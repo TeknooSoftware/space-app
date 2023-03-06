@@ -1,0 +1,29 @@
+space_dashboard:
+    path: '/'
+    methods:  ['GET']
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.dashboard'
+        template: '@@TeknooEastPaas/Dashboard/index.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        allowEmptyCredentials: true
+
+space_dashboard_frame:
+    path: '/dashboard/frame/'
+    methods:  ['GET', 'POST', 'PUT', 'DELETE']
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.dashboard_frame'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        allowEmptyCredentials: true
+
+space_dashboard_frame_url:
+    path: '/dashboard/frame/{wildcard}'
+    requirements:
+        wildcard: .*
+    methods:  ['GET', 'POST', 'PUT', 'DELETE']
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.dashboard_frame'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        allowEmptyCredentials: true

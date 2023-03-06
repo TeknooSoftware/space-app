@@ -1,0 +1,102 @@
+{# templates/bundles/TeknooEastPaasBundle/AdminJob/get.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% macro displayJobHistory(history) %}
+  <tr>
+    <td class="col-1">{{ history.date|date('Y-m-d H:i:s') }}</td>
+    <td class="col-10">{{ history.getMessage }}</td>
+    <td class="col-1">{% if history.isFinal %}{{ 'teknoo.space.text.job_yes'|trans }}{% endif %}</td>
+  </tr>
+  {% if history.extra is not empty %}
+  <tr>
+      <td colspan="3" class="col-12">
+          {% if history.extra.result.message is defined %}
+              {{ history.extra.result.message|nl2br }}
+          {% elseif history.extra.result is defined %}
+              <pre class="text-breakspace">{{ history.extra.result|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+          {% else %}
+              <pre class="text-breakspace">{{ history.extra|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+          {% endif %}
+      </td>
+  </tr>
+  {% endif %}
+  {% if history.previous is not empty %}
+    {{ _self.displayJobHistory(history.previous) }}
+  {% endif %}
+{% endmacro %}
+
+{% block formTitle %}{{  'teknoo.space.title.project.edit'|trans }}{% endblock %}
+
+{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.job.view'|trans }}{% endblock %}
+
+{% block instanceTitle %}{{ 'teknoo.space.title.job.view'|trans }}{% endblock %}
+
+{% block breadcrumbAddsItems %}
+    {% if jobInstance.project is not empty %}
+        <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_project_edit', {'id': jobInstance.project.id}) }}">{{ jobInstance.project }}</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block formParentBlock %}
+    <div class="row">
+        <div class="col-lg-3 mt-4 mt-lg-0 pt-2 pt-lg-0">
+            <div class="card border-0 sidebar sticky-bar rounded shadow bg-white">
+                <div class="card-body">
+                    <div class="widget">
+                        {% if jobInstance.project is not empty %}
+                        <h5 class="widget-title">{{ 'teknoo.space.text.job_actions'|trans }}</h5>
+                        <a href="{{  path('_teknoo_paas_admin_project_edit', {'id':jobInstance.project.id}) }}" title="{{ 'teknoo.space.action.job_open_project'|trans }}" class="btn btn-soft-primary btn-full-large btn-block mb-2">
+                            <i class="mdi mdi-pencil"></i>
+                            {{ 'teknoo.space.action.job_open_project'|trans }}
+                        </a>
+                        <h5 class="widget-title">{{ 'teknoo.space.text.project_actions'|trans }}</h5>
+                        <a href="{{  path('space_admin_restart_job', {'projectId':jobInstance.project.id, 'jobId':jobInstance.id}) }}" title="{{ 'teknoo.space.action.restart_job'|trans }}" class="btn btn-soft-success btn-full-large btn-block mb-2">
+                            <i class="mdi mdi-shape-circle-plus"></i>
+                            {{ 'teknoo.space.action.restart_job'|trans }}
+                        </a>
+                        {% if projectUrl is defined and projectUrl is not empty %}
+                            <a href="{{ projectUrl }}" target="_blank" title="{{ 'teknoo.space.action.open_website'|trans }}" class="btn btn-soft-secondary btn-full-large btn-block mb-2">
+                                <i class="mdi mdi-shape-circle-plus"></i>
+                                {{ 'teknoo.space.action.open_website'|trans }}
+                            </a>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>{# end col #}
+        <div class="col-lg-9">
+            <div class="table-responsive bg-white shadow rounded">
+                <table class="table table-fixed mb-0 table-center">
+                    {% block listTableHeader %}
+                        <thead class="bg-light">
+                        <tr>
+                            <th scope="col" class="col-1 border-bottom text-center">{{ 'teknoo.space.text.admin_cols_job_updated_at'|trans }}</th>
+                            <th scope="col" class="col-10 border-bottom">{{ 'teknoo.space.text.admin_cols_job_event'|trans }}</th>
+                            <th scope="col" class="col-1 border-bottom text-end">{{ 'teknoo.space.text.admin_cols_job_final'|trans }}</th>
+                        </tr>
+                        </thead>
+                    {% endblock %}
+                    {% block listTableBody %}
+                        <tbody>
+                        {% if jobInstance.history is not empty %}
+                            {{ _self.displayJobHistory(jobInstance.history) }}
+                        {% endif %}
+                        </tbody>
+                    {% endblock %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript_additonals %}
+    {% if jobInstance.history is not empty and false == jobInstance.history.isFinal %}
+        <script nonce="{{ space_nonce() }}">
+          setTimeout(function() { location.reload(); }, 60 * 1000);
+        </script>
+    {% endif %}
+{% endblock %}

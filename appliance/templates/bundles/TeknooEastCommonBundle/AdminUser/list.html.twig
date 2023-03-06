@@ -1,0 +1,55 @@
+{# templates/bundles/TeknooEastPaasBundle/views/AdminUser/list.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.list.html.twig'  %}
+
+{% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\UserSearchType' %}
+
+{% import '@TeknooEastPaas/Functions/utils.html.twig' as utils %}
+
+{% block listTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user'|trans }}{% endblock %}
+{% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.admin_user'|trans }}{% endblock %}
+{% block listLink %}{{ path('_teknoo_common_admin_user_list') }}{% endblock %}
+
+{% block topHeaderButton %}
+    <li class="list-inline-item mb-0 ms-1">
+        <a rel="noopener" class="btn btn-outline-light" href="{{ path('_teknoo_common_admin_user_new') }}" title="{{ 'teknoo.space.text.admin_create_user'|trans }}">
+            <i class="uil uil-user-plus"></i>
+            {{ 'teknoo.space.action.new_user'|trans }}
+        </a>
+    </li>
+{% endblock %}
+
+{% block listTableHeader %}
+    <thead class="bg-light">
+    <tr>
+        <th scope="col" class="border-bottom text-start">#</th>
+        <th scope="col" class="border-bottom"><a class="text-primary" href="{{ path('_teknoo_common_admin_user_list') }}{{ utils.orderUrl(queryParams, 'email') }}">{{ 'teknoo.space.text.admin_cols_user_email'|trans }}</a></th>
+        <th scope="col" class="border-bottom">{{ 'teknoo.space.text.admin_cols_user_firstname'|trans }}</th>
+        <th scope="col" class="border-bottom"><a class="text-primary" href="{{ path('_teknoo_common_admin_user_list') }}{{ utils.orderUrl(queryParams, 'lastName') }}">{{ 'teknoo.space.text.admin_cols_user_lastname'|trans }}</a></th>
+        <th scope="col" class="border-bottom text-center">{{ 'teknoo.space.text.admin_cols_user_action'|trans }}</th>
+    </tr>
+    </thead>
+{% endblock %}
+
+{% block listTableEmpty %}
+    <tr>
+        <td colspan="5">{{ 'teknoo.space.text.admin_user_no_entries'|trans }}</td>
+    </tr>
+{% endblock %}
+
+{% block listTableRow %}
+    <tr {% if loop.index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
+        <td class="text-center">{{ object.id|slice(0, 6) }}</td>
+        <td>
+            <a class="text-primary" href="{{  path('_teknoo_common_admin_user_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_user'|trans }}">
+                {{ object.user.email }}
+            </a>
+        </td>
+        <td>{{ object.user.firstName }}</td>
+        <td>{{ object.user.lastName }}</td>
+        <td class="text-center">
+            <a class="text-primary" href="{{  path('_teknoo_common_admin_user_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_user'|trans }}"><span class="mdi mdi-pencil"></span></a>
+            <a class="text-primary" onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{  path('_teknoo_common_admin_user_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_user'|trans }}"><span class="mdi mdi-trash-can"></span></a>
+        </td>
+    </tr>
+{% endblock %}

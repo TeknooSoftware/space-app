@@ -1,0 +1,21 @@
+{# templates/bundles/TeknooEastPaasBundle/views/AdminAccount/code_generator.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{ 'teknoo.space.title.admin_account.code_generator'|trans }}{% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.new'|trans }}{% endblock %}
+
+{% block instanceTitle %}{{ 'teknoo.space.title.admin_account.code_generator_title'|trans }}{% endblock %}
+
+{% block listLink path('_teknoo_paas_admin_account_list') %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.company, {"largeRow": true}) }}
+        {{ form_row(formView.code, {"largeRow": true}) }}
+    </div>
+{% endblock %}
+
+{% block btnSaveLabel %}<i class="uil uil-angle-double-down"></i>
+    {{ 'teknoo.space.action.admin_generate'|trans }}{% endblock %}

@@ -1,0 +1,34 @@
+{# templates/bundles/TeknooEastPaasBundle/Job/new.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
+
+{% block breadcrumbAddsItems %}
+    <li class="breadcrumb-item text-capitalize"><a href="{{ path('_teknoo_paas_admin_account_edit', {"id": objectInstance.id}) }}">{{ objectInstance }}</a></li>
+{% endblock %}
+
+{% block instanceTitle %}{{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
+
+{% block listLink path('_teknoo_paas_admin_account_list') %}
+
+{% block crudFormFields %}
+    <div class="row subforms" data-subforms="sets" data-prototype="{{ form_widget(formView.sets.vars.prototype)|e('html_attr') }}" data-prototype-name="__env_name__">
+        <div class="col-md-12">
+            <h3>Environments</h3>
+        </div>
+        {% for envSet in formView.sets %}
+            {{ form_widget(envSet, {"largeRow": true}) }}
+        {% endfor %}
+    </div>
+    {% do formView.sets.setRendered %}
+{% endblock %}
+
+{% block addsFormButton %}
+    <button type="button" data-subforms-id="sets" class="btn btn-outline-secondary btn-full-large btn-block btn-add-subform mb-2">
+        <i class="uil uil-focus-add"></i>
+        {{ 'teknoo.space.action.add_environment'|trans }}
+    </button>
+{% endblock %}

@@ -1,0 +1,32 @@
+account_logout:
+    path: '/account/logout'
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.static'
+        template: '@@TeknooEastPaas/Account/login.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+account_login:
+    path: '/account/login'
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.static'
+        template: '@@TeknooEastPaas/Account/login.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+account_autologin:
+    path: '/account/auto-login'
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.static'
+        template: '@@TeknooEastPaas/Account/login.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+account_check:
+    path: '/account/check'
+    schemes:    [https]
+    methods:  ['POST']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.static'
+        template: '@@TeknooEastPaas/Account/index.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'

@@ -1,0 +1,34 @@
+{# templates/bundles/TeknooEastPaasBundle/views/AdminUser/edit.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{ 'teknoo.space.title.admin_user.edit'|trans }}{% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user.edit'|trans }} : {{ objectInstance }}{% endblock %}
+{% block instanceTitle %}{{ objectInstance }}{% endblock %}
+{% block listLink path('_teknoo_common_admin_user_list') %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.user.firstName) }}
+        {{ form_row(formView.user.lastName) }}
+        {{ form_row(formView.user.roles, {"largeRow": true}) }}
+        {{ form_row(formView.user.email, {"largeRow": true}) }}
+        {{ form_row(
+            formView.userData.picture.image,
+            {"colClass":"col-10", "pictureInstance": objectInstance.userData.picture}
+        ) }}
+        {{ form_row(formView.userData.removePicture, {"colClass":"col-2 d-flex flex-column justify-content-end", 'label_attr':{'class': 'switch-custom'}}) }}
+        {% do formView.userData.picture.name.setRendered() %}
+        {% do formView.userData.picture.alternative.setRendered() %}
+    </div>
+    <div class="row">
+        {{ form_row(formView.user.storedPassword.password) }}
+    </div>
+{% endblock %}
+
+{% block btnExtra %}
+    <div class="widget mb-2 pb-2">
+        <h5 class="widget-title">{{ 'teknoo.space.text.user_status'|trans }}</h5>
+        {{ form_row(formView.user.active, {'label_attr':{'class': 'switch-custom'}}) }}
+    </div>
+{% endblock %}

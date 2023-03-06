@@ -1,0 +1,55 @@
+{# templates/bundles/TeknooEastPaasBundle/Project/list.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.list.html.twig' %}
+
+{% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\ProjectSearchType' %}
+
+{% import '@TeknooEastPaas/Functions/utils.html.twig' as utils %}
+
+{% block listTitle %}<i class="uil uil-trowel"></i> {{ "teknoo.space.title.project"|trans }}{% endblock %}
+{% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.project'|trans }}{% endblock %}
+{% block listLink %}{{ path('space_project_list') }}{% endblock %}
+
+{% block topHeaderButton %}
+    <li class="list-inline-item mb-0 ms-1">
+        <a rel="noopener" class="btn btn-outline-light" href="{{ path('space_project_new') }}" title="{{ 'teknoo.space.text.create_project'|trans }}">
+            <i class="uil uil-book-medical"></i>
+            {{ 'teknoo.space.action.new_project'|trans }}
+        </a>
+    </li>
+{% endblock %}
+
+{% block listTableHeader %}
+    <thead class="bg-light">
+    <tr>
+        <th scope="col" class="border-bottom"><a class="text-primary" href="{{ path('space_project_list') }}{{ utils.orderUrl(queryParams, 'name') }}">{{ 'teknoo.space.text.cols_project_name'|trans }}</a></th>
+        <th scope="col" class="border-bottom"><a class="text-primary" href="{{ path('space_project_list') }}{{ utils.orderUrl(queryParams, 'createdAt') }}">{{ 'teknoo.space.text.cols_project_created_at'|trans }}</a></th>
+        <th scope="col" class="border-bottom"><a class="text-primary" href="{{ path('space_project_list') }}{{ utils.orderUrl(queryParams, 'updatedAt') }}">{{ 'teknoo.space.text.cols_project_updated_at'|trans }}</a></th>
+        <th scope="col" class="border-bottom text-end">{{ 'teknoo.space.text.cols_project_action'|trans }}</th>
+    </tr>
+    </thead>
+{% endblock %}
+
+{% block listTableEmpty %}
+    <tr>
+        <td colspan="4">{{ 'teknoo.space.text.project_no_entries'|trans }}</td>
+    </tr>
+{% endblock %}
+
+
+{% block listTableRow %}
+    <tr {% if loop.index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
+        <td>
+            <a class="text-primary space-project-name" href="{{  path('space_project_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_project'|trans }}">
+                {{ object.project }}
+            </a>
+        </td>
+        <td>{{ object.project.createdAt|date('Y M d H:i:s') }}</td>
+        <td>{{ object.project.updatedAt|date('Y M d H:i:s') }}</td>
+        <td class="text-end">
+            <a class="text-primary" href="{{  path('space_project_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_project'|trans }}"><span class="mdi mdi-pencil"></span></a>
+            <a class="text-primary" href="{{  path('space_job_new', {'projectId':object.id}) }}" title="{{ 'teknoo.space.action.start_job'|trans }}"><span class="mdi mdi-shape-circle-plus"></span></a>
+            <a class="text-primary" onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{  path('space_project_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_project'|trans }}"><span class="mdi mdi-trash-can"></span></a>
+        </td>
+    </tr>
+{% endblock %}

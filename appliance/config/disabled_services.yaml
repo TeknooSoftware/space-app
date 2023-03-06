@@ -1,0 +1,13 @@
+services:
+    locale_listener:
+        class: 'Symfony\Component\HttpKernel\EventListener\LocaleListener'
+        arguments:
+            - "@request_stack"
+            - "%kernel.default_locale%"
+            - "@?router"
+
+    locale_aware_listener:
+        class: 'Symfony\Component\HttpKernel\EventListener\LocaleAwareListener'
+        arguments:
+            - []
+            - "@request_stack"

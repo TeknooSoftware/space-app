@@ -1,0 +1,117 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    teknoo.space.endpoint.subscription:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\Subscription'
+            - '@service_container'
+
+    teknoo.space.endpoint.code_generator:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\FormWithoutObject'
+            - '@service_container'
+
+    teknoo.space.endpoint.job.new:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\JobStart'
+            - '@service_container'
+
+    teknoo.space.endpoint.job.restart:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\JobRestart'
+            - '@service_container'
+
+    teknoo.space.endpoint.job.get:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\JobGet'
+            - '@service_container'
+
+    teknoo.space.endpoint.job.list:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\JobList'
+            - '@service_container'
+
+    teknoo.space.endpoint.my_settings:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\UserMySettings'
+            - '@service_container'
+
+    teknoo.space.endpoint.account.settings:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\AccountEditSettings'
+            - '@service_container'
+
+    teknoo.space.endpoint.admin.account.reinstall:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountReinstall'
+            - '@service_container'
+
+    teknoo.space.endpoint.admin.account.registry-reinstall:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall'
+            - '@service_container'
+
+    teknoo.space.endpoint.project.list:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\ProjectList'
+            - '@service_container'
+
+    teknoo.space.endpoint.project.new:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\ProjectNew'
+            - '@service_container'
+
+    teknoo.space.endpoint.project.edit:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\EditProjectEndPointInterface'
+            - '@service_container'
+
+    teknoo.space.endpoint.project.refresh_credentials:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\RefreshProjectCredentials'
+            - '@service_container'
+
+    teknoo.space.endpoint.dashboard:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\Dashboard'
+            - '@service_container'
+
+    teknoo.space.endpoint.dashboard_frame:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\DashboardFrame'
+            - '@service_container'

@@ -1,0 +1,11 @@
+framework:
+    messenger:
+        transports:
+            new_job: '%env(MESSENGER_NEW_JOB_DSN)%'
+            history_sent: '%env(MESSENGER_HISTORY_SENT_DSN)%'
+            job_done: '%env(MESSENGER_JOB_DONE_DSN)%'
+            execute_job:
+                dsn: '%env(MESSENGER_EXECUTE_JOB_DSN)%'
+                # default configuration
+                retry_strategy:
+                    max_retries: 0

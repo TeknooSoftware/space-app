@@ -1,0 +1,42 @@
+space_admin_new_job:
+    path: '/admin/project/{projectId}/new-job'
+    methods:  ['GET', 'POST', 'PUT']
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.new'
+        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\NewJob'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\NewJobType'
+        template: '@@TeknooEastPaas/AdminJob/new.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+        route: 'space_job_new_pending'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+
+space_admin_restart_job:
+    path: '/admin/project/{projectId}/restart-job/{jobId}'
+    methods:  ['GET', 'POST', 'PUT']
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.restart'
+        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\NewJob'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\NewJobType'
+        template: '@@TeknooEastPaas/AdminJob/new.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+        route: 'space_job_new_pending'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+        formActionRoute: 'space_admin_new_job'
+
+space_admin_get_job:
+    path: '/admin/job/{id}'
+    methods: [ 'GET', 'POST', 'PUT' ]
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.get'
+        loader: '@Teknoo\East\Paas\Loader\JobLoader'
+        template: '@@TeknooEastPaas/AdminJob/get.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        objectViewKey: 'jobInstance'
+        formOptions: { }

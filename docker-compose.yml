@@ -1,0 +1,117 @@
+version: "3.7"
+networks:
+  backend: ~
+  bdd: ~
+  amqp: ~
+volumes:
+  caddy_data:
+  caddy_config:
+services:
+  mercure:
+    image: dunglas/mercure:latest
+    ports:
+      - 8181:8181
+    environment:
+      # Uncomment the following line to disable HTTPS
+      SERVER_NAME: ':8181'
+      MERCURE_PUBLISHER_JWT_ALG: 'HS256'
+      MERCURE_SUBSCRIBER_JWT_ALG: 'HS256'
+      PUBLISH_ALLOWED_ORIGINS: '*'
+      ALLOW_ANONYMOUS: 1
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins https://localhost
+        anonymous
+      CORS_ALLOWED_ORIGINS: '*'
+      # Uncomment the following line to enable the development mode
+      #command: /usr/bin/caddy run -config /etc/caddy/Caddyfile.dev
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - backend
+  db:
+    build:
+      context: ./build.dev/mongo
+    ports:
+      - 27017:27017
+    networks:
+      - bdd
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin_space
+      MONGO_INITDB_ROOT_PASSWORD: space_pwd
+      MONGO_INITDB_DATABASE: space
+    volumes:
+      - ./var/mongo:/var/lib/mongodb
+  amqp:
+    build:
+      context: ./build.dev/rabbitmq
+    ports:
+      - 8080:8080
+      - 5672:5672
+    environment:
+      RABBITMQ_USERNAME: space
+      RABBITMQ_PASSWORD: space_pwd
+    networks:
+      - amqp
+  php:
+    build:
+      context: ./build.dev/php
+    privileged: true
+    expose:
+      - 9000
+    networks:
+      - bdd
+      - backend
+      - amqp
+    links:
+      - db
+    volumes:
+      - ./appliance/:/var/www/space
+      - /var/lib/docker:/var/lib/docker
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - APP_ENV=dev
+      - MAILER_FROM=
+      - MAILER_HOST=127.0.0.1
+      - MAILER_PASSWORD=
+      - MAILER_SUBJECT="Teknoo Space Contact"
+      - MAILER_TRANSPORT=smtp
+      - MAILER_USER=
+      - MERCURE_PUBLISH_URL=http://mercure:8181/.well-known/mercure
+      - MERCURE_SUBSCRIBER_URL=https://localhost/hub/.well-known/mercure
+      - MESSENGER_EXECUTE_JOB_DSN=amqp://space:space_pwd@amqp:5672/%2f/execute_job
+      - MESSENGER_HISTORY_SENT_DSN=amqp://space:space_pwd@amqp:5672/%2f/history_sent
+      - MESSENGER_JOB_DONE_DSN=amqp://space:space_pwd@amqp:5672/%2f/job_done
+      - MESSENGER_NEW_JOB_DSN=amqp://space:space_pwd@amqp:5672/%2f/new_job
+      - MONGODB_NAME=space
+      - MONGODB_SERVER=mongodb://space_user:space_pwd@db/space
+      - SPACE_CLUSTER_ISSUER=lets-encrypt
+      - SPACE_HOSTNAME=localhost
+      - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+      - SPACE_JOB_ROOT=/tmp
+      - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+      - SPACE_KUBERNETES_CLUSTER_ENV=prod
+      - SPACE_KUBERNETES_CLUSTER_NAME=Teknoo Space Hydrogen
+      - SPACE_KUBERNETES_CLUSTER_TYPE=kubernetes
+      - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
+      - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
+      - SPACE_OCI_GLOBAL_REGISTRY_USERNAME=spaceuser
+      - SPACE_OCI_REGISTRY_IMAGE=registry:latest
+      - SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
+      - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
+      - SPACE_PING_FILE=var/ping_file
+      - SPACE_PING_SECONDS=60
+      - SPACE_STORAGE_CLASS_LONGHORN=longhorn
+      - SPACE_STORAGE_CLASS_NFS=nfs.csi.k8s.io
+      - SPACE_STORAGE_DEFAULT_SIZE=3Gi
+      - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
+  apache:
+    build:
+      context: ./build.dev/apache
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - backend
+    volumes:
+      - ./appliance/public:/var/www/space/public

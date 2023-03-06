@@ -1,0 +1,33 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $appHostname: '%app.hostname%'
+            $defaultClusterName: '%app.kubernetes.cluster.default_name%'
+            $defaultClusterType: '%app.kubernetes.cluster.default_type%'
+            $defaultClusterAddress: '%app.kubernetes.master%'
+            $defaultClusterEnv: '%app.kubernetes.cluster.default_env%'
+            $testTransport: '@zenstruck_messenger_test.transport_registry'
+            $cacheExpiredLinks: '@security.authenticator.cache.expired_links'
+
+    Teknoo\Space\Tests\Behat\GetTokenStorageService:
+        public: true
+        arguments:
+            - '@?security.token_storage'
+
+    Teknoo\Space\Tests\Behat\:
+        resource: '../tests/Behat/*'
+        exclude: '../tests/Behat/{GetTokenStorageService.php}'
+
+    Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory: ~
+
+    Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType:
+        public: true
+        tags:
+            - {name: form.type}
+
+    doctrine_mongodb.messenger.event_subscriber.doctrine_clear_document_manager:
+        class: 'Teknoo\Space\Tests\Behat\ODM\DoctrineClearEntityManagerWorkerSubscriber'
+        tags:
+            - {name: kernel.event_subscriber}

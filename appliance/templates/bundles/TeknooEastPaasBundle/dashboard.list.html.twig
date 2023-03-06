@@ -1,0 +1,86 @@
+{# templates/bundles/TeknooEastPaasBundle/views/dashboard.list.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+
+{% import '@TeknooEastPaas/Functions/url.html.twig' as functions %}
+
+{% block topHeaderSearchBar %}
+    {% if searchForm is defined and searchForm is not empty or formClass is defined and formClass is not empty %}
+        {#  SEARCH  #}
+        <div class="search-bar p-0 d-none d-md-block ms-2">
+            <div id="search" class="menu-search mb-0">
+            {% if searchForm is not defined or searchForm is empty %}
+                {% set searchForm = formFactory.create(formClass) %}
+            {% endif %}
+            {% set searchFormView = searchForm.createView() %}
+            {% form_theme searchFormView with ['bootstrap_4_layout.html.twig'] %}
+            {{ form_start(searchFormView, {"attr":{"class":"searchform"}}) }}
+            <div>
+                {{ form_widget(searchFormView.search, {'attr':{'class':'border rounded', "label": null, "placeholder": 'teknoo.space.text.admin.search'|trans}}) }}
+                <input type="submit" id="searchsubmit" value="{{ 'teknoo.space.form.search.text'|trans }}">
+            </div>
+            {{ form_end(searchFormView) }}
+            </div>
+        </div>
+        {#  SEARCH  #}
+    {% endif %}
+{% endblock %}{# topHeaderSearchBar #}
+
+{% block containerFluidInner %}
+    <div class="layout-specing">
+        <div class="d-md-flex justify-content-between align-items-center">
+            <h5 class="mb-0">{% block listTitle '' %}</h5>
+
+            <nav aria-label="breadcrumb" class="d-inline-block mt-2 mt-sm-0">
+                <ul class="breadcrumb bg-transparent rounded mb-0 p-0">
+                    <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_dashboard') }}">{{ 'teknoo.space.text.space'|trans }}</a></li>
+                    <li class="breadcrumb-item text-capitalize"><a href="{% block listLink '#' %}">{% block listTitleInBreadCrumb '' %}</a></li>
+                    {% block additionalBreadcrumbs '' %}
+                </ul>
+            </nav>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="table-responsive shadow rounded">
+                    <table class="table table-center bg-white mb-0">
+                    {% block listTableHeader '' %}
+                    {% block listTableBody %}
+                        <tbody>
+                        {% if objectsCollection is defined %}
+                            {% for object in objectsCollection %}
+                                {% block listTableRow '' %}
+                            {% else %}
+                                {% block listTableEmpty'' %}
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    {% endblock %}
+                    </table>
+                </div>
+            </div><!--end col-->
+        </div><!--end row-->
+
+        {% if pageCount > 1 %}
+            <div class="row text-center">
+                <!-- PAGINATION START -->
+                <div class="col-12 mt-4">
+                    <div class="d-md-flex align-items-center text-center justify-content-between">
+                        <ul class="pagination">
+                            {% if page > 1 %}
+                                <li class="page-item"><a class="page-link" href="{{ functions.updateQueryField('page', (page-1)) }}">{{ 'teknoo.space.text.previous'|trans }}</a></li>
+                            {% endif %}
+                            {% for pageNumber in 1..pageCount %}
+                                <li class="page-item{% if page == pageNumber %} active{% endif %}"><a class="page-link" href="{{ functions.updateQueryField('page', pageNumber) }}">{{ pageNumber }}</a></li>
+                            {% endfor %}
+                            {% if page < pageCount %}
+                                <li class="page-item"><a class="page-link" href="{{ functions.updateQueryField('page', (page+1)) }}">{{ 'teknoo.space.text.next'|trans }}</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div><!--end col-->
+                <!-- PAGINATION END -->
+            </div><!--end row-->
+        {% endif %}
+    </div>
+{% endblock %}{# containerFluidInner #}

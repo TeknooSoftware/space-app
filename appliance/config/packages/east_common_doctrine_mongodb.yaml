@@ -1,0 +1,15 @@
+doctrine_mongodb:
+    document_managers:
+        default:
+            auto_mapping: true
+            mappings:
+                TeknooEastCommon:
+                    type: 'xml'
+                    dir: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/doctrine/config/universal'
+                    is_bundle: false
+                    prefix: 'Teknoo\East\Common\Object'
+                TeknooEastCommonDoctrine:
+                    type: 'xml'
+                    dir: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/doctrine/config/doctrine'
+                    is_bundle: false
+                    prefix: 'Teknoo\East\Common\Doctrine\Object'

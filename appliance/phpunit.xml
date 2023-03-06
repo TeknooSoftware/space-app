@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" processIsolation="false" stopOnFailure="false" bootstrap="tests/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <coverage>
+    <include>
+      <directory>domain</directory>
+      <directory>src</directory>
+      <directory>infrastructures</directory>
+    </include>
+  </coverage>
+  <php>
+    <ini name="error_reporting" value="-1"/>
+    <server name="KERNEL_CLASS" value="App/Kernel"/>
+    <!-- ###+ symfony/messenger ### -->
+    <!-- MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages -->
+    <!-- ###- symfony/messenger ### -->
+    <!-- ###+ symfony/mercure-bundle ### -->
+    <!-- See https://symfony.com/doc/current/mercure.html#configuration -->
+    <env name="MERCURE_PUBLISH_URL" value="https://localhost/hub/.well-known/mercure"/>
+    <!-- The default token is signed with the secret key: !ChangeMe! -->
+    <env name="MERCURE_JWT_TOKEN" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZXJjdXJlIjp7InB1Ymxpc2giOltdfX0.Oo0yg7y4yMa1vr_bziltxuTCqb8JVHKxp-f_FwwOim0"/>
+    <!-- ###- symfony/mercure-bundle ### -->
+    <!-- ###+ symfony/mailer ### -->
+    <!-- MAILER_DSN=null://null -->
+    <!-- ###- symfony/mailer ### -->
+  </php>
+  <testsuites>
+    <testsuite name="Teknoo Software Space Test Suite">
+      <directory suffix="Test.php">tests/</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>

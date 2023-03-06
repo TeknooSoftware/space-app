@@ -1,0 +1,44 @@
+{# templates/bundles/TeknooEastCommonBundle/Error/default.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+
+{% block navbar %}{% endblock %}
+
+{% block back_to %}
+  <div class="back-to-home rounded d-none d-sm-block">
+    <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-icon btn-soft-primary">
+      <i data-feather="home" class="icons"></i>
+    </a>
+  </div>
+{% endblock %}{# back_to #}
+
+{% block main %}
+  <section class="bg-home d-flex align-items-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-12 text-center">
+          {% block imageError %}
+          <img src="images/error.svg" class="img-fluid" alt="">
+          {% endblock %}
+          {% set errorCode = error.code %}
+          {% if 0 == errorCode %}
+            {% set errorCode = 500 %}
+          {% endif %}
+          {% set errorUpper = 'teknoo.space.error.' ~ errorCode ~ '.upper' %}
+          {% set errorTitle = 'teknoo.space.error.' ~ errorCode ~ '.title' %}
+          {% set errorDescription = 'teknoo.space.error.' ~ errorCode ~ '.description' %}
+          <div class="text-uppercase mt-4 display-3">{{ errorUpper|trans }}</div>
+          <div class="text-capitalize text-dark mb-4 error-page">{{ errorTitle|trans }}</div>
+          <p class="text-muted para-desc mx-auto">{{ errorDescription|trans|trans }}</p>
+        </div>{# end col #}
+      </div>{# end row #}
+
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <a hreflang="{{ locale }}" rel="noopener" href="javascript:window.history.back()" class="btn btn-outline-primary mt-4">{{ 'teknoo.space.action.go_back'|trans }}</a>
+          <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-primary mt-4 ml-2">{{ 'teknoo.space.action.go_to_home'|trans }}</a>
+        </div>{# end col #}
+      </div>{# end row #}
+    </div>{# end container #}
+  </section>{# end section #}
+{% endblock %}{# main #}

@@ -1,0 +1,44 @@
+parameters:
+    locale: 'en'
+
+    languages:
+        - 'fr'
+        - 'en'
+
+    teknoo.east.common.bundle.allowed_forms: {
+        "@TeknooEastCommon/AdminUser/list.html.twig" : {
+            "user_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\UserSearchType"
+        },
+        "@TeknooEastPaas/AdminAccount/list.html.twig": {
+            "account_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\AccountSearchType"
+        },
+        "@TeknooEastPaas/AdminProject/list.html.twig": {
+            "project_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\ProjectSearchType"
+        },
+        "@TeknooEastPaas/AdminJob/list.html.twig": {
+            "job_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\JobSearchType"
+        },
+        "@TeknooEastPaas/AdminType/list.html.twig": {
+            "type_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\TypeSearchType"
+        },
+        "@TeknooEastPaas/AdminContent/list.html.twig": {
+            "content_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\ContentSearchType"
+        },
+        "@TeknooEastPaas/AdminItem/list.html.twig": {
+            "item_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\ItemSearchType"
+        },
+        "@TeknooEastPaas/AdminMedia/list.html.twig": {
+            "media_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\MediaSearchType"
+        },
+    }
+
+    teknoo.space.code.subscription.required: true
+    teknoo.space.mercure.publishing_enabled.default: true
+    teknoo.space.mercure.publishing_enabled: '%env(default:teknoo.space.mercure.publishing_enabled.default:SPACE_MERCURE_PUBLISHING_ENABLED)%'
+    teknoo.space.ping_file: '%env(SPACE_PING_FILE)%'
+    teknoo.space.ping_seconds: '%env(int:SPACE_PING_SECONDS)%'
+    teknoo.space.new_job.waiting_time.default: 5
+    teknoo.space.prefer-real-date: true
+    teknoo.east.paas.symfony.history.prefer-real-date: true
+    teknoo.east.paas.symfony.prepare-job.prefer-real-date: true
+    teknoo.east.paas.job_unit.use_hierarchical_namespaces: true

@@ -1,0 +1,4 @@
+Teknoo\Space\Object\DTO\JobVar:
+    attributes:
+        persistedVar:
+            ignore: true

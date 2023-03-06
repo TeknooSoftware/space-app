@@ -1,0 +1,25 @@
+doctrine_mongodb:
+    connections:
+        default:
+            server: "%env(MONGODB_SERVER)%"
+            options: {}
+    default_database: '%env(MONGODB_NAME)%'
+    document_managers:
+        default:
+            auto_mapping: true
+            mappings:
+                TeknooEastPaas:
+                    type: 'xml'
+                    dir: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Doctrine/config/universal'
+                    is_bundle: false
+                    prefix: 'Teknoo\East\Paas\Object'
+                TeknooEastPaasInfrastructuresDoctrine:
+                    type: 'xml'
+                    dir: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Doctrine/config/odm'
+                    is_bundle: false
+                    prefix: 'Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM'
+                AppObjectPersisted:
+                    type: 'xml'
+                    dir: '%kernel.project_dir%/config/doctrine'
+                    is_bundle: false
+                    prefix: 'Teknoo\Space\Object\Persisted'

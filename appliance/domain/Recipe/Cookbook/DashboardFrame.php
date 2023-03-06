@@ -1,0 +1,68 @@
+<?php
+
+/*
+ * Teknoo Space.
+ *
+ * LICENSE
+ *
+ * This source file is subject to the MIT license
+ * it is available in LICENSE file at the root of this package
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to richard@teknoo.software so we can send you a copy immediately.
+ *
+ *
+ * @copyright   Copyright (c) EIRL Richard Déloge (richard@teknoo.software)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ *
+ * @link        http://teknoo.space Project website
+ *
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richard@teknoo.software>
+ */
+
+declare(strict_types=1);
+
+namespace Teknoo\Space\Recipe\Cookbook;
+
+use Teknoo\East\Common\Recipe\Step\RenderError;
+use Teknoo\East\Foundation\Recipe\CookbookInterface;
+use Teknoo\Recipe\Bowl\Bowl;
+use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
+use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
+use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+
+/**
+ * @copyright   Copyright (c) EIRL Richard Déloge (richard@teknoo.software)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software)
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richard@teknoo.software>
+ */
+class DashboardFrame implements CookbookInterface
+{
+    use BaseCookbookTrait;
+
+    public function __construct(
+        RecipeInterface $recipe,
+        private LoadCredentials $loadCredentials,
+        private DashboardFrameInterface $dashboard,
+        private RenderError $renderError,
+        private string $defaultErrorTemplate,
+    ) {
+        $this->fill($recipe);
+    }
+
+    protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
+    {
+        $recipe = $recipe->cook($this->loadCredentials, LoadCredentials::class, [], 10);
+
+        $recipe = $recipe->cook($this->dashboard, DashboardFrameInterface::class, [], 40);
+
+        $recipe = $recipe->onError(new Bowl($this->renderError, []));
+
+        $this->addToWorkplan('errorTemplate', $this->defaultErrorTemplate);
+
+        return $recipe;
+    }
+}

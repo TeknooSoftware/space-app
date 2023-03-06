@@ -1,0 +1,21 @@
+{# templates/bundles/TeknooEastCommonBundle/2fa/enabling.html.twig #}
+
+{% extends '@TeknooEastPaas/Admin/list.html.twig' %}
+
+{% block content %}
+    <div class="row title">
+        <div class="col-12 col-md-8">
+            <h1>Authentication 2FA</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            {{ form_start(formView, {"attr":{"class":"form-horizontal", "action": path('_teknoo_common_2fa_google_validate')}}) }}
+            {% form_theme formView '@TeknooEastPaas/Admin/fields.html.twig' %}
+            {{ form_errors(formView) }}
+            {{ form_row(formView.code) }}
+            <input type="submit" class="btn btn-primary" name="Validate" />
+            {{ form_end(formView) }}
+        </div>
+    </div>
+{% endblock %}

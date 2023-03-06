@@ -1,0 +1,13 @@
+/ansible/keys/*
+!/ansible/keys/*.pub
+!/ansible/keys/.gitkeep
+/docker-compose.override.yml
+/var/
+!/var/.gitkeep
+/var/mongo/
+!/var/mongo/.gitkeep
+/ansible/playbooks/vars/keys.yml
+/appliance/.phpunit.cache/
+/appliance/phpunitgen.php
+/enterprise/
+/appliance/.env.build

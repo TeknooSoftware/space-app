@@ -1,0 +1,23 @@
+framework:
+    #esi: ~
+    secret: '%env(APP_SECRET)%'
+    form: ~
+    csrf_protection: ~
+    serializer: ~
+    property_info:
+        enabled: true
+    trusted_hosts: ~
+    session:
+        # https://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id: session.handler.native_file
+        cookie_path: '/'
+        cookie_domain: ''
+        cookie_httponly: true
+        storage_factory_id: "session.storage.factory.native"
+        save_path: "%kernel.project_dir%/var/sessions"
+    fragments: ~
+    http_method_override: true
+    php_errors:
+        log: true
+    router:
+        default_uri: 'https://%env(SPACE_HOSTNAME)%/'

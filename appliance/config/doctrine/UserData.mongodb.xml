@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--config/doctrine/AccountHistory.mongodb.xml-->
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                                            http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Teknoo\Space\Object\Persisted\UserData" collection="users_data">
+        <id type="string" strategy="UUID"/>
+        <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
+        <field field-name="updatedAt" name="updated_at" type="date" />
+        <reference-one field="user" target-document="Teknoo\East\Common\Object\User">
+            <cascade />
+        </reference-one>
+        <reference-one field="picture" target-document="Teknoo\East\Common\Doctrine\Object\Media">
+            <cascade>
+                <remove/>
+                <refresh/>
+            </cascade>
+        </reference-one>
+    </document>
+</doctrine-mongo-mapping>

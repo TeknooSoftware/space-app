@@ -1,0 +1,183 @@
+imports:
+    - { resource: parameters.yaml }
+    - { resource: disabled_services.yaml }
+    - { resource: endpoints.yaml }
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+        bind:
+            $adminRoleName: 'ROLE_ADMIN'
+            $codeGeneratorSalt: '%env(SPACE_CODE_GENERATOR_SALT)%'
+            $enableCodeRestriction: '%env(default:teknoo.space.code.subscription.required:SPACE_CODE_SUBSCRIPTION_REQUIRED)%'
+
+    ###################
+    # Generic
+
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{patch,DependencyInjection,Kernel.php}'
+
+    Teknoo\Space\Infrastructures\Symfony\:
+        resource: '../infrastructures/Symfony/*'
+
+    Teknoo\Space\Infrastructures\Twig\Extension\:
+        resource: '../infrastructures/Twig/Extension/*'
+        tags:
+            - { name: twig.extension }
+
+    Teknoo\Space\Infrastructures\Symfony\Security\Voter\:
+        resource: '../infrastructures/Symfony/Security/Voter/'
+        tags: ['security.voter']
+
+    ##################
+    # Domain interface implementation
+    Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob'
+        public: true
+
+    Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier'
+        public: true
+
+    Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\LoginUser'
+        public: true
+        arguments:
+            - '@Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface'
+        calls:
+            - ['setResponseFactory', ['@Psr\Http\Message\ResponseFactoryInterface']]
+            - ['setRouter', ['@router']]
+
+    ###################
+    # Generic
+    Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator'
+
+    #############
+    # Mercure
+    Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
+        arguments:
+            - '@Symfony\Component\Mercure\HubInterface'
+            - '%teknoo.space.mercure.publishing_enabled%'
+
+    Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher'
+        arguments:
+            - '@Symfony\Component\Mercure\HubInterface'
+            - '%teknoo.space.mercure.publishing_enabled%'
+
+    ############
+    # Messenger
+    Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\HistorySentHandler:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\HistorySentHandler'
+        arguments:
+            - '@Teknoo\East\FoundationBundle\Messenger\Executor'
+            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\AddHistoryInterface'
+            - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
+            - '@Psr\Http\Message\StreamFactoryInterface'
+            - '@Teknoo\East\FoundationBundle\Messenger\Client'
+            - '@logger'
+        tags:
+            - 'messenger.message_handler'
+
+    Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler'
+        arguments:
+            - '@Teknoo\East\FoundationBundle\Messenger\Executor'
+            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface'
+            - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
+            - '@Psr\Http\Message\StreamFactoryInterface'
+            - '@Teknoo\East\FoundationBundle\Messenger\Client'
+            - '@logger'
+            - '%env(default:teknoo.space.new_job.waiting_time.default:SPACE_NEW_JOB_WAITING_TIME)%'
+        tags:
+            - 'messenger.message_handler'
+
+    Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\RunJobHandler:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\RunJobHandler'
+        arguments:
+            - '@Teknoo\East\FoundationBundle\Messenger\Executor'
+            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\RunJobInterface'
+            - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
+            - '@Psr\Http\Message\StreamFactoryInterface'
+            - '@Teknoo\East\FoundationBundle\Messenger\Client'
+            - '@logger'
+        tags:
+            - 'messenger.message_handler'
+
+    ########################
+    # Recipe
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob'
+        public: true
+        arguments:
+            - '@messenger.routable_message_bus'
+
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
+            - '@router'
+            - 'space_job_new_pending'
+            - 'space_job_list'
+            - '@logger'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
+            - '@router'
+            - 'space_job_new_pending'
+            - 'space_job_get'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher'
+            - '@router'
+            - 'space_job_new_pending'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Writer\PersistedVariableWriter'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ObjectAccessControl:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ObjectAccessControl'
+        public: true
+        arguments:
+            - '@security.authorization_checker'
+            - '@security.token_storage'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ListObjectsAccessControl:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ListObjectsAccessControl'
+        public: true
+        arguments:
+            - '@security.authorization_checker'
+            - '@security.token_storage'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\LoadUserInSpace:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\LoadUserInSpace'
+        arguments:
+            - '@security.token_storage'
+            - '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+            - '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        public: true
+
+    ####################
+    # Form
+    Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType:
+        class: 'Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType'
+        arguments:
+            - '@Teknoo\East\Common\Doctrine\Writer\ODM\MediaWriter'
+        tags:
+            - {name: form.type}

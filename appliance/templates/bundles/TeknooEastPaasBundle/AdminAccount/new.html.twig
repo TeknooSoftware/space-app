@@ -1,0 +1,36 @@
+{# templates/bundles/TeknooEastPaasBundle/views/AdminAccount/new.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{ 'teknoo.space.title.admin_account.new'|trans }}{% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.new'|trans }}{% endblock %}
+
+{% block instanceTitle %}{{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
+
+{% block listLink path('_teknoo_paas_admin_account_list') %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
+        {{ form_row(formView.account.prefix_namespace) }}
+        {{ form_row(formView.account.namespace) }}
+        {{ form_row(formView.account.use_hierarchical_namespaces, {'label_attr':{'class': 'switch-custom'}}) }}
+        {{ form_row(formView.account.users, {"largeRow": true}) }}
+    </div>
+{% endblock %}
+
+{% block crudSecondaryForm %}
+    <div class="col-lg-12">
+    <div class="rounded shadow p-4 bg-white mt-4">
+        <div class="row">
+            {{ form_row(formView.accountData.billingName, {"largeRow": true}) }}
+            {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
+            {{ form_row(formView.accountData.zipCode) }}
+            {{ form_row(formView.accountData.cityName) }}
+            {{ form_row(formView.accountData.countryName) }}
+            {{ form_row(formView.accountData.vatNumber) }}
+        </div>
+    </div>
+    </div>{# end col #}
+{% endblock %}

@@ -1,0 +1,80 @@
+_teknoo_paas_admin_account_list:
+    path: '/admin/accounts'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.list'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        defaultOrderDirection: 'ASC'
+        itemsPerPage: 20
+        template: '@@TeknooEastPaas/AdminAccount/list.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+_teknoo_paas_admin_account_edit:
+    path: '/admin/account/edit/{id}'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
+        template: '@@TeknooEastPaas/AdminAccount/edit.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions:
+            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+            namespace_in_readonly: true
+
+_teknoo_paas_admin_account_new:
+    path: '/admin/account/new'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.new.account'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
+        template: '@@TeknooEastPaas/AdminAccount/new.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%" }
+        route: '_teknoo_paas_admin_account_edit'
+        accountKey: 'constructorArguments'
+
+_teknoo_paas_admin_account_delete:
+    path: '/admin/account/delete/{id}'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        deleter: '@app.deleting.space_account'
+        route: '_teknoo_paas_admin_account_list'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+space_admin_account_edit_variables:
+    path: '/admin/account/variables/{id}'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
+        template: '@@TeknooEastPaas/AdminAccount/variables.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: {}
+
+space_admin_account_reinstall:
+    path: '/admin/account/reinstall/{id}'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.reinstall'
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        route: '_teknoo_paas_admin_account_edit'
+        allowEmptyCredentials: true
+
+space_admin_account_registry_reinstall:
+    path: '/admin/account/reinstall-registry/{id}'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.registry-reinstall'
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        route: '_teknoo_paas_admin_account_edit'
+        allowEmptyCredentials: true

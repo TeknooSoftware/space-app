@@ -1,0 +1,103 @@
+{# templates/bundles/TeknooEastPaasBundle/views/AdminAccount/edit.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% macro printHistory(history, index) %}
+    <tr {% if index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
+        <td>{{ history.date|date('Y M d H:i:s') }}</td>
+        <td>{{ history.message|trans}}</td>
+        <td><pre>{{ history.extra|json_encode }}</pre></td>
+    </tr>
+    {% if history.previous is not empty %}
+        {{ _self.printHistory(history.previous, index+1) }}
+    {% endif %}
+{% endmacro %}
+
+{% block formTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }}{% endblock %}
+
+{% block instanceTitle %}{{ objectInstance }}{% endblock %}
+
+{% block listLink path('_teknoo_paas_admin_account_list') %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
+        {{ form_row(formView.account.prefix_namespace) }}
+        {{ form_row(formView.account.namespace) }}
+        {{ form_row(formView.account.use_hierarchical_namespaces, {'label_attr':{'class': 'switch-custom'}}) }}
+        {{ form_row(formView.account.users, {"largeRow": true}) }}
+    </div>
+{% endblock %}
+
+{% block crudSecondaryForm %}
+    <div class="col-lg-12">
+    <div class="rounded shadow p-4 bg-white mt-4">
+        <div class="row">
+            {{ form_row(formView.accountData.billingName, {"largeRow": true}) }}
+            {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
+            {{ form_row(formView.accountData.zipCode) }}
+            {{ form_row(formView.accountData.cityName) }}
+            {{ form_row(formView.accountData.countryName) }}
+            {{ form_row(formView.accountData.vatNumber) }}
+        </div>
+    </div>
+    </div>{# end col #}
+{% endblock %}
+
+{% block blockExtra %}
+    {% if accountHistoryRoot is defined and accountHistoryRoot is not empty %}
+        <div class="col-lg-12 mb-4">
+            <div class="accordion" id="account-history">
+                <div class="accordion-item rounded">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button border-0 bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                                aria-expanded="true" aria-controls="collapseOne">
+                            {{ 'teknoo.space.title.admin_account.history'|trans }}
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse border-0 collapse show" aria-labelledby="headingOne"
+                         data-bs-parent="#account-history">
+                        <div class="accordion-body text-muted table-responsive bg-white shadow rounded">
+                            <table class="table mb-0 table-center">
+                                <thead class="bg-light">
+                                <tr>
+                                    <th>{{ 'teknoo.space.text.admin_account.history.date'|trans }}</th>
+                                    <th>{{ 'teknoo.space.text.admin_account.history.message'|trans }}</th>
+                                    <th>{{ 'teknoo.space.text.admin_account.history.extra'|trans }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {{ _self.printHistory(accountHistoryRoot, 1) }}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block btnExtraBottom %}
+    <div class="widget mt-2 mb-2 pb-2">
+        <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
+        <a href="{{  path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+            <i class="uil uil-setting"></i>
+            {{ 'teknoo.space.action.persisted_vars'|trans }}
+        </a>
+        <a href="{{  path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}" class="btn btn-soft-success btn-full-large btn-block">
+            <i class="uil uil-trowel"></i>
+            {{ 'teknoo.space.action.new_project'|trans }}
+        </a>
+        <a href="{{  path('space_admin_account_reinstall', {'id':objectInstance.id}) }}" class="btn btn-soft-danger btn-full-large btn-block mt-2">
+            <i class="mdi mdi-shape-circle-plus"></i>
+            {{ 'teknoo.space.action.admin_reconfigure_kubernetes'|trans }}
+        </a>
+        <a href="{{  path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}" class="btn btn-outline-danger btn-full-large btn-block mt-2">
+            <i class="mdi mdi-shape-circle-plus"></i>
+            {{ 'teknoo.space.action.admin_reconfigure_registry'|trans }}
+        </a>
+    </div>
+{% endblock %}

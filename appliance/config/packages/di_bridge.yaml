@@ -1,0 +1,12 @@
+di_bridge:
+    #compilation_path: '%kernel.project_dir%/var/cache/phpdi'
+    definitions:
+        - { priority: 0, file: '%kernel.project_dir%/config/di.hook.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.variables.east.common.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.variables.east.paas.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.variables.kubernetes.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.variables.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.common.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.persistent_data.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.recipe.steps.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.recipe.cookbooks.php' }

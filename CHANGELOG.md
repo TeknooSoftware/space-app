@@ -1,0 +1,27 @@
+# Teknoo Software - Space - Change Log
+
+## [1.0.0-beta1] - 2023-05-16
+### Beta1 Release
+* First public release, imported from private alpha release
+* built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` libraries
+  and Symfony components.
+* an account represents the top entity (a company, a service, a foundation, an human, etc...
+* an account has at least one user.
+* an user represent an human.
+* an account has projects.
+* projects have deployment jobs.
+* all projects must be hosted on a Git instance, reachable via the protocoles HTTPS or SSH.
+* projects' images are built thanks to Buildah.
+* only Kubernetes clusters 1.22+ are supported.
+* a job represents a deployment
+* a job can provide severals variables to pass to the compiler about the deployment.
+    * variables can be persisted to the project to be reused in the future in next deployments.
+    * projects can host persisted variables to be used in all next deployments.
+    * accounts can host also persisted variables to be used on all deployments of all of this projects if
+      they are not already defined in projects.
+    * persisted variables can contains secrets.
+        * Warning, currently secrets are not visible in Space's web app but they are passed unencrypted to the agents.
+* Space is bundled with a Composer hook to build PHP Project. NPM and PIP supports is also planned.
+* Space allow any users to subcribe, but it's not manage billings.
+  * Subscriptions can be restricted with uniques codes to forbid non selected user to subscribe.
+* Space supports 2FA authentication with an TOTP application like Google Authenticator.

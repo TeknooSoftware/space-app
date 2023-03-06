@@ -1,0 +1,50 @@
+{# templates/bundles/TeknooEastPaasBundle/AdminJob/new.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{  'teknoo.space.title.project.edit'|trans }}{% endblock %}
+
+{% block pageTitle %}{{ 'teknoo.space.title.admin_job.new'|trans }}{% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.admin_job.new'|trans }}{% endblock %}
+
+{% block instanceTitle %}{{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
+
+{% block breadcrumbAddsItems %}
+    <li class="breadcrumb-item text-capitalize"><a href="{{ path('_teknoo_paas_admin_project_edit', {'id': project.id}) }}">{{ project }}</a></li>
+{% endblock %}
+
+{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+
+{% block crudFormFields %}
+
+    {{ form_row(formView.projectId) }}
+    {{ form_row(formView.newJobId) }}
+    <div class="row">
+        {{ form_row(formView.envName, {"largeRow": true}) }}
+    </div>
+    <div class="row subforms" data-subforms="variables" data-prototype="{{ form_widget(formView.variables.vars.prototype)|e('html_attr') }}">
+        <div class="col-md-12">
+            <h3>Variables</h3>
+        </div>
+        {% for variable in formView.variables %}
+            {{ form_widget(variable, {"largeRow": true}) }}
+        {% endfor %}
+    </div>
+    {% do formView.variables.setRendered %}
+{% endblock %}
+
+{% block formButton %}
+    <button type="button" data-subforms-id="variables" class="btn btn-soft-secondary btn-full-large btn-block btn-add-subform mb-2">
+        <i class="uil uil-focus-add"></i>
+        {{ 'teknoo.space.action.add_variable'|trans }}
+    </button>
+    <button type="reset" class="btn btn-soft-light btn-full-large btn-block mb-2 text-left">
+        <i class="uil uil-times-square"></i>
+        {{ 'teknoo.space.action.admin_reset'|trans }}
+    </button>
+    <button type="submit" class="btn btn-soft-primary btn-full-large btn-block mb-2" name="save">
+        <i class="uil uil-save"></i>
+        {{ 'teknoo.space.action.admin_run'|trans }}
+    </button>
+{% endblock %}

@@ -1,0 +1,12 @@
+di_bridge:
+    #compilation_path: '%kernel.project_dir%/var/cache/phpdi'
+    definitions:
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/src/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Doctrine/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Flysystem/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Git/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Kubernetes/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Image/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Composer/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Laminas/di.php' }
+        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Symfony/Components/di.php' }

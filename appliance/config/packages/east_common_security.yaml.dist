@@ -1,0 +1,60 @@
+security:
+    role_hierarchy:
+        ROLE_ADMIN: 'ROLE_USER'
+
+    providers:
+        with_password:
+            id: 'Teknoo\East\CommonBundle\Provider\PasswordAuthenticatedUserProvider'
+        from_third_party:
+            id: 'Teknoo\East\CommonBundle\Provider\ThirdPartyAuthenticatedUserProvider'
+        all_providers:
+            chain:
+                providers: ['with_password', 'from_third_party']
+    password_hashers:
+        Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser:
+            algorithm: '%teknoo.east.common.bundle.password_authenticated_user_provider.default_algo%'
+
+    firewalls:
+        # disables authentication for assets and the profiler, adapt it according to your needs
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        #Admin area, allow anonymous for login
+        admin_login:
+            pattern: '^/admin/login$'
+            security: false
+
+        admin_gitlab_login:
+            pattern: '^/admin/gitlab/login$'
+            security: false
+
+        #require admin role for all others pages
+        admin_area:
+            pattern: '^/admin'
+            custom_authenticators:
+                - '%teknoo.east.common.bundle.security.authenticator.oauth2.class%'
+            provider: all_providers
+            form_login:
+                provider: 'with_password'
+                check_path: 'admin_common_check'
+                login_path: 'admin_common_login'
+                default_target_path: 'admin_common_home'
+                always_use_default_target_path: false
+                use_referer: true
+                enable_csrf: true
+            remember_me:
+                secret: '%env(APP_REMEMBER_SECRET)%'
+                secure: true
+                httponly: true
+            logout:
+                path: 'admin_common_logout'
+                target: 'admin_common_home'
+
+        main: ~
+
+    access_control:
+        #Admin : require role admin
+        - { path: '^/admin', roles: ROLE_ADMIN, requires_channel: https }
+        #Front : available for anyone
+        - { path: '^/', requires_channel: https }

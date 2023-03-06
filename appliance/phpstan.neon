@@ -1,0 +1,54 @@
+parameters:
+    ignoreErrors:
+        -
+            message: '#is never read, only written#'
+            path:  domain/Object/Persisted/
+        -
+            message: '#Sluggable#'
+            path:  domain/Recipe/Step/Account/SetAccountNamespace.php
+        -
+            message: '#::query\(\) expects#'
+            path:  domain/Loader/Meta/
+        -
+            message: '#::fetch\(\) expects#'
+            path:  domain/Loader/Meta/
+        -
+            message: '#BatchManipulationManagerInterface::deleteQuery#'
+            path:  domain/Writer/Meta/
+        -
+            message: '#CreateRegistryAccount::insertModel\(\) expects#'
+            path:  infrastructures/Kubernetes/Recipe/Step/Account/CreateRegistryAccount.php
+        -
+            message: '#expects (string\|null|string|bool|array<[, a-zA-Z\\]+>|[, a-zA-Z\\|]+), mixed given#'
+            path:  infrastructures/Symfony/Form/Type/
+        -
+            message: '#Argument of an invalid type mixed supplied for foreach#'
+            path:  infrastructures/Symfony/Form/DataMapper/
+        -
+            message: '#on mixed#'
+            path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
+services:
+    -
+        class: Teknoo\States\PHPStan\MethodsClassExtension
+        arguments:
+            parser: @defaultAnalysisParser
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: Teknoo\States\PHPStan\Analyser\ASTVisitor
+        arguments:
+            parser: @defaultAnalysisParser
+
+    -
+        class: Teknoo\States\PHPStan\Analyser\NodeScopeResolver
+        autowired: PHPStan\Analyser\NodeScopeResolver
+        arguments:
+            parser: @defaultAnalysisParser
+            reflector: @nodeScopeResolverReflector
+            polluteScopeWithLoopInitialAssignments: %polluteScopeWithLoopInitialAssignments%
+            polluteScopeWithAlwaysIterableForeach: %polluteScopeWithAlwaysIterableForeach%
+            earlyTerminatingMethodCalls: %earlyTerminatingMethodCalls%
+            earlyTerminatingFunctionCalls: %earlyTerminatingFunctionCalls%
+            implicitThrows: %exceptions.implicitThrows%
+            treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%

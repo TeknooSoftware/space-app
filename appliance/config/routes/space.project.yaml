@@ -1,0 +1,70 @@
+space_project_list:
+    path: '/projects/'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.list'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        defaultOrderDirection: 'ASC'
+        itemsPerPage: 20
+        template: '@@TeknooEastPaas/Project/list.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+space_project_edit:
+    path: '/project/edit/{id}'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.edit'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        template: '@@TeknooEastPaas/Project/edit.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+
+space_project_edit_variables:
+    path: '/project/edit/{id}/variables'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.edit'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\VarsType'
+        template: '@@TeknooEastPaas/Project/variables.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+        populateFormOptions: true
+
+space_project_edit_refresh_credentials:
+    path: '/project/edit/{id}/refresh-credentials'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.refresh_credentials'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        route: 'space_project_edit'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+
+space_project_new:
+    path: '/project/new'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.new'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        template: '@@TeknooEastPaas/Project/new.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+        route: 'space_project_edit'
+
+space_project_delete:
+    path: '/project/delete/{id}'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        deleter: '@app.deleting.space_project'
+        route: 'space_project_list'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'

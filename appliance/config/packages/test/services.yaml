@@ -1,0 +1,3 @@
+services:
+  GuzzleHttp\Client:
+    public: true

@@ -1,0 +1,51 @@
+.btn-full-large {
+    width: 100%;
+}
+
+.bg-half-134 {
+    padding: 134px 0 30px;
+    background-size: cover;
+    -ms-flex-item-align: center;
+    -ms-grid-row-align: center;
+    align-self: center;
+    position: relative;
+    background-position: center center;
+}
+
+select#new_job_envName {
+    text-transform: capitalize;
+}
+
+.btn.btn-small {
+    padding: 6px 8px;
+}
+
+.table-row-even td {
+    background-color: #efefef;
+}
+
+.table-row-odd {
+}
+
+.table-fixed {
+    table-layout: fixed;
+}
+
+.custom-file-label {
+    display: none;
+}
+
+.text-breakspace {
+    white-space: break-spaces !important;
+    word-wrap: break-word;
+}
+
+.avatar.avatar-login {
+    height: 140px;
+    max-width: 80%;
+}
+
+.avatar.avatar-subscription {
+    height: 100px;
+    max-width: 40%;
+}

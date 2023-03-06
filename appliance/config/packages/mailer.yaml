@@ -1,0 +1,3 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_TRANSPORT)%://%env(MAILER_USER)%:%env(MAILER_PASSWORD)%@%env(MAILER_HOST)%:587'

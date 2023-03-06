@@ -1,0 +1,11 @@
+space_subscription:
+    path: '/account/subscription'
+    methods:  ['GET', 'POST', 'PUT']
+    schemes:    [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.subscription'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceSubscription'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType'
+        template: '@@TeknooEastPaas/Account/subscription.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }

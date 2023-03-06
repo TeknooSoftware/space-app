@@ -1,0 +1,11 @@
+framework:
+    messenger:
+        transports:
+            new_job: 'test://'
+            history_sent: 'test://'
+            job_done: 'test://'
+            execute_job:
+                dsn: 'test://'
+                # default configuration
+                retry_strategy:
+                    max_retries: 0

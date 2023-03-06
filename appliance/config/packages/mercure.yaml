@@ -1,0 +1,10 @@
+mercure:
+    hubs:
+        default:
+            url: '%env(MERCURE_PUBLISH_URL)%'
+            public_url: '%env(MERCURE_SUBSCRIBER_URL)%'
+            jwt:
+                secret: '%env(MERCURE_JWT_TOKEN)%'
+                publish: [ '*' ]
+                subscribe: [ '*' ]
+                algorithm: 'hmac.sha256'

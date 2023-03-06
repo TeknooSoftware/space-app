@@ -1,0 +1,94 @@
+{# templates/bundles/TeknooEastPaasBundle/views/Account/subscription.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+
+{% block bodyClass '' %}
+{% block leftMenu '' %}
+{% block topHeader '' %}
+
+{% block pageWrapper %}
+    {#  Hero Start  #}
+    <section class="bg-home bg-circle-gradiant d-flex align-items-center">
+        <div class="bg-overlay bg-overlay-white"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="p-4 bg-white rounded shadow">
+                        {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooEastPaas/fields.html.twig'] %}
+                        {% if formActionRoute is defined and formActionRoute is not empty %}
+                            {% set formAction = path(formActionRoute, formActionRouteParams) %}
+                        {% endif %}
+                        {{ form_start(formView, {"attr":{"class":"login-form mt-4","action": formAction|default(app.request.getPathInfo() ~ "?locale=" ~ app.request.get('locale')) }}) }}
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <div class="me-lg-5">
+                                        <a href="{{ path('space_dashboard') }}"><img src="images/logo-dark.svg" class="avatar avatar-subscription d-block mx-auto" alt="Teknoo Space"></a>
+                                        <h4 class="card-title text-center">Signup</h4>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card shadow rounded border-0">
+                                        <div class="card-body container">
+                                            <div class="row">
+                                                {{ form_row(formView.user.user.firstName) }}
+                                                {{ form_row(formView.user.user.lastName) }}
+                                                {{ form_row(formView.account.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
+                                                {{ form_row(formView.user.user.email, {"largeRow": true}) }}
+                                                {{ form_row(formView.user.user.storedPassword.password) }}
+                                                {{ form_row(formView.user.userData.picture.image, {"largeRow": true}) }}
+                                                {% do formView.user.userData.picture.name.setRendered() %}
+                                                {% do formView.user.userData.picture.alternative.setRendered() %}
+                                                {% do formView.user.userData.removePicture.setRendered() %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card shadow rounded border-0">
+                                        <div class="card-body container">
+                                            <div class="row">
+                                                {{ form_row(formView.account.accountData.billingName, {"largeRow": true}) }}
+                                                {{ form_row(formView.account.accountData.streetAddress, {"largeRow": true}) }}
+                                                {{ form_row(formView.account.accountData.zipCode) }}
+                                                {{ form_row(formView.account.accountData.cityName) }}
+                                                {{ form_row(formView.account.accountData.countryName) }}
+                                                {{ form_row(formView.account.accountData.vatNumber) }}
+                                                {% if formView.code is defined %}
+                                                {{ form_row(formView.code, {"largeRow": true}) }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!--end col-->
+                                <div class="col-12 mt-3">
+                                    <div class="card shadow rounded border-0">
+                                        <div class="card-body container">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    {{ form_errors(formView) }}
+                                                    <div class="d-grid">
+                                                        <button class="btn btn-primary">{{ 'teknoo.space.text.register'|trans }}</button>
+                                                    </div>
+                                                </div><!--end col-->
+
+                                                <div class="mx-auto">
+                                                    <p class="mb-0 mt-3 text-center">
+                                                        <small class="text-dark me-2">{{ 'teknoo.space.text.already_have_account'|trans }}</small>
+                                                        <a href="{{ path('account_login') }}" class="text-dark fw-bold">{{ 'teknoo.space.text.sign_in'|trans }}</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!--end col-->
+                            </div>
+                        </div>
+                        {{ form_end(formView) }}
+                    </div>{# end form #}
+                </div> {# end col #}
+            </div>{# end row #}
+        </div> {# end container #}
+    </section>{# end section #}
+    {#  Hero End  #}
+{% endblock %}{# main #}

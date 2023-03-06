@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--config/doctrine/AccountHistory.mongodb.xml-->
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                                            http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Teknoo\Space\Object\Persisted\AccountPersistedVariable" collection="account_persisted_variables">
+        <id type="string" strategy="UUID"/>
+        <field field-name="name" name="name" type="string" nullable="false" index="true"/>
+        <field field-name="value" name="value" type="string" nullable="true"/>
+        <field field-name="environmentName" name="environment_name" type="string" nullable="false" index="true"/>
+        <field field-name="secret" name="secret" type="string" nullable="false"/>
+        <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
+        <field field-name="updatedAt" name="updated_at" type="date" />
+        <reference-one field="account" target-document="Teknoo\East\Paas\Object\Account">
+            <cascade />
+        </reference-one>
+    </document>
+</doctrine-mongo-mapping>

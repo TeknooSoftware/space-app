@@ -1,0 +1,48 @@
+_teknoo_paas_admin_project_list:
+    path: '/admin/projects'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.list'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        defaultOrderDirection: 'ASC'
+        itemsPerPage: 20
+        template: '@@TeknooEastPaas/AdminProject/list.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+
+_teknoo_paas_admin_project_edit:
+    path: '/admin/project/edit/{id}'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.project'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        template: '@@TeknooEastPaas/AdminProject/edit.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+
+_teknoo_paas_admin_project_new:
+    path: '/admin/project/new/{accountId}'
+    methods:  ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.new.project'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        template: '@@TeknooEastPaas/AdminProject/new.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formOptions: { }
+        route: '_teknoo_paas_admin_project_edit'
+        accountKey: 'constructorArguments'
+
+_teknoo_paas_admin_project_delete:
+    path: '/admin/project/delete/{id}'
+    methods:  ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        deleter: '@app.deleting.space_project'
+        route: '_teknoo_paas_admin_project_list'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'

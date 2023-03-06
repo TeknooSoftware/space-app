@@ -1,0 +1,131 @@
+{# templates/bundles/TeknooEastPaasBundle/views/Dashboard/index.html.twig #}
+
+{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+
+{% block containerFluidInner %}
+    <div class="layout-specing">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h6 id="welcome-message" class="text-muted mb-1">{{ 'teknoo.space.text.welcome_back'|trans({'user': space.user.user}) }}</h6>
+                <h5 class="mb-0">{{ 'teknoo.space.text.dashboard'|trans }}</h5>
+            </div>
+
+            <nav aria-label="breadcrumb" class="d-inline-block mt-2 mt-sm-0">
+                <ul class="breadcrumb bg-transparent rounded mb-0 p-0">
+                    <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_dashboard') }}">{{ 'teknoo.space.text.space'|trans }}</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
+            {% if k8s.health is defined %}
+            <div class="col mt-4">
+                <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="icon text-center rounded-pill">
+                            <i class="uil uil-heart fs-4 mb-0"></i>
+                        </div>
+                        <div class="flex-1 ms-3">
+                            <h6 class="mb-0 text-muted">{{ 'teknoo.space.text.health'|trans }}</h6>
+                            <p class="fs-5 text-dark fw-bold mb-0">{{ k8s.health }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div><!--end col-->
+            {% endif %}
+            {% if k8s.version is defined %}
+                {% if k8s.version.gitVersion is defined %}
+                <div class="col mt-4">
+                    <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon text-center rounded-pill">
+                                <i class="uil uil-apps fs-4 mb-0"></i>
+                            </div>
+                            <div class="flex-1 ms-3">
+                                <h6 class="mb-0 text-muted">{{ 'teknoo.space.text.version'|trans }}</h6>
+                                <p class="fs-5 text-dark fw-bold mb-0">{{ k8s.version.gitVersion }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div><!--end col-->
+                {% endif %}
+
+                {% if k8s.version.buildDate is defined %}
+                <div class="col mt-4">
+                    <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon text-center rounded-pill">
+                                <i class="uil uil-calender fs-4 mb-0"></i>
+                            </div>
+                            <div class="flex-1 ms-3">
+                                <h6 class="mb-0 text-muted">{{ 'teknoo.space.text.build_date'|trans }}</h6>
+                                <p class="fs-5 text-dark fw-bold mb-0">{{ k8s.version.buildDate|date("d F Y") }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div><!--end col-->
+                {% endif %}
+
+                {% if k8s.version.platform is defined %}
+                <div class="col mt-4">
+                    <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon text-center rounded-pill">
+                                <i class="uil uil-cog fs-4 mb-0"></i>
+                            </div>
+                            <div class="flex-1 ms-3">
+                                <h6 class="mb-0 text-muted">{{ 'teknoo.space.text.platform'|trans }}</h6>
+                                <p class="fs-5 text-dark fw-bold mb-0">{{ k8s.version.platform }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div><!--end col-->
+                {% endif %}
+
+                {% if k8s.version.goVersion is defined %}
+                <div class="col mt-4">
+                    <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="icon text-center rounded-pill">
+                                <i class="uil uil-okta fs-4 mb-0"></i>
+                            </div>
+                            <div class="flex-1 ms-3">
+                                <h6 class="mb-0 text-muted">{{ 'teknoo.space.text.go_version'|trans }}</h6>
+                                <p class="fs-5 text-dark fw-bold mb-0">{{ k8s.version.goVersion }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div><!--end col-->
+                {% endif %}
+            {% endif %}
+            {% if k8s.error is defined %}
+            <div class="col mt-12">
+                <a href="#!" class="features feature-primary d-flex justify-content-between align-items-center rounded shadow p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="icon text-center rounded-pill">
+                            <i class="uil uil-exclamation-triangle fs-4 mb-0"></i>
+                        </div>
+                        <div class="flex-1 ms-3">
+                            <h6 class="mb-0 text-muted">{{ 'teknoo.space.text.error'|trans }}</h6>
+                            <p class="fs-5 text-dark fw-bold mb-0">{{ k8s.error.message }}</p>
+                        </div>
+                    </div>
+                </a>
+            </div><!--end col-->
+            {% endif %}
+        </div><!--end row-->
+
+        {% if dashboard.namespace is defined and dashboard.namespace is not null %}
+        <div class="row mt-3">
+            <div class="col-12">
+                <iframe id="dashboard"
+                        class="w-100 min-vh-100"
+                        title="Kuberntes Dashboard"
+                        src="{{ path('space_dashboard_frame') }}#/workloads?namespace={{ dashboard.namespace }}"
+                        sandbox="allow-scripts allow-forms allow-same-origin"
+                ></iframe>
+            </div><!--end row-->
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}{# containerFluidInner #}
