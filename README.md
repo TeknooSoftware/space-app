@@ -1,8 +1,8 @@
 Teknoo Software - Space
 =======================
 
-[![Latest Stable Version](https://poser.pugx.org/teknoo/states/v/stable)](https://packagist.org/packages/teknoo/space-app)
-[![Latest Unstable Version](https://poser.pugx.org/teknoo/states/v/unstable)](https://packagist.org/packages/teknoo/space-app)
+[![Latest Stable Version](https://poser.pugx.org/teknoo/space-app/v/stable)](https://packagist.org/packages/teknoo/space-app)
+[![Latest Unstable Version](https://poser.pugx.org/teknoo/space-app/v/unstable)](https://packagist.org/packages/teknoo/space-app)
 [![Total Downloads](https://poser.pugx.org/teknoo/space-app/downloads)](https://packagist.org/packages/teknoo/space-app)
 [![License](https://poser.pugx.org/teknoo/space-app/license)](https://packagist.org/packages/teknoo/space-app)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
