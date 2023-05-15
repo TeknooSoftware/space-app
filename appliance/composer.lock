@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "277c36978dcd1eceac14dda5062faa49",
+    "content-hash": "9ffb2c40d5ee88a94e86ef3773516ba4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10087,16 +10087,16 @@
         },
         {
             "name": "teknoo/bridge-phpdi-symfony",
-            "version": "5.2.4",
+            "version": "5.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/bridge-phpdi-symfony.git",
-                "reference": "b68216d1eb260cc8700a0ed2ca2ee4ffbab9b228"
+                "reference": "d8b04c848eda381102b35620e3cc98c5574e9398"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/bridge-phpdi-symfony/zipball/b68216d1eb260cc8700a0ed2ca2ee4ffbab9b228",
-                "reference": "b68216d1eb260cc8700a0ed2ca2ee4ffbab9b228",
+                "url": "https://api.github.com/repos/TeknooSoftware/bridge-phpdi-symfony/zipball/d8b04c848eda381102b35620e3cc98c5574e9398",
+                "reference": "d8b04c848eda381102b35620e3cc98c5574e9398",
                 "shasum": ""
             },
             "require": {
@@ -10107,9 +10107,9 @@
                 "symfony/http-kernel": "^5.4||^6.2"
             },
             "require-dev": {
-                "icanhazstring/composer-unused": "^0.8.7",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/error-handler": "^5.4||^6.2",
@@ -10166,50 +10166,50 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-04-16T16:22:22+00:00"
+            "time": "2023-05-15T16:43:40+00:00"
         },
         {
             "name": "teknoo/east-common",
-            "version": "1.9.3",
+            "version": "1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "6e3a5db9b2a33bec1a892dcdcd9f0d9baf4be57b"
+                "reference": "64ad9384a8c3024420d38314539c0b2465c3fade"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/6e3a5db9b2a33bec1a892dcdcd9f0d9baf4be57b",
-                "reference": "6e3a5db9b2a33bec1a892dcdcd9f0d9baf4be57b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/64ad9384a8c3024420d38314539c0b2465c3fade",
+                "reference": "64ad9384a8c3024420d38314539c0b2465c3fade",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1",
                 "php-di/php-di": "^6.4.0",
-                "teknoo/east-foundation": "^6.2.7",
-                "teknoo/immutable": "^3.0.14",
-                "teknoo/recipe": "^4.2.5",
-                "teknoo/states": "^6.0.16"
+                "teknoo/east-foundation": "^6.2.10",
+                "teknoo/immutable": "^3.0.16",
+                "teknoo/recipe": "^4.2.7",
+                "teknoo/states": "^6.0.19"
             },
             "require-dev": {
-                "behat/behat": "^3.12",
+                "behat/behat": "^3.13",
                 "doctrine/common": "^3.4.3",
-                "doctrine/mongodb-odm": "^2.5",
+                "doctrine/mongodb-odm": "^2.5.2",
                 "doctrine/mongodb-odm-bundle": "^4.5.2",
                 "doctrine/persistence": "^3.1.4",
                 "ext-mongodb": "*",
-                "icanhazstring/composer-unused": "^0.8.7",
-                "knpuniversity/oauth2-client-bundle": "^2.13.1",
-                "laminas/laminas-diactoros": "^2.24",
-                "league/oauth2-client": "^2.6.1",
-                "nikic/php-parser": "^v4.15.3",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "knpuniversity/oauth2-client-bundle": "^2.15",
+                "laminas/laminas-diactoros": "^2.25.2",
+                "league/oauth2-client": "^2.7",
+                "nikic/php-parser": "^v4.15.4",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "scheb/2fa-backup-code": "^6.7",
                 "scheb/2fa-bundle": "^6.7",
                 "scheb/2fa-google-authenticator": "^6.7",
                 "scheb/2fa-totp": "^6.7",
-                "spomky-labs/otphp": "^11.1",
+                "spomky-labs/otphp": "^11.2",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/config": "^6.2",
                 "symfony/console": "^6.2",
@@ -10225,8 +10225,8 @@
                 "symfony/security-http": "^6.2",
                 "symfony/templating": "^6.2",
                 "symfony/validator": "^6.2",
-                "teknoo/bridge-phpdi-symfony": "^5.2.2",
-                "twig/twig": "^3.5.1"
+                "teknoo/bridge-phpdi-symfony": "^5.2.4",
+                "twig/twig": "^3.6"
             },
             "type": "library",
             "extra": {
@@ -10277,46 +10277,46 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-05-05T18:59:54+00:00"
+            "time": "2023-05-15T16:58:24+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "1.9.3",
+            "version": "1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "8d38a77303473b90a0f7a57fefc9bfe661091802"
+                "reference": "a95d6829806e8555cc398abdfb82037a8f19608f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/8d38a77303473b90a0f7a57fefc9bfe661091802",
-                "reference": "8d38a77303473b90a0f7a57fefc9bfe661091802",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/a95d6829806e8555cc398abdfb82037a8f19608f",
+                "reference": "a95d6829806e8555cc398abdfb82037a8f19608f",
                 "shasum": ""
             },
             "require": {
                 "doctrine/common": "^3.4.3",
-                "doctrine/mongodb-odm": "^2.5",
+                "doctrine/mongodb-odm": "^2.5.2",
                 "doctrine/mongodb-odm-bundle": "^4.5.2",
                 "ext-mongodb": "*",
                 "ext-simplexml": "*",
-                "laminas/laminas-diactoros": "^2.24",
-                "psr/http-factory": "^1.0.1",
-                "psr/http-message": "^1.0.1",
+                "laminas/laminas-diactoros": "^2.25.2",
+                "psr/http-factory": "^1.0.2",
+                "psr/http-message": "^1.1",
                 "symfony/form": "^6.2",
                 "symfony/http-kernel": "^6.2",
-                "symfony/psr-http-message-bridge": "^2.1.4",
+                "symfony/psr-http-message-bridge": "^2.2",
                 "symfony/security-bundle": "^6.2",
                 "symfony/security-core": "^6.2",
                 "symfony/templating": "^6.2",
                 "symfony/validator": "^6.2",
                 "symfony/yaml": "^6.2",
-                "teknoo/bridge-phpdi-symfony": "^5.2.4",
-                "teknoo/east-common": "^1.9.3",
-                "teknoo/east-foundation-symfony": "^6.2.9",
-                "teknoo/immutable": "^3.0.15",
-                "teknoo/recipe": "^4.2.6",
-                "teknoo/states": "^6.0.18",
-                "twig/twig": "^3.5"
+                "teknoo/bridge-phpdi-symfony": "^5.2.5",
+                "teknoo/east-common": "^1.9.4",
+                "teknoo/east-foundation-symfony": "^6.2.10",
+                "teknoo/immutable": "^3.0.16",
+                "teknoo/recipe": "^4.2.7",
+                "teknoo/states": "^6.0.19",
+                "twig/twig": "^3.6"
             },
             "require-dev": {
                 "roave/security-advisories": "dev-latest"
@@ -10362,20 +10362,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-05-05T19:01:13+00:00"
+            "time": "2023-05-15T16:59:54+00:00"
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "6.2.9",
+            "version": "6.2.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "00ae951c7995aeba7c5ef25937d087cb23cb5eb3"
+                "reference": "1d019411efb1a1ba0e9b8436d71a9a733dcccaa3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/00ae951c7995aeba7c5ef25937d087cb23cb5eb3",
-                "reference": "00ae951c7995aeba7c5ef25937d087cb23cb5eb3",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/1d019411efb1a1ba0e9b8436d71a9a733dcccaa3",
+                "reference": "1d019411efb1a1ba0e9b8436d71a9a733dcccaa3",
                 "shasum": ""
             },
             "require": {
@@ -10385,34 +10385,34 @@
                 "psr/container": "^1.0||^2.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0||^2",
-                "teknoo/immutable": "^3.0.1.14",
-                "teknoo/recipe": "^4.2.4",
-                "teknoo/states": "^6.0.16"
+                "teknoo/immutable": "^3.0.1.16",
+                "teknoo/recipe": "^4.2.7",
+                "teknoo/states": "^6.0.19"
             },
             "require-dev": {
-                "behat/behat": "^3.12",
+                "behat/behat": "^3.13",
                 "ext-pcntl": "*",
-                "icanhazstring/composer-unused": "^0.8.7",
-                "laminas/laminas-diactoros": "^2.23",
-                "nikic/php-parser": "^v4.15.2",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "laminas/laminas-diactoros": "^2.25.2",
+                "nikic/php-parser": "^v4.15.4",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
-                "symfony/config": "^6.1",
-                "symfony/console": "^6.1",
-                "symfony/dependency-injection": "^6.1",
-                "symfony/framework-bundle": "^6.1",
-                "symfony/http-foundation": "^6.1",
-                "symfony/http-kernel": "^6.1",
-                "symfony/messenger": "^6.1",
+                "symfony/config": "^6.2",
+                "symfony/console": "^6.2",
+                "symfony/dependency-injection": "^6.2",
+                "symfony/framework-bundle": "^6.2",
+                "symfony/http-foundation": "^6.2",
+                "symfony/http-kernel": "^6.2",
+                "symfony/messenger": "^6.2",
                 "symfony/property-access": "^6.2.8",
-                "symfony/psr-http-message-bridge": "^2.1.4",
-                "symfony/routing": "^6.1",
-                "symfony/security-core": "^6.1",
-                "symfony/serializer": "^6.1",
-                "symfony/yaml": "^6.1",
-                "twig/twig": "^3.4"
+                "symfony/psr-http-message-bridge": "^2.2",
+                "symfony/routing": "^6.2",
+                "symfony/security-core": "^6.2",
+                "symfony/serializer": "^6.2",
+                "symfony/yaml": "^6.2",
+                "twig/twig": "^3.6"
             },
             "type": "library",
             "extra": {
@@ -10461,39 +10461,39 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-04-16T16:26:29+00:00"
+            "time": "2023-05-15T16:51:07+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "6.2.9",
+            "version": "6.2.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "aaf4a219c756363b68d49fbb46e3ad35ed908589"
+                "reference": "e2402a1755c5686cb2d3f3d9fcea1966809c1545"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/aaf4a219c756363b68d49fbb46e3ad35ed908589",
-                "reference": "aaf4a219c756363b68d49fbb46e3ad35ed908589",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/e2402a1755c5686cb2d3f3d9fcea1966809c1545",
+                "reference": "e2402a1755c5686cb2d3f3d9fcea1966809c1545",
                 "shasum": ""
             },
             "require": {
                 "laminas/laminas-diactoros": "^2.11",
-                "symfony/config": "^6.1",
-                "symfony/console": "^6.1",
-                "symfony/dependency-injection": "^6.1",
-                "symfony/http-foundation": "^6.1",
-                "symfony/http-kernel": "^6.1",
+                "symfony/config": "^6.2",
+                "symfony/console": "^6.2",
+                "symfony/dependency-injection": "^6.2",
+                "symfony/http-foundation": "^6.2",
+                "symfony/http-kernel": "^6.2",
                 "symfony/psr-http-message-bridge": "^2.1",
-                "symfony/routing": "^6.1",
-                "symfony/security-core": "^6.1",
-                "symfony/serializer": "^6.1",
-                "symfony/yaml": "^6.1",
-                "teknoo/bridge-phpdi-symfony": "^5.2.4",
-                "teknoo/east-foundation": "^6.2.9",
-                "teknoo/immutable": "^3.0.15",
-                "teknoo/recipe": "^4.2.6",
-                "teknoo/states": "^6.0.18"
+                "symfony/routing": "^6.2",
+                "symfony/security-core": "^6.2",
+                "symfony/serializer": "^6.2",
+                "symfony/yaml": "^6.2",
+                "teknoo/bridge-phpdi-symfony": "^5.2.5",
+                "teknoo/east-foundation": "^6.2.10",
+                "teknoo/immutable": "^3.0.16",
+                "teknoo/recipe": "^4.2.7",
+                "teknoo/states": "^6.0.19"
             },
             "require-dev": {
                 "roave/security-advisories": "dev-latest"
@@ -10539,20 +10539,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-04-16T16:29:45+00:00"
+            "time": "2023-05-15T16:52:06+00:00"
         },
         {
             "name": "teknoo/east-paas",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "44ed63d041e5203f10435907de7235093ae0e7a1"
+                "reference": "15fd8faab0a2801b15f017365c25d47701965d6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/44ed63d041e5203f10435907de7235093ae0e7a1",
-                "reference": "44ed63d041e5203f10435907de7235093ae0e7a1",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/15fd8faab0a2801b15f017365c25d47701965d6e",
+                "reference": "15fd8faab0a2801b15f017365c25d47701965d6e",
                 "shasum": ""
             },
             "require": {
@@ -10561,29 +10561,29 @@
                 "ext-libxml": "*",
                 "php": "^8.1",
                 "php-di/php-di": "^6.4",
-                "psr/http-client": "^1.0.1",
-                "teknoo/east-common": "^1.9",
-                "teknoo/east-foundation": "^6.2.7",
-                "teknoo/immutable": "^3.0.14",
-                "teknoo/recipe": "^4.2.5",
-                "teknoo/states": "^6.0.16"
+                "psr/http-client": "^1.0.2",
+                "teknoo/east-common": "^1.9.4",
+                "teknoo/east-foundation": "^6.2.10",
+                "teknoo/immutable": "^3.0.16",
+                "teknoo/recipe": "^4.2.7",
+                "teknoo/states": "^6.0.19"
             },
             "require-dev": {
-                "behat/behat": "^3.12",
+                "behat/behat": "^3.13",
                 "doctrine/common": "^3.4.3",
-                "doctrine/mongodb-odm": "^2.4.2",
-                "doctrine/mongodb-odm-bundle": "^4.5",
-                "doctrine/persistence": "^3.1",
-                "guzzlehttp/guzzle": "^7.5",
-                "icanhazstring/composer-unused": "^0.8.7",
-                "laminas/laminas-diactoros": "^2.23",
-                "league/flysystem": "^3.1",
-                "nikic/php-parser": "^v4.15.2",
-                "php-http/discovery": "^1.14.3",
-                "php-http/mock-client": "^1.0",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
-                "psr/http-client": "^1.0.1",
+                "doctrine/mongodb-odm": "^2.5.2",
+                "doctrine/mongodb-odm-bundle": "^4.5.2",
+                "doctrine/persistence": "^3.1.4",
+                "guzzlehttp/guzzle": "^7.6",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "laminas/laminas-diactoros": "^2.25.2",
+                "league/flysystem": "^3.15.1",
+                "nikic/php-parser": "^v4.15.4",
+                "php-http/discovery": "^1.18",
+                "php-http/mock-client": "^1.5.1",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
+                "psr/http-client": "^1.0.2",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/config": "^6.2",
@@ -10610,8 +10610,8 @@
                 "symfony/validator": "^6.2",
                 "symfony/var-exporter": "^6.2",
                 "symfony/yaml": "^6.2",
-                "teknoo/bridge-phpdi-symfony": "^5.2.3",
-                "teknoo/kubernetes-client": "^1.3"
+                "teknoo/bridge-phpdi-symfony": "^5.2.4",
+                "teknoo/kubernetes-client": "^1.3.3"
             },
             "type": "library",
             "extra": {
@@ -10678,29 +10678,29 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-05-13T15:53:13+00:00"
+            "time": "2023-05-15T17:09:41+00:00"
         },
         {
             "name": "teknoo/immutable",
-            "version": "3.0.15",
+            "version": "3.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/immutable.git",
-                "reference": "7ba92d541f494565cc5d9caeb2ce55ecf62f5c43"
+                "reference": "168a0fd5806bb0266140a94cfc25e8f123d144c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/immutable/zipball/7ba92d541f494565cc5d9caeb2ce55ecf62f5c43",
-                "reference": "7ba92d541f494565cc5d9caeb2ce55ecf62f5c43",
+                "url": "https://api.github.com/repos/TeknooSoftware/immutable/zipball/168a0fd5806bb0266140a94cfc25e8f123d144c0",
+                "reference": "168a0fd5806bb0266140a94cfc25e8f123d144c0",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1"
             },
             "require-dev": {
-                "icanhazstring/composer-unused": "^0.8.7",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/property-access": "^6.2.8"
@@ -10747,20 +10747,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-04-16T16:23:24+00:00"
+            "time": "2023-05-15T16:33:18+00:00"
         },
         {
             "name": "teknoo/kubernetes-client",
-            "version": "1.3.3",
+            "version": "1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "42d88de49e98c8ee06e7518f497d14ba2836ad05"
+                "reference": "d02703cfa46d9981286f2eec3a01a271d59a3827"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/42d88de49e98c8ee06e7518f497d14ba2836ad05",
-                "reference": "42d88de49e98c8ee06e7518f497d14ba2836ad05",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/d02703cfa46d9981286f2eec3a01a271d59a3827",
+                "reference": "d02703cfa46d9981286f2eec3a01a271d59a3827",
                 "shasum": ""
             },
             "require": {
@@ -10774,16 +10774,16 @@
                 "symfony/yaml": "^6.1"
             },
             "require-dev": {
-                "behat/behat": "^v3.12",
-                "icanhazstring/composer-unused": "^0.8.7",
-                "nikic/php-parser": "^v4.15.2",
-                "nyholm/psr7": "^1.5",
-                "php-http/curl-client": "^2.2.1",
-                "php-http/discovery": "^1.14.3",
+                "behat/behat": "^v3.13",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "nikic/php-parser": "^v4.15.4",
+                "nyholm/psr7": "^1.8",
+                "php-http/curl-client": "^2.3",
+                "php-http/discovery": "^1.18",
                 "php-http/guzzle7-adapter": "^1",
                 "php-http/socket-client": "^2.1.1",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/http-client": "^6.2",
@@ -10832,33 +10832,33 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-05-08T08:44:54+00:00"
+            "time": "2023-05-15T16:47:08+00:00"
         },
         {
             "name": "teknoo/recipe",
-            "version": "4.2.6",
+            "version": "4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/recipe.git",
-                "reference": "df082b2d1ee469e698976849b836c14faf50c841"
+                "reference": "e8b3a65de0923072d131609c4c5d96cba236f954"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/df082b2d1ee469e698976849b836c14faf50c841",
-                "reference": "df082b2d1ee469e698976849b836c14faf50c841",
+                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/e8b3a65de0923072d131609c4c5d96cba236f954",
+                "reference": "e8b3a65de0923072d131609c4c5d96cba236f954",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1",
-                "teknoo/immutable": "^3.0.14",
-                "teknoo/states": "^6.0.16"
+                "teknoo/immutable": "^3.0.15",
+                "teknoo/states": "^6.0.19"
             },
             "require-dev": {
-                "behat/behat": "^3.12",
-                "icanhazstring/composer-unused": "^0.8.7",
-                "nikic/php-parser": "^v4.15.2",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "behat/behat": "^3.13",
+                "icanhazstring/composer-unused": "^0.8.8",
+                "nikic/php-parser": "^v4.15.4",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/property-access": "^6.2.8"
@@ -10914,33 +10914,33 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-04-16T16:21:58+00:00"
+            "time": "2023-05-15T16:38:38+00:00"
         },
         {
             "name": "teknoo/states",
-            "version": "6.0.18",
+            "version": "6.0.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "490ce0d8cba8ff223cfbc7e88f60d75df5607325"
+                "reference": "7e0a5643eaf21ba8dac7901acc15470f4e95eeb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/490ce0d8cba8ff223cfbc7e88f60d75df5607325",
-                "reference": "490ce0d8cba8ff223cfbc7e88f60d75df5607325",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/7e0a5643eaf21ba8dac7901acc15470f4e95eeb1",
+                "reference": "7e0a5643eaf21ba8dac7901acc15470f4e95eeb1",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.1",
-                "teknoo/immutable": "^3.0.14"
+                "teknoo/immutable": "^3.0.16"
             },
             "require-dev": {
-                "doctrine/mongodb-odm": "^2.5.0",
-                "doctrine/orm": "^2.14.1",
-                "icanhazstring/composer-unused": "^0.8.7",
+                "doctrine/mongodb-odm": "^2.5.2",
+                "doctrine/orm": "^2.15.1",
+                "icanhazstring/composer-unused": "^0.8.8",
                 "nikic/php-parser": "^4.15.4",
-                "phpstan/phpstan": "^1.10.13",
-                "phpunit/phpunit": "^10.1",
+                "phpstan/phpstan": "^1.10.15",
+                "phpunit/phpunit": "^10.1.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
                 "symfony/property-access": "^6.2.8"
@@ -10996,7 +10996,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-04-16T16:20:32+00:00"
+            "time": "2023-05-15T16:35:32+00:00"
         },
         {
             "name": "twig/extra-bundle",
