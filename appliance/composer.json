@@ -1,5 +1,5 @@
 {
-    "name": "teknoo/space",
+    "name": "teknoo/space-app",
     "type": "project",
     "description": "Space is a Platform as a Service application built on Teknoo East PaaS, Teknoo Kubernetes Client libraries\nand Symfony. The application is multi-account, multi-users and multi-projects, to build and deploy projects on dedicated \ncontainerized platforms on Kubernetes cluster.",
     "keywords": ["paas","image","containerd","oci","docker","kubernetes","platform","service","ci", "cd","continuous delivery","platform.sh","heroku"],
