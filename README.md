@@ -60,8 +60,10 @@ This library requires :
     * Teknoo/space-app
     * Teknoo/Kubernetes Clent
     * Symfony 6.2+
+    * Doctrine ODM 2.5+ / MongoDB
     * Flysystem
     * Buildah
+
 
 Environnements variables configuration
 --------------------------------------

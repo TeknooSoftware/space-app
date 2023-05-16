@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+    mercure:
+        environment:
+            - MERCURE_PUBLISHER_JWT_KEY=ToChange!
+            - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
+    php:
+        environment:
+            - APP_REMEMBER_SECRET=ToChange!
+            - APP_SECRET=ToChange!
+            - MERCURE_JWT_TOKEN=ToChange!
+            - SPACE_CODE_GENERATOR_SALT=ToChange!
+            - SPACE_KUBERNETES_CA_VALUE=ToChange!
+            - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
+            - SPACE_KUBERNETES_DASHBOARD=https://ToChange!/
+            - SPACE_KUBERNETES_MASTER=https://ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
+            - SPACE_OCI_REGISTRY_URL=.ToChange!
