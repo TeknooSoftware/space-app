@@ -8,6 +8,7 @@ ENV LC_ALL en_US.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update ; \
+    apt-get dist-upgrade -y  ; \
     apt-get install -y  \
         software-properties-common  \
         sudo  \

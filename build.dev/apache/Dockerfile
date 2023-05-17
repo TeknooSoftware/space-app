@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:lunar
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
@@ -20,6 +20,7 @@ RUN a2dissite 000-default ; \
     a2enmod rewrite ; \
     a2enmod ssl ; \
     a2enmod security2 ; \
+    usermod -u 1001 ubuntu; \
     usermod -u 1000 www-data
 
 CMD ["apache2ctl", "-DFOREGROUND"]

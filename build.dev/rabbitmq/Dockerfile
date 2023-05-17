@@ -1,4 +1,4 @@
-FROM rabbitmq:3.11.3-management-alpine
+FROM rabbitmq:3.11-management-alpine
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
