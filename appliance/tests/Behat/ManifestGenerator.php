@@ -98,7 +98,8 @@ class ManifestGenerator
                     ],
                     "resources": [
                         "deployments",
-                        "replicasets"
+                        "replicasets",
+                        "statefulsets"
                     ],
                     "verbs": [
                         "get",
@@ -399,7 +400,191 @@ EOF;
             "kind": "Deployment",
             "apiVersion": "apps/v1",
             "metadata": {
-                "name": "{$projectPrefix}php-pods-dplmt",
+                "name": "{$projectPrefix}shell-dplmt",
+                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}shell"
+                },
+                "annotations": {
+                    "teknoo.space.version": "v1"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxSurge": 1,
+                        "maxUnavailable": 0
+                    }
+                },
+                "selector": {
+                    "matchLabels": {
+                        "name": "{$projectPrefix}shell"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "name": "{$projectPrefix}shell-pod",
+                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "labels": {
+                            "name": "{$projectPrefix}shell",
+                            "vname": "{$projectPrefix}shell-v1"
+                        }
+                    },
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "sleep"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "sleep",
+                                "image": "registry.hub.docker.com/bash:alpine",
+                                "imagePullPolicy": "Always",
+                                "ports": []
+                            }
+                        ],
+                        "imagePullSecrets": [
+                            {
+                                "name": "my-companydocker-config"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "kind": "Deployment",
+            "apiVersion": "apps/v1",
+            "metadata": {
+                "name": "{$projectPrefix}demo-dplmt",
+                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}demo"
+                },
+                "annotations": {
+                    "teknoo.space.version": "v1"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "selector": {
+                    "matchLabels": {
+                        "name": "{$projectPrefix}demo"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "name": "{$projectPrefix}demo-pod",
+                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "labels": {
+                            "name": "{$projectPrefix}demo",
+                            "vname": "{$projectPrefix}demo-v1"
+                        }
+                    },
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "nginx",
+                                    "waf",
+                                    "blackfire"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "nginx",
+                                "image": "my-company.registry.demo.teknoo.space/nginx-{$jobId}:alpine",
+                                "imagePullPolicy": "Always",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080
+                                    },
+                                    {
+                                        "containerPort": 8181
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "initialDelaySeconds": 10,
+                                    "periodSeconds": 30,
+                                    "httpGet": {
+                                        "path": "/status",
+                                        "port": 8080,
+                                        "scheme": "HTTPS"
+                                    },
+                                    "successThreshold": 3,
+                                    "failureThreshold": 2
+                                }
+                            },
+                            {
+                                "name": "waf",
+                                "image": "registry.hub.docker.com/library/waf:alpine",
+                                "imagePullPolicy": "Always",
+                                "ports": [
+                                    {
+                                        "containerPort": 8181
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "initialDelaySeconds": 10,
+                                    "periodSeconds": 30,
+                                    "tcpSocket": {
+                                        "port": 8181
+                                    },
+                                    "successThreshold": 1,
+                                    "failureThreshold": 1
+                                }
+                            },
+                            {
+                                "name": "blackfire",
+                                "image": "blackfire/blackfire:2",
+                                "imagePullPolicy": "Always",
+                                "ports": [
+                                    {
+                                        "containerPort": 8307
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "BLACKFIRE_SERVER_ID",
+                                        "value": "foo"
+                                    },
+                                    {
+                                        "name": "BLACKFIRE_SERVER_TOKEN",
+                                        "value": "bar"
+                                    }
+                                ]
+                            }
+                        ],
+                        "imagePullSecrets": [
+                            {
+                                "name": "my-companydocker-config"
+                            }
+                        ],
+                        "securityContext": {
+                            "fsGroup": 1000
+                        }
+                    }
+                }
+            }
+        }
+    ],
+    "namespaces/space-behat-my-comany{$hncSuffix}/statefulsets": [
+        {
+            "kind": "StatefulSet",
+            "apiVersion": "apps/v1",
+            "metadata": {
+                "name": "{$projectPrefix}php-pods-sfset",
                 "namespace": "space-behat-my-comany{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-pods"
@@ -410,6 +595,7 @@ EOF;
             },
             "spec": {
                 "replicas": 2,
+                "serviceName": "{$projectPrefix}php-pods",
                 "strategy": {
                     "type": "RollingUpdate",
                     "rollingUpdate": {
@@ -606,188 +792,6 @@ EOF;
                                 }
                             }
                         ]
-                    }
-                }
-            }
-        },
-        {
-            "kind": "Deployment",
-            "apiVersion": "apps/v1",
-            "metadata": {
-                "name": "{$projectPrefix}shell-dplmt",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
-                "labels": {
-                    "name": "{$projectPrefix}shell"
-                },
-                "annotations": {
-                    "teknoo.space.version": "v1"
-                }
-            },
-            "spec": {
-                "replicas": 1,
-                "strategy": {
-                    "type": "RollingUpdate",
-                    "rollingUpdate": {
-                        "maxSurge": 1,
-                        "maxUnavailable": 0
-                    }
-                },
-                "selector": {
-                    "matchLabels": {
-                        "name": "{$projectPrefix}shell"
-                    }
-                },
-                "template": {
-                    "metadata": {
-                        "name": "{$projectPrefix}shell-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
-                        "labels": {
-                            "name": "{$projectPrefix}shell",
-                            "vname": "{$projectPrefix}shell-v1"
-                        }
-                    },
-                    "spec": {
-                        "hostAliases": [
-                            {
-                                "hostnames": [
-                                    "sleep"
-                                ],
-                                "ip": "127.0.0.1"
-                            }
-                        ],
-                        "containers": [
-                            {
-                                "name": "sleep",
-                                "image": "registry.hub.docker.com/bash:alpine",
-                                "imagePullPolicy": "Always",
-                                "ports": []
-                            }
-                        ],
-                        "imagePullSecrets": [
-                            {
-                                "name": "my-companydocker-config"
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-        {
-            "kind": "Deployment",
-            "apiVersion": "apps/v1",
-            "metadata": {
-                "name": "{$projectPrefix}demo-dplmt",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
-                "labels": {
-                    "name": "{$projectPrefix}demo"
-                },
-                "annotations": {
-                    "teknoo.space.version": "v1"
-                }
-            },
-            "spec": {
-                "replicas": 1,
-                "strategy": {
-                    "type": "Recreate"
-                },
-                "selector": {
-                    "matchLabels": {
-                        "name": "{$projectPrefix}demo"
-                    }
-                },
-                "template": {
-                    "metadata": {
-                        "name": "{$projectPrefix}demo-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
-                        "labels": {
-                            "name": "{$projectPrefix}demo",
-                            "vname": "{$projectPrefix}demo-v1"
-                        }
-                    },
-                    "spec": {
-                        "hostAliases": [
-                            {
-                                "hostnames": [
-                                    "nginx",
-                                    "waf",
-                                    "blackfire"
-                                ],
-                                "ip": "127.0.0.1"
-                            }
-                        ],
-                        "containers": [
-                            {
-                                "name": "nginx",
-                                "image": "my-company.registry.demo.teknoo.space/nginx-{$jobId}:alpine",
-                                "imagePullPolicy": "Always",
-                                "ports": [
-                                    {
-                                        "containerPort": 8080
-                                    },
-                                    {
-                                        "containerPort": 8181
-                                    }
-                                ],
-                                "livenessProbe": {
-                                    "initialDelaySeconds": 10,
-                                    "periodSeconds": 30,
-                                    "httpGet": {
-                                        "path": "/status",
-                                        "port": 8080,
-                                        "scheme": "HTTPS"
-                                    },
-                                    "successThreshold": 3,
-                                    "failureThreshold": 2
-                                }
-                            },
-                            {
-                                "name": "waf",
-                                "image": "registry.hub.docker.com/library/waf:alpine",
-                                "imagePullPolicy": "Always",
-                                "ports": [
-                                    {
-                                        "containerPort": 8181
-                                    }
-                                ],
-                                "livenessProbe": {
-                                    "initialDelaySeconds": 10,
-                                    "periodSeconds": 30,
-                                    "tcpSocket": {
-                                        "port": 8181
-                                    },
-                                    "successThreshold": 1,
-                                    "failureThreshold": 1
-                                }
-                            },
-                            {
-                                "name": "blackfire",
-                                "image": "blackfire/blackfire:2",
-                                "imagePullPolicy": "Always",
-                                "ports": [
-                                    {
-                                        "containerPort": 8307
-                                    }
-                                ],
-                                "env": [
-                                    {
-                                        "name": "BLACKFIRE_SERVER_ID",
-                                        "value": "foo"
-                                    },
-                                    {
-                                        "name": "BLACKFIRE_SERVER_TOKEN",
-                                        "value": "bar"
-                                    }
-                                ]
-                            }
-                        ],
-                        "imagePullSecrets": [
-                            {
-                                "name": "my-companydocker-config"
-                            }
-                        ],
-                        "securityContext": {
-                            "fsGroup": 1000
-                        }
                     }
                 }
             }
