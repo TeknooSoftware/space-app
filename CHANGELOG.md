@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta2] - 2023-05-22
+### Beta1 Release
+- Support Statefulsets
+- Stateful projects use now a statefulsets instead of a deployment
+
 ## [1.0.0-beta1] - 2023-05-16
 ### Beta1 Release
 * First public release, imported from private alpha release

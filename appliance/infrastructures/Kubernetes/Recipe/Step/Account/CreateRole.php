@@ -76,7 +76,7 @@ class CreateRole
                 ],
                 [
                     'apiGroups' => ['apps'],
-                    'resources' => ['deployments', 'replicasets'],
+                    'resources' => ['deployments', 'replicasets', 'statefulsets'],
                     'verbs' => ['get', 'watch', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection'],
                 ],
                 [
