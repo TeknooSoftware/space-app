@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" processIsolation="false" stopOnFailure="false" bootstrap="tests/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
-  <coverage>
-    <include>
-      <directory>domain</directory>
-      <directory>src</directory>
-      <directory>infrastructures</directory>
-    </include>
-  </coverage>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" processIsolation="false" stopOnFailure="false" bootstrap="tests/bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <coverage/>
   <php>
     <ini name="error_reporting" value="-1"/>
     <server name="KERNEL_CLASS" value="App/Kernel"/>
@@ -28,4 +22,11 @@
       <directory suffix="Test.php">tests/</directory>
     </testsuite>
   </testsuites>
+  <source>
+    <include>
+      <directory>domain</directory>
+      <directory>src</directory>
+      <directory>infrastructures</directory>
+    </include>
+  </source>
 </phpunit>

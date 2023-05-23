@@ -406,7 +406,7 @@ EOF;
                     "name": "{$projectPrefix}shell"
                 },
                 "annotations": {
-                    "teknoo.space.version": "v1"
+                    "teknoo.east.paas.version": "v1"
                 }
             },
             "spec": {
@@ -468,7 +468,7 @@ EOF;
                     "name": "{$projectPrefix}demo"
                 },
                 "annotations": {
-                    "teknoo.space.version": "v1"
+                    "teknoo.east.paas.version": "v1"
                 }
             },
             "spec": {
@@ -590,7 +590,7 @@ EOF;
                     "name": "{$projectPrefix}php-pods"
                 },
                 "annotations": {
-                    "teknoo.space.version": "v1"
+                    "teknoo.east.paas.version": "v1"
                 }
             },
             "spec": {
