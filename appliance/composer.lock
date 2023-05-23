@@ -6745,16 +6745,16 @@
         },
         {
             "name": "symfony/mercure-bundle",
-            "version": "v0.3.6",
+            "version": "v0.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mercure-bundle.git",
-                "reference": "262c922912d94d01230b2c647208d06fc46d4cff"
+                "reference": "d2d67f89536dd274b6cdf10659660af8a2d80be0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mercure-bundle/zipball/262c922912d94d01230b2c647208d06fc46d4cff",
-                "reference": "262c922912d94d01230b2c647208d06fc46d4cff",
+                "url": "https://api.github.com/repos/symfony/mercure-bundle/zipball/d2d67f89536dd274b6cdf10659660af8a2d80be0",
+                "reference": "d2d67f89536dd274b6cdf10659660af8a2d80be0",
                 "shasum": ""
             },
             "require": {
@@ -6810,7 +6810,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/mercure-bundle/issues",
-                "source": "https://github.com/symfony/mercure-bundle/tree/v0.3.6"
+                "source": "https://github.com/symfony/mercure-bundle/tree/v0.3.7"
             },
             "funding": [
                 {
@@ -6822,7 +6822,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-03-06T22:48:03+00:00"
+            "time": "2023-05-23T16:31:37+00:00"
         },
         {
             "name": "symfony/messenger",
@@ -10547,12 +10547,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "7fc1824891f2af82743511ae500af47ab386b5ef"
+                "reference": "03d2082e7b6c7e13f9323f7e0844b80bee957ba5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/7fc1824891f2af82743511ae500af47ab386b5ef",
-                "reference": "7fc1824891f2af82743511ae500af47ab386b5ef",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/03d2082e7b6c7e13f9323f7e0844b80bee957ba5",
+                "reference": "03d2082e7b6c7e13f9323f7e0844b80bee957ba5",
                 "shasum": ""
             },
             "require": {
@@ -10678,7 +10678,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-05-22T20:04:50+00:00"
+            "time": "2023-05-23T17:59:01+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -12882,12 +12882,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6f9ab12e73b98c36375e0a883c2959306e3251a0"
+                "reference": "2d9146bd69addfbd99652930a825c8ba7b8ea13c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6f9ab12e73b98c36375e0a883c2959306e3251a0",
-                "reference": "6f9ab12e73b98c36375e0a883c2959306e3251a0",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2d9146bd69addfbd99652930a825c8ba7b8ea13c",
+                "reference": "2d9146bd69addfbd99652930a825c8ba7b8ea13c",
                 "shasum": ""
             },
             "conflict": {
@@ -12963,7 +12963,7 @@
                 "contao/core-bundle": "<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4|= 4.10.0",
                 "contao/listing-bundle": ">=4,<4.4.8",
                 "contao/managed-edition": "<=1.5",
-                "craftcms/cms": "<=3.8.3|>=4,<=4.4.3|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
+                "craftcms/cms": "<=3.8.3|>=4,<4.4.6|>= 4.0.0-RC1, < 4.3.7|>= 4.0.0-RC1, < 4.2.1",
                 "croogo/croogo": "<3.0.7",
                 "cuyz/valinor": "<0.12",
                 "czproject/git-php": "<4.0.3",
@@ -13482,7 +13482,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-22T20:04:52+00:00"
+            "time": "2023-05-22T21:04:18+00:00"
         },
         {
             "name": "roave/signature",
