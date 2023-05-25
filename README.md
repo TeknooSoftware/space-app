@@ -1,16 +1,18 @@
 Teknoo Software - Space
 =======================
 
-[![License](https://poser.pugx.org/teknoo/space-app/license)](https://packagist.org/packages/teknoo/space-app)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/TeknooSoftware/space-app)
+[![License](https://shields.io/badge/license-MIT-green?style=flat)](https://raw.githubusercontent.com/TeknooSoftware/space-app/main/LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
-Space is a `Platform as a Service` application built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` libraries
-and Symfony components. The application is multi-account, multi-users and multi-projects, to build and deploy projects 
-on dedicated containerized platforms on Kubernetes cluster.
+Space is a `Platform as a Service` application, a continuous integration/delivery/deployment solution, 
+built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` and the `Symfony` components. The application is multi-account,
+multi-users and multi-projects, and able to build and deploy projects on dedicated containerized platforms on 
+`Kubernetes` cluster.
 
 This is the `Standard` version of Space. It is released under MIT licence. This version includes :
 
-* an account represents the top entity (a company, a service, a foundation, an human, etc...
+* an account represents the top entity (a company, a service, a foundation, an human, etc...)
 * an account has at least one user.
 * an user represent an human.
 * an account has projects.
@@ -37,15 +39,29 @@ A commercial `Enterprise` version is planned with some additional features.
 
 Support this project
 ---------------------
-
-This project is free and will remain free, but it is developed on my personal time. 
+This project is free and will remain free. It is fully supported by the activities of the EIRL.
 If you like it and help me maintain it and evolve it, don't hesitate to support me on 
-[Patreon](https://patreon.com/teknoo_software).
+[Patreon](https://patreon.com/teknoo_software) or [Github](https://github.com/sponsors/TeknooSoftware).
+
 Thanks :) Richard. 
+
+Credits
+-------
+EIRL Richard Déloge - <https://deloge.io> - Lead developer.
+SASU Teknoo Software - <https://teknoo.software>
+
+About Teknoo Software
+---------------------
+**Teknoo Software** is a PHP software editor, founded by Richard Déloge, as part of EIRL Richard Déloge.
+Teknoo Software's goals : Provide to our partners and to the community a set of high quality services or software,
+sharing knowledge and skills.
+
+License
+-------
+Space is licensed under the MIT License - see the licenses folder for details.
 
 Installation & Requirements
 ---------------------------
-
 This library requires :
 
     * PHP 8.2+
@@ -61,10 +77,8 @@ This library requires :
     * Flysystem
     * Buildah
 
-
 Environnements variables configuration
 --------------------------------------
-
 * Global configuration :
   * `SPACE_HOSTNAME` : (string) url of the Space instance.
   * `SPACE_JOB_ROOT` : (string) path where run reployment (git clone and build image), `/tmp` by default.
@@ -192,22 +206,6 @@ Environnements variables configuration
         * `SPACE_IMG_BUILDER_PLATFORMS` : (string) name of the platform whose image is dedicated.
           `linux/amd64` by default. *Optional*
 
-Credits
--------
-EIRL Richard Déloge - <https://deloge.io> - Lead developer.
-SASU Teknoo Software - <https://teknoo.software>
-
-About Teknoo Software
----------------------
-**Teknoo Software** is a PHP software editor, founded by Richard Déloge, as part of EIRL Richard Déloge.
-Teknoo Software's goals : Provide to our partners and to the community a set of high quality services or software,
- sharing knowledge and skills.
-
-License
--------
-Space is licensed under the MIT License - see the licenses folder for details
-
 Contribute :)
 -------------
-
 You are welcome to contribute to this project. [Fork it on Github](CONTRIBUTING.md)
