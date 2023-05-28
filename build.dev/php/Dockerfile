@@ -7,7 +7,8 @@ ENV LANGUAGE en_US:fr
 ENV LC_ALL en_US.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update ; \
+RUN apt-get clean ; \
+    apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
         software-properties-common  \
