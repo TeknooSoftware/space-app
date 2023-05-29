@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:kinetic
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
