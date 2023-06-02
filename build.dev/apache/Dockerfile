@@ -1,4 +1,4 @@
-FROM ubuntu:lunar
+FROM ubuntu:23.04
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
