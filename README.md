@@ -27,7 +27,7 @@ This is the `Standard` version of Space. It is released under MIT licence. This 
   * accounts can host also persisted variables to be used on all deployments of all of this projects if
     they are not already defined in projects.
   * persisted variables can contains secrets. 
-    * Warning, currently secrets are not visible in Space's web app but they are passed unencrypted to the agents. 
+    * Warning, currently secrets are not visible in Space's web app but they are passed unencrypted to the workers. 
 * Space is bundled with a Composer hook to build PHP Project. NPM and PIP supports is also planned.
 * Space allow any users to subcribe, but it's not manage billings.
       * Subscriptions can be restricted with uniques codes to forbid non selected user to subscribe.
@@ -36,6 +36,9 @@ This is the `Standard` version of Space. It is released under MIT licence. This 
 A free support is available by Github issues of this repository.
 About priority support, please contact us at <contact@teknoo.software>.
 A commercial `Enterprise` version is planned with some additional features.
+
+Architecture
+------------
 
 Support this project
 ---------------------
@@ -62,10 +65,19 @@ Space is licensed under the MIT License - see the licenses folder for details.
 
 Installation & Requirements
 ---------------------------
-This library requires :
+
+This applications requires
 
     * PHP 8.2+
     * A PHP autoloader (Composer is recommended)
+    * A webserver (like Httpd/nginx + PHP-FPM)
+    * A MongoDB server (for the web interfaces and all workers except the builder)
+    * A AMQP server, like RabbitMQ for the coomunication between components
+    * A mercure server for the web interface and new job worker.
+    * Buildah (Only for the builder)
+
+This application is bundled with :
+
     * Teknoo/Immutable
     * Teknoo/States
     * Teknoo/Recipe
@@ -75,7 +87,6 @@ This library requires :
     * Symfony 6.2+
     * Doctrine ODM 2.5+ / MongoDB
     * Flysystem
-    * Buildah
 
 Environnements variables configuration
 --------------------------------------
@@ -160,7 +171,7 @@ Environnements variables configuration
     * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the 
                                      Space dashboard. *Optional*
 * Workers configuration :
-  * Agents only (not builder) :
+  * workers only (not builder) :
     * Doctrine ODM :
       * `MONGODB_SERVER` : (string) mongodb DSN
       * `MONGODB_NAME` : (string) database name
@@ -168,7 +179,7 @@ Environnements variables configuration
   * `SPACE_GIT_TIMEOUT` : (int) max time allowed to clone a project in the deployment.
                           Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
   * Healthcheck :
-    * `SPACE_PING_FILE` : (string) file used by Space's agents and builder to indicate the state of health, read by
+    * `SPACE_PING_FILE` : (string) file used by Space's workers and builder to indicate the state of health, read by
                           the orchestrator. `/tmp/ping_file` by default. *Optional*
     * `SPACE_PING_SECONDS` : (int) number of seconds between each update in the `ping file`, `60` by default. *Optional*
   * Deployment :
@@ -205,6 +216,14 @@ Environnements variables configuration
           Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
         * `SPACE_IMG_BUILDER_PLATFORMS` : (string) name of the platform whose image is dedicated.
           `linux/amd64` by default. *Optional*
+
+Commands
+--------
+
+* worker to prepare a new job : `bin/console messenger:consume new_job`
+* worker to persist histories of jobs : `bin/console messenger:consume history_sent`
+* worker to persist final results of jobs : `bin/console messenger:consume job_done`
+* worker to execute jobs : `bin/console messenger:consume execute_job`
 
 Contribute :)
 -------------
