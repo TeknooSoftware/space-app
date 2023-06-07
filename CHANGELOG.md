@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta3] - 2023-06-07
+### Beta1 Release
+- Update Teknoo libs
+- Require Symfony 6.3 or newer
+
 ## [1.0.0-beta2] - 2023-05-22
 ### Beta1 Release
 - Support Statefulsets
