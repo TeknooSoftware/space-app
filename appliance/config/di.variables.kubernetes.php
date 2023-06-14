@@ -28,27 +28,27 @@ namespace App\Config;
 use function DI\env;
 
 return [
-    'app.kubernetes.root_namespace' => env('SPACE_KUBERNETES_ROOT_NAMESPACE'),
-    'app.kubernetes.master' => env('SPACE_KUBERNETES_MASTER'),
-    'app.kubernetes.dashboard' => env('SPACE_KUBERNETES_DASHBOARD'),
-    'app.kubernetes.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN'),
-    'app.kubernetes.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE'),
-    'app.kubernetes.cluster.default_name' => env('SPACE_KUBERNETES_CLUSTER_NAME', 'localhost'),
-    'app.kubernetes.cluster.default_type' => env('SPACE_KUBERNETES_CLUSTER_TYPE', 'kubernetes'),
-    'app.kubernetes.cluster.default_env' => env('SPACE_KUBERNETES_CLUSTER_ENV', 'prod'),
-    'app.kubernetes.secret_account_token_waiting_time' => env(
+    'teknoo.space.kubernetes.root_namespace' => env('SPACE_KUBERNETES_ROOT_NAMESPACE'),
+    'teknoo.space.kubernetes.master' => env('SPACE_KUBERNETES_MASTER'),
+    'teknoo.space.kubernetes.dashboard' => env('SPACE_KUBERNETES_DASHBOARD'),
+    'teknoo.space.kubernetes.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN'),
+    'teknoo.space.kubernetes.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE'),
+    'teknoo.space.kubernetes.cluster.default_name' => env('SPACE_KUBERNETES_CLUSTER_NAME', 'localhost'),
+    'teknoo.space.kubernetes.cluster.default_type' => env('SPACE_KUBERNETES_CLUSTER_TYPE', 'kubernetes'),
+    'teknoo.space.kubernetes.cluster.default_env' => env('SPACE_KUBERNETES_CLUSTER_ENV', 'prod'),
+    'teknoo.space.kubernetes.secret_account_token_waiting_time' => env(
         'SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME',
         1000,
     ),
 
-    'app.kubernetes.oci_registry.image' => env('SPACE_OCI_REGISTRY_IMAGE'),
-    'app.kubernetes.oci_registry.url' => env('SPACE_OCI_REGISTRY_URL'),
-    'app.kubernetes.oci_registry.tls_secret_name' => env('SPACE_OCI_REGISTRY_TLS_SECRET'),
-    'app.kubernetes.oci_registry.storage_claiming_size' => env('SPACE_OCI_REGISTRY_PVC_SIZE'),
+    'teknoo.space.kubernetes.oci_registry.image' => env('SPACE_OCI_REGISTRY_IMAGE'),
+    'teknoo.space.kubernetes.oci_registry.url' => env('SPACE_OCI_REGISTRY_URL'),
+    'teknoo.space.kubernetes.oci_registry.tls_secret_name' => env('SPACE_OCI_REGISTRY_TLS_SECRET'),
+    'teknoo.space.kubernetes.oci_registry.storage_claiming_size' => env('SPACE_OCI_REGISTRY_PVC_SIZE'),
 
-    'app.kubernetes.oci_space_global_registry.url' => env('SPACE_OCI_GLOBAL_REGISTRY_URL'),
-    'app.kubernetes.oci_space_global_registry.username' => env('SPACE_OCI_GLOBAL_REGISTRY_USERNAME'),
-    'app.kubernetes.oci_space_global_registry.pwd' => env('SPACE_OCI_GLOBAL_REGISTRY_PWD'),
+    'teknoo.space.kubernetes.oci_space_global_registry.url' => env('SPACE_OCI_GLOBAL_REGISTRY_URL'),
+    'teknoo.space.kubernetes.oci_space_global_registry.username' => env('SPACE_OCI_GLOBAL_REGISTRY_USERNAME'),
+    'teknoo.space.kubernetes.oci_space_global_registry.pwd' => env('SPACE_OCI_GLOBAL_REGISTRY_PWD'),
 
-    'app.kubernetes.cluster_issuer' => env('SPACE_CLUSTER_ISSUER'),
+    'teknoo.space.kubernetes.cluster_issuer' => env('SPACE_CLUSTER_ISSUER'),
 ];
