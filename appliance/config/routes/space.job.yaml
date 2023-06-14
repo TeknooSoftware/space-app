@@ -71,7 +71,7 @@ space_job_delete:
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        deleter: '@app.deleting.space_project'
+        deleter: '@teknoo.space.deleting.space_project'
         route: 'space_project_list'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
 

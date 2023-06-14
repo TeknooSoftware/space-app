@@ -25,24 +25,46 @@ declare(strict_types=1);
 
 namespace App\Config;
 
+use ArrayObject;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Contracts\Hook\HooksCollectionInterface;
-use Teknoo\East\Paas\Infrastructures\Composer\ComposerHook;
+use Teknoo\East\Paas\Infrastructures\ProjectBuilding\ComposerHook;
+use Teknoo\East\Paas\Infrastructures\ProjectBuilding\MakeHook;
+use Teknoo\East\Paas\Infrastructures\ProjectBuilding\NpmHook;
+use Teknoo\East\Paas\Infrastructures\ProjectBuilding\PipHook;
 use Traversable;
 
 return [
+    'teknoo.space.hook.collection' => static function (): ArrayObject {
+        return new ArrayObject([
+            'composer' => ComposerHook::class,
+            'npm' => NpmHook::class,
+            'pip' => PipHook::class,
+            'make' => MakeHook::class,
+        ]);
+    },
+
     HooksCollectionInterface::class => static function (ContainerInterface $container): HooksCollectionInterface {
-        return new class ($container) implements HooksCollectionInterface {
-
-            private ContainerInterface $container;
-
-            public function __construct(ContainerInterface $container)
-            {
-                $this->container = $container;
+        return new class (
+            $container,
+            $container->get('teknoo.space.hook.collection'),
+        ) implements HooksCollectionInterface {
+            public function __construct(
+                private ContainerInterface $container,
+                private iterable $hooksNames,
+            ) {
             }
 
             public function getIterator(): Traversable {
-                yield 'composer' => $this->container->get(ComposerHook::class);
+                foreach ($this->hooksNames as $name => $class) {
+                    $key = "'teknoo.east.paas.{$name}.path'";
+                    if (
+                        $this->container->has($key)
+                        && !empty($this->container->get($key))
+                    ) {
+                        yield $name => $this->container->get($class);
+                    }
+                }
             }
         };
     },

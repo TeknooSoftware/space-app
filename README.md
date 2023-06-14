@@ -198,6 +198,18 @@ Environnements variables configuration
         * `SPACE_COMPOSER_PATH` : (string) path to the composer executable. `$PATH/composer` by default
         * `SPACE_COMPOSER_TIMEOUT` : (int) max time allowed to install dependencies via Composer.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+      * Npm :
+        * `SPACE_NPM_PATH` : (string) path to the npm executable. `$PATH/npm` by default
+        * `SPACE_NPM_TIMEOUT` : (int) max time allowed to install dependencies via Npm.
+                                     Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+      * Pip :
+        * `SPACE_PIP_PATH` : (string) path to the pip executable. `$PATH/pip` by default
+        * `SPACE_PIP_TIMEOUT` : (int) max time allowed to install dependencies via Pip.
+                                     Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+      * Make :
+        * `SPACE_MAKE_PATH` : (string) path to the make executable. `$PATH/make` by default
+        * `SPACE_MAKE_TIMEOUT` : (int) max time allowed to install dependencies via Make.
+                                     Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
     * OCI Image building :
         * `SPACE_IMG_BUILDER_CMD` : (string) name of the tool to use to create OCI/Docker image. 
                                     `buildah` by default. *Optional*

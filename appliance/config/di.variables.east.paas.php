@@ -71,12 +71,18 @@ return [
     'teknoo.east.paas.default_storage_provider' => env('SPACE_STORAGE_CLASS', 'space-nfs'),
     'teknoo.east.paas.default_storage_size' => env('SPACE_STORAGE_DEFAULT_SIZE', '2Gi'),
 
-    'teknoo.east.paas.worker.tmp_dir' => get('app.job_root'),
+    'teknoo.east.paas.worker.tmp_dir' => get('teknoo.space.job_root'),
 
     'teknoo.east.paas.git.cloning.timeout' => env('SPACE_GIT_TIMEOUT', 240),
 
-    'teknoo.east.paas.composer.phar.path' => env('SPACE_COMPOSER_PATH', '/usr/local/bin/composer'),
+    'teknoo.east.paas.composer.path' => env('SPACE_COMPOSER_PATH', 'composer'),
     'teknoo.east.paas.composer.timeout' => env('SPACE_COMPOSER_TIMEOUT', 240),
+    'teknoo.east.paas.npm.path' => env('SPACE_NPM_PATH', 'npm'),
+    'teknoo.east.paas.npm.timeout' => env('SPACE_NPM_TIMEOUT', 240),
+    'teknoo.east.paas.pip.path' => env('SPACE_PIP_PATH', 'pip'),
+    'teknoo.east.paas.pip.timeout' => env('SPACE_PIP_TIMEOUT', 240),
+    'teknoo.east.paas.make.path' => env('SPACE_MAKE_PATH', 'make'),
+    'teknoo.east.paas.make.timeout' => env('SPACE_MAKE_TIMEOUT', 240),
 
     'teknoo.east.paas.img_builder.cmd' => env('SPACE_IMG_BUILDER_CMD', 'buildah'),
     'teknoo.east.paas.img_builder.build.timeout' => env('SPACE_IMG_BUILDER_TIMEOUT', 10*60),

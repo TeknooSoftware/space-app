@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta4] - 2023-06-14
+### Beta1 Release
+- Update Teknoo libs
+- Update to PaaS lib 1.8
+- Support NPM, PIP and Make
+- Replace in the container `app.` prefix to `teknoo.space.`
+
 ## [1.0.0-beta3] - 2023-06-07
 ### Beta1 Release
 - Update Teknoo libs

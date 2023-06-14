@@ -33,8 +33,8 @@ use function sys_get_temp_dir;
 
 return [
     //App variables
-    'app.hostname' => env('SPACE_HOSTNAME', 'localhost'),
-    'app.job_root' => env('SPACE_JOB_ROOT', sys_get_temp_dir()),
+    'teknoo.space.hostname' => env('SPACE_HOSTNAME', 'localhost'),
+    'teknoo.space.job_root' => env('SPACE_JOB_ROOT', sys_get_temp_dir()),
 
     BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
 ];

@@ -103,7 +103,7 @@ return [
         ->constructor(get(AccountCredentialRepositoryInterface::class)),
     AccountCredentialWriter::class => create(AccountCredentialWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.account_credential' => create(DeletingService::class)
+    'teknoo.space.deleting.account_credential' => create(DeletingService::class)
         ->constructor(get(AccountCredentialWriter::class), get(DatesService::class)),
     
     //AccountData
@@ -124,7 +124,7 @@ return [
         ->constructor(get(AccountDataRepositoryInterface::class)),
     AccountDataWriter::class => create(AccountDataWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.account_data' => create(DeletingService::class)
+    'teknoo.space.deleting.account_data' => create(DeletingService::class)
         ->constructor(get(AccountDataWriter::class), get(DatesService::class)),
 
     //AccountHistory
@@ -145,7 +145,7 @@ return [
         ->constructor(get(AccountHistoryRepositoryInterface::class)),
     AccountHistoryWriter::class => create(AccountHistoryWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.account_history' => create(DeletingService::class)
+    'teknoo.space.deleting.account_history' => create(DeletingService::class)
         ->constructor(get(AccountHistoryWriter::class), get(DatesService::class)),
 
     //PersistedVariable
@@ -181,14 +181,14 @@ return [
         ->constructor(get(AccountPersistedVariableRepositoryInterface::class)),
     AccountPersistedVariableWriter::class => create(AccountPersistedVariableWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.account_persisted_env_var_job' => create(DeletingService::class)
+    'teknoo.space.deleting.account_persisted_env_var_job' => create(DeletingService::class)
         ->constructor(get(AccountPersistedVariableWriter::class), get(DatesService::class)),
 
     PersistedVariableLoader::class => create(PersistedVariableLoader::class)
         ->constructor(get(PersistedVariableRepositoryInterface::class)),
     PersistedVariableWriter::class => create(PersistedVariableWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.persisted_env_var_job' => create(DeletingService::class)
+    'teknoo.space.deleting.persisted_env_var_job' => create(DeletingService::class)
         ->constructor(get(PersistedVariableWriter::class), get(DatesService::class)),
 
 
@@ -210,7 +210,7 @@ return [
         ->constructor(get(ProjectMetadataRepositoryInterface::class)),
     ProjectMetadataWriter::class => create(ProjectMetadataWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.project_metadata' => create(DeletingService::class)
+    'teknoo.space.deleting.project_metadata' => create(DeletingService::class)
         ->constructor(get(ProjectMetadataWriter::class), get(DatesService::class)),
 
     //SpaceProject
@@ -227,7 +227,7 @@ return [
             get(PersistedVariableWriter::class),
             get(BatchManipulationManagerInterface::class),
         ),
-    'app.deleting.space_project' => create(DeletingService::class)
+    'teknoo.space.deleting.space_project' => create(DeletingService::class)
         ->constructor(
             get(SpaceProjectWriter::class),
             get(DatesService::class),
@@ -251,7 +251,7 @@ return [
             get(AccountPersistedVariableWriter::class),
             get(BatchManipulationManagerInterface::class),
         ),
-    'app.deleting.space_account' => create(DeletingService::class)
+    'teknoo.space.deleting.space_account' => create(DeletingService::class)
         ->constructor(get(SpaceAccountWriter::class), get(DatesService::class)),
 
     //SpaceUser
@@ -265,7 +265,7 @@ return [
             get(SymfonyUserWriter::class),
             get(UserDataWriter::class)
         ),
-    'app.deleting.space_user' => create(DeletingService::class)
+    'teknoo.space.deleting.space_user' => create(DeletingService::class)
         ->constructor(get(SpaceUserWriter::class), get(DatesService::class)),
 
     //UserData
@@ -286,6 +286,6 @@ return [
         ->constructor(get(UserDataRepositoryInterface::class)),
     UserDataWriter::class => create(UserDataWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'app.deleting.user_data' => create(DeletingService::class)
+    'teknoo.space.deleting.user_data' => create(DeletingService::class)
         ->constructor(get(UserDataWriter::class), get(DatesService::class)),
 ];

@@ -112,7 +112,7 @@ return [
     CreateNamespace::class => static function (ContainerInterface $container): CreateNamespace {
         return new CreateNamespace(
             $container->get(KubernetesClient::class . ':create_account'),
-            $container->get('app.kubernetes.root_namespace'),
+            $container->get('teknoo.space.kubernetes.root_namespace'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
             $container->get(AccountWriter::class),
@@ -154,7 +154,7 @@ return [
         return new CreateSecretServiceAccountToken(
             $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
-            (int) $container->get('app.kubernetes.secret_account_token_waiting_time'),
+            (int) $container->get('teknoo.space.kubernetes.secret_account_token_waiting_time'),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
@@ -171,16 +171,16 @@ return [
     CreateRegistryAccount::class => static function (ContainerInterface $container): CreateRegistryAccount {
         return new CreateRegistryAccount(
             client: $container->get(KubernetesClient::class . ':create_account'),
-            registryImageName: $container->get('app.kubernetes.oci_registry.image'),
-            tlsSecretName: $container->get('app.kubernetes.oci_registry.tls_secret_name'),
-            registryUrl: $container->get('app.kubernetes.oci_registry.url'),
-            clusterIssuer: $container->get('app.kubernetes.cluster_issuer'),
+            registryImageName: $container->get('teknoo.space.kubernetes.oci_registry.image'),
+            tlsSecretName: $container->get('teknoo.space.kubernetes.oci_registry.tls_secret_name'),
+            registryUrl: $container->get('teknoo.space.kubernetes.oci_registry.url'),
+            clusterIssuer: $container->get('teknoo.space.kubernetes.cluster_issuer'),
             datesService: $container->get(DatesService::class),
             prefereRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
             ingressClass: $container->get('teknoo.east.paas.kubernetes.ingress.default_ingress_class'),
-            spaceRegistryUrl: $container->get('app.kubernetes.oci_space_global_registry.url'),
-            spaceRegistryUsername: $container->get('app.kubernetes.oci_space_global_registry.username'),
-            spaceRegistryPwd: $container->get('app.kubernetes.oci_space_global_registry.pwd'),
+            spaceRegistryUrl: $container->get('teknoo.space.kubernetes.oci_space_global_registry.url'),
+            spaceRegistryUsername: $container->get('teknoo.space.kubernetes.oci_space_global_registry.username'),
+            spaceRegistryPwd: $container->get('teknoo.space.kubernetes.oci_space_global_registry.pwd'),
         );
     },
 
@@ -207,10 +207,10 @@ return [
 
     PrepareProject::class => create()
         ->constructor(
-            get('app.kubernetes.cluster.default_name'),
-            get('app.kubernetes.cluster.default_type'),
-            get('app.kubernetes.master'),
-            get('app.kubernetes.cluster.default_env'),
+            get('teknoo.space.kubernetes.cluster.default_name'),
+            get('teknoo.space.kubernetes.cluster.default_type'),
+            get('teknoo.space.kubernetes.master'),
+            get('teknoo.space.kubernetes.cluster.default_env'),
         ),
 
     SetRedirectClientAtEnd::class => create()
@@ -300,8 +300,8 @@ return [
 
     UpdateProjectCredentialsFromAccount::class => create()
         ->constructor(
-            get('app.kubernetes.cluster.default_type'),
-            get('app.kubernetes.master'),
+            get('teknoo.space.kubernetes.cluster.default_type'),
+            get('teknoo.space.kubernetes.master'),
         ),
 
     JobAddExtra::class => create()
@@ -350,9 +350,9 @@ return [
         );
 
         return new DashboardFrame(
-            dashboardUrl: $container->get('app.kubernetes.dashboard'),
+            dashboardUrl: $container->get('teknoo.space.kubernetes.dashboard'),
             httpMethodsClient: $httpMethodsClient,
-            clusterToken: $container->get('app.kubernetes.create_account.token'),
+            clusterToken: $container->get('teknoo.space.kubernetes.create_account.token'),
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
         );
     },

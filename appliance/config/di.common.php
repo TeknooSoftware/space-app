@@ -54,7 +54,7 @@ return [
     HostnameRedirectionMiddleware::class => static function (
         ContainerInterface $container
     ): HostnameRedirectionMiddleware {
-        return new HostnameRedirectionMiddleware($container->get('app.hostname'));
+        return new HostnameRedirectionMiddleware($container->get('teknoo.space.hostname'));
     },
 
     RecipeInterface::class => decorate(function ($previous, ContainerInterface $container): mixed {
@@ -82,14 +82,14 @@ return [
     KubernetesClient::class . ':create_account' => static function (ContainerInterface $container): KubernetesClient {
         $factory = $container->get(ClientFactoryInterface::class);
 
-        $caCertificate = base64_decode($container->get('app.kubernetes.create_account.ca_cert'));
+        $caCertificate = base64_decode($container->get('teknoo.space.kubernetes.create_account.ca_cert'));
         $credentials = new ClusterCredentials(
-            token: $container->get('app.kubernetes.create_account.token'),
+            token: $container->get('teknoo.space.kubernetes.create_account.token'),
             caCertificate: $caCertificate,
         );
 
         return $factory(
-            $container->get('app.kubernetes.master'),
+            $container->get('teknoo.space.kubernetes.master'),
             $credentials,
             $container->get(RepositoryRegistry::class)
         );
