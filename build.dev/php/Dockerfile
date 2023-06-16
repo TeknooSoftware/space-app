@@ -21,7 +21,7 @@ RUN apt-get clean ; \
         locales \
     ; \
     locale-gen ; \
-    add-apt-repository -y ppa:ondrej/php ; \
+    LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php ; \
     wget -O - https://packagecloud.io/gpg.key | apt-key add - ; \
     wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - ; \
     echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list  ; \
@@ -50,9 +50,9 @@ RUN apt-get clean ; \
             php8.2-amqp \
             blackfire-agent \
     ; \
+    locale-gen ; \
     mkdir -p /run/php/ ; \
-    mkdir -p /var/log/blackfire/ ; \
-    chown -R blackfire:blackfire /var/log/blackfire/
+    mkdir -p /var/log/blackfire/
 
 ADD 99-space.ini /etc/php/8.2/fpm/conf.d/
 ADD 99-space.ini /etc/php/8.2/cli/conf.d/
