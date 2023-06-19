@@ -57,7 +57,7 @@ return [
 
             public function getIterator(): Traversable {
                 foreach ($this->hooksNames as $name => $class) {
-                    $key = "'teknoo.east.paas.{$name}.path'";
+                    $key = "teknoo.east.paas.{$name}.path";
                     if (
                         $this->container->has($key)
                         && !empty($this->container->get($key))

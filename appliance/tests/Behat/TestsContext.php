@@ -113,6 +113,7 @@ use function hash;
 use function in_array;
 use function is_array;
 use function is_iterable;
+use function iterator_to_array;
 use function key;
 use function mb_strtolower;
 use function method_exists;
@@ -169,6 +170,8 @@ class TestsContext implements Context
 
     private array $manifests = [];
 
+    private ?HooksCollectionInterface $hookCollection = null;
+
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -213,6 +216,7 @@ class TestsContext implements Context
         $this->projectPrefix = null;
         Query::$testsContext = $this;
         Query::$testsObjecttManager = null;
+        $this->hookCollection = null;
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->timeoutService->disable();
     }
@@ -2338,5 +2342,67 @@ class TestsContext implements Context
             'teknoo.east.paas.img_builder.build.platforms',
             'space',
         );
+    }
+
+    /**
+     * @Given without any hooks path defined
+     */
+    public function withoutAnyHooksPathDefined()
+    {
+        $diCi = $this->sfContainer->get(DiContainer::class);
+        $diCi->set(
+            'teknoo.east.paas.composer.path',
+            null
+        );
+        $diCi->set(
+            'teknoo.east.paas.npm.path',
+            null
+        );
+        $diCi->set(
+            'teknoo.east.paas.pip.path',
+            null
+        );
+        $diCi->set(
+            'teknoo.east.paas.make.path',
+            null
+        );
+    }
+
+    /**
+     * @Given a composer path set in the DI
+     */
+    public function aComposerPathSetInTheDi()
+    {
+        $diCi = $this->sfContainer->get(DiContainer::class);
+        $diCi->set(
+            'teknoo.east.paas.composer.path',
+            'composer'
+        );
+    }
+
+    /**
+     * @When the hook library is generated
+     */
+    public function theHookLibraryIsGenerated()
+    {
+        $this->hookCollection = $this->sfContainer->get(HooksCollectionInterface::class);
+    }
+
+    /**
+     * @Then it obtains non empty hooks library with :name key.
+     */
+    public function itObtainsNonEmptyHooksLibraryWithKey(string $name)
+    {
+        $hooks = iterator_to_array($this->hookCollection);
+        Assert::assertArrayHasKey($name, $hooks);
+    }
+
+    /**
+     * @Then it obtains empty hooks library
+     */
+    public function itObtainsEmptyHooksLibrary()
+    {
+        $hooks = iterator_to_array($this->hookCollection);
+        Assert::assertEmpty($hooks);
     }
 }
