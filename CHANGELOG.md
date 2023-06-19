@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta5] - 2023-06-19
+### Beta1 Release
+- Fix bug with supports of new hooks.
+
 ## [1.0.0-beta4] - 2023-06-14
 ### Beta1 Release
 - Update Teknoo libs
