@@ -1,0 +1,15 @@
+doctrine_mongodb:
+    document_managers:
+        default:
+            auto_mapping: true
+            mappings:
+                 TeknooEastPaas:
+                     type: 'xml'
+                     dir: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Doctrine/config/universal'
+                     is_bundle: false
+                     prefix: 'Teknoo\East\Paas\Object'
+                 TeknooEastPaasInfrastructuresDoctrine:
+                     type: 'xml'
+                     dir: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Doctrine/config/odm'
+                     is_bundle: false
+                     prefix: 'Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM'

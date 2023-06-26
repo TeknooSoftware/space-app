@@ -1,0 +1,7 @@
+framework:
+    messenger:
+        routing:
+            Teknoo\Space\Object\DTO\NewJob: 'new_job'
+            Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\MessageJob: 'execute_job'
+            Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\HistorySent: 'history_sent'
+            Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\JobDone: 'job_done'
