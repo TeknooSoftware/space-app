@@ -654,6 +654,21 @@
     "teknoo/east-paas": {
         "version": "dev-master"
     },
+    "teknoo/east-paas-symfony": {
+        "version": "1.8",
+        "recipe": {
+            "repo": "https://github.com/TeknooSoftware/symfony-recipes",
+            "branch": "master",
+            "version": "1.8",
+            "ref": "3723ag63ef45554134461235865644d727e8a6385e89"
+        },
+        "files": [
+            "config/packages/east_paas_doctrine_mongodb.yaml",
+            "config/packages/east_paas_di.yaml",
+            "config/packages/east_paas_messenger.yaml",
+            "config/routes/common.yaml"
+        ]
+    },
     "teknoo/immutable": {
         "version": "1.0.0"
     },
