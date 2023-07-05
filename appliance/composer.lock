@@ -11020,16 +11020,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "6.1.1",
+            "version": "6.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "57c52f9ce8efd916476d69218367b69cecf2bc3a"
+                "reference": "091fa60dd7355a9c977d5946a451da8840a06f59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/57c52f9ce8efd916476d69218367b69cecf2bc3a",
-                "reference": "57c52f9ce8efd916476d69218367b69cecf2bc3a",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/091fa60dd7355a9c977d5946a451da8840a06f59",
+                "reference": "091fa60dd7355a9c977d5946a451da8840a06f59",
                 "shasum": ""
             },
             "require": {
@@ -11041,7 +11041,7 @@
                 "doctrine/orm": "^2.15.2",
                 "icanhazstring/composer-unused": "^0.8.9",
                 "nikic/php-parser": "^4.15.5",
-                "phpstan/phpstan": "^1.10.16",
+                "phpstan/phpstan": "^1.10.23",
                 "phpunit/phpunit": "^10.2.1",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
@@ -11098,7 +11098,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-06-06T07:03:00+00:00"
+            "time": "2023-07-04T19:49:00+00:00"
         },
         {
             "name": "twig/extra-bundle",
@@ -12220,16 +12220,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.22",
+            "version": "1.10.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "97d694dfd4ceb57bcce4e3b38548f13ea62e4287"
+                "reference": "65ab678d1248a8bc6fde456f0d7ff3562a61a4cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/97d694dfd4ceb57bcce4e3b38548f13ea62e4287",
-                "reference": "97d694dfd4ceb57bcce4e3b38548f13ea62e4287",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/65ab678d1248a8bc6fde456f0d7ff3562a61a4cd",
+                "reference": "65ab678d1248a8bc6fde456f0d7ff3562a61a4cd",
                 "shasum": ""
             },
             "require": {
@@ -12278,7 +12278,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-06-30T20:04:11+00:00"
+            "time": "2023-07-04T13:32:44+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
