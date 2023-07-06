@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f5d3a46705f4501efb954ccd78cf751",
+    "content-hash": "e4800e7ef101a56312cb4dc189b73059",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10532,16 +10532,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "36802e86de76966a3955de121f4f3a45d815be5e"
+                "reference": "d77b1f8cfe65554becc51c4d8cf15fa1b16af4ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/36802e86de76966a3955de121f4f3a45d815be5e",
-                "reference": "36802e86de76966a3955de121f4f3a45d815be5e",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/d77b1f8cfe65554becc51c4d8cf15fa1b16af4ee",
+                "reference": "d77b1f8cfe65554becc51c4d8cf15fa1b16af4ee",
                 "shasum": ""
             },
             "require": {
@@ -10555,7 +10555,7 @@
                 "teknoo/east-foundation": "^6.2.11",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/recipe": "^4.2.8",
-                "teknoo/states": "^6.1.1"
+                "teknoo/states": "^6.1.2"
             },
             "require-dev": {
                 "behat/behat": "^3.13",
@@ -10570,8 +10570,8 @@
                 "nikic/php-parser": "^4.15.5",
                 "php-http/discovery": "^1.18",
                 "php-http/mock-client": "^1.5.1",
-                "phpstan/phpstan": "^1.10.16",
-                "phpunit/phpunit": "^10.2.1",
+                "phpstan/phpstan": "^1.10.24",
+                "phpunit/phpunit": "^10.2.3",
                 "psr/http-client": "^1.0.2",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
@@ -10667,20 +10667,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-06-14T06:53:57+00:00"
+            "time": "2023-07-06T14:00:32+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "1.8.0",
+            "version": "1.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "0c2dc32cabbf8a32312e27c7be70f3273cf8f65f"
+                "reference": "873870375c25ed37120fa672722740bbcdd7c967"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/0c2dc32cabbf8a32312e27c7be70f3273cf8f65f",
-                "reference": "0c2dc32cabbf8a32312e27c7be70f3273cf8f65f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/873870375c25ed37120fa672722740bbcdd7c967",
+                "reference": "873870375c25ed37120fa672722740bbcdd7c967",
                 "shasum": ""
             },
             "require": {
@@ -10718,11 +10718,11 @@
                 "teknoo/bridge-phpdi-symfony": "^5.2.6",
                 "teknoo/east-common-symfony": "^1.9.5",
                 "teknoo/east-foundation-symfony": "^6.2.11",
-                "teknoo/east-paas": "^1.8",
+                "teknoo/east-paas": "^1.8.1",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/kubernetes-client": "^1.4.1",
                 "teknoo/recipe": "^4.2.8",
-                "teknoo/states": "^6.1.1"
+                "teknoo/states": "^6.1.2"
             },
             "require-dev": {
                 "roave/security-advisories": "dev-latest"
@@ -10780,7 +10780,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-06-25T17:40:57+00:00"
+            "time": "2023-07-06T14:03:04+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -11692,16 +11692,16 @@
         },
         {
             "name": "icanhazstring/composer-unused",
-            "version": "0.8.9",
+            "version": "0.8.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer-unused/composer-unused.git",
-                "reference": "8d4046ed0b8ce9916d06f8a9a6e1fb2445204096"
+                "reference": "fd2624f49de2d8925355cfb8739e2b2a57017d10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer-unused/composer-unused/zipball/8d4046ed0b8ce9916d06f8a9a6e1fb2445204096",
-                "reference": "8d4046ed0b8ce9916d06f8a9a6e1fb2445204096",
+                "url": "https://api.github.com/repos/composer-unused/composer-unused/zipball/fd2624f49de2d8925355cfb8739e2b2a57017d10",
+                "reference": "fd2624f49de2d8925355cfb8739e2b2a57017d10",
                 "shasum": ""
             },
             "require": {
@@ -11785,7 +11785,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-05-29T05:28:09+00:00"
+            "time": "2023-07-06T05:41:37+00:00"
         },
         {
             "name": "jetbrains/phpstorm-stubs",
@@ -12220,16 +12220,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.24",
+            "version": "1.10.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "360ecc90569e9a60c2954ee209ec04fa0d958e14"
+                "reference": "578f4e70d117f9a90699324c555922800ac38d8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/360ecc90569e9a60c2954ee209ec04fa0d958e14",
-                "reference": "360ecc90569e9a60c2954ee209ec04fa0d958e14",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/578f4e70d117f9a90699324c555922800ac38d8c",
+                "reference": "578f4e70d117f9a90699324c555922800ac38d8c",
                 "shasum": ""
             },
             "require": {
@@ -12278,7 +12278,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-05T12:32:13+00:00"
+            "time": "2023-07-06T12:11:37+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -12983,12 +12983,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "885786b30f50e83a88941df2062d68de623599fd"
+                "reference": "6ea60363203786a5dd5617c28e933280bb61f78b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/885786b30f50e83a88941df2062d68de623599fd",
-                "reference": "885786b30f50e83a88941df2062d68de623599fd",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6ea60363203786a5dd5617c28e933280bb61f78b",
+                "reference": "6ea60363203786a5dd5617c28e933280bb61f78b",
                 "shasum": ""
             },
             "conflict": {
@@ -13286,6 +13286,7 @@
                 "opencart/opencart": "<=3.0.3.7",
                 "openid/php-openid": "<2.3",
                 "openmage/magento-lts": "<19.4.22|>=20,<20.0.19",
+                "opensource-workshop/connect-cms": "<1.7.2|>=2,<2.3.2",
                 "orchid/platform": ">=9,<9.4.4",
                 "oro/commerce": ">=4.1,<5.0.6",
                 "oro/crm": ">=1.7,<1.7.4|>=3.1,<4.1.17|>=4.2,<4.2.7",
@@ -13591,7 +13592,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-06-30T21:04:19+00:00"
+            "time": "2023-07-05T23:04:23+00:00"
         },
         {
             "name": "roave/signature",
