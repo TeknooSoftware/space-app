@@ -1,7 +1,7 @@
 # Teknoo Software - Space - Change Log
 
 ## [1.0.0-beta7] - 2023-07-13
-### Beta6 Release
+### Beta Release
 - Symfony 6.3.1
 - Switch to PaaS Symfony metapackage
 - Support PHP-DI 7.0+
@@ -10,33 +10,33 @@
 - Fix missing call to space.js
 
 ## [1.0.0-beta6] - 2023-06-26
-### Beta6 Release
+### Beta Release
 - Symfony 6.3.1
 - Switch to PaaS Symfony metapackage
 
 ## [1.0.0-beta5] - 2023-06-19
-### Beta5 Release
+### Beta Release
 - Fix bug with supports of new hooks.
 
 ## [1.0.0-beta4] - 2023-06-14
-### Beta4 Release
+### Beta Release
 - Update Teknoo libs
 - Update to PaaS lib 1.8
 - Support NPM, PIP and Make
 - Replace in the container `app.` prefix to `teknoo.space.`
 
 ## [1.0.0-beta3] - 2023-06-07
-### Beta3 Release
+### Beta3= Release
 - Update Teknoo libs
 - Require Symfony 6.3 or newer
 
 ## [1.0.0-beta2] - 2023-05-22
-### Beta2 Release
+### Beta2= Release
 - Support Statefulsets
 - Stateful projects use now a statefulsets instead of a deployment
 
 ## [1.0.0-beta1] - 2023-05-16
-### Beta1 Release
+### Beta1= Release
 * First public release, imported from private alpha release
 * built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` libraries
   and Symfony components.
