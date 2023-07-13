@@ -155,9 +155,6 @@
     "php-di/php-di": {
         "version": "6.0.5"
     },
-    "php-di/phpdoc-reader": {
-        "version": "2.1.0"
-    },
     "php-http/client-common": {
         "version": "2.4.0"
     },
