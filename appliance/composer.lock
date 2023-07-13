@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00375b5ded3e33c7a878118c5552123e",
+    "content-hash": "4528603e3a3ac6f2b8ced531844e2d63",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10176,12 +10176,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "76c7a3909a71a648f4715a542946d941497b3d48"
+                "reference": "a83e2126b9a1b94af7854accbdbf15d6b8c74dee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/76c7a3909a71a648f4715a542946d941497b3d48",
-                "reference": "76c7a3909a71a648f4715a542946d941497b3d48",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/a83e2126b9a1b94af7854accbdbf15d6b8c74dee",
+                "reference": "a83e2126b9a1b94af7854accbdbf15d6b8c74dee",
                 "shasum": ""
             },
             "require": {
@@ -10191,8 +10191,8 @@
                 "php": "^8.1",
                 "php-di/php-di": "^7.0.3",
                 "psr/http-client": "^1.0.2",
-                "teknoo/east-common": "^2.0.0-beta1",
-                "teknoo/east-foundation": "^7.0.0-beta1",
+                "teknoo/east-common": "^2.0.0",
+                "teknoo/east-foundation": "^7.0.0",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/recipe": "^4.2.8",
                 "teknoo/states": "^6.1.2"
@@ -10239,7 +10239,7 @@
                 "symfony/validator": "^6.3",
                 "symfony/var-exporter": "^6.3",
                 "symfony/yaml": "^6.3",
-                "teknoo/bridge-phpdi-symfony": "^6.0.0-beta1",
+                "teknoo/bridge-phpdi-symfony": "^6.0.0",
                 "teknoo/kubernetes-client": "^1.4.1"
             },
             "type": "library",
@@ -10307,7 +10307,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-07-13T07:03:32+00:00"
+            "time": "2023-07-13T07:04:29+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
