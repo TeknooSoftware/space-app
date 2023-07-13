@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:22.10
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
