@@ -1,5 +1,14 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta7] - 2023-07-13
+### Beta6 Release
+- Symfony 6.3.1
+- Switch to PaaS Symfony metapackage
+- Support PHP-DI 7.0+
+- Support Laminas Diactoros 3.0+
+- Support Python, PIP, Node, NPM and Make
+- Fix missing call to space.js
+
 ## [1.0.0-beta6] - 2023-06-26
 ### Beta6 Release
 - Symfony 6.3.1
