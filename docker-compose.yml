@@ -65,7 +65,7 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         environment:
-            - APP_ENV=prod
+            - APP_ENV=dev
             - MAILER_FROM=
             - MAILER_HOST=127.0.0.1
             - MAILER_PASSWORD=
