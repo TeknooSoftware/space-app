@@ -17,3 +17,9 @@ services:
             - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
             - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
             - SPACE_OCI_REGISTRY_URL=.ToChange!
+    blackfire:
+        environment:
+          BLACKFIRE_SERVER_ID: ToChange!
+          BLACKFIRE_SERVER_TOKEN: ToChange!
+          BLACKFIRE_CLIENT_ID: ToChange!
+          BLACKFIRE_CLIENT_TOKEN: ToChange!

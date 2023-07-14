@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta8] - 2023-07-14
+### Beta Release
+- Restore PHP-DI Compilation
+- Use East PaaS 2.0.1
+
 ## [1.0.0-beta7] - 2023-07-13
 ### Beta Release
 - Symfony 6.3.1

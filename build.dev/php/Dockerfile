@@ -7,7 +7,8 @@ ENV LANGUAGE en_US:fr
 ENV LC_ALL en_US.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get clean ; \
+RUN set -eux ; \
+    apt-get clean ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
@@ -23,10 +24,11 @@ RUN apt-get clean ; \
     locale-gen ; \
     LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php ; \
     wget -O - https://packagecloud.io/gpg.key | apt-key add - ; \
-    wget -q -O - https://packages.blackfire.io/gpg.key | apt-key add - ; \
-    echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list  ; \
+    wget -q -O - https://packages.blackfire.io/gpg.key | sudo dd of=/usr/share/keyrings/blackfire-archive-keyring.asc ; \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/blackfire-archive-keyring.asc] http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sources.list.d/blackfire.list ; \
     apt-get update ; \
     apt-get install -y  \
+            musl-dev \
             tzdata  \
             wget \
             nano  \
@@ -41,16 +43,17 @@ RUN apt-get clean ; \
             php8.2-phpdbg \
             php8.2-sqlite3  \
             php8.2-xdebug \
-            git  \
             php8.2-xml \
             php8.2-mbstring \
             php8.2-bcmath \
             php8.2-mongodb \
             php8.2-soap \
             php8.2-amqp \
-            blackfire-agent \
+            blackfire-php \
     ; \
+    ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
     locale-gen ; \
+    printf "extension=blackfire.so\nblackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /etc/php/8.2/fpm/conf.d/90-blackfire.ini ; \
     mkdir -p /run/php/ ; \
     mkdir -p /var/log/blackfire/
 
@@ -58,7 +61,8 @@ ADD 99-space.ini /etc/php/8.2/fpm/conf.d/
 ADD 99-space.ini /etc/php/8.2/cli/conf.d/
 ADD space.pool.conf /etc/php/8.2/fpm/pool.d/
 
-RUN usermod -u 1000 www-data ; \
+RUN set -eux ; \
+    usermod -u 1000 www-data ; \
     mkdir -p /var/www ; \
     chown www-data:www-data /var/www ; \
     echo '#!/bin/bash' > /opt/startup.sh ; \
