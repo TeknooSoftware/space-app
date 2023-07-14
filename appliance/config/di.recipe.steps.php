@@ -29,7 +29,6 @@ use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Writer\PngWriter;
 use Http\Client\Common\HttpMethodsClient;
-use Http\Discovery\Psr17FactoryDiscovery;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -334,13 +333,15 @@ return [
         if ($container->has(RequestFactoryInterface::class)) {
             $httpRequestFactory = $container->get(RequestFactoryInterface::class);
         } else {
-            $httpRequestFactory = Psr17FactoryDiscovery::findRequestFactory();
+            //No simplify FQN because bug in PHPDI Compilation
+            $httpRequestFactory = \Http\Discovery\Psr17FactoryDiscovery::findRequestFactory();
         }
 
         if ($container->has(StreamFactoryInterface::class)) {
             $httpStreamFactory = $container->get(StreamFactoryInterface::class);
         } else {
-            $httpStreamFactory = Psr17FactoryDiscovery::findStreamFactory();
+            //No simplify FQN because bug in PHPDI Compilation
+            $httpStreamFactory = \Http\Discovery\Psr17FactoryDiscovery::findStreamFactory();
         }
 
         $httpMethodsClient = new HttpMethodsClient(
@@ -353,7 +354,8 @@ return [
             dashboardUrl: $container->get('teknoo.space.kubernetes.dashboard'),
             httpMethodsClient: $httpMethodsClient,
             clusterToken: $container->get('teknoo.space.kubernetes.create_account.token'),
-            responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
+            //No simplify FQN because bug in PHPDI Compilation
+            responseFactory: \Http\Discovery\Psr17FactoryDiscovery::findResponseFactory(),
         );
     },
 

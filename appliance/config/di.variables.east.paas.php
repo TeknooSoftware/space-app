@@ -29,36 +29,35 @@ use ArrayObject;
 
 use function DI\env;
 use function DI\get;
+use function DI\factory;
 use function dirname;
 use function is_array;
 use function is_file;
 use function json_decode;
 
-$loadFromEnv = static function (mixed $default, string $jsonKey, string $fileKey): callable
+$loadFromEnv = static function (mixed $default, string $jsonKey, string $fileKey): ArrayObject
 {
-    return static function () use ($default, $jsonKey, $fileKey): mixed {
-        $value = $default;
+    $value = $default;
 
-        if (!empty($_ENV[$jsonKey])) {
-            $value = json_decode(
-                json: $_ENV[$jsonKey],
-                associative: true,
-            );
-        }
+    if (!empty($_ENV[$jsonKey])) {
+        $value = json_decode(
+            json: $_ENV[$jsonKey],
+            associative: true,
+        );
+    }
 
-        if (
-            !empty($_ENV[$fileKey])
-            && is_file($file = $_ENV[$fileKey])
-        ) {
-            $value = require $file;
-        }
+    if (
+        !empty($_ENV[$fileKey])
+        && is_file($file = $_ENV[$fileKey])
+    ) {
+        $value = require $file;
+    }
 
-        if (is_array($value)) {
-            $value = new ArrayObject($value);
-        }
+    if (is_array($value)) {
+        $value = new ArrayObject($value);
+    }
 
-        return $value;
-    };
+    return $value;
 };
 
 return [
@@ -95,47 +94,103 @@ return [
         'SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS',
         'public'
     ),
-    'teknoo.east.paas.kubernetes.ingress.default_annotations' => $loadFromEnv(
-        [
-            'cert-manager.io/cluster-issuer' => 'lets-encrypt',
-        ],
-        'SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON',
-        'SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE',
-    ),
+    'teknoo.east.paas.kubernetes.ingress.default_annotations' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [
+                'cert-manager.io/cluster-issuer' => 'lets-encrypt',
+            ],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE',
+        ),
 
-    'teknoo.east.paas.compilation.containers_images_library' => $loadFromEnv(
-        [],
-        'SPACE_PAAS_IMAGE_LIBRARY_JSON',
-        'SPACE_PAAS_IMAGE_LIBRARY_FILE',
-    ),
+    'teknoo.east.paas.compilation.containers_images_library' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PAAS_IMAGE_LIBRARY_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PAAS_IMAGE_LIBRARY_FILE',
+        ),
 
-    'teknoo.east.paas.compilation.global_variables' => $loadFromEnv(
-        [],
-        'SPACE_PAAS_GLOBAL_VARIABLES_JSON',
-        'SPACE_PAAS_GLOBAL_VARIABLES_FILE',
-    ),
+    'teknoo.east.paas.compilation.global_variables' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PAAS_GLOBAL_VARIABLES_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PAAS_GLOBAL_VARIABLES_FILE',
+        ),
 
-    'teknoo.east.paas.compilation.pods_extends.library' => $loadFromEnv(
-        [],
-        'SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON',
-        'SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE',
-    ),
+    'teknoo.east.paas.compilation.pods_extends.library' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE',
+        ),
 
-    'teknoo.east.paas.compilation.containers_extends.library' => $loadFromEnv(
-        [],
-        'SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON',
-        'SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE',
-    ),
+    'teknoo.east.paas.compilation.containers_extends.library' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE',
+        ),
 
-    'teknoo.east.paas.compilation.services_extends.library' => $loadFromEnv(
-        [],
-        'SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON',
-        'SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE',
-    ),
+    'teknoo.east.paas.compilation.services_extends.library' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE',
+        ),
 
-    'teknoo.east.paas.compilation.ingresses_extends.library' => $loadFromEnv(
-        [],
-        'SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON',
-        'SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE',
-    ),
+    'teknoo.east.paas.compilation.ingresses_extends.library' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE',
+        ),
 ];

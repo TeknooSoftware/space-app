@@ -4,13 +4,15 @@ MAINTAINER Richard Déloge <richard@teknoo.software>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update ; \
+RUN set -eux ; \
+    apt-get update ; \
     apt-get dist-upgrade -y ; \
     apt-get install -y tzdata apache2 libapache2-mod-security2
 
 ADD web.conf /etc/apache2/sites-available/web.conf
 
-RUN a2dissite 000-default ; \
+RUN set -eux ; \
+    a2dissite 000-default ; \
     a2ensite web ; \
     a2enmod alias ; \
     a2enmod headers ; \

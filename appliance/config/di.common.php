@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace App\Config;
 
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Diactoros\MessageFactory;
@@ -74,10 +76,20 @@ return [
     }),
 
     ListObjectsAccessControlInterface::class => get(ListObjectsAccessControl::class),
-    ListObjectsAccessControl::class => create(),
+    ListObjectsAccessControl::class => static function (ContainerInterface $container): ListObjectsAccessControl {
+        return new ListObjectsAccessControl(
+            $container->get(AuthorizationCheckerInterface::class),
+            $container->get(TokenStorageInterface::class),
+        );
+    },
 
     ObjectAccessControlInterface::class => get(ObjectAccessControl::class),
-    ObjectAccessControl::class => create(),
+    ObjectAccessControl::class => static function (ContainerInterface $container): ObjectAccessControl {
+        return new ObjectAccessControl(
+            $container->get(AuthorizationCheckerInterface::class),
+            $container->get(TokenStorageInterface::class),
+        );
+    },
 
     KubernetesClient::class . ':create_account' => static function (ContainerInterface $container): KubernetesClient {
         $factory = $container->get(ClientFactoryInterface::class);
