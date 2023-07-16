@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Foundation\Client\ClientInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Recipe\Step\Project\PrepareCriteria;
@@ -59,8 +60,8 @@ class PrepareCriteriaTest extends TestCase
         self::assertInstanceOf(
             PrepareCriteria::class,
             ($this->prepareCriteria)(
-                $this->createMock(Account::class),
                 $this->createMock(ManagerInterface::class),
+                $this->createMock(Account::class),
                 ['foo' => 'bar'],
             )
         );
