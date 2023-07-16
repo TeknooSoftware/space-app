@@ -8,7 +8,7 @@
 
 {% block instanceTitle %}{{ objectInstance }}{% endblock %}
 
-{% block listLink path('space_project_list') %}
+{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">

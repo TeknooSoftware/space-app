@@ -23,13 +23,9 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\Project;
+namespace Teknoo\Space\Recipe\Step\Project\Exception;
 
-use Teknoo\East\Common\Query\Expr\ObjectReference;
-use Teknoo\East\Foundation\Client\ClientInterface;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Recipe\Step\Project\Exception\RuntimeException;
+use RuntimeException as BaseException;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,29 +33,6 @@ use Teknoo\Space\Recipe\Step\Project\Exception\RuntimeException;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class PrepareCriteria
+class RuntimeException extends BaseException
 {
-    /**
-     * @param array<string, mixed> $criteria
-     */
-    public function __invoke(
-        ManagerInterface $manager,
-        ?Account $account = null,
-        array $criteria = [],
-    ): PrepareCriteria {
-        if (!$account) {
-            throw new RuntimeException(
-                message: 'teknoo.space.error.space_account.account.fetching',
-                code: 403
-            );
-        }
-
-        $criteria['account'] = new ObjectReference($account);
-
-        $manager->updateWorkPlan([
-            'criteria' => $criteria,
-        ]);
-
-        return $this;
-    }
 }
