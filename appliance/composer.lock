@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70ed5378dcd2e5fb0dd9a8c79959d08d",
+    "content-hash": "9a7a09e5b31a37c399bed34191b8fd8e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10176,12 +10176,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "f94fbdd7adea955e306464f7a178b6018ee33b8a"
+                "reference": "0345841cc0197708d624b658461ba97af48fd3f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/f94fbdd7adea955e306464f7a178b6018ee33b8a",
-                "reference": "f94fbdd7adea955e306464f7a178b6018ee33b8a",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/0345841cc0197708d624b658461ba97af48fd3f6",
+                "reference": "0345841cc0197708d624b658461ba97af48fd3f6",
                 "shasum": ""
             },
             "require": {
@@ -10307,20 +10307,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-07-18T07:02:46+00:00"
+            "time": "2023-07-18T20:19:05+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "7b05bfa20a9b5d4b390204f36c17e2fe58b38234"
+                "reference": "49b6e12b0d8319c2c89fafd6933a85ba7c6b8094"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/7b05bfa20a9b5d4b390204f36c17e2fe58b38234",
-                "reference": "7b05bfa20a9b5d4b390204f36c17e2fe58b38234",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/49b6e12b0d8319c2c89fafd6933a85ba7c6b8094",
+                "reference": "49b6e12b0d8319c2c89fafd6933a85ba7c6b8094",
                 "shasum": ""
             },
             "require": {
@@ -10358,7 +10358,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.0",
                 "teknoo/east-common-symfony": "^2.0.0",
                 "teknoo/east-foundation-symfony": "^7.0.0",
-                "teknoo/east-paas": "^2.0.1",
+                "teknoo/east-paas": "^2.0.2",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/kubernetes-client": "^1.4.2",
                 "teknoo/recipe": "^4.2.8",
@@ -10420,7 +10420,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-07-14T12:22:03+00:00"
+            "time": "2023-07-18T09:07:52+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -12690,12 +12690,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "3596a07e255491ec8092b554f559a2670267e058"
+                "reference": "7521cb38a353696d8c0f8eca07527d51096f6730"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/3596a07e255491ec8092b554f559a2670267e058",
-                "reference": "3596a07e255491ec8092b554f559a2670267e058",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7521cb38a353696d8c0f8eca07527d51096f6730",
+                "reference": "7521cb38a353696d8c0f8eca07527d51096f6730",
                 "shasum": ""
             },
             "conflict": {
@@ -13084,6 +13084,7 @@
                 "scheb/two-factor-bundle": ">=0,<3.26|>=4,<4.11",
                 "sensiolabs/connect": "<4.2.3",
                 "serluck/phpwhois": "<=4.2.6",
+                "sfroemken/url_redirect": "<=1.2.1",
                 "sheng/yiicms": "<=1.2",
                 "shopware/core": "<=6.4.20",
                 "shopware/platform": "<=6.4.20",
@@ -13092,6 +13093,7 @@
                 "shopware/storefront": "<=6.4.8.1",
                 "shopxo/shopxo": "<2.2.6",
                 "showdoc/showdoc": "<2.10.4",
+                "silverstripe-australia/advancedreports": ">=1,<=2",
                 "silverstripe/admin": "<=3",
                 "silverstripe/assets": ">=1,<1.11.1",
                 "silverstripe/cms": "<4.11.3",
@@ -13115,6 +13117,7 @@
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
                 "simplito/elliptic-php": "<1.0.6",
                 "sitegeist/fluid-components": "<3.5",
+                "sjbr/sr-freecap": "<=2.5.2",
                 "slim/psr7": "<1.4.1|>=1.5,<1.5.1|>=1.6,<1.6.1",
                 "slim/slim": "<2.6",
                 "smarty/smarty": "<3.1.48|>=4,<4.3.1",
@@ -13320,7 +13323,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-18T00:24:41+00:00"
+            "time": "2023-07-18T20:04:29+00:00"
         },
         {
             "name": "roave/signature",

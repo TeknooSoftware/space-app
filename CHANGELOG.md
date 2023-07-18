@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta10] - 2023-07-18
+### Beta Release
+- Fix venv
+
 ## [1.0.0-beta9] - 2023-07-15
 ### Beta Release
 - Fix issue into list of projects
