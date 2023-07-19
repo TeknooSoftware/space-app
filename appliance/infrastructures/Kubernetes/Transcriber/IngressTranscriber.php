@@ -58,6 +58,7 @@ class IngressTranscriber extends BaseTranscriber
         if (
             isset($specs['spec']['tls'])
             && !empty($specs['metadata']['annotations']['cert-manager.io/cluster-issuer'])
+            && empty($ingress->getMeta()['letsencrypt'])
         ) {
             unset($specs['metadata']['annotations']['cert-manager.io/cluster-issuer']);
         }
