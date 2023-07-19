@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta11] - 2023-07-19
+### Beta Release
+- Use East PaaS 2.0.3
+- Add `letsencrypt' option in ingress's meta to allow lets encrypt generation for yours ingresses
+
 ## [1.0.0-beta10] - 2023-07-18
 ### Beta Release
 - Fix venv

@@ -200,6 +200,10 @@ ingresses:
         host: demo-paas.teknoo.software
         tls:
             secret: "demo-vault" #Configure the orchestrator to fetch value from vault
+        meta:
+            letsencrypt: true
+            annotations:
+                foo2: bar
         service: #default service
             name: demo
             port: 8080

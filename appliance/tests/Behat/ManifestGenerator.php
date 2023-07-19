@@ -866,6 +866,8 @@ EOF;
                     "name": "{$projectPrefix}demo"
                 },
                 "annotations": {
+                    "foo2": "bar",
+                    "cert-manager.io/cluster-issuer": "lets-encrypt",
                     "kubernetes.io/ingress.class": "public"
                 }
             },
