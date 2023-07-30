@@ -115,3 +115,10 @@ services:
         arguments:
             - '@Teknoo\Space\Recipe\Cookbook\DashboardFrame'
             - '@service_container'
+
+    teknoo.space.endpoint.contact:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\Contact'
+            - '@service_container'

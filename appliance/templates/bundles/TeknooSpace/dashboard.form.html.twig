@@ -1,8 +1,8 @@
-{# templates/bundles/TeknooEastPaasBundle/views/form.html.twig #}
+{# templates/bundles/TeknooSpace/views/form.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+{% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
-{% import '@TeknooEastPaas/Functions/url.html.twig' as functions %}
+{% import '@TeknooSpace/Functions/url.html.twig' as functions %}
 
 {% block containerFluidInner %}
     <div class="layout-specing">
@@ -21,7 +21,7 @@
 
         {% block formParentBlock %}
         {% set locale = app.request.get('locale', 'en') %}
-        {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooEastPaas/fields.html.twig'] %}
+        {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
         {% if formActionRoute is defined and formActionRoute is not empty %}
             {% set formAction = path(formActionRoute, formActionRouteParams) %}
         {% endif %}
@@ -56,7 +56,7 @@
                                 </button>
                                 <button type="submit" class="btn btn-primary btn-full-large btn-block mb-2" name="save">
                                     {% block btnSaveLabel %}<i class="uil uil-save"></i>
-                                    {{ 'teknoo.space.action.admin_save'|trans }}{% endblock %}
+                                    {{ 'teknoo.space.action.save'|trans }}{% endblock %}
                                 </button>
                                 {% block addsFormButtonBottom '' %}
                             {% endblock %}

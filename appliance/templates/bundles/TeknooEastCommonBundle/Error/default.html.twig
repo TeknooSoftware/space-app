@@ -1,6 +1,6 @@
 {# templates/bundles/TeknooEastCommonBundle/Error/default.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+{% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
 {% block navbar %}{% endblock %}
 
@@ -36,7 +36,7 @@
       <div class="row">
         <div class="col-md-12 text-center">
           <a hreflang="{{ locale }}" rel="noopener" href="javascript:window.history.back()" class="btn btn-outline-primary mt-4">{{ 'teknoo.space.action.go_back'|trans }}</a>
-          <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-primary mt-4 ml-2">{{ 'teknoo.space.action.go_to_home'|trans }}</a>
+          <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-primary mt-4 ml-2">{{ 'teknoo.space.action.go_to_dashboard'|trans }}</a>
         </div>{# end col #}
       </div>{# end row #}
     </div>{# end container #}

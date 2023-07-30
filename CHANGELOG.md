@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta12] - 2023-07-30
+### Beta Release
+- Clean some code
+- Add mail feature
+  - Add support form contact
+- Improve template structure
+
 ## [1.0.0-beta11] - 2023-07-19
 ### Beta Release
 - Use East PaaS 2.0.3

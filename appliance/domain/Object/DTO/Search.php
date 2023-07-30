@@ -35,5 +35,8 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
  */
 class Search implements ObjectInterface
 {
-    public string $search = '';
+    public function __construct(
+        public string $search = '',
+    ) {
+    }
 }

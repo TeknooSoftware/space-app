@@ -1,4 +1,4 @@
-{# templates/bundles/TeknooEastPaasBundle/views/Admin/fields.html.twig #}
+{# templates/bundles/TeknooSpace/views/Admin/fields.html.twig #}
 {% use "bootstrap_5_layout.html.twig" %}
 
 {% block form_label %}
@@ -206,6 +206,21 @@
             {{ form_row(form.wasSecret) }}
             {{ form_row(form.persisted, {"colClass": "col-2 d-flex flex-column  justify-content-end", 'label_attr':{'class': 'switch-custom'}}) }}
             {{ form_row(form.value, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _support_attachments_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.file, {"colClass": "col-10"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
                     <button type="button" class="btn btn-icon action-remove btn-small">
