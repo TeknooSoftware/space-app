@@ -29,7 +29,6 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 
 use function hash;
 use function random_int;
-use function sha1;
 use function substr;
 use function uniqid;
 

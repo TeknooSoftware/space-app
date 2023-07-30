@@ -1,0 +1,37 @@
+{# templates/bundles/TeknooSpace/Contact/support.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{ 'teknoo.space.title.contact.support'|trans }}{% endblock %}
+{% block listLink %}{{ path('space_dashboard') }}{% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-fast-mail"></i> {{ 'teknoo.space.title.contact'|trans }}{% endblock %}
+{% block instanceTitle %}{{ 'teknoo.space.text.contact.support'|trans }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.fromName, {"largeRow": true}) }}
+        {{ form_row(formView.fromEmail, {"largeRow": true}) }}
+        {{ form_row(formView.subject, {"largeRow": true}) }}
+        {{ form_row(formView.message, {"largeRow": true}) }}
+    </div>
+
+    <div class="row subforms" data-subforms="attachments" data-prototype="{{ form_widget(formView.attachments.vars.prototype)|e('html_attr') }}" data-prototype-name="__name__">
+        <div class="col-md-12">
+            <h3>{{ 'teknoo.space.title.attachments'|trans }}</h3>
+        </div>
+        {% for file in formView.attachments %}
+            {{ form_widget(file, {"largeRow": true}) }}
+        {% endfor %}
+    </div>
+    {% do formView.attachments.setRendered %}
+{% endblock %}
+
+{% block btnSaveLabel %}<i class="uil uil-save"></i>
+    {{ 'teknoo.space.action.send'|trans }}{% endblock %}
+
+{% block addsFormButton %}
+    <button type="button" data-subforms-id="attachments" class="btn btn-outline-secondary btn-full-large btn-block btn-add-subform mb-2">
+        <i class="uil uil-focus-add"></i>
+        {{ 'teknoo.space.action.add_attachment'|trans }}
+    </button>
+{% endblock %}

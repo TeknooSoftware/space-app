@@ -1,4 +1,4 @@
-{# templates/bundles/TeknooEastPaasBundle/dashboard.layout.html.twig #}
+{# templates/bundles/TeknooSpace/dashboard.layout.html.twig #}
 {% block html %}
 <!doctype html>
 <html lang="{{ locale|default('en') }}">
@@ -42,7 +42,7 @@
         <div class="page-wrapper toggled">
             {% block leftMenu %}
             {% if app.user is not empty %}
-            {% include '@TeknooEastPaas/Parts/dashboard.menu.html.twig' %}
+            {% include '@TeknooSpace/Parts/dashboard.menu.html.twig' %}
             {% endif %}
             {% endblock %}{# leftMenu #}
 

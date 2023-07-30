@@ -1,10 +1,10 @@
 {# templates/bundles/TeknooEastPaasBundle/views/AdminUser/list.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.list.html.twig'  %}
+{% extends '@TeknooSpace/dashboard.list.html.twig'  %}
 
 {% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\UserSearchType' %}
 
-{% import '@TeknooEastPaas/Functions/utils.html.twig' as utils %}
+{% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
 
 {% block listTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user'|trans }}{% endblock %}
 {% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.admin_user'|trans }}{% endblock %}

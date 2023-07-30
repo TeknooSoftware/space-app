@@ -51,6 +51,7 @@ use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewProjectEndPointStepsInt
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\RunJobStepsInterface;
 use Teknoo\Recipe\Bowl\RecipeBowl;
 use Teknoo\Recipe\RecipeInterface as OriginalRecipeInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
@@ -80,6 +81,7 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
 use Teknoo\Space\Recipe\Cookbook\AccountEditSettings;
+use Teknoo\Space\Recipe\Cookbook\Contact;
 use Teknoo\Space\Recipe\Cookbook\Dashboard;
 use Teknoo\Space\Recipe\Cookbook\DashboardFrame;
 use Teknoo\Space\Recipe\Cookbook\FormWithoutObject;
@@ -92,35 +94,36 @@ use Teknoo\Space\Recipe\Cookbook\ProjectNew;
 use Teknoo\Space\Recipe\Cookbook\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Cookbook\Subscription;
 use Teknoo\Space\Recipe\Cookbook\UserMySettings;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
-use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
+use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
+use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
+use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobAddExtra;
 use Teknoo\Space\Recipe\Step\Job\PrepareCriteria as JobPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
-use Teknoo\Space\Recipe\Step\ProjectMetadata\InjectToViewMetadata;
-use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareCriteria as ProjectPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
+use Teknoo\Space\Recipe\Step\ProjectMetadata\InjectToViewMetadata;
+use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 
 use function DI\create;
 use function DI\decorate;
 use function DI\get;
+use function DI\value;
 
-return [
+return array(
     Subscription::class => create()
         ->constructor(
             get(OriginalRecipeInterface::class),
@@ -161,42 +164,40 @@ return [
             get('teknoo.east.paas.default_storage_size'),
         ),
 
-    AccountReinstall::class => static function (ContainerInterface $container): AccountReinstall {
-        return new AccountReinstall(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(AccountPrepareRedirection::class),
-            $container->get(SetRedirectClientAtEnd::class),
-            $container->get(LoadHistory::class),
-            $container->get(LoadCredentials::class),
-            $container->get(RemoveCredentials::class),
-            $container->get(SetAccountNamespace::class),
-            $container->get(AccountInstall::class),
-            $container->get(UpdateAccountHistory::class),
-            $container->get(ReinstallAccountErrorHandler::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get('teknoo.east.paas.default_storage_size'),
-        );
-    },
+    AccountReinstall::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(AccountPrepareRedirection::class),
+            get(SetRedirectClientAtEnd::class),
+            get(LoadHistory::class),
+            get(LoadCredentials::class),
+            get(RemoveCredentials::class),
+            get(SetAccountNamespace::class),
+            get(AccountInstall::class),
+            get(UpdateAccountHistory::class),
+            get(ReinstallAccountErrorHandler::class),
+            get(ObjectAccessControlInterface::class),
+            get('teknoo.east.paas.default_storage_size'),
+        ),
 
-    AccountRegistryReinstall::class => static function (ContainerInterface $container): AccountRegistryReinstall {
-        return new AccountRegistryReinstall(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(AccountPrepareRedirection::class),
-            $container->get(SetRedirectClientAtEnd::class),
-            $container->get(LoadHistory::class),
-            $container->get(LoadCredentials::class),
-            $container->get(ReloadNamespace::class),
-            $container->get(CreateStorage::class),
-            $container->get(CreateRegistryAccount::class),
-            $container->get(UpdateCredentials::class),
-            $container->get(UpdateAccountHistory::class),
-            $container->get(ReinstallAccountErrorHandler::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get('teknoo.east.paas.default_storage_size'),
-        );
-    },
+    AccountRegistryReinstall::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(AccountPrepareRedirection::class),
+            get(SetRedirectClientAtEnd::class),
+            get(LoadHistory::class),
+            get(LoadCredentials::class),
+            get(ReloadNamespace::class),
+            get(CreateStorage::class),
+            get(CreateRegistryAccount::class),
+            get(UpdateCredentials::class),
+            get(UpdateAccountHistory::class),
+            get(ReinstallAccountErrorHandler::class),
+            get(ObjectAccessControlInterface::class),
+            get('teknoo.east.paas.default_storage_size'),
+        ),
 
     NewAccountEndPointStepsInterface::class => decorate(
         static function (
@@ -283,163 +284,164 @@ return [
         }
     ),
 
-    JobStart::class => static function (ContainerInterface $container): JobStart {
-        return new JobStart(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get(CreateObject::class),
-            $container->get(PrepareNewJobForm::class),
-            $container->get(LoadPersistedVariablesForJob::class),
-            $container->get(FormHandlingInterface::class),
-            $container->get(FormProcessingInterface::class),
-            $container->get(NewJobNotifierInterface::class),
-            $container->get(CallNewJobInterface::class),
-            $container->get(RedirectClientInterface::class),
-            $container->get(RenderFormInterface::class),
-            $container->get(RenderError::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    JobStart::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(ObjectAccessControlInterface::class),
+            get(CreateObject::class),
+            get(PrepareNewJobForm::class),
+            get(LoadPersistedVariablesForJob::class),
+            get(FormHandlingInterface::class),
+            get(FormProcessingInterface::class),
+            get(NewJobNotifierInterface::class),
+            get(CallNewJobInterface::class),
+            get(RedirectClientInterface::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    JobList::class => static function (ContainerInterface $container): JobList {
-        return new JobList(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(ExtractPage::class),
-            $container->get(ExtractOrder::class),
-            $container->get(JobPrepareCriteria::class),
-            $container->get(LoadListObjects::class),
-            $container->get(RenderList::class),
-            $container->get(RenderError::class),
-            $container->get(SearchFormLoaderInterface::class),
-            $container->get(ListObjectsAccessControlInterface::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    JobList::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(ExtractPage::class),
+            get(ExtractOrder::class),
+            get(JobPrepareCriteria::class),
+            get(LoadListObjects::class),
+            get(RenderList::class),
+            get(RenderError::class),
+            get(SearchFormLoaderInterface::class),
+            get(ListObjectsAccessControlInterface::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    JobRestart::class => static function (ContainerInterface $container): JobRestart {
-        return new JobRestart(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get(CreateObject::class),
-            $container->get(LoadPersistedVariablesForJob::class),
-            $container->get(PrepareNewJobForm::class),
-            $container->get(FormHandlingInterface::class),
-            $container->get(RenderFormInterface::class),
-            $container->get(RenderError::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    JobRestart::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(ObjectAccessControlInterface::class),
+            get(CreateObject::class),
+            get(LoadPersistedVariablesForJob::class),
+            get(PrepareNewJobForm::class),
+            get(FormHandlingInterface::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    JobGet::class => static function (ContainerInterface $container): JobGet {
-        return new JobGet(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(ExtractProject::class),
-            $container->get(LoadProjectMetadata::class),
-            $container->get(InjectToViewMetadata::class),
-            $container->get(Render::class),
-            $container->get(RenderError::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    JobGet::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(ExtractProject::class),
+            get(LoadProjectMetadata::class),
+            get(InjectToViewMetadata::class),
+            get(Render::class),
+            get(RenderError::class),
+            get(ObjectAccessControlInterface::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    UserMySettings::class => static function (ContainerInterface $container): UserMySettings {
-        return new UserMySettings(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(FormHandlingInterface::class),
-            $container->get(FormProcessingInterface::class),
-            $container->get(SaveObject::class),
-            $container->get(RenderFormInterface::class),
-            $container->get(RenderError::class),
-            SpaceUser::class,
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    UserMySettings::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(FormHandlingInterface::class),
+            get(FormProcessingInterface::class),
+            get(SaveObject::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
+            value(SpaceUser::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    AccountEditSettings::class => static function (ContainerInterface $container): AccountEditSettings {
-        return new AccountEditSettings(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(FormHandlingInterface::class),
-            $container->get(FormProcessingInterface::class),
-            $container->get(SaveObject::class),
-            $container->get(RenderFormInterface::class),
-            $container->get(RenderError::class),
-            SpaceAccount::class,
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    AccountEditSettings::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(FormHandlingInterface::class),
+            get(FormProcessingInterface::class),
+            get(SaveObject::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
+            value(SpaceAccount::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    ProjectNew::class  => static function (ContainerInterface $container): ProjectNew {
-        return new ProjectNew(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get(CreateObject::class),
-            $container->get(FormHandlingInterface::class),
-            $container->get(FormProcessingInterface::class),
-            $container->get(SaveObject::class),
-            $container->get(RedirectClientInterface::class),
-            $container->get(RenderFormInterface::class),
-            $container->get(RenderError::class),
-            $container->get(NewProjectEndPointStepsInterface::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    ProjectNew::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(ObjectAccessControlInterface::class),
+            get(CreateObject::class),
+            get(FormHandlingInterface::class),
+            get(FormProcessingInterface::class),
+            get(SaveObject::class),
+            get(RedirectClientInterface::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
+            get(NewProjectEndPointStepsInterface::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    ProjectList::class => static function (ContainerInterface $container): ProjectList {
-        return new ProjectList(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(ExtractPage::class),
-            $container->get(ExtractOrder::class),
-            $container->get(ProjectPrepareCriteria::class),
-            $container->get(LoadListObjects::class),
-            $container->get(RenderList::class),
-            $container->get(RenderError::class),
-            $container->get(SearchFormLoaderInterface::class),
-            $container->get(ListObjectsAccessControlInterface::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-            [],
-        );
-    },
+    ProjectList::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(ExtractPage::class),
+            get(ExtractOrder::class),
+            get(ProjectPrepareCriteria::class),
+            get(LoadListObjects::class),
+            get(RenderList::class),
+            get(RenderError::class),
+            get(SearchFormLoaderInterface::class),
+            get(ListObjectsAccessControlInterface::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+            value([]),
+        ),
 
-    RefreshProjectCredentials::class => static function (ContainerInterface $container): RefreshProjectCredentials {
-        return new RefreshProjectCredentials(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(ObjectAccessControlInterface::class),
-            $container->get(LoadAccountFromProject::class),
-            $container->get(LoadCredentials::class),
-            $container->get(UpdateProjectCredentialsFromAccount::class),
-            $container->get(SaveObject::class),
-            $container->get(SpaceProjectPrepareRedirection::class),
-            $container->get(RedirectClientInterface::class),
-            $container->get(RenderError::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-            [],
-        );
-    },
+    RefreshProjectCredentials::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(ObjectAccessControlInterface::class),
+            get(LoadAccountFromProject::class),
+            get(LoadCredentials::class),
+            get(UpdateProjectCredentialsFromAccount::class),
+            get(SaveObject::class),
+            get(SpaceProjectPrepareRedirection::class),
+            get(RedirectClientInterface::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    Dashboard::class => static function (ContainerInterface $container): Dashboard {
-        return new Dashboard(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(HealthInterface::class),
-            $container->get(DashboardInfoInterface::class),
-            $container->get(Render::class),
-            $container->get(RenderError::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
+    Dashboard::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(HealthInterface::class),
+            get(DashboardInfoInterface::class),
+            get(Render::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
 
-    DashboardFrame::class => static function (ContainerInterface $container): DashboardFrame {
-        return new DashboardFrame(
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadCredentials::class),
-            $container->get(DashboardFrameInterface::class),
-            $container->get(RenderError::class),
-            $container->get('teknoo.east.common.cookbook.default_error_template'),
-        );
-    },
-];
+    DashboardFrame::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadCredentials::class),
+            get(DashboardFrameInterface::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
+
+    Contact::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(CreateObject::class),
+            get(FormHandlingInterface::class),
+            get(FormProcessingInterface::class),
+            get(SendEmailInterface::class),
+            get(RedirectClientInterface::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
+);

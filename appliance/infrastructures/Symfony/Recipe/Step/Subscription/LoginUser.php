@@ -58,7 +58,6 @@ class LoginUser implements LoginUserInterface, RedirectingInterface
         ClientInterface $client
     ): LoginUserInterface {
         $storedPassword = null;
-        $authData = null;
         foreach ($user->getAuthData() as $authData) {
             if ($authData instanceof StoredPassword) {
                 $storedPassword = $authData;
