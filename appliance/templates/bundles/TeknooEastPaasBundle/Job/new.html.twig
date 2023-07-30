@@ -1,6 +1,6 @@
 {# templates/bundles/TeknooEastPaasBundle/Job/new.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
 {% block formTitle %}{{  'teknoo.space.title.project.edit'|trans }}{% endblock %}
 {% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
@@ -19,7 +19,7 @@
     </div>
     <div class="row subforms" data-subforms="variables" data-prototype="{{ form_widget(formView.variables.vars.prototype)|e('html_attr') }}">
         <div class="col-md-12">
-            <h3>Variables</h3>
+            <h3>{{ 'teknoo.space.title.variables'|trans }}</h3>
         </div>
         {% for variable in formView.variables %}
             {{ form_widget(variable, {"largeRow": true}) }}

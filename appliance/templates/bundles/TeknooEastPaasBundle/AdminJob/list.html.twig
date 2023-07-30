@@ -1,10 +1,10 @@
 {# templates/bundles/TeknooEastPaasBundle/AdminJob/list.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.list.html.twig' %}
+{% extends '@TeknooSpace/dashboard.list.html.twig' %}
 
 {% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\JobSearchType' %}
 
-{% import '@TeknooEastPaas/Functions/utils.html.twig' as utils %}
+{% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
 
 {% block listTitle %}<i class="uil uil-drill"></i> {{ "teknoo.space.title.admin_job"|trans }}{% endblock %}
 {% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.admin_job'|trans }}{% endblock %}

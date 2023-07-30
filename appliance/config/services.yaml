@@ -1,3 +1,10 @@
+parameters:
+    teknoo.space.defaults.mailer.sender_name: ''
+    teknoo.space.defaults.mailer.sender_address: ''
+    teknoo.space.defaults.mailer.forbidden_words: ''
+    teknoo.space.defaults.support.contact: ''
+    teknoo.space.support.contact: '%env(default:teknoo.space.defaults.support.contact:SPACE_SUPPORT_CONTACT)%'
+
 imports:
     - { resource: parameters.yaml }
     - { resource: disabled_services.yaml }
@@ -171,6 +178,19 @@ services:
             - '@security.token_storage'
             - '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
             - '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        public: true
+
+    Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail'
+        public: true
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail'
+        arguments:
+            - '@Symfony\Component\Mailer\MailerInterface'
+            - '%env(default:teknoo.space.defaults.mailer.sender_name:MAILER_SENDER_NAME)%'
+            - '%env(default:teknoo.space.defaults.mailer.sender_address:MAILER_SENDER_ADDRESS)%'
+            - '%env(default:teknoo.space.defaults.mailer.forbidden_words:MAILER_FORBIDDEN_WORDS)%'
         public: true
 
     ####################

@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Client\ClientInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Recipe\Step\Project\PrepareCriteria;

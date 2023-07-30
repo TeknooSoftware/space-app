@@ -1,3 +1,4 @@
+{# templates/bundles/TeknooSpace/Parts/dashboard.menu.html.twig #}
 <nav id="sidebar" class="sidebar-wrapper sidebar-dark">
     <div class="sidebar-content" data-simplebar style="height: calc(100% - 60px);">
         <div class="sidebar-brand">
@@ -46,6 +47,9 @@
                 </li>
             {% else %}
                 <li><a href="{{ path('space_project_list') }}"><i class="ti ti-home me-2"></i>{{ 'teknoo.space.action.projects'|trans }}</a></li>
+            {% endif %}
+            {% if supportContact is not empty %}
+            <li><a href="{{ path('space_support_contact') }}"><i class="ti ti-mail me-2"></i>{{ 'teknoo.space.action.contacts'|trans }}</a></li>
             {% endif %}
         </ul>
         <!-- sidebar-menu  -->

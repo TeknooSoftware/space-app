@@ -2,24 +2,31 @@ version: "3.7"
 services:
     mercure:
         environment:
-            - MERCURE_PUBLISHER_JWT_KEY=ToChange!
-            - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
+            - MERCURE_PUBLISHER_JWT_KEY=AChanger
+            - MERCURE_SUBSCRIBER_JWT_KEY=AChanger
     php:
         environment:
-            - APP_REMEMBER_SECRET=ToChange!
-            - APP_SECRET=ToChange!
-            - MERCURE_JWT_TOKEN=ToChange!
-            - SPACE_CODE_GENERATOR_SALT=ToChange!
-            - SPACE_KUBERNETES_CA_VALUE=ToChange!
-            - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
-            - SPACE_KUBERNETES_DASHBOARD=https://ToChange!/
-            - SPACE_KUBERNETES_MASTER=https://ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
-            - SPACE_OCI_REGISTRY_URL=.ToChange!
+            - APP_REMEMBER_SECRET=AChanger
+            - APP_SECRET=AChanger
+            - MERCURE_JWT_TOKEN=AChanger
+            - OAUTH_GITLAB_CLIENT_ID=AChanger
+            - OAUTH_GITLAB_CLIENT_SECRET=AChanger
+            - SPACE_CODE_GENERATOR_SALT=AChanger
+            - SPACE_KUBERNETES_CA_VALUE=AChanger
+            - SPACE_KUBERNETES_CREATE_TOKEN=AChanger
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=AChanger
+            - SPACE_KUBERNETES_MASTER=https://AChanger:16443
+            - SPACE_KUBERNETES_CLUSTER_URL=AChanger
+            - SPACE_KUBERNETES_DASHBOARD=https://AChanger/
+            - SPACE_OAUTH_GITLAB_URL=https://AChanger/
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=AChanger
+            - SPACE_OCI_REGISTRY_URL=.AChanger
+            - MAILER_HOST=AChanger
+            - MAILER_PASSWORD=AChanger
+            - MAILER_USER=AChanger
     blackfire:
         environment:
-          BLACKFIRE_SERVER_ID: ToChange!
-          BLACKFIRE_SERVER_TOKEN: ToChange!
-          BLACKFIRE_CLIENT_ID: ToChange!
-          BLACKFIRE_CLIENT_TOKEN: ToChange!
+            - BLACKFIRE_SERVER_ID=AChanger
+            - BLACKFIRE_SERVER_TOKEN=AChanger
+            - BLACKFIRE_CLIENT_ID=AChanger
+            - BLACKFIRE_CLIENT_TOKEN=AChanger

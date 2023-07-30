@@ -1,6 +1,6 @@
 {# templates/bundles/TeknooEastPaasBundle/views/Account/subscription.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.layout.html.twig' %}
+{% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
 {% block bodyClass '' %}
 {% block leftMenu '' %}
@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="p-4 bg-white rounded shadow">
-                        {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooEastPaas/fields.html.twig'] %}
+                        {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
                         {% if formActionRoute is defined and formActionRoute is not empty %}
                             {% set formAction = path(formActionRoute, formActionRouteParams) %}
                         {% endif %}

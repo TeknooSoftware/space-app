@@ -1,12 +1,12 @@
 {# templates/bundles/TeknooEastPaasBundle/Job/new.html.twig #}
 
-{% extends '@TeknooEastPaas/dashboard.form.html.twig' %}
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
 {% block formTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
 
 {% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.project.project_variables'|trans }}{% endblock %}
 
-{% block breadcrumbAddsItems %}
+{% block breadcrumbAddsItems %}recipeend
     <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_project_edit', {'id': objectInstance.id}) }}">{{ objectInstance }}</a></li>
 {% endblock %}
 
@@ -14,9 +14,10 @@
 
 {% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
 
-{% block crudFormFields %}<div class="row subforms" data-subforms="sets" data-prototype="{{ form_widget(formView.sets.vars.prototype)|e('html_attr') }}" data-prototype-name="__env_name__">
+{% block crudFormFields %}
+    <div class="row subforms" data-subforms="sets" data-prototype="{{ form_widget(formView.sets.vars.prototype)|e('html_attr') }}" data-prototype-name="__env_name__">
         <div class="col-md-12">
-            <h3>Environments</h3>
+            <h3>{{ 'teknoo.space.title.environments'|trans }}</h3>
         </div>
         {% for envSet in formView.sets %}
             {{ form_widget(envSet, {"largeRow": true}) }}

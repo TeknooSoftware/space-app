@@ -4,7 +4,7 @@ space_dashboard:
     schemes:    [https]
     defaults:
         _controller: 'teknoo.space.endpoint.dashboard'
-        template: '@@TeknooEastPaas/Dashboard/index.html.twig'
+        template: '@@TeknooSpace/Dashboard/index.html.twig'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         allowEmptyCredentials: true
 

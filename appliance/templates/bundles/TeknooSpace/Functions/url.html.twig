@@ -1,4 +1,4 @@
-{# templates/bundles/TeknooEastPaasBundle/Functions/navigations.html.twig #}
+{# templates/bundles/TeknooSpace/Functions/navigations.html.twig #}
 
 {% macro generate(item, displayParent, locale, lastParentItem) %}{% apply spaceless %}
 {% if lastParentItem is empty %}/page{% endif %}{% if lastParentItem is not null %}{{ _self.generate(lastParentItem, true) }}{% endif %}{% if item.content is not null %}/{% if 'default' != item.content.slug %}{{ item.content.slug }}{% endif %}{% elseif true == displayParent %}/{{ item.slug }}{% endif %}

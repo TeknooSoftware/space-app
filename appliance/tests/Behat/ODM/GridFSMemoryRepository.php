@@ -25,13 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\ODM;
 
-use Doctrine\ODM\MongoDB\Query\Builder as QueryBuilder;
-use Doctrine\ODM\MongoDB\Query\Query;
-use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\Repository\GridFSRepository;
 use Doctrine\ODM\MongoDB\Repository\UploadOptions;
-use Doctrine\Persistence\ObjectManager;
-use Teknoo\Space\Tests\Behat\TestsContext;
 
 class GridFSMemoryRepository extends MemoryRepository implements GridFSRepository
 {

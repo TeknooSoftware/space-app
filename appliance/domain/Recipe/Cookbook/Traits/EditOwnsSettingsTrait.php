@@ -36,7 +36,6 @@ use Teknoo\East\Common\Recipe\Step\SaveObject;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Object\DTO\SpaceUser;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
