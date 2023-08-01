@@ -67,8 +67,8 @@ services:
         environment:
             - APP_ENV=dev
             - MAILER_TRANSPORT=smtp
-            - MAILER_SENDER_NAME=Support
-            - MAILER_SENDER_ADDRESS=support@teknoo.space
+            - MAILER_SENDER_NAME=Teknoo Space App
+            - MAILER_SENDER_ADDRESS=space@teknoo.software
             - MERCURE_PUBLISH_URL=http://mercure:8181/.well-known/mercure
             - MERCURE_SUBSCRIBER_URL=https://localhost/hub/.well-known/mercure
             - MESSENGER_EXECUTE_JOB_DSN=amqp://space:space_pwd@amqp:5672/%2f/execute_job
@@ -98,8 +98,8 @@ services:
             - SPACE_STORAGE_DEFAULT_SIZE=3Gi
             - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
             - PHP_BLACKFIRE_SERVER=blackfire
-            - SPACE_SUPPORT_CONTACT=richarddeloge+support@gmail.com
-            - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://https://bul.tc
+            - SPACE_SUPPORT_CONTACT=support@teknoo.space
+            - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
     apache:
         build:
             context: ./build.dev/apache
