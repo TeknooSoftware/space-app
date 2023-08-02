@@ -191,6 +191,9 @@ services:
             - '%env(default:teknoo.space.defaults.mailer.sender_name:MAILER_SENDER_NAME)%'
             - '%env(default:teknoo.space.defaults.mailer.sender_address:MAILER_SENDER_ADDRESS)%'
             - '%env(default:teknoo.space.defaults.mailer.forbidden_words:MAILER_FORBIDDEN_WORDS)%'
+            - {
+                  support: '%teknoo.space.support.contact%'
+            }
         public: true
 
     ####################
