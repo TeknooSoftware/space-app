@@ -31,6 +31,7 @@ use Symfony\Component\Mime\Email;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\Exception\BotForbidden;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\Exception\InvalidArgumentException;
 use Teknoo\Space\Object\DTO\Contact;
 use Throwable;
 
@@ -98,6 +99,13 @@ class SendEmail implements SendEmailInterface
         string $receiverAddress,
     ): SendEmailInterface {
         if (empty($receiverAddress)) {
+            $manager->error(
+                new InvalidArgumentException(
+                    code: 500,
+                    message: 'teknoo.space.error.contact.missing.receiver'
+                )
+            );
+
             return $this;
         }
 
