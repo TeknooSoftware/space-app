@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta13] - 2023-08-02
+### Beta Release
+- Improve SendEmail feature
+
 ## [1.0.0-beta12] - 2023-07-30
 ### Beta Release
 - Clean some code
