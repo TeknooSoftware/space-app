@@ -51,11 +51,15 @@ class SendEmail implements SendEmailInterface
      */
     private array $forbiddenWords = [];
 
+    /**
+     * @param array<string, string> $addresses
+     */
     public function __construct(
         private MailerInterface $mailer,
         private string $senderName,
         private string $senderAddress,
         string $forbiddenWords = '',
+        private array $addresses = [],
     ) {
         $this->forbiddenWords = explode(',', $forbiddenWords);
     }
@@ -107,6 +111,10 @@ class SendEmail implements SendEmailInterface
             );
 
             return $this;
+        }
+
+        if (isset($this->addresses[$receiverAddress])) {
+            $receiverAddress = $this->addresses[$receiverAddress];
         }
 
         try {

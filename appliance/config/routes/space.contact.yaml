@@ -10,7 +10,7 @@ space_support_contact:
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formOptions: { }
         route: 'space_support_contact_sent'
-        receiverAddress: '%teknoo.space.support.contact%'
+        receiverAddress: 'support'
 
 space_support_contact_sent:
     path: '/contact/support/sent'
