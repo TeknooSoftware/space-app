@@ -11,3 +11,4 @@
 /appliance/phpunitgen.php
 /enterprise/
 /appliance/.env.build
+/appliance/public/test.php
