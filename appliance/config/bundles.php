@@ -17,4 +17,5 @@ return [
     Teknoo\East\FoundationBundle\EastFoundationBundle::class => ['all' => true],
     Teknoo\East\CommonBundle\TeknooEastCommonBundle::class => ['all' => true],
     Teknoo\East\Paas\Infrastructures\EastPaasBundle\TeknooEastPaasBundle::class => ['all' => true],
+    Lexik\Bundle\JWTAuthenticationBundle\LexikJWTAuthenticationBundle::class => ['all' => true],
 ];

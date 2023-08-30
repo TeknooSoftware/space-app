@@ -1,5 +1,18 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta14] - 2023-08-30
+### Beta Release
+- Add JWT firewall thanks to `LexikJWTAuthenticationBundle`
+  - To get a JWT token from the interface (not allowed directly from the bundle to keep 2FA).
+  - Add Cookbook `UserGetJwtToken` to allow user to get a token
+  - JWT token can be passed to the api in HTTP Header or, if the env `SPACE_JWT_ENABLE_IN_QUERY` is at true, 
+    in the query, with the `bearer` parameter
+- Add API v1 to execute new job on a project, list, get and delete jobs
+  - An API to manage projects, projects' variables and secrets is planned for later
+  - The API is behind the JWT firewall
+  - The API accepts JSON body and URL encoded body
+  - The API will be compliant with Swagger later
+
 ## [1.0.0-beta13] - 2023-08-02
 ### Beta Release
 - Improve SendEmail feature

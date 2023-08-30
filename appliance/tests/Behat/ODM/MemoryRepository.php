@@ -68,6 +68,8 @@ class MemoryRepository extends DocumentRepository
         return new class($this->context, $this->className) extends QueryBuilder {
             private array $criteria;
 
+            private ?int $limit = null;
+
             public function __construct(
                 private TestsContext $context,
                 private string $className,
@@ -77,6 +79,13 @@ class MemoryRepository extends DocumentRepository
             public function equals($value): QueryBuilder
             {
                 $this->criteria = $value;
+
+                return $this;
+            }
+
+            public function limit(int $limit): QueryBuilder
+            {
+                $this->limit = $limit;
 
                 return $this;
             }
@@ -94,7 +103,11 @@ class MemoryRepository extends DocumentRepository
                     ],
                 );
                 $query->resultToReturn = new ArrayObject(
-                    $this->context->findObjectsBycriteria($this->className, $this->criteria)
+                    $this->context->findObjectsBycriteria(
+                        $this->className,
+                        $this->criteria,
+                        $this->limit,
+                    )
                 );
 
                 return $query;

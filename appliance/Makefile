@@ -47,12 +47,14 @@ audit:
 test:
 	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
 	rm -rf var/cache/test
+	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	${PHP} vendor/bin/behat
 	rm -rf var/cache/test
 
 test-without-coverage:
 	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	rm -rf var/cache/test
+	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	${PHP} vendor/bin/behat
 	rm -rf var/cache/test
 

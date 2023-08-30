@@ -32,6 +32,13 @@ services:
             - '@Teknoo\Space\Recipe\Cookbook\JobRestart'
             - '@service_container'
 
+    teknoo.space.endpoint.job.pending:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\JobPending'
+            - '@service_container'
+
     teknoo.space.endpoint.job.get:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
@@ -51,6 +58,13 @@ services:
         public: true
         arguments:
             - '@Teknoo\Space\Recipe\Cookbook\UserMySettings'
+            - '@service_container'
+
+    teknoo.space.endpoint.my_settings.jwt_token:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Cookbook\UserGetJwtToken'
             - '@service_container'
 
     teknoo.space.endpoint.account.settings:

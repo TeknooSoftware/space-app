@@ -57,17 +57,17 @@ class JobList implements CookbookInterface
      */
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private ExtractPage $extractPage,
-        private ExtractOrder $extractOrder,
-        private JobPrepareCriteria $jobPrepareCriteria,
-        private LoadListObjects $loadListObjects,
-        private RenderList $renderList,
-        private RenderError $renderError,
-        private SearchFormLoaderInterface $searchFormLoader,
-        private ListObjectsAccessControlInterface $listObjectsAccessControl,
-        private string $defaultErrorTemplate,
-        private array $loadListObjectsWiths = [],
+        private readonly LoadObject $loadObject,
+        private readonly ExtractPage $extractPage,
+        private readonly ExtractOrder $extractOrder,
+        private readonly JobPrepareCriteria $jobPrepareCriteria,
+        private readonly LoadListObjects $loadListObjects,
+        private readonly RenderList $renderList,
+        private readonly RenderError $renderError,
+        private readonly SearchFormLoaderInterface $searchFormLoader,
+        private readonly ListObjectsAccessControlInterface $listObjectsAccessControl,
+        private readonly string $defaultErrorTemplate,
+        private readonly array $loadListObjectsWiths = [],
     ) {
         $this->fill($recipe);
     }

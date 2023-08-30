@@ -27,6 +27,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
 
 /**
@@ -46,25 +47,28 @@ class JobUpdaterNotifier
     }
 
     public function __invoke(
+        Project $project,
         Job $job,
         string $newJobId,
     ): static {
         $this->publisher->publish(
-            $this->generator->generate(
-                $this->pendingJobRoute,
-                [
+            url: $this->generator->generate(
+                name: $this->pendingJobRoute,
+                parameters: [
                     'newJobId' => $newJobId,
                 ],
-                UrlGeneratorInterface::ABSOLUTE_URL,
+                referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
             ),
-            $newJobId,
-            $this->generator->generate(
-                $this->getJobRoute,
-                [
+            newJobId: $newJobId,
+            jobUrl: $this->generator->generate(
+                name: $this->getJobRoute,
+                parameters: [
                     'id' => $job->getId(),
                 ],
-                UrlGeneratorInterface::ABSOLUTE_URL,
+                referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
             ),
+            project: $project,
+            job: $job,
         );
 
         return $this;

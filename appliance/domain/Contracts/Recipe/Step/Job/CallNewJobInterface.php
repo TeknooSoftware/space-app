@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Contracts\Recipe\Step\Job;
 
+use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
@@ -41,5 +42,6 @@ interface CallNewJobInterface
         ManagerInterface $manager,
         NewJob $newJob,
         SpaceProject $project,
+        ParametersBag $parametersBag,
     ): CallNewJobInterface;
 }
