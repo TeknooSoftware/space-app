@@ -12,6 +12,7 @@
   - The API is behind the JWT firewall
   - The API accepts JSON body and URL encoded body
   - The API will be compliant with Swagger later
+- Fix open project url from job
 
 ## [1.0.0-beta13] - 2023-08-02
 ### Beta Release

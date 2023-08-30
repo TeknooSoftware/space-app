@@ -58,6 +58,9 @@
                             {{ 'teknoo.space.action.restart_job'|trans }}
                         </a>
                         {% if projectUrl is defined and projectUrl is not empty %}
+                        {% if not(projectUrl starts with 'http') %}
+                            {% set projectUrl = 'https://' ~ projectUrl %}
+                        {% endif %}
                         <a href="{{ projectUrl }}" target="_blank" title="{{ 'teknoo.space.action.open_website'|trans }}" class="btn btn-soft-secondary btn-full-large btn-block mb-2">
                             <i class="mdi mdi-shape-circle-plus"></i>
                             {{ 'teknoo.space.action.open_website'|trans }}
