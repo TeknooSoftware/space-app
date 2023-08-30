@@ -45,10 +45,10 @@ class DashboardFrame implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadCredentials $loadCredentials,
-        private DashboardFrameInterface $dashboard,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly LoadCredentials $loadCredentials,
+        private readonly DashboardFrameInterface $dashboard,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

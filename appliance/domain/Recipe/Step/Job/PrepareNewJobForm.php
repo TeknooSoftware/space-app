@@ -32,6 +32,8 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
 
+use function array_merge;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -40,12 +42,16 @@ use Teknoo\Space\Object\DTO\SpaceProject;
  */
 class PrepareNewJobForm
 {
+    /**
+     * @param array<string, mixed> $formOptions
+     */
     public function __invoke(
         ManagerInterface $manager,
         Project|SpaceProject $projectInstance,
         NewJob $newJobInstance,
         ParametersBag $bag,
         ?string $formActionRoute = null,
+        array $formOptions = [],
     ): self {
         if ($projectInstance instanceof SpaceProject) {
             $projectInstance = $projectInstance->project;
@@ -61,9 +67,12 @@ class PrepareNewJobForm
         );
 
         $manager->updateWorkPlan([
-            'formOptions' => [
-                'environmentsList' => $environmentsList,
-            ],
+            'formOptions' => array_merge(
+                $formOptions,
+                [
+                    'environmentsList' => $environmentsList,
+                ],
+            )
         ]);
 
         $bag->set('project', $projectInstance);

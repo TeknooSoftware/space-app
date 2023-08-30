@@ -47,13 +47,13 @@ trait EditOwnsSettingsTrait
 {
     public function __construct(
         RecipeInterface $recipe,
-        private FormHandlingInterface $formHandling,
-        private FormProcessingInterface $formProcessing,
-        private SaveObject $saveObject,
-        private RenderFormInterface $renderForm,
-        private RenderError $renderError,
-        private string $objectClass,
-        private string $defaultErrorTemplate,
+        private readonly FormHandlingInterface $formHandling,
+        private readonly FormProcessingInterface $formProcessing,
+        private readonly SaveObject $saveObject,
+        private readonly RenderFormInterface $renderForm,
+        private readonly RenderError $renderError,
+        private readonly string $objectClass,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

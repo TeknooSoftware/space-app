@@ -54,16 +54,16 @@ class RefreshProjectCredentials implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private ObjectAccessControlInterface $objectAccessControl,
-        private LoadAccountFromProject $loadAccountFromProject,
-        private LoadCredentials $loadCredentials,
-        private UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount,
-        private SaveObject $saveObject,
-        private SpaceProjectPrepareRedirection $spaceProjectPrepareRedirection,
-        private RedirectClientInterface $redirectClient,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly LoadObject $loadObject,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
+        private readonly LoadAccountFromProject $loadAccountFromProject,
+        private readonly LoadCredentials $loadCredentials,
+        private readonly UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount,
+        private readonly SaveObject $saveObject,
+        private readonly SpaceProjectPrepareRedirection $spaceProjectPrepareRedirection,
+        private readonly RedirectClientInterface $redirectClient,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

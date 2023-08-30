@@ -33,6 +33,7 @@ use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
+use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\Recipe\ChefInterface;
@@ -76,6 +77,9 @@ class JobStartTest extends TestCase
 
     private NewJobNotifierInterface|MockObject $newJobNotifier;
 
+
+    private JumpIf|MockObject $jumpIf;
+
     private CallNewJobInterface|MockObject $callNewJob;
 
     private RedirectClientInterface|MockObject $redirectClient;
@@ -102,6 +106,7 @@ class JobStartTest extends TestCase
         $this->formHandling = $this->createMock(FormHandlingInterface::class);
         $this->formProcessing = $this->createMock(FormProcessingInterface::class);
         $this->newJobNotifier = $this->createMock(NewJobNotifierInterface::class);
+        $this->jumpIf = $this->createMock(JumpIf::class);
         $this->callNewJob = $this->createMock(CallNewJobInterface::class);
         $this->redirectClient = $this->createMock(RedirectClientInterface::class);
         $this->renderForm = $this->createMock(RenderFormInterface::class);
@@ -117,6 +122,7 @@ class JobStartTest extends TestCase
             $this->formHandling,
             $this->formProcessing,
             $this->newJobNotifier,
+            $this->jumpIf,
             $this->callNewJob,
             $this->redirectClient,
             $this->renderForm,

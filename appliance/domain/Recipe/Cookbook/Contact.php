@@ -52,14 +52,14 @@ class Contact implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private CreateObject $createObject,
-        private FormHandlingInterface $formHandling,
-        private FormProcessingInterface $formProcessing,
-        private SendEmailInterface $sendEmail,
-        private RedirectClientInterface $redirectClient,
-        private RenderFormInterface $renderForm,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly CreateObject $createObject,
+        private readonly FormHandlingInterface $formHandling,
+        private readonly FormProcessingInterface $formProcessing,
+        private readonly SendEmailInterface $sendEmail,
+        private readonly RedirectClientInterface $redirectClient,
+        private readonly RenderFormInterface $renderForm,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

@@ -29,7 +29,7 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use DateTime;
 use DateTimeInterface;
-use DI\Container as DiContainer;    
+use DI\Container as DiContainer;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
@@ -53,6 +53,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
@@ -106,7 +107,11 @@ use Zenstruck\Messenger\Test\Transport\TestTransportRegistry;
 
 use function array_merge;
 use function array_shift;
+use function array_slice;
+use function array_values;
+use function count;
 use function current;
+use function end;
 use function explode;
 use function get_parent_class;
 use function hash;
@@ -114,6 +119,8 @@ use function in_array;
 use function is_array;
 use function is_iterable;
 use function iterator_to_array;
+use function json_decode;
+use function json_encode;
 use function key;
 use function mb_strtolower;
 use function method_exists;
@@ -170,7 +177,13 @@ class TestsContext implements Context
 
     private array $manifests = [];
 
+    private ?string $jwtToken = null;
+
+    private ?int $itemsPerPages = null;
+
     private ?HooksCollectionInterface $hookCollection = null;
+
+    private ?string $apiPendingJobUrl = null;
 
     public function __construct(
         private readonly KernelInterface $kernel,
@@ -182,6 +195,7 @@ class TestsContext implements Context
         private readonly TestTransportRegistry $testTransport,
         private readonly TimeoutServiceInterface $timeoutService,
         private readonly CacheItemPoolInterface $cacheExpiredLinks,
+        private readonly NormalizerInterface $normalizer,
         private readonly string $appHostname,
         private readonly string $defaultClusterName,
         private readonly string $defaultClusterType,
@@ -217,7 +231,10 @@ class TestsContext implements Context
         Query::$testsContext = $this;
         Query::$testsObjecttManager = null;
         $this->hookCollection = null;
+        $this->jwtToken = null;
+        $this->itemsPerPages = null;
         $this->getTokenStorageService->tokenStorage?->setToken(null);
+        $this->apiPendingJobUrl = null;
         $this->timeoutService->disable();
     }
 
@@ -400,7 +417,11 @@ class TestsContext implements Context
         return true;
     }
 
-    public function findObjectsBycriteria(string $className, array $criteria): iterable
+    public function findObjectsBycriteria(
+        string $className,
+        array $criteria,
+        ?int $limit = null,
+    ): iterable
     {
         $final = [];
         do {
@@ -414,6 +435,10 @@ class TestsContext implements Context
 
                 if ($this->checkListOfCriteria($criteria, $roInstance, $object)) {
                     $final[] = $object;
+                }
+
+                if (null !== $limit && count($final) >= $limit) {
+                    break;
                 }
             }
         } while (empty($final) && !empty($className = get_parent_class($className)));
@@ -433,6 +458,11 @@ class TestsContext implements Context
         }
 
         return spl_object_hash($object);
+    }
+
+    public function getListOfPersistedObjects(string $class): array
+    {
+        return $this->objects[$class];
     }
 
     public function persistObject(object $object): void {
@@ -547,6 +577,7 @@ class TestsContext implements Context
         array $headers = [],
         bool $noCookies = false,
         bool $clearCookies = false,
+        ?string $content = null,
     ): Response {
         $this->hasBeenRedirected = false;
 
@@ -572,7 +603,8 @@ class TestsContext implements Context
                     'REMOTE_ADDR' => $this->clientIp,
                 ],
                 $headers,
-            )
+            ),
+            content: $content,
         );
 
         $this->response = $this->kernel->handle($this->request);
@@ -1299,7 +1331,7 @@ class TestsContext implements Context
         $project->setPrefix($this->projectPrefix = $prefix);
 
         $project->setImagesRegistry(
-            new ImageRegistry(
+            $imageRegistry = new ImageRegistry(
                 $credential->getRegistryUrl(),
                 new XRegistryAuth(
                     $credential->getRegistryAccountName(),
@@ -1311,19 +1343,24 @@ class TestsContext implements Context
             )
         );
 
+        $this->register($imageRegistry);
+
         $project->setSourceRepository(
-            new GitRepository(
+            $repository = new GitRepository(
                 'https://oauth:token@gitlab.demo',
                 'main',
                 new SshIdentity('git', '')
             )
         );
 
+        $this->register($repository);
+
         $cluster = new Cluster();
         $cluster->setName($this->defaultClusterName);
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
+        $cluster->setEnvironment($env = new Environment($this->defaultClusterEnv));
+        $this->register($env);
         $cluster->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),
@@ -1352,6 +1389,8 @@ class TestsContext implements Context
             $clusterDev,
         ]);
 
+        $this->persistAndRegister($clusterDev);
+        $this->persistAndRegister($cluster);
         $this->persistAndRegister($project);
 
         $projectMetadata = new ProjectMetadata(
@@ -1678,6 +1717,428 @@ class TestsContext implements Context
     public function aProjectWithACompletePaasFile()
     {
         $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
+    }
+
+    /**
+     * @Given :number jobs for the project
+     */
+    public function jobsForTheProject(int $number)
+    {
+        $project = $this->recall(Project::class);
+        $env = $this->recall(Environment::class);
+        $cluster = $this->recall(Cluster::class);
+        $registry = $this->recall(ImageRegistry::class);
+        $repository = $this->recall(GitRepository::class);
+
+        for ($i = 0; $i < $number; $i++) {
+            $job = new Job();
+            $job->setProject($project);
+            $job->setEnvironment($env);
+            $job->setClusters([$cluster]);
+            $job->setSourceRepository($repository);
+            $job->setImagesRegistry($registry);
+
+            $this->persistAndRegister($job);
+        }
+    }
+
+    /**
+     * @When get a JWT token for the user
+     */
+    public function getAJwtTokenForTheUser()
+    {
+        $this->findUrlFromRouteInPageAndOpenIt(
+            crawler: $this->createCrawler(),
+            routeName: 'space_my_settings_token',
+        );
+
+        $dateInFuture = new DateTime('now'); //Use now, because JWT Bundle does not use DatesService
+        $dateInFuture->modify("+2 days");
+
+        $values = $this->createForm('jwt_configuration')->getPhpValues();
+        $values['jwt_configuration']['expirationDate'] = $dateInFuture->format('Y-m-d');
+
+        $this->executeRequest(
+            method: 'POST',
+            url: $this->getPathFromRoute('space_my_settings_token'),
+            params: $values
+        );
+
+        $node = $this->createCrawler()->filter('.jwt-token-value');
+        $this->jwtToken = trim((string) $node?->getNode(0)?->textContent);
+
+        Assert::assertNotEmpty($this->jwtToken);
+    }
+
+    /**
+     * @When the API is called to list of jobs
+     */
+    public function theApiIsCalledToListOfJobs()
+    {
+        $project = $this->recall(Project::class);
+
+        $this->executeRequest(
+            method: 'get',
+            url: $this->getPathFromRoute(
+                route: 'space_api_job_list',
+                parameters: [
+                    'projectId' => $project->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to get the last job
+     */
+    public function theApiIsCalledToGetTheLastJob()
+    {
+        $project = $this->recall(Project::class);
+        $job = $this->recall(Job::class);
+
+        $this->executeRequest(
+            method: 'get',
+            url: $this->getPathFromRoute(
+                route: 'space_api_job_get',
+                parameters: [
+                    'projectId' => $project->getId(),
+                    'id' => $job->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to get the last generated job
+     */
+    public function theApiIsCalledToGetTheLastGeneratedJob()
+    {
+        $project = $this->recall(Project::class);
+        $jobs = $this->listObjects(JobOrigin::class);
+        $job = end($jobs);
+
+        $this->register($job);
+
+        $this->executeRequest(
+            method: 'get',
+            url: $this->getPathFromRoute(
+                route: 'space_api_job_get',
+                parameters: [
+                    'projectId' => $project->getId(),
+                    'id' => $job->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to delete the last job
+     * @When the API is called to delete the last job with :method method
+     */
+    public function theApiIsCalledToDeleteTheLastJob(string $method = 'GET')
+    {
+        $project = $this->recall(Project::class);
+        $job = $this->recall(Job::class);
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: 'space_api_job_delete',
+                parameters: [
+                    'projectId' => $project->getId(),
+                    'id' => $job->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to create a new job with a json body:
+     */
+    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields)
+    {
+        $this->theApiIsCalledToCreateANewJob($bodyFields, 'json');
+    }
+
+    /**
+     * @When the API is called to create a new job:
+     */
+    public function theApiIsCalledToCreateANewJob(TableNode $bodyFields, string $format = 'default')
+    {
+        $project = $this->recall(Project::class);
+
+        $final = [];
+        foreach ($bodyFields as $field) {
+            $this->setRequestParameters($final, $field['field'], $field['value']);
+        }
+
+        $final = match ($format) {
+            'json' => json_encode($final),
+            default => $final,
+        };
+
+        $this->executeRequest(
+            method: 'post',
+            url: $this->getPathFromRoute(
+                route: 'space_api_job_new',
+                parameters: [
+                    'projectId' => $project->getId(),
+                ],
+            ),
+            params: match ($format) {
+                'json' => [],
+                default => $final,
+            },
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+                'CONTENT_TYPE' => match ($format) {
+                    'json' => 'application/json',
+                    default => 'application/x-www-form-urlencoded',
+                },
+            ],
+            noCookies: true,
+            content: match ($format) {
+                'json' => $final,
+                default => null,
+            },
+        );
+    }
+
+    /**
+     * @When the API is called to pending job status api
+     */
+    public function theApiIsCalledToPendingJobStatusApi()
+    {
+        Assert::assertNotEmpty($this->apiPendingJobUrl);
+
+        $this->executeRequest(
+            method: 'get',
+            url: $this->apiPendingJobUrl,
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the job is deleted
+     */
+    public function theJobIsDeleted()
+    {
+        Assert::assertEmpty(
+            $this->listObjects(Job::class),
+        );
+    }
+
+    /**
+     * @When the job is not deleted
+     */
+    public function theJobIsNotDeleted()
+    {
+        Assert::assertNotEmpty(
+            $this->listObjects(Job::class),
+        );
+    }
+
+    /**
+     * @Then get a JSON reponse
+     */
+    public function getAJsonReponse()
+    {
+        Assert::assertEquals(
+            'application/json; charset=utf-8',
+            $this->response->headers->get('Content-Type'),
+        );
+    }
+
+    /**
+     * @When an :arg1 error
+     */
+    public function anError(int $code)
+    {
+        Assert::assertEquals(
+            $code,
+            $this->response->getStatusCode(),
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertEquals(
+            $code,
+            $unserialized['data']['code'],
+        );
+    }
+
+    /**
+     * @Then a pending job id
+     */
+    public function aPendingJobId()
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertNotEmpty($unserialized['meta']['url']);
+        Assert::assertNotEmpty($unserialized['data']['job_queue_id']);
+
+        $this->apiPendingJobUrl = $unserialized['meta']['url'];
+    }
+
+    /**
+     * @Then a pending job status without a job id
+     */
+    public function aPendingJobStatusWithoutAJobId()
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertEquals(
+            'teknoo.space.error.job.pending.mercure_disabled',
+            $unserialized['data']['error']['message'],
+        );
+    }
+
+
+    /**
+     * @When is a serialized collection of :count items on :total pages
+     */
+    public function isASerializedCollectionOfItemsOnPages(int $count, int $page)
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertEquals(
+            1,
+            $unserialized['meta']['page'] ?? 0
+        );
+
+        Assert::assertEquals(
+            $count,
+            $unserialized['meta']['count'] ?? 0
+        );
+
+        Assert::assertEquals(
+            $page,
+            $unserialized['meta']['totalPages'] ?? 0
+        );
+
+        $this->itemsPerPages = $count / $page;
+    }
+
+    /**
+     * @When the a list of serialized jobs
+     */
+    public function theListSerializedJobs()
+    {
+        $jobs = $this->getListOfPersistedObjects(Job::class);
+        $selectedJobs = array_values(
+            array_slice(
+                array: $jobs,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedJobs,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
+    /**
+     * @When the serialized job
+     */
+    public function theSerializedJob()
+    {
+        $job = $this->recall(Job::class);
+        $job ??= $this->recall(JobOrigin::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => JobOrigin::class,
+                    'id' => $job->getId(),
+                ],
+                'data' => $job
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+    }
+
+    /**
+     * @When the serialized deleted job
+     */
+    public function theSerializedDeletedJob()
+    {
+        $job = $this->recall(Job::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => JobOrigin::class,
+                    'id' => $job->getId(),
+                    'deleted' => 'success',
+                ],
+                'data' => [
+                    '@class' => JobOrigin::class,
+                    'id' => $job->getId(),
+                    'project' => $job->getProject(),
+                    'environment' => $this->recall(Environment::class),
+                ],
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
     }
 
     /**

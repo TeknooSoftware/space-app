@@ -47,11 +47,11 @@ class FormWithoutObject implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private CreateObject $createObject,
-        private FormHandlingInterface $formHandling,
-        private RenderFormInterface $renderForm,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly CreateObject $createObject,
+        private readonly FormHandlingInterface $formHandling,
+        private readonly RenderFormInterface $renderForm,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

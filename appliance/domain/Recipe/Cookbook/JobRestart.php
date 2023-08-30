@@ -52,15 +52,15 @@ class JobRestart implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private ObjectAccessControlInterface $objectAccessControl,
-        private CreateObject $createObject,
-        private LoadPersistedVariablesForJob $loadPersistedVariablesForJob,
-        private PrepareNewJobForm $prepareNewJobForm,
-        private FormHandlingInterface $formHandling,
-        private RenderFormInterface $renderForm,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly LoadObject $loadObject,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
+        private readonly CreateObject $createObject,
+        private readonly LoadPersistedVariablesForJob $loadPersistedVariablesForJob,
+        private readonly PrepareNewJobForm $prepareNewJobForm,
+        private readonly FormHandlingInterface $formHandling,
+        private readonly RenderFormInterface $renderForm,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

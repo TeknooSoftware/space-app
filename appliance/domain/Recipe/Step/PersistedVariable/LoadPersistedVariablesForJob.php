@@ -61,6 +61,7 @@ class LoadPersistedVariablesForJob
         /** @var \Teknoo\Space\Object\Persisted\AccountPersistedVariable[] $apvs */
             static function (iterable $apvs) use ($newJob): void {
                 foreach ($apvs as $var) {
+                    $newJob->envName = $newJob->envName ?? $var->getEnvironmentName();
                     $newJob->variables[$name = $var->getName()] = new JobVar(
                         id: $var->getId(),
                         name: $name,
@@ -100,6 +101,7 @@ class LoadPersistedVariablesForJob
                 );
 
                 foreach ($persistedVariables as $var) {
+                    $newJob->envName = $newJob->envName ?? $var->getEnvironmentName();
                     $newJob->variables[$name = $var->getName()] = new JobVar(
                         id: $var->getId(),
                         name: $name,

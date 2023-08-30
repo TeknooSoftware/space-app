@@ -51,21 +51,23 @@ class NewJobType extends AbstractType
     {
         parent::buildForm($builder, $options);
 
-        $builder->add(
-            'newJobId',
-            HiddenType::class,
-            [
-                'required' => true,
-            ],
-        );
+        if (empty($options['api'])) {
+            $builder->add(
+                'newJobId',
+                HiddenType::class,
+                [
+                    'required' => true,
+                ],
+            );
 
-        $builder->add(
-            'projectId',
-            HiddenType::class,
-            [
-                'required' => true,
-            ],
-        );
+            $builder->add(
+                'projectId',
+                HiddenType::class,
+                [
+                    'required' => true,
+                ],
+            );
+        }
 
         $builder->add(
             'envName',
@@ -108,7 +110,8 @@ class NewJobType extends AbstractType
                     $form->get('envName')->getData(),
                 );
             },
-            'environmentsList' => []
+            'environmentsList' => [],
+            'api' => null,
         ]);
 
         return $this;

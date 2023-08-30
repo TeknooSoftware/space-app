@@ -53,14 +53,14 @@ class JobGet implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private ExtractProject $extractProject,
-        private LoadProjectMetadata $loadProjectMetadata,
-        private InjectToViewMetadata $injectToViewMetadata,
-        private Render $render,
-        private RenderError $renderError,
-        private ObjectAccessControlInterface $objectAccessControl,
-        private string $defaultErrorTemplate,
+        private readonly LoadObject $loadObject,
+        private readonly ExtractProject $extractProject,
+        private readonly LoadProjectMetadata $loadProjectMetadata,
+        private readonly InjectToViewMetadata $injectToViewMetadata,
+        private readonly Render $render,
+        private readonly RenderError $renderError,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

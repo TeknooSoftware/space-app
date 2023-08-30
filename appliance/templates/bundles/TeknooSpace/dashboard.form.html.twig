@@ -21,17 +21,19 @@
 
         {% block formParentBlock %}
         {% set locale = app.request.get('locale', 'en') %}
+        {% if formView is defined %}
         {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
         {% if formActionRoute is defined and formActionRoute is not empty %}
             {% set formAction = path(formActionRoute, formActionRouteParams) %}
         {% endif %}
         {{ form_start(formView, {"attr":{"action": formAction|default(app.request.getPathInfo() ~ "?locale=" ~ locale) }}) }}
+        {% endif %}
         <div class="row">
             <div class="col-lg-3 mt-4 mt-lg-0 pt-2 pt-lg-0">
                 <div class="card border-0 sidebar sticky-bar rounded shadow bg-white">
                     <div class="card-body">
                         {% block btnExtra '' %}
-                        {% if true == isTranslatable and languagesList is defined %}
+                        {% if isTranslatable is defined and true == isTranslatable and languagesList is defined %}
                             <div class="widget mb-4 pb-2">
                                 <h5 class="widget-title">{{ 'teknoo.space.text.admin_translation'|trans }}</h5>
                                 <ul class="list-unstyled mb-0 mt-0">
@@ -79,7 +81,9 @@
                                 </div>
                                 {% endblock %}
                             {% endif %}
+                            {% if formView is defined %}
                             {{ form_errors(formView) }}
+                            {% endif %}
                             {% block crudFormFields '' %}
                         </div>
                     </div>{# end col #}
@@ -88,7 +92,9 @@
                 </div>
             </div>
         </div>{# end row #}
+        {% if formView is defined %}
         {{ form_end(formView) }}
+        {% endif %}
         {% endblock %}{# formParentBlock #}
     </div>
 {% endblock %}{# containerFluidInner #}
