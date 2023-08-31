@@ -27,7 +27,7 @@ This is the `Standard` version of Space. It is released under MIT licence. This 
   * accounts can host also persisted variables to be used on all deployments of all of this projects if
     they are not already defined in projects.
   * persisted variables can contains secrets. 
-    * Warning, currently secrets are not visible in Space's web app but they are passed unencrypted to the agents. 
+    * Warning, currently secrets are not visible in Space's web app but they are passed unencrypted to the workers. 
 * Space is bundled with a Composer hook to build PHP Project. NPM and PIP supports is also planned.
 * Space allow any users to subcribe, but it's not manage billings.
       * Subscriptions can be restricted with uniques codes to forbid non selected user to subscribe.
@@ -169,7 +169,7 @@ Environnements variables configuration
     * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the 
                                      Space dashboard. *Optional*
 * Workers configuration :
-  * Agents only (not builder) :
+  * Workers only (not builder) :
     * Doctrine ODM :
       * `MONGODB_SERVER` : (string) mongodb DSN
       * `MONGODB_NAME` : (string) database name
@@ -177,7 +177,7 @@ Environnements variables configuration
   * `SPACE_GIT_TIMEOUT` : (int) max time allowed to clone a project in the deployment.
                           Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
   * Healthcheck :
-    * `SPACE_PING_FILE` : (string) file used by Space's agents and builder to indicate the state of health, read by
+    * `SPACE_PING_FILE` : (string) file used by Space's workers and builder to indicate the state of health, read by
                           the orchestrator. `/tmp/ping_file` by default. *Optional*
     * `SPACE_PING_SECONDS` : (int) number of seconds between each update in the `ping file`, `60` by default. *Optional*
   * Deployment :
@@ -230,10 +230,10 @@ Environnements variables configuration
 Commands
 --------
 
-* agent to prepare a new job : `bin/console messenger:consume new_job`
-* agent to persist histories of jobs : `bin/console messenger:consume history_sent`
-* agent to persist final results of jobs : `bin/console messenger:consume job_done`
-* agent to execute jobs : `bin/console messenger:consume execute_job`
+* worker to prepare a new job : `bin/console messenger:consume new_job`
+* worker to persist histories of jobs : `bin/console messenger:consume history_sent`
+* worker to persist final results of jobs : `bin/console messenger:consume job_done`
+* worker to execute jobs : `bin/console messenger:consume execute_job`
 
 Contribute :)
 -------------
