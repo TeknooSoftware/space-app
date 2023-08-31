@@ -1,11 +1,11 @@
 space_admin_code_generator:
     path: '/admin/subscription/code'
-    methods:  ['GET', 'POST', 'PUT']
-    schemes:    [https]
+    methods: ['GET', 'POST', 'PUT']
+    schemes: [https]
     defaults:
         _controller: 'teknoo.space.endpoint.code_generator'
-        objectClass: 'Teknoo\East\Common\Object\EmptyObject'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\CodeGeneratorType'
-        template: '@@TeknooEastPaas/AdminAccount/code_generator.html.twig'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\CodeGeneratorType'
         formOptions: { }
+        objectClass: 'Teknoo\East\Common\Object\EmptyObject'
+        template: '@@TeknooEastPaas/AdminAccount/code_generator.html.twig'

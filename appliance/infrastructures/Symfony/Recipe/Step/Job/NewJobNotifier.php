@@ -29,6 +29,8 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Mercure\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\OtherException;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\UnavailableException;
@@ -57,16 +59,15 @@ class NewJobNotifier implements NewJobNotifierInterface
         NewJob $newJob,
         ManagerInterface $manager,
     ): NewJobNotifierInterface {
-
         try {
             $this->publisher->publish(
-                $this->generator->generate(
-                    $this->pendingJobRoute,
-                    ['newJobId' => $newJob->newJobId],
-                    UrlGeneratorInterface::ABSOLUTE_URL
+                url: $this->generator->generate(
+                    name: $this->pendingJobRoute,
+                    parameters: ['newJobId' => $newJob->newJobId],
+                    referenceType: UrlGeneratorInterface::ABSOLUTE_URL
                 ),
-                $newJob->newJobId,
-                null,
+                newJobId: $newJob->newJobId,
+                jobUrl: null,
             );
         } catch (ExceptionInterface $mercureException) {
             $this->logger->critical(

@@ -1,0 +1,14 @@
+{# templates/bundles/TeknooEastPaasBundle/views/User/Jwt.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block formTitle %}{{ 'teknoo.space.title.user.jwt'|trans }}{% endblock %}
+{% block listLink %}{{ path('space_my_settings_token') }}{% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.jwt'|trans }}{% endblock %}
+{% block instanceTitle %}{{ space.user }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.expirationDate, {"centerRow": true}) }}
+    </div>
+{% endblock %}

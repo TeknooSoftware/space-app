@@ -7,6 +7,6 @@ oauth_connect_gitlab_check:
     path: '/oauth/gitlab/check'
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'
-        template: '@@TeknooEastPaas/Admin/index.html.twig'
-        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         _oauth_client_key: gitlab
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        template: '@@TeknooEastPaas/Admin/index.html.twig'

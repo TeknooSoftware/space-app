@@ -30,8 +30,23 @@ services:
     Teknoo\Space\Infrastructures\Symfony\:
         resource: '../infrastructures/Symfony/*'
 
+    Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing:
+        class: 'Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing'
+        arguments:
+            $serializer: '@serializer'
+        tags:
+            - { name: twig.extension }
+
+    Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing:
+        class: 'Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing'
+        arguments:
+            $serializer: '@serializer'
+        tags:
+            - { name: twig.extension }
+
     Teknoo\Space\Infrastructures\Twig\Extension\:
         resource: '../infrastructures/Twig/Extension/*'
+        exclude: '../infrastructures/Twig/Extension/CollectionSerializing'
         tags:
             - { name: twig.extension }
 
@@ -57,6 +72,32 @@ services:
         calls:
             - ['setResponseFactory', ['@Psr\Http\Message\ResponseFactoryInterface']]
             - ['setRouter', ['@router']]
+
+    Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending'
+        public: true
+
+    Symfony\Component\HttpClient\EventSourceHttpClient:
+        class: 'Symfony\Component\HttpClient\EventSourceHttpClient'
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending'
+        public: true
+        bind:
+            $topicRoute: 'space_job_new_pending'
+            $sseClient: '@Symfony\Component\HttpClient\EventSourceHttpClient'
+            $mercureEnabled: '%teknoo.space.mercure.publishing_enabled%'
+
+    Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\JwtCreateToken'
+        public: true
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\JwtCreateToken:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\JwtCreateToken'
+        public: true
+        arguments:
+            - '@lexik_jwt_authentication.jwt_manager'
+            - '@security.token_storage'
 
     ###################
     # Generic

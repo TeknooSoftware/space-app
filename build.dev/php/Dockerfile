@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM php:8.2-fpm
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
@@ -12,63 +12,76 @@ RUN set -eux ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
-        software-properties-common  \
-        sudo  \
-        apt-transport-https \
-        ca-certificates \
-        curl \
-        gnupg-agent \
-        wget \
-        locales \
+            software-properties-common  \
+            sudo  \
+            apt-transport-https \
+            ca-certificates \
+            curl \
+            gnupg-agent \
+            musl-dev \
+            tzdata  \
+            wget \
+            locales \
+            nano  \
+            libyaml-dev \
+            librabbitmq-dev \
+            libbz2-dev \
+            libcurl4-openssl-dev \
+            libxml2-dev \
+            zlib1g-dev \
+            libpng-dev \
+            libonig-dev \
+            libsqlite3-dev \
+            libsodium-dev \
+            libxslt-dev \
+            libzip-dev \
     ; \
-    locale-gen ; \
-    LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php ; \
+    pecl install apcu ; \
+    pecl install mongodb ; \
+    pecl install yaml ; \
+    pecl install -o -f amqp ; \
+    docker-php-ext-enable apcu  \
+                          mongodb  \
+                          yaml  \
+                          amqp \
+    ; \
+    docker-php-ext-install bcmath \
+                           bz2 \
+                           calendar \
+                           curl \
+                           dom \
+                           filter \
+                           gd \
+                           gettext \
+                           intl \
+                           mbstring \
+                           mysqli \
+                           pcntl \
+                           pdo \
+                           pdo_sqlite \
+                           opcache \
+                           sockets \
+                           sodium \
+                           simplexml \
+                           soap \
+                           xml  \
+                           xsl  \
+                           zip \
+    ; \
     wget -O - https://packagecloud.io/gpg.key | apt-key add - ; \
     wget -q -O - https://packages.blackfire.io/gpg.key | sudo dd of=/usr/share/keyrings/blackfire-archive-keyring.asc ; \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/blackfire-archive-keyring.asc] http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sources.list.d/blackfire.list ; \
     apt-get update ; \
-    apt-get install -y  \
-            musl-dev \
-            tzdata  \
-            wget \
-            nano  \
-            php8.2-common \
-            php8.2-cli  \
-            php8.2-fpm  \
-            php8.2-mysql \
-            php8.2-apcu \
-            php8.2-gd  \
-            php8.2-curl \
-            php8.2-intl \
-            php8.2-phpdbg \
-            php8.2-sqlite3  \
-            php8.2-xdebug \
-            php8.2-xml \
-            php8.2-mbstring \
-            php8.2-bcmath \
-            php8.2-mongodb \
-            php8.2-soap \
-            php8.2-amqp \
-            blackfire-php \
+    apt-get install blackfire-php \
     ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
     locale-gen ; \
-    printf "extension=blackfire.so\nblackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /etc/php/8.2/fpm/conf.d/90-blackfire.ini ; \
+    printf "blackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /usr/local/etc/php/conf.d/90-blackfire.ini ; \
     mkdir -p /run/php/ ; \
-    mkdir -p /var/log/blackfire/
-
-ADD 99-space.ini /etc/php/8.2/fpm/conf.d/
-ADD 99-space.ini /etc/php/8.2/cli/conf.d/
-ADD space.pool.conf /etc/php/8.2/fpm/pool.d/
-
-RUN set -eux ; \
+    mkdir -p /var/log/blackfire/ ; \
     usermod -u 1000 www-data ; \
     mkdir -p /var/www ; \
-    chown www-data:www-data /var/www ; \
-    echo '#!/bin/bash' > /opt/startup.sh ; \
-    echo 'php-fpm8.2 -F --fpm-config /etc/php/8.2/fpm/php-fpm.conf' >> /opt/startup.sh ; \
-    chmod +x /opt/startup.sh
+    chown www-data:www-data /var/www
 
-CMD ["/opt/startup.sh"]
-
-EXPOSE 9000
+ADD 99-space.ini /usr/local/etc/php/conf.d/
+ADD space.pool.conf /usr/local/etc/php-fpm.d/www.conf

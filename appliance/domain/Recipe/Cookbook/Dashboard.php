@@ -46,11 +46,11 @@ class Dashboard implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private HealthInterface $health,
-        private DashboardInfoInterface $dashboardInfo,
-        private Render $render,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly HealthInterface $health,
+        private readonly DashboardInfoInterface $dashboardInfo,
+        private readonly Render $render,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }

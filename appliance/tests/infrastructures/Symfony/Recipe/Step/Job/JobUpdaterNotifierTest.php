@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier;
 
@@ -77,8 +78,9 @@ class JobUpdaterNotifierTest extends TestCase
         self::assertInstanceOf(
             JobUpdaterNotifier::class,
             ($this->jobUpdaterNotifier)(
-                $this->createMock(Job::class),
-                'foo',
+                project: $this->createMock(Project::class),
+                job: $this->createMock(Job::class),
+                newJobId: 'foo',
             )
         );
     }

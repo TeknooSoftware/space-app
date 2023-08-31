@@ -31,6 +31,7 @@ use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
+use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Foundation\Recipe\CookbookInterface;
@@ -38,6 +39,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
+use Teknoo\Recipe\Ingredient\IngredientWithCondition;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
@@ -56,26 +58,35 @@ class JobStart implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private ObjectAccessControlInterface $objectAccessControl,
-        private CreateObject $createObject,
-        private PrepareNewJobForm $prepareNewJobForm,
-        private LoadPersistedVariablesForJob $loadPersistedVariablesForJob,
-        private FormHandlingInterface $formHandling,
-        private FormProcessingInterface $formProcessing,
-        private NewJobNotifierInterface $newJobNotifier,
-        private CallNewJobInterface $callNewJob,
-        private RedirectClientInterface $redirectClient,
-        private RenderFormInterface $renderForm,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly LoadObject $loadObject,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
+        private readonly CreateObject $createObject,
+        private readonly PrepareNewJobForm $prepareNewJobForm,
+        private readonly LoadPersistedVariablesForJob $loadPersistedVariablesForJob,
+        private readonly FormHandlingInterface $formHandling,
+        private readonly FormProcessingInterface $formProcessing,
+        private readonly NewJobNotifierInterface $newJobNotifier,
+        private readonly JumpIf $jumpIf,
+        private readonly CallNewJobInterface $callNewJob,
+        private readonly RedirectClientInterface $redirectClient,
+        private readonly RenderFormInterface $renderForm,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient('string', 'route'));
+
+        $recipe = $recipe->require(
+            new IngredientWithCondition(
+                conditionCallback: fn (array &$workplan) => empty($workplan['api']),
+                requiredType: 'string',
+                name: 'route'
+            )
+        );
+
         $recipe = $recipe->require(new Ingredient('string', 'objectClass'));
         $recipe = $recipe->require(new Ingredient('string', 'formClass'));
         $recipe = $recipe->require(new Ingredient('array', 'formOptions'));
@@ -115,6 +126,15 @@ class JobStart implements CookbookInterface
         $recipe = $recipe->cook($this->newJobNotifier, NewJobNotifierInterface::class, [], 70);
 
         $recipe = $recipe->cook($this->callNewJob, CallNewJobInterface::class, [], 80);
+
+        $recipe = $recipe->cook(
+            $this->jumpIf,
+            JumpIf::class,
+            [
+                'testValue' => 'api',
+            ],
+            89,
+        );
 
         $recipe = $recipe->cook(
             $this->redirectClient,

@@ -27,6 +27,8 @@ namespace Teknoo\Space\Infrastructures\Symfony\Mercure;
 
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Paas\Object\Project;
 
 use function json_encode;
 
@@ -50,6 +52,8 @@ class JobUrlPublisher
         string $url,
         string $newJobId,
         ?string $jobUrl,
+        ?Project $project = null,
+        ?Job $job = null,
     ): static {
         if (!$this->enabled) {
             return $this;
@@ -65,6 +69,8 @@ class JobUrlPublisher
             data: json_encode(
                 [
                     'new_job_id' => $newJobId,
+                    'job_id' => $job?->getId(),
+                    'project_id' => $project?->getId(),
                     'job_url' => $jobUrl,
                 ],
                 JSON_THROW_ON_ERROR,

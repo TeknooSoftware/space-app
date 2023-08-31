@@ -1,4 +1,6 @@
 security:
+    enable_authenticator_manager: true
+
     role_hierarchy:
         ROLE_ADMIN: 'ROLE_USER'
 
@@ -28,6 +30,12 @@ security:
         account_gitlab_login:
             pattern: '^/oauth/gitlab/login$'
             security: false
+
+        api_area:
+            provider: all_providers
+            pattern: '^/api'
+            stateless: true
+            jwt: ~
 
         #require admin role for all others pages
         account_area:
@@ -59,8 +67,6 @@ security:
                 auth_form_path: 2fa_login    # The route name you have used in the routes.yaml
                 check_path: 2fa_login_check  # The route name you have used in the routes.yaml
 
-        main: ~
-
     access_control:
         #Front : available for anyone
         - { path: '^/healthy', roles: [PUBLIC_ACCESS] }
@@ -73,6 +79,9 @@ security:
             requires_channel: https,
             allow_if: "!is_authenticated()"
         }
-        #Account : require role account
+        #Account : 2fa
         - { path: '^/2fa/auth', roles: [IS_AUTHENTICATED_2FA_IN_PROGRESS], requires_channel: https }
+        #Api
+        - { path: '^/api', roles: IS_AUTHENTICATED_FULLY }
+        #Default
         - { path: '^/', roles: [ROLE_USER], requires_channel: https }

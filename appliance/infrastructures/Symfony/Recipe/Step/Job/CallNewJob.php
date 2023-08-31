@@ -27,6 +27,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Object\DTO\NewJob;
@@ -49,12 +50,16 @@ class CallNewJob implements CallNewJobInterface
         ManagerInterface $manager,
         NewJob $newJob,
         SpaceProject $project,
+        ParametersBag $parametersBag,
     ): CallNewJobInterface {
         $this->messageBus->dispatch(
             new Envelope(
                 $newJob->export()
             )
         );
+
+        $parametersBag->set('newJobId', $newJob->newJobId);
+        $parametersBag->set('projectId', $project->getId());
 
         $manager->updateWorkPlan([
             'routeParameters' => [

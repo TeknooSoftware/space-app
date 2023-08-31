@@ -54,16 +54,16 @@ class Subscription implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private CreateObject $createObject,
-        private FormHandlingInterface $formHandling,
-        private FormProcessingInterface $formProcessing,
-        private CreateUserInterface $createUser,
-        private CreateAccountInterface $createAccount,
+        private readonly CreateObject $createObject,
+        private readonly FormHandlingInterface $formHandling,
+        private readonly FormProcessingInterface $formProcessing,
+        private readonly CreateUserInterface $createUser,
+        private readonly CreateAccountInterface $createAccount,
         NewAccountEndPointStepsInterface $newAccountEndPointSteps,
-        private LoginUserInterface $loginUser,
-        private RenderFormInterface $renderForm,
-        private RenderError $renderError,
-        private string $defaultErrorTemplate,
+        private readonly LoginUserInterface $loginUser,
+        private readonly RenderFormInterface $renderForm,
+        private readonly RenderError $renderError,
+        private readonly string $defaultErrorTemplate,
     ) {
         $this->additionalSteps = $newAccountEndPointSteps;
 

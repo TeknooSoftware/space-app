@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob;
@@ -82,6 +83,7 @@ class CallNewJobTest extends TestCase
                 $this->createMock(ManagerInterface::class),
                 $newJob,
                 new SpaceProject($this->createMock(Project::class)),
+                $this->createMock(ParametersBag::class),
             )
         );
     }

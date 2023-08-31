@@ -1,21 +1,62 @@
 {# templates/bundles/TeknooEastCommonBundle/2fa/enabling.html.twig #}
 
-{% extends '@TeknooEastPaas/Admin/list.html.twig' %}
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block content %}
-    <div class="row title">
-        <div class="col-12 col-md-8">
-            <h1>{{ 'teknoo.space.title.authentication_2FA'|trans }}</h1>
-        </div>
-    </div>
+{% block formTitle %}{{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
+{% block listLink %}{{ path('_teknoo_common_2fa_google_enable') }}{% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
+{% block instanceTitle %}{{ space.user }}{% endblock %}
+
+{% block formParentBlock %}
     <div class="row">
-        <div class="col-6">
-            {{ form_start(formView, {"attr":{"class":"form-horizontal", "action": path('_teknoo_common_2fa_google_validate')}}) }}
-            {% form_theme formView '@TeknooEastPaas/Admin/fields.html.twig' %}
-            {{ form_errors(formView) }}
-            {{ form_row(formView.code) }}
-            <input type="submit" class="btn btn-primary" name="Validate" />
-            {{ form_end(formView) }}
+        <div class="col-lg-3 mt-4 mt-lg-0 pt-2 pt-lg-0">
+            <div class="card border-0 sidebar sticky-bar rounded shadow bg-white">
+                <div class="card-body">
+                    {% block btnExtra '' %}
+                    <div class="widget">
+                        <h5 class="widget-title">{{ 'teknoo.space.text.submit_block'|trans }}</h5>
+                        {% block formButton %}
+                            {% block addsFormButton '' %}
+                            <a href="{{ path('space_my_settings') }}"
+                               class="btn btn-primary btn-full-large btn-block mb-2 text-left">
+                                <i class="ti ti-settings"></i>
+                                {{ 'teknoo.space.action.my-settings'|trans }}
+                            </a>
+                            {% block addsFormButtonBottom '' %}
+                        {% endblock %}
+                    </div>
+                    {% block btnExtraBottom '' %}
+                </div>
+            </div>
+        </div>{# end col #}
+        <div class="col-9">
+            <div class="card">
+                <div class="card-body"d>
+                    <table class="table card-text">
+                        <tr>
+                            <th scope="row">QRCode</th>
+                            <td class="text-center">
+                                <img src="{{ path('_teknoo_common_2fa_google_qrcode') }}" alt="QRCode"/>
+                                {% form_theme formView with ['bootstrap_5_layout.html.twig'] %}
+                                {{ form_start(formView, {"attr":{"class":"form-horizontal", "action": path('_teknoo_common_2fa_google_validate')}}) }}
+                                {{ form_errors(formView) }}
+                                <div class="d-flex justify-content-center">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            {{ form_row(formView.code, {'label': 'Validation code', 'row_attr': {'class': 'form-floating',}}) }}
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="submit" class="btn btn-primary" name="validate" value="{{ 'teknoo.space.action.2fa.validate'|trans }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                                {{ form_end(formView) }}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

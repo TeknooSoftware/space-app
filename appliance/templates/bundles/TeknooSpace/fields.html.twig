@@ -24,6 +24,9 @@
     {% if largeRow is defined %}
         {% set colClass = 'col-12' %}
     {% endif %}
+    {% if centerRow is defined %}
+        {% set colClass = 'col-6 offset-3' %}
+    {% endif %}
     <div class="{{ colClass }}">
         <div class="mb-3">
             {{ form_label(form, null, {'label_attr':{'class':'form-label'}}) }}

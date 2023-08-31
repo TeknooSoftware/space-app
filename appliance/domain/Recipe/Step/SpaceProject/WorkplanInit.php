@@ -31,6 +31,8 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 
+use function array_merge;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -39,12 +41,16 @@ use Teknoo\Space\Object\Persisted\ProjectMetadata;
  */
 class WorkplanInit
 {
+    /**
+     * @param array<string, mixed> $formOptions
+     */
     public function __invoke(
         ManagerInterface $manager,
         SpaceProject $spaceProject,
         ?Project $project = null,
         ?ProjectMetadata $metadata = null,
         bool $populateFormOptions = false,
+        array $formOptions = [],
     ): self {
         $projectInstance = $spaceProject->project ?? $project;
 
@@ -62,9 +68,12 @@ class WorkplanInit
                 }
             );
 
-            $workPlan['formOptions'] = [
-                'environmentsList' => $environmentsList,
-            ];
+            $workPlan['formOptions'] = array_merge(
+                $formOptions,
+                [
+                    'environmentsList' => $environmentsList,
+                ],
+            );
         }
 
         $manager->updateWorkPlan($workPlan);

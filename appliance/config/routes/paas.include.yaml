@@ -1,9 +1,9 @@
 space_admin_account:
     resource: '@TeknooEastPaasBundle/Resources/config/routing_admin_account.yaml'
     prefix: '/admin'
-    schemes:    [https]
+    schemes: [https]
 
 space_admin_job:
     resource: '@TeknooEastPaasBundle/Resources/config/routing_admin_job.yaml'
     prefix: '/admin'
-    schemes:    [https]
+    schemes: [https]

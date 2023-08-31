@@ -36,12 +36,14 @@ use Teknoo\East\Common\Contracts\Recipe\Step\SearchFormLoaderInterface;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
 use Teknoo\East\Common\Recipe\Step\ExtractOrder;
 use Teknoo\East\Common\Recipe\Step\ExtractPage;
+use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadListObjects;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\RenderList;
 use Teknoo\East\Common\Recipe\Step\SaveObject;
+use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\EditAccountEndPointStepsInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\EditProjectEndPointStepsInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewAccountEndPointStepsInterface;
@@ -53,6 +55,7 @@ use Teknoo\Recipe\Bowl\RecipeBowl;
 use Teknoo\Recipe\RecipeInterface as OriginalRecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
@@ -60,6 +63,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface;
+use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountReinstall;
@@ -87,12 +91,14 @@ use Teknoo\Space\Recipe\Cookbook\DashboardFrame;
 use Teknoo\Space\Recipe\Cookbook\FormWithoutObject;
 use Teknoo\Space\Recipe\Cookbook\JobGet;
 use Teknoo\Space\Recipe\Cookbook\JobList;
+use Teknoo\Space\Recipe\Cookbook\JobPending;
 use Teknoo\Space\Recipe\Cookbook\JobRestart;
 use Teknoo\Space\Recipe\Cookbook\JobStart;
 use Teknoo\Space\Recipe\Cookbook\ProjectList;
 use Teknoo\Space\Recipe\Cookbook\ProjectNew;
 use Teknoo\Space\Recipe\Cookbook\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Cookbook\Subscription;
+use Teknoo\Space\Recipe\Cookbook\UserGetJwtToken;
 use Teknoo\Space\Recipe\Cookbook\UserMySettings;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
@@ -295,6 +301,7 @@ return array(
             get(FormHandlingInterface::class),
             get(FormProcessingInterface::class),
             get(NewJobNotifierInterface::class),
+            get(JumpIf::class),
             get(CallNewJobInterface::class),
             get(RedirectClientInterface::class),
             get(RenderFormInterface::class),
@@ -331,6 +338,17 @@ return array(
             get('teknoo.east.common.cookbook.default_error_template'),
         ),
 
+    JobPending::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(ObjectAccessControlInterface::class),
+            get(FetchJobIdFromPendingInterface::class),
+            get(Render::class),
+            get(RenderError::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
+
     JobGet::class => create()
         ->constructor(
             get(OriginalRecipeInterface::class),
@@ -353,6 +371,20 @@ return array(
             get(RenderFormInterface::class),
             get(RenderError::class),
             value(SpaceUser::class),
+            get('teknoo.east.common.cookbook.default_error_template'),
+        ),
+
+    UserGetJwtToken::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(CreateObject::class),
+            get(FormHandlingInterface::class),
+            get(FormProcessingInterface::class),
+            get(JwtCreateTokenInterface::class),
+            get(Render::class),
+            get(Stop::class),
+            get(RenderFormInterface::class),
+            get(RenderError::class),
             get('teknoo.east.common.cookbook.default_error_template'),
         ),
 

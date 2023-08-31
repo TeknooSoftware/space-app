@@ -33,6 +33,7 @@ parameters:
     }
 
     teknoo.space.code.subscription.required: true
+    teknoo.space.jwt.enable_in-query: '%env(bool:SPACE_JWT_ENABLE_IN_QUERY)%'
     teknoo.space.mercure.publishing_enabled.default: true
     teknoo.space.mercure.publishing_enabled: '%env(default:teknoo.space.mercure.publishing_enabled.default:SPACE_MERCURE_PUBLISHING_ENABLED)%'
     teknoo.space.ping_file: '%env(SPACE_PING_FILE)%'

@@ -1,48 +1,48 @@
 _teknoo_common_admin_user_list:
     path: '/admin/users'
-    methods:  ['GET']
+    methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.list'
-        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         defaultOrderDirection: 'ASC'
-        itemsPerPage: 20
-        template: '@@TeknooEastCommon/AdminUser/list.html.twig'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        template: '@@TeknooEastCommon/AdminUser/list.html.twig'
 
 _teknoo_common_admin_user_edit:
     path: '/admin/user/edit/{id}'
-    methods:  ['GET', 'POST', 'PUT']
+    methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.edit'
-        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
-        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
-        template: '@@TeknooEastCommon/AdminUser/edit.html.twig'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
         formOptions: { }
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        template: '@@TeknooEastCommon/AdminUser/edit.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
 
 _teknoo_common_admin_user_new:
     path: '/admin/user/new'
-    methods:  ['GET', 'POST', 'PUT']
+    methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.new'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
+        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
+        route: '_teknoo_common_admin_user_edit'
+        template: '@@TeknooEastCommon/AdminUser/new.html.twig'
+        userKey: 'constructorArguments'
         userLoader: '@Teknoo\East\Common\Loader\UserLoader'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
-        objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
-        template: '@@TeknooEastCommon/AdminUser/new.html.twig'
-        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
-        formOptions: { }
-        route: '_teknoo_common_admin_user_edit'
-        userKey: 'constructorArguments'
 
 _teknoo_common_admin_user_delete:
     path: '/admin/user/delete/{id}'
-    methods:  ['GET']
+    methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
-        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         deleter: '@teknoo.space.deleting.space_user'
-        route: '_teknoo_common_admin_user_list'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        route: '_teknoo_common_admin_user_list'
