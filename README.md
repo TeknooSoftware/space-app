@@ -62,10 +62,19 @@ Space is licensed under the MIT License - see the licenses folder for details.
 
 Installation & Requirements
 ---------------------------
-This library requires :
+
+This applications requires
 
     * PHP 8.2+
     * A PHP autoloader (Composer is recommended)
+    * A webserver (like Httpd/nginx + PHP-FPM)
+    * A MongoDB server (for the web interfaces and all workers except the builder)
+    * A AMQP server, like RabbitMQ for the coomunication between components
+    * A mercure server for the web interface and new job worker.
+    * Buildah (Only for the builder)
+
+This application is bundled with :
+
     * Teknoo/Immutable
     * Teknoo/States
     * Teknoo/Recipe
@@ -217,6 +226,14 @@ Environnements variables configuration
           Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
         * `SPACE_IMG_BUILDER_PLATFORMS` : (string) name of the platform whose image is dedicated.
           `linux/amd64` by default. *Optional*
+
+Commands
+--------
+
+* agent to prepare a new job : `bin/console messenger:consume new_job`
+* agent to persist histories of jobs : `bin/console messenger:consume history_sent`
+* agent to persist final results of jobs : `bin/console messenger:consume job_done`
+* agent to execute jobs : `bin/console messenger:consume execute_job`
 
 Contribute :)
 -------------
