@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Step\AccountCredential;
 
 use DateTimeInterface;
+use SensitiveParameter;
 use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\Persisted\AccountCredential;
@@ -51,6 +52,7 @@ class UpdateCredentials
         ManagerInterface $manager,
         string $registryUrl,
         string $registryAccountName,
+        #[SensitiveParameter]
         string $registryPassword,
         AccountCredential $accountCredential,
         AccountHistory $accountHistory

@@ -29,6 +29,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\HistorySent;
 use Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\JobDone;
+use Teknoo\Recipe\Promise\Promise;
 use Throwable;
 
 use function json_encode;
@@ -49,7 +50,7 @@ class HistorySentHandler
         $client = clone $this->client;
         $client->sendAResponseIsOptional();
 
-        try {
+        $processMessage = function (HistorySent | JobDone $history) use ($client): void {
             $this->logger->info(
                 (string) json_encode(
                     [
@@ -74,7 +75,9 @@ class HistorySentHandler
                     'jobId' => $history->getJobId(),
                 ]
             );
-        } catch (Throwable $error) {
+        };
+
+        $processError = function (Throwable $error) use ($client): void {
             $this->logger->critical($error);
 
             $client->errorInRequest(
@@ -84,6 +87,27 @@ class HistorySentHandler
                     previous: $error,
                 )
             );
+        };
+
+        if (null !== $this->encryption) {
+            /** @var Promise<HistorySent|JobDone, mixed, mixed> $promise */
+            $promise = new Promise(
+                onSuccess: $processMessage,
+                onFail: $processError,
+            );
+
+            $this->encryption->decrypt(
+                $history,
+                $promise,
+            );
+
+            return $this;
+        }
+
+        try {
+            $processMessage($history);
+        } catch (Throwable $error) {
+            $processError($error);
         }
 
         return $this;

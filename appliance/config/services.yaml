@@ -129,6 +129,7 @@ services:
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
             - '@logger'
+            - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
         tags:
             - 'messenger.message_handler'
 
@@ -141,6 +142,7 @@ services:
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
             - '@logger'
+            - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
             - '%env(default:teknoo.space.new_job.waiting_time.default:SPACE_NEW_JOB_WAITING_TIME)%'
         tags:
             - 'messenger.message_handler'
@@ -154,6 +156,7 @@ services:
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
             - '@logger'
+            - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
         tags:
             - 'messenger.message_handler'
 
@@ -164,6 +167,7 @@ services:
         public: true
         arguments:
             - '@messenger.routable_message_bus'
+            - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
 
 
     Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier:

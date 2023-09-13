@@ -26,8 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
+use Teknoo\East\Paas\Contracts\Message\MessageInterface;
 
 use function hash;
+use function json_decode;
+use function json_encode;
 use function random_int;
 use function substr;
 use function uniqid;
@@ -38,8 +41,12 @@ use function uniqid;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class NewJob implements ObjectInterface
+class NewJob implements ObjectInterface, MessageInterface
 {
+    private ?string $encryptionAlgorithm = null;
+
+    private ?string $encryptedVariables = null;
+
     /**
      * @param JobVar[] $variables
      */
@@ -70,12 +77,55 @@ class NewJob implements ObjectInterface
     /*
      * To remove all occurences of persisted object or doctrine proxies in a serialized representation
      */
-    public function export(): self
+    public function export(bool $asArray = false): self
     {
         $that = clone $this;
         $that->variables = [];
         foreach ($this->variables as $variable) {
             $that->variables[] = $variable->export();
+        }
+
+        return $that;
+    }
+
+    public function getMessage(): string
+    {
+        if (null !== $this->encryptedVariables) {
+            return $this->encryptedVariables;
+        }
+
+        $rawVars = [];
+        foreach ($this->variables as $variable) {
+            $rawVars[] = $variable->exportAsArray();
+        }
+
+        return (string) json_encode($rawVars);
+    }
+
+    public function getEncryptionAlgorithm(): ?string
+    {
+        return $this->encryptionAlgorithm;
+    }
+
+    public function cloneWith(string $message, ?string $encryptionAlgorithm): MessageInterface
+    {
+        $that = clone $this;
+        $that->encryptionAlgorithm = $encryptionAlgorithm;
+
+        if (null !== $encryptionAlgorithm) {
+            $that->encryptedVariables = $message;
+            $that->variables = [];
+        } else {
+            $that->encryptedVariables = null;
+            $that->variables = [];
+
+            /**
+             * @var array<int, array{id: ?string, name: string, value: ?string, persisted: bool, secret: bool}> $raw
+             */
+            $raw = (array) json_decode(json: $message, associative: true);
+            foreach ($raw as &$var) {
+                $that->variables[] = new JobVar(...$var);
+            }
         }
 
         return $that;

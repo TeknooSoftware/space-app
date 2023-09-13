@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta15] - 2023-09-13
+### Beta Release
+- Add encryption capacities in messages between servers and agents or workers
+  - Define env var `TEKNOO_PAAS_SECURITY_ALGORITHM` (with `rsa` ou `dsa`).
+  - Define env var `TEKNOO_PAAS_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
+  - Define env var (optional) `TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the
+    private key.
+  - Define env var `TEKNOO_PAAS_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
+- Add #[SensitiveParameter] to prevent leak.
+
 ## [1.0.0-beta14] - 2023-08-30
 ### Beta Release
 - Add JWT firewall thanks to `LexikJWTAuthenticationBundle`

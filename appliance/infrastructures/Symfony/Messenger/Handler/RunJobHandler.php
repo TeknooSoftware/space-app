@@ -28,6 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Messenger\Handler;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\MessageJob;
+use Teknoo\Recipe\Promise\Promise;
 use Throwable;
 
 use function json_encode;
@@ -48,7 +49,7 @@ class RunJobHandler
         $client = clone $this->client;
         $client->sendAResponseIsOptional();
 
-        try {
+        $processMessage = function (MessageJob $job) use ($client): void {
             $this->logger->info(
                 (string) json_encode(
                     [
@@ -73,7 +74,9 @@ class RunJobHandler
                     'jobId' => $job->getJobId(),
                 ]
             );
-        } catch (Throwable $error) {
+        };
+
+        $processError = function (Throwable $error) use ($client): void {
             $this->logger->critical($error);
 
             $client->errorInRequest(
@@ -83,6 +86,27 @@ class RunJobHandler
                     previous: $error,
                 )
             );
+        };
+
+        if (null !== $this->encryption) {
+            /** @var Promise<MessageJob, mixed, mixed> $promise */
+            $promise = new Promise(
+                onSuccess: $processMessage,
+                onFail: $processError,
+            );
+
+            $this->encryption->decrypt(
+                $job,
+                $promise,
+            );
+
+            return $this;
+        }
+
+        try {
+            $processMessage($job);
+        } catch (Throwable $error) {
+            $processError($error);
         }
 
         return $this;
