@@ -31,6 +31,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob;
 use Teknoo\Space\Object\DTO\JobVar;
@@ -52,6 +53,8 @@ class CallNewJobTest extends TestCase
 
     private MessageBusInterface|MockObject $messageBus;
 
+    private EncryptionInterface|MockObject $encryption;
+
     /**
      * {@inheritdoc}
      */
@@ -60,7 +63,11 @@ class CallNewJobTest extends TestCase
         parent::setUp();
 
         $this->messageBus = $this->createMock(MessageBusInterface::class);
-        $this->callNewJob = new CallNewJob($this->messageBus);
+        $this->encryption = $this->createMock(EncryptionInterface::class);
+        $this->callNewJob = new CallNewJob(
+            $this->messageBus,
+            $this->encryption,
+        );
     }
 
     public function testInvoke(): void

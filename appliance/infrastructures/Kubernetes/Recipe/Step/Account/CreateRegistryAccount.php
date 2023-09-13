@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
 
 use DateTimeInterface;
+use SensitiveParameter;
 use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Kubernetes\Client as KubernetesClient;
@@ -255,7 +256,8 @@ class CreateRegistryAccount
         string $name,
         string $url,
         string $username,
-        string $password
+        #[SensitiveParameter]
+        string $password,
     ): Secret {
         return new Secret([
             'metadata' => [
@@ -297,7 +299,8 @@ class CreateRegistryAccount
         string $namespace,
         string $name,
         string $username,
-        string $password
+        #[SensitiveParameter]
+        string $password,
     ): Secret {
         return new Secret([
             'metadata' => [

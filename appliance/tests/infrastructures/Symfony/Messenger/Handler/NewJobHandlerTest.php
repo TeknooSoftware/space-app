@@ -33,6 +33,7 @@ use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
+use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler;
 use Teknoo\Space\Object\DTO\NewJob;
 
@@ -61,6 +62,8 @@ class NewJobHandlerTest extends TestCase
 
     private LoggerInterface|MockObject $logger;
 
+    private EncryptionInterface|MockObject $encryption;
+
     private int $waitingTimeSecond;
 
     /**
@@ -76,6 +79,7 @@ class NewJobHandlerTest extends TestCase
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
         $this->client = $this->createMock(Client::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->encryption = $this->createMock(EncryptionInterface::class);
         $this->waitingTimeSecond = 1;
         $this->newJobHandler = new NewJobHandler(
             $this->executor,
@@ -84,6 +88,7 @@ class NewJobHandlerTest extends TestCase
             $this->streamFactory,
             $this->client,
             $this->logger,
+            $this->encryption,
             $this->waitingTimeSecond
         );
     }

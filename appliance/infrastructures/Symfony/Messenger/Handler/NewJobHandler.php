@@ -33,6 +33,8 @@ use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
+use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\DTO\NewJob;
 use Throwable;
 
@@ -57,6 +59,7 @@ class NewJobHandler
         private StreamFactoryInterface $streamFactory,
         private Client $client,
         private LoggerInterface $logger,
+        private ?EncryptionInterface $encryption,
         private int $waitingTimeSecond = 0,
     ) {
     }
@@ -84,7 +87,7 @@ class NewJobHandler
             sleep($this->waitingTimeSecond);
         }
 
-        try {
+        $processMessage = function (NewJob $newJob) use ($client): void {
             $this->logger->info(
                 (string) json_encode(
                     [
@@ -113,7 +116,9 @@ class NewJobHandler
                     'extra' => ['new_job_id' => $newJob->newJobId],
                 ],
             );
-        } catch (Throwable $error) {
+        };
+
+        $processError = function (Throwable $error) use ($client): void {
             $this->logger->critical($error);
 
             $client->errorInRequest(
@@ -123,6 +128,27 @@ class NewJobHandler
                     previous: $error,
                 )
             );
+        };
+
+        if (null !== $this->encryption) {
+            /** @var Promise<NewJob, mixed, mixed> $promise */
+            $promise = new Promise(
+                onSuccess: $processMessage,
+                onFail: $processError,
+            );
+
+            $this->encryption->decrypt(
+                $newJob,
+                $promise,
+            );
+
+            return $this;
+        }
+
+        try {
+            $processMessage($newJob);
+        } catch (Throwable $error) {
+            $processError($error);
         }
 
         return $this;

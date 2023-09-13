@@ -17,8 +17,14 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 
-.phpunit.result.cache
 .php_cs.cache
+.phpunit.result.cache
+/.env.build
 /.env.local
+/.phpunit.cache/
+/phpunitgen.php
+/public/test.php
 /tests/Behat/jwt/private.pem
 /tests/Behat/jwt/public.pem
+/tests/var/keys/private.pem
+/tests/var/keys/public.pem
