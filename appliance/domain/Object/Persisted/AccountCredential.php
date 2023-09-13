@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Object\Persisted;
 
+use SensitiveParameter;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
@@ -74,6 +75,7 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
         string $registryUrl,
         string $registryAccountName,
         string $registryConfigName,
+        #[SensitiveParameter]
         string $registryPassword,
         string $serviceAccountName,
         string $roleName,

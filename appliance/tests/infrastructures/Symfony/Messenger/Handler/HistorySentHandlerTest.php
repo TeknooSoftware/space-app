@@ -32,6 +32,7 @@ use Psr\Log\LoggerInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
+use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\HistorySent;
 use Teknoo\Recipe\BaseRecipeInterface;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\HistorySentHandler;
@@ -61,6 +62,8 @@ class HistorySentHandlerTest extends TestCase
 
     private LoggerInterface|MockObject $logger;
 
+    private EncryptionInterface|MockObject $encryption;
+
     /**
      * {@inheritdoc}
      */
@@ -74,6 +77,7 @@ class HistorySentHandlerTest extends TestCase
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
         $this->client = $this->createMock(Client::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->encryption = $this->createMock(EncryptionInterface::class);
 
         $this->historySentHandler = new HistorySentHandler(
             $this->executor,
@@ -82,6 +86,7 @@ class HistorySentHandlerTest extends TestCase
             $this->streamFactory,
             $this->client,
             $this->logger,
+            $this->encryption,
         );
     }
 

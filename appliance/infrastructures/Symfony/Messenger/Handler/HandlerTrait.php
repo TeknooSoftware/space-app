@@ -31,6 +31,7 @@ use Psr\Log\LoggerInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
+use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\BaseRecipeInterface;
 
 /**
@@ -48,6 +49,7 @@ trait HandlerTrait
         private StreamFactoryInterface $streamFactory,
         private Client $client,
         private LoggerInterface $logger,
+        private ?EncryptionInterface $encryption,
     ) {
     }
 

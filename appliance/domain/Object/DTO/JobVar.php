@@ -63,7 +63,22 @@ class JobVar implements ObjectInterface
     {
         $that = clone $this;
         $that->persistedVar = null;
+        $that->wasSecret = false;
 
         return $that;
+    }
+
+    /**
+     * @return array<string, string|bool|null>
+     */
+    public function exportAsArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'value' => $this->value,
+            'persisted' => $this->persisted,
+            'secret' => $this->secret,
+        ];
     }
 }

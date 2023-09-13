@@ -34,6 +34,7 @@ use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
 use OTPHP\TOTP;
+use phpseclib3\Crypt\RSA;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
@@ -76,6 +77,7 @@ use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\East\Paas\Infrastructures\Image\Contracts\ProcessFactoryInterface;
+use Teknoo\East\Paas\Infrastructures\PhpSecLib\Configuration\Algorithm;
 use Teknoo\East\Paas\Job\History\SerialGenerator;
 use Teknoo\East\Paas\Object\Account as AccountOrigin;
 use Teknoo\East\Paas\Object\Cluster;
@@ -185,6 +187,10 @@ class TestsContext implements Context
 
     private ?string $apiPendingJobUrl = null;
 
+    private string $privateKey = __DIR__ . '/../var/keys/private.pem';
+
+    private string $publicKey = __DIR__ . '/../var/keys/public.pem';
+
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -236,6 +242,22 @@ class TestsContext implements Context
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->apiPendingJobUrl = null;
         $this->timeoutService->disable();
+
+        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM'])) {
+            unset($_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM']);
+        }
+
+        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY'])) {
+            unset($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY']);
+        }
+
+        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE'])) {
+            unset($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE']);
+        }
+
+        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'])) {
+            unset($_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY']);
+        }
     }
 
     /**
@@ -274,6 +296,21 @@ class TestsContext implements Context
         $this->setSerialGenerator(fn() => 0);
 
         HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, Symfony::class);
+    }
+
+    /**
+     * @Given encryption capacities between servers and agents
+     */
+    public function encryptionCapacitiesBetweenServersAndAgents()
+    {
+        $pk = RSA::createKey(1024);
+
+        file_put_contents($this->privateKey, $pk->toString('PKCS8'));
+        file_put_contents($this->publicKey, $pk->getPublicKey()->toString('PKCS8'));
+
+        $_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM'] = Algorithm::RSA->value;
+        $_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY'] = $this->privateKey;
+        $_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'] = $this->publicKey;
     }
 
     /**
@@ -1824,6 +1861,10 @@ class TestsContext implements Context
         $project = $this->recall(Project::class);
         $jobs = $this->listObjects(JobOrigin::class);
         $job = end($jobs);
+
+        if (empty($job)) {
+            throw new RuntimeException('Job was not created');
+        }
 
         $this->register($job);
 
