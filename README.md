@@ -97,6 +97,12 @@ Environnements variables configuration
     * `MERCURE_PUBLISH_URL` : (string) Mercure url to push the job page url to follow the deployment. *Optional*
     * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
     * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+  * East PaaS Encryption : 
+    * Encryptions capacities in messages between servers and agents or workers : 
+    * `TEKNOO_PAAS_SECURITY_ALGORITHM` (with `rsa` ou `dsa`).
+    * `TEKNOO_PAAS_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
+    * (optional) `TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the private key.
+    * `TEKNOO_PAAS_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
   * Symfony :
     * `MESSENGER_NEW_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment 
                                 request.
