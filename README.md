@@ -27,7 +27,9 @@ This is the `Standard` version of Space. It is released under MIT licence. This 
   * accounts can host also persisted variables to be used on all deployments of all of this projects if
     they are not already defined in projects.
   * persisted variables can contains secrets. 
-    * Warning, currently secrets are not visible in Space's web app but they are passed unencrypted to the workers. 
+    * Warning, secrets are not visible in Space's web app but they are passed unencrypted to the workers if encryption
+      is not enabled between servers and agents. Fill environments variables about `East PaaS Encryption` described 
+      later in this document.
 * Space is bundled with a Composer hook to build PHP Project. NPM and PIP supports is also planned.
 * Space allow any users to subcribe, but it's not manage billings.
       * Subscriptions can be restricted with uniques codes to forbid non selected user to subscribe.
