@@ -38,7 +38,7 @@ class MemoryObjectManager implements ObjectManager
     public function __construct(
         callable $getRepository,
         private TestsContext $context,
-    ){
+    ) {
         $this->getRepository = $getRepository;
     }
 
@@ -47,32 +47,50 @@ class MemoryObjectManager implements ObjectManager
         return $this->context->findObjectById($className, $id);
     }
 
-    public function persist($object): void {
+    public function persist($object): void
+    {
         $this->context->persistObject($object);
     }
 
-    public function remove($object): void {
+    public function remove($object): void
+    {
         $this->context->removeObject($object);
     }
 
-    public function clear(): void {
+    public function clear(): void
+    {
     }
 
-    public function detach($object) {}
+    public function detach($object)
+    {
+    }
 
-    public function refresh($object) {}
+    public function refresh($object)
+    {
+    }
 
-    public function flush() {}
+    public function flush()
+    {
+    }
 
-    public function getRepository($className) {
+    public function getRepository($className)
+    {
         return ($this->getRepository)($className);
     }
 
-    public function getClassMetadata($className) {}
+    public function getClassMetadata($className)
+    {
+    }
 
-    public function getMetadataFactory() {}
+    public function getMetadataFactory()
+    {
+    }
 
-    public function initializeObject($obj) {}
+    public function initializeObject($obj)
+    {
+    }
 
-    public function contains($object) {}
+    public function contains($object)
+    {
+    }
 }

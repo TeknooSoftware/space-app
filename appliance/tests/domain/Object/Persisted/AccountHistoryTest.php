@@ -83,7 +83,9 @@ class AccountHistoryTest extends TestCase
         self::assertInstanceOf(
             AccountHistory::class,
             $this->accountHistory->setHistory($this->createMock(History::class))->passMeYouHistory(
-                function ($value) use (&$final) { $final = $value; }
+                function ($value) use (&$final) {
+                    $final = $value;
+                }
             ),
         );
 

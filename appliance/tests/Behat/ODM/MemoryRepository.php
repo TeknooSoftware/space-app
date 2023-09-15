@@ -41,14 +41,16 @@ class MemoryRepository extends DocumentRepository
     ) {
     }
 
-    public function register(string $id, $object): self {
+    public function register(string $id, $object): self
+    {
         $this->objectManager->persist($object);
 
         return $this;
     }
 
-    public function findOneBy(array $criteria, ?array $sort = null): ?object {
-        if(isset($criteria['id'])) {
+    public function findOneBy(array $criteria, ?array $sort = null): ?object
+    {
+        if (isset($criteria['id'])) {
             return $this->context->findObjectById($this->className, $criteria['id']);
         }
 
@@ -59,13 +61,14 @@ class MemoryRepository extends DocumentRepository
         return null;
     }
 
-    public function getClassName(): string {
+    public function getClassName(): string
+    {
         return $this->className;
     }
 
     public function createQueryBuilder(): QueryBuilder
     {
-        return new class($this->context, $this->className) extends QueryBuilder {
+        return new class ($this->context, $this->className) extends QueryBuilder {
             private array $criteria;
 
             private ?int $limit = null;

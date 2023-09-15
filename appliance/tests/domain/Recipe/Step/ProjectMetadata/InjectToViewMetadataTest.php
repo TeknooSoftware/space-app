@@ -50,7 +50,7 @@ class InjectToViewMetadataTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->injectToViewMetadata = new InjectToViewMetadata();
     }
 

@@ -33,7 +33,7 @@ phpstan:
 	${PHP} -d memory_limit=256M vendor/bin/phpstan analyse domain src infrastructures --level max
 
 phpcs:
-	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php domain/ src/ infrastructures/
+	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php domain/ src/ infrastructures/ tests/
 
 composerunsed:
 	${PHP} vendor/bin/composer-unused

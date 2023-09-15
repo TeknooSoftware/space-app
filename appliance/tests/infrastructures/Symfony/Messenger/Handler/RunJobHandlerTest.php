@@ -78,7 +78,7 @@ class RunJobHandlerTest extends TestCase
         $this->client = $this->createMock(Client::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->encryption = $this->createMock(EncryptionInterface::class);
-        
+
         $this->runJobHandler = new RunJobHandler(
             $this->executor,
             $this->recipe,

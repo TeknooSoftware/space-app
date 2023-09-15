@@ -50,7 +50,7 @@ class ExtractProjectTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->extractProject = new ExtractProject();
     }
 

@@ -62,7 +62,7 @@ class AccountHistoryWriterTest extends TestCase
         $this->manager = $this->createMock(ManagerInterface::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDateOnUpdate = true;
-        
+
         $this->accountHistoryWriter = new AccountHistoryWriter(
             $this->manager,
             $this->datesService,

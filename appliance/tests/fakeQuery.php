@@ -7,6 +7,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Teknoo\Space\Tests\Behat\TestsContext;
+
 use function count;
 use function is_iterable;
 
@@ -95,7 +96,7 @@ if (!\class_exists(Query::class, false)) {
             return $this->resultToReturn;
         }
 
-        public function setHydrate(bool $hydrate) : void
+        public function setHydrate(bool $hydrate): void
         {
         }
     }

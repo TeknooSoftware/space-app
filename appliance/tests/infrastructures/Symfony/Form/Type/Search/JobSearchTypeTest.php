@@ -50,7 +50,7 @@ class JobSearchTypeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->jobSearchType = new JobSearchType();
     }
 

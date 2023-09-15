@@ -53,7 +53,7 @@ class PrepareNewJobFormTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->prepareNewJobForm = new PrepareNewJobForm();
     }
 

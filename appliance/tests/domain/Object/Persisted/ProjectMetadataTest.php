@@ -87,8 +87,10 @@ class ProjectMetadataTest extends TestCase
         self::assertInstanceOf(
             ProjectMetadata::class,
             $this->projectMetadata->visit([
-                'projectUrl' => function ($value) use (&$final) { $final = $value; },
-                'foo' => fn() => self::fail('Must be not called'),
+                'projectUrl' => function ($value) use (&$final) {
+                    $final = $value;
+                },
+                'foo' => fn () => self::fail('Must be not called'),
             ]),
         );
         self::assertEquals(

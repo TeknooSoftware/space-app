@@ -50,7 +50,7 @@ class AdminSpaceAccountTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->adminSpaceAccountType = new AdminSpaceAccountType();
     }
 

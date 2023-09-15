@@ -50,7 +50,7 @@ class PrepareRedirectionTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->prepareRedirection = new PrepareRedirection();
     }
 

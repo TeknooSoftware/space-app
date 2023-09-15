@@ -97,8 +97,10 @@ class UserDataTest extends TestCase
         self::assertInstanceOf(
             UserData::class,
             $this->userData->visit([
-                'picture' => function ($value) use (&$final) { $final = $value; },
-                'foo' => fn() => self::fail('Must be not called'),
+                'picture' => function ($value) use (&$final) {
+                    $final = $value;
+                },
+                'foo' => fn () => self::fail('Must be not called'),
             ]),
         );
         self::assertInstanceOf(

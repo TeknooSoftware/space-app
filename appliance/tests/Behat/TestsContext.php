@@ -115,11 +115,13 @@ use function count;
 use function current;
 use function end;
 use function explode;
+use function file_exists;
 use function get_parent_class;
 use function hash;
 use function in_array;
 use function is_array;
 use function is_iterable;
+use function is_readable;
 use function iterator_to_array;
 use function json_decode;
 use function json_encode;
@@ -293,7 +295,7 @@ class TestsContext implements Context
         $this->sfContainer = $this->kernel->getContainer();
 
         $this->setDateTime(new DateTime('2018-10-01 02:03:04', new \DateTimeZone('UTC')));
-        $this->setSerialGenerator(fn() => 0);
+        $this->setSerialGenerator(fn () => 0);
 
         HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, Symfony::class);
     }
@@ -303,10 +305,12 @@ class TestsContext implements Context
      */
     public function encryptionCapacitiesBetweenServersAndAgents()
     {
-        $pk = RSA::createKey(1024);
+        if (!file_exists($this->privateKey) || !is_readable($this->privateKey)) {
+            $pk = RSA::createKey(1024);
 
-        file_put_contents($this->privateKey, $pk->toString('PKCS8'));
-        file_put_contents($this->publicKey, $pk->getPublicKey()->toString('PKCS8'));
+            file_put_contents($this->privateKey, $pk->toString('PKCS8'));
+            file_put_contents($this->publicKey, $pk->getPublicKey()->toString('PKCS8'));
+        }
 
         $_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM'] = Algorithm::RSA->value;
         $_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY'] = $this->privateKey;
@@ -353,7 +357,7 @@ class TestsContext implements Context
             return match (key($value)) {
                 '$in' => in_array($expected, current($value)),
                 '$nin' => !in_array($expected, current($value)),
-                default=> $expected === $value,
+                default => $expected === $value,
             };
         }
 
@@ -458,8 +462,7 @@ class TestsContext implements Context
         string $className,
         array $criteria,
         ?int $limit = null,
-    ): iterable
-    {
+    ): iterable {
         $final = [];
         do {
             if (empty($this->objects[$className])) {
@@ -502,7 +505,8 @@ class TestsContext implements Context
         return $this->objects[$class];
     }
 
-    public function persistObject(object $object): void {
+    public function persistObject(object $object): void
+    {
         if ($object instanceof IdentifiedObjectInterface) {
             if (
                 empty($object->getId())
@@ -515,7 +519,8 @@ class TestsContext implements Context
         $this->objects[$object::class][$this->getObjectUniqueId($object)] = $object;
     }
 
-    public function removeObject(object $object): void {
+    public function removeObject(object $object): void
+    {
         if (isset($this->objects[$object::class][$this->getObjectUniqueId($object)])) {
             unset($this->objects[$object::class][$this->getObjectUniqueId($object)]);
         }
@@ -1023,7 +1028,7 @@ class TestsContext implements Context
             if (
                 '<auto>' === $field['value']
             ) {
-               $field['value'] = $this->getFormFieldValue($formValue, $field['field']);
+                $field['value'] = $this->getFormFieldValue($formValue, $field['field']);
             }
 
             $this->setRequestParameters($final, $field['field'], $field['value']);
@@ -1211,7 +1216,7 @@ class TestsContext implements Context
         $node = $crawler->filter('p#2fa-error');
         $nodeValue = trim((string) $node?->getNode(0)?->textContent);
 
-        Assert::assertNotEmpty($nodeValue,);
+        Assert::assertNotEmpty($nodeValue);
     }
 
     private function submitTotpCode(string $code): void
@@ -1254,7 +1259,7 @@ class TestsContext implements Context
         $node = $crawler->filter('#login-error');
         $nodeValue = trim((string) $node?->getNode(0)?->textContent);
 
-        Assert::assertNotEmpty($nodeValue,);
+        Assert::assertNotEmpty($nodeValue);
     }
 
     /**
@@ -2305,7 +2310,7 @@ class TestsContext implements Context
         $job = current($jobs);
         Assert::assertInstanceOf(JobOrigin::class, $job);
 
-        $json = stripslashes(json_encode($this->manifests, JSON_THROW_ON_ERROR|JSON_PRETTY_PRINT));
+        $json = stripslashes(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
 
         $id = $job->getId();
         if (strlen($id) < 9) {
@@ -2314,7 +2319,7 @@ class TestsContext implements Context
 
         $jobId = substr(string: $id, offset: 0, length: 4) . '-' . substr(string: $id, offset: -4);
 
-        $expected = (new ManifestGenerator)->fullDeployment(
+        $expected = (new ManifestGenerator())->fullDeployment(
             projectPrefix: $this->projectPrefix,
             jobId: $jobId,
             hncSuffix: $this->hncSuffix,
@@ -2446,8 +2451,8 @@ class TestsContext implements Context
      */
     public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace)
     {
-        $expected = trim((new ManifestGenerator)->namespaceCreation($namespace));
-        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR|JSON_PRETTY_PRINT));
+        $expected = trim((new ManifestGenerator())->namespaceCreation($namespace));
+        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         Assert::assertEquals(
             $expected,
             $json,
@@ -2719,7 +2724,6 @@ class TestsContext implements Context
 
                 return $this;
             }
-
         };
 
         $this->sfContainer->set(
@@ -2733,7 +2737,7 @@ class TestsContext implements Context
      */
     public function aGitCloningAgent()
     {
-        $cloningAgent = new class implements CloningAgentInterface {
+        $cloningAgent = new class () implements CloningAgentInterface {
             use ImmutableTrait;
 
             private ?JobWorkspaceInterface $workspace = null;
@@ -2777,7 +2781,6 @@ class TestsContext implements Context
 
         $hooks = ['composer' => clone $hook, 'hook-id' => clone $hook];
         $collection = new class ($hooks) implements HooksCollectionInterface {
-
             private iterable $hooks;
 
             public function __construct(iterable $hooks)

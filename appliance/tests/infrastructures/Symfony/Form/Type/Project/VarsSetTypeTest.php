@@ -50,7 +50,7 @@ class VarsSetTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->varsSetType = new VarsSetType();
     }
 

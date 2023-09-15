@@ -50,7 +50,7 @@ class JobVarTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->jobVarType = new JobVarType();
     }
 

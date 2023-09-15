@@ -117,6 +117,9 @@
         "webmozart/assert": "^1.11"
     },
     "config": {
+        "audit": {
+            "abandoned": "report"
+        },
         "preferred-install": {
             "*": "dist"
         },

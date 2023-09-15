@@ -50,7 +50,7 @@ class SpaceUserTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->spaceUserType = new SpaceUserType();
     }
 

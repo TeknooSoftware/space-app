@@ -52,7 +52,7 @@ class LoadAccountFromProjectTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->loadAccountFromProject = new LoadAccountFromProject();
     }
 

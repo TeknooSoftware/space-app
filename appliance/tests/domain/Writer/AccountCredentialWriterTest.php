@@ -63,7 +63,7 @@ class AccountCredentialWriterTest extends TestCase
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDateOnUpdate = true;
 
-        
+
         $this->accountCredentialWriter = new AccountCredentialWriter(
             $this->manager,
             $this->datesService,
