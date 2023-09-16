@@ -23,25 +23,25 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use DateTime;
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Job;
-use Teknoo\Space\Recipe\Step\Job\ExtractProject;
+use Teknoo\Space\Object\DTO\JWTConfiguration;
 
 /**
- * Class ExtractProjectTest.
+ * Class JWTConfigurationTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Job\ExtractProject
+ * @covers \Teknoo\Space\Object\DTO\JWTConfiguration
  */
-class ExtractProjectTest extends TestCase
+class JwtConfigurationTest extends TestCase
 {
-    private ExtractProject $extractProject;
+    private JWTConfiguration $jWTConfiguration;
 
     /**
      * {@inheritdoc}
@@ -50,18 +50,14 @@ class ExtractProjectTest extends TestCase
     {
         parent::setUp();
 
-
-        $this->extractProject = new ExtractProject();
+        $this->jWTConfiguration = new JWTConfiguration(new DateTime('2023-09-16 01:00:00'));
     }
 
-    public function testInvoke(): void
+    public function testConstruct(): void
     {
         self::assertInstanceOf(
-            ExtractProject::class,
-            ($this->extractProject)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Job::class),
-            )
+            DateTimeInterface::class,
+            $this->jWTConfiguration->expirationDate,
         );
     }
 }

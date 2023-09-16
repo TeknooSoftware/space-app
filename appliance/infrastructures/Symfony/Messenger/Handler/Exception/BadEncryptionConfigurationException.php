@@ -23,14 +23,16 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Behat;
+namespace Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use RuntimeException;
 
-class GetTokenStorageService
+/**
+ * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @license     http://teknoo.software/license/mit         MIT License
+ * @author      Richard Déloge <richard@teknoo.software>
+ */
+class BadEncryptionConfigurationException extends RuntimeException
 {
-    public function __construct(
-        public ?TokenStorageInterface $tokenStorage = null,
-    ) {
-    }
 }

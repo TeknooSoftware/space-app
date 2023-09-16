@@ -118,6 +118,13 @@ services:
             - '@Symfony\Component\Mercure\HubInterface'
             - '%teknoo.space.mercure.publishing_enabled%'
 
+    Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher'
+            - '@router'
+            - 'space_job_new_pending'
+
     ############
     # Messenger
     Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\HistorySentHandler:
@@ -142,6 +149,7 @@ services:
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
             - '@logger'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
             - '%env(default:teknoo.space.new_job.waiting_time.default:SPACE_NEW_JOB_WAITING_TIME)%'
         tags:
@@ -193,9 +201,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher'
-            - '@router'
-            - 'space_job_new_pending'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
 
     Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar'

@@ -62,7 +62,7 @@ class ProjectMetadataWriterTest extends TestCase
         $this->manager = $this->createMock(ManagerInterface::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDateOnUpdate = true;
-        
+
         $this->projectMetadataWriter = new ProjectMetadataWriter(
             $this->manager,
             $this->datesService,

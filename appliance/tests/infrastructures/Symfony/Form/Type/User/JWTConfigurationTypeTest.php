@@ -23,25 +23,25 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\User;
 
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Job;
-use Teknoo\Space\Recipe\Step\Job\ExtractProject;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\Space\Infrastructures\Symfony\Form\Type\User\JWTConfigurationType;
 
 /**
- * Class ExtractProjectTest.
+ * Class JWTConfigurationTypeTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Job\ExtractProject
+ * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\User\JWTConfigurationType
  */
-class ExtractProjectTest extends TestCase
+class JWTConfigurationTypeTest extends TestCase
 {
-    private ExtractProject $extractProject;
+    private JWTConfigurationType $jWTConfigurationType;
 
     /**
      * {@inheritdoc}
@@ -51,17 +51,27 @@ class ExtractProjectTest extends TestCase
         parent::setUp();
 
 
-        $this->extractProject = new ExtractProject();
+        $this->jWTConfigurationType = new JWTConfigurationType();
     }
 
-    public function testInvoke(): void
+    public function testBuildForm(): void
     {
         self::assertInstanceOf(
-            ExtractProject::class,
-            ($this->extractProject)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Job::class),
-            )
+            JWTConfigurationType::class,
+            $this->jWTConfigurationType->buildForm(
+                $this->createMock(FormBuilderInterface::class),
+                ['foo' => 'bar'],
+            ),
+        );
+    }
+
+    public function testConfigureOptions(): void
+    {
+        self::assertInstanceOf(
+            JWTConfigurationType::class,
+            $this->jWTConfigurationType->configureOptions(
+                $this->createMock(OptionsResolver::class),
+            ),
         );
     }
 }

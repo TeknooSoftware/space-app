@@ -66,9 +66,11 @@ class CreateSecretServiceAccountTokenTest extends TestCase
         $this->client
             ->expects(self::any())
             ->method('__call')
-            ->willReturnCallback(fn ($name) => match($name) {
-                'secrets' => $this->createMock(SecretRepository::class),
-            });
+            ->willReturnCallback(
+                fn ($name) => match ($name) {
+                    'secrets' => $this->createMock(SecretRepository::class),
+                }
+            );
 
         $this->datesService = $this->createMock(DatesService::class);
         $this->secretWaitingTime = 42;

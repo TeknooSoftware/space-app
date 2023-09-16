@@ -23,9 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
+namespace Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier;
 
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
 use Throwable;
 
 /**
@@ -34,20 +35,29 @@ use Throwable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobErrorNotifier
+class JobError
 {
     public function __construct(
-        private JobError $notifier,
+        private JobErrorPublisher $publisher,
+        private UrlGeneratorInterface $generator,
+        private string $pendingJobRoute,
     ) {
     }
 
-    public function __invoke(
+    public function process(
         Throwable $error,
         string $newJobId,
     ): static {
-        $this->notifier->process(
-            error: $error,
-            newJobId: $newJobId,
+        $this->publisher->publish(
+            $this->generator->generate(
+                $this->pendingJobRoute,
+                [
+                    'newJobId' => $newJobId,
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ),
+            $newJobId,
+            $error,
         );
 
         return $this;

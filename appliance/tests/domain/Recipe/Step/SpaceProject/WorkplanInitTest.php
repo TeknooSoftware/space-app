@@ -52,7 +52,7 @@ class WorkplanInitTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->workplanInit = new WorkplanInit();
     }
 

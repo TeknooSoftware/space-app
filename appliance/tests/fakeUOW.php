@@ -11,7 +11,7 @@ if (!\class_exists(UnitOfWork::class, false)) {
         {
         }
 
-        public function getDocumentChangeSet(object $document) : array
+        public function getDocumentChangeSet(object $document): array
         {
         }
 
@@ -19,30 +19,29 @@ if (!\class_exists(UnitOfWork::class, false)) {
         {
         }
 
-        public function recomputeSingleDocumentChangeSet(ClassMetadata $class, object $document) : void
+        public function recomputeSingleDocumentChangeSet(ClassMetadata $class, object $document): void
         {
         }
 
-        public function setOriginalDocumentProperty(string $oid, string $property, $value) : void
+        public function setOriginalDocumentProperty(string $oid, string $property, $value): void
         {
         }
 
-        public function getScheduledDocumentInsertions() : array
+        public function getScheduledDocumentInsertions(): array
         {
         }
 
-        public function getScheduledDocumentUpdates() : array
+        public function getScheduledDocumentUpdates(): array
         {
         }
 
-        public function getScheduledDocumentDeletions() : array
+        public function getScheduledDocumentDeletions(): array
         {
-
         }
 
         public function getDocumentPersister(string $className)
         {
-            return new class {
+            return new class () {
                 public function addDiscriminatorToPreparedQuery(array $preparedQuery): array
                 {
                     return $preparedQuery;

@@ -35,6 +35,8 @@ use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
+use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception\BadEncryptionConfigurationException;
 use Teknoo\Space\Object\DTO\NewJob;
 use Throwable;
 
@@ -59,6 +61,7 @@ class NewJobHandler
         private StreamFactoryInterface $streamFactory,
         private Client $client,
         private LoggerInterface $logger,
+        private JobError $jobErrorNotifier,
         private ?EncryptionInterface $encryption,
         private int $waitingTimeSecond = 0,
     ) {
@@ -86,6 +89,8 @@ class NewJobHandler
         if (0 < $this->waitingTimeSecond) {
             sleep($this->waitingTimeSecond);
         }
+
+        $currentNewJobId = $newJob->newJobId;
 
         $processMessage = function (NewJob $newJob) use ($client): void {
             $this->logger->info(
@@ -118,8 +123,15 @@ class NewJobHandler
             );
         };
 
-        $processError = function (Throwable $error) use ($client): void {
+        $processError = function (Throwable $error) use ($client, $currentNewJobId): void {
             $this->logger->critical($error);
+
+            if (null !== $currentNewJobId) {
+                $this->jobErrorNotifier->process(
+                    error: $error,
+                    newJobId: $currentNewJobId,
+                );
+            }
 
             $client->errorInRequest(
                 new UnrecoverableMessageHandlingException(
@@ -140,6 +152,16 @@ class NewJobHandler
             $this->encryption->decrypt(
                 $newJob,
                 $promise,
+            );
+
+            return $this;
+        }
+
+        if (!empty($newJob->getEncryptionAlgorithm())) {
+            $processError(
+                new BadEncryptionConfigurationException(
+                    'teknoo.space.error.messenger.handler.message-can-not-decrypted',
+                ),
             );
 
             return $this;

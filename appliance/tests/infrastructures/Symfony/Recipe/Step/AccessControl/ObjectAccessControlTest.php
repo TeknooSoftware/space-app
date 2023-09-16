@@ -63,7 +63,7 @@ class ObjectAccessControlTest extends TestCase
 
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        
+
         $this->objectAccessControl = new ObjectAccessControl(
             $this->authorizationChecker,
             $this->tokenStorage,

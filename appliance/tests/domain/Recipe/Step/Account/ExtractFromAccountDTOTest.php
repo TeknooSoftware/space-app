@@ -51,7 +51,7 @@ class ExtractFromAccountDTOTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->extractFromAccountDTO = new ExtractFromAccountDTO();
     }
 

@@ -31,12 +31,13 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Teknoo\Kubernetes\HttpClient\InstantiatorInterface;
+
 use function array_pop;
 use function explode;
 use function json_decode;
 
-class MockClientInstantiator implements InstantiatorInterface {
-
+class MockClientInstantiator implements InstantiatorInterface
+{
     public static TestsContext $testsContext;
 
     public function build(

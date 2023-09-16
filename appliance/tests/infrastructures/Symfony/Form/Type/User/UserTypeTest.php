@@ -50,7 +50,7 @@ class UserTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->userType = new UserType();
     }
 

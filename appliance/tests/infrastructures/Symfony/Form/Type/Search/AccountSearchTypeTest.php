@@ -51,7 +51,7 @@ class AccountSearchTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->accountSearchType = new AccountSearchType();
     }
 

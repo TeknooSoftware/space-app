@@ -159,8 +159,10 @@ class AccountDataTest extends TestCase
         self::assertInstanceOf(
             AccountData::class,
             $this->accountData->visit([
-                'billingName' => function ($value) use (&$final) { $final = $value; },
-                'foo' => fn() => self::fail('Must be not called'),
+                'billingName' => function ($value) use (&$final) {
+                    $final = $value;
+                },
+                'foo' => fn () => self::fail('Must be not called'),
             ]),
         );
         self::assertEquals(

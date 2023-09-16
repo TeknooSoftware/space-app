@@ -41,6 +41,8 @@ use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending;
 
+use const PHP_EOL;
+
 /**
  * Class FetchJobIdFromPendingTest.
  *
@@ -98,7 +100,9 @@ class FetchJobIdFromPendingTest extends TestCase
                 function () use ($response) {
                     $generator = function () use ($response): \Generator {
                         yield $response => new FirstChunk();
-                        yield $response => new ServerSentEvent('id: urn:uuid:313a4bdc-bad0-4ead-8513-72f36c19e9b3' . \PHP_EOL . 'data: {"foo": "bar"}');
+                        yield $response => new ServerSentEvent(
+                            'id: urn:uuid:313a4bdc-bad0-4ead-8513-72f36c19e9b3' . PHP_EOL . 'data: {"foo": "bar"}'
+                        );
                         yield $response => new LastChunk();
                     };
 

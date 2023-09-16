@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta16] - 2023-09-16
+### Beta Release
+- Improve error manager when encryption configuration differe between servers and workers
+
 ## [1.0.0-beta15] - 2023-09-13
 ### Beta Release
 - Add encryption capacities in messages between servers and agents or workers

@@ -74,7 +74,6 @@ class CreateServiceAccountTest extends TestCase
         self::assertInstanceOf(
             CreateServiceAccount::class,
             ($this->createServiceAccount)(
-
                 $this->createMock(ManagerInterface::class),
                 'foo',
                 'foo',

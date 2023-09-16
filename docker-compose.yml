@@ -100,6 +100,9 @@ services:
             - PHP_BLACKFIRE_SERVER=blackfire
             - SPACE_SUPPORT_CONTACT=support@teknoo.space
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
     apache:
         build:
             context: ./build.dev/apache

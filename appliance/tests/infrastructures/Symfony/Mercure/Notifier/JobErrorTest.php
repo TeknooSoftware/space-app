@@ -23,25 +23,33 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Mercure\Notifier;
 
+use Exception;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Job;
-use Teknoo\Space\Recipe\Step\Job\ExtractProject;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
 
 /**
- * Class ExtractProjectTest.
+ * Class JobErrorNotifierTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Job\ExtractProject
+ * @covers \Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError
  */
-class ExtractProjectTest extends TestCase
+class JobErrorTest extends TestCase
 {
-    private ExtractProject $extractProject;
+    private JobError $jobErrorNotifier;
+
+    private JobErrorPublisher|MockObject $publisher;
+
+    private UrlGeneratorInterface|MockObject $generator;
+
+    private string $pendingJobRoute;
 
     /**
      * {@inheritdoc}
@@ -50,17 +58,19 @@ class ExtractProjectTest extends TestCase
     {
         parent::setUp();
 
-
-        $this->extractProject = new ExtractProject();
+        $this->publisher = $this->createMock(JobErrorPublisher::class);
+        $this->generator = $this->createMock(UrlGeneratorInterface::class);
+        $this->pendingJobRoute = '42';
+        $this->jobErrorNotifier = new JobError($this->publisher, $this->generator, $this->pendingJobRoute);
     }
 
-    public function testInvoke(): void
+    public function testProcess(): void
     {
         self::assertInstanceOf(
-            ExtractProject::class,
-            ($this->extractProject)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Job::class),
+            JobError::class,
+            ($this->jobErrorNotifier)->process(
+                new Exception('foo'),
+                'bar',
             )
         );
     }

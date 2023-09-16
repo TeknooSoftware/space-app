@@ -79,7 +79,6 @@ class CreateStorageTest extends TestCase
         self::assertInstanceOf(
             CreateStorage::class,
             ($this->createStorage)(
-
                 $this->createMock(ManagerInterface::class),
                 'foo',
                 'foo',

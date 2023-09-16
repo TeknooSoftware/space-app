@@ -49,7 +49,7 @@ class IncludeExtraInWorkplanTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->includeExtraInWorkplan = new IncludeExtraInWorkplan();
     }
 

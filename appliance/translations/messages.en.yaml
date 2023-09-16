@@ -104,6 +104,7 @@ teknoo.space.error.space_user.user.persisting: "Can not persist update's updates
 teknoo.space.error.space_user.user_data.fetching: "User's data can not be fetched"
 teknoo.space.error.contact.bot_forbidden: "Ungranted bot"
 teknoo.space.error.contact.missing.receiver: "Receiver address is not defined"
+teknoo.space.error.messenger.handler.message-can-not-decrypted: "Configuration error, agent can not decrypt messages"
 teknoo.space.footer.text.newsletter: ''
 teknoo.space.footer.title.footer_left: ''
 teknoo.space.footer.title.footer_right: ''

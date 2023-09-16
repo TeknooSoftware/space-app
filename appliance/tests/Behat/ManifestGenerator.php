@@ -230,13 +230,13 @@ class ManifestGenerator
     ]
 }
 EOF;
-;
+        ;
     }
 
     public function fullDeployment(
         string $projectPrefix,
         string $jobId,
-        string $hncSuffix, 
+        string $hncSuffix,
         bool $useHnc,
     ): string {
         if (!empty($projectPrefix)) {

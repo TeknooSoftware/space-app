@@ -50,7 +50,7 @@ class SpaceProjectTypeTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->spaceProjectType = new SpaceProjectType();
     }
 

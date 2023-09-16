@@ -50,7 +50,7 @@ class PrepareCriteriaTest extends TestCase
     {
         parent::setUp();
 
-        
+
         $this->prepareCriteria = new PrepareCriteria();
     }
 

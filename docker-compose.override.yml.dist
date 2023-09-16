@@ -2,31 +2,32 @@ version: "3.7"
 services:
     mercure:
         environment:
-            - MERCURE_PUBLISHER_JWT_KEY=AChanger
-            - MERCURE_SUBSCRIBER_JWT_KEY=AChanger
+            - MERCURE_PUBLISHER_JWT_KEY=ToChange!
+            - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
     php:
         environment:
-            - APP_REMEMBER_SECRET=AChanger
-            - APP_SECRET=AChanger
-            - MERCURE_JWT_TOKEN=AChanger
-            - OAUTH_GITLAB_CLIENT_ID=AChanger
-            - OAUTH_GITLAB_CLIENT_SECRET=AChanger
-            - SPACE_CODE_GENERATOR_SALT=AChanger
-            - SPACE_KUBERNETES_CA_VALUE=AChanger
-            - SPACE_KUBERNETES_CREATE_TOKEN=AChanger
-            - SPACE_OCI_GLOBAL_REGISTRY_PWD=AChanger
-            - SPACE_KUBERNETES_MASTER=https://AChanger:16443
-            - SPACE_KUBERNETES_CLUSTER_URL=AChanger
-            - SPACE_KUBERNETES_DASHBOARD=https://AChanger/
-            - SPACE_OAUTH_GITLAB_URL=https://AChanger/
-            - SPACE_OCI_GLOBAL_REGISTRY_URL=AChanger
-            - SPACE_OCI_REGISTRY_URL=.AChanger
-            - MAILER_HOST=AChanger
-            - MAILER_PASSWORD=AChanger
-            - MAILER_USER=AChanger
+            - APP_REMEMBER_SECRET=ToChange!
+            - APP_SECRET=ToChange!
+            - MERCURE_JWT_TOKEN=ToChange!
+            - OAUTH_GITLAB_CLIENT_ID=ToChange!
+            - OAUTH_GITLAB_CLIENT_SECRET=ToChange!
+            - SPACE_CODE_GENERATOR_SALT=ToChange!
+            - SPACE_KUBERNETES_CA_VALUE=ToChange!
+            - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
+            - SPACE_KUBERNETES_MASTER=https://ToChange!:16443
+            - SPACE_KUBERNETES_CLUSTER_URL=ToChange!
+            - SPACE_KUBERNETES_DASHBOARD=https://ToChange!/
+            - SPACE_OAUTH_GITLAB_URL=https://ToChange!/
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
+            - SPACE_OCI_REGISTRY_URL=.ToChange!
+            - MAILER_HOST=ToChange!
+            - MAILER_PASSWORD=ToChange!
+            - MAILER_USER=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     blackfire:
         environment:
-            - BLACKFIRE_SERVER_ID=AChanger
-            - BLACKFIRE_SERVER_TOKEN=AChanger
-            - BLACKFIRE_CLIENT_ID=AChanger
-            - BLACKFIRE_CLIENT_TOKEN=AChanger
+            - BLACKFIRE_SERVER_ID=ToChange!
+            - BLACKFIRE_SERVER_TOKEN=ToChange!
+            - BLACKFIRE_CLIENT_ID=ToChange!
+            - BLACKFIRE_CLIENT_TOKEN=ToChange!

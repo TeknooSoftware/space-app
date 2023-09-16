@@ -62,7 +62,7 @@ class AccountPersistedVariableWriterTest extends TestCase
         $this->manager = $this->createMock(ManagerInterface::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDateOnUpdate = true;
-        
+
         $this->accountPersistedVariableWriter = new AccountPersistedVariableWriter(
             $this->manager,
             $this->datesService,

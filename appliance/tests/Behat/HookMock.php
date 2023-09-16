@@ -28,7 +28,8 @@ namespace Teknoo\Space\Tests\Behat;
 use Teknoo\East\Paas\Contracts\Hook\HookInterface;
 use Teknoo\Recipe\Promise\PromiseInterface;
 
-class HookMock implements HookInterface {
+class HookMock implements HookInterface
+{
     public function __construct(
         public array $options = [],
     ) {

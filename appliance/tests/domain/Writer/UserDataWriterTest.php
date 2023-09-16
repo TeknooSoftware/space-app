@@ -66,7 +66,8 @@ class UserDataWriterTest extends TestCase
         $this->userDataWriter = new UserDataWriter(
             $this->manager,
             $this->datesService,
-            $this->prefereRealDateOnUpdate,);
+            $this->prefereRealDateOnUpdate,
+        );
     }
 
     public function testSave(): void
