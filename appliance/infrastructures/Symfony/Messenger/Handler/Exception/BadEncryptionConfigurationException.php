@@ -23,10 +23,9 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
+namespace Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception;
 
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
-use Throwable;
+use RuntimeException;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,22 +33,6 @@ use Throwable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobErrorNotifier
+class BadEncryptionConfigurationException extends RuntimeException
 {
-    public function __construct(
-        private JobError $notifier,
-    ) {
-    }
-
-    public function __invoke(
-        Throwable $error,
-        string $newJobId,
-    ): static {
-        $this->notifier->process(
-            error: $error,
-            newJobId: $newJobId,
-        );
-
-        return $this;
-    }
 }

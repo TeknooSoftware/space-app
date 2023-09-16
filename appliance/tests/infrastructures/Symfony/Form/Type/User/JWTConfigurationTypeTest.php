@@ -23,30 +23,25 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\User;
 
-use Exception;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\Space\Infrastructures\Symfony\Form\Type\User\JWTConfigurationType;
 
 /**
- * Class JobErrorNotifierTest.
+ * Class JWTConfigurationTypeTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier
+ * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\User\JWTConfigurationType
  */
-class JobErrorNotifierTest extends TestCase
+class JWTConfigurationTypeTest extends TestCase
 {
-    private JobErrorNotifier $jobErrorNotifier;
-
-    private JobError|MockObject $jobError;
+    private JWTConfigurationType $jWTConfigurationType;
 
     /**
      * {@inheritdoc}
@@ -55,18 +50,28 @@ class JobErrorNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->jobError = $this->createMock(JobError::class);
-        $this->jobErrorNotifier = new JobErrorNotifier($this->jobError);
+
+        $this->jWTConfigurationType = new JWTConfigurationType();
     }
 
-    public function testInvoke(): void
+    public function testBuildForm(): void
     {
         self::assertInstanceOf(
-            JobErrorNotifier::class,
-            ($this->jobErrorNotifier)(
-                new Exception('foo'),
-                'bar',
-            )
+            JWTConfigurationType::class,
+            $this->jWTConfigurationType->buildForm(
+                $this->createMock(FormBuilderInterface::class),
+                ['foo' => 'bar'],
+            ),
+        );
+    }
+
+    public function testConfigureOptions(): void
+    {
+        self::assertInstanceOf(
+            JWTConfigurationType::class,
+            $this->jWTConfigurationType->configureOptions(
+                $this->createMock(OptionsResolver::class),
+            ),
         );
     }
 }

@@ -34,6 +34,7 @@ use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler;
 use Teknoo\Space\Object\DTO\NewJob;
 
@@ -62,6 +63,8 @@ class NewJobHandlerTest extends TestCase
 
     private LoggerInterface|MockObject $logger;
 
+    private JobError|MockObject $jobError;
+
     private EncryptionInterface|MockObject $encryption;
 
     private int $waitingTimeSecond;
@@ -79,6 +82,7 @@ class NewJobHandlerTest extends TestCase
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
         $this->client = $this->createMock(Client::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->jobError = $this->createMock(JobError::class);
         $this->encryption = $this->createMock(EncryptionInterface::class);
         $this->waitingTimeSecond = 1;
         $this->newJobHandler = new NewJobHandler(
@@ -88,6 +92,7 @@ class NewJobHandlerTest extends TestCase
             $this->streamFactory,
             $this->client,
             $this->logger,
+            $this->jobError,
             $this->encryption,
             $this->waitingTimeSecond
         );
@@ -98,7 +103,7 @@ class NewJobHandlerTest extends TestCase
         self::assertInstanceOf(
             NewJobHandler::class,
             ($this->newJobHandler)(
-                $this->createMock(NewJob::class),
+                new NewJob(newJobId: 'foo'),
             )
         );
     }

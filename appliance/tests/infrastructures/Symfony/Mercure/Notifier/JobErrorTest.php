@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Mercure\Notifier;
 
 use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,7 +31,6 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier;
 
 /**
  * Class JobErrorNotifierTest.
@@ -40,13 +39,17 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier
+ * @covers \Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError
  */
-class JobErrorNotifierTest extends TestCase
+class JobErrorTest extends TestCase
 {
-    private JobErrorNotifier $jobErrorNotifier;
+    private JobError $jobErrorNotifier;
 
-    private JobError|MockObject $jobError;
+    private JobErrorPublisher|MockObject $publisher;
+
+    private UrlGeneratorInterface|MockObject $generator;
+
+    private string $pendingJobRoute;
 
     /**
      * {@inheritdoc}
@@ -55,15 +58,17 @@ class JobErrorNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->jobError = $this->createMock(JobError::class);
-        $this->jobErrorNotifier = new JobErrorNotifier($this->jobError);
+        $this->publisher = $this->createMock(JobErrorPublisher::class);
+        $this->generator = $this->createMock(UrlGeneratorInterface::class);
+        $this->pendingJobRoute = '42';
+        $this->jobErrorNotifier = new JobError($this->publisher, $this->generator, $this->pendingJobRoute);
     }
 
-    public function testInvoke(): void
+    public function testProcess(): void
     {
         self::assertInstanceOf(
-            JobErrorNotifier::class,
-            ($this->jobErrorNotifier)(
+            JobError::class,
+            ($this->jobErrorNotifier)->process(
                 new Exception('foo'),
                 'bar',
             )

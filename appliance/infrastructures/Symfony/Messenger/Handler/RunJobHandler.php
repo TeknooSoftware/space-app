@@ -29,6 +29,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 use Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\MessageJob;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception\BadEncryptionConfigurationException;
 use Throwable;
 
 use function json_encode;
@@ -98,6 +99,16 @@ class RunJobHandler
             $this->encryption->decrypt(
                 $job,
                 $promise,
+            );
+
+            return $this;
+        }
+
+        if (!empty($job->getEncryptionAlgorithm())) {
+            $processError(
+                new BadEncryptionConfigurationException(
+                    'teknoo.space.error.messenger.handler.message-can-not-decrypted',
+                ),
             );
 
             return $this;

@@ -23,30 +23,25 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
-use Exception;
-use PHPUnit\Framework\MockObject\MockObject;
+use DateTime;
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier;
+use Teknoo\Space\Object\DTO\JWTConfiguration;
 
 /**
- * Class JobErrorNotifierTest.
+ * Class JWTConfigurationTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier
+ * @covers \Teknoo\Space\Object\DTO\JWTConfiguration
  */
-class JobErrorNotifierTest extends TestCase
+class JwtConfigurationTest extends TestCase
 {
-    private JobErrorNotifier $jobErrorNotifier;
-
-    private JobError|MockObject $jobError;
+    private JWTConfiguration $jWTConfiguration;
 
     /**
      * {@inheritdoc}
@@ -55,18 +50,14 @@ class JobErrorNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->jobError = $this->createMock(JobError::class);
-        $this->jobErrorNotifier = new JobErrorNotifier($this->jobError);
+        $this->jWTConfiguration = new JWTConfiguration(new DateTime('2023-09-16 01:00:00'));
     }
 
-    public function testInvoke(): void
+    public function testConstruct(): void
     {
         self::assertInstanceOf(
-            JobErrorNotifier::class,
-            ($this->jobErrorNotifier)(
-                new Exception('foo'),
-                'bar',
-            )
+            DateTimeInterface::class,
+            $this->jWTConfiguration->expirationDate,
         );
     }
 }
