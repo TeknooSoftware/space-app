@@ -28,3 +28,4 @@
 /tests/Behat/jwt/public.pem
 /tests/var/keys/private.pem
 /tests/var/keys/public.pem
+/.env.local.php
