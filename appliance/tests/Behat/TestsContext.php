@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat;
 
+use ArrayObject;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use DateTime;
@@ -2881,7 +2882,7 @@ class TestsContext implements Context
         $diCi = $this->sfContainer->get(DiContainer::class);
         $diCi->set(
             'teknoo.east.paas.composer.path',
-            'composer'
+            new ArrayObject(['composer'])
         );
     }
 

@@ -1,5 +1,14 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta17] - 2023-09-20
+### Beta Release
+- Replace `SPACE_COMPOSER_PATH`, `SPACE_NPM_PATH`, `SPACE_PIP_PATH` and `SPACE_MAKE_PATH` to
+  - `SPACE_COMPOSER_PATH_JSON` (need a json array or json string) or `SPACE_COMPOSER_PATH_FILE` 
+  - `SPACE_NPM_PATH_JSON` (need a json array or json string) or `SPACE_NPM_PATH_FILE`
+  - `SPACE_PIP_PATH_JSON` (need a json array or json string) or `SPACE_PIP_PATH_FILE`
+  - `SPACE_MAKE_PATH_JSON` (need a json array or json string) or `SPACE_MAKE_PATH_FILE` 
+  - Path can be an array and not only a binary path, to use a docker container instead of a binary.
+
 ## [1.0.0-beta16] - 2023-09-16
 ### Beta Release
 - Improve error manager when encryption configuration differe between servers and workers

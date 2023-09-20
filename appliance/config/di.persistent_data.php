@@ -105,7 +105,7 @@ return [
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
     'teknoo.space.deleting.account_credential' => create(DeletingService::class)
         ->constructor(get(AccountCredentialWriter::class), get(DatesService::class)),
-    
+
     //AccountData
     AccountDataRepositoryInterface::class => get(AccountDataRepository::class),
     AccountDataRepository::class => static function (ContainerInterface $container): AccountDataRepository {

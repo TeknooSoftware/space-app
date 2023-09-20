@@ -28,12 +28,14 @@ lint:
 	find ./src -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 	find ./domain -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 	find ./infrastructures -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
+	find ./tests -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
+	find ./config -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 
 phpstan:
 	${PHP} -d memory_limit=256M vendor/bin/phpstan analyse domain src infrastructures --level max
 
 phpcs:
-	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php domain/ src/ infrastructures/ tests/
+	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php domain/ src/ infrastructures/ tests/ config/
 
 composerunsed:
 	${PHP} vendor/bin/composer-unused
