@@ -94,12 +94,7 @@ class NewJob implements ObjectInterface, MessageInterface
             return $this->encryptedVariables;
         }
 
-        $rawVars = [];
-        foreach ($this->variables as $variable) {
-            $rawVars[] = $variable->exportAsArray();
-        }
-
-        return (string) json_encode($rawVars);
+        return (string) json_encode($this->variables);
     }
 
     public function getEncryptionAlgorithm(): ?string

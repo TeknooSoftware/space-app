@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Object\DTO;
 
+use JsonSerializable;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 use Teknoo\Space\Object\Persisted\PersistedVariable;
@@ -35,7 +36,7 @@ use Teknoo\Space\Object\Persisted\PersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobVar implements ObjectInterface
+class JobVar implements ObjectInterface, JsonSerializable
 {
     public function __construct(
         private ?string $id = null,
@@ -71,7 +72,7 @@ class JobVar implements ObjectInterface
     /**
      * @return array<string, string|bool|null>
      */
-    public function exportAsArray(): array
+    public function jsonSerialize(): mixed
     {
         return [
             'id' => $this->id,
