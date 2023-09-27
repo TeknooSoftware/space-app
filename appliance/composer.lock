@@ -1656,16 +1656,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v10.24.0",
+            "version": "v10.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "939a975daa8a5f77974ffa6a24067f5e947683f4"
+                "reference": "133f59956c8002448b07a3ff5f4352f3b3de5614"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/939a975daa8a5f77974ffa6a24067f5e947683f4",
-                "reference": "939a975daa8a5f77974ffa6a24067f5e947683f4",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/133f59956c8002448b07a3ff5f4352f3b3de5614",
+                "reference": "133f59956c8002448b07a3ff5f4352f3b3de5614",
                 "shasum": ""
             },
             "require": {
@@ -1707,11 +1707,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-09-18T18:32:31+00:00"
+            "time": "2023-09-19T22:43:12+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v10.24.0",
+            "version": "v10.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1757,7 +1757,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v10.24.0",
+            "version": "v10.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1805,7 +1805,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v10.24.0",
+            "version": "v10.25.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -12902,12 +12902,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ea3fc67b2c04a0af64eb18579946c5b83b6f3067"
+                "reference": "223d2b1a8f3137e07fdab4da588866bbfa960467"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ea3fc67b2c04a0af64eb18579946c5b83b6f3067",
-                "reference": "ea3fc67b2c04a0af64eb18579946c5b83b6f3067",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/223d2b1a8f3137e07fdab4da588866bbfa960467",
+                "reference": "223d2b1a8f3137e07fdab4da588866bbfa960467",
                 "shasum": ""
             },
             "conflict": {
@@ -13047,7 +13047,7 @@
                 "ezsystems/ezplatform-richtext": ">=2.3,<2.3.7.1-dev",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2-dev|>=7,<7.5.30",
-                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.06,<=2019.03.5.1",
+                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.03.5.1",
                 "ezsystems/platform-ui-assets-bundle": ">=4.2,<4.2.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<4.1.1",
@@ -13352,7 +13352,7 @@
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
                 "simplito/elliptic-php": "<1.0.6",
                 "sitegeist/fluid-components": "<3.5",
-                "sjbr/sr-freecap": "<=2.5.2",
+                "sjbr/sr-freecap": "<2.4.6|>=2.5,<2.5.3",
                 "slim/psr7": "<1.4.1|>=1.5,<1.5.1|>=1.6,<1.6.1",
                 "slim/slim": "<2.6",
                 "slub/slub-events": "<3.0.3",
@@ -13572,7 +13572,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-25T18:04:45+00:00"
+            "time": "2023-09-27T04:04:30+00:00"
         },
         {
             "name": "sebastian/cli-parser",
