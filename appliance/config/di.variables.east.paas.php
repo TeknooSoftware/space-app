@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace App\Config;
 
 use ArrayObject;
+use Teknoo\Space\Configuration\Exception\UnsupportedConfigurationException;
 
 use function DI\env;
 use function DI\get;
@@ -35,23 +36,35 @@ use function is_array;
 use function is_file;
 use function json_decode;
 
-$loadFromEnv = static function (mixed $default, string $jsonKey, string $fileKey): ArrayObject
-{
-    $value = $default;
+use const JSON_THROW_ON_ERROR;
+
+$loadFromEnv = static function (
+    mixed $default,
+    string $jsonKey,
+    string $fileKey,
+): ArrayObject {
+    $value = null;
+
+    if (!empty($_ENV[$jsonKey]) && !empty($_ENV[$fileKey])) {
+        throw new UnsupportedConfigurationException(
+            "{$jsonKey} and {$fileKey} can not be filled in same time",
+        );
+    }
 
     if (!empty($_ENV[$jsonKey])) {
         $value = json_decode(
             json: $_ENV[$jsonKey],
             associative: true,
+            flags: JSON_THROW_ON_ERROR,
         );
-    }
-
-    if (
+    } elseif (
         !empty($_ENV[$fileKey])
         && is_file($file = $_ENV[$fileKey])
     ) {
         $value = require $file;
     }
+
+    $value ??= $default;
 
     if (is_array($value)) {
         $value = new ArrayObject($value);
@@ -74,17 +87,68 @@ return [
 
     'teknoo.east.paas.git.cloning.timeout' => env('SPACE_GIT_TIMEOUT', 240),
 
-    'teknoo.east.paas.composer.path' => env('SPACE_COMPOSER_PATH', 'composer'),
+    'teknoo.east.paas.composer.path' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            ['composer'],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_COMPOSER_PATH_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_COMPOSER_PATH_FILE',
+        ),
     'teknoo.east.paas.composer.timeout' => env('SPACE_COMPOSER_TIMEOUT', 240),
-    'teknoo.east.paas.npm.path' => env('SPACE_NPM_PATH', 'npm'),
+
+    'teknoo.east.paas.npm.path' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            ['npm'],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_NPM_PATH_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_NPM_PATH_FILE',
+        ),
     'teknoo.east.paas.npm.timeout' => env('SPACE_NPM_TIMEOUT', 240),
-    'teknoo.east.paas.pip.path' => env('SPACE_PIP_PATH', 'pip'),
+
+    'teknoo.east.paas.pip.path' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            ['pip'],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_PIP_PATH_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_PIP_PATH_FILE',
+        ),
     'teknoo.east.paas.pip.timeout' => env('SPACE_PIP_TIMEOUT', 240),
-    'teknoo.east.paas.make.path' => env('SPACE_MAKE_PATH', 'make'),
+
+    'teknoo.east.paas.make.path' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            ['make'],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_MAKE_PATH_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_MAKE_PATH_FILE',
+        ),
     'teknoo.east.paas.make.timeout' => env('SPACE_MAKE_TIMEOUT', 240),
 
     'teknoo.east.paas.img_builder.cmd' => env('SPACE_IMG_BUILDER_CMD', 'buildah'),
-    'teknoo.east.paas.img_builder.build.timeout' => env('SPACE_IMG_BUILDER_TIMEOUT', 10*60),
+    'teknoo.east.paas.img_builder.build.timeout' => env('SPACE_IMG_BUILDER_TIMEOUT', 10 * 60),
     'teknoo.east.paas.img_builder.build.platforms' => env('SPACE_IMG_BUILDER_PLATFORMS', 'linux/amd64'),
 
     'teknoo.east.paas.kubernetes.timeout' => env('SPACE_KUBERNETES_CLIENT_TIMEOUT', 10),

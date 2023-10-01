@@ -55,7 +55,8 @@ return [
             ) {
             }
 
-            public function getIterator(): Traversable {
+            public function getIterator(): Traversable
+            {
                 foreach ($this->hooksNames as $name => $class) {
                     $key = "teknoo.east.paas.{$name}.path";
                     if (

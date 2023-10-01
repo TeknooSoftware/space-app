@@ -360,7 +360,7 @@ return [
     },
 
     PngWriter::class => create(),
-    BuilderInterface::class => static function(): BuilderInterface {
+    BuilderInterface::class => static function (): BuilderInterface {
         return Builder::create();
     },
 

@@ -212,19 +212,23 @@ Environnements variables configuration
         * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
     * Hook :
       * Composer :
-        * `SPACE_COMPOSER_PATH` : (string) path to the composer executable. `$PATH/composer` by default
+        * `SPACE_COMPOSER_PATH_JSON` : (json string) path to the composer executable. `$PATH/composer` by default
+          * `SPACE_COMPOSER_PATH_FILE` : file alternative
         * `SPACE_COMPOSER_TIMEOUT` : (int) max time allowed to install dependencies via Composer.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
       * Npm :
-        * `SPACE_NPM_PATH` : (string) path to the npm executable. `$PATH/npm` by default
+        * `SPACE_NPM_PATH_JSON` : (json string) path to the npm executable. `$PATH/npm` by default
+          * `SPACE_NPM_PATH_FILE` : file alternative
         * `SPACE_NPM_TIMEOUT` : (int) max time allowed to install dependencies via Npm.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
       * Pip :
-        * `SPACE_PIP_PATH` : (string) path to the pip executable. `$PATH/pip` by default
+        * `SPACE_PIP_PATH_JSON` : (json string) path to the pip executable. `$PATH/pip` by default
+          * `SPACE_PIP_PATH_FILE` : file alternative
         * `SPACE_PIP_TIMEOUT` : (int) max time allowed to install dependencies via Pip.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
       * Make :
-        * `SPACE_MAKE_PATH` : (string) path to the make executable. `$PATH/make` by default
+        * `SPACE_MAKE_PATH_JSON` : (json string) path to the make executable. `$PATH/make` by default
+          * `SPACE_MAKE_PATH_FILE` : file alternative
         * `SPACE_MAKE_TIMEOUT` : (int) max time allowed to install dependencies via Make.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
     * OCI Image building :
