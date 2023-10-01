@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta18] - 2023-10-01
+### Beta Release
+- Support Hooks running in a dedicated container
+
 ## [1.0.0-beta17] - 2023-09-20
 ### Beta Release
 - Replace `SPACE_COMPOSER_PATH`, `SPACE_NPM_PATH`, `SPACE_PIP_PATH` and `SPACE_MAKE_PATH` to
