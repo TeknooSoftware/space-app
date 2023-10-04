@@ -10,7 +10,7 @@ function addSubForm(collectionHolder) {
   newForm = newForm.replace(new RegExp(prototypeName, 'g'), index);
 
   // increase the index with one for the next item
-  collectionHolder.dataset.index = collectionHolder.dataset.index + 1;
+  collectionHolder.dataset.index = parseInt(collectionHolder.dataset.index) + 1;
 
   let dom = new DOMParser().parseFromString(newForm, 'text/html').body;
   while (dom.hasChildNodes()) collectionHolder.appendChild(dom.firstChild);
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded",function () {
       if (null === collectionHolder) {
         collectionHolder = document.querySelector('.subforms[data-subforms="' + button.dataset.subformsId + '"]');
       }
-      collectionHolder.dataset.index = collectionHolder.querySelectorAll('div.subform').length;
+      collectionHolder.dataset.index = collectionHolder.querySelectorAll('.subform').length;
 
       // add a new sub form
       addSubForm(collectionHolder);
