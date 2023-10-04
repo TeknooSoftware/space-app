@@ -1,0 +1,5 @@
+Contact: mailto:contact@teknoo.software
+Contact: mailto:richard@teknoo.software
+Expires: 2023-12-31T22:59:00.000Z
+Preferred-Languages: en,fr
+Canonical: https://teknoo.space/security.txt
