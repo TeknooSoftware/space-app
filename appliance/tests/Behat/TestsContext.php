@@ -2807,8 +2807,9 @@ class TestsContext implements Context
     public function anOciBuilder()
     {
         $generator = new Generator();
-        $mock = $generator->getMock(
+        $mock = $generator->testDouble(
             type: Process::class,
+            mockObject: true,
             callOriginalConstructor: false,
             callOriginalClone: false,
             callOriginalMethods: false,
