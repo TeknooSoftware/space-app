@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta19] - 2023-10-08
+### Beta Release
+- Fix some boostrap classes in templates
+- Update libs and use East Common 2.3.2
+- Prevent issue with subforms in javascripts
+
 ## [1.0.0-beta18] - 2023-10-01
 ### Beta Release
 - Support Hooks running in a dedicated container
