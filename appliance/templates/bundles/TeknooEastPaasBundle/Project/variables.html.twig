@@ -16,7 +16,7 @@
 
 {% block crudFormFields %}
     <div class="row subforms" data-subforms="sets" data-prototype="{{ form_widget(formView.sets.vars.prototype)|e('html_attr') }}" data-prototype-name="__env_name__">
-        <div class="col-md-12">
+        <div class="col-12">
             <h3>{{ 'teknoo.space.title.environments'|trans }}</h3>
         </div>
         {% for envSet in formView.sets %}

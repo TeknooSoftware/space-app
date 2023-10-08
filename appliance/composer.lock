@@ -918,16 +918,16 @@
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
-            "version": "4.6.0",
+            "version": "4.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoDBBundle.git",
-                "reference": "294b0fb99432bd5a21dbcc24f87f195bcb2cf7b8"
+                "reference": "0135a1645a6b5ca9b94afc630e2a3aaba20a8efa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/294b0fb99432bd5a21dbcc24f87f195bcb2cf7b8",
-                "reference": "294b0fb99432bd5a21dbcc24f87f195bcb2cf7b8",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/0135a1645a6b5ca9b94afc630e2a3aaba20a8efa",
+                "reference": "0135a1645a6b5ca9b94afc630e2a3aaba20a8efa",
                 "shasum": ""
             },
             "require": {
@@ -1003,9 +1003,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineMongoDBBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/4.6.0"
+                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/4.6.1"
             },
-            "time": "2023-07-26T13:41:24+00:00"
+            "time": "2023-08-24T07:04:03+00:00"
         },
         {
             "name": "doctrine/persistence",

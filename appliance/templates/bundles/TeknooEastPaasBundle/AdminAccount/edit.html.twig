@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block crudSecondaryForm %}
-    <div class="col-lg-12">
+    <div class="col-12">
     <div class="rounded shadow p-4 bg-white mt-4">
         <div class="row">
             {{ form_row(formView.accountData.billingName, {"largeRow": true}) }}
@@ -48,7 +48,7 @@
 
 {% block blockExtra %}
     {% if accountHistoryRoot is defined and accountHistoryRoot is not empty %}
-        <div class="col-lg-12 mb-4">
+        <div class="col-12 mb-4">
             <div class="accordion" id="account-history">
                 <div class="accordion-item rounded">
                     <h2 class="accordion-header" id="headingOne">
