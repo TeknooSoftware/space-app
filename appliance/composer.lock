@@ -1656,7 +1656,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v10.26.2",
+            "version": "v10.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1711,7 +1711,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v10.26.2",
+            "version": "v10.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1757,7 +1757,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v10.26.2",
+            "version": "v10.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1805,7 +1805,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v10.26.2",
+            "version": "v10.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -15060,16 +15060,16 @@
         },
         {
             "name": "zenstruck/messenger-test",
-            "version": "v1.7.2",
+            "version": "v1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/messenger-test.git",
-                "reference": "8ef7993cf452182ee843a614921552ae560e408c"
+                "reference": "3e856ce90acd357230cb0e56e7f0d6beab384332"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/8ef7993cf452182ee843a614921552ae560e408c",
-                "reference": "8ef7993cf452182ee843a614921552ae560e408c",
+                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/3e856ce90acd357230cb0e56e7f0d6beab384332",
+                "reference": "3e856ce90acd357230cb0e56e7f0d6beab384332",
                 "shasum": ""
             },
             "require": {
@@ -15115,7 +15115,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/messenger-test/issues",
-                "source": "https://github.com/zenstruck/messenger-test/tree/v1.7.2"
+                "source": "https://github.com/zenstruck/messenger-test/tree/v1.7.3"
             },
             "funding": [
                 {
@@ -15123,7 +15123,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-02-24T20:54:57+00:00"
+            "time": "2023-10-09T15:24:43+00:00"
         }
     ],
     "aliases": [],
