@@ -1656,16 +1656,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v10.27.0",
+            "version": "v10.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "133f59956c8002448b07a3ff5f4352f3b3de5614"
+                "reference": "bb8784ce913bd46f944b4bd67cd857f40d9cfe68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/133f59956c8002448b07a3ff5f4352f3b3de5614",
-                "reference": "133f59956c8002448b07a3ff5f4352f3b3de5614",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/bb8784ce913bd46f944b4bd67cd857f40d9cfe68",
+                "reference": "bb8784ce913bd46f944b4bd67cd857f40d9cfe68",
                 "shasum": ""
             },
             "require": {
@@ -1707,11 +1707,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-09-19T22:43:12+00:00"
+            "time": "2023-10-10T12:55:25+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v10.27.0",
+            "version": "v10.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1757,7 +1757,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v10.27.0",
+            "version": "v10.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1805,7 +1805,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v10.27.0",
+            "version": "v10.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -12904,12 +12904,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "66dba7265a37e4081f443ed8211d507cd3cce5ef"
+                "reference": "138c8164ca26fdf365c2d3091040d78b0723735f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/66dba7265a37e4081f443ed8211d507cd3cce5ef",
-                "reference": "66dba7265a37e4081f443ed8211d507cd3cce5ef",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/138c8164ca26fdf365c2d3091040d78b0723735f",
+                "reference": "138c8164ca26fdf365c2d3091040d78b0723735f",
                 "shasum": ""
             },
             "conflict": {
@@ -13241,7 +13241,7 @@
                 "openmage/magento-lts": "<=19.5|>=20,<=20.1",
                 "opensource-workshop/connect-cms": "<1.7.2|>=2,<2.3.2",
                 "orchid/platform": ">=9,<9.4.4|>=14.0.0.0-alpha4,<14.5",
-                "oro/commerce": ">=4.1,<5.0.6",
+                "oro/commerce": ">=4.1,<5.0.11|>=5.1,<5.1.1",
                 "oro/crm": ">=1.7,<1.7.4|>=3.1,<4.1.17|>=4.2,<4.2.7",
                 "oro/platform": ">=1.7,<1.7.4|>=3.1,<3.1.29|>=4.1,<4.1.17|>=4.2,<4.2.8",
                 "oxid-esales/oxideshop-ce": "<4.5",
@@ -13577,7 +13577,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-09T22:04:13+00:00"
+            "time": "2023-10-10T22:04:32+00:00"
         },
         {
             "name": "sebastian/cli-parser",
