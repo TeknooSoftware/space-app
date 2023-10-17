@@ -12344,16 +12344,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.38",
+            "version": "1.10.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "5302bb402c57f00fb3c2c015bac86e0827e4b691"
+                "reference": "d9dedb0413f678b4d03cbc2279a48f91592c97c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/5302bb402c57f00fb3c2c015bac86e0827e4b691",
-                "reference": "5302bb402c57f00fb3c2c015bac86e0827e4b691",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d9dedb0413f678b4d03cbc2279a48f91592c97c4",
+                "reference": "d9dedb0413f678b4d03cbc2279a48f91592c97c4",
                 "shasum": ""
             },
             "require": {
@@ -12402,7 +12402,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-06T14:19:14+00:00"
+            "time": "2023-10-17T15:46:26+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -12904,12 +12904,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "87270ed29e2feaebecac71f5665cc20088e7752f"
+                "reference": "26c07e705c8f8e8b20e075c275f20f10dacf4ac0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/87270ed29e2feaebecac71f5665cc20088e7752f",
-                "reference": "87270ed29e2feaebecac71f5665cc20088e7752f",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/26c07e705c8f8e8b20e075c275f20f10dacf4ac0",
+                "reference": "26c07e705c8f8e8b20e075c275f20f10dacf4ac0",
                 "shasum": ""
             },
             "conflict": {
@@ -13187,7 +13187,7 @@
                 "magento/magento1ee": ">=1,<1.14.4.3-dev",
                 "magento/product-community-edition": ">=2,<2.2.10|>=2.3,<2.3.2.0-patch2",
                 "maikuolan/phpmussel": ">=1,<1.6",
-                "mantisbt/mantisbt": "<=2.25.5",
+                "mantisbt/mantisbt": "<=2.25.7",
                 "marcwillmann/turn": "<0.3.3",
                 "matyhtf/framework": "<3.0.6",
                 "mautic/core": "<4.3",
@@ -13577,7 +13577,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-17T10:04:36+00:00"
+            "time": "2023-10-17T15:04:43+00:00"
         },
         {
             "name": "sebastian/cli-parser",
