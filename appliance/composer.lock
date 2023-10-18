@@ -1910,29 +1910,29 @@
         },
         {
             "name": "laminas/laminas-code",
-            "version": "4.12.0",
+            "version": "4.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-code.git",
-                "reference": "36cbee228b427446419dd51944bdfb6bb8ddbcd0"
+                "reference": "7353d4099ad5388e84737dd16994316a04f48dbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/36cbee228b427446419dd51944bdfb6bb8ddbcd0",
-                "reference": "36cbee228b427446419dd51944bdfb6bb8ddbcd0",
+                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/7353d4099ad5388e84737dd16994316a04f48dbf",
+                "reference": "7353d4099ad5388e84737dd16994316a04f48dbf",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1.0 || ~8.2.0"
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
             },
             "require-dev": {
-                "doctrine/annotations": "^2.0.0",
+                "doctrine/annotations": "^2.0.1",
                 "ext-phar": "*",
-                "laminas/laminas-coding-standard": "^2.3.0",
-                "laminas/laminas-stdlib": "^3.6.1",
-                "phpunit/phpunit": "^10.0.9",
+                "laminas/laminas-coding-standard": "^2.5.0",
+                "laminas/laminas-stdlib": "^3.17.0",
+                "phpunit/phpunit": "^10.3.3",
                 "psalm/plugin-phpunit": "^0.18.4",
-                "vimeo/psalm": "^5.7.1"
+                "vimeo/psalm": "^5.15.0"
             },
             "suggest": {
                 "doctrine/annotations": "Doctrine\\Common\\Annotations >=1.0 for annotation features",
@@ -1969,7 +1969,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2023-09-06T14:56:25+00:00"
+            "time": "2023-10-18T10:00:55+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -12904,12 +12904,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "26c07e705c8f8e8b20e075c275f20f10dacf4ac0"
+                "reference": "a4ba413fa5a4a938b21fc5705ae363ee79c479d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/26c07e705c8f8e8b20e075c275f20f10dacf4ac0",
-                "reference": "26c07e705c8f8e8b20e075c275f20f10dacf4ac0",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a4ba413fa5a4a938b21fc5705ae363ee79c479d8",
+                "reference": "a4ba413fa5a4a938b21fc5705ae363ee79c479d8",
                 "shasum": ""
             },
             "conflict": {
@@ -13577,7 +13577,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-17T15:04:43+00:00"
+            "time": "2023-10-18T13:05:56+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -15060,20 +15060,20 @@
         },
         {
             "name": "zenstruck/messenger-test",
-            "version": "v1.7.3",
+            "version": "v1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/messenger-test.git",
-                "reference": "3e856ce90acd357230cb0e56e7f0d6beab384332"
+                "reference": "1eef59fc3bfe245d2cba458485e6d60be03bbee8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/3e856ce90acd357230cb0e56e7f0d6beab384332",
-                "reference": "3e856ce90acd357230cb0e56e7f0d6beab384332",
+                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/1eef59fc3bfe245d2cba458485e6d60be03bbee8",
+                "reference": "1eef59fc3bfe245d2cba458485e6d60be03bbee8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.0",
+                "php": ">=8.1",
                 "symfony/deprecation-contracts": "^2.2|^3.0",
                 "symfony/framework-bundle": "^5.4|^6.0",
                 "symfony/messenger": "^5.4|^6.0",
@@ -15084,10 +15084,14 @@
             },
             "require-dev": {
                 "phpstan/phpstan": "^1.4",
-                "phpunit/phpunit": "^9.5.0",
+                "phpunit/phpunit": "^9.6.0",
                 "symfony/browser-kit": "^5.4|^6.0",
+                "symfony/clock": "^6.3",
                 "symfony/phpunit-bridge": "^5.4|^6.0",
                 "symfony/yaml": "^5.4|^6.0"
+            },
+            "suggest": {
+                "symfony/clock": "A PSR-20 clock implementation in order to support DelayStamp."
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -15115,7 +15119,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/messenger-test/issues",
-                "source": "https://github.com/zenstruck/messenger-test/tree/v1.7.3"
+                "source": "https://github.com/zenstruck/messenger-test/tree/v1.8.0"
             },
             "funding": [
                 {
@@ -15123,7 +15127,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-10-09T15:24:43+00:00"
+            "time": "2023-10-18T09:09:59+00:00"
         }
     ],
     "aliases": [],
