@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b7bb826ee2509361bcf6a95b10e1e07",
+    "content-hash": "1b2ac1ae0de5085e47bc11d3d1646a7f",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11037,16 +11037,16 @@
         },
         {
             "name": "teknoo/kubernetes-client",
-            "version": "1.4.2",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "c15e284b77a83fb819a0f33135874828b878165d"
+                "reference": "d0d09f03dda1fd5c9a90e5fa660b895d2eac4490"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/c15e284b77a83fb819a0f33135874828b878165d",
-                "reference": "c15e284b77a83fb819a0f33135874828b878165d",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/d0d09f03dda1fd5c9a90e5fa660b895d2eac4490",
+                "reference": "d0d09f03dda1fd5c9a90e5fa660b895d2eac4490",
                 "shasum": ""
             },
             "require": {
@@ -11118,7 +11118,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-06-29T07:26:42+00:00"
+            "time": "2023-10-19T09:05:43+00:00"
         },
         {
             "name": "teknoo/recipe",
@@ -12904,12 +12904,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "a4ba413fa5a4a938b21fc5705ae363ee79c479d8"
+                "reference": "c8ae106748275c5feb622b72dce28a0427770f4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/a4ba413fa5a4a938b21fc5705ae363ee79c479d8",
-                "reference": "a4ba413fa5a4a938b21fc5705ae363ee79c479d8",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c8ae106748275c5feb622b72dce28a0427770f4f",
+                "reference": "c8ae106748275c5feb622b72dce28a0427770f4f",
                 "shasum": ""
             },
             "conflict": {
@@ -13049,7 +13049,7 @@
                 "ezsystems/ezplatform-richtext": ">=2.3,<2.3.7.1-dev",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2-dev|>=7,<7.5.30",
-                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.03.5.1",
+                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.06,<=2019.03.5.1",
                 "ezsystems/platform-ui-assets-bundle": ">=4.2,<4.2.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<4.1.1",
@@ -13577,7 +13577,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-18T13:05:56+00:00"
+            "time": "2023-10-18T17:04:20+00:00"
         },
         {
             "name": "sebastian/cli-parser",

@@ -90,7 +90,7 @@
         "teknoo/east-foundation-symfony": "^7.3.1",
         "teknoo/east-paas-symfony": "^2.2.8",
         "teknoo/immutable": "^3.0.16",
-        "teknoo/kubernetes-client": "^1.4.2",
+        "teknoo/kubernetes-client": "^1.4.3",
         "teknoo/recipe": "^4.3",
         "teknoo/states": "^6.1.2",
         "twig/extra-bundle": "^3.7.1",
