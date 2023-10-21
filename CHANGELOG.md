@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta20] - 2023-10-22
+### Beta Release
+- Update to last Symfony 6.3 minor
+- Update libs and use Teknoo Kubernetes 1.4.3
+
 ## [1.0.0-beta19] - 2023-10-08
 ### Beta Release
 - Fix some boostrap classes in templates
