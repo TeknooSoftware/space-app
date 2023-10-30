@@ -49,7 +49,7 @@ class ProjectMetadataType extends AbstractType
     {
         $builder->add('projectUrl', TextType::class);
 
-        $builder->setDataMapper(new class implements DataMapperInterface {
+        $builder->setDataMapper(new class () implements DataMapperInterface {
             /**
              * @param Traversable<string, FormInterface> $forms
              * @param ?\Teknoo\Space\Object\Persisted\ProjectMetadata $data

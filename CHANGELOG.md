@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta21] - 2023-10-30
+### Beta Release
+- Update to last Symfony 6.3 minor
+
 ## [1.0.0-beta20] - 2023-10-22
 ### Beta Release
 - Update to last Symfony 6.3 minor

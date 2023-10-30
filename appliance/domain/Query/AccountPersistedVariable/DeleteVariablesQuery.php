@@ -65,7 +65,7 @@ class DeleteVariablesQuery implements DeletingQueryInterface, ImmutableInterface
         $this->notIds = $notIds;
     }
 
-    public function delete(QueryExecutorInterface $queryBuilder, PromiseInterface $promise,): DeletingQueryInterface
+    public function delete(QueryExecutorInterface $queryBuilder, PromiseInterface $promise): DeletingQueryInterface
     {
         $queryBuilder->filterOn(
             AccountPersistedVariable::class,

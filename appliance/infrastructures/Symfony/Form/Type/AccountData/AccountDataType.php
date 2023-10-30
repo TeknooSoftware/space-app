@@ -101,7 +101,7 @@ class AccountDataType extends AbstractType
             ],
         );
 
-        $builder->setDataMapper(new class implements DataMapperInterface {
+        $builder->setDataMapper(new class () implements DataMapperInterface {
             /**
              * @param Traversable<string, FormInterface> $forms
              * @param ?\Teknoo\Space\Object\Persisted\AccountData $data
