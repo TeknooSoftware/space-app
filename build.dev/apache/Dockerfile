@@ -1,4 +1,4 @@
-FROM ubuntu:lunar
+FROM ubuntu:mantic-20231011
 
 MAINTAINER Richard Déloge <richard@teknoo.software>
 
