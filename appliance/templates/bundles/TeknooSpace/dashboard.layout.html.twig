@@ -18,22 +18,25 @@
         <link rel="shortcut icon" href="favicon.ico">
         {% endblock %}{# favicon_icon #}
 
+        {% block stylesheet %}
+            <link rel="stylesheet" href="{{ path('_teknoo_common_minifier_css_version', {'setName': 'default', 'version': '2023.11.10'}) }}">
+        {% endblock %}{# stylesheet #}
+        {#
         {% block bootstrap %}
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-        {% endblock %}{# bootstrap #}
+        {% endblock %}
 
         {% block main_icons %}
-        {#  Icons  #}
         <link href="libs/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet" type="text/css">
         <link href="css/icons.min.css" rel="stylesheet" type="text/css" />
         <link href="libs/@iconscout/unicons/css/line.css" type="text/css" rel="stylesheet" />
-        {% endblock %}{# main_icons #}
+        {% endblock %}
 
         {% block main_css %}
         <link href="css/style.min.css" class="theme-opt" rel="stylesheet" type="text/css" />
         <link href="css/colors/default.css" rel="stylesheet" id="color-opt">
         <link href="css/space.css" rel="stylesheet" />
-        {% endblock %}{# main_css #}
+        {% endblock %}#}
     </head>
     {% endblock %}{# html #}
     {% block body %}
@@ -136,11 +139,12 @@
         {% endblock %}{# pageWrapper #}
 
         {% block javascript %}
-        <script src="libs/bootstrap/js/bootstrap.bundle.min.js" nonce="{{ space_nonce() }}"></script>
+        <script nonce="{{ space_nonce() }}" src="{{ path('_teknoo_common_minifier_js_version', {'setName': 'default', 'version': '2023.11.10'}) }}"></script>
+        {# <script src="libs/bootstrap/js/bootstrap.bundle.min.js" nonce="{{ space_nonce() }}"></script>
         <script src="libs/feather-icons/feather.min.js" nonce="{{ space_nonce() }}"></script>
         <script src="libs/simplebar/simplebar.min.js" nonce="{{ space_nonce() }}"></script>
         <script src="js/app.js" nonce="{{ space_nonce() }}"></script>
-        <script src="js/space.js" nonce="{{ space_nonce() }}"></script>
+        <script src="js/space.js" nonce="{{ space_nonce() }}"></script> #}
         {% block javascript_additonals '' %}
         {% endblock %}{# javascript #}
     </body>

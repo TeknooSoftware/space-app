@@ -6,6 +6,10 @@ admin_common:
     resource: '@TeknooEastCommonBundle/Resources/config/2fa_routing.yaml'
     prefix: '/'
 
+common_assets:
+    resource: '@TeknooEastCommonBundle/Resources/config/assets_routing.yaml'
+    prefix: '/build'
+
 common:
     resource: '@TeknooEastCommonBundle/Resources/config/routing.yaml'
     prefix: '/'
