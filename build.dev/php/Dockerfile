@@ -1,6 +1,4 @@
-FROM php:8.2-fpm
-
-MAINTAINER Richard Déloge <richard@teknoo.software>
+FROM php:8.2.12-fpm
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
@@ -74,8 +72,9 @@ RUN set -eux ; \
     wget -q -O - https://packages.blackfire.io/gpg.key | sudo dd of=/usr/share/keyrings/blackfire-archive-keyring.asc ; \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/blackfire-archive-keyring.asc] http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sources.list.d/blackfire.list ; \
     apt-get update ; \
-    apt-get install blackfire-php \
+    apt-get install -y blackfire-php \
     ; \
+    apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
     locale-gen ; \
     printf "blackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /usr/local/etc/php/conf.d/90-blackfire.ini ; \

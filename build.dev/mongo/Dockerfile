@@ -1,6 +1,4 @@
-FROM mongo:4.4
-
-MAINTAINER Richard Déloge <richard@teknoo.software>
+FROM mongo:4.4.25
 
 ENV DEBIAN_FRONTEND noninteractive
 

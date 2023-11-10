@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta22] - 2023-11-10
+### Beta Release
+- Update to Symfony 6.3.8 to fix CVEs
+- Update to last Teknoo Recipe and East Common to fix some bug
+- Minify assets
+
 ## [1.0.0-beta21] - 2023-10-30
 ### Beta Release
 - Update to last Symfony 6.3 minor
