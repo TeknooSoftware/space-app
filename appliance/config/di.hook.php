@@ -51,6 +51,9 @@ return [
             $container,
             $container->get('teknoo.space.hook.collection'),
         ) implements HooksCollectionInterface {
+            /**
+             * @param iterable<string> $hooksNames
+             */
             public function __construct(
                 private ContainerInterface $container,
                 private iterable $hooksNames,
