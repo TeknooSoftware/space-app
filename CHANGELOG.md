@@ -1,5 +1,16 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta23] - 2023-11-12
+### Beta Release
+- Update to East PaaS 2.3
+- Support of Symfony Console in hook:
+  - `SPACE_SFCONSOLE_PATH_JSON` : (json string) path to the symfony console executable. `bin/console` by default
+    - `SPACE_SFCONSOLE_PATH_FILE` : file alternative
+  - `SPACE_SFCONSOLE_TIMEOUT` : (int) max time allowed to install dependencies via symfony console.
+      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+- QA
+- Prevent somes bugs in container
+
 ## [1.0.0-beta22] - 2023-11-10
 ### Beta Release
 - Update to Symfony 6.3.8 to fix CVEs

@@ -10,6 +10,6 @@ twig:
         mercureUrl: '%env(MERCURE_SUBSCRIBER_URL)%'
         mercureEnabled: '%teknoo.space.mercure.publishing_enabled%'
         supportContact: '%teknoo.space.support.contact%'
-        assetsVersion: '%app.assets.version%'
+        assetsVersion: '%teknoo.space.assets.version%'
     paths:
         '%kernel.project_dir%/templates/bundles/TeknooSpace': TeknooSpace

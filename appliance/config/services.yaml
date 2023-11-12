@@ -1,11 +1,3 @@
-parameters:
-    teknoo.space.defaults.mailer.sender_name: ''
-    teknoo.space.defaults.mailer.sender_address: ''
-    teknoo.space.defaults.mailer.forbidden_words: ''
-    teknoo.space.defaults.support.contact: ''
-    teknoo.space.support.contact: '%env(default:teknoo.space.defaults.support.contact:SPACE_SUPPORT_CONTACT)%'
-    app.assets.version: '2023.11.12'
-
 imports:
     - { resource: parameters.yaml }
     - { resource: disabled_services.yaml }
