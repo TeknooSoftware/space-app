@@ -32,6 +32,7 @@ use Teknoo\East\Paas\Infrastructures\ProjectBuilding\ComposerHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\MakeHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\NpmHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\PipHook;
+use Teknoo\East\Paas\Infrastructures\ProjectBuilding\SfConsoleHook;
 use Traversable;
 
 return [
@@ -41,6 +42,7 @@ return [
             'npm' => NpmHook::class,
             'pip' => PipHook::class,
             'make' => MakeHook::class,
+            'symfony_console' => SfConsoleHook::class,
         ]);
     },
 

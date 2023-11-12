@@ -19,7 +19,7 @@
         {% endblock %}{# favicon_icon #}
 
         {% block stylesheet %}
-            <link rel="stylesheet" href="{{ path('_teknoo_common_minifier_css_version', {'setName': 'default', 'version': '2023.11.10'}) }}">
+            <link rel="stylesheet" href="{{ path('_teknoo_common_minifier_css_version', {'setName': 'default', 'version': assetsVersion}) }}">
         {% endblock %}{# stylesheet #}
         {#
         {% block bootstrap %}
@@ -139,7 +139,7 @@
         {% endblock %}{# pageWrapper #}
 
         {% block javascript %}
-        <script nonce="{{ space_nonce() }}" src="{{ path('_teknoo_common_minifier_js_version', {'setName': 'default', 'version': '2023.11.10'}) }}"></script>
+        <script nonce="{{ space_nonce() }}" src="{{ path('_teknoo_common_minifier_js_version', {'setName': 'default', 'version': assetsVersion}) }}"></script>
         {# <script src="libs/bootstrap/js/bootstrap.bundle.min.js" nonce="{{ space_nonce() }}"></script>
         <script src="libs/feather-icons/feather.min.js" nonce="{{ space_nonce() }}"></script>
         <script src="libs/simplebar/simplebar.min.js" nonce="{{ space_nonce() }}"></script>

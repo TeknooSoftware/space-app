@@ -2862,6 +2862,10 @@ class TestsContext implements Context
             null
         );
         $diCi->set(
+            'teknoo.east.paas.symfony_console.path',
+            null
+        );
+        $diCi->set(
             'teknoo.east.paas.npm.path',
             null
         );
