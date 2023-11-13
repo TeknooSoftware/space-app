@@ -24,7 +24,7 @@
         {{ form_row(formView.envName, {"largeRow": true}) }}
     </div>
     <div class="row subforms" data-subforms="variables" data-prototype="{{ form_widget(formView.variables.vars.prototype)|e('html_attr') }}">
-        <div class="col-md-12">
+        <div class="col-12">
             <h3>{{ 'teknoo.space.title.variables'|trans }}</h3>
         </div>
         {% for variable in formView.variables %}

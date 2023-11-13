@@ -1,6 +1,12 @@
 parameters:
     ignoreErrors:
         -
+            message: '#mixed#'
+            path:  config/
+        -
+            message: '#::add#'
+            path:  config/
+        -
             message: '#is never read, only written#'
             path:  domain/Object/Persisted/
         -

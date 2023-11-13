@@ -123,4 +123,32 @@ return [
             (int) $container->get('teknoo.space.ping_seconds'),
         );
     },
+
+    'teknoo.east.common.assets.destination.css.path' => 'public/build/css',
+    'teknoo.east.common.assets.source.css.path' => 'public/',
+    'teknoo.east.common.assets.destination.js.path' => 'public/build/js',
+    'teknoo.east.common.assets.source.js.path' => 'public/',
+    'teknoo.east.common.assets.final_location' => 'build/',
+
+    'teknoo.east.common.assets.sets.css' => [
+        'default' => [
+            'css/bootstrap.min.css',
+            'libs/@mdi/font/css/materialdesignicons.min.css',
+            'css/icons.min.css',
+            'libs/@iconscout/unicons/css/line.css',
+            'css/style.min.css',
+            'css/colors/default.css',
+            'css/space.css',
+        ],
+    ],
+
+    'teknoo.east.common.assets.sets.js' => [
+        'default' => [
+            'libs/bootstrap/js/bootstrap.bundle.min.js',
+            'libs/feather-icons/feather.min.js',
+            'libs/simplebar/simplebar.min.js',
+            'js/app.js',
+            'js/space.js',
+        ],
+    ],
 ];

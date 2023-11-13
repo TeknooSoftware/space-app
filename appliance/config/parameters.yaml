@@ -40,6 +40,16 @@ parameters:
     teknoo.space.ping_seconds: '%env(int:SPACE_PING_SECONDS)%'
     teknoo.space.new_job.waiting_time.default: 5
     teknoo.space.prefer-real-date: true
+
     teknoo.east.paas.symfony.history.prefer-real-date: true
     teknoo.east.paas.symfony.prepare-job.prefer-real-date: true
     teknoo.east.paas.job_unit.use_hierarchical_namespaces: true
+
+    teknoo.space.defaults.mailer.sender_name: ''
+    teknoo.space.defaults.mailer.sender_address: ''
+    teknoo.space.defaults.mailer.forbidden_words: ''
+    teknoo.space.defaults.support.contact: ''
+
+    teknoo.space.support.contact: '%env(default:teknoo.space.defaults.support.contact:SPACE_SUPPORT_CONTACT)%'
+
+    teknoo.space.assets.version: '2023.11.12'

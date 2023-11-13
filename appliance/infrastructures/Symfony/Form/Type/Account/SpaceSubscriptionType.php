@@ -92,8 +92,8 @@ class SpaceSubscriptionType extends AbstractType
 
                     /** @var Promise<string, string|Throwable, mixed> $promise */
                     $promise = new Promise(
-                        fn(string $code) => $code,
-                        fn(Throwable $error) => $error,
+                        fn (string $code) => $code,
+                        fn (Throwable $error) => $error,
                     );
 
                     $this->codeGenerator->verify(

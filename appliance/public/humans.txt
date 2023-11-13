@@ -1,0 +1,19 @@
+/* TEAM */
+Your title: Richard DELOGE
+Site: richard@teknoo.software
+Twitter: rideloge
+Location: Caen, Normandy, France
+
+/* THANKS */
+Name: PHP Foundation, https://opencollective.com/phpfoundation
+Name: Composer, https://getcomposer.org
+Name: Symfony SAS, https://symfony.com/
+
+
+/* SITE */
+Last update: 2022/08/05
+Standards: PHP8.2, HTML5, CSS3, ECMA6
+Components: State 6.1, Recipe 4.3, East Foundation 7.3, Kubernetes Client 1.4, Symfony 6.3, Bootstrap, East PaaS 2.2,
+            East Common 2.2
+
+Software: PHPStorm, Docker, Kubernetes

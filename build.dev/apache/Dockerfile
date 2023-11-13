@@ -1,13 +1,12 @@
-FROM ubuntu:lunar
-
-MAINTAINER Richard Déloge <richard@teknoo.software>
+FROM ubuntu:mantic
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN set -eux ; \
     apt-get update ; \
     apt-get dist-upgrade -y ; \
-    apt-get install -y tzdata apache2 libapache2-mod-security2
+    apt-get install -y tzdata apache2 libapache2-mod-security2 ; \
+    apt-get clean
 
 ADD web.conf /etc/apache2/sites-available/web.conf
 

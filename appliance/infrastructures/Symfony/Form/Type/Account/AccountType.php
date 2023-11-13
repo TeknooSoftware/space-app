@@ -62,7 +62,7 @@ class AccountType extends AbstractType
             ],
         );
 
-        $builder->setDataMapper(new class implements DataMapperInterface {
+        $builder->setDataMapper(new class () implements DataMapperInterface {
             /**
              * @param Traversable<string, FormInterface> $forms
              * @param ?Account $data

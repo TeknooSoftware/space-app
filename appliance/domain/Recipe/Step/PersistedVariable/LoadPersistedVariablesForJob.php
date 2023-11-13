@@ -58,7 +58,7 @@ class LoadPersistedVariablesForJob
     ): void {
         /** @var Promise<iterable<AccountPersistedVariable>, mixed, mixed> $fetchedFromAccountPromise */
         $fetchedFromAccountPromise = new Promise(
-        /** @var \Teknoo\Space\Object\Persisted\AccountPersistedVariable[] $apvs */
+            /** @var \Teknoo\Space\Object\Persisted\AccountPersistedVariable[] $apvs */
             static function (iterable $apvs) use ($newJob): void {
                 foreach ($apvs as $var) {
                     $newJob->envName = $newJob->envName ?? $var->getEnvironmentName();
@@ -86,7 +86,7 @@ class LoadPersistedVariablesForJob
     ): void {
         /** @var Promise<iterable<PersistedVariable>, mixed, mixed> $fetchedFromProjectPromise */
         $fetchedFromProjectPromise = new Promise(
-        /** @var \Teknoo\Space\Object\Persisted\PersistedVariable[] $persistedVariables */
+            /** @var \Teknoo\Space\Object\Persisted\PersistedVariable[] $persistedVariables */
             static function (iterable $persistedVariables) use ($newJob, $project): void {
                 $project->projectMetadata?->visit(
                     [

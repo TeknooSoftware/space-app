@@ -16,7 +16,7 @@
   <section class="bg-home d-flex align-items-center">
     <div class="container">
       <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-12 text-center">
+        <div class="col-8 col-md-12 text-center">
           {% block imageError %}
           <img src="images/error.svg" class="img-fluid" alt="">
           {% endblock %}
@@ -34,7 +34,7 @@
       </div>{# end row #}
 
       <div class="row">
-        <div class="col-md-12 text-center">
+        <div class="col-12 text-center">
           <a hreflang="{{ locale }}" rel="noopener" href="javascript:window.history.back()" class="btn btn-outline-primary mt-4">{{ 'teknoo.space.action.go_back'|trans }}</a>
           <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-primary mt-4 ml-2">{{ 'teknoo.space.action.go_to_dashboard'|trans }}</a>
         </div>{# end col #}

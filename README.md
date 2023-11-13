@@ -216,6 +216,11 @@ Environnements variables configuration
           * `SPACE_COMPOSER_PATH_FILE` : file alternative
         * `SPACE_COMPOSER_TIMEOUT` : (int) max time allowed to install dependencies via Composer.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+      * Symfony Console :
+        * `SPACE_SFCONSOLE_PATH_JSON` : (json string) path to the symfony console executable. `bin/console` by default
+          * `SPACE_SFCONSOLE_PATH_FILE` : file alternative
+        * `SPACE_SFCONSOLE_TIMEOUT` : (int) max time allowed to install dependencies via symfony console.
+                                     Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
       * Npm :
         * `SPACE_NPM_PATH_JSON` : (json string) path to the npm executable. `$PATH/npm` by default
           * `SPACE_NPM_PATH_FILE` : file alternative

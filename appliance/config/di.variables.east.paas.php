@@ -102,6 +102,21 @@ return [
         ),
     'teknoo.east.paas.composer.timeout' => env('SPACE_COMPOSER_TIMEOUT', 240),
 
+    'teknoo.east.paas.symfony_console.path' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            ['${PWD}/bin/console'],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_SFCONSOLE_PATH_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_SFCONSOLE_PATH_FILE',
+        ),
+    'teknoo.east.paas.symfony_console.timeout' => env('SPACE_SFCONSOLE_TIMEOUT', 240),
+
     'teknoo.east.paas.npm.path' => factory($loadFromEnv)
         ->parameter(
             'default',

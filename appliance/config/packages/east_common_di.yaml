@@ -5,5 +5,7 @@ di_bridge:
         - { priority: 20, file: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/symfony/Resources/config/di.php' }
         - { priority: 20, file: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/symfony/Resources/config/laminas_di.php' }
         - { priority: 20, file: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/di.php' }
+        - { priority: 20, file: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/flysystem/di.php' }
+        - { priority: 20, file: '%kernel.project_dir%/vendor/teknoo/east-common/infrastructures/minify/di.php' }
     import:
         Doctrine\Persistence\ObjectManager: 'doctrine_mongodb.odm.default_document_manager'

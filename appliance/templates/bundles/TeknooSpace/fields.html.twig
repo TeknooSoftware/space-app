@@ -64,12 +64,12 @@
 {% endblock checkbox_widget %}
 
 {% block _type_blocks_entry_widget %}
-    <div class="col-md-12 subform">
+    <div class="col-12 subform">
         <div class="row">
             {{ form_errors(form) }}
-            {{ form_row(form.name, {"colClass": "col-md-6"}) }}
-            {{ form_row(form.type, {"colClass": "col-md-5"}) }}
-            <div class="col-md-1 pt-2 align-self-center">
+            {{ form_row(form.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.type, {"colClass": "col-5"}) }}
+            <div class="col-1 pt-2 align-self-center">
                 <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
                     <i class="mdi mdi-trash-can "></i>
                 </button>
@@ -79,17 +79,17 @@
 {% endblock %}
 
 {% block _space_project_project_clusters_entry_widget %}
-    <div class="col-md-12 subform">
+    <div class="col-12 subform">
         <div class="row">
-            {{ form_row(form.name, {"colClass": "col-md-6"}) }}
-            {{ form_row(form.type, {"colClass": "col-md-6"}) }}
-            {{ form_row(form.address, {"colClass": "col-md-6"}) }}
-            {{ form_row(form.environment.name, {"colClass": "col-md-6"}) }}
-            {{ form_row(form.identity.caCertificate, {"colClass": "col-md-12"}) }}
-            {{ form_row(form.identity.clientCertificate, {"colClass": "col-md-12"}) }}
-            {{ form_row(form.identity.clientKey, {"colClass": "col-md-12"}) }}
-            {{ form_row(form.identity.token, {"colClass": "col-md-11"}) }}
-            <div class="col-md-1 align-self-center">
+            {{ form_row(form.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.type, {"colClass": "col-6"}) }}
+            {{ form_row(form.address, {"colClass": "col-6"}) }}
+            {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.identity.caCertificate, {"colClass": "col-12"}) }}
+            {{ form_row(form.identity.clientCertificate, {"colClass": "col-12"}) }}
+            {{ form_row(form.identity.clientKey, {"colClass": "col-12"}) }}
+            {{ form_row(form.identity.token, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
                 <div class="form-group">
                     <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
                         <i class="mdi mdi-trash-can "></i>
@@ -101,7 +101,7 @@
 {% endblock %}
 
 {% block _account_vars_sets_entry_widget %}
-    <div class="col-md-12 subform">
+    <div class="col-12 subform">
         <div class="row">
             {{ form_row(form.environmentName, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
@@ -151,7 +151,7 @@
 {% endblock %}
 
 {% block _project_vars_sets_entry_widget %}
-    <div class="col-md-12 subform">
+    <div class="col-12 subform">
         <div class="row">
             {{ form_row(form.environmentName, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">

@@ -29,7 +29,7 @@
         {{ form_start(formView, {"attr":{"action": formAction|default(app.request.getPathInfo() ~ "?locale=" ~ locale) }}) }}
         {% endif %}
         <div class="row">
-            <div class="col-lg-3 mt-4 mt-lg-0 pt-2 pt-lg-0">
+            <div class="col-3 mt-4 mt-lg-0 pt-2 pt-lg-0">
                 <div class="card border-0 sidebar sticky-bar rounded shadow bg-white">
                     <div class="card-body">
                         {% block btnExtra '' %}
@@ -67,11 +67,11 @@
                     </div>
                 </div>
             </div>{# end col #}
-            <div class="col-lg-9">
+            <div class="col-9">
                 <div class="row">
                     {% block blockExtra '' %}
 
-                    <div class="col-lg-12">
+                    <div class="col-12">
                         <div class="rounded shadow p-4 bg-white">
                             {% if objectSaved is defined and objectSaved is not empty %}
                                 {% block alertFormSuccess %}

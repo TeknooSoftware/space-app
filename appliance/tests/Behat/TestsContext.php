@@ -2807,8 +2807,9 @@ class TestsContext implements Context
     public function anOciBuilder()
     {
         $generator = new Generator();
-        $mock = $generator->getMock(
+        $mock = $generator->testDouble(
             type: Process::class,
+            mockObject: true,
             callOriginalConstructor: false,
             callOriginalClone: false,
             callOriginalMethods: false,
@@ -2858,6 +2859,10 @@ class TestsContext implements Context
         $diCi = $this->sfContainer->get(DiContainer::class);
         $diCi->set(
             'teknoo.east.paas.composer.path',
+            null
+        );
+        $diCi->set(
+            'teknoo.east.paas.symfony_console.path',
             null
         );
         $diCi->set(

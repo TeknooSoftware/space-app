@@ -1,5 +1,37 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta23] - 2023-11-12
+### Beta Release
+- Update to East PaaS 2.3
+- Support of Symfony Console in hook:
+  - `SPACE_SFCONSOLE_PATH_JSON` : (json string) path to the symfony console executable. `bin/console` by default
+    - `SPACE_SFCONSOLE_PATH_FILE` : file alternative
+  - `SPACE_SFCONSOLE_TIMEOUT` : (int) max time allowed to install dependencies via symfony console.
+      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+- QA
+- Prevent somes bugs in container
+
+## [1.0.0-beta22] - 2023-11-10
+### Beta Release
+- Update to Symfony 6.3.8 to fix CVEs
+- Update to last Teknoo Recipe and East Common to fix some bug
+- Minify assets
+
+## [1.0.0-beta21] - 2023-10-30
+### Beta Release
+- Update to last Symfony 6.3 minor
+
+## [1.0.0-beta20] - 2023-10-22
+### Beta Release
+- Update to last Symfony 6.3 minor
+- Update libs and use Teknoo Kubernetes 1.4.3
+
+## [1.0.0-beta19] - 2023-10-08
+### Beta Release
+- Fix some boostrap classes in templates
+- Update libs and use East Common 2.3.2
+- Prevent issue with subforms in javascripts
+
 ## [1.0.0-beta18] - 2023-10-01
 ### Beta Release
 - Support Hooks running in a dedicated container

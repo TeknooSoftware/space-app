@@ -68,6 +68,7 @@ security:
     access_control:
         #Front : available for anyone
         - { path: '^/healthy', roles: [PUBLIC_ACCESS] }
+        - { path: '^/build', roles: [PUBLIC_ACCESS], requires_channel: https }
         #Admin : require role admin
         - { path: '^/admin', roles: [ROLE_ADMIN], requires_channel: https }
         #Account subscription
