@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "11341ec8096241f4722619778dd561e6",
+    "content-hash": "f9ffcf005e187c2e7ad562eced96a1d9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10458,16 +10458,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "2.4.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "422d00d7432de0af4dca8a7a2847e682d521c6a4"
+                "reference": "ded2589e839ca4dce92a14ddab0a32f2f1dae313"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/422d00d7432de0af4dca8a7a2847e682d521c6a4",
-                "reference": "422d00d7432de0af4dca8a7a2847e682d521c6a4",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/ded2589e839ca4dce92a14ddab0a32f2f1dae313",
+                "reference": "ded2589e839ca4dce92a14ddab0a32f2f1dae313",
                 "shasum": ""
             },
             "require": {
@@ -10485,6 +10485,7 @@
                 "doctrine/mongodb-odm-bundle": "^4.6.2",
                 "doctrine/persistence": "^3.2",
                 "ext-mongodb": "*",
+                "ext-tidy": "*",
                 "icanhazstring/composer-unused": "^0.8.10",
                 "knpuniversity/oauth2-client-bundle": "^2.16",
                 "laminas/laminas-diactoros": "^3",
@@ -10571,20 +10572,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-11-09T06:55:15+00:00"
+            "time": "2023-11-17T07:54:34+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "2.4.0",
+            "version": "2.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "ea5b02e64942495a971b94e5aaacc14c5308d077"
+                "reference": "e9c76425581022dce234e6eb912540fd29718a95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/ea5b02e64942495a971b94e5aaacc14c5308d077",
-                "reference": "ea5b02e64942495a971b94e5aaacc14c5308d077",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/e9c76425581022dce234e6eb912540fd29718a95",
+                "reference": "e9c76425581022dce234e6eb912540fd29718a95",
                 "shasum": ""
             },
             "require": {
@@ -10607,7 +10608,7 @@
                 "symfony/validator": "^6.3",
                 "symfony/yaml": "^6.3",
                 "teknoo/bridge-phpdi-symfony": "^6.0.1",
-                "teknoo/east-common": "^2.4.0",
+                "teknoo/east-common": "^2.5.0",
                 "teknoo/east-foundation-symfony": "^7.3.2",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/recipe": "^4.5.1",
@@ -10658,7 +10659,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-11-09T07:03:37+00:00"
+            "time": "2023-11-16T13:06:47+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -10841,16 +10842,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "2.3.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "e71901c4be15b06e413cd6eec4894bdaf35c28d9"
+                "reference": "c86c18d88d23866a7cbc25ab71d4af2c11aef0e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/e71901c4be15b06e413cd6eec4894bdaf35c28d9",
-                "reference": "e71901c4be15b06e413cd6eec4894bdaf35c28d9",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/c86c18d88d23866a7cbc25ab71d4af2c11aef0e1",
+                "reference": "c86c18d88d23866a7cbc25ab71d4af2c11aef0e1",
                 "shasum": ""
             },
             "require": {
@@ -10860,7 +10861,7 @@
                 "php": "^8.1",
                 "php-di/php-di": "^7.0.5",
                 "psr/http-client": "^1.0.2",
-                "teknoo/east-common": "^2.4.0",
+                "teknoo/east-common": "^2.5",
                 "teknoo/east-foundation": "^7.3.3",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/recipe": "^4.5.1",
@@ -10978,20 +10979,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-11-13T10:17:41+00:00"
+            "time": "2023-11-17T08:29:03+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "2.3.0",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "fa504491a0f3df213c51f2404097a97ed4a4f3fc"
+                "reference": "428feb68169dbebdf2d0a9ab062a1d7b7a1a6954"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/fa504491a0f3df213c51f2404097a97ed4a4f3fc",
-                "reference": "fa504491a0f3df213c51f2404097a97ed4a4f3fc",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/428feb68169dbebdf2d0a9ab062a1d7b7a1a6954",
+                "reference": "428feb68169dbebdf2d0a9ab062a1d7b7a1a6954",
                 "shasum": ""
             },
             "require": {
@@ -11028,9 +11029,9 @@
                 "symfony/validator": "*",
                 "symfony/yaml": "*",
                 "teknoo/bridge-phpdi-symfony": "^6.0.1",
-                "teknoo/east-common-symfony": "^2.4",
+                "teknoo/east-common-symfony": "^2.5",
                 "teknoo/east-foundation-symfony": "^7.3.3",
-                "teknoo/east-paas": "^2.3.0",
+                "teknoo/east-paas": "^2.4",
                 "teknoo/immutable": "^3.0.16",
                 "teknoo/kubernetes-client": "^1.4.3",
                 "teknoo/recipe": "^4.5.1",
@@ -11092,7 +11093,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-11-12T13:50:22+00:00"
+            "time": "2023-11-17T08:32:01+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13032,12 +13033,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "b06feb3f7e6aaacf37e47bc0bf045e3baeb06374"
+                "reference": "4bca2ea3f3d800c4a25ed3171b03980fa247521b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/b06feb3f7e6aaacf37e47bc0bf045e3baeb06374",
-                "reference": "b06feb3f7e6aaacf37e47bc0bf045e3baeb06374",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4bca2ea3f3d800c4a25ed3171b03980fa247521b",
+                "reference": "4bca2ea3f3d800c4a25ed3171b03980fa247521b",
                 "shasum": ""
             },
             "conflict": {
@@ -13046,6 +13047,7 @@
                 "adodb/adodb-php": "<=5.20.20|>=5.21,<=5.21.3",
                 "aheinze/cockpit": "<2.2",
                 "aimeos/aimeos-typo3": "<19.10.12|>=20,<20.10.5",
+                "airesvsg/acf-to-rest-api": "<=3.1",
                 "akaunting/akaunting": "<2.1.13",
                 "akeneo/pim-community-dev": "<5.0.119|>=6,<6.0.53",
                 "alextselegidis/easyappointments": "<1.5",
@@ -13725,7 +13727,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-15T19:04:11+00:00"
+            "time": "2023-11-15T21:04:09+00:00"
         },
         {
             "name": "sebastian/cli-parser",

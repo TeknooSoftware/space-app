@@ -11,6 +11,7 @@ space_support_contact:
         receiverAddress: 'support'
         route: 'space_support_contact_sent'
         template: '@@TeknooSpace/Contact/support.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_support_contact_sent:
     path: '/contact/support/sent'
@@ -19,3 +20,4 @@ space_support_contact_sent:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooSpace/Contact/sent.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"

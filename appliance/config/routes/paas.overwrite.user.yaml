@@ -8,6 +8,7 @@ _teknoo_common_admin_user_list:
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         template: '@@TeknooEastCommon/AdminUser/list.html.twig'
+        cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
 
 _teknoo_common_admin_user_edit:
     path: '/admin/user/edit/{id}'
@@ -20,6 +21,7 @@ _teknoo_common_admin_user_edit:
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         template: '@@TeknooEastCommon/AdminUser/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
 
 _teknoo_common_admin_user_new:
     path: '/admin/user/new'
@@ -36,6 +38,7 @@ _teknoo_common_admin_user_new:
         userKey: 'constructorArguments'
         userLoader: '@Teknoo\East\Common\Loader\UserLoader'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
 
 _teknoo_common_admin_user_delete:
     path: '/admin/user/delete/{id}'

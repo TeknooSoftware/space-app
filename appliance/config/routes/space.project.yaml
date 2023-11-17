@@ -8,6 +8,7 @@ space_project_list:
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooEastPaas/Project/list.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_edit:
     path: '/project/edit/{id}'
@@ -20,6 +21,7 @@ space_project_edit:
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooEastPaas/Project/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_edit_variables:
     path: '/project/edit/{id}/variables'
@@ -33,6 +35,7 @@ space_project_edit_variables:
         populateFormOptions: true
         template: '@@TeknooEastPaas/Project/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_edit_refresh_credentials:
     path: '/project/edit/{id}/refresh-credentials'
@@ -44,6 +47,7 @@ space_project_edit_refresh_credentials:
         projectKey: 'Teknoo\East\Paas\Object\Project'
         route: 'space_project_edit'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_new:
     path: '/project/new'
@@ -58,6 +62,7 @@ space_project_new:
         route: 'space_project_edit'
         template: '@@TeknooEastPaas/Project/new.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_delete:
     path: '/project/delete/{id}'

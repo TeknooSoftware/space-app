@@ -11,6 +11,7 @@ space_my_settings:
         objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
         template: '@@TeknooEastPaas/User/settings.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_my_settings_token:
     path: '/my-settings/jwt-token'
@@ -24,6 +25,7 @@ space_my_settings_token:
         objectClass: 'Teknoo\Space\Object\DTO\JWTConfiguration'
         template: '@@TeknooEastPaas/User/jwt.form.html.twig'
         tokenTemplate: '@@TeknooEastPaas/User/jwt.token.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_account_settings:
     path: '/account/settings'
@@ -38,6 +40,7 @@ space_account_settings:
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
         template: '@@TeknooEastPaas/Account/settings.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_account_edit_variables:
     path: '/account/variables'
@@ -50,3 +53,4 @@ space_account_edit_variables:
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/Account/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"

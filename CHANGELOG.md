@@ -1,5 +1,16 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta24] - 2023-11-17
+### Beta Release
+- Update to East Common 2.5
+  - Add `teknoo.space.rendering.clean_html` for Space's routes and set to true all theses parameters :
+    - `teknoo.east.common.rendering.clean_html`
+    - `teknoo.east.common.admin.rendering.clean_html`
+    - `teknoo.east.paas.admin.rendering.clean_html`
+    - `teknoo.east.paas.rendering.clean_html`
+    - `teknoo.space.rendering.clean_html`
+- Apply last patchs from Symfony
+  
 ## [1.0.0-beta23] - 2023-11-12
 ### Beta Release
 - Update to East PaaS 2.3

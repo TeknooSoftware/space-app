@@ -8,6 +8,7 @@ _teknoo_paas_admin_account_list:
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/AdminAccount/list.html.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_account_edit:
     path: '/admin/account/edit/{id}'
@@ -22,6 +23,7 @@ _teknoo_paas_admin_account_edit:
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/AdminAccount/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_account_new:
     path: '/admin/account/new'
@@ -38,6 +40,7 @@ _teknoo_paas_admin_account_new:
         route: '_teknoo_paas_admin_account_edit'
         template: '@@TeknooEastPaas/AdminAccount/new.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_account_delete:
     path: '/admin/account/delete/{id}'
@@ -60,6 +63,7 @@ space_admin_account_edit_variables:
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/AdminAccount/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_admin_account_reinstall:
     path: '/admin/account/reinstall/{id}'
@@ -69,6 +73,7 @@ space_admin_account_reinstall:
         allowEmptyCredentials: true
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_admin_account_registry_reinstall:
     path: '/admin/account/reinstall-registry/{id}'
@@ -78,3 +83,4 @@ space_admin_account_registry_reinstall:
         allowEmptyCredentials: true
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

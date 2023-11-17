@@ -9,3 +9,4 @@ space_admin_code_generator:
         formOptions: { }
         objectClass: 'Teknoo\East\Common\Object\EmptyObject'
         template: '@@TeknooEastPaas/AdminAccount/code_generator.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"

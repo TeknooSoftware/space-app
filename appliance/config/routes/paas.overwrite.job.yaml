@@ -12,6 +12,7 @@ space_admin_new_job:
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         route: 'space_job_new_pending'
         template: '@@TeknooEastPaas/AdminJob/new.html.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_admin_restart_job:
     path: '/admin/project/{projectId}/restart-job/{jobId}'
@@ -28,6 +29,7 @@ space_admin_restart_job:
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         route: 'space_job_new_pending'
         template: '@@TeknooEastPaas/AdminJob/new.html.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_admin_get_job:
     path: '/admin/job/{id}'
@@ -40,3 +42,4 @@ space_admin_get_job:
         loader: '@Teknoo\East\Paas\Loader\JobLoader'
         objectViewKey: 'jobInstance'
         template: '@@TeknooEastPaas/AdminJob/get.html.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

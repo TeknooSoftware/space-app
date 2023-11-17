@@ -6,3 +6,4 @@ space_healthy:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooEastPaas/healthy.html.twig'
+        cleanHtml: false

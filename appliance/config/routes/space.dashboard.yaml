@@ -7,6 +7,7 @@ space_dashboard:
         allowEmptyCredentials: true
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooSpace/Dashboard/index.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_dashboard_frame:
     path: '/dashboard/frame/'
