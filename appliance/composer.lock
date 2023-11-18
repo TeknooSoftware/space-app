@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9ffcf005e187c2e7ad562eced96a1d9",
+    "content-hash": "31d185aa1f807ebb3ad1a650865956b7",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11333,16 +11333,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "6.1.2",
+            "version": "6.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "091fa60dd7355a9c977d5946a451da8840a06f59"
+                "reference": "0949d0410c59df4bab19718061bc8f62d71f8736"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/091fa60dd7355a9c977d5946a451da8840a06f59",
-                "reference": "091fa60dd7355a9c977d5946a451da8840a06f59",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/0949d0410c59df4bab19718061bc8f62d71f8736",
+                "reference": "0949d0410c59df4bab19718061bc8f62d71f8736",
                 "shasum": ""
             },
             "require": {
@@ -11353,8 +11353,8 @@
                 "doctrine/mongodb-odm": "^2.5.2",
                 "doctrine/orm": "^2.15.2",
                 "icanhazstring/composer-unused": "^0.8.9",
-                "nikic/php-parser": "^4.15.5",
-                "phpstan/phpstan": "^1.10.23",
+                "nikic/php-parser": "^4.17.1",
+                "phpstan/phpstan": "^1.10.42",
                 "phpunit/phpunit": "^10.2.1",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.7.2",
@@ -11411,7 +11411,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-07-04T19:49:00+00:00"
+            "time": "2023-11-18T13:11:46+00:00"
         },
         {
             "name": "twig/extra-bundle",
@@ -12473,16 +12473,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.41",
+            "version": "1.10.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "c6174523c2a69231df55bdc65b61655e72876d76"
+                "reference": "fc2316508de5453140b5cb3d3f8683a33e92f26a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c6174523c2a69231df55bdc65b61655e72876d76",
-                "reference": "c6174523c2a69231df55bdc65b61655e72876d76",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/fc2316508de5453140b5cb3d3f8683a33e92f26a",
+                "reference": "fc2316508de5453140b5cb3d3f8683a33e92f26a",
                 "shasum": ""
             },
             "require": {
@@ -12531,7 +12531,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-05T12:57:57+00:00"
+            "time": "2023-11-17T15:26:57+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13033,12 +13033,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "4bca2ea3f3d800c4a25ed3171b03980fa247521b"
+                "reference": "ed4318ac306a1a1d467d19c1a768ff17e2d454b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4bca2ea3f3d800c4a25ed3171b03980fa247521b",
-                "reference": "4bca2ea3f3d800c4a25ed3171b03980fa247521b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ed4318ac306a1a1d467d19c1a768ff17e2d454b1",
+                "reference": "ed4318ac306a1a1d467d19c1a768ff17e2d454b1",
                 "shasum": ""
             },
             "conflict": {
@@ -13119,7 +13119,7 @@
                 "codeigniter4/shield": "<1.0.0.0-beta4",
                 "codiad/codiad": "<=2.8.4",
                 "composer/composer": "<1.10.27|>=2,<2.2.22|>=2.3,<2.6.4",
-                "concrete5/concrete5": "<=9.2.1",
+                "concrete5/concrete5": "<9.2.2",
                 "concrete5/core": "<8.5.8|>=9,<9.1",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
                 "contao/contao": ">=4,<4.4.56|>=4.5,<4.9.40|>=4.10,<4.11.7|>=4.13,<4.13.21|>=5.1,<5.1.4",
@@ -13727,7 +13727,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-15T21:04:09+00:00"
+            "time": "2023-11-17T23:04:10+00:00"
         },
         {
             "name": "sebastian/cli-parser",
