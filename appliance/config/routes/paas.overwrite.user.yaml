@@ -1,6 +1,6 @@
 _teknoo_common_admin_user_list:
     path: '/admin/users'
-    methods: ['GET']
+    methods: ['GET', 'POST']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.list'
         defaultOrderDirection: 'ASC'

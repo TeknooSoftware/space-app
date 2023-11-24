@@ -56,7 +56,7 @@ space_job_get:
 
 space_job_list:
     path: '/project/view/{projectId}/jobs'
-    methods: [ 'GET' ]
+    methods: ['GET', 'POST']
     schemes: [https]
     defaults:
         _controller: 'teknoo.space.endpoint.job.list'

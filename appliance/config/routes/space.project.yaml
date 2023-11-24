@@ -1,6 +1,6 @@
 space_project_list:
     path: '/projects/'
-    methods: ['GET']
+    methods: ['GET', 'POST']
     defaults:
         _controller: 'teknoo.space.endpoint.project.list'
         defaultOrderDirection: 'ASC'
