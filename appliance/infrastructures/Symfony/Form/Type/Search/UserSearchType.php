@@ -27,6 +27,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Search;
 
 use Symfony\Component\Form\AbstractType;
 use Teknoo\East\Common\Query\Expr\InclusiveOr;
+use Teknoo\East\Common\Query\Expr\Regex;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\Search;
 
@@ -50,9 +51,15 @@ class UserSearchType extends AbstractType
         $manager->updateWorkPlan([
             'criteria' => [
                 'userSearch' => new InclusiveOr(
-                    ['email' => $search->search],
-                    ['firstName' => $search->search],
-                    ['lastName' => $search->search],
+                    [
+                        'email' => new Regex($search->search)
+                    ],
+                    [
+                        'firstName' => new Regex($search->search)
+                    ],
+                    [
+                        'lastName' => new Regex($search->search)
+                    ],
                 )
             ],
         ]);

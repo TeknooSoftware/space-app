@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta25] - 2023-11-26
+### Beta Release
+- Update to East Common 2.6
+- Fix bug in search :
+  - routes to allow search in lists
+  - use regex instead text matching
+- refresh credentials in project refresh also registry url
+- fix issue in account creation
+- support doctrine odm 2.6.1
+
 ## [1.0.0-beta24] - 2023-11-17
 ### Beta Release
 - Update to East Common 2.5
