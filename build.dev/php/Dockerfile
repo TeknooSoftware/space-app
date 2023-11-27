@@ -31,6 +31,7 @@ RUN set -eux ; \
             libonig-dev \
             libsqlite3-dev \
             libsodium-dev \
+            libtidy-dev \
             libxslt-dev \
             libzip-dev \
     ; \
@@ -64,6 +65,7 @@ RUN set -eux ; \
                            sodium \
                            simplexml \
                            soap \
+                           tidy \
                            xml  \
                            xsl  \
                            zip \

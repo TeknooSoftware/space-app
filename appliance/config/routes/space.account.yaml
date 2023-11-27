@@ -5,6 +5,7 @@ account_logout:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooEastPaas/Account/login.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 account_login:
     path: '/account/login'
@@ -13,6 +14,7 @@ account_login:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooEastPaas/Account/login.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 account_autologin:
     path: '/account/auto-login'
@@ -21,6 +23,7 @@ account_autologin:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooEastPaas/Account/login.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 account_check:
     path: '/account/check'

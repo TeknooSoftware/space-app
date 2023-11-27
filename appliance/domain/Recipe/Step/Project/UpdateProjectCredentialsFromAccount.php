@@ -66,7 +66,7 @@ class UpdateProjectCredentialsFromAccount
 
                     $eastProject->setImagesRegistry(
                         new ImageRegistry(
-                            $imageRegistry->getApiUrl(),
+                            $accountCredential->getRegistryUrl(),
                             new XRegistryAuth(
                                 username: $accountCredential->getRegistryAccountName(),
                                 password: $accountCredential->getRegistryPassword(),
@@ -80,7 +80,6 @@ class UpdateProjectCredentialsFromAccount
                         if (!$cluster instanceof Cluster) {
                             continue;
                         }
-
 
                         $cluster->setType($this->defaultClusterType);
                         $cluster->setAddress($this->defaultClusterAddress);

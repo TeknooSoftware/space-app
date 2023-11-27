@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Search;
 
 use Symfony\Component\Form\AbstractType;
+use Teknoo\East\Common\Query\Expr\Regex;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\Search;
 
@@ -48,7 +49,7 @@ class AccountSearchType extends AbstractType
     {
         $manager->updateWorkPlan([
             'criteria' => [
-                'name' => $search->search
+                'name' => new Regex($search->search),
             ],
         ]);
     }

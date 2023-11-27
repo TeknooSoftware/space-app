@@ -45,7 +45,7 @@ space_api_job_restart:
 
 space_api_job_list:
     path: '/api/v1/project/{projectId}/jobs'
-    methods: ['GET']
+    methods: ['GET', 'POST']
     schemes: [https]
     defaults:
         _controller: 'teknoo.space.endpoint.job.list'

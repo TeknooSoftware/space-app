@@ -121,10 +121,10 @@ class CreateSecretServiceAccountToken
             return $this;
         }
 
-        /** @var array{"data": array{"ca.crt":string, "token":string}} $attributes */
+        /** @var array{"data": ?array{"ca.crt": ?string, "token": ?string}} $attributes */
         $attributes = $secretFetched->toArray();
-        $workPlan['token'] = base64_decode($attributes['data']['token']);
-        $workPlan['caCertificate'] = base64_decode($attributes['data']['ca.crt']);
+        $workPlan['token'] = base64_decode((string) ($attributes['data']['token'] ?? ''));
+        $workPlan['caCertificate'] = base64_decode((string) ($attributes['data']['ca.crt'] ?? ''));
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory) {

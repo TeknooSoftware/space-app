@@ -9,14 +9,14 @@ scheb_two_factor:
         enabled: true                           # If Google Authenticator should be enabled, default false
         server_name: '%env(SPACE_HOSTNAME)%'  # Server name used in QR code
         issuer: Teknoo Space                    # Issuer name used in QR code
-        window: 1                               # How many codes before/after the current one would be accepted as valid
+        leeway: 1                               # How many codes before/after the current one would be accepted as valid
         template: '@TeknooEastCommon/2fa/login.html.twig'
 
     totp:
         enabled: true                           # If TOTP authentication should be enabled, default false
         server_name: '%env(SPACE_HOSTNAME)%'  # Server name used in QR code
         issuer: Teknoo Space                    # Issuer name used in QR code
-        window: 1                               # How many codes before/after the current one would be accepted as valid
+        leeway: 1                               # How many codes before/after the current one would be accepted as valid
         parameters:                             # Additional parameters added in the QR code
             image: 'https://teknoo.software/img/logo.svg'
         template: '@TeknooEastCommon/2fa/login.html.twig'
