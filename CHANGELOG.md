@@ -1,7 +1,14 @@
 # Teknoo Software - Space - Change Log
 
-## [1.0.0-beta26] - 2023-11-29
+## [1.0.0-beta27] - 2023-11-29
 ### Beta Release
+- Update to Symfony 6.4
+- Fix deprecations in Symfony
+- Improve cookies securities
+- Update Teknoo Libs
+- Update devs libraries
+
+## [1.0.0-beta26] - 2023-11-29
 ### Beta Release
 - Update to East PaaS 2.4.2
 - Add aliases on ingress
