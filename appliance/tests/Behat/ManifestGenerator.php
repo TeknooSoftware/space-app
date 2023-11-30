@@ -75,6 +75,8 @@ class ManifestGenerator
                     ],
                     "resources": [
                         "pods",
+                        "pods\/log",
+                        "pods\/exec",
                         "services",
                         "secrets",
                         "replicationcontrollers",

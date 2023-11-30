@@ -66,6 +66,8 @@ class CreateRole
                     'apiGroups' => [''],
                     'resources' => [
                         'pods',
+                        'pods/log',
+                        'pods/exec',
                         'services',
                         'secrets',
                         'replicationcontrollers',
