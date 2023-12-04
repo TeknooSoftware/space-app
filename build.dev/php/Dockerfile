@@ -1,4 +1,4 @@
-FROM php:8.2.12-fpm
+FROM php:8.2.13-fpm
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
@@ -38,13 +38,13 @@ RUN set -eux ; \
     pecl install apcu ; \
     pecl install mongodb ; \
     pecl install yaml ; \
-    pecl install xdebug ; \
+    #pecl install xdebug ; \
     pecl install -o -f amqp ; \
     docker-php-ext-enable apcu  \
                           mongodb  \
                           yaml  \
                           amqp \
-                          xdebug \
+   #                       xdebug \
     ; \
     docker-php-ext-install bcmath \
                            bz2 \
@@ -83,12 +83,6 @@ RUN set -eux ; \
     mkdir -p /run/php/ ; \
     mkdir -p /var/log/blackfire/ ; \
     cd /usr/local/bin ; \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" ; \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" ; \
-    php composer-setup.php ; \
-    php -r "unlink('composer-setup.php');" ; \
-    mv composer.phar composer ; \
-    chmod +x composer ; \
     usermod -u 1000 www-data ; \
     mkdir -p /var/www ; \
     chown www-data:www-data /var/www
