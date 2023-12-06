@@ -38,7 +38,7 @@ return [
     'teknoo.space.kubernetes.cluster.default_env' => env('SPACE_KUBERNETES_CLUSTER_ENV', 'prod'),
     'teknoo.space.kubernetes.secret_account_token_waiting_time' => env(
         'SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME',
-        1000,
+        1,
     ),
 
     'teknoo.space.kubernetes.oci_registry.image' => env('SPACE_OCI_REGISTRY_IMAGE'),

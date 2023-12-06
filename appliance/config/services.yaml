@@ -144,6 +144,7 @@ services:
             - '@logger'
             - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
+            - '@Teknoo\East\Foundation\Time\SleepServiceInterface'
             - '%env(default:teknoo.space.new_job.waiting_time.default:SPACE_NEW_JOB_WAITING_TIME)%'
         tags:
             - 'messenger.message_handler'

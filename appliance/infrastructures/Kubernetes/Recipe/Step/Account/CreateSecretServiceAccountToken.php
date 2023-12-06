@@ -29,6 +29,7 @@ use DateTimeInterface;
 use RuntimeException;
 use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Model\Secret;
@@ -36,7 +37,6 @@ use Teknoo\Kubernetes\Repository\SecretRepository;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 use function base64_decode;
-use function usleep;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -51,6 +51,7 @@ class CreateSecretServiceAccountToken
     public function __construct(
         private KubernetesClient $client,
         private DatesService $datesService,
+        private SleepServiceInterface $sleepService,
         private int $secretWaitingTime = 1000,
         private bool $prefereRealDate = false,
     ) {
@@ -98,14 +99,14 @@ class CreateSecretServiceAccountToken
 
         $counter = 0;
         do {
-            if ($counter < 50) {
-                usleep($this->secretWaitingTime);
+            if (0 < $counter && 10 > $counter) {
+                $this->sleepService->wait($this->secretWaitingTime);
             }
 
             $secretFetched = $this->fetchSecret($secretRepository, (string) $secret->getMetadata('name'));
             $counter++;
         } while (
-            $counter < 50
+            $counter < 10
             && (
                 !$secretFetched instanceof Secret
                 || empty($secretFetched->toArray()['data'])
