@@ -83,8 +83,8 @@ This application is bundled with :
     * Teknoo/East-Foundation
     * Teknoo/space-app
     * Teknoo/Kubernetes Clent
-    * Symfony 6.2+
-    * Doctrine ODM 2.5+ / MongoDB
+    * Symfony 6.3+
+    * Doctrine ODM 2.6+ / MongoDB
     * Flysystem
     * Buildah
 
