@@ -1656,7 +1656,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v10.37.2",
+            "version": "v10.37.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1711,7 +1711,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v10.37.2",
+            "version": "v10.37.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1757,7 +1757,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v10.37.2",
+            "version": "v10.37.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1805,7 +1805,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v10.37.2",
+            "version": "v10.37.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -12970,12 +12970,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "c15c2331d5e126939f41dd3ae151f38cdf55f91a"
+                "reference": "d345a2012fb0f5e28662625dedcf3ef89f493f0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c15c2331d5e126939f41dd3ae151f38cdf55f91a",
-                "reference": "c15c2331d5e126939f41dd3ae151f38cdf55f91a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d345a2012fb0f5e28662625dedcf3ef89f493f0b",
+                "reference": "d345a2012fb0f5e28662625dedcf3ef89f493f0b",
                 "shasum": ""
             },
             "conflict": {
@@ -13122,7 +13122,7 @@
                 "ezsystems/ezplatform-solr-search-engine": ">=1.7,<1.7.12|>=2,<2.0.2|>=3.3,<3.3.15",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2-dev|>=7,<7.5.31",
-                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.03.5.1",
+                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.06,<=2019.03.5.1",
                 "ezsystems/platform-ui-assets-bundle": ">=4.2,<4.2.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<4.1.1",
@@ -13679,7 +13679,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-13T16:04:38+00:00"
+            "time": "2023-12-13T21:04:16+00:00"
         },
         {
             "name": "sebastian/cli-parser",
