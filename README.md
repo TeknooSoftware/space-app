@@ -5,8 +5,8 @@ Teknoo Software - Space
 [![License](https://shields.io/badge/license-MIT-green?style=flat)](https://raw.githubusercontent.com/TeknooSoftware/space-app/main/LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
-Space is a `Platform as a Service` application, a continuous integration/delivery/deployment solution, 
-built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` and the `Symfony` components. The application is multi-account,
+Space is a `Platform as a Service` application, a continuous integration/delivery/deployment solution, built on 
+`Teknoo East PaaS`, `Teknoo Kubernetes Client` and the `Symfony` components. The application is multi-account, 
 multi-users and multi-projects, and able to build and deploy projects on dedicated containerized platforms on 
 `Kubernetes` cluster.
 
@@ -19,20 +19,21 @@ This is the `Standard` version of Space. It is released under MIT licence. This 
 * projects have deployment jobs.
 * all projects must be hosted on a Git instance, reachable via the protocoles HTTPS or SSH.
 * projects' images are built thanks to Buildah.
-* only Kubernetes clusters 1.22+ are supported.
+* Kubernetes clusters 1.22+ are supported.
 * a job represents a deployment
-* a job can provide severals variables to pass to the compiler about the deployment.
+* a job can provide several variables to pass to the compiler about the deployment.
   * variables can be persisted to the project to be reused in the future in next deployments.
   * projects can host persisted variables to be used in all next deployments.
-  * accounts can host also persisted variables to be used on all deployments of all of this projects if
-    they are not already defined in projects.
-  * persisted variables can contains secrets. 
-    * Warning, secrets are not visible in Space's web app but they are passed unencrypted to the workers if encryption
-      is not enabled between servers and agents. Fill environments variables about `East PaaS Encryption` described 
-      later in this document.
-* Space is bundled with a Composer hook to build PHP Project. NPM and PIP supports is also planned.
-* Space allow any users to subcribe, but it's not manage billings.
-      * Subscriptions can be restricted with uniques codes to forbid non selected user to subscribe.
+  * accounts can host also persisted variables to be used on all deployments of all of this projects if they are not 
+    already defined in projects.
+  * persisted variables can contains secrets.
+      * Warning, secrets are not visible in Space's web app, but they are passed unencrypted to the workers if 
+        encryption is not enabled between servers and agents. Fill environments variables about East PaaS Encryption 
+        described later in this document..
+* Space is bundled with Composer hook to create a PHP project. Python and PIP, NodeJs and NPM and gcc and Make are 
+  also supported.
+* Space allow any users to subscribe, but it's not manage billings. 
+  * Subscriptions can be restricted with unique code to forbid non granted user to subscribe
 * Space supports 2FA authentication with an TOTP application like Google Authenticator.
 
 A free support is available by Github issues of this repository.

@@ -12970,12 +12970,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "d345a2012fb0f5e28662625dedcf3ef89f493f0b"
+                "reference": "f4c6a9f3f5ff03971b60eb02cde19787d62d0978"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d345a2012fb0f5e28662625dedcf3ef89f493f0b",
-                "reference": "d345a2012fb0f5e28662625dedcf3ef89f493f0b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f4c6a9f3f5ff03971b60eb02cde19787d62d0978",
+                "reference": "f4c6a9f3f5ff03971b60eb02cde19787d62d0978",
                 "shasum": ""
             },
             "conflict": {
@@ -13089,7 +13089,7 @@
                 "doctrine/mongodb-odm-bundle": "<3.0.1",
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<18.0.2",
-                "dompdf/dompdf": "<2.0.2|==2.0.2",
+                "dompdf/dompdf": "<2.0.4",
                 "doublethreedigital/guest-entries": "<3.1.2",
                 "drupal/core": "<9.4.14|>=9.5,<9.5.8|>=10,<10.0.8",
                 "drupal/drupal": ">=6,<6.38|>=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
@@ -13122,7 +13122,7 @@
                 "ezsystems/ezplatform-solr-search-engine": ">=1.7,<1.7.12|>=2,<2.0.2|>=3.3,<3.3.15",
                 "ezsystems/ezplatform-user": ">=1,<1.0.1",
                 "ezsystems/ezpublish-kernel": "<6.13.8.2-dev|>=7,<7.5.31",
-                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.06,<=2019.03.5.1",
+                "ezsystems/ezpublish-legacy": "<=2017.12.7.3|>=2018.6,<=2019.03.5.1",
                 "ezsystems/platform-ui-assets-bundle": ">=4.2,<4.2.3",
                 "ezsystems/repository-forms": ">=2.3,<2.3.2.1-dev|>=2.5,<2.5.15",
                 "ezyang/htmlpurifier": "<4.1.1",
@@ -13679,7 +13679,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-13T21:04:16+00:00"
+            "time": "2023-12-14T08:05:03+00:00"
         },
         {
             "name": "sebastian/cli-parser",
