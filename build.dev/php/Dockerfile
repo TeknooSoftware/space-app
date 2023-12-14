@@ -1,4 +1,4 @@
-FROM php:8.2.13-fpm
+FROM php:8.3-fpm
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
@@ -34,17 +34,18 @@ RUN set -eux ; \
             libtidy-dev \
             libxslt-dev \
             libzip-dev \
+            libssl-dev \
     ; \
     pecl install apcu ; \
     pecl install mongodb ; \
     pecl install yaml ; \
-    #pecl install xdebug ; \
+    pecl install xdebug ; \
     pecl install -o -f amqp ; \
     docker-php-ext-enable apcu  \
                           mongodb  \
                           yaml  \
                           amqp \
-   #                       xdebug \
+                          xdebug \
     ; \
     docker-php-ext-install bcmath \
                            bz2 \
@@ -56,7 +57,6 @@ RUN set -eux ; \
                            gettext \
                            intl \
                            mbstring \
-                           mysqli \
                            pcntl \
                            pdo \
                            pdo_sqlite \
