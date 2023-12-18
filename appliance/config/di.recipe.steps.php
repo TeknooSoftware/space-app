@@ -38,6 +38,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Teknoo\East\CommonBundle\Contracts\Recipe\Step\BuildQrCodeInterface;
 use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\Common\Service\FindSlugService;
+use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Writer\AccountWriter;
 use Teknoo\Kubernetes\Client as KubernetesClient;
@@ -154,6 +155,7 @@ return [
         return new CreateSecretServiceAccountToken(
             $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
+            $container->get(SleepServiceInterface::class),
             (int) $container->get('teknoo.space.kubernetes.secret_account_token_waiting_time'),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );

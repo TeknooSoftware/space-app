@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Kubernetes\Repository\SecretRepository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
@@ -50,6 +51,8 @@ class CreateSecretServiceAccountTokenTest extends TestCase
     private Client|MockObject $client;
 
     private DatesService|MockObject $datesService;
+
+    private SleepServiceInterface|MockObject $sleepService;
 
     private int $secretWaitingTime;
 
@@ -73,11 +76,13 @@ class CreateSecretServiceAccountTokenTest extends TestCase
             );
 
         $this->datesService = $this->createMock(DatesService::class);
+        $this->sleepService = $this->createMock(SleepServiceInterface::class);
         $this->secretWaitingTime = 42;
         $this->prefereRealDate = true;
         $this->createSecret = new CreateSecretServiceAccountToken(
             $this->client,
             $this->datesService,
+            $this->sleepService,
             $this->secretWaitingTime,
             $this->prefereRealDate
         );

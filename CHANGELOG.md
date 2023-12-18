@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta28] - 2023-12-06
+### Beta Release
+- Update to Symfony 6.4.1 and Teknoo East Foundation 7.4
+- Fix core dump issue in php dev image, bug from xdebug
+- Use Sleep service from East Foundation
+
 ## [1.0.0-beta27] - 2023-11-29
 ### Beta Release
 - Update to Symfony 6.4

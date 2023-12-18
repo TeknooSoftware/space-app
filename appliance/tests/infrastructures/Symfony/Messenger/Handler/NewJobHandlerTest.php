@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
+use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
@@ -67,6 +68,8 @@ class NewJobHandlerTest extends TestCase
 
     private EncryptionInterface|MockObject $encryption;
 
+    private SleepServiceInterface|MockObject $sleepService;
+
     private int $waitingTimeSecond;
 
     /**
@@ -84,6 +87,7 @@ class NewJobHandlerTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->jobError = $this->createMock(JobError::class);
         $this->encryption = $this->createMock(EncryptionInterface::class);
+        $this->sleepService = $this->createMock(SleepServiceInterface::class);
         $this->waitingTimeSecond = 1;
         $this->newJobHandler = new NewJobHandler(
             $this->executor,
@@ -94,7 +98,8 @@ class NewJobHandlerTest extends TestCase
             $this->logger,
             $this->jobError,
             $this->encryption,
-            $this->waitingTimeSecond
+            $this->sleepService,
+            $this->waitingTimeSecond,
         );
     }
 

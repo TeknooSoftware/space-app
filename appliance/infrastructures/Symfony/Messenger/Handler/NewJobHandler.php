@@ -29,6 +29,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
+use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
@@ -41,7 +42,6 @@ use Teknoo\Space\Object\DTO\NewJob;
 use Throwable;
 
 use function json_encode;
-use function sleep;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -63,6 +63,7 @@ class NewJobHandler
         private LoggerInterface $logger,
         private JobError $jobErrorNotifier,
         private ?EncryptionInterface $encryption,
+        private SleepServiceInterface $sleepService,
         private int $waitingTimeSecond = 0,
     ) {
     }
@@ -87,7 +88,7 @@ class NewJobHandler
         $client->sendAResponseIsOptional();
 
         if (0 < $this->waitingTimeSecond) {
-            sleep($this->waitingTimeSecond);
+            $this->sleepService->wait($this->waitingTimeSecond);
         }
 
         $currentNewJobId = $newJob->newJobId;

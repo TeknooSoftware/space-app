@@ -1,0 +1,11 @@
+default:
+    suites:
+        default:
+            contexts:
+                - Teknoo\Space\Tests\Behat\TestsContext
+
+    extensions:
+        FriendsOfBehat\SymfonyExtension:
+            bootstrap: tests/bootstrap.php
+            kernel:
+                environment: test
