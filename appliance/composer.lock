@@ -809,16 +809,16 @@
         },
         {
             "name": "doctrine/mongodb-odm",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "fc236daa1503a89283ec6d1fcf7b821999f9fdd1"
+                "reference": "a51bfc01425d2c30b69f2c5ce13fe0d3c58bbd98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/fc236daa1503a89283ec6d1fcf7b821999f9fdd1",
-                "reference": "fc236daa1503a89283ec6d1fcf7b821999f9fdd1",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/a51bfc01425d2c30b69f2c5ce13fe0d3c58bbd98",
+                "reference": "a51bfc01425d2c30b69f2c5ce13fe0d3c58bbd98",
                 "shasum": ""
             },
             "require": {
@@ -898,7 +898,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/mongodb-odm/issues",
-                "source": "https://github.com/doctrine/mongodb-odm/tree/2.6.1"
+                "source": "https://github.com/doctrine/mongodb-odm/tree/2.6.2"
             },
             "funding": [
                 {
@@ -914,7 +914,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-24T16:24:38+00:00"
+            "time": "2023-12-17T22:00:36+00:00"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
@@ -1656,16 +1656,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v10.37.3",
+            "version": "v10.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "8e4c4f97ea066cd6aec962ef8a6abc09dfd5e754"
+                "reference": "2677b3962a88640f92dba8a1f4ed38dcaaf13dad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/8e4c4f97ea066cd6aec962ef8a6abc09dfd5e754",
-                "reference": "8e4c4f97ea066cd6aec962ef8a6abc09dfd5e754",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/2677b3962a88640f92dba8a1f4ed38dcaaf13dad",
+                "reference": "2677b3962a88640f92dba8a1f4ed38dcaaf13dad",
                 "shasum": ""
             },
             "require": {
@@ -1707,11 +1707,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-11-27T14:46:52+00:00"
+            "time": "2023-12-15T18:25:00+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v10.37.3",
+            "version": "v10.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1757,7 +1757,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v10.37.3",
+            "version": "v10.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1805,7 +1805,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v10.37.3",
+            "version": "v10.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -10392,16 +10392,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "2.6.3",
+            "version": "2.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "f4b978185d529c7d16a556b52c6251b4f344e85d"
+                "reference": "be136fc8bf203b35b71d1bfaadcf186e52b96053"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/f4b978185d529c7d16a556b52c6251b4f344e85d",
-                "reference": "f4b978185d529c7d16a556b52c6251b4f344e85d",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/be136fc8bf203b35b71d1bfaadcf186e52b96053",
+                "reference": "be136fc8bf203b35b71d1bfaadcf186e52b96053",
                 "shasum": ""
             },
             "require": {
@@ -10506,20 +10506,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-12-04T09:27:50+00:00"
+            "time": "2023-12-19T18:01:58+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "2.6.3",
+            "version": "2.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "aa824440228f8292c2bc0131781e063f87438dfc"
+                "reference": "a69e1802d9fbb0784d23582eaef73b7b23f1bdb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/aa824440228f8292c2bc0131781e063f87438dfc",
-                "reference": "aa824440228f8292c2bc0131781e063f87438dfc",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/a69e1802d9fbb0784d23582eaef73b7b23f1bdb4",
+                "reference": "a69e1802d9fbb0784d23582eaef73b7b23f1bdb4",
                 "shasum": ""
             },
             "require": {
@@ -10542,7 +10542,7 @@
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.0.4",
-                "teknoo/east-common": "^2.6.3",
+                "teknoo/east-common": "^2.6.4",
                 "teknoo/east-foundation-symfony": "^7.3.4",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/recipe": "^4.5.2",
@@ -10593,7 +10593,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-12-04T09:25:07+00:00"
+            "time": "2023-12-19T18:11:52+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -12970,12 +12970,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "3c2385497f806decca1e5abeba3cb8fd7caba4e0"
+                "reference": "98ceed764ff7fcf20081fdc2e0914441f46b0906"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/3c2385497f806decca1e5abeba3cb8fd7caba4e0",
-                "reference": "3c2385497f806decca1e5abeba3cb8fd7caba4e0",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/98ceed764ff7fcf20081fdc2e0914441f46b0906",
+                "reference": "98ceed764ff7fcf20081fdc2e0914441f46b0906",
                 "shasum": ""
             },
             "conflict": {
@@ -13596,6 +13596,7 @@
                 "yii2mod/yii2-cms": "<1.9.2",
                 "yiisoft/yii": "<1.1.29",
                 "yiisoft/yii2": "<2.0.38",
+                "yiisoft/yii2-authclient": "<2.2.15",
                 "yiisoft/yii2-bootstrap": "<2.0.4",
                 "yiisoft/yii2-dev": "<2.0.43",
                 "yiisoft/yii2-elasticsearch": "<2.0.5",
@@ -13679,7 +13680,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-12-15T16:04:17+00:00"
+            "time": "2023-12-18T20:04:29+00:00"
         },
         {
             "name": "sebastian/cli-parser",
