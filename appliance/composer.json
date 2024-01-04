@@ -135,8 +135,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/",
             "Teknoo\\Space\\": "domain/",
+            "Teknoo\\Space\\App\\": "src/",
             "Teknoo\\Space\\Infrastructures\\": "infrastructures/"
         },
         "classmap": [

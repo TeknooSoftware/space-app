@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Config;
+namespace Teknoo\Space\App\Config;
 
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Transcriber\IngressTranscriber as BaseIngressTranscriber;
 use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;

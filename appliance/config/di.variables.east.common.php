@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Config;
+namespace Teknoo\Space\App\Config;
 
 return [
     'teknoo.east.common.cookbook.default_error_template' => '@TeknooEastCommon/Error/default.html.twig',

@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Config;
+namespace Teknoo\Space\App\Config;
 
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;

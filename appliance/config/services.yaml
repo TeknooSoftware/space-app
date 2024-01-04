@@ -16,7 +16,7 @@ services:
     ###################
     # Generic
 
-    App\:
+    Teknoo\Space\App\:
         resource: '../src/*'
         exclude: '../src/{patch,DependencyInjection,Kernel.php}'
 

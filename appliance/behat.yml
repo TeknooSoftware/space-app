@@ -8,4 +8,5 @@ default:
         FriendsOfBehat\SymfonyExtension:
             bootstrap: tests/bootstrap.php
             kernel:
+                class: Teknoo\Space\App\Kernel
                 environment: test

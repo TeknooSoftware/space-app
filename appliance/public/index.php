@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-use App\Kernel;
+use Teknoo\Space\App\Kernel;
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
