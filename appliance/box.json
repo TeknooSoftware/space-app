@@ -1,0 +1,29 @@
+{
+    "stub": true,
+    "main": "bin/console",
+    "output": "../output/space.phar",
+    "chmod": "0555",
+    "exclude-dev-files": true,
+    "directories": [
+        "bin",
+        "config",
+        "domain",
+        "features",
+        "infrastructures",
+        "public",
+        "src",
+        "templates",
+        "translations",
+        "vendor"
+    ],
+    "files": [
+        ".env",
+        ".env.build",
+        "composer.json",
+        "composer.lock",
+        "symfony.lock"
+    ],
+    "intercept": true,
+    "alias": "space.phar",
+    "compression": "GZ"
+}
