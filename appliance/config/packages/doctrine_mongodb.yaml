@@ -4,6 +4,8 @@ doctrine_mongodb:
             server: "%env(MONGODB_SERVER)%"
             options: {}
     default_database: '%env(MONGODB_NAME)%'
+    auto-generate-hydrator-classes: true
+    auto-generate-proxy-classes: true
     document_managers:
         default:
             auto_mapping: true

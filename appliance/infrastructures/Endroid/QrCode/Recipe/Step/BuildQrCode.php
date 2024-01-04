@@ -27,8 +27,8 @@ namespace Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step;
 
 use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Encoding\Encoding;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Laminas\Diactoros\Response;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -39,7 +39,6 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class BuildQrCode implements BuildQrCodeInterface
@@ -61,10 +60,10 @@ class BuildQrCode implements BuildQrCodeInterface
             ->writerOptions([])
             ->data($qrCodeValue)
             ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
             ->size(400)
             ->margin(0)
-            ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
+            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
             ->build();
 
         $client->acceptResponse(

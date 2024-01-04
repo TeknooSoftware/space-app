@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.2.13-fpm
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
@@ -39,7 +39,7 @@ RUN set -eux ; \
     pecl install apcu ; \
     pecl install mongodb ; \
     pecl install yaml ; \
-    pecl install xdebug ; \
+    pecl install xdebug-3.2.2 ; \
     pecl install -o -f amqp ; \
     docker-php-ext-enable apcu  \
                           mongodb  \

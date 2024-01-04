@@ -65,5 +65,6 @@ test-without-coverage:
 ### Cleaning
 clean:
 	rm -rf vendor
+	rm -rf vendor-bir
 
 .PHONY: clean
