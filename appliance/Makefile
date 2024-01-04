@@ -72,7 +72,6 @@ clean:
 ### Build
 build:
 	rm -rf ./../output/*.phar
-	rm -rf ./var/cache/*
 	${COMPOSER} bin box require --dev "humbug/box:^4.6.1"
 	APP_ENV=prod ${PHP} vendor/bin/box compile
 

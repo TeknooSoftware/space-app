@@ -48,7 +48,7 @@ class Kernel extends BaseKernel
 
     private const PHAR_SCHEME = 'phar://';
 
-    private ?string $rootDir = null;
+    private ?string $projectDir = null;
 
     private static function isPhar(): bool
     {
@@ -67,60 +67,19 @@ class Kernel extends BaseKernel
 
     public function getProjectDir(): string
     {
+        if (null !== $this->projectDir) {
+            return $this->projectDir;
+        }
+
         $projectDir = parent::getProjectDir();
 
         if (self::isPhar()) {
-            $projectDir = self::getParentDirOf($projectDir, '/src');
+            $projectDir = rtrim(self::getParentDirOf($this->getProjectDir(), self::PHAR_NAME), '/');
+            if (str_contains($projectDir, self::PHAR_SCHEME)) {
+                $projectDir = substr($projectDir, strlen(self::PHAR_SCHEME));
+            }
         }
 
-        return $projectDir;
-    }
-
-    public function getRootDir(): string
-    {
-        if (null !== $this->rootDir) {
-            return $this->rootDir;
-        }
-
-        $rootDir = rtrim(self::getParentDirOf($this->getProjectDir(), self::PHAR_NAME), '/');
-        if (str_contains($rootDir, self::PHAR_SCHEME)) {
-            $rootDir = substr($rootDir, strlen(self::PHAR_SCHEME));
-        }
-
-        return $this->rootDir = $rootDir;
-    }
-
-    public function getCacheDir(): string
-    {
-        if (self::isPhar()) {
-            return $this->getRootDir() . '/var/cache/' . $this->environment;
-        }
-
-        return parent::getCacheDir();
-    }
-
-    public function getLogDir(): string
-    {
-        if (self::isPhar()) {
-            return $this->getRootDir() . '/var/log';
-        }
-
-        return parent::getLogDir();
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    protected function getKernelParameters(): array
-    {
-        $parameters = parent::getKernelParameters();
-
-        if (self::isPhar()) {
-            $parameters['space.root_dir'] = $this->getRootDir();
-        } else {
-            $parameters['space.root_dir'] = $this->getProjectDir();
-        }
-
-        return $parameters;
+        return $this->projectDir = $projectDir;
     }
 }
