@@ -1,6 +1,6 @@
 before_script:
   - cd appliance
-  - make
+  - make update
 
 .abstract_tests:
   image: $PHP_IMAGE:$PHP_VERSION

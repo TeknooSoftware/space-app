@@ -6,23 +6,31 @@ DEPENDENCIES ?= latest
 PHP ?= /usr/bin/env php
 
 ### Helpers
-all: clean depend
+default: clean dev
+.PHONY: default
 
-.PHONY: all
+verify: clean dev test qa-offline
+.PHONY: verify
 
 ### Dependencies
-depend:
+update:
 ifeq ($(DEPENDENCIES), lowest)
 	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-lowest --prefer-dist --no-interaction;
 else
-	ifeq ($(DEPENDENCIES), install)
-		COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction --no-dev --optimize-autoloader --classmap-authoritative;
-	else
-		COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-dist --no-interaction;
-	endif
+	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction;
 endif
 
-.PHONY: depend
+.PHONY: update
+
+install: clean
+	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction --no-dev --optimize-autoloader --classmap-authoritative;
+	APP_ENV=prod ${PHP} bin/console cache:warmup
+
+dev: clean
+	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction --optimize-autoloader --classmap-authoritative;
+	APP_ENV=prod ${PHP} bin/console cache:warmup
+
+.PHONY: install
 
 ### QA
 qa: lint phpstan phpcs audit
@@ -69,5 +77,7 @@ test-without-coverage:
 ### Cleaning
 clean:
 	rm -rf vendor
+	rm -rf var/cache/*
+	rm -rf var/log/*
 
 .PHONY: clean
