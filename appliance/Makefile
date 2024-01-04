@@ -15,7 +15,11 @@ depend:
 ifeq ($(DEPENDENCIES), lowest)
 	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-lowest --prefer-dist --no-interaction;
 else
-	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-dist --no-interaction;
+	ifeq ($(DEPENDENCIES), install)
+		COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction --no-dev --optimize-autoloader --classmap-authoritative;
+	else
+		COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-dist --no-interaction;
+	endif
 endif
 
 .PHONY: depend
@@ -65,6 +69,5 @@ test-without-coverage:
 ### Cleaning
 clean:
 	rm -rf vendor
-	rm -rf vendor-bir
 
 .PHONY: clean
