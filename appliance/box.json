@@ -3,7 +3,9 @@
     "main": "bin/console",
     "output": "../output/space.phar",
     "chmod": "0555",
+    "exclude-composer-files": true,
     "exclude-dev-files": true,
+    "dump-autoload": true,
     "directories": [
         "bin",
         "config",
@@ -17,7 +19,9 @@
     ],
     "files": [
         ".env",
-        ".env.build"
+        ".env.build",
+        "composer.json",
+        "composer.lock"
     ],
     "intercept": true,
     "alias": "space.phar",
