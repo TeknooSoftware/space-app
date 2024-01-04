@@ -98,7 +98,6 @@
         "twig/twig": "^3.8"
     },
     "require-dev": {
-        "bamarni/composer-bin-plugin": "^1.8",
         "behat/behat": "^3.13",
         "friends-of-behat/symfony-extension": "^2.4.1",
         "icanhazstring/composer-unused": "^0.8.11",
@@ -132,7 +131,7 @@
             "symfony/flex": true,
             "symfony/runtime": true,
             "php-http/discovery": true,
-            "bamarni/composer-bin-plugin": true
+            "bamarni/composer-bin-plugin": false
         }
     },
     "autoload": {
@@ -183,10 +182,6 @@
                 "flex://defaults"
             ],
             "require": "^6.4"
-        },
-        "bamarni-bin": {
-            "bin-links": true,
-            "forward-command": true
         }
     }
 }
