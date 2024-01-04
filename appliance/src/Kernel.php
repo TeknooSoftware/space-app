@@ -28,6 +28,8 @@ namespace App;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 
+use function str_contains;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -37,4 +39,13 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 class Kernel extends BaseKernel
 {
     use MicroKernelTrait;
+
+    public function getProjectDir(): string
+    {
+        if (false === str_contains(__FILE__, '.phar')) {
+            return parent::getProjectDir();
+        }
+
+        return __DIR__ . '/../';
+    }
 }

@@ -4,3 +4,4 @@
 /var/mongo/
 !/var/mongo/.gitkeep
 /enterprise/
+/output/*.phar

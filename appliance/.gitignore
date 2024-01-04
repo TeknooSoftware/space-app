@@ -28,3 +28,4 @@
 /public/build/js/*
 /public/build/css/*
 /global_variables.php
+/vendor-bin/
