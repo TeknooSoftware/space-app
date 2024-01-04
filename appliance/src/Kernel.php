@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace Teknoo\Space\App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
@@ -48,7 +48,7 @@ class Kernel extends BaseKernel
 
     private const PHAR_SCHEME = 'phar://';
 
-    private ?string $projectDir = null;
+    private ?string $pharDir = null;
 
     private static function isPhar(): bool
     {
@@ -67,19 +67,60 @@ class Kernel extends BaseKernel
 
     public function getProjectDir(): string
     {
-        if (null !== $this->projectDir) {
-            return $this->projectDir;
-        }
-
         $projectDir = parent::getProjectDir();
 
         if (self::isPhar()) {
-            $projectDir = rtrim(self::getParentDirOf($this->getProjectDir(), self::PHAR_NAME), '/');
-            if (str_contains($projectDir, self::PHAR_SCHEME)) {
-                $projectDir = substr($projectDir, strlen(self::PHAR_SCHEME));
-            }
+            $projectDir = self::getParentDirOf($projectDir, '/src');
         }
 
-        return $this->projectDir = $projectDir;
+        return $projectDir;
+    }
+
+    public function getPharDir(): string
+    {
+        if (null !== $this->pharDir) {
+            return $this->pharDir;
+        }
+
+        $pharDir = rtrim(self::getParentDirOf($this->getProjectDir(), self::PHAR_NAME), '/');
+        if (str_contains($pharDir, self::PHAR_SCHEME)) {
+            $pharDir = substr($pharDir, strlen(self::PHAR_SCHEME));
+        }
+
+        return $this->pharDir = $pharDir;
+    }
+
+    public function getCacheDir(): string
+    {
+        if (self::isPhar()) {
+            return $this->getPharDir() . '/var/cache/' . $this->environment;
+        }
+
+        return parent::getCacheDir();
+    }
+
+    public function getLogDir(): string
+    {
+        if (self::isPhar()) {
+            return $this->getPharDir() . '/var/log';
+        }
+
+        return parent::getLogDir();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getKernelParameters(): array
+    {
+        $parameters = parent::getKernelParameters();
+
+        if (self::isPhar()) {
+            $parameters['space.project_dir'] = $this->getPharDir();
+        } else {
+            $parameters['space.project_dir'] = $this->getProjectDir();
+        }
+
+        return $parameters;
     }
 }

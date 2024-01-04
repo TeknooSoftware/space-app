@@ -12,7 +12,7 @@ doctrine_mongodb:
             mappings:
                 AppObjectPersisted:
                     type: 'xml'
-                    dir: '%kernel.project_dir%/config/doctrine'
+                    dir: '%space.project_dir%/config/doctrine'
                     is_bundle: false
                     prefix: 'Teknoo\Space\Object\Persisted'
             metadata_cache_driver: apcu

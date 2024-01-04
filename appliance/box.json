@@ -6,6 +6,7 @@
     "exclude-dev-files": true,
     "directories": [
         "bin",
+        "config",
         "domain",
         "features",
         "infrastructures",
