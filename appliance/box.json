@@ -13,15 +13,11 @@
         "public",
         "src",
         "templates",
-        "translations",
-        "vendor"
+        "translations"
     ],
     "files": [
         ".env",
-        ".env.build",
-        "composer.json",
-        "composer.lock",
-        "symfony.lock"
+        ".env.build"
     ],
     "intercept": true,
     "alias": "space.phar",
