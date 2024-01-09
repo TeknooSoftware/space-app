@@ -1,4 +1,5 @@
 ###> symfony/framework-bundle ###
+/config/secrets/
 /public/bundles/
 /var/
 /vendor/
@@ -13,6 +14,7 @@
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
 
+*.bck
 .php_cs.cache
 .phpunit.result.cache
 /.env.build

@@ -1,5 +1,22 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta29] - 2024-01-09
+### Beta Release
+- Add bin/config.sh script to help to configure a fresh Space installation 
+- Update Makefile to add an help command
+  - Add `make help` to display commands
+  - Add `make verify`
+  - Add `make install` to install Space in production mode
+  - Add `make dev-install` to install Space in development mode
+  - Rename `make` to `make update` to update Space's vendor in upper or lowest mode
+  - Add `make config` to configure a fresh Space installation
+  - Add `make build`, `make start`, `make stop` and `make restart` to manage docker-compose stack
+  - Other commands stay unchanged
+- Fix Symfony Messenger configuration to use default `memory` transport until Space is not configured to avoid error
+- Add `.env.local.unsecure.dist` to help developpers / ops to configure a Space without Symfony Secret
+  - use `.env.local.dist` to configure non-secrets envs.
+  - Use `make config` to configure Space with Symfony secrets
+
 ## [1.0.0-beta28] - 2023-12-06
 ### Beta Release
 - Update to Symfony 6.4.1 and Teknoo East Foundation 7.4

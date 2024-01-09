@@ -63,8 +63,8 @@ License
 -------
 Space is licensed under the MIT License - see the licenses folder for details.
 
-Installation & Requirements
----------------------------
+Requirements
+------------
 
 This applications requires
 
@@ -84,10 +84,48 @@ This application is bundled with :
     * Teknoo/East-Foundation
     * Teknoo/space-app
     * Teknoo/Kubernetes Clent
-    * Symfony 6.3+
+    * Symfony 6.4+
     * Doctrine ODM 2.6+ / MongoDB
     * Flysystem
     * Buildah
+
+Installation
+------------
+
+Space can be installed with standards composer command, but a Makefile is available to help to install and use it :
+`Make` commandes are :
+
+* **Generics**:
+  * `help`:          Show this help.
+  * `verify`:        Download dependencies via Composer and verify space installation.
+* **Installations**:
+  * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony app
+                     and warmup caches.
+  * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
+  * `update`:        Install and update all dependencies according to composer configuration
+                     Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts 
+                     versions.
+  * `config`:        To set values in env file to configure Space.
+* **Docker**:
+  * `build`:         To build docker images to run locally Space on Docker.
+  * `start`:         To start or refresh the docker stack and use Space locally on localhost.
+  * `stop`:          To stop the docker stack.
+  * `restart`:       To restart the docker stack.
+* **QA**:
+  * `qa`:            Run a set of quality tests, to detect bugs, securities or qualities issues.
+  * `qa-offline`:    Run a set of quality tests, without audit, in offline, to detect bugs, securities or qualities 
+                     issues.
+  * `lint`:          To detect error in PHP file causing compilation errors.
+  * `phpstan`:       To run code analyze with PHPStan to prevent bugs.
+  * `phpcs`:         To check if the code follow the PSR 12.
+  * `composerunsed`: To detect unused vendor in the code.
+  * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
+* **Testing**:
+  * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can 
+                     work properly.
+  * `test-without-coverage`:  Run tests (units tests and behavior tests without a code coverage).
+* **Cleaning**:
+  * `clean`:         Remove all PHP vendors, composer generated map, clean all Symfony builds, caches and logs.
 
 Environnements variables configuration
 --------------------------------------
