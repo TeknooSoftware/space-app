@@ -40,6 +40,11 @@ parameters:
     teknoo.space.ping_seconds: '%env(int:SPACE_PING_SECONDS)%'
     teknoo.space.new_job.waiting_time.default: 5
     teknoo.space.prefer-real-date: true
+    teknoo.space.messenger.dsn.default: 'in-memory://'
+    teknoo.space.messenger.dsn.new_job: '%env(string:default:teknoo.space.messenger.dsn.default:MESSENGER_NEW_JOB_DSN)%'
+    teknoo.space.messenger.dsn.history_sent: '%env(string:default:teknoo.space.messenger.dsn.default:MESSENGER_HISTORY_SENT_DSN)%'
+    teknoo.space.messenger.dsn.job_done: '%env(string:default:teknoo.space.messenger.dsn.default:MESSENGER_JOB_DONE_DSN)%'
+    teknoo.space.messenger.dsn.execute_job: '%env(string:default:teknoo.space.messenger.dsn.default:MESSENGER_EXECUTE_JOB_DSN)%'
 
     teknoo.east.paas.symfony.history.prefer-real-date: true
     teknoo.east.paas.symfony.prepare-job.prefer-real-date: true

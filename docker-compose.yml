@@ -68,15 +68,7 @@ services:
             - APP_ENV=dev
             - MAILER_TRANSPORT=smtp
             - MAILER_SENDER_NAME=Teknoo Space App
-            - MAILER_SENDER_ADDRESS=space@teknoo.software
-            - MERCURE_PUBLISH_URL=http://mercure:8181/.well-known/mercure
-            - MERCURE_SUBSCRIBER_URL=https://localhost/hub/.well-known/mercure
-            - MESSENGER_EXECUTE_JOB_DSN=amqp://space:space_pwd@amqp:5672/%2f/execute_job
-            - MESSENGER_HISTORY_SENT_DSN=amqp://space:space_pwd@amqp:5672/%2f/history_sent
-            - MESSENGER_JOB_DONE_DSN=amqp://space:space_pwd@amqp:5672/%2f/job_done
-            - MESSENGER_NEW_JOB_DSN=amqp://space:space_pwd@amqp:5672/%2f/new_job
             - MONGODB_NAME=space
-            - MONGODB_SERVER=mongodb://space_user:space_pwd@db/space
             - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_HOSTNAME=localhost
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
@@ -93,19 +85,17 @@ services:
             - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
-            - SPACE_STORAGE_CLASS_LONGHORN=longhorn
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - SPACE_STORAGE_DEFAULT_SIZE=3Gi
             - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
             - PHP_BLACKFIRE_SERVER=blackfire
-            - SPACE_SUPPORT_CONTACT=support@teknoo.space
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
-    apache:
+    httpd:
         build:
-            context: ./build.dev/apache
+            context: build.dev/httpd
         ports:
             - 80:80
             - 443:443
