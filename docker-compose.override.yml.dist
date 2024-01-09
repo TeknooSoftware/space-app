@@ -6,6 +6,7 @@ services:
             - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
     php:
         environment:
+            - APP_ENV=dev
             - APP_REMEMBER_SECRET=ToChange!
             - APP_SECRET=ToChange!
             - MAILER_HOST=ToChange!

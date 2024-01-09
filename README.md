@@ -92,8 +92,9 @@ This application is bundled with :
 Installation
 ------------
 
-Space can be installed with standards composer command, but a Makefile is available to help to install and use it :
-`Make` commandes are :
+Space can be installed with standards composer command, but a Makefile is available to help to install and use it.
+`make` is available in the folder `application`, but you can use the link `space.sh` instead of at the root of this 
+project. `make` commandes are :
 
 * **Generics**:
   * `help`:          Show this help.

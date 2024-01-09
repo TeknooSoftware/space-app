@@ -65,7 +65,6 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         environment:
-            - APP_ENV=dev
             - MAILER_TRANSPORT=smtp
             - MAILER_SENDER_NAME=Teknoo Space App
             - MONGODB_NAME=space
