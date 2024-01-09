@@ -8,22 +8,31 @@ services:
         environment:
             - APP_REMEMBER_SECRET=ToChange!
             - APP_SECRET=ToChange!
+            - MAILER_HOST=ToChange!
+            - MAILER_PASSWORD=ToChange!
+            - MAILER_SENDER_ADDRESS=space@teknoo.software
+            - MAILER_USER=ToChange!
             - MERCURE_JWT_TOKEN=ToChange!
+            - MERCURE_PUBLISH_URL=ToChange!
+            - MERCURE_SUBSCRIBER_URL=ToChange!
+            - MESSENGER_EXECUTE_JOB_DSN=ToChange!
+            - MESSENGER_HISTORY_SENT_DSN=ToChange!
+            - MESSENGER_JOB_DONE_DSN=ToChange!
+            - MESSENGER_NEW_JOB_DSN=ToChange!
+            - MONGODB_SERVER=ToChange!
             - OAUTH_GITLAB_CLIENT_ID=ToChange!
             - OAUTH_GITLAB_CLIENT_SECRET=ToChange!
             - SPACE_CODE_GENERATOR_SALT=ToChange!
             - SPACE_KUBERNETES_CA_VALUE=ToChange!
-            - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
-            - SPACE_KUBERNETES_MASTER=https://ToChange!:16443
             - SPACE_KUBERNETES_CLUSTER_URL=ToChange!
+            - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
             - SPACE_KUBERNETES_DASHBOARD=https://ToChange!/
+            - SPACE_KUBERNETES_MASTER=https://ToChange!:16443
             - SPACE_OAUTH_GITLAB_URL=https://ToChange!/
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
             - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
             - SPACE_OCI_REGISTRY_URL=.ToChange!
-            - MAILER_HOST=ToChange!
-            - MAILER_PASSWORD=ToChange!
-            - MAILER_USER=ToChange!
+            - SPACE_SUPPORT_CONTACT=support@teknoo.space
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     blackfire:
         environment:

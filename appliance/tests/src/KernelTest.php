@@ -25,11 +25,11 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\App;
 
-use App\Kernel;
+use Teknoo\Space\App\Kernel;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @covers \App\Kernel
+ * @covers \Teknoo\Space\App\Kernel
  */
 class KernelTest extends TestCase
 {
