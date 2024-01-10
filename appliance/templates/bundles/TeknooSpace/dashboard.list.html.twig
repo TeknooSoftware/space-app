@@ -34,7 +34,7 @@
             <nav aria-label="breadcrumb" class="d-inline-block mt-2 mt-sm-0">
                 <ul class="breadcrumb bg-transparent rounded mb-0 p-0">
                     <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_dashboard') }}">{{ 'teknoo.space.text.space'|trans }}</a></li>
-                    <li class="breadcrumb-item text-capitalize"><a href="{% block listLink '#' %}">{% block listTitleInBreadCrumb '' %}</a></li>
+                    <li class="breadcrumb-item text-capitalize"><a href="{% block breadcrumbListLink '#' %}">{% block breadcrumbListTitle '' %}</a></li>
                     {% block additionalBreadcrumbs '' %}
                 </ul>
             </nav>

@@ -2,13 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{  'teknoo.space.title.admin_project.new'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.admin_project.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }} - {% endblock %}
 
-{% block instanceMainTitle %}<i class="uil uil-trowel"></i> {{  'teknoo.space.title.admin_project.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-trowel"></i> {{ 'teknoo.space.title.admin_project.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
 
-{% block instanceTitle %}{{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
-
-{% block listLink path('_teknoo_paas_admin_project_list') %}
+{% block breadcrumbListLink path('_teknoo_paas_admin_project_list') %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_project.new'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">

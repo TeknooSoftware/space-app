@@ -13,13 +13,12 @@
     {% endif %}
 {% endmacro %}
 
-{% block formTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
-
+{% block title %}{{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }} - {% endblock %}
 {% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }}{% endblock %}
 
-{% block instanceTitle %}{{ objectInstance }}{% endblock %}
-
-{% block listLink path('_teknoo_paas_admin_account_list') %}
+{% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">
@@ -83,19 +82,19 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
-        <a href="{{  path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>
-        <a href="{{  path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}" class="btn btn-soft-success btn-full-large btn-block">
+        <a href="{{ path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}" class="btn btn-soft-success btn-full-large btn-block">
             <i class="uil uil-trowel"></i>
             {{ 'teknoo.space.action.new_project'|trans }}
         </a>
-        <a href="{{  path('space_admin_account_reinstall', {'id':objectInstance.id}) }}" class="btn btn-soft-danger btn-full-large btn-block mt-2">
+        <a href="{{ path('space_admin_account_reinstall', {'id':objectInstance.id}) }}" class="btn btn-soft-danger btn-full-large btn-block mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_reconfigure_kubernetes'|trans }}
         </a>
-        <a href="{{  path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}" class="btn btn-outline-danger btn-full-large btn-block mt-2">
+        <a href="{{ path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}" class="btn btn-outline-danger btn-full-large btn-block mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_reconfigure_registry'|trans }}
         </a>

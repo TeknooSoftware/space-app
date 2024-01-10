@@ -2,14 +2,16 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{  'teknoo.space.title.project.edit'|trans }}{% endblock %}
-{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
-{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.job.new'|trans }}{% endblock %}
-{% block instanceTitle %}{{ 'teknoo.space.title.job.new'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.job.new'|trans }} : {{ project }} - {% endblock %}
 
+{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.job.new'|trans }} : {{ project }}{% endblock %}
+
+{% block breadcrumbListLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.job.new'|trans }}{% endblock %}
 {% block breadcrumbAddsItems %}
     <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_project_edit', {'id': project.id}) }}">{{ project }}</a></li>
 {% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.job.new'|trans }}{% endblock %}
 
 {% block crudFormFields %}
     {{ form_row(formView.projectId) }}

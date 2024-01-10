@@ -2,10 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
-{% block listLink %}{{ path('_teknoo_common_2fa_google_enable') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.user.2fa'|trans }} - {% endblock %}
+
 {% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
-{% block instanceTitle %}{{ space.user }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('_teknoo_common_2fa_google_enable') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
 
 {% block formParentBlock %}
     <div class="row">
@@ -35,15 +38,15 @@
                     <table class="table card-text">
                         <tbody>
                         <tr>
-                            <th scope="row">Provider</th>
-                            <td>{{ totpAuth.provider }}</td>
+                            <th scope="row">{{ 'teknoo.space.text.2fa.provider'|trans }}</th>
+                            <td>{{ ('teknoo.space.text.2fa.provider.' ~ totpAuth.provider)|trans }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Algorithm</th>
+                            <th scope="row">{{ 'teknoo.space.text.2fa.algorithm'|trans }}</th>
                             <td>{{ totpAuth.algorithm }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Enable</th>
+                            <th scope="row">{{ 'teknoo.space.text.2fa.enabled'|trans }}</th>
                             <td>{% if totpAuth.enabled %}Yes{% else %}No{% endif %}</td>
                         </tr>
                         <tr>

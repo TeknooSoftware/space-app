@@ -2,13 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{  'teknoo.space.title.project.edit'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.project.edit'|trans }} : {{ objectInstance }} - {% endblock %}
 
 {% block instanceMainTitle %}<i class="uil uil-trowel"></i> {{ 'teknoo.space.title.project.edit'|trans }} : {{ objectInstance }}{% endblock %}
 
-{% block instanceTitle %}{{ objectInstance }}{% endblock %}
-
-{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+{% block breadcrumbListLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">
@@ -51,19 +51,19 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.project_actions'|trans }}</h5>
-        <a href="{{  path('space_project_edit_refresh_credentials', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_project_edit_refresh_credentials', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-refresh"></i>
             {{ 'teknoo.space.action.project_refresh'|trans }}
         </a>
-        <a href="{{  path('space_project_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_project_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>
-        <a href="{{  path('space_job_list', {'projectId':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_job_list', {'projectId':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-list-ul"></i>
             {{ 'teknoo.space.action.jobs'|trans }}
         </a>
-        <a href="{{  path('space_job_new', {'projectId':objectInstance.id}) }}" class="btn btn-success btn-full-large btn-block">
+        <a href="{{ path('space_job_new', {'projectId':objectInstance.id}) }}" class="btn btn-success btn-full-large btn-block">
             <i class="uil uil-play"></i>
             {{ 'teknoo.space.action.start_job'|trans }}
         </a>

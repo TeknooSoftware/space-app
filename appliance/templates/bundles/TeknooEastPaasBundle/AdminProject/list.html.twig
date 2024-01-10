@@ -6,9 +6,12 @@
 
 {% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
 
-{% block listTitle %}<i class="uil uil-trowel"></i> {{ "teknoo.space.title.admin_project"|trans }}{% endblock %}
-{% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.admin_project'|trans }}{% endblock %}
-{% block listLink %}{{ path('_teknoo_paas_admin_project_list') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.admin_project'|trans }} - {% endblock %}
+
+{% block listTitle %}<i class="uil uil-trowel"></i> {{ 'teknoo.space.title.admin_project'|trans }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('_teknoo_paas_admin_project_list') }}{% endblock %}
+{% block breadcrumbListTitle %}{{ 'teknoo.space.title.admin_project'|trans }}{% endblock %}
 
 {% block listTableHeader %}
     <thead class="bg-light">
@@ -29,26 +32,25 @@
     </tr>
 {% endblock %}
 
-
 {% block listTableRow %}
     <tr {% if loop.index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
         <td>{{ object.id|slice(0, 6) }}</td>
         <td>
-            <a class="text-primary" href="{{  path('_teknoo_paas_admin_project_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_project'|trans }}">
+            <a class="text-primary" href="{{ path('_teknoo_paas_admin_project_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_project'|trans }}">
                 {{ object.project }}
             </a>
         </td>
         <td>
-            <a class="text-primary" href="{{  path('_teknoo_paas_admin_account_edit', {'id':object.project.account.id}) }}" title="{{ 'teknoo.space.action.edit_account'|trans }}">
+            <a class="text-primary" href="{{ path('_teknoo_paas_admin_account_edit', {'id':object.project.account.id}) }}" title="{{ 'teknoo.space.action.edit_account'|trans }}">
                 {{ object.project.account }}
             </a>
         </td>
         <td>{{ object.project.createdAt|date('Y M d H:i:s') }}</td>
         <td>{{ object.project.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
-            <a class="text-primary" href="{{  path('_teknoo_paas_admin_project_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_project'|trans }}"><span class="mdi mdi-pencil"></span></a>
-            <a class="text-primary" href="{{  path('space_admin_new_job', {'projectId':object.id}) }}" title="{{ 'teknoo.space.action.start_job'|trans }}"><span class="mdi mdi-shape-circle-plus"></span></a>
-            <a class="text-primary" onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{  path('_teknoo_paas_admin_project_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_project'|trans }}"><span class="mdi mdi-trash-can"></span></a>
+            <a class="text-primary" href="{{ path('_teknoo_paas_admin_project_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_project'|trans }}"><span class="mdi mdi-pencil"></span></a>
+            <a class="text-primary" href="{{ path('space_admin_new_job', {'projectId':object.id}) }}" title="{{ 'teknoo.space.action.start_job'|trans }}"><span class="mdi mdi-shape-circle-plus"></span></a>
+            <a class="text-primary" onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{ path('_teknoo_paas_admin_project_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_project'|trans }}"><span class="mdi mdi-trash-can"></span></a>
         </td>
     </tr>
 {% endblock %}

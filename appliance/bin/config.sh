@@ -110,15 +110,17 @@ else
   APP_SECRET=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
   SPACE_CODE_GENERATOR_SALT=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
   TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
+  SPACE_JWT_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
 
   if [ "$useSfSeret" = "y" ]; then
       cp .env.local.dist "$ENV_LOCAL_FILE"
 
-      echo "Set random secrets: APP_REMEMBER_SECRET, APP_SECRET and SPACE_CODE_GENERATOR_SALT, TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      echo "Set random secrets: APP_REMEMBER_SECRET, APP_SECRET and SPACE_CODE_GENERATOR_SALT, TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE, SPACE_JWT_PASSPHRASE"
       updateSecret "APP_REMEMBER_SECRET" "$APP_REMEMBER_SECRET"
       updateSecret "APP_SECRET" "$APP_SECRET"
       updateSecret "SPACE_CODE_GENERATOR_SALT" "$SPACE_CODE_GENERATOR_SALT"
       updateSecret "TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" "$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      updateSecret "SPACE_JWT_PASSPHRASE" "$SPACE_JWT_PASSPHRASE"
   else
       cp .env.local.unsecure.dist "$ENV_LOCAL_FILE"
 
@@ -127,6 +129,7 @@ else
       updateFile "$ENV_LOCAL_FILE" "APP_SECRET" "$APP_SECRET"
       updateFile "$ENV_LOCAL_FILE" "SPACE_CODE_GENERATOR_SALT" "$SPACE_CODE_GENERATOR_SALT"
       updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" "$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      updateFile "$ENV_LOCAL_FILE" "SPACE_JWT_PASSPHRASE" "$SPACE_JWT_PASSPHRASE"
   fi
 
   if [ "$useDockerCompose" = "y" ]; then
@@ -134,6 +137,7 @@ else
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "APP_SECRET" "$APP_SECRET"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CODE_GENERATOR_SALT" "$SPACE_CODE_GENERATOR_SALT"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" "$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_JWT_PASSPHRASE" "$SPACE_JWT_PASSPHRASE"
   fi
 fi
 

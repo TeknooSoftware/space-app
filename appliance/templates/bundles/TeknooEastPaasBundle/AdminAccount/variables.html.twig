@@ -2,7 +2,8 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.admin_account.edit'|trans }} - {% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
 
 {% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
 
@@ -10,9 +11,9 @@
     <li class="breadcrumb-item text-capitalize"><a href="{{ path('_teknoo_paas_admin_account_edit', {"id": objectInstance.id}) }}">{{ objectInstance }}</a></li>
 {% endblock %}
 
-{% block instanceTitle %}{{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
 
-{% block listLink path('_teknoo_paas_admin_account_list') %}
+{% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
 
 {% block crudFormFields %}
     <div class="row subforms" data-subforms="sets" data-prototype="{{ form_widget(formView.sets.vars.prototype)|e('html_attr') }}" data-prototype-name="__env_name__">

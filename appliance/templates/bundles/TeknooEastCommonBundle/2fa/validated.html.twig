@@ -2,10 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
-{% block listLink %}{{ path('_teknoo_common_2fa_google_enable') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.user.2fa'|trans }} - {% endblock %}
+
 {% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
-{% block instanceTitle %}{{ space.user }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('_teknoo_common_2fa_google_enable') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
 
 {% block formParentBlock %}
     <div class="row">

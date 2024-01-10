@@ -2,13 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.admin_media.new'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.admin_media.new'|trans }} - {% endblock %}
 
 {% block instanceMainTitle %}<i class="uil uil-image-download"></i> {{ 'teknoo.space.title.admin_media.new'|trans }}{% endblock %}
 
-{% block instanceTitle %}{{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
-
-{% block listLink path('_teknoo_common_admin_media_list') %}
+{% block breadcrumbListLink path('_teknoo_common_admin_media_list') %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_media.new'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">

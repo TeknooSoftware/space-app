@@ -2,17 +2,19 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.account.account_variables'|trans }} - {% endblock %}
 
 {% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
 
-{% block breadcrumbAddsItems %}
-    <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_account_settings') }}">Settings</a></li>
-{% endblock %}
-
-{% block instanceTitle %}{{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
-
-{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_account_list') }}{% else %}{{ path('space_account_settings') }}{% endif %}{% endblock %}
+{%- block breadcrumbListLink -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ path('_teknoo_paas_admin_account_list') }}
+    {% else %}
+        {{ path('space_account_settings') }}
+    {% endif %}
+{%- endblock -%}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row subforms" data-subforms="sets" data-prototype="{{ form_widget(formView.sets.vars.prototype)|e('html_attr') }}" data-prototype-name="__env_name__">

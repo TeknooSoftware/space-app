@@ -2,10 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.admin_user.edit'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.admin_user.edit'|trans }} : {{ objectInstance }} - {% endblock %}
+
 {% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user.edit'|trans }} : {{ objectInstance }}{% endblock %}
-{% block instanceTitle %}{{ objectInstance }}{% endblock %}
-{% block listLink path('_teknoo_common_admin_user_list') %}
+
+{% block breadcrumbListLink path('_teknoo_common_admin_user_list') %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_user.edit'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">

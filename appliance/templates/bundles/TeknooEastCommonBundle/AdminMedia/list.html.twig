@@ -6,9 +6,12 @@
 
 {% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
 
+{% block title %}{{ 'teknoo.space.title.admin_media'|trans }} - {% endblock %}
+
 {% block listTitle %}<i class="uil uil-image-download"></i> {{ 'teknoo.space.title.admin_media'|trans }}{% endblock %}
-{% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.admin_media'|trans }}{% endblock %}
-{% block listLink %}{{ path('_teknoo_common_admin_media_list') }}{% endblock %}
+
+{% block breadcrumbListTitle %}{{ 'teknoo.space.title.admin_media'|trans }}{% endblock %}
+{% block breadcrumbListLink %}{{ path('_teknoo_common_admin_media_list') }}{% endblock %}
 
 {% block topHeaderButton %}
     <li class="list-inline-item mb-0 ms-1">
@@ -52,8 +55,8 @@
             {% endif %}
         </td>
         <td class="text-end">
-            <a class="text-primary" href="{{  path('_teknoo_common_media', {'id':object.id}) }}" target="_blank" title="{{ 'teknoo.space.action.open_media'|trans }}"><span class="mdi mdi-folder-open"></span></a>
-            <a class="text-primary" onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{  path('_teknoo_common_admin_media_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_media'|trans }}"><span class="mdi mdi-trash-can"></span></a>
+            <a class="text-primary" href="{{ path('_teknoo_common_media', {'id':object.id}) }}" target="_blank" title="{{ 'teknoo.space.action.open_media'|trans }}"><span class="mdi mdi-folder-open"></span></a>
+            <a class="text-primary" onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{ path('_teknoo_common_admin_media_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_media'|trans }}"><span class="mdi mdi-trash-can"></span></a>
         </td>
     </tr>
 {% endblock %}

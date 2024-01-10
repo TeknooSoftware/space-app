@@ -2,10 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.contact.support'|trans }}{% endblock %}
-{% block listLink %}{{ path('space_dashboard') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.contact.support'|trans }} - {% endblock %}
+
 {% block instanceMainTitle %}<i class="uil uil-fast-mail"></i> {{ 'teknoo.space.title.contact'|trans }}{% endblock %}
-{% block instanceTitle %}{{ 'teknoo.space.text.contact.support'|trans }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('space_dashboard') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.contact.support'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.text.contact.support.form'|trans }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">

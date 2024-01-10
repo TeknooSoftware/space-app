@@ -26,19 +26,18 @@
   {% endif %}
 {% endmacro %}
 
-{% block formTitle %}{{  'teknoo.space.title.project.edit'|trans }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.job.view'|trans }} : {{ jobInstance.project }} - {% endblock %}
 
-{% block listLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.job.view'|trans }} : {{ jobInstance.project }}{% endblock %}
 
-{% block instanceMainTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.job.view'|trans }}{% endblock %}
-
-{% block instanceTitle %}{{ 'teknoo.space.title.job.view'|trans }}{% endblock %}
-
-{% block breadcrumbAddsItems %}
+{% block breadcrumbListLink %}{% if is_granted('ROLE_ADMIN') %}{{ path('_teknoo_paas_admin_project_list') }}{% else %}{{ path('space_project_list') }}{% endif %}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
+{%- block breadcrumbAddsItems -%}
     {% if jobInstance.project is not empty %}
         <li class="breadcrumb-item text-capitalize"><a href="{{ path('space_project_edit', {'id': jobInstance.project.id}) }}">{{ jobInstance.project }}</a></li>
     {% endif %}
-{% endblock %}
+{%- endblock -%}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.job.view'|trans }}{% endblock %}
 
 {% block formParentBlock %}
     <div class="row">
@@ -48,12 +47,12 @@
                     <div class="widget">
                         {% if jobInstance.project is not empty %}
                         <h5 class="widget-title">{{ 'teknoo.space.text.job_actions'|trans }}</h5>
-                        <a href="{{  path('_teknoo_paas_admin_project_edit', {'id':jobInstance.project.id}) }}" title="{{ 'teknoo.space.action.job_open_project'|trans }}" class="btn btn-soft-primary btn-full-large btn-block mb-2">
+                        <a href="{{ path('_teknoo_paas_admin_project_edit', {'id':jobInstance.project.id}) }}" title="{{ 'teknoo.space.action.job_open_project'|trans }}" class="btn btn-soft-primary btn-full-large btn-block mb-2">
                             <i class="mdi mdi-pencil"></i>
                             {{ 'teknoo.space.action.job_open_project'|trans }}
                         </a>
                         <h5 class="widget-title">{{ 'teknoo.space.text.project_actions'|trans }}</h5>
-                        <a href="{{  path('space_admin_restart_job', {'projectId':jobInstance.project.id, 'jobId':jobInstance.id}) }}" title="{{ 'teknoo.space.action.restart_job'|trans }}" class="btn btn-soft-success btn-full-large btn-block mb-2">
+                        <a href="{{ path('space_admin_restart_job', {'projectId':jobInstance.project.id, 'jobId':jobInstance.id}) }}" title="{{ 'teknoo.space.action.restart_job'|trans }}" class="btn btn-soft-success btn-full-large btn-block mb-2">
                             <i class="mdi mdi-shape-circle-plus"></i>
                             {{ 'teknoo.space.action.restart_job'|trans }}
                         </a>

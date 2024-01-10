@@ -6,9 +6,12 @@
 
 {% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
 
-{% block listTitle %}<i class="uil uil-drill"></i> {{ "teknoo.space.title.admin_job"|trans }}{% endblock %}
-{% block listTitleInBreadCrumb %}{{ 'teknoo.space.title.admin_job'|trans }}{% endblock %}
-{% block listLink %}{{ path('_teknoo_paas_admin_job_list') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.admin_job'|trans }} - {% endblock %}
+
+{% block listTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.admin_job'|trans }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('_teknoo_paas_admin_job_list') }}{% endblock %}
+{% block breadcrumbListTitle %}{{ 'teknoo.space.title.admin_job'|trans }}{% endblock %}
 
 {% block listTableHeader %}
     <thead class="bg-light">
@@ -34,10 +37,10 @@
         <td>{{ object.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
             {% if object.project is not empty %}
-            <a class="text-primary" href="{{  path('_teknoo_paas_admin_project_edit', {'id':object.project.id}) }}" title="{{ 'teknoo.space.action.edit_project_from_job'|trans }}"><span class="mdi mdi-pencil"></span></a>
+            <a class="text-primary" href="{{ path('_teknoo_paas_admin_project_edit', {'id':object.project.id}) }}" title="{{ 'teknoo.space.action.edit_project_from_job'|trans }}"><span class="mdi mdi-pencil"></span></a>
             {% endif %}
-            <a class="text-primary" href="{{  path('space_admin_get_job', {'id':object.id}) }}" title="{{ 'teknoo.space.action.view_job'|trans }}"><span class="mdi mdi-card-search"></span></a>
-            <a class="text-primary"  onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{  path('_teknoo_paas_admin_job_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_job'|trans }}"><span class="mdi mdi-trash-can"></span></a>
+            <a class="text-primary" href="{{ path('space_admin_get_job', {'id':object.id}) }}" title="{{ 'teknoo.space.action.view_job'|trans }}"><span class="mdi mdi-card-search"></span></a>
+            <a class="text-primary" onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{ path('_teknoo_paas_admin_job_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_job'|trans }}"><span class="mdi mdi-trash-can"></span></a>
         </td>
     </tr>
 {% endblock %}

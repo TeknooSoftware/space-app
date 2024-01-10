@@ -35,6 +35,7 @@ services:
             - SPACE_OCI_REGISTRY_URL=.ToChange!
             - SPACE_SUPPORT_CONTACT=support@teknoo.space
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - SPACE_JWT_PASSPHRASE=ToChange!
     blackfire:
         environment:
             - BLACKFIRE_SERVER_ID=ToChange!

@@ -92,6 +92,9 @@ services:
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
+            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
+            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
+            - SPACE_JWT_TTL=31104000
     httpd:
         build:
             context: build.dev/httpd
