@@ -25,6 +25,10 @@
   - Jira
   - Microsoft
   - Generic OAuth will be planned soon
+    - Add the env key `OAUTH_SERVER_TYPE` to set the provider type
+    - Add the env key `OAUTH_ENABLED` to show oauth button in sign in form
+    - Add the env key `OAUTH_SERVER_URL` to set the server (for gitlab only)
+    - Add the env key `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` to authenticate the server to use the OAuth API
 
 ## [1.0.0-beta29] - 2024-01-09
 ### Beta Release
