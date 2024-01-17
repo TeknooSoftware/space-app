@@ -52,6 +52,9 @@ class UserSearchType extends AbstractType
             'criteria' => [
                 'userSearch' => new InclusiveOr(
                     [
+                        'id' => new Regex($search->search),
+                    ],
+                    [
                         'email' => new Regex($search->search)
                     ],
                     [

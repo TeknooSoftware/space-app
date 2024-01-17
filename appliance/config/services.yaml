@@ -11,7 +11,9 @@ services:
         bind:
             $adminRoleName: 'ROLE_ADMIN'
             $codeGeneratorSalt: '%env(SPACE_CODE_GENERATOR_SALT)%'
-            $enableCodeRestriction: '%env(default:teknoo.space.code.subscription.required:SPACE_CODE_SUBSCRIPTION_REQUIRED)%'
+            $enableCodeRestriction: '%env(default:teknoo.space.default.code.subscription.required:SPACE_CODE_SUBSCRIPTION_REQUIRED)%'
+            $default2FAProviderName: '%teknoo.space.user.2fa.provider%'
+            $routesFor2FAByProviders: '%teknoo.space.user.2fa.routes%'
 
     ###################
     # Generic
@@ -39,7 +41,9 @@ services:
 
     Teknoo\Space\Infrastructures\Twig\Extension\:
         resource: '../infrastructures/Twig/Extension/*'
-        exclude: '../infrastructures/Twig/Extension/CollectionSerializing'
+        exclude:
+            - '../infrastructures/Twig/Extension/CollectionSerializing'
+            - '../infrastructures/Twig/Extension/MFARoutesFinder/'
         tags:
             - { name: twig.extension }
 
@@ -145,7 +149,7 @@ services:
             - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
             - '@Teknoo\East\Foundation\Time\SleepServiceInterface'
-            - '%env(default:teknoo.space.new_job.waiting_time.default:SPACE_NEW_JOB_WAITING_TIME)%'
+            - '%env(default:teknoo.space.default.new_job.waiting_time:SPACE_NEW_JOB_WAITING_TIME)%'
         tags:
             - 'messenger.message_handler'
 
@@ -233,9 +237,9 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail'
         arguments:
             - '@Symfony\Component\Mailer\MailerInterface'
-            - '%env(default:teknoo.space.defaults.mailer.sender_name:MAILER_SENDER_NAME)%'
-            - '%env(default:teknoo.space.defaults.mailer.sender_address:MAILER_SENDER_ADDRESS)%'
-            - '%env(default:teknoo.space.defaults.mailer.forbidden_words:MAILER_FORBIDDEN_WORDS)%'
+            - '%env(default:teknoo.space.default.mailer.sender_name:MAILER_SENDER_NAME)%'
+            - '%env(default:teknoo.space.default.mailer.sender_address:MAILER_SENDER_ADDRESS)%'
+            - '%env(default:teknoo.space.default.mailer.forbidden_words:MAILER_FORBIDDEN_WORDS)%'
             - {
                   support: '%teknoo.space.support.contact%'
             }
@@ -249,3 +253,19 @@ services:
             - '@Teknoo\East\Common\Doctrine\Writer\ODM\MediaWriter'
         tags:
             - {name: form.type}
+
+    #####################
+    # Login
+    Teknoo\East\CommonBundle\EndPoint\ConnectEndPoint:
+        class: 'Teknoo\East\CommonBundle\EndPoint\ConnectEndPoint'
+        arguments:
+            - '@KnpU\OAuth2ClientBundle\Client\ClientRegistry'
+            - '%teknoo.space.oauth.server.type%'
+            - [ 'read_user' ]
+        calls:
+            - [ 'setResponseFactory', [ '@Psr\Http\Message\ResponseFactoryInterface' ] ]
+            - [ 'setRouter', [ '@router' ] ]
+        public: true
+
+    Teknoo\East\CommonBundle\Contracts\Security\Authenticator\UserConverterInterface:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\UserConverter'

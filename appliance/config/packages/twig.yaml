@@ -11,5 +11,8 @@ twig:
         mercureEnabled: '%teknoo.space.mercure.publishing_enabled%'
         supportContact: '%teknoo.space.support.contact%'
         assetsVersion: '%teknoo.space.assets.version%'
+        oauth:
+            enabled: '%env(OAUTH_ENABLED)%'
+            type: '%teknoo.space.oauth.server.type%'
     paths:
         '%kernel.project_dir%/templates/bundles/TeknooSpace': TeknooSpace

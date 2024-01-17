@@ -1,0 +1,12 @@
+space_connect_oauth_login:
+    path: '/account/oauth/login'
+    defaults:
+        _controller: 'Teknoo\East\CommonBundle\EndPoint\ConnectEndPoint'
+
+space_connect_oauh_check:
+    path: '/account/oauth/check'
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.static'
+        template: '@@TeknooEastPaas/Account/index.html.twig'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        _oauth_client_key: '%teknoo.space.oauth.server.type%'

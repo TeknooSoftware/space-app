@@ -1,11 +1,11 @@
 framework:
     messenger:
         transports:
-            new_job: '%env(MESSENGER_NEW_JOB_DSN)%'
-            history_sent: '%env(MESSENGER_HISTORY_SENT_DSN)%'
-            job_done: '%env(MESSENGER_JOB_DONE_DSN)%'
+            new_job: '%teknoo.space.messenger.dsn.new_job%'
+            history_sent: '%teknoo.space.messenger.dsn.history_sent%'
+            job_done: '%teknoo.space.messenger.dsn.job_done%'
             execute_job:
-                dsn: '%env(MESSENGER_EXECUTE_JOB_DSN)%'
+                dsn: '%teknoo.space.messenger.dsn.execute_job%'
                 # default configuration
                 retry_strategy:
                     max_retries: 0

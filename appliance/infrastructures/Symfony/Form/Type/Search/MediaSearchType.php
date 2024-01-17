@@ -52,7 +52,7 @@ class MediaSearchType extends AbstractType
             'criteria' => [
                 'mediaSearch' => new InclusiveOr(
                     [
-                        'name' => new Regex($search->search),
+                        'metadata.file_name' => new Regex($search->search),
                     ],
                     [
                         'metadata.alternative' => new Regex($search->search),

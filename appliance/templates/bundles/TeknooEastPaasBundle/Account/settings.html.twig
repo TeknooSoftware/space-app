@@ -2,10 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
-{% block listLink %}{{ path('space_account_settings') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.account.settings'|trans }} - {% endblock %}
+
 {% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
-{% block instanceTitle %}{{ objectInstance.account }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('space_account_settings') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ objectInstance.account }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">
@@ -31,7 +34,7 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
-        <a href="{{  path('space_account_edit_variables') }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_account_edit_variables') }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>
