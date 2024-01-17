@@ -21,12 +21,14 @@ verify: clean dev-install test qa-offline
 install: 	## To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony app and warmup caches
 install: clean
 	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction --no-dev --optimize-autoloader --classmap-authoritative;
+	${COMPOSER} thanks
 	APP_ENV=prod ${PHP} bin/console cache:warmup
 
 .PHONY: clean
 dev-install: 	## To install all PHP vendors for Space, thanks to Composer, including dev libraries
 dev-install: clean
 	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-interaction --optimize-autoloader --classmap-authoritative;
+	${COMPOSER} thanks
 	APP_ENV=prod ${PHP} bin/console cache:warmup
 
 .PHONY: update
@@ -101,7 +103,7 @@ test: 		## Run tests (units tests and behavior tests, with a code coverage) to c
 	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
 	rm -rf var/cache/test
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	${PHP} vendor/bin/behat
+	APP_ENV=test ${PHP} vendor/bin/behat
 	rm -rf var/cache/test
 
 .PHONY: test-without-coverage
@@ -109,7 +111,7 @@ test-without-coverage: ## Run tests (units tests and behavior tests without a co
 	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	rm -rf var/cache/test
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	${PHP} vendor/bin/behat
+	APP_ENV=test ${PHP} vendor/bin/behat
 	rm -rf var/cache/test
 
 ##

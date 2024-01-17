@@ -25,8 +25,8 @@ security:
             pattern: '^/account/login$'
             security: false
 
-        account_gitlab_login:
-            pattern: '^/oauth/gitlab/login$'
+        account_oauth_login:
+            pattern: '^/account/oauth/login$'
             security: false
 
         api_area:
@@ -38,6 +38,8 @@ security:
         #require admin role for all others pages
         account_area:
             pattern: '^/'
+            custom_authenticators:
+                - '%teknoo.east.common.bundle.security.authenticator.oauth2.class%'
             provider: all_providers
             login_link:
                 provider: 'with_password'

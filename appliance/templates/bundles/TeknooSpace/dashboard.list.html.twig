@@ -13,7 +13,7 @@
                 {% set searchForm = formFactory.create(formClass) %}
             {% endif %}
             {% set searchFormView = searchForm.createView() %}
-            {% form_theme searchFormView with ['bootstrap_4_layout.html.twig'] %}
+            {% form_theme searchFormView with ['bootstrap_5_layout.html.twig'] %}
             {{ form_start(searchFormView, {"attr":{"class":"searchform"}}) }}
             <div>
                 {{ form_widget(searchFormView.search, {'attr':{'class':'border rounded', "label": null, "placeholder": 'teknoo.space.text.admin.search'|trans}}) }}
