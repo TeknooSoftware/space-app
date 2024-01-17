@@ -2,6 +2,14 @@
 
 {% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
+{%- block title -%}
+  {% set errorCode = error.code %}
+  {% if 0 == errorCode %}
+    {% set errorCode = 500 %}
+  {% endif %}
+  {{ ('teknoo.space.error.' ~ errorCode ~ '.title')|trans }} -&nbsp;
+{%- endblock -%}
+
 {% block navbar %}{% endblock %}
 
 {% block back_to %}

@@ -2,10 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block formTitle %}{{ 'teknoo.space.title.user.jwt'|trans }}{% endblock %}
-{% block listLink %}{{ path('space_my_settings_token') }}{% endblock %}
+{% block title %}{{ 'teknoo.space.title.user.jwt'|trans }} - {% endblock %}
+
 {% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.jwt'|trans }}{% endblock %}
-{% block instanceTitle %}{{ space.user }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('space_my_settings_token') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.user.jwt'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">

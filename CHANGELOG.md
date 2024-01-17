@@ -1,5 +1,35 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta30] - 2024-01-17
+### Beta Release
+- Improve HTML Header title to be more understandable by user
+- Fix breadcrumb texts
+- Fix some issue in make command
+- Fix issues with JWT TTL env var not parsed to int
+- Improve twig blocks' names about breadcrumb
+- Fix several issues with breadcrumb text
+- Enable support of 2FA with a generic TOTP and not only Google Authenticator
+  - Add the env key `SPACE_2FA_PROVIDER` to select the 2FA provider to use. Users already configured with a provider
+    still use it.
+- Fix some issue in 2FA form
+- Fix subscription form and search form to use bootstrap 5 instead of bootstrap 4
+- Fix some issue in search 
+- Improve DI parameters about default values
+- Set Mailer's DSN in env var, no longer concatened in the configuration
+- Fix Docker Compose stack to embed also workers
+- Support of OAuth2 authentication with providers (only one provider can be used at a time) :
+  - Digital Ocean
+  - Github
+  - Gitlab
+  - Google
+  - Jira
+  - Microsoft
+  - Generic OAuth will be planned soon
+    - Add the env key `OAUTH_SERVER_TYPE` to set the provider type
+    - Add the env key `OAUTH_ENABLED` to show oauth button in sign in form
+    - Add the env key `OAUTH_SERVER_URL` to set the server (for gitlab only)
+    - Add the env key `OAUTH_CLIENT_ID` and `OAUTH_CLIENT_SECRET` to authenticate the server to use the OAuth API
+
 ## [1.0.0-beta29] - 2024-01-09
 ### Beta Release
 - Add bin/config.sh script to help to configure a fresh Space installation 

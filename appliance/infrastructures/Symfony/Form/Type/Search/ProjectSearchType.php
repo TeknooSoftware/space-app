@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Search;
 
 use Symfony\Component\Form\AbstractType;
+use Teknoo\East\Common\Query\Expr\InclusiveOr;
 use Teknoo\East\Common\Query\Expr\Regex;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\Search;
@@ -49,7 +50,14 @@ class ProjectSearchType extends AbstractType
     {
         $manager->updateWorkPlan([
             'criteria' => [
-                'name' => new Regex($search->search),
+                'projectSearch' => new InclusiveOr(
+                    [
+                        'id' => new Regex($search->search),
+                    ],
+                    [
+                        'name' => new Regex($search->search),
+                    ],
+                ),
             ],
         ]);
     }
