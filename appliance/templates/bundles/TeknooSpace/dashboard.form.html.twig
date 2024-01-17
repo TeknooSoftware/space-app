@@ -22,7 +22,7 @@
         {% block formParentBlock %}
         {% set locale = app.request.get('locale', 'en') %}
         {% if formView is defined %}
-        {% form_theme formView with ['bootstrap_4_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
+        {% form_theme formView with ['bootstrap_5_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
         {% if formActionRoute is defined and formActionRoute is not empty %}
             {% set formAction = path(formActionRoute, formActionRouteParams) %}
         {% endif %}

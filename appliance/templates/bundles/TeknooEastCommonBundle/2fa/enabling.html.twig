@@ -6,7 +6,7 @@
 
 {% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
 
-{% block breadcrumbListLink %}{{ path('_teknoo_common_2fa_google_enable') }}{% endblock %}
+{% block breadcrumbListLink %}{{ path(space_2fa_route_finder(app.user, 'enable')) }}{% endblock %}
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.user.2fa'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
 
@@ -53,17 +53,17 @@
                             {% if false == totpAuth.enabled %}
                             <th scope="row">QRCode</th>
                             <td class="text-center">
-                                <img src="{{ path('_teknoo_common_2fa_google_qrcode') }}" alt="QRCode"/>
-                                {% form_theme formView with ['bootstrap_4_layout.html.twig'] %}
-                                {{ form_start(formView, {"attr":{"class":"form-horizontal", "action": path('_teknoo_common_2fa_google_validate')}}) }}
+                                <img src="{{ path(space_2fa_route_finder(app.user, 'qrcode')) }}" alt="QRCode"/>
+                                {% form_theme formView with ['bootstrap_5_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
+                                {{ form_start(formView, {"attr":{"class":"form-horizontal", "action": path(space_2fa_route_finder(app.user, 'validate'))}}) }}
                                 {{ form_errors(formView) }}
                                 <div class="d-flex justify-content-center">
                                     <div class="row">
                                         <div class="col-6">
-                                        {{ form_row(formView.code, {'label': 'Validation code', 'row_attr': {'class': 'form-floating',}}) }}
+                                        {{ form_row(formView.code, {'label': 'Validation code', 'row_attr': {'class': 'form-floating'}, 'largeRow': true}) }}
                                         </div>
-                                        <div class="col-6">
-                                        <input type="submit" class="btn btn-primary" name="validate" value="{{ 'teknoo.space.action.2fa.validate'|trans }}" />
+                                        <div class="col-6 align-self-center">
+                                            <input type="submit" class="btn btn-primary" name="validate" value="{{ 'teknoo.space.action.2fa.validate'|trans }}" />
                                         </div>
                                     </div>
                                 </div>
@@ -72,7 +72,7 @@
                             {% else %}
                                 <th scope="row">Disabled</th>
                                 <td>
-                                    <a href="{{ path('_teknoo_common_2fa_google_disable') }}" class="btn btn-danger">{{ 'teknoo.space.action.2fa.disable'|trans }}</a>
+                                    <a href="{{ path(space_2fa_route_finder(app.user, 'disable')) }}" class="btn btn-danger">{{ 'teknoo.space.action.2fa.disable'|trans }}</a>
                                 </td>
                             {% endif %}
                         </tr>

@@ -17,6 +17,9 @@ fi
 
 ENV_LOCAL_FILE='.env.local'
 DOCKER_COMPOSE_OVERRIDE_FILE='../docker-compose.override.yml'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
 
 ###########
 # Functions
@@ -31,11 +34,29 @@ readForYesOrNo() {
   echo "$returnVal"
 }
 
+readForYesOrNoToBool() {
+  returnVal=""
+
+  while [ "$returnVal" != "y" ] && [ "$returnVal" != "n" ]; do
+    read -r -p "$1 : " returnVal
+  done
+
+  if [ "$returnVal" = "y" ]; then
+    echo "1"
+  else
+    echo "0"
+  fi
+}
+
 readAMandatoryResponse() {
   returnVal=""
 
   while [ -z "$returnVal" ]; do
     read -r -p "$1 : " returnVal
+
+    if [ -z "$returnVal" ] && [ "$#" = "2" ]; then
+      returnVal="${2}"
+    fi
   done
 
   echo "$returnVal"
@@ -48,7 +69,6 @@ updateSecret() {
 
 updateFile() {
   echo "Set $2 in $1"
-  pattern=" "
   case "$3" in
     *\ * ) sed -i "s~^\([- ]*\)$2=.*$~\\1$2=\"$3\"~g" "$1" ;;
     * ) sed -i "s~^\([- ]*\)$2=.*$~\\1$2=$3~g" "$1" ;;
@@ -81,6 +101,24 @@ dockerGlobalRegistryApi=$(readAMandatoryResponse "Docker Registry API Url")
 dockerGlobalRegistryUser=$(readAMandatoryResponse "Docker Registry User")
 dockerGlobalRegistryPassword=$(readAMandatoryResponse "Docker Registry Password")
 dockerPrivateRegistryUrl=$(readAMandatoryResponse "Docker Private Registry Url")
+mFAProvider=$(readAMandatoryResponse "2FA Provider [google_authenticator/generic]" "google_authenticator")
+mailerDSN=$(readAMandatoryResponse "Mailer DSN [null://null]" "null://null")
+mailerSenderAddress=$(readAMandatoryResponse "Mailer sender adress")
+oauthEnabled=$(readForYesOrNoToBool "OAuth Enabled [y/n]")
+
+oauthServerType=""
+oauthServerUrl=""
+oauthClientId=""
+oauthClientSecret=""
+
+if [ "$oauthEnabled" = "1" ]; then
+  oauthServerType=$(readAMandatoryResponse "OAuth Server Type [digital_ocean/github/gitlab/google/jira/microsoft]")
+  if [ "$oauthServerType" = "gitlab" ]; then
+    oauthServerUrl=$(readAMandatoryResponse "OAuth Gitlab server")
+  fi
+  oauthClientId=$(readAMandatoryResponse "OAuth Client Id")
+  oauthClientSecret=$(readAMandatoryResponse "OAuth Client Secret")
+fi
 
 ###############
 # Configuration
@@ -155,6 +193,9 @@ if [ "$useSfSeret" = "y" ]; then
   updateSecret "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
   updateSecret "SPACE_OCI_GLOBAL_REGISTRY_PWD" "$dockerGlobalRegistryPassword"
   updateSecret "MERCURE_JWT_TOKEN" "$mercureJwtToken"
+  updateSecret "MAILER_DSN" "$mailerDSN"
+  updateSecret "OAUTH_CLIENT_ID" "$oauthClientId"
+  updateSecret "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
 else
   updateFile "$ENV_LOCAL_FILE" "MONGODB_SERVER" "$mongoDbDSN"
   updateFile "$ENV_LOCAL_FILE" "MESSENGER_EXECUTE_JOB_DSN" "$MESSENGER_EXECUTE_JOB_DSN"
@@ -164,6 +205,9 @@ else
   updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
   updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_GLOBAL_REGISTRY_PWD" "$dockerGlobalRegistryPassword"
   updateFile "$ENV_LOCAL_FILE" "MERCURE_JWT_TOKEN" "$mercureJwtToken"
+  updateFile "$ENV_LOCAL_FILE" "MAILER_DSN" "$mailerDSN"
+  updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
+  updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
 fi
 
 if [ "$useDockerCompose" = "y" ]; then
@@ -175,6 +219,11 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_GLOBAL_REGISTRY_PWD" "$dockerGlobalRegistryPassword"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MERCURE_JWT_TOKEN" "$mercureJwtToken"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MERCURE_PUBLISHER_JWT_KEY" "$mercureJwtToken"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MERCURE_SUBSCRIBER_JWT_KEY" "$mercureJwtToken"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MAILER_DSN" "$mailerDSN"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
 fi
 
 updateFile "$ENV_LOCAL_FILE" "APP_ENV" "$APP_ENV"
@@ -188,6 +237,11 @@ updateFile "$ENV_LOCAL_FILE" "MERCURE_SUBSCRIBER_URL" "$mercureSubscribeUrl"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/private.pem"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/public.pem"
+updateFile "$ENV_LOCAL_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
+updateFile "$ENV_LOCAL_FILE" "MAILER_SENDER_ADDRESS" "$mailerSenderAddress"
+updateFile "$ENV_LOCAL_FILE" "OAUTH_ENABLED" "$oauthEnabled"
+updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
+updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
 
 if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "APP_ENV" "$APP_ENV"
@@ -201,6 +255,16 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/private.pem"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/public.pem"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MAILER_SENDER_ADDRESS" "$mailerSenderAddress"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_ENABLED" "$oauthEnabled"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
+
+  echo ""
+  echo ">> $RED To use blackfire with Space, please update blackfire section under $DOCKER_COMPOSE_OVERRIDE_FILE $NC"
 fi
 
-echo "Space is configured"
+echo ""
+echo "** $GREEN Space is configured $NC **"
+echo ""

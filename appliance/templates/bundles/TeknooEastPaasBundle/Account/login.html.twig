@@ -39,11 +39,15 @@
                                         <label class="form-check-label" for="_remember_me">{{ 'teknoo.space.text.remember_me'|trans }}</label>
                                     </div>
                                 </div>
-                                <p class="forgot-pass mb-0"><a href="reset-password.html" class="text-dark small fw-bold">{{ 'teknoo.space.action.forgot_password'|trans }}</a></p>
+                                {# todo <p class="forgot-pass mb-0"><a href="reset-password.html" class="text-dark small fw-bold">{{ 'teknoo.space.action.forgot_password'|trans }}</a></p> #}
                                 <p class="forgot-pass mb-0"><a href="{{ path('space_subscription') }}" class="text-dark small fw-bold">{{ 'teknoo.space.action.subscribe'|trans }}</a></p>
                             </div>
 
                             <button class="btn btn-primary w-100 text-center" type="submit">{{ 'teknoo.space.action.sign_in'|trans }}</button>
+
+                            {% if oauth.enabled %}
+                                <a href="{{ path('space_connect_oauth_login') }}" class="btn btn-secondary w-100 text-center mt-2">{{ ('teknoo.space.action.oauth.sign_in.' ~ oauth.type)|trans }}</a>
+                            {% endif %}
 
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
                         </form>

@@ -38,13 +38,17 @@ use Teknoo\Space\Object\DTO\SpaceProject;
  */
 class PrepareCriteria
 {
+    /**
+     * @param array<string, mixed> $criteria
+     */
     public function __invoke(
         SpaceProject $project,
         ManagerInterface $manager,
         ParametersBag $bag,
+        array $criteria = [],
     ): PrepareCriteria {
         $manager->updateWorkPlan([
-            'criteria' => [
+            'criteria' => $criteria + [
                 'project' => new ObjectReference($project->project)
             ]
         ]);

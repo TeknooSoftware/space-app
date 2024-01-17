@@ -50,10 +50,9 @@ services:
             RABBITMQ_PASSWORD: space_pwd
         networks:
             - amqp
-    php:
+    fpm:
         build:
-            context: ./build.dev/php
-        privileged: true
+            context: build.dev/php-fpm
         expose:
             - 9000
         networks:
@@ -65,13 +64,122 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         environment:
-            - MAILER_TRANSPORT=smtp
+            - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - MAILER_SENDER_NAME=Teknoo Space App
+            - MONGODB_NAME=space
+            - PHP_BLACKFIRE_SERVER=blackfire
+            - SPACE_CLUSTER_ISSUER=lets-encrypt
+            - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
+            - SPACE_HOSTNAME=localhost
+            - SPACE_JOB_ROOT=/tmp
+            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
+            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
+            - SPACE_JWT_TTL=31104000
+            - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+            - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+            - SPACE_KUBERNETES_CLUSTER_ENV=prod
+            - SPACE_KUBERNETES_CLUSTER_NAME=Teknoo Space Hydrogen
+            - SPACE_KUBERNETES_CLUSTER_TYPE=kubernetes
+            - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
+            - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
+            - SPACE_OCI_GLOBAL_REGISTRY_USERNAME=spaceuser
+            - SPACE_OCI_REGISTRY_IMAGE=registry:latest
+            - SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
+            - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
+    cli_new_job:
+        build:
+            context: build.dev/php-cli
+        networks:
+            - bdd
+            - backend
+            - amqp
+        links:
+            - db
+        volumes:
+            - ./appliance/:/var/www/space
+        working_dir: /var/www/space
+        command: ["bin/console", "messenger:consume", "new_job"]
+        environment:
             - MONGODB_NAME=space
             - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_HOSTNAME=localhost
-            - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
+            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
+            - SPACE_JWT_TTL=31104000
+            - SPACE_PING_FILE=var/ping_file
+            - SPACE_PING_SECONDS=60
+            - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
+            - SPACE_STORAGE_DEFAULT_SIZE=3Gi
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
+    cli_job_done:
+        build:
+            context: build.dev/php-cli
+        networks:
+            - bdd
+            - amqp
+        links:
+            - db
+        volumes:
+            - ./appliance/:/var/www/space
+        working_dir: /var/www/space
+        command: ["bin/console", "messenger:consume", "job_done"]
+        environment:
+            - MONGODB_NAME=space
+            - SPACE_HOSTNAME=localhost
+            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
+            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
+            - SPACE_JWT_TTL=31104000
+            - SPACE_PING_FILE=var/ping_file
+            - SPACE_PING_SECONDS=60
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
+    cli_history_sent:
+        build:
+            context: build.dev/php-cli
+        networks:
+            - bdd
+            - amqp
+        links:
+            - db
+        volumes:
+            - ./appliance/:/var/www/space
+        working_dir: /var/www/space
+        command: ["bin/console", "messenger:consume", "history_sent"]
+        environment:
+            - MONGODB_NAME=space
+            - SPACE_HOSTNAME=localhost
+            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
+            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
+            - SPACE_JWT_TTL=31104000
+            - SPACE_PING_FILE=var/ping_file
+            - SPACE_PING_SECONDS=60
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
+    cli_execute:
+        build:
+            context: build.dev/php-buildah
+        privileged: true
+        networks:
+            - amqp
+        volumes:
+            - ./appliance/:/var/www/space
+        working_dir: /var/www/space
+        command: ["bin/console", "messenger:consume", "execute_job"]
+        environment:
+            - SPACE_CLUSTER_ISSUER=lets-encrypt
+            - SPACE_HOSTNAME=localhost
             - SPACE_JOB_ROOT=/tmp
+            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
+            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
+            - SPACE_JWT_TTL=31104000
+            - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
             - SPACE_KUBERNETES_CLUSTER_ENV=prod
             - SPACE_KUBERNETES_CLUSTER_NAME=Teknoo Space Hydrogen
@@ -86,15 +194,9 @@ services:
             - SPACE_PING_SECONDS=60
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - SPACE_STORAGE_DEFAULT_SIZE=3Gi
-            - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
-            - PHP_BLACKFIRE_SERVER=blackfire
-            - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
-            - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
-            - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
-            - SPACE_JWT_TTL=31104000
     httpd:
         build:
             context: build.dev/httpd
