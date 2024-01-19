@@ -4850,7 +4850,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.0.0",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -4893,22 +4893,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.0.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.1.0"
             },
             "time": "2023-12-03T16:24:13+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.0.0",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "ec492571cf6017107910a1968a6f8f827dd74b77"
+                "reference": "80834f49286d989a6bbfa3c423e1f51eb5a4c19f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/ec492571cf6017107910a1968a6f8f827dd74b77",
-                "reference": "ec492571cf6017107910a1968a6f8f827dd74b77",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/80834f49286d989a6bbfa3c423e1f51eb5a4c19f",
+                "reference": "80834f49286d989a6bbfa3c423e1f51eb5a4c19f",
                 "shasum": ""
             },
             "require": {
@@ -4960,22 +4960,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.0.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.1.0"
             },
-            "time": "2023-12-03T16:24:13+00:00"
+            "time": "2024-01-18T20:20:03+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v7.0.0",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
-                "reference": "34cf210e293dec5c20fd61a7b7c199c2cac471af"
+                "reference": "725124caaec5d5fae3e028977b460483db8f62a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/34cf210e293dec5c20fd61a7b7c199c2cac471af",
-                "reference": "34cf210e293dec5c20fd61a7b7c199c2cac471af",
+                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/725124caaec5d5fae3e028977b460483db8f62a6",
+                "reference": "725124caaec5d5fae3e028977b460483db8f62a6",
                 "shasum": ""
             },
             "require": {
@@ -5010,22 +5010,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.0.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.1.0"
             },
-            "time": "2023-12-03T16:24:13+00:00"
+            "time": "2024-01-18T20:20:03+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.0.0",
+            "version": "v7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
-                "reference": "056806cb3d3c8d9402bb6e9d8cd0d2f518aa7218"
+                "reference": "436f070c6c6b75ca579585ffcfd14ad02d7ac683"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/056806cb3d3c8d9402bb6e9d8cd0d2f518aa7218",
-                "reference": "056806cb3d3c8d9402bb6e9d8cd0d2f518aa7218",
+                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/436f070c6c6b75ca579585ffcfd14ad02d7ac683",
+                "reference": "436f070c6c6b75ca579585ffcfd14ad02d7ac683",
                 "shasum": ""
             },
             "require": {
@@ -5060,9 +5060,9 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.0.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.1.0"
             },
-            "time": "2023-12-03T16:24:13+00:00"
+            "time": "2024-01-18T20:20:03+00:00"
         },
         {
             "name": "spomky-labs/otphp",
@@ -13351,16 +13351,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.7",
+            "version": "10.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e5c5b397a95cb0db013270a985726fcae93e61b8"
+                "reference": "08f4fa74d5fbfff1ef22abffee47aaedcaea227e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e5c5b397a95cb0db013270a985726fcae93e61b8",
-                "reference": "e5c5b397a95cb0db013270a985726fcae93e61b8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/08f4fa74d5fbfff1ef22abffee47aaedcaea227e",
+                "reference": "08f4fa74d5fbfff1ef22abffee47aaedcaea227e",
                 "shasum": ""
             },
             "require": {
@@ -13432,7 +13432,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.7"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.8"
             },
             "funding": [
                 {
@@ -13448,7 +13448,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-14T16:40:30+00:00"
+            "time": "2024-01-19T07:07:27+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13456,12 +13456,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "b7a13fc786f4fc7204a1b302e29a44bc6542bdd0"
+                "reference": "f81bd7cb90f5f30d3b246e342843ae905947158f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/b7a13fc786f4fc7204a1b302e29a44bc6542bdd0",
-                "reference": "b7a13fc786f4fc7204a1b302e29a44bc6542bdd0",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f81bd7cb90f5f30d3b246e342843ae905947158f",
+                "reference": "f81bd7cb90f5f30d3b246e342843ae905947158f",
                 "shasum": ""
             },
             "conflict": {
@@ -13917,8 +13917,8 @@
                 "serluck/phpwhois": "<=4.2.6",
                 "sfroemken/url_redirect": "<=1.2.1",
                 "sheng/yiicms": "<=1.2",
-                "shopware/core": "<=6.4.20",
-                "shopware/platform": "<=6.4.20",
+                "shopware/core": "<=6.5.7.3",
+                "shopware/platform": "<=6.5.7.3",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<=5.7.17",
                 "shopware/storefront": "<=6.4.8.1",
@@ -14179,7 +14179,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-16T18:04:59+00:00"
+            "time": "2024-01-17T21:04:22+00:00"
         },
         {
             "name": "sebastian/cli-parser",
