@@ -10,6 +10,7 @@ services:
             - APP_REMEMBER_SECRET=ToChange!
             - APP_SECRET=ToChange!
             - MAILER_DSN=ToChange!
+            - MAILER_REPLY_TO_ADDRESS=ToChange!
             - MAILER_SENDER_ADDRESS=ToChange!
             - MERCURE_JWT_TOKEN=ToChange!
             - MERCURE_PUBLISH_URL=ToChange!

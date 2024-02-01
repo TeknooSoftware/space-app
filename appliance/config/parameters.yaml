@@ -72,7 +72,7 @@ parameters:
 
     teknoo.space.rendering.clean_html: true
 
-    teknoo.space.support.contact: '%env(default:teknoo.space.default.support.contact:SPACE_SUPPORT_CONTACT)%'
+    teknoo.space.support.contact: '%env(string:default:teknoo.space.default.support.contact:SPACE_SUPPORT_CONTACT)%'
 
     teknoo.space.user.2fa.provider: '%env(string:default:teknoo.space.default.user.2fa.provider:SPACE_2FA_PROVIDER)%'
     teknoo.space.user.2fa.routes:

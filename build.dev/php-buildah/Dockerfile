@@ -83,9 +83,11 @@ RUN set -eux ; \
     cd /usr/local/bin ; \
     wget -q "https://github.com/containerd/nerdctl/releases/download/v${NERDCTL_VERSION}/nerdctl-full-${NERDCTL_VERSION}-linux-amd64.tar.gz" -O /tmp/nerdctl.tar.gz ; \
     tar -C . -xzf /tmp/nerdctl.tar.gz --strip-components 1 bin/nerdctl ; \
-    addgroup --gid 1000 space ; \
-    adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system space ; \
+    addgroup --gid 1000 spacegroup ; \
+    adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
-    chown space:space /var/www
+    chown spaceuser:spacegroup /var/www
 
 ADD 99-space.ini /usr/local/etc/php/conf.d/
+
+USER spaceuser:spacegroup

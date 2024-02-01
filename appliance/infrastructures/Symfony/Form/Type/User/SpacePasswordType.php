@@ -23,9 +23,12 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\Exception;
+namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\User;
 
-use InvalidArgumentException as BaseException;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\Space\Object\DTO\SpaceUser;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -33,6 +36,26 @@ use InvalidArgumentException as BaseException;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class InvalidArgumentException extends BaseException
+class SpacePasswordType extends AbstractType
 {
+    public function buildForm(FormBuilderInterface $builder, array $options): self
+    {
+        $builder->add(
+            'user',
+            PasswordType::class,
+        );
+
+        return $this;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): self
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefaults([
+            'data_class' => SpaceUser::class,
+        ]);
+
+        return $this;
+    }
 }

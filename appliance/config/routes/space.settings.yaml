@@ -13,6 +13,21 @@ space_my_settings:
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
+space_update_password:
+    path: '/my-settings/update-password'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: [https]
+    defaults:
+        _controller: 'teknoo.space.endpoint.my_settings'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\SpacePasswordType'
+        formOptions: { }
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
+        template: '@@TeknooEastPaas/User/update_password.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
 space_my_settings_token:
     path: '/my-settings/jwt-token'
     methods: ['GET', 'POST']

@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\Exception;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\Exception;
 
 use RuntimeException as BaseException;
 
