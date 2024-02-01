@@ -83,9 +83,12 @@ RUN set -eux ; \
     mkdir -p /run/php/ ; \
     mkdir -p /var/log/blackfire/ ; \
     cd /usr/local/bin ; \
-    usermod -u 1000 www-data ; \
+    addgroup --gid 1000 spacegroup ; \
+    adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
-    chown www-data:www-data /var/www
+    chown spaceuser:spacegroup /var/www
 
 ADD 99-space.ini /usr/local/etc/php/conf.d/
 ADD space.pool.conf /usr/local/etc/php-fpm.d/www.conf
+
+USER spaceuser:spacegroup

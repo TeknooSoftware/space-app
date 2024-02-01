@@ -1,4 +1,4 @@
-{# templates/bundles/TeknooEastPaasBundle/views/Account/index.html.twig #}
+{# templates/bundles/TeknooEastPaasBundle/Account/login.html.twig #}
 
 {% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
@@ -39,7 +39,7 @@
                                         <label class="form-check-label" for="_remember_me">{{ 'teknoo.space.text.remember_me'|trans }}</label>
                                     </div>
                                 </div>
-                                {# todo <p class="forgot-pass mb-0"><a href="reset-password.html" class="text-dark small fw-bold">{{ 'teknoo.space.action.forgot_password'|trans }}</a></p> #}
+                                <p class="forgot-pass mb-0"><a href="{{ path('_teknoo_common_user_recovery') }}" class="text-dark small fw-bold">{{ 'teknoo.space.action.forgot_password'|trans }}</a></p>
                                 <p class="forgot-pass mb-0"><a href="{{ path('space_subscription') }}" class="text-dark small fw-bold">{{ 'teknoo.space.action.subscribe'|trans }}</a></p>
                             </div>
 

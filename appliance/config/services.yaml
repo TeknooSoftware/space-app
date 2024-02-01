@@ -11,6 +11,8 @@ services:
         bind:
             $adminRoleName: 'ROLE_ADMIN'
             $codeGeneratorSalt: '%env(SPACE_CODE_GENERATOR_SALT)%'
+            $spaceDashbordRoute: 'space_dashboard'
+            $spaceUpdatePasswordRoute: 'space_update_password'
             $enableCodeRestriction: '%env(default:teknoo.space.default.code.subscription.required:SPACE_CODE_SUBSCRIPTION_REQUIRED)%'
             $default2FAProviderName: '%teknoo.space.user.2fa.provider%'
             $routesFor2FAByProviders: '%teknoo.space.user.2fa.routes%'
@@ -230,11 +232,11 @@ services:
         public: true
 
     Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface:
-        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail'
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\SendEmail'
         public: true
 
-    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail'
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\SendEmail:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\SendEmail'
         arguments:
             - '@Symfony\Component\Mailer\MailerInterface'
             - '%env(default:teknoo.space.default.mailer.sender_name:MAILER_SENDER_NAME)%'

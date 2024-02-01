@@ -23,14 +23,14 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Contact;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Email;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\SendEmail;
 use Teknoo\Space\Object\DTO\Contact;
 
 /**
@@ -39,7 +39,7 @@ use Teknoo\Space\Object\DTO\Contact;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\SendEmail
+ * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\SendEmail
  */
 class SendEmailTest extends TestCase
 {

@@ -12,10 +12,12 @@
         </div>
 
         <ul class="sidebar-menu">
+            {% if is_granted('ROLE_USER') %}
             <li><a href="{{ path('space_dashboard') }}"><i class="ti ti-home me-2"></i>{{ 'teknoo.space.action.dashboard'|trans }}</a></li>
             <li><a href="{{ path('space_my_settings') }}"><i class="ti ti-settings me-2"></i>{{ 'teknoo.space.action.my-settings'|trans }}</a></li>
             {% if space.account is defined and space.account is not empty %}
                 <li><a href="{{ path('space_account_settings') }}"><i class="ti ti-settings me-2"></i>{{ 'teknoo.space.action.account-settings'|trans }}</a></li>
+            {% endif %}
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <li class="sidebar-dropdown">
@@ -45,7 +47,7 @@
                         </ul>
                     </div>
                 </li>
-            {% else %}
+            {% elseif is_granted('ROLE_USER') %}
                 <li><a href="{{ path('space_project_list') }}"><i class="ti ti-home me-2"></i>{{ 'teknoo.space.action.projects'|trans }}</a></li>
             {% endif %}
             {% if supportContact is not empty %}

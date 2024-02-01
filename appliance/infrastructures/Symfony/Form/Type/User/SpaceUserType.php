@@ -25,11 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\User;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType;
-use Teknoo\Space\Object\DTO\SpaceUser;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,7 +34,7 @@ use Teknoo\Space\Object\DTO\SpaceUser;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SpaceUserType extends AbstractType
+class SpaceUserType extends SpacePasswordType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
@@ -50,17 +47,6 @@ class SpaceUserType extends AbstractType
             'userData',
             UserDataType::class,
         );
-
-        return $this;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): self
-    {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefaults([
-            'data_class' => SpaceUser::class,
-        ]);
 
         return $this;
     }
