@@ -27,8 +27,8 @@ namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
 
 use DateTimeInterface;
 use SensitiveParameter;
-use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\Deployment;
 use Teknoo\Kubernetes\Model\Ingress;

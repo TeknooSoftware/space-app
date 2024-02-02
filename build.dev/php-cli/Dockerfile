@@ -1,4 +1,4 @@
-FROM php:8.2.14-cli
+FROM php:8.2.15-cli
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
@@ -73,9 +73,11 @@ RUN set -eux ; \
     locale-gen ; \
     mkdir -p /run/php/ ; \
     cd /usr/local/bin ; \
-    addgroup --gid 1000 space ; \
-    adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system space ; \
+    addgroup --gid 1000 spacegroup ; \
+    adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
-    chown space:space /var/www
+    chown spaceuser:spacegroup /var/www
 
 ADD 99-space.ini /usr/local/etc/php/conf.d/
+
+USER spaceuser:spacegroup

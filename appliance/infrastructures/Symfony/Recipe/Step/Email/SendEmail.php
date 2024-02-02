@@ -23,15 +23,15 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email;
 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\Exception\BotForbidden;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Contact\Exception\InvalidArgumentException;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\Exception\BotForbidden;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\Exception\InvalidArgumentException;
 use Teknoo\Space\Object\DTO\Contact;
 use Throwable;
 

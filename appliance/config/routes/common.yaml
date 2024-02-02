@@ -10,6 +10,10 @@ common_assets:
     resource: '@TeknooEastCommonBundle/Resources/config/assets_routing.yaml'
     prefix: '/build'
 
+common_user_recovery:
+    resource: '@TeknooEastCommonBundle/Resources/config/user_recovery_routing.yaml'
+    prefix: '/account'
+
 common:
     resource: '@TeknooEastCommonBundle/Resources/config/routing.yaml'
     prefix: '/'

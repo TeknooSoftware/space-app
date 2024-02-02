@@ -50,8 +50,12 @@ use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request as SfRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Mailer\Event\MessageEvents;
+use Symfony\Component\Mailer\EventListener\MessageLoggerListener;
+use Symfony\Component\Mailer\Test\Constraint\EmailCount;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -63,9 +67,10 @@ use Teknoo\East\Common\Doctrine\Object\Media as MediaODM;
 use Teknoo\East\Common\Object\StoredPassword;
 use Teknoo\East\Common\Object\TOTPAuth;
 use Teknoo\East\Common\Object\User;
-use Teknoo\East\Common\Service\DatesService;
 use Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser;
+use Teknoo\East\CommonBundle\Object\UserWithRecoveryAccess;
 use Teknoo\East\Foundation\Liveness\TimeoutServiceInterface;
+use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\Transport;
 use Teknoo\East\Paas\Contracts\Compilation\ConductorInterface;
 use Teknoo\East\Paas\Contracts\Hook\HooksCollectionInterface;
@@ -205,6 +210,7 @@ class TestsContext implements Context
         private readonly TimeoutServiceInterface $timeoutService,
         private readonly CacheItemPoolInterface $cacheExpiredLinks,
         private readonly NormalizerInterface $normalizer,
+        private readonly ?MessageLoggerListener $messageLoggerListener,
         private readonly string $appHostname,
         private readonly string $defaultClusterName,
         private readonly string $defaultClusterType,
@@ -2562,6 +2568,23 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then a recovery session is opened
+     */
+    public function aNewRecoverySessionIsOpen()
+    {
+        Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
+        Assert::assertInstanceOf(UserWithRecoveryAccess::class, $token?->getUser());
+    }
+
+    /**
+     * @Then a session must be not opened
+     */
+    public function aSessionMustBeNotOpened()
+    {
+        Assert::assertEmpty($this->getTokenStorageService->tokenStorage?->getToken());
+    }
+
+    /**
      * @Then Space executes the job
      */
     public function spaceExecutesTheJob()
@@ -2915,5 +2938,90 @@ class TestsContext implements Context
     {
         $hooks = iterator_to_array($this->hookCollection);
         Assert::assertEmpty($hooks);
+    }
+
+    /**
+     * @When an user go to recovery request page
+     */
+    public function anUserGoToRecoveryRequestPage()
+    {
+        $url = $this->getPathFromRoute(
+            route: '_teknoo_common_user_recovery',
+        );
+
+        $this->executeRequest('get', $url);
+        $this->formName = 'email_form';
+    }
+
+    /**
+     * @Then The client must go to recovery request sent page
+     */
+    public function theClientMustGoToRecoveryRequestSentPage()
+    {
+        Assert::assertStringStartsWith(
+            $this->getPathFromRoute('_teknoo_common_user_recovery'),
+            $this->currentUrl,
+        );
+    }
+
+    /**
+     * @Then it is redirected to the recovery password page
+     */
+    public function itIsRedirectedToTheRecoveryPasswordPage()
+    {
+        $this->checkIfUserHasBeenRedirected();
+        Assert::assertEquals(
+            $this->getPathFromRoute('space_update_password'),
+            $this->currentUrl,
+        );
+    }
+
+    private function getMailerEvents(): MessageEvents
+    {
+        Assert::assertNotNull(
+            $this->messageLoggerListener,
+            'Symfony Mailer is not configured'
+        );
+
+        return $this->messageLoggerListener->getEvents();
+    }
+
+    /**
+     * @Then no notification must be sent
+     */
+    public function noNotificationMustBeSent()
+    {
+        Assert::assertThat(
+            $this->getMailerEvents(),
+            new EmailCount(0),
+        );
+    }
+
+    /**
+     * @Then a notification must be sent
+     */
+    public function aNotificationMustBeSent()
+    {
+        Assert::assertThat(
+            $this->getMailerEvents(),
+            new EmailCount(1),
+        );
+    }
+
+    /**
+     * @When the user click on the link in the notification
+     */
+    public function theUserClickOnTheLinkInTheNotification()
+    {
+        $message = $this->getMailerEvents()->getMessages(null)[0];
+        $context = $message->getContext();
+        $actionUrl = $context['action_url'] ?? '';
+
+        Assert::assertNotEmpty($actionUrl);
+
+        $this->executeRequest(
+            method: 'get',
+            url: $actionUrl,
+        );
     }
 }

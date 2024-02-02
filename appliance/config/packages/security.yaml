@@ -1,15 +1,21 @@
 security:
     role_hierarchy:
         ROLE_ADMIN: 'ROLE_USER'
+        ROLE_RECOVERY: ~
 
     providers:
         with_password:
             id: 'Teknoo\East\CommonBundle\Provider\PasswordAuthenticatedUserProvider'
         from_third_party:
             id: 'Teknoo\East\CommonBundle\Provider\ThirdPartyAuthenticatedUserProvider'
-        all_providers:
+        with_recovery_access:
+            id: 'Teknoo\East\CommonBundle\Provider\RecoveringAccessUserProvider'
+        normals_providers:
             chain:
                 providers: ['with_password', 'from_third_party']
+        loginlinks_providers:
+            chain:
+                providers: ['with_recovery_access', 'with_password']
     password_hashers:
         Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser:
             algorithm: 'sodium'
@@ -30,7 +36,7 @@ security:
             security: false
 
         api_area:
-            provider: all_providers
+            provider: normals_providers
             pattern: '^/api'
             stateless: true
             jwt: ~
@@ -40,14 +46,15 @@ security:
             pattern: '^/'
             custom_authenticators:
                 - '%teknoo.east.common.bundle.security.authenticator.oauth2.class%'
-            provider: all_providers
+            provider: normals_providers
             login_link:
-                provider: 'with_password'
                 check_route: 'account_autologin'
-                login_path: 'account_login'
                 lifetime: 300
+                login_path: 'account_login'
                 max_uses: 1
-                signature_properties: ['userIdentifier']
+                provider: 'loginlinks_providers'
+                signature_properties: ['userIdentifier', 'hash']
+                success_handler: 'Teknoo\Space\Infrastructures\Symfony\Security\Authentication\AuthenticationSuccessHandler'
             form_login:
                 provider: 'with_password'
                 check_path: 'account_check'
@@ -73,16 +80,24 @@ security:
         - { path: '^/build', roles: [PUBLIC_ACCESS], requires_channel: https }
         #Admin : require role admin
         - { path: '^/admin', roles: [ROLE_ADMIN], requires_channel: https }
+        #Account recovery
+        - {
+            path: '^/account/user/access/recovery',
+            roles: [PUBLIC_ACCESS, ~ROLE_RECOVERY],
+            requires_channel: https,
+            allow_if: "!is_authenticated()"
+        }
+        - { path: '^/my-settings/update-password', roles: [ROLE_USER, ROLE_RECOVERY], requires_channel: https }
         #Account subscription
         - {
             path: '^/account/subscription',
-            roles: PUBLIC_ACCESS,
+            roles: [PUBLIC_ACCESS, ~ROLE_RECOVERY],
             requires_channel: https,
             allow_if: "!is_authenticated()"
         }
         #Account : 2fa
         - { path: '^/2fa/auth', roles: [IS_AUTHENTICATED_2FA_IN_PROGRESS], requires_channel: https }
         #Api
-        - { path: '^/api', roles: IS_AUTHENTICATED_FULLY }
+        - { path: '^/api', roles: [IS_AUTHENTICATED_FULLY, ~ROLE_RECOVERY] }
         #Default
         - { path: '^/', roles: [ROLE_USER], requires_channel: https }

@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta31] - 2024-02-01
+### Beta Release
+- Add Recovery acces method when user lost its password : The TOTP still enabled when to recover an access
+- Require East Common 2.7
+- Require East Foundation 7.5.1
+- Require East Pass 2.4.7
+- Common `DatesService` is deprecated, use Foundation's `DatesService` instead
+
 ## [1.0.0-beta30] - 2024-01-17
 ### Beta Release
 - Improve HTML Header title to be more understandable by user

@@ -12,9 +12,9 @@
             {% else %}
                 {% set label = name|humanize %}
             {% endif %}
+            {% set label = label|trans(label_translation_parameters, translation_domain)  ~ '&nbsp;<span class="text-danger">*</span>' %}
         {% endif %}
         {% set label_html = true %}
-        {% set label = label|trans(label_translation_parameters, translation_domain)  ~ '&nbsp;<span class="text-danger">*</span>' %}
     {% endif %}
     {{- parent() -}}
 {% endblock %}
