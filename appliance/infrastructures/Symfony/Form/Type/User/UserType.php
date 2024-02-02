@@ -43,7 +43,7 @@ use Teknoo\East\Common\Object\User;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class UserType extends AbstractType
+class UserType extends PasswordType
 {
     /**
      * @param FormBuilderInterface<PasswordAuthenticatedUser> $builder
@@ -78,49 +78,7 @@ class UserType extends AbstractType
             ],
         );
 
-        $builder->add(
-            'storedPassword',
-            StoredPasswordType::class,
-            [
-                'mapped' => false,
-            ],
-        );
-
-
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            static function (FormEvent $event) {
-                /**
-                 * @var User $user
-                 */
-                $user = $event->getData();
-                $spForm = $event->getForm()->get('storedPassword');
-
-                foreach ($user->getAuthData() as $authData) {
-                    if (!$authData instanceof StoredPassword) {
-                        continue;
-                    }
-
-                    $spForm->setData($authData);
-                    return;
-                }
-
-                $authData = new StoredPassword();
-                $spForm->setData($authData);
-                $user->addAuthData($authData);
-            }
-        );
-
-        return $this;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): self
-    {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefaults([
-            'data_class' => User::class,
-        ]);
+        parent::buildForm($builder, $options);
 
         return $this;
     }

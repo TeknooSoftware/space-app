@@ -10,6 +10,7 @@ services:
             $defaultClusterEnv: '%teknoo.space.kubernetes.cluster.default_env%'
             $testTransport: '@zenstruck_messenger_test.transport_registry'
             $cacheExpiredLinks: '@security.authenticator.cache.expired_links'
+            $messageLoggerListener: '@?mailer.message_logger_listener'
 
     Teknoo\Space\Tests\Behat\GetTokenStorageService:
         public: true

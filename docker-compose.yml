@@ -66,6 +66,7 @@ services:
         environment:
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - MAILER_SENDER_NAME=Teknoo Space App
+            - MAILER_REPLY_TO_NAME=Teknoo Space - Support
             - MONGODB_NAME=space
             - PHP_BLACKFIRE_SERVER=blackfire
             - SPACE_CLUSTER_ISSUER=lets-encrypt

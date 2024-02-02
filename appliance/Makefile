@@ -121,4 +121,3 @@ clean: 		## Remove all PHP vendors, composer generated map, clean all Symfony bu
 	rm -rf vendor
 	rm -rf var/cache/*
 	rm -rf var/log/*
-	@docker-compose rm -f
