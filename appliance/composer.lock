@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "826c458d6d972b506b42c91dea79b17e",
+    "content-hash": "2d3484533bb4366e6434971ee98da402",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11502,16 +11502,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "2.4.8",
+            "version": "2.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "71091e553d4cc2ae4c5004118d63b41166394817"
+                "reference": "33748573bc9592457889489f540704d3ac0c2654"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/71091e553d4cc2ae4c5004118d63b41166394817",
-                "reference": "71091e553d4cc2ae4c5004118d63b41166394817",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/33748573bc9592457889489f540704d3ac0c2654",
+                "reference": "33748573bc9592457889489f540704d3ac0c2654",
                 "shasum": ""
             },
             "require": {
@@ -11537,12 +11537,12 @@
                 "icanhazstring/composer-unused": "^0.8.11",
                 "laminas/laminas-diactoros": "^3.3",
                 "league/flysystem": "^3.23",
-                "nikic/php-parser": "^4.18",
+                "nikic/php-parser": "^4.18||^5",
                 "php-http/discovery": "^1.19.2",
                 "php-http/mock-client": "^1.6",
                 "phpseclib/phpseclib": "^3.0.35",
-                "phpstan/phpstan": "^1.10.50",
-                "phpunit/phpunit": "^10.5.5",
+                "phpstan/phpstan": "^1.10.57",
+                "phpunit/phpunit": "^10.5.10||^11",
                 "psr/http-client": "^1.0.3",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.8",
@@ -11565,7 +11565,7 @@
                 "symfony/security-bundle": "^6.3||^7",
                 "symfony/security-core": "^6.3||^7",
                 "symfony/security-http": "^6.3||^7",
-                "symfony/serializer": "^6.0.6",
+                "symfony/serializer": "^6.0.6||^7",
                 "symfony/translation": "^6.3||^7",
                 "symfony/validator": "^6.3||^7",
                 "symfony/var-exporter": "^6.3||^7",
@@ -11639,20 +11639,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-06T11:04:50+00:00"
+            "time": "2024-02-06T15:09:54+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "2.4.8",
+            "version": "2.4.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "454d075a521dc86132a51441bb679716a50770b9"
+                "reference": "def7a78eb30a102bf9b594c80c972e79d0bca2d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/454d075a521dc86132a51441bb679716a50770b9",
-                "reference": "454d075a521dc86132a51441bb679716a50770b9",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/def7a78eb30a102bf9b594c80c972e79d0bca2d4",
+                "reference": "def7a78eb30a102bf9b594c80c972e79d0bca2d4",
                 "shasum": ""
             },
             "require": {
@@ -11691,7 +11691,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
                 "teknoo/east-common-symfony": "^2.7",
                 "teknoo/east-foundation-symfony": "^7.5.2",
-                "teknoo/east-paas": "^2.4.8",
+                "teknoo/east-paas": "^2.4.9",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.4.4",
                 "teknoo/recipe": "^4.6",
@@ -11753,7 +11753,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-06T11:44:56+00:00"
+            "time": "2024-02-06T15:10:29+00:00"
         },
         {
             "name": "teknoo/immutable",
