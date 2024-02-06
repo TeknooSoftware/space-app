@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta32] - 2024-02-06
+### Beta Release
+- Require East Foundation 4.6
+- Require East Foundation 7.5.1
+- Require East Pass 2.4.9
+
 ## [1.0.0-beta31] - 2024-02-01
 ### Beta Release
 - Add Recovery acces method when user lost its password : The TOTP still enabled when to recover an access
