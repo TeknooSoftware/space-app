@@ -26,8 +26,12 @@ declare(strict_types=1);
 namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
+use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Space\Object\Persisted\PersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 
@@ -37,9 +41,22 @@ use Teknoo\Space\Object\Persisted\ProjectMetadata;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SpaceProject implements IdentifiedObjectInterface
+class SpaceProject implements IdentifiedObjectInterface, NormalizableInterface
 {
+    use GroupsTrait;
+    use ExportConfigurationsTrait;
+
     public Project $project;
+
+    /**
+     * @var array<string, string[]>
+     */
+    private static array $exportConfigurations = [
+        '@class' => ['default', 'api', 'crud', 'crud_variables', 'digest'],
+        'project' => ['default', 'api', 'crud', 'digest'],
+        'projectMetadata' => ['crud'],
+        'variables' => ['crud_variables'],
+    ];
 
     /**
      * @param iterable<PersistedVariable>|PersistedVariable[] $variables
@@ -69,5 +86,27 @@ class SpaceProject implements IdentifiedObjectInterface
     public function __toString(): string
     {
         return (string) $this->project;
+    }
+
+    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
+    {
+        $data = [
+            '@class' => self::class,
+            'project' => fn () => $this->project,
+            'projectMetadata' => fn () => $this->projectMetadata,
+            'variables' => fn () => $this->variables,
+        ];
+
+        $this->setGroupsConfiguration(self::$exportConfigurations);
+
+        $normalizer->injectData(
+            $this->filterExport(
+                data: $data,
+                groups: (array) ($context['groups'] ?? ['default']),
+                lazyData: true,
+            )
+        );
+
+        return $this;
     }
 }

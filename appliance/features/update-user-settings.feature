@@ -14,53 +14,53 @@ Feature: On a space instance, each user can edit its own settings, like its firs
     When the user enter a valid TOTP code
     And It goes to user settings
     Then the user obtains the form:
-      | field                                           | value               |
-      | space_user.user.firstName                       | Jean                |
-      | space_user.user.lastName                        | Dupont              |
-      | space_user.user.email                           | dupont@teknoo.space |
-      | space_user.user.storedPassword.password.first   |                     |
-      | space_user.user.storedPassword.password.second  |                     |
+      | field                                          | value               |
+      | space_user.user.firstName                      | Jean                |
+      | space_user.user.lastName                       | Dupont              |
+      | space_user.user.email                          | dupont@teknoo.space |
+      | space_user.user.storedPassword.password.first  |                     |
+      | space_user.user.storedPassword.password.second |                     |
     When it submits the form:
-      | field                                           | value               |
-      | space_user._token                               | <auto>              |
-      | space_user.user.firstName                       | Albert              |
-      | space_user.user.lastName                        | Dupont              |
-      | space_user.user.email                           | dupont@teknoo.space |
-      | space_user.user.storedPassword.password.first   |                     |
-      | space_user.user.storedPassword.password.second  |                     |
+      | field                                          | value               |
+      | space_user._token                              | <auto>              |
+      | space_user.user.firstName                      | Albert              |
+      | space_user.user.lastName                       | Dupont              |
+      | space_user.user.email                          | dupont@teknoo.space |
+      | space_user.user.storedPassword.password.first  |                     |
+      | space_user.user.storedPassword.password.second |                     |
     Then the user obtains the form:
-      | field                                           | value               |
-      | space_user.user.firstName                       | Albert              |
-      | space_user.user.lastName                        | Dupont              |
-      | space_user.user.email                           | dupont@teknoo.space |
-      | space_user.user.storedPassword.password.first   |                     |
-      | space_user.user.storedPassword.password.second  |                     |
+      | field                                          | value               |
+      | space_user.user.firstName                      | Albert              |
+      | space_user.user.lastName                       | Dupont              |
+      | space_user.user.email                          | dupont@teknoo.space |
+      | space_user.user.storedPassword.password.first  |                     |
+      | space_user.user.storedPassword.password.second |                     |
     And its name is now "Albert Dupont"
     When it submits the form:
-      | field                                           | value               |
-      | space_user._token                               | <auto>              |
-      | space_user.user.firstName                       | Albert              |
-      | space_user.user.lastName                        | Dupont              |
-      | space_user.user.email                           | dupont@teknoo.space |
-      | space_user.user.storedPassword.password.first   | foo                 |
-      | space_user.user.storedPassword.password.second  | bar                 |
+      | field                                          | value               |
+      | space_user._token                              | <auto>              |
+      | space_user.user.firstName                      | Albert              |
+      | space_user.user.lastName                       | Dupont              |
+      | space_user.user.email                          | dupont@teknoo.space |
+      | space_user.user.storedPassword.password.first  | foo                 |
+      | space_user.user.storedPassword.password.second | bar                 |
     Then the user obtains an error
     And a password mismatch error
     And the user obtains the form:
-      | field                                           | value               |
-      | space_user.user.firstName                       | Albert              |
-      | space_user.user.lastName                        | Dupont              |
-      | space_user.user.email                           | dupont@teknoo.space |
-      | space_user.user.storedPassword.password.first   |                     |
-      | space_user.user.storedPassword.password.second  |                     |
+      | field                                          | value               |
+      | space_user.user.firstName                      | Albert              |
+      | space_user.user.lastName                       | Dupont              |
+      | space_user.user.email                          | dupont@teknoo.space |
+      | space_user.user.storedPassword.password.first  |                     |
+      | space_user.user.storedPassword.password.second |                     |
     When it submits the form:
-      | field                                           | value               |
-      | space_user._token                               | <auto>              |
-      | space_user.user.firstName                       | Albert              |
-      | space_user.user.lastName                        | Dupont              |
-      | space_user.user.email                           | dupont@teknoo.space |
-      | space_user.user.storedPassword.password.first   | Test3@Test          |
-      | space_user.user.storedPassword.password.second  | Test3@Test          |
+      | field                                          | value               |
+      | space_user._token                              | <auto>              |
+      | space_user.user.firstName                      | Albert              |
+      | space_user.user.lastName                       | Dupont              |
+      | space_user.user.email                          | dupont@teknoo.space |
+      | space_user.user.storedPassword.password.first  | Test3@Test          |
+      | space_user.user.storedPassword.password.second | Test3@Test          |
     When the user logs out
     And the user sign in with "dupont@teknoo.space" and the password "Test3@Test"
     Then it must redirected to the TOTP code page

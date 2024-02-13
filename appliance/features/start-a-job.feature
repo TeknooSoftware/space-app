@@ -15,7 +15,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And simulate a too long image building
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -25,15 +25,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -62,15 +62,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -88,7 +88,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -97,15 +97,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -125,7 +125,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -134,15 +134,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -171,15 +171,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -199,7 +199,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -208,15 +208,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -246,15 +246,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -274,7 +274,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "demo"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -283,15 +283,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page
@@ -321,15 +321,15 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it goes to project page of "my project"
     When it runs a job
     And it submits the form:
-      | field                                | value                     |
-      | new_job._token                       | <auto>                    |
-      | new_job.projectId                    | <auto>                    |
-      | new_job.newJobId                     | <auto>                    |
-      | new_job.envName                      | prod                      |
-      | new_job.variables.0.name             | FOO                       |
-      | new_job.variables.0.value            | BAR                       |
-      | new_job.variables.1.name             | SERVER_SCRIPT             |
-      | new_job.variables.1.value            | /opt/app/src/server.php   |
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.newJobId          | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
     Then it obtains a deployment page
     And Space executes the job
     And it is forwared to job page

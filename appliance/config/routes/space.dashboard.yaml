@@ -1,7 +1,7 @@
 space_dashboard:
     path: '/'
     methods: ['GET']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.dashboard'
         allowEmptyCredentials: true
@@ -12,7 +12,7 @@ space_dashboard:
 space_dashboard_frame:
     path: '/dashboard/frame/'
     methods: ['GET', 'POST', 'PUT', 'DELETE']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.dashboard_frame'
         allowEmptyCredentials: true
@@ -23,7 +23,7 @@ space_dashboard_frame_url:
     requirements:
         wildcard: .*
     methods: ['GET', 'POST', 'PUT', 'DELETE']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.dashboard_frame'
         allowEmptyCredentials: true

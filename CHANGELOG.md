@@ -1,10 +1,23 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta33] - 2024-02-13
+### Beta Release
+- Add HTTP API to manage projects and its settings or account's settings. (An API for Job is already present).
+- Add HTTP API, dedicated to Admin, to manages accounts and users or projects.
+- Remove last "billing" reference : in `BillingName` to `LegalName`.
+- Remove `formOptions` empty entry in routes.
+- Fix cookbooks's ingredients.
+- Require Recipe 4.6.1
+- Require East Foundation 7.6.1
+- Require East Common 2.8
+- Require East PaaS 2.5
+- Clean Composer.json
+
 ## [1.0.0-beta32] - 2024-02-06
 ### Beta Release
 - Require East Foundation 4.6
 - Require East Foundation 7.5.1
-- Require East Pass 2.4.9
+- Require East PaaS 2.4.9
 
 ## [1.0.0-beta31] - 2024-02-01
 ### Beta Release

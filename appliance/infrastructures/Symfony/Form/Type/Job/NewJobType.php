@@ -32,6 +32,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
 use Teknoo\Space\Object\DTO\NewJob;
 
 /**
@@ -40,79 +41,31 @@ use Teknoo\Space\Object\DTO\NewJob;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class NewJobType extends AbstractType
+class NewJobType extends ApiNewJobType
 {
-    public function getBlockPrefix(): string
-    {
-        return 'new_job';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         parent::buildForm($builder, $options);
 
-        if (empty($options['api'])) {
-            $builder->add(
-                'newJobId',
-                HiddenType::class,
-                [
-                    'required' => true,
-                ],
-            );
-
-            $builder->add(
-                'projectId',
-                HiddenType::class,
-                [
-                    'required' => true,
-                ],
-            );
+        if (!empty($options['api'])) {
+            return $this;
         }
 
         $builder->add(
-            'envName',
-            ChoiceType::class,
+            'newJobId',
+            HiddenType::class,
             [
                 'required' => true,
-                'choices' => $options['environmentsList'],
-                'label' => 'teknoo.space.form.job.new_job.environment',
             ],
         );
 
         $builder->add(
-            'variables',
-            CollectionType::class,
+            'projectId',
+            HiddenType::class,
             [
-                'entry_type' => JobVarType::class,
-                'allow_add' => true,
-                'allow_delete' => true,
-                'prototype' => true,
-                'entry_options' => [
-                    'use_password_for_secret' => true,
-                ]
+                'required' => true,
             ],
         );
-
-        return $this;
-    }
-
-    public function configureOptions(OptionsResolver $resolver): self
-    {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefaults([
-            'data_class' => NewJob::class,
-            'empty_data' => static function (FormInterface $form) {
-                return new NewJob(
-                    $form->get('newJobId')->getData(),
-                    $form->get('variables')->getData(),
-                    $form->get('projectId')->getData(),
-                    $form->get('envName')->getData(),
-                );
-            },
-            'environmentsList' => [],
-            'api' => null,
-        ]);
 
         return $this;
     }

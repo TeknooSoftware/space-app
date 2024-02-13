@@ -91,6 +91,8 @@ if (!\class_exists(Query::class, false)) {
                 foreach ($this->resultToReturn as $row) {
                     return $row;
                 }
+
+                return null;
             }
 
             return $this->resultToReturn;

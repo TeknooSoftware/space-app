@@ -26,7 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
+use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 
@@ -36,8 +40,21 @@ use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SpaceAccount implements IdentifiedObjectInterface
+class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface
 {
+    use GroupsTrait;
+    use ExportConfigurationsTrait;
+
+    /**
+     * @var array<string, string[]>
+     */
+    private static array $exportConfigurations = [
+        '@class' => ['default', 'api', 'crud', 'digest'],
+        'account' => ['default', 'api', 'crud', 'digest'],
+        'accountData' => ['crud'],
+        'variables' => ['crud_variables'],
+    ];
+
     /**
      * @param iterable<AccountPersistedVariable>|AccountPersistedVariable[] $variables
      */
@@ -59,5 +76,27 @@ class SpaceAccount implements IdentifiedObjectInterface
     public function __toString(): string
     {
         return (string) $this->account;
+    }
+
+    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
+    {
+        $data = [
+            '@class' => self::class,
+            'account' => fn () => $this->account,
+            'accountData' => fn () => $this->accountData,
+            'variables' => fn () => $this->variables,
+        ];
+
+        $this->setGroupsConfiguration(self::$exportConfigurations);
+
+        $normalizer->injectData(
+            $this->filterExport(
+                data: $data,
+                groups: (array) ($context['groups'] ?? ['default']),
+                lazyData: true,
+            )
+        );
+
+        return $this;
     }
 }

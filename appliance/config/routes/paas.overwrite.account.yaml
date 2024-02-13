@@ -30,11 +30,10 @@ _teknoo_paas_admin_account_new:
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.paas.endpoint.admin.new.account'
-        accountKey: 'constructorArguments'
-        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
-        formOptions: { "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%" }
+        formOptions:
+            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
         route: '_teknoo_paas_admin_account_edit'
@@ -59,7 +58,6 @@ space_admin_account_edit_variables:
         _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
-        formOptions: {}
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/AdminAccount/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'

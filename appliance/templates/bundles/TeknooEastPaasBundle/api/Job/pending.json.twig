@@ -1,4 +1,5 @@
-{# templates/bundles/TeknooEastPaasBundle/Job/pending.json.twig #}{% apply spaceless %}
+{# templates/bundles/TeknooEastPaasBundle/api/Job/pending.json.twig #}
+{% apply spaceless %}
 {% if newJobResult.error_message is defined and newJobResult.error_message is not empty %}
 {% set object = {"error": {"code": newJobResult.error_code|default(500), "message": newJobResult.error_message}} %}
 {{ object|space_object_serialization({}, "json", {"error": true}) }}

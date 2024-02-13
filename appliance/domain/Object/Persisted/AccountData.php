@@ -29,7 +29,11 @@ use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Contracts\Object\VisitableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
+use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,15 +41,34 @@ use Teknoo\East\Paas\Object\Account;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountData implements IdentifiedObjectInterface, TimestampableInterface, VisitableInterface
+class AccountData implements
+    IdentifiedObjectInterface,
+    TimestampableInterface,
+    VisitableInterface,
+    NormalizableInterface
 {
     use ObjectTrait;
+    use GroupsTrait;
+    use ExportConfigurationsTrait;
 
     private ?string $vatNumber = '';
 
+    /**
+     * @var array<string, string[]>
+     */
+    private static array $exportConfigurations = [
+        '@class' => ['default', 'crud'],
+        'legalName' => ['default', 'crud'],
+        'streetAddress' => ['crud'],
+        'zipCode' => ['crud'],
+        'cityName' => ['crud'],
+        'countryName' => ['crud'],
+        'vatNumber' => ['crud'],
+    ];
+
     public function __construct(
         private Account $account,
-        private string $billingName = '',
+        private string $legalName = '',
         private string $streetAddress = '',
         private string $zipCode = '',
         private string $cityName = '',
@@ -63,9 +86,9 @@ class AccountData implements IdentifiedObjectInterface, TimestampableInterface, 
         return $this;
     }
 
-    public function setBillingName(string $billingName): AccountData
+    public function setLegalName(string $legalName): AccountData
     {
-        $this->billingName = $billingName;
+        $this->legalName = $legalName;
 
         return $this;
     }
@@ -107,12 +130,36 @@ class AccountData implements IdentifiedObjectInterface, TimestampableInterface, 
 
     public function visit($visitors): VisitableInterface
     {
-        $fields = ['billingName', 'streetAddress', 'zipCode', 'cityName', 'countryName', 'vatNumber'];
+        $fields = ['legalName', 'streetAddress', 'zipCode', 'cityName', 'countryName', 'vatNumber'];
         foreach ($fields as $keyName) {
             if (isset($visitors[$keyName])) {
                 $visitors[$keyName]($this->{$keyName});
             }
         }
+
+        return $this;
+    }
+
+    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
+    {
+        $data = [
+            '@class' => self::class,
+            'legalName' => $this->legalName,
+            'streetAddress' => $this->streetAddress,
+            'zipCode' => $this->zipCode,
+            'cityName' => $this->cityName,
+            'countryName' => $this->countryName,
+            'vatNumber' => $this->vatNumber,
+        ];
+
+        $this->setGroupsConfiguration(self::$exportConfigurations);
+
+        $normalizer->injectData(
+            $this->filterExport(
+                data: $data,
+                groups: (array) ($context['groups'] ?? ['default']),
+            )
+        );
 
         return $this;
     }
