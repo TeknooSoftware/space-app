@@ -1,12 +1,11 @@
 space_my_settings:
     path: '/my-settings'
     methods: ['GET', 'POST', 'PUT']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.my_settings'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\SpaceUserType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
         template: '@@TeknooEastPaas/User/settings.html.twig'
@@ -16,12 +15,11 @@ space_my_settings:
 space_update_password:
     path: '/my-settings/update-password'
     methods: ['GET', 'POST', 'PUT']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.my_settings'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\SpacePasswordType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
         template: '@@TeknooEastPaas/User/update_password.html.twig'
@@ -31,12 +29,11 @@ space_update_password:
 space_my_settings_token:
     path: '/my-settings/jwt-token'
     methods: ['GET', 'POST']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.my_settings.jwt_token'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\JWTConfigurationType'
-        formOptions: { }
         objectClass: 'Teknoo\Space\Object\DTO\JWTConfiguration'
         template: '@@TeknooEastPaas/User/jwt.form.html.twig'
         tokenTemplate: '@@TeknooEastPaas/User/jwt.token.html.twig'
@@ -45,12 +42,11 @@ space_my_settings_token:
 space_account_settings:
     path: '/account/settings'
     methods: ['GET', 'POST', 'PUT']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.account.settings'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
         template: '@@TeknooEastPaas/Account/settings.html.twig'
@@ -64,7 +60,6 @@ space_account_edit_variables:
         _controller: 'teknoo.space.endpoint.account.settings'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/Account/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'

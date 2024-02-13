@@ -1,3 +1,6 @@
+parameters:
+    teknoo.east.common.form_type.doctrine.class: 'Teknoo\Space\Tests\Behat\Form\Type\MockChoiceType'
+
 services:
     _defaults:
         autowire: true

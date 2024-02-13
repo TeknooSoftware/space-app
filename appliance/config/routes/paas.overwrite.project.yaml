@@ -17,7 +17,6 @@ _teknoo_paas_admin_project_edit:
         _controller: 'teknoo.east.paas.endpoint.admin.edit.project'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooEastPaas/AdminProject/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
@@ -32,7 +31,6 @@ _teknoo_paas_admin_project_new:
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
         route: '_teknoo_paas_admin_project_edit'

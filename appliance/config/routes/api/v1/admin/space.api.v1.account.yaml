@@ -1,0 +1,72 @@
+space_api_admin_account_new:
+    path: '/account/new'
+    methods: ['POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.new.account'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
+        formOptions:
+            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
+        route: 'space_api_admin_account_edit'
+        template: '@@TeknooEastPaas/api/AdminAccount/item.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+
+space_api_admin_account_edit:
+    path: '/account/{id}'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
+        formOptions:
+            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+            namespace_in_readonly: true
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        template: '@@TeknooEastPaas/api/AdminAccount/item.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+
+space_api_admin_account_edit_variables:
+    path: '/account/{id}/variables'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        populateFormOptions: true
+        template: '@@TeknooEastPaas/api/AdminAccount/variables.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+
+space_api_admin_account_list:
+    path: '/accounts'
+    methods: ['GET', 'POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.list'
+        api: 'json'
+        defaultOrderDirection: 'ASC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        template: '@@TeknooEastPaas/api/AdminAccount/list.json.twig'
+
+space_api_admin_account_delete:
+    path: '/account/{id}/delete'
+    methods: ['GET', 'DELETE']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        api: 'json'
+        deleter: '@teknoo.space.deleting.space_account'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        objectViewKey: 'accountInstance'
+        template: '@@TeknooEastPaas/api/AdminAccount/deleted.json.twig'

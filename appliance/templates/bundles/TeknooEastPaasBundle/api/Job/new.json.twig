@@ -1,4 +1,5 @@
-{# templates/bundles/TeknooEastPaasBundle/Job/pending.json.twig #}{% apply spaceless %}
+{# templates/bundles/TeknooEastPaasBundle/api/Job/new.json.twig #}
+{% apply spaceless %}
 {% if newJobId is defined and newJobId is not empty %}
 {% set path = path('space_api_job_new_pending', {"projectId": projectId, "newJobId": newJobId}) %}
 {% set object = {"job_queue_id": newJobId} %}

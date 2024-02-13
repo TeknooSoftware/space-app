@@ -28,6 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
 use Teknoo\Space\Object\DTO\SpaceUser;
 
 /**
@@ -36,7 +37,7 @@ use Teknoo\Space\Object\DTO\SpaceUser;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SpacePasswordType extends AbstractType
+class SpacePasswordType extends AbstractType implements FormApiAwareInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
@@ -54,6 +55,7 @@ class SpacePasswordType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => SpaceUser::class,
+            'api' => null,
         ]);
 
         return $this;

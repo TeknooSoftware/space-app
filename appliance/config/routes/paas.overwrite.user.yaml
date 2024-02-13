@@ -17,7 +17,6 @@ _teknoo_common_admin_user_edit:
         _controller: 'teknoo.east.common.endpoint.crud.edit'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         template: '@@TeknooEastCommon/AdminUser/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
@@ -30,7 +29,6 @@ _teknoo_common_admin_user_new:
         _controller: 'teknoo.east.common.endpoint.crud.new'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
-        formOptions: { }
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
         route: '_teknoo_common_admin_user_edit'

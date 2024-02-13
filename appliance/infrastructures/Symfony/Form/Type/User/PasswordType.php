@@ -30,6 +30,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
 use Teknoo\East\CommonBundle\Form\Type\StoredPasswordType;
 use Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser;
 use Teknoo\East\Common\Object\StoredPassword;
@@ -41,7 +42,7 @@ use Teknoo\East\Common\Object\User;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class PasswordType extends AbstractType
+class PasswordType extends AbstractType implements FormApiAwareInterface
 {
     /**
      * @param FormBuilderInterface<PasswordAuthenticatedUser> $builder
@@ -49,6 +50,10 @@ class PasswordType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
+        if (!empty($options['api'])) {
+            return $this;
+        }
+
         $builder->add(
             'storedPassword',
             StoredPasswordType::class,
@@ -90,6 +95,7 @@ class PasswordType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => User::class,
+            'api' => null,
         ]);
 
         return $this;

@@ -72,10 +72,17 @@ class Subscription implements CookbookInterface
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient('string', 'objectClass'));
-        $recipe = $recipe->require(new Ingredient('string', 'formClass'));
-        $recipe = $recipe->require(new Ingredient('array', 'formOptions'));
-        $recipe = $recipe->require(new Ingredient('string', 'template'));
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'objectClass'));
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'formClass'));
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'array',
+                name: 'formOptions',
+                mandatory: false,
+                default: [],
+            )
+        );
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'template'));
 
         $recipe = $recipe->cook($this->createObject, CreateObject::class, [], 10);
 

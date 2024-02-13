@@ -54,8 +54,8 @@ Feature: On space, users are logged with an email and a password.
     And the platform is booted
     When an user go to recovery request page
     Then the user obtains the form:
-      | field             | value               |
-      | email_form.email  |                     |
+      | field            | value |
+      | email_form.email |       |
     When it submits the form:
       | field             | value               |
       | email_form.email  | dupont@teknoo.space |
@@ -64,7 +64,8 @@ Feature: On space, users are logged with an email and a password.
     And a session must be not opened
     And no notification must be sent
 
-  Scenario: Send notification and login when subscribed user input its email with the recovery method and follow the link
+  Scenario: Send notification and login when subscribed user input its email with the recovery method
+  and follow the link
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-comany"
@@ -72,8 +73,8 @@ Feature: On space, users are logged with an email and a password.
     And the platform is booted
     When an user go to recovery request page
     Then the user obtains the form:
-      | field             | value               |
-      | email_form.email  |                     |
+      | field            | value |
+      | email_form.email |       |
     When it submits the form:
       | field             | value               |
       | email_form.email  | dupont@teknoo.space |
@@ -85,7 +86,8 @@ Feature: On space, users are logged with an email and a password.
     Then it is redirected to the recovery password page
     And a recovery session is opened
 
-  Scenario: Send notification and login when subscribed user test its email with TOTP with the recovery method and follow the link
+  Scenario: Send notification and login when subscribed user test its email with TOTP with the recovery method
+  and follow the link
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-comany"
@@ -94,8 +96,8 @@ Feature: On space, users are logged with an email and a password.
     And the platform is booted
     When an user go to recovery request page
     Then the user obtains the form:
-      | field             | value               |
-      | email_form.email  |                     |
+      | field            | value |
+      | email_form.email |       |
     When it submits the form:
       | field             | value               |
       | email_form.email  | dupont@teknoo.space |

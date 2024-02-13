@@ -48,11 +48,11 @@ class AccountDataType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         $builder->add(
-            'billingName',
+            'legalName',
             TextType::class,
             [
                 'required' => true,
-                'label' => 'teknoo.space.form.account_data.data.billing_name',
+                'label' => 'teknoo.space.form.account_data.data.legal_name',
             ],
         );
 
@@ -130,7 +130,7 @@ class AccountDataType extends AbstractType
                 }
 
                 $forms = iterator_to_array($forms);
-                $data->setBillingName($forms['billingName']->getData() ?? '');
+                $data->setLegalName($forms['legalName']->getData() ?? '');
                 $data->setStreetAddress($forms['streetAddress']->getData() ?? '');
                 $data->setZipCode($forms['zipCode']->getData() ?? '');
                 $data->setCityName($forms['cityName']->getData() ?? '');
