@@ -35,6 +35,7 @@ use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Query\AccountHistory\LoadFromAccountQuery;
 use Teknoo\Space\Writer\AccountHistoryWriter;
+use Throwable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -73,7 +74,7 @@ class LoadHistory
             static function (AccountHistory $accountHistory) use ($passHistory) {
                 $passHistory($accountHistory);
             },
-            function (\Throwable $error) use ($manager, $passHistory, $accountInstance): void {
+            function (Throwable $error) use ($manager, $passHistory, $accountInstance): void {
                 if (!$error instanceof DomainException) {
                     $manager->error($error);
 

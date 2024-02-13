@@ -86,6 +86,11 @@ class JobVarType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.job.job_var.persisted',
+                'false_values' => [
+                    null,
+                    '0',
+                    '',
+                ],
             ],
         );
 
@@ -95,6 +100,11 @@ class JobVarType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.job.job_var.secret',
+                'false_values' => [
+                    null,
+                    '0',
+                    '',
+                ],
             ],
         );
 

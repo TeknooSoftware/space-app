@@ -1,6 +1,6 @@
 Feature: On a space instance, users are grouped in shared accounts : there are at least one user per account, but
   account can have several users. The account and its projects is shared by all users of the account.
-  An account owns also a specific Kubernetes namespace, billing informations and a name of the company or the service
+  An account owns also a specific Kubernetes namespace, legal informations and a name of the company or the service
   behind the account.
 
   Scenario: Update my account settings
@@ -17,7 +17,7 @@ Feature: On a space instance, users are grouped in shared accounts : there are a
     Then the user obtains the form:
       | field                                   | value          |
       | space_account.account.name              | My Company     |
-      | space_account.accountData.billingName   | My Company SAS |
+      | space_account.accountData.legalName     | My Company SAS |
       | space_account.accountData.streetAddress | 123 street     |
       | space_account.accountData.zipCode       | 14000          |
       | space_account.accountData.cityName      | Caen           |
@@ -27,7 +27,7 @@ Feature: On a space instance, users are grouped in shared accounts : there are a
       | field                                   | value          |
       | space_account._token                    | <auto>         |
       | space_account.account.name              | Great Company  |
-      | space_account.accountData.billingName   | Gr Company SAS |
+      | space_account.accountData.legalName     | Gr Company SAS |
       | space_account.accountData.streetAddress | 123 street     |
       | space_account.accountData.zipCode       | 14000          |
       | space_account.accountData.cityName      | Caen           |
@@ -36,7 +36,7 @@ Feature: On a space instance, users are grouped in shared accounts : there are a
     Then the user obtains the form:
       | field                                   | value          |
       | space_account.account.name              | Great Company  |
-      | space_account.accountData.billingName   | Gr Company SAS |
+      | space_account.accountData.legalName     | Gr Company SAS |
       | space_account.accountData.streetAddress | 123 street     |
       | space_account.accountData.zipCode       | 14000          |
       | space_account.accountData.cityName      | Caen           |

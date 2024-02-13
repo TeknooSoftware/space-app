@@ -9,7 +9,7 @@
         <id type="string" strategy="UUID"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date" />
-        <field field-name="billingName" name="billing_name" type="string" nullable="false"/>
+        <field field-name="legalName" name="legal_name" type="string" nullable="false"/>
         <field field-name="streetAddress" name="street_address" type="string" nullable="false"/>
         <field field-name="zipCode" name="zip_code" type="string" nullable="false"/>
         <field field-name="cityName" name="city_name" type="string" nullable="false"/>

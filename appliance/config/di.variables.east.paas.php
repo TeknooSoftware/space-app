@@ -75,7 +75,7 @@ $loadFromEnv = static function (
 
 return [
     //East PaaS Configuration
-    'teknoo.east.paas.project_configuration_filename' => '.paas.yaml',
+    'teknoo.east.paas.project_configuration_filename' => 'space.paas.yaml',
     'teknoo.east.paas.root_dir' => dirname(__DIR__),
 
     'teknoo.east.paas.worker.time_limit' => env('SPACE_WORKER_TIME_LIMIT', '300'),

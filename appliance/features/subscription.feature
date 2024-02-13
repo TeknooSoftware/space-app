@@ -11,20 +11,20 @@ Feature: On a space instance, subscription can be restricted to some user with a
     And the platform is booted
     When an user go to subscription page
     Then the user obtains the form:
-      | field                                                       | value          |
-      | space_subscription.user.user.firstName                      |                |
-      | space_subscription.user.user.lastName                       |                |
-      | space_subscription.account.account.name                     |                |
-      | space_subscription.user.user.email                          |                |
-      | space_subscription.user.user.storedPassword.password.first  |                |
-      | space_subscription.user.user.storedPassword.password.second |                |
-      | space_subscription.account.accountData.billingName          |                |
-      | space_subscription.account.accountData.streetAddress        |                |
-      | space_subscription.account.accountData.zipCode              |                |
-      | space_subscription.account.accountData.cityName             |                |
-      | space_subscription.account.accountData.countryName          |                |
-      | space_subscription.account.accountData.vatNumber            |                |
-      | space_subscription.code                                     |                |
+      | field                                                       | value |
+      | space_subscription.user.user.firstName                      |       |
+      | space_subscription.user.user.lastName                       |       |
+      | space_subscription.account.account.name                     |       |
+      | space_subscription.user.user.email                          |       |
+      | space_subscription.user.user.storedPassword.password.first  |       |
+      | space_subscription.user.user.storedPassword.password.second |       |
+      | space_subscription.account.accountData.legalName            |       |
+      | space_subscription.account.accountData.streetAddress        |       |
+      | space_subscription.account.accountData.zipCode              |       |
+      | space_subscription.account.accountData.cityName             |       |
+      | space_subscription.account.accountData.countryName          |       |
+      | space_subscription.account.accountData.vatNumber            |       |
+      | space_subscription.code                                     |       |
     When it submits the form:
       | field                                                       | value          |
       | space_subscription._token                                   | <auto>         |
@@ -34,7 +34,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.user.user.email                          | jean@dupont.me |
       | space_subscription.user.user.storedPassword.password.first  | Test2@Test     |
       | space_subscription.user.user.storedPassword.password.second | Test2@Test     |
-      | space_subscription.account.accountData.billingName          | MC SASU        |
+      | space_subscription.account.accountData.legalName            | MC SASU        |
       | space_subscription.account.accountData.streetAddress        | 123 Street     |
       | space_subscription.account.accountData.zipCode              | 14000          |
       | space_subscription.account.accountData.cityName             | Caen           |
@@ -51,7 +51,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.user.user.email                          | jean@dupont.me |
       | space_subscription.user.user.storedPassword.password.first  |                |
       | space_subscription.user.user.storedPassword.password.second |                |
-      | space_subscription.account.accountData.billingName          | MC SASU        |
+      | space_subscription.account.accountData.legalName            | MC SASU        |
       | space_subscription.account.accountData.streetAddress        | 123 Street     |
       | space_subscription.account.accountData.zipCode              | 14000          |
       | space_subscription.account.accountData.cityName             | Caen           |
@@ -67,20 +67,20 @@ Feature: On a space instance, subscription can be restricted to some user with a
     And the platform is booted
     When an user go to subscription page
     Then the user obtains the form:
-      | field                                                       | value          |
-      | space_subscription.user.user.firstName                      |                |
-      | space_subscription.user.user.lastName                       |                |
-      | space_subscription.account.account.name                     |                |
-      | space_subscription.user.user.email                          |                |
-      | space_subscription.user.user.storedPassword.password.first  |                |
-      | space_subscription.user.user.storedPassword.password.second |                |
-      | space_subscription.account.accountData.billingName          |                |
-      | space_subscription.account.accountData.streetAddress        |                |
-      | space_subscription.account.accountData.zipCode              |                |
-      | space_subscription.account.accountData.cityName             |                |
-      | space_subscription.account.accountData.countryName          |                |
-      | space_subscription.account.accountData.vatNumber            |                |
-      | space_subscription.code                                     |                |
+      | field                                                       | value |
+      | space_subscription.user.user.firstName                      |       |
+      | space_subscription.user.user.lastName                       |       |
+      | space_subscription.account.account.name                     |       |
+      | space_subscription.user.user.email                          |       |
+      | space_subscription.user.user.storedPassword.password.first  |       |
+      | space_subscription.user.user.storedPassword.password.second |       |
+      | space_subscription.account.accountData.legalName            |       |
+      | space_subscription.account.accountData.streetAddress        |       |
+      | space_subscription.account.accountData.zipCode              |       |
+      | space_subscription.account.accountData.cityName             |       |
+      | space_subscription.account.accountData.countryName          |       |
+      | space_subscription.account.accountData.vatNumber            |       |
+      | space_subscription.code                                     |       |
     When it submits the form:
       | field                                                       | value          |
       | space_subscription._token                                   | <auto>         |
@@ -90,7 +90,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.user.user.email                          | jean@dupont.me |
       | space_subscription.user.user.storedPassword.password.first  | Test2@Test     |
       | space_subscription.user.user.storedPassword.password.second | Test2@Test     |
-      | space_subscription.account.accountData.billingName          | MC SASU        |
+      | space_subscription.account.accountData.legalName            | MC SASU        |
       | space_subscription.account.accountData.streetAddress        | 123 Street     |
       | space_subscription.account.accountData.zipCode              | 14000          |
       | space_subscription.account.accountData.cityName             | Caen           |
@@ -111,19 +111,19 @@ Feature: On a space instance, subscription can be restricted to some user with a
     And the platform is booted
     When an user go to subscription page
     Then the user obtains the form:
-      | field                                                       | value          |
-      | space_subscription.user.user.firstName                      |                |
-      | space_subscription.user.user.lastName                       |                |
-      | space_subscription.account.account.name                     |                |
-      | space_subscription.user.user.email                          |                |
-      | space_subscription.user.user.storedPassword.password.first  |                |
-      | space_subscription.user.user.storedPassword.password.second |                |
-      | space_subscription.account.accountData.billingName          |                |
-      | space_subscription.account.accountData.streetAddress        |                |
-      | space_subscription.account.accountData.zipCode              |                |
-      | space_subscription.account.accountData.cityName             |                |
-      | space_subscription.account.accountData.countryName          |                |
-      | space_subscription.account.accountData.vatNumber            |                |
+      | field                                                       | value |
+      | space_subscription.user.user.firstName                      |       |
+      | space_subscription.user.user.lastName                       |       |
+      | space_subscription.account.account.name                     |       |
+      | space_subscription.user.user.email                          |       |
+      | space_subscription.user.user.storedPassword.password.first  |       |
+      | space_subscription.user.user.storedPassword.password.second |       |
+      | space_subscription.account.accountData.legalName            |       |
+      | space_subscription.account.accountData.streetAddress        |       |
+      | space_subscription.account.accountData.zipCode              |       |
+      | space_subscription.account.accountData.cityName             |       |
+      | space_subscription.account.accountData.countryName          |       |
+      | space_subscription.account.accountData.vatNumber            |       |
     When it submits the form:
       | field                                                       | value          |
       | space_subscription._token                                   | <auto>         |
@@ -133,7 +133,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.user.user.email                          | jean@dupont.me |
       | space_subscription.user.user.storedPassword.password.first  | Test2@Test     |
       | space_subscription.user.user.storedPassword.password.second | Test2@Test     |
-      | space_subscription.account.accountData.billingName          | MC SASU        |
+      | space_subscription.account.accountData.legalName            | MC SASU        |
       | space_subscription.account.accountData.streetAddress        | 123 Street     |
       | space_subscription.account.accountData.zipCode              | 14000          |
       | space_subscription.account.accountData.cityName             | Caen           |

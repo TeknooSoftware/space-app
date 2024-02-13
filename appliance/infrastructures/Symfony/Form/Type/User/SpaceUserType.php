@@ -41,6 +41,9 @@ class SpaceUserType extends SpacePasswordType
         $builder->add(
             'user',
             UserType::class,
+            [
+                'api' => $options['api'] ?? null,
+            ]
         );
 
         $builder->add(

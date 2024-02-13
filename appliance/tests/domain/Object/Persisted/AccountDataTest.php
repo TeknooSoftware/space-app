@@ -46,7 +46,7 @@ class AccountDataTest extends TestCase
 
     private Account|MockObject $account;
 
-    private string $billingName;
+    private string $legalName;
 
     private string $streetAddress;
 
@@ -66,7 +66,7 @@ class AccountDataTest extends TestCase
         parent::setUp();
 
         $this->account = $this->createMock(Account::class);
-        $this->billingName = '42';
+        $this->legalName = '42';
         $this->streetAddress = '42';
         $this->zipCode = '42';
         $this->cityName = '42';
@@ -74,7 +74,7 @@ class AccountDataTest extends TestCase
         $this->vatNumber = '42';
         $this->accountData = new AccountData(
             $this->account,
-            $this->billingName,
+            $this->legalName,
             $this->streetAddress,
             $this->zipCode,
             $this->cityName,
@@ -93,13 +93,13 @@ class AccountDataTest extends TestCase
         self::assertEquals($expected, $property->getValue($this->accountData));
     }
 
-    public function testSetBillingName(): void
+    public function testSetLegalName(): void
     {
         $expected = '42';
         $property = (new ReflectionClass(AccountData::class))
-            ->getProperty('billingName');
+            ->getProperty('legalName');
         $property->setAccessible(true);
-        $this->accountData->setBillingName($expected);
+        $this->accountData->setLegalName($expected);
         self::assertEquals($expected, $property->getValue($this->accountData));
     }
 
@@ -159,7 +159,7 @@ class AccountDataTest extends TestCase
         self::assertInstanceOf(
             AccountData::class,
             $this->accountData->visit([
-                'billingName' => function ($value) use (&$final) {
+                'legalName' => function ($value) use (&$final) {
                     $final = $value;
                 },
                 'foo' => fn () => self::fail('Must be not called'),

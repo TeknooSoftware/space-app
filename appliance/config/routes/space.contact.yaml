@@ -1,12 +1,11 @@
 space_support_contact:
     path: '/contact/support'
     methods: ['GET', 'POST', 'PUT']
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.contact'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Contact\SupportType'
-        formOptions: { }
         objectClass: 'Teknoo\Space\Object\DTO\Contact'
         receiverAddress: 'support'
         route: 'space_support_contact_sent'
@@ -15,7 +14,7 @@ space_support_contact:
 
 space_support_contact_sent:
     path: '/contact/support/sent'
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'

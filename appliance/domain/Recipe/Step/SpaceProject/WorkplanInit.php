@@ -47,12 +47,12 @@ class WorkplanInit
     public function __invoke(
         ManagerInterface $manager,
         SpaceProject $spaceProject,
-        ?Project $project = null,
+        ?Project $projectObject = null,
         ?ProjectMetadata $metadata = null,
         bool $populateFormOptions = false,
         array $formOptions = [],
     ): self {
-        $projectInstance = $spaceProject->project ?? $project;
+        $projectInstance = $spaceProject->project ?? $projectObject;
 
         $workPlan = [
             Project::class => $projectInstance,
