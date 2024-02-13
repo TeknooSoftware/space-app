@@ -1,6 +1,6 @@
 account_logout:
     path: '/account/logout'
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
@@ -9,7 +9,7 @@ account_logout:
 
 account_login:
     path: '/account/login'
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
@@ -18,7 +18,7 @@ account_login:
 
 account_autologin:
     path: '/account/auto-login'
-    schemes: [https]
+    schemes: ['https']
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
@@ -27,7 +27,7 @@ account_autologin:
 
 account_check:
     path: '/account/check'
-    schemes: [https]
+    schemes: ['https']
     methods: ['POST']
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'

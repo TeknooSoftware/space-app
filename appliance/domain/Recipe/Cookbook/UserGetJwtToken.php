@@ -67,12 +67,19 @@ class UserGetJwtToken implements CookbookInterface
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(ServerRequestInterface::class, 'request'));
-        $recipe = $recipe->require(new Ingredient('string', 'objectClass'));
-        $recipe = $recipe->require(new Ingredient('string', 'formClass'));
-        $recipe = $recipe->require(new Ingredient('array', 'formOptions'));
-        $recipe = $recipe->require(new Ingredient('string', 'template'));
-        $recipe = $recipe->require(new Ingredient('string', 'tokenTemplate'));
+        $recipe = $recipe->require(new Ingredient(requiredType: ServerRequestInterface::class, name: 'request'));
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'objectClass'));
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'formClass'));
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'array',
+                name: 'formOptions',
+                mandatory: false,
+                default: [],
+            )
+        );
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'template'));
+        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'tokenTemplate'));
 
         $recipe = $recipe->cook($this->createObject, CreateObject::class, [], 10);
 

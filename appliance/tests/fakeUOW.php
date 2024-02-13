@@ -46,6 +46,15 @@ if (!class_exists(UnitOfWork::class, false)) {
         {
         }
 
+        public function initializeObject(object $obj): void
+        {
+        }
+
+        public function isScheduledForInsert(object $document): bool
+        {
+            return true;
+        }
+
         public function getDocumentPersister(string $className)
         {
             return new class () {

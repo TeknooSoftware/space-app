@@ -61,6 +61,11 @@ class MemoryRepository extends DocumentRepository
         return null;
     }
 
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
+    {
+        return $this->context->findObjectsBycriteria($this->className, $criteria);
+    }
+
     public function getClassName(): string
     {
         return $this->className;
@@ -105,6 +110,7 @@ class MemoryRepository extends DocumentRepository
                         'type' => $this->getType(),
                     ],
                 );
+
                 $query->resultToReturn = new ArrayObject(
                     $this->context->findObjectsBycriteria(
                         $this->className,

@@ -73,7 +73,12 @@ class UserDataType extends AbstractType
             CheckboxType::class,
             [
                 'required' => false,
-                'mapped' => false
+                'mapped' => false,
+                'false_values' => [
+                    null,
+                    '0',
+                    '',
+                ],
             ]
         );
 

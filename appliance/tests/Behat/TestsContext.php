@@ -50,7 +50,6 @@ use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Request as SfRequest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Mailer\Event\MessageEvents;
@@ -100,6 +99,9 @@ use Teknoo\Kubernetes\HttpClient\Instantiator\Symfony;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType;
+use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Object\DTO\SpaceProject;
+use Teknoo\Space\Object\DTO\SpaceUser;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
@@ -134,6 +136,7 @@ use function json_encode;
 use function key;
 use function mb_strtolower;
 use function method_exists;
+use function random_int;
 use function spl_object_hash;
 use function str_contains;
 use function str_replace;
@@ -161,15 +164,20 @@ class TestsContext implements Context
     private array $repositories = [];
 
     /**
-     * @var array<ObjectInterface>
+     * @var array<string, ObjectInterface>
      */
     private array $objects = [];
 
     private ?string $currentUrl = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     private array $workMemory = [];
 
     private bool $hasBeenRedirected = false;
+
+    private bool $isApiCall = false;
 
     private ?string $formName = null;
 
@@ -310,7 +318,7 @@ class TestsContext implements Context
     /**
      * @Given encryption capacities between servers and agents
      */
-    public function encryptionCapacitiesBetweenServersAndAgents()
+    public function encryptionCapacitiesBetweenServersAndAgents(): void
     {
         if (!file_exists($this->privateKey) || !is_readable($this->privateKey)) {
             $pk = RSA::createKey(1024);
@@ -498,7 +506,7 @@ class TestsContext implements Context
         return $this->objects[$className] ?? [];
     }
 
-    private function getObjectUniqueId(object $object)
+    private function getObjectUniqueId(object $object): string
     {
         if ($object instanceof IdentifiedObjectInterface) {
             return 'IdentifiedObjectInterface:' . $object->getId();
@@ -629,6 +637,7 @@ class TestsContext implements Context
         ?string $content = null,
     ): Response {
         $this->hasBeenRedirected = false;
+        $this->isApiCall = !empty($headers['HTTP_AUTHORIZATION']);
 
         $host = $originalHost = 'https://' . $this->appHostname;
         if (true === str_starts_with($url, 'http')) {
@@ -675,7 +684,15 @@ class TestsContext implements Context
                 $newUrl = $this->response->headers->get('location');
             }
 
-            $response = $this->executeRequest('get', $newUrl, []);
+            if (isset($headers['CONTENT_TYPE'])) {
+                unset($headers['CONTENT_TYPE']);
+            }
+
+            $response = $this->executeRequest(
+                method: 'GET',
+                url: $newUrl,
+                headers: $headers,
+            );
             $this->hasBeenRedirected = true;
 
             return $response;
@@ -705,7 +722,7 @@ class TestsContext implements Context
             Assert::fail("The route '{$routeName}' with url '{$url}' was not found");
         }
 
-        $this->executeRequest('get', $url);
+        $this->executeRequest('GET', $url);
     }
 
     private function getCSRFToken(Crawler $crawler, ?string $formName = null, ?string $fieldName = null): ?string
@@ -750,7 +767,7 @@ class TestsContext implements Context
         $this->hasBeenRedirected = false;
     }
 
-    private function checkIfResponseIsAFinal(): void
+    public function checkIfResponseIsAFinal(): void
     {
         Assert::assertEquals(200, $this->response?->getStatusCode());
     }
@@ -771,7 +788,7 @@ class TestsContext implements Context
 
         $accountData = new AccountData(
             account: $account,
-            billingName: $accountName . ' SAS',
+            legalName: $accountName . ' SAS',
             streetAddress: '123 street',
             zipCode: '14000',
             cityName: 'Caen',
@@ -804,13 +821,14 @@ class TestsContext implements Context
     }
 
     /**
-     * @Given an user, called :lastName :firstName with the :email with the password :password
+     * @Given an :role, called :lastName :firstName with the :email with the password :password
      */
     public function anUserCalledWithTheWithThePassword(
         string $lastName,
         string $firstName,
         string $email,
         string $password,
+        string $role
     ): void {
         $sp = new StoredPassword(
             algo: PasswordAuthenticatedUser::class,
@@ -824,7 +842,12 @@ class TestsContext implements Context
         $user->setLastName($lastName);
         $user->setEmail($email);
         $user->setActive(true);
-        $user->setRoles(['ROLE_USER']);
+        $user->setRoles([
+            match ($role) {
+                'user' => 'ROLE_USER',
+                'admin' => 'ROLE_ADMIN',
+            }
+        ]);
         $user->addAuthData(
             $sp->setHashedPassword(
                 $this->passwordHasher->hashPassword(
@@ -884,7 +907,7 @@ class TestsContext implements Context
     /**
      * @When It goes to account settings
      */
-    public function itGoesToAccountSettings()
+    public function itGoesToAccountSettings(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -897,7 +920,7 @@ class TestsContext implements Context
     /**
      * @When open the account variables page
      */
-    public function openTheAccountVariablesPage()
+    public function openTheAccountVariablesPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1014,7 +1037,7 @@ class TestsContext implements Context
     /**
      * @Then it obtains a empty account's variables form
      */
-    public function itObtainsAEmptyAccountsVariablesForm()
+    public function itObtainsAEmptyAccountsVariablesForm(): void
     {
         $formValues = $this->createForm('account_vars')->getPhpValues();
         Assert::assertFalse(isset($formValues['account_vars']['sets']));
@@ -1023,7 +1046,7 @@ class TestsContext implements Context
     /**
      * @When it submits the form:
      */
-    public function itSubmitsTheForm(TableNode $formFields)
+    public function itSubmitsTheForm(TableNode $formFields): void
     {
         Assert::assertNotEmpty($this->formName);
 
@@ -1032,9 +1055,7 @@ class TestsContext implements Context
         $formValue = $form->getPhpValues();
 
         foreach ($formFields as $field) {
-            if (
-                '<auto>' === $field['value']
-            ) {
+            if ('<auto>' === $field['value']) {
                 $field['value'] = $this->getFormFieldValue($formValue, $field['field']);
             }
 
@@ -1051,21 +1072,24 @@ class TestsContext implements Context
     /**
      * @Then the account must have these persisted variables
      */
-    public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables)
+    public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
         $this->checkIfResponseIsAFinal();
 
-        $crawler = $this->createCrawler();
-        $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
-        Assert::assertEquals(
-            $this->translator->trans('teknoo.space.alert.data_saved'),
-            $nodeValue,
-        );
+        if (!$this->isApiCall) {
+            $crawler = $this->createCrawler();
+            $node = $crawler->filter('.space-form-success');
+            $nodeValue = trim((string)$node?->getNode(0)?->textContent);
+            Assert::assertEquals(
+                $this->translator->trans('teknoo.space.alert.data_saved'),
+                $nodeValue,
+            );
+        }
 
-        $vars = $this->listObjects(AccountPersistedVariable::class);
-        Assert::assertCount(count($expectedVariables->getLines()) - 1, $vars);
         $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+        $vars = $this->getRepository(AccountPersistedVariable::class)->findBy(['account' => $account]);
+        Assert::assertCount(count($expectedVariables->getLines()) - 1, $vars);
 
         foreach ($expectedVariables as $expVar) {
             $var = array_shift($vars);
@@ -1111,7 +1135,7 @@ class TestsContext implements Context
     /**
      * @Then the user obtains the form:
      */
-    public function theUserObtainsTheForm(TableNode $formFields)
+    public function theUserObtainsTheForm(TableNode $formFields): void
     {
         $formValues = $this->createForm($this->formName)->getPhpValues();
         foreach ($formFields as $field) {
@@ -1126,13 +1150,13 @@ class TestsContext implements Context
     /**
      * @Given the account have these persisted variables:
      */
-    public function theAccountHaveThesePersistedVariables(TableNode $variables)
+    public function theAccountHaveThesePersistedVariables(TableNode $variables): void
     {
         $account = $this->recall(Account::class);
         foreach ($variables as $var) {
             $apv = new AccountPersistedVariable(
                 account: $account,
-                id: $var['id'] . $this->generateId(),
+                id: $var['id'],
                 name: $var['name'],
                 value: $var['value'],
                 environmentName: $var['environment'],
@@ -1149,7 +1173,7 @@ class TestsContext implements Context
     public function theUserSignInWithAndThePassword(string $email, string $password): void
     {
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $this->getPathFromRoute(
                 route: 'account_login',
             ),
@@ -1186,7 +1210,7 @@ class TestsContext implements Context
     /**
      * @Then It has a welcome message with :fullName in the dashboard header
      */
-    public function itHasAWelcomeMessageWithInTheDashboardHeader(string $fullName)
+    public function itHasAWelcomeMessageWithInTheDashboardHeader(string $fullName): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1204,7 +1228,7 @@ class TestsContext implements Context
     /**
      * @Then it must redirected to the TOTP code page
      */
-    public function itMustRedirectedToTheTotpCodePage()
+    public function itMustRedirectedToTheTotpCodePage(): void
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertEquals(
@@ -1216,7 +1240,7 @@ class TestsContext implements Context
     /**
      * @Then it must have a TOTP error
      */
-    public function itMustHaveATotpError()
+    public function itMustHaveATotpError(): void
     {
         $crawler = $this->createCrawler();
 
@@ -1242,7 +1266,7 @@ class TestsContext implements Context
     /**
      * @When the user enter a valid TOTP code
      */
-    public function theUserEnterAValidTotpCode()
+    public function theUserEnterAValidTotpCode(): void
     {
         $this->submitTotpCode(
             code: TOTP::createFromSecret(
@@ -1254,7 +1278,7 @@ class TestsContext implements Context
     /**
      * @Then it is redirected to the login page with an error
      */
-    public function itIsRedirectedToTheLoginPageWithAnError()
+    public function itIsRedirectedToTheLoginPageWithAnError(): void
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertEquals(
@@ -1272,7 +1296,7 @@ class TestsContext implements Context
     /**
      * @When the user enter a wrong TOTP code
      */
-    public function theUserEnterAWrongTotpCode()
+    public function theUserEnterAWrongTotpCode(): void
     {
         $this->submitTotpCode(
             code: 'fooBar'
@@ -1282,7 +1306,7 @@ class TestsContext implements Context
     /**
      * @Given a standard website project :projectName
      */
-    public function aStandardWebsiteProject(string $projectName)
+    public function aStandardWebsiteProject(string $projectName): void
     {
         /** @var AccountCredential $credential */
         $credential = $this->recall(AccountCredential::class);
@@ -1365,9 +1389,82 @@ class TestsContext implements Context
     }
 
     /**
+     * @Given :count standard websites projects :projectName and a prefix :prefix
+     */
+    public function standardWebsitesProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
+    {
+        for ($i = 1; $i <= $count; $i++) {
+            $this->aStandardWebsiteProjectAndAPrefix(str_replace('X', (string) $i, $projectName), $prefix);
+        }
+    }
+
+    /**
+     * @Given :count basics users for this account
+     */
+    public function basicsUsersForThisAccount(int $count): void
+    {
+        $users = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $user = new User();
+            $user->setId($this->generateId());
+            $user->setFirstName("Firstname $i");
+            $user->setLastName("Lastname $i");
+            $user->setEmail("email$i@teknoo.space");
+            $user->setActive(true);
+            $user->setRoles(['ROLE_USER']);
+
+            $this->persistAndRegister($user);
+            $users[] = $user;
+
+            $userData = new UserData(
+                user: $user,
+            );
+            $userData->setId($this->generateId());
+
+            $this->persistAndRegister($userData);
+        }
+
+        $this->recall(Account::class)?->setUsers($users);
+    }
+
+    /**
+     * @Given :count accounts with some users
+     */
+    public function accountsWithSomeUsers(int $count): void
+    {
+        for ($i = 1; $i <= $count; $i++) {
+            $account = new Account();
+            $account->setName("Account $i");
+            $account->setNamespace("namespace-$i");
+
+            for ($j = 1; $j <= random_int(1, $count); $j++) {
+                $users = [];
+                $user = new User();
+                $user->setId($this->generateId());
+                $user->setFirstName("Firstname $i");
+                $user->setLastName("Lastname $i");
+                $user->setEmail("email$i@teknoo.space");
+                $user->setActive(true);
+                $user->setRoles(['ROLE_USER']);
+
+                $this->persistAndRegister($user);
+                $users[] = $user;
+
+                $userData = new UserData(user: $user,);
+                $userData->setId($this->generateId());
+
+                $this->persistAndRegister($userData);
+            }
+
+            $account->setUsers($users);
+            $this->persistAndRegister($account);
+        }
+    }
+
+    /**
      * @Given a standard website project :projectName and a prefix :prefix
      */
-    public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix)
+    public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix): void
     {
         /** @var AccountCredential $credential */
         $credential = $this->recall(AccountCredential::class);
@@ -1457,9 +1554,30 @@ class TestsContext implements Context
     }
 
     /**
+     * @Given :count project's variables
+     */
+    public function andSomeProjectVariables(int $count): void
+    {
+        $project = $this->recall(Project::class);
+
+        for ($i = 1; $i <= $count; $i++) {
+            $pVar = new PersistedVariable(
+                project: $project,
+                id: null,
+                name: 'var ' . $i,
+                value: 'value ' . $i,
+                environmentName: 'prod',
+                secret: ($i % 3) === 0
+            );
+
+            $this->persistAndRegister($pVar);
+        }
+    }
+
+    /**
      * @When It goes to projects list page
      */
-    public function itGoesToProjectsListPage()
+    public function itGoesToProjectsListPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1470,7 +1588,7 @@ class TestsContext implements Context
     /**
      * @Then the user obtains a project list:
      */
-    public function theUserObtainsAProjectList(TableNode $projects)
+    public function theUserObtainsAProjectList(TableNode $projects): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1496,7 +1614,7 @@ class TestsContext implements Context
     /**
      * @When It goes to new project page
      */
-    public function itGoesToNewProjectPage()
+    public function itGoesToNewProjectPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1514,7 +1632,7 @@ class TestsContext implements Context
     /**
      * @Then it obtains a empty project's form
      */
-    public function itObtainsAEmptyProjectsForm()
+    public function itObtainsAEmptyProjectsForm(): void
     {
         $formValues = $this->createForm('space_project')->getPhpValues();
         Assert::assertEmpty($formValues['space_project']['project']['name']);
@@ -1523,7 +1641,7 @@ class TestsContext implements Context
     /**
      * @Then the project must be persisted
      */
-    public function theProjectMustBePersisted()
+    public function theProjectMustBePersisted(): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1547,7 +1665,7 @@ class TestsContext implements Context
     /**
      * @When it opens the project page of :projectName
      */
-    public function itOpensTheProjectPageOf(string $projectName)
+    public function itOpensTheProjectPageOf(string $projectName): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1563,7 +1681,7 @@ class TestsContext implements Context
     /**
      * @Then the project must be updated
      */
-    public function theProjectMustBeUpdated()
+    public function theProjectMustBeUpdated(): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1593,7 +1711,7 @@ class TestsContext implements Context
     /**
      * @When It goes to project page of :projectName of :accountName
      */
-    public function itGoesToProjectPageOfOf(string $projectName, string $accountName)
+    public function itGoesToProjectPageOfOf(string $projectName, string $accountName): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1604,13 +1722,13 @@ class TestsContext implements Context
             ],
         );
 
-        $this->executeRequest('get', $url);
+        $this->executeRequest('GET', $url);
     }
 
     /**
      * @Then the user must have a :code error
      */
-    public function theUserMustHaveAError(int $code)
+    public function theUserMustHaveAError(int $code): void
     {
         Assert::assertEquals($code, $this->response?->getStatusCode());
     }
@@ -1618,7 +1736,7 @@ class TestsContext implements Context
     /**
      * @Then the project is not deleted
      */
-    public function theProjectIsNotDeleted()
+    public function theProjectIsNotDeleted(): void
     {
         $projects = $this->listObjects(Project::class);
         Assert::assertNotEmpty($projects);
@@ -1638,13 +1756,13 @@ class TestsContext implements Context
             ],
         );
 
-        $this->executeRequest('get', $url);
+        $this->executeRequest('GET', $url);
     }
 
     /**
      * @When it goes to project page of :projectName
      */
-    public function itGoesToProjectPageOf(string $projectName)
+    public function itGoesToProjectPageOf(string $projectName): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1658,7 +1776,7 @@ class TestsContext implements Context
     /**
      * @When open the project variables page
      */
-    public function openTheProjectVariablesPage()
+    public function openTheProjectVariablesPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1674,7 +1792,7 @@ class TestsContext implements Context
     /**
      * @Then it obtains a empty project's variables form
      */
-    public function itObtainsAEmptyProjectsVariablesForm()
+    public function itObtainsAEmptyProjectsVariablesForm(): void
     {
         $formValues = $this->createForm('project_vars')->getPhpValues();
         Assert::assertFalse(isset($formValues['project_vars']['sets']));
@@ -1683,7 +1801,7 @@ class TestsContext implements Context
     /**
      * @Then the project must have these persisted variables
      */
-    public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables)
+    public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1743,13 +1861,13 @@ class TestsContext implements Context
     /**
      * @Given the project have these persisted variables:
      */
-    public function theProjectHaveThesePersistedVariables(TableNode $variables)
+    public function theProjectHaveThesePersistedVariables(TableNode $variables): void
     {
         $project = $this->recall(Project::class);
         foreach ($variables as $var) {
             $apv = new PersistedVariable(
                 project: $project,
-                id: $var['id'] . $this->generateId(),
+                id: $var['id'],
                 name: $var['name'],
                 value: $var['value'],
                 environmentName: $var['environment'],
@@ -1761,9 +1879,9 @@ class TestsContext implements Context
     }
 
     /**
-     * @Given a project with a complete paas file
+     * @Given the project has a complete paas file
      */
-    public function aProjectWithACompletePaasFile()
+    public function theProjectHasACompletePaasFile(): void
     {
         $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
     }
@@ -1771,7 +1889,7 @@ class TestsContext implements Context
     /**
      * @Given :number jobs for the project
      */
-    public function jobsForTheProject(int $number)
+    public function jobsForTheProject(int $number): void
     {
         $project = $this->recall(Project::class);
         $env = $this->recall(Environment::class);
@@ -1794,7 +1912,7 @@ class TestsContext implements Context
     /**
      * @When get a JWT token for the user
      */
-    public function getAJwtTokenForTheUser()
+    public function getAJwtTokenForTheUser(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -1822,12 +1940,12 @@ class TestsContext implements Context
     /**
      * @When the API is called to list of jobs
      */
-    public function theApiIsCalledToListOfJobs()
+    public function theApiIsCalledToListOfJobs(): void
     {
         $project = $this->recall(Project::class);
 
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $this->getPathFromRoute(
                 route: 'space_api_job_list',
                 parameters: [
@@ -1842,15 +1960,70 @@ class TestsContext implements Context
     }
 
     /**
+     * @When the API is called to list of projects
+     * @When the API is called to list of projects as :role
+     */
+    public function theApiIsCalledToListOfProjects(?string $role = null): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: match ($role) {
+                    'admin' => 'space_api_admin_project_list',
+                    default => 'space_api_project_list',
+                }
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to list of users as admin
+     */
+    public function theApiIsCalledToListOfUsers(): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_user_list',
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to list of accounts as admin
+     */
+    public function theApiIsCalledToListOfAccountsAsAdmin(): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_account_list',
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
      * @When the API is called to get the last job
      */
-    public function theApiIsCalledToGetTheLastJob()
+    public function theApiIsCalledToGetTheLastJob(): void
     {
         $project = $this->recall(Project::class);
         $job = $this->recall(Job::class);
 
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $this->getPathFromRoute(
                 route: 'space_api_job_get',
                 parameters: [
@@ -1866,9 +2039,83 @@ class TestsContext implements Context
     }
 
     /**
+     * @When the API is called to get the last project
+     */
+    public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_project_edit'): void
+    {
+        $project = $this->recall(Project::class);
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: $routeName,
+                parameters: [
+                    'id' => $project->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to get the last user
+     */
+    public function theApiIsCalledToGetTheLastUser(): void
+    {
+        $user = $this->recall(User::class);
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_user_edit',
+                parameters: [
+                    'id' => $user->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to get the last account
+     */
+    public function theApiIsCalledToGetTheLastAccount(): void
+    {
+        $account = $this->recall(Account::class);
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_account_edit',
+                parameters: [
+                    'id' => $account->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to get the last project's variables
+     */
+    public function theApiIsCalledToGetTheLastProjectsVariables(): void
+    {
+        $this->theApiIsCalledToGetTheLastProject('space_api_project_edit_variables');
+    }
+
+    /**
      * @When the API is called to get the last generated job
      */
-    public function theApiIsCalledToGetTheLastGeneratedJob()
+    public function theApiIsCalledToGetTheLastGeneratedJob(): void
     {
         $project = $this->recall(Project::class);
         $jobs = $this->listObjects(JobOrigin::class);
@@ -1881,12 +2128,81 @@ class TestsContext implements Context
         $this->register($job);
 
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $this->getPathFromRoute(
                 route: 'space_api_job_get',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to delete the last project
+     * @When the API is called to delete the last project with :method method
+     */
+    public function theApiIsCalledToDeleteTheLastProject(string $method = 'GET'): void
+    {
+        $project = $this->recall(Project::class);
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: 'space_api_project_delete',
+                parameters: [
+                    'id' => $project->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to delete the last user
+     * @When the API is called to delete the last user with :method method
+     */
+    public function theApiIsCalledToDeleteTheLastUser(string $method = 'GET'): void
+    {
+        $user = $this->recall(User::class);
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_user_delete',
+                parameters: [
+                    'id' => $user->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to delete the last account
+     * @When the API is called to delete the last account with :method method
+     */
+    public function theApiIsCalledToDeleteTheLastAccount(string $method = 'GET'): void
+    {
+        $account = $this->recall(Account::class);
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_account_delete',
+                parameters: [
+                    'id' => $account->getId(),
                 ],
             ),
             headers: [
@@ -1900,7 +2216,7 @@ class TestsContext implements Context
      * @When the API is called to delete the last job
      * @When the API is called to delete the last job with :method method
      */
-    public function theApiIsCalledToDeleteTheLastJob(string $method = 'GET')
+    public function theApiIsCalledToDeleteTheLastJob(string $method = 'GET'): void
     {
         $project = $this->recall(Project::class);
         $job = $this->recall(Job::class);
@@ -1924,36 +2240,31 @@ class TestsContext implements Context
     /**
      * @When the API is called to create a new job with a json body:
      */
-    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields)
+    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToCreateANewJob($bodyFields, 'json');
     }
 
-    /**
-     * @When the API is called to create a new job:
-     */
-    public function theApiIsCalledToCreateANewJob(TableNode $bodyFields, string $format = 'default')
+    private function encodeAPIBody(TableNode $bodyFields, string $format = 'default'): string|array
     {
-        $project = $this->recall(Project::class);
-
         $final = [];
         foreach ($bodyFields as $field) {
             $this->setRequestParameters($final, $field['field'], $field['value']);
         }
 
-        $final = match ($format) {
+        return match ($format) {
             'json' => json_encode($final),
             default => $final,
         };
+    }
+
+    private function submitValuesThroughAPI(string $url, TableNode $bodyFields, string $format = 'default'): void
+    {
+        $final = $this->encodeAPIBody($bodyFields, $format);
 
         $this->executeRequest(
             method: 'post',
-            url: $this->getPathFromRoute(
-                route: 'space_api_job_new',
-                parameters: [
-                    'projectId' => $project->getId(),
-                ],
-            ),
+            url: $url,
             params: match ($format) {
                 'json' => [],
                 default => $final,
@@ -1974,14 +2285,368 @@ class TestsContext implements Context
     }
 
     /**
+     * @When the API is called to edit a project's variables with a json body:
+     */
+    public function theApiIsCalledToEditAProjectsVariablesWithAJsonBody(TableNode $bodyFields): void
+    {
+        $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_project_edit_variables');
+    }
+
+    /**
+     * @When the API is called to edit a project's variables:
+     */
+    public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields): void
+    {
+        $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_project_edit_variables');
+    }
+
+    /**
+     * @When the API is called to edit a project with a json body:
+     */
+    public function theApiIsCalledToEditAProjectWithAJsonBody(TableNode $bodyFields): void
+    {
+        $this->theApiIsCalledToEditAProject($bodyFields, 'json');
+    }
+
+    /**
+     * @When the API is called to edit a project:
+     */
+    public function theApiIsCalledToEditAProject(
+        TableNode $bodyFields,
+        string $format = 'default',
+        string $routeName = 'space_api_project_edit',
+    ): void {
+        $project = $this->recall(Project::class);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: $routeName,
+                parameters: [
+                    'id' => $project->getId(),
+                ]
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to create a project:
+     * @When the API is called to create a project with a :format body:
+     * @When the API is called to create a project as :role:
+     * @When the API is called to create a project as :role with a :format body:
+     */
+    public function theApiIsCalledToCreateAProject(
+        TableNode $bodyFields,
+        string $format = 'default',
+        ?string $role = null,
+    ): void {
+        if ('admin' === $role) {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_admin_project_new',
+                parameters: [
+                    'accountId' => $this->recall(Account::class)->getId(),
+                ]
+            );
+        } else {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_project_new',
+            );
+        }
+
+        $this->submitValuesThroughAPI(
+            url: $url,
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to create an user as admin:
+     * @When the API is called to create an user as admin with a :format body:
+     */
+    public function theApiIsCalledToCreateAnUserAsAdmin(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_user_new',
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to create an account as admin:
+     * @When the API is called to create an account as admin with a :format body:
+     */
+    public function theApiIsCalledToCreateAnAccountAsAdmin(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_account_new',
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to edit the last user:
+     * @When the API is called to edit the last user with a :format body:
+     */
+    public function theApiIsCalledToEditAnUser(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $user = $this->recall(User::class);
+        Assert::assertNotNull($user);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_user_edit',
+                parameters: [
+                    'id' => $user->getId(),
+                ]
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to edit the last account:
+     * @When the API is called to edit the last account with a :format body:
+     */
+    public function theApiIsCalledToEditAnAccount(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_admin_account_edit',
+                parameters: [
+                    'id' => $account->getId(),
+                ]
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to get user's settings
+     */
+    public function theApiIsCalledToGetUsersSettings(): void
+    {
+        $this->executeRequest(
+            method: 'get',
+            url: $this->getPathFromRoute('space_api_my_settings'),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to get account's settings
+     */
+    public function theApiIsCalledToGetAccountsSettings(): void
+    {
+        $this->executeRequest(
+            method: 'get',
+            url: $this->getPathFromRoute('space_api_account_settings'),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    /**
+     * @When the API is called to update user's settings:
+     * @When the API is called to update user's settings with a :format body:
+     */
+    public function theApiIsCalledToUpdateUsersSettings(TableNode $bodyFields, string $format = 'default'): void
+    {
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_my_settings',
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to update account's settings:
+     * @When the API is called to update account's settings with a :format body:
+     */
+    public function theApiIsCalledToUpdateAccountsSettings(TableNode $bodyFields, string $format = 'default'): void
+    {
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_account_settings',
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to update account's variables:
+     * @When the API is called to update account's variables with a :format body:
+     * @When the API is called to update variables of last account with as :role:
+     * @When the API is called to update variables of last account with a :format body as :role:
+     */
+    public function theApiIsCalledToUpdateAccountsVariables(
+        TableNode $bodyFields,
+        string $format = 'default',
+        ?string $role = null,
+    ): void {
+        if (null === $role) {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_account_edit_variables',
+            );
+        } else {
+            $account = $this->recall(Account::class);
+            Assert::assertNotEmpty($account);
+
+            $url = $this->getPathFromRoute(
+                route: 'space_api_admin_account_edit_variables',
+                parameters: [
+                    'id' => $account->getId(),
+                ],
+            );
+        }
+
+        $this->submitValuesThroughAPI(
+            url: $url,
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
+     * @When the API is called to get account's variables
+     * @When the API is called to get variables of last account as :role
+     */
+    public function theApiIsCalledToGetAccountsVariables(?string $role = null): void
+    {
+        if (null === $role) {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_account_edit_variables',
+            );
+        } else {
+            $account = $this->recall(Account::class);
+            Assert::assertNotEmpty($account);
+
+            $url = $this->getPathFromRoute(
+                route: 'space_api_admin_account_edit_variables',
+                parameters: [
+                    'id' => $account->getId(),
+                ],
+            );
+        }
+
+        $this->executeRequest(
+            method: 'post',
+            url: $url,
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+
+
+    /**
+     * @Then the serialized accounts variables
+     * @Then the serialized accounts variables with :count variables
+     */
+    public function theSerializedAccountsVariables(?int $count = null): void
+    {
+        $this->checkIfResponseIsAFinal();
+
+        $account = $this->recall(Account::class);
+        $accountData = $this->getRepository(AccountData::class)->findOneBy(['account' => $account]);
+        $accountVars = $this->getRepository(AccountPersistedVariable::class)->findBy(['account' => $account]);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => SpaceAccount::class,
+                    'id' => $account->getId(),
+                ],
+                'data' => new SpaceAccount(
+                    account: $account,
+                    accountData: $accountData,
+                    variables: $accountVars
+                ),
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['crud_variables'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data']['variables'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        if (!empty($count)) {
+            Assert::assertCount(
+                $count,
+                $unserialized['data']['variables'] ?? [],
+            );
+        }
+    }
+
+    /**
+     * @When the API is called to create a new job:
+     */
+    public function theApiIsCalledToCreateANewJob(TableNode $bodyFields, string $format = 'default'): void
+    {
+        $project = $this->recall(Project::class);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_job_new',
+                parameters: [
+                    'projectId' => $project->getId(),
+                ]
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    /**
      * @When the API is called to pending job status api
      */
-    public function theApiIsCalledToPendingJobStatusApi()
+    public function theApiIsCalledToPendingJobStatusApi(): void
     {
         Assert::assertNotEmpty($this->apiPendingJobUrl);
 
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $this->apiPendingJobUrl,
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -1993,7 +2658,7 @@ class TestsContext implements Context
     /**
      * @When the job is deleted
      */
-    public function theJobIsDeleted()
+    public function theJobIsDeleted(): void
     {
         Assert::assertEmpty(
             $this->listObjects(Job::class),
@@ -2001,9 +2666,72 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then there is a project in the memory for this account
+     */
+    public function thereIsAProjectInTheMemoryForThisAccount(): void
+    {
+        Assert::assertCount(
+            1,
+            $this->listObjects(ProjectOrigin::class),
+        );
+    }
+
+    /**
+     * @Then there is an user in the memory
+     */
+    public function thereIsAnUserInTheMemory(): void
+    {
+        Assert::assertCount(
+            2,
+            $this->listObjects(User::class),
+        );
+    }
+
+    /**
+     * @Then there is an account in the memory
+     */
+    public function thereIsAnAccountInTheMemory(): void
+    {
+        Assert::assertNotEmpty(
+            $this->listObjects(User::class),
+        );
+    }
+
+    /**
+     * @Then the project is deleted
+     */
+    public function theProjectIsDeleted(): void
+    {
+        Assert::assertEmpty(
+            $this->listObjects(Project::class),
+        );
+    }
+
+    /**
+     * @Then the user is deleted
+     */
+    public function theUserIsDeleted(): void
+    {
+        Assert::assertCount(
+            1,
+            $this->listObjects(User::class),
+        );
+    }
+
+    /**
+     * @Then the account is deleted
+     */
+    public function theAccountIsDeleted(): void
+    {
+        Assert::assertEmpty(
+            $this->listObjects(Account::class),
+        );
+    }
+
+    /**
      * @When the job is not deleted
      */
-    public function theJobIsNotDeleted()
+    public function theJobIsNotDeleted(): void
     {
         Assert::assertNotEmpty(
             $this->listObjects(Job::class),
@@ -2013,7 +2741,7 @@ class TestsContext implements Context
     /**
      * @Then get a JSON reponse
      */
-    public function getAJsonReponse()
+    public function getAJsonReponse(): void
     {
         Assert::assertEquals(
             'application/json; charset=utf-8',
@@ -2024,7 +2752,7 @@ class TestsContext implements Context
     /**
      * @When an :arg1 error
      */
-    public function anError(int $code)
+    public function anError(int $code): void
     {
         Assert::assertEquals(
             $code,
@@ -2043,7 +2771,7 @@ class TestsContext implements Context
     /**
      * @Then a pending job id
      */
-    public function aPendingJobId()
+    public function aPendingJobId(): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -2057,7 +2785,7 @@ class TestsContext implements Context
     /**
      * @Then a pending job status without a job id
      */
-    public function aPendingJobStatusWithoutAJobId()
+    public function aPendingJobStatusWithoutAJobId(): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -2072,7 +2800,7 @@ class TestsContext implements Context
     /**
      * @When is a serialized collection of :count items on :total pages
      */
-    public function isASerializedCollectionOfItemsOnPages(int $count, int $page)
+    public function isASerializedCollectionOfItemsOnPages(int $count, int $page): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -2096,9 +2824,90 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then the a list of serialized users
+     */
+    public function theAListOfSerializedUsers(): void
+    {
+        $users = [];
+        foreach ($this->getListOfPersistedObjects(User::class) as $user) {
+            $users[] = new SpaceUser($user);
+        }
+
+        $selectedUsers = array_values(
+            array_slice(
+                array: $users,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedUsers,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
+    /**
+     * @Then the a list of serialized accounts
+     */
+    public function theAListOfSerializedAccounts(): void
+    {
+        $accounts = [];
+        foreach ($this->getListOfPersistedObjects(Account::class) as $account) {
+            $accountData = $this->getRepository(AccountData::class)->findOneBy(['account' => $account]);
+            $accounts[] = new SpaceAccount($account, $accountData);
+        }
+
+        $selectedAccounts = array_values(
+            array_slice(
+                array: $accounts,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedAccounts,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
+    /**
      * @When the a list of serialized jobs
      */
-    public function theListSerializedJobs()
+    public function theListSerializedJobs(): void
     {
         $jobs = $this->getListOfPersistedObjects(Job::class);
         $selectedJobs = array_values(
@@ -2121,6 +2930,10 @@ class TestsContext implements Context
             ],
         );
 
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
         Assert::assertEquals(
             $normalized,
             $unserialized['data'],
@@ -2128,9 +2941,323 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then the a list of serialized owned projects
+     */
+    public function theAListOfSerializedOwnedProjects(): void
+    {
+        $account = $this->recall(Account::class);
+        $allProjects = $this->getListOfPersistedObjects(Project::class);
+        $projects = [];
+        foreach ($allProjects as $project) {
+            if ($project->getAccount() === $account) {
+                $projects[] = new SpaceProject($project);
+            }
+        }
+
+        $selectedProjects = array_values(
+            array_slice(
+                array: $projects,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedProjects,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
+    /**
+     * @Then the a list of serialized projects
+     */
+    public function theAListOfSerializedProjects(): void
+    {
+        $projects = [];
+        foreach ($this->getListOfPersistedObjects(Project::class) as $project) {
+            $projects[] = new SpaceProject($project);
+        }
+
+        $selectedProjects = array_values(
+            array_slice(
+                array: $projects,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedProjects,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
+    /**
+     * @Then the serialized :count project's variables
+     * @Then the serialized :count project's variables with :name equals to :value
+     */
+    public function theSerializedProjectsVariables(int $count, ?string $name = null, ?string $value = null): void
+    {
+        $this->checkIfResponseIsAFinal();
+
+        $project = $this->recall(Project::class);
+        $project ??= $this->recall(ProjectOrigin::class);
+        $projectsVars = $this->getRepository(PersistedVariable::class)->findBy(['project' => $project]);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => SpaceProject::class,
+                    'id' => $project->getId(),
+                ],
+                'data' => new SpaceProject(projectOrAccount: $project, variables: $projectsVars)
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['crud_variables'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        if (null !== $name) {
+            $found = false;
+            foreach ($projectsVars as $var) {
+                if ($name === $var->getName()) {
+                    $found = true;
+                    Assert::assertEquals(
+                        $value,
+                        $var->getValue()
+                    );
+                }
+            }
+
+            Assert::assertTrue($found);
+        }
+    }
+
+    /**
+     * @Then the serialized created project :name
+     */
+    public function theSerializedCreatedProject(string $name): void
+    {
+        $this->theSerializedProject(created: true, name: $name);
+    }
+
+    /**
+     * @Then the serialized user :lastName :firstName
+     * @Then the serialized user :lastName :firstName for :role
+     */
+    public function theSerializedUser(string $lastName, string $firstName, ?string $role = null): void
+    {
+        foreach ($this->listObjects(User::class) as $user) {
+        }
+
+        $userData = $this->getRepository(UserData::class)->findOneBy(['user' => $user]);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => SpaceUser::class,
+                    'id' => $user->getId(),
+                ],
+                'data' => new SpaceUser(
+                    user: $user,
+                    userData: $userData,
+                ),
+            ],
+            format: 'json',
+            context: [
+                'groups' => [
+                    match ($role) {
+                        'admin' => 'crud',
+                        default => 'api',
+                    }
+                ],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        Assert::assertEquals(
+            $firstName,
+            (string) $user->getFirstName(),
+        );
+
+        Assert::assertEquals(
+            $lastName,
+            (string) $user->getLastName(),
+        );
+    }
+
+    /**
+     * @Then the serialized account :accountName
+     * @Then the serialized account :accountName for :role
+     */
+    public function theSerializedAccount(string $accountName, ?string $role = null): void
+    {
+        $account = $this->recall(Account::class);
+        if (null === $account) {
+            foreach ($this->listObjects(AccountOrigin::class) as $account) {
+            }
+        }
+
+        Assert::assertNotNull($account);
+        $accountData = $this->getRepository(AccountData::class)->findOneBy(['account' => $account]);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => SpaceAccount::class,
+                    'id' => $account->getId(),
+                ],
+                'data' => new SpaceAccount(
+                    account: $account,
+                    accountData: $accountData,
+                ),
+            ],
+            format: 'json',
+            context: [
+                'groups' => match ($role) {
+                    'admin' => ['admin', 'api', 'crud'],
+                    default => ['api', 'crud'],
+                }
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data']['account'] ?? null,
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data']['accountData'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        Assert::assertEquals(
+            $accountName,
+            (string) $account,
+        );
+    }
+
+    /**
+     * @Then the serialized project :name
+     * @Then the serialized updated project :name
+     */
+    public function theSerializedProject(bool $created = false, string $name = ''): void
+    {
+        if ($created) {
+            $project = null;
+            foreach ($this->listObjects(ProjectOrigin::class) as $project) {
+                break;
+            }
+
+            Assert::assertNotEmpty($project);
+        } else {
+            $project = $this->recall(Project::class);
+            $project ??= $this->recall(ProjectOrigin::class);
+        }
+
+        $projectMetadata = $this->getRepository(ProjectMetadata::class)->findOneBy(['project' => $project]);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => SpaceProject::class,
+                    'id' => $project->getId(),
+                ],
+                'data' => new SpaceProject(
+                    projectOrAccount: $project,
+                    projectMetadata: $projectMetadata,
+                ),
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['crud'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        Assert::assertEquals(
+            $name,
+            (string) $project,
+        );
+    }
+
+    /**
      * @When the serialized job
      */
-    public function theSerializedJob()
+    public function theSerializedJob(): void
     {
         $job = $this->recall(Job::class);
         $job ??= $this->recall(JobOrigin::class);
@@ -2152,6 +3279,103 @@ class TestsContext implements Context
             ],
         );
 
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+    }
+
+    /**
+     * @Then the serialized deleted project
+     */
+    public function theSerializedDeletedProject(): void
+    {
+        $project = $this->recall(Project::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = [
+            'meta' => [
+                '@class' => SpaceProject::class,
+                'id' => $project->getId(),
+                'deleted' => 'success',
+            ],
+            'data' => $this->normalizer->normalize(
+                new SpaceProject($project),
+                format: 'json',
+                context: [
+                    'groups' => ['digest'],
+                ],
+            ),
+        ];
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+    }
+
+    /**
+     * @Then the serialized deleted user
+     */
+    public function theSerializedDeletedUser(): void
+    {
+        $user = $this->recall(User::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = [
+            'meta' => [
+                '@class' => SpaceUser::class,
+                'id' => $user->getId(),
+                'deleted' => 'success',
+            ],
+            'data' => $this->normalizer->normalize(
+                new SpaceUser($user),
+                format: 'json',
+                context: [
+                    'groups' => ['digest'],
+                ],
+            ),
+        ];
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+    }
+
+    /**
+     * @Then the serialized deleted account
+     */
+    public function theSerializedDeletedAccount(): void
+    {
+        $account = $this->recall(Account::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = [
+            'meta' => [
+                '@class' => SpaceAccount::class,
+                'id' => $account->getId(),
+                'deleted' => 'success',
+            ],
+            'data' => $this->normalizer->normalize(
+                new SpaceAccount($account),
+                format: 'json',
+                context: [
+                    'groups' => ['digest'],
+                ],
+            ),
+        ];
+
         Assert::assertEquals(
             $normalized,
             $unserialized,
@@ -2161,7 +3385,7 @@ class TestsContext implements Context
     /**
      * @When the serialized deleted job
      */
-    public function theSerializedDeletedJob()
+    public function theSerializedDeletedJob(): void
     {
         $job = $this->recall(Job::class);
 
@@ -2184,8 +3408,12 @@ class TestsContext implements Context
             ],
             format: 'json',
             context: [
-                'groups' => ['api'],
+                'groups' => ['digest'],
             ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
         );
 
         Assert::assertEquals(
@@ -2197,7 +3425,7 @@ class TestsContext implements Context
     /**
      * @Given a project with a paas file using extends
      */
-    public function aProjectWithAPaasFileUsingExtends()
+    public function aProjectWithAPaasFileUsingExtends(): void
     {
         $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
     }
@@ -2205,7 +3433,7 @@ class TestsContext implements Context
     /**
      * @Given simulate a too long image building
      */
-    public function simulateATooLongImageBuilding()
+    public function simulateATooLongImageBuilding(): void
     {
         $this->slowBuilder = true;
     }
@@ -2213,7 +3441,7 @@ class TestsContext implements Context
     /**
      * @When it runs a job
      */
-    public function itRunsAJob()
+    public function itRunsAJob(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -2229,7 +3457,7 @@ class TestsContext implements Context
     /**
      * @Then it obtains a deployment page
      */
-    public function itObtainsADeploymentPage()
+    public function itObtainsADeploymentPage(): void
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertStringStartsWith(
@@ -2241,7 +3469,7 @@ class TestsContext implements Context
     /**
      * @Then it is forwared to job page
      */
-    public function itIsForwaredToJobPage()
+    public function itIsForwaredToJobPage(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
@@ -2263,13 +3491,13 @@ class TestsContext implements Context
             ],
         );
 
-        $this->executeRequest('get', $url);
+        $this->executeRequest('GET', $url);
     }
 
     /**
      * @Then it has an error about a timeout
      */
-    public function itHasAnErrorAboutATimeout()
+    public function itHasAnErrorAboutATimeout(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
@@ -2288,7 +3516,7 @@ class TestsContext implements Context
     /**
      * @Then job must be successful finished
      */
-    public function jobMustBeSuccessfulFinished()
+    public function jobMustBeSuccessfulFinished(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
@@ -2308,7 +3536,7 @@ class TestsContext implements Context
     /**
      * @Then some Kubernetes manifests have been created and executed
      */
-    public function someKubernetesManifestsHaveBeenCreatedAndExecuted()
+    public function someKubernetesManifestsHaveBeenCreatedAndExecuted(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
@@ -2321,7 +3549,7 @@ class TestsContext implements Context
 
         $id = $job->getId();
         if (strlen($id) < 9) {
-            return $id;
+            return;
         }
 
         $jobId = substr(string: $id, offset: 0, length: 4) . '-' . substr(string: $id, offset: -4);
@@ -2342,7 +3570,7 @@ class TestsContext implements Context
     /**
      * @Given a cluster supporting hierarchical namespace
      */
-    public function aClusterSupportingHierarchicalNamespace()
+    public function aClusterSupportingHierarchicalNamespace(): void
     {
         $this->useHnc = true;
     }
@@ -2350,7 +3578,7 @@ class TestsContext implements Context
     /**
      * @Given a subscription restriction
      */
-    public function aSubscriptionRestriction()
+    public function aSubscriptionRestriction(): void
     {
         $type = $this->sfContainer->get(SpaceSubscriptionType::class);
         $type->setEnableCodeRestriction(true);
@@ -2359,7 +3587,7 @@ class TestsContext implements Context
     /**
      * @Given without a subscription restriction
      */
-    public function withoutAaSubscriptionRestriction()
+    public function withoutAaSubscriptionRestriction(): void
     {
         $type = $this->sfContainer->get(SpaceSubscriptionType::class);
         $type->setEnableCodeRestriction(false);
@@ -2368,20 +3596,20 @@ class TestsContext implements Context
     /**
      * @When an user go to subscription page
      */
-    public function anUserGoToSubscriptionPage()
+    public function anUserGoToSubscriptionPage(): void
     {
         $url = $this->getPathFromRoute(
             route: 'space_subscription',
         );
 
-        $this->executeRequest('get', $url);
+        $this->executeRequest('GET', $url);
         $this->formName = 'space_subscription';
     }
 
     /**
      * @Then the user obtains an error
      */
-    public function theUserObtainsAnError()
+    public function theUserObtainsAnError(): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -2396,7 +3624,7 @@ class TestsContext implements Context
     /**
      * @Then a password mismatch error
      */
-    public function aPasswordMismatchError()
+    public function aPasswordMismatchError(): void
     {
         $crawler = $this->createCrawler();
 
@@ -2412,7 +3640,7 @@ class TestsContext implements Context
     /**
      * @Then an invalid code error
      */
-    public function anInvalidCodeError()
+    public function anInvalidCodeError(): void
     {
         $crawler = $this->createCrawler();
 
@@ -2428,7 +3656,7 @@ class TestsContext implements Context
     /**
      * @Then An account :accountName is created
      */
-    public function anAccountIsCreated(string $accountName)
+    public function anAccountIsCreated(string $accountName): void
     {
         $accounts = $this->listObjects(AccountOrigin::class);
         Assert::assertNotEmpty($accounts);
@@ -2442,7 +3670,7 @@ class TestsContext implements Context
     /**
      * @Then an user :email is created
      */
-    public function anUserIsCreated(string $email)
+    public function anUserIsCreated(string $email): void
     {
         $users = $this->listObjects(User::class);
         Assert::assertNotEmpty($users);
@@ -2456,7 +3684,7 @@ class TestsContext implements Context
     /**
      * @Then a Kubernetes namespace :namespace is created and populated
      */
-    public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace)
+    public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace): void
     {
         $expected = trim((new ManifestGenerator())->namespaceCreation($namespace));
         $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
@@ -2469,7 +3697,7 @@ class TestsContext implements Context
     /**
      * @Then the user is redirected to the dashboard page
      */
-    public function theUserIsRedirectedToTheDashboardPage()
+    public function theUserIsRedirectedToTheDashboardPage(): void
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertEquals(
@@ -2481,9 +3709,19 @@ class TestsContext implements Context
     /**
      * @Then the account name is now :accountName
      */
-    public function theAccountNameIsNow(string $accountName)
+    public function theAccountNameIsNow(string $accountName): void
     {
         $this->checkIfResponseIsAFinal();
+
+        if ($this->isApiCall) {
+            $account = $this->recall(Account::class);
+            Assert::assertEquals(
+                $accountName,
+                (string) $account,
+            );
+
+            return;
+        }
 
         $crawler = $this->createCrawler();
 
@@ -2506,7 +3744,7 @@ class TestsContext implements Context
     /**
      * @When It goes to user settings
      */
-    public function itGoesToUserSettings()
+    public function itGoesToUserSettings(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
@@ -2517,11 +3755,22 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then the user's name is now :fullName
      * @Then its name is now :fullName
      */
-    public function itsNameIsNow(string $fullName)
+    public function itsNameIsNow(string $fullName): void
     {
         $this->checkIfResponseIsAFinal();
+
+        if ($this->isApiCall) {
+            $user = $this->recall(User::class);
+            Assert::assertEquals(
+                $fullName,
+                $user?->getFirstName() . ' ' . $user?->getLastName(),
+            );
+
+            return;
+        }
 
         $crawler = $this->createCrawler();
 
@@ -2544,10 +3793,10 @@ class TestsContext implements Context
     /**
      * @When the user logs out
      */
-    public function theUserLogsOut()
+    public function theUserLogsOut(): void
     {
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $this->getPathFromRoute(
                 route: 'account_logout',
             ),
@@ -2561,7 +3810,7 @@ class TestsContext implements Context
      * @Then a session is opened
      * @Then a new session is open
      */
-    public function aNewSessionIsOpen()
+    public function aNewSessionIsOpen(): void
     {
         Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
         Assert::assertInstanceOf(PasswordAuthenticatedUser::class, $token?->getUser());
@@ -2570,7 +3819,7 @@ class TestsContext implements Context
     /**
      * @Then a recovery session is opened
      */
-    public function aNewRecoverySessionIsOpen()
+    public function aNewRecoverySessionIsOpen(): void
     {
         Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
         Assert::assertInstanceOf(UserWithRecoveryAccess::class, $token?->getUser());
@@ -2579,7 +3828,7 @@ class TestsContext implements Context
     /**
      * @Then a session must be not opened
      */
-    public function aSessionMustBeNotOpened()
+    public function aSessionMustBeNotOpened(): void
     {
         Assert::assertEmpty($this->getTokenStorageService->tokenStorage?->getToken());
     }
@@ -2587,7 +3836,7 @@ class TestsContext implements Context
     /**
      * @Then Space executes the job
      */
-    public function spaceExecutesTheJob()
+    public function spaceExecutesTheJob(): void
     {
         $newJobTransport = $this->testTransport->get('new_job');
         $executeJobTransport = $this->testTransport->get('execute_job');
@@ -2603,7 +3852,7 @@ class TestsContext implements Context
     /**
      * @Given extensions libraries provided by administrators
      */
-    public function extensionsLibrariesProvidedByAdministrators()
+    public function extensionsLibrariesProvidedByAdministrators(): void
     {
         $lib = $this->sfContainer->get('teknoo.east.paas.compilation.ingresses_extends.library');
         $lib['demo-extends'] = [
@@ -2687,7 +3936,7 @@ class TestsContext implements Context
     /**
      * @Given a job workspace agent
      */
-    public function aJobWorkspaceAgent()
+    public function aJobWorkspaceAgent(): void
     {
         $workspace = new class ($this->paasFile) implements JobWorkspaceInterface {
             use ImmutableTrait;
@@ -2759,7 +4008,7 @@ class TestsContext implements Context
     /**
      * @Given a git cloning agent
      */
-    public function aGitCloningAgent()
+    public function aGitCloningAgent(): void
     {
         $cloningAgent = new class () implements CloningAgentInterface {
             use ImmutableTrait;
@@ -2799,7 +4048,7 @@ class TestsContext implements Context
     /**
      * @Given a composer hook as hook builder
      */
-    public function aComposerHookAsHookBuilder()
+    public function aComposerHookAsHookBuilder(): void
     {
         $hook = new HookMock();
 
@@ -2827,7 +4076,7 @@ class TestsContext implements Context
     /**
      * @Given an OCI builder
      */
-    public function anOciBuilder()
+    public function anOciBuilder(): void
     {
         $generator = new Generator();
         $mock = $generator->testDouble(
@@ -2877,7 +4126,7 @@ class TestsContext implements Context
     /**
      * @Given without any hooks path defined
      */
-    public function withoutAnyHooksPathDefined()
+    public function withoutAnyHooksPathDefined(): void
     {
         $diCi = $this->sfContainer->get(DiContainer::class);
         $diCi->set(
@@ -2905,7 +4154,7 @@ class TestsContext implements Context
     /**
      * @Given a composer path set in the DI
      */
-    public function aComposerPathSetInTheDi()
+    public function aComposerPathSetInTheDi(): void
     {
         $diCi = $this->sfContainer->get(DiContainer::class);
         $diCi->set(
@@ -2917,7 +4166,7 @@ class TestsContext implements Context
     /**
      * @When the hook library is generated
      */
-    public function theHookLibraryIsGenerated()
+    public function theHookLibraryIsGenerated(): void
     {
         $this->hookCollection = $this->sfContainer->get(HooksCollectionInterface::class);
     }
@@ -2925,7 +4174,7 @@ class TestsContext implements Context
     /**
      * @Then it obtains non empty hooks library with :name key.
      */
-    public function itObtainsNonEmptyHooksLibraryWithKey(string $name)
+    public function itObtainsNonEmptyHooksLibraryWithKey(string $name): void
     {
         $hooks = iterator_to_array($this->hookCollection);
         Assert::assertArrayHasKey($name, $hooks);
@@ -2934,7 +4183,7 @@ class TestsContext implements Context
     /**
      * @Then it obtains empty hooks library
      */
-    public function itObtainsEmptyHooksLibrary()
+    public function itObtainsEmptyHooksLibrary(): void
     {
         $hooks = iterator_to_array($this->hookCollection);
         Assert::assertEmpty($hooks);
@@ -2943,20 +4192,20 @@ class TestsContext implements Context
     /**
      * @When an user go to recovery request page
      */
-    public function anUserGoToRecoveryRequestPage()
+    public function anUserGoToRecoveryRequestPage(): void
     {
         $url = $this->getPathFromRoute(
             route: '_teknoo_common_user_recovery',
         );
 
-        $this->executeRequest('get', $url);
+        $this->executeRequest('GET', $url);
         $this->formName = 'email_form';
     }
 
     /**
      * @Then The client must go to recovery request sent page
      */
-    public function theClientMustGoToRecoveryRequestSentPage()
+    public function theClientMustGoToRecoveryRequestSentPage(): void
     {
         Assert::assertStringStartsWith(
             $this->getPathFromRoute('_teknoo_common_user_recovery'),
@@ -2967,7 +4216,7 @@ class TestsContext implements Context
     /**
      * @Then it is redirected to the recovery password page
      */
-    public function itIsRedirectedToTheRecoveryPasswordPage()
+    public function itIsRedirectedToTheRecoveryPasswordPage(): void
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertEquals(
@@ -2989,7 +4238,7 @@ class TestsContext implements Context
     /**
      * @Then no notification must be sent
      */
-    public function noNotificationMustBeSent()
+    public function noNotificationMustBeSent(): void
     {
         Assert::assertThat(
             $this->getMailerEvents(),
@@ -3000,7 +4249,7 @@ class TestsContext implements Context
     /**
      * @Then a notification must be sent
      */
-    public function aNotificationMustBeSent()
+    public function aNotificationMustBeSent(): void
     {
         Assert::assertThat(
             $this->getMailerEvents(),
@@ -3011,7 +4260,7 @@ class TestsContext implements Context
     /**
      * @When the user click on the link in the notification
      */
-    public function theUserClickOnTheLinkInTheNotification()
+    public function theUserClickOnTheLinkInTheNotification(): void
     {
         $message = $this->getMailerEvents()->getMessages(null)[0];
         $context = $message->getContext();
@@ -3020,7 +4269,7 @@ class TestsContext implements Context
         Assert::assertNotEmpty($actionUrl);
 
         $this->executeRequest(
-            method: 'get',
+            method: 'GET',
             url: $actionUrl,
         );
     }

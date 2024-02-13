@@ -12,7 +12,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "100" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -39,7 +39,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an account for "An Other Company" with the account namespace "my-comany"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "100" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -63,7 +63,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -89,7 +89,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an account for "An Other Company" with the account namespace "my-comany"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -113,7 +113,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -140,7 +140,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an account for "An Other Company" with the account namespace "my-comany"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -165,7 +165,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -192,7 +192,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an account for "An Other Company" with the account namespace "my-comany"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -217,7 +217,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -243,7 +243,8 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and paas file is valid with url encoded body with encrypted message
+  Scenario: Execute a job from an owned projet with prefix and paas file is valid with url encoded body
+  with encrypted message
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -256,7 +257,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -296,7 +297,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an account for "An Other Company" with the account namespace "my-comany"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -313,7 +314,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     Then get a JSON reponse
     And an 403 error
 
-  Scenario: Execute a job from an owned projet with prefix and paas file is valid with json body
+  Scenario: Execute a job from an owned projet with prefix and paas file is valid with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -325,7 +326,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -351,7 +352,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and paas file is valid with json body with encrypted message
+  Scenario: Execute a job from an owned projet with prefix and paas file is valid with a json body with encrypted message
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -364,7 +365,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -390,7 +391,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from a non-owned projet with prefix and paas file is valid with json body
+  Scenario: Execute a job from a non-owned projet with prefix and paas file is valid with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -404,7 +405,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an account for "An Other Company" with the account namespace "my-comany"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -422,7 +423,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an 403 error
 
 
-  Scenario: Execute a job from an owned projet with prefix and paas file with extends is valid with json body
+  Scenario: Execute a job from an owned projet with prefix and paas file with extends is valid with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -461,7 +462,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with hierarchical namespace and paas file is valid with json body
+  Scenario: Execute a job from an owned projet with hierarchical namespace and paas file is valid with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -474,7 +475,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -501,7 +502,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And some Kubernetes manifests have been created and executed
 
   Scenario: Execute a job from an owned projet with hierarchical namespace and paas file with extends is valid with
-            json body
+  json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -542,7 +543,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And some Kubernetes manifests have been created and executed
 
   Scenario: Execute a job from an owned projet with hierarchical namespace and prefix and paas file is valid with
-            json body
+  json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -555,7 +556,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "demo"
-    And a project with a complete paas file
+    And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -582,7 +583,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And some Kubernetes manifests have been created and executed
 
   Scenario: Execute a job from an owned projet with hierarchical namespace and prefix and paas file with extends is
-            valid with json body
+  valid with a json body
     Given A Space app instance
     And a kubernetes client
     And extensions libraries provided by administrators
