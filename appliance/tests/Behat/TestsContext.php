@@ -310,7 +310,12 @@ class TestsContext implements Context
         $this->sfContainer = $this->kernel->getContainer();
 
         $this->setDateTime(new DateTime('2018-10-01 02:03:04', new \DateTimeZone('UTC')));
-        $this->setSerialGenerator(fn () => 0);
+        $counter = 0;
+        $this->setSerialGenerator(
+            function () use (&$counter) {
+                return ++$counter;
+            }
+        );
 
         HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, Symfony::class);
     }
