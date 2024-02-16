@@ -1,5 +1,14 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta34] - 2024-02-16
+### Beta Release
+- Upgrade to MongoDb 7.
+- Update libs.
+- Factorize pods' transcribers for Kubernetes.
+- Fix issue in `Job`'s `History` sorting :
+  - `Final` must be at the top of the history chain.
+- Limit verbose about `extra` in history.
+
 ## [1.0.0-beta33] - 2024-02-13
 ### Beta Release
 - Add HTTP API to manage projects and its settings or account's settings. (An API for Job is already present).
