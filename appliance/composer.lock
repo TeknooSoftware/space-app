@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27f961978fa9480733bcb1e1d7b71c64",
+    "content-hash": "9dd6ac6bec792ae889c2c7b2cdb368f5",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11502,16 +11502,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "bfd79f1e3b8b7aafd29dca1d14bcf3421e61c9e4"
+                "reference": "a5af5b13de6125cafc6a49117511ade128379ade"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/bfd79f1e3b8b7aafd29dca1d14bcf3421e61c9e4",
-                "reference": "bfd79f1e3b8b7aafd29dca1d14bcf3421e61c9e4",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/a5af5b13de6125cafc6a49117511ade128379ade",
+                "reference": "a5af5b13de6125cafc6a49117511ade128379ade",
                 "shasum": ""
             },
             "require": {
@@ -11521,11 +11521,11 @@
                 "php": "^8.1",
                 "php-di/php-di": "^7.0.6",
                 "psr/http-client": "^1.0.3",
-                "teknoo/east-common": "^2.7",
-                "teknoo/east-foundation": "^7.6",
+                "teknoo/east-common": "^2.8",
+                "teknoo/east-foundation": "^7.6.1",
                 "teknoo/immutable": "^3.0.17",
-                "teknoo/recipe": "^4.6",
-                "teknoo/states": "^6.1.5"
+                "teknoo/recipe": "^4.6.1",
+                "teknoo/states": "^6.1.6"
             },
             "require-dev": {
                 "behat/behat": "^3.13",
@@ -11638,20 +11638,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-12T10:19:03+00:00"
+            "time": "2024-02-16T13:15:37+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "2.5.0",
+            "version": "2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "5114146fa17737b20b87cd38ce68b4ae19182513"
+                "reference": "7d47b2f13147e67f27025dfcee5b8579c9cdcf74"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/5114146fa17737b20b87cd38ce68b4ae19182513",
-                "reference": "5114146fa17737b20b87cd38ce68b4ae19182513",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/7d47b2f13147e67f27025dfcee5b8579c9cdcf74",
+                "reference": "7d47b2f13147e67f27025dfcee5b8579c9cdcf74",
                 "shasum": ""
             },
             "require": {
@@ -11688,12 +11688,12 @@
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
-                "teknoo/east-common-symfony": "^2.7",
-                "teknoo/east-foundation-symfony": "^7.5.2",
-                "teknoo/east-paas": "^2.5",
+                "teknoo/east-common-symfony": "^2.8",
+                "teknoo/east-foundation-symfony": "^7.6.1",
+                "teknoo/east-paas": "^2.5.1",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.4.4",
-                "teknoo/recipe": "^4.6",
+                "teknoo/recipe": "^4.6.1",
                 "teknoo/states": "^6.1.6"
             },
             "require-dev": {
@@ -11752,7 +11752,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-11T18:35:06+00:00"
+            "time": "2024-02-16T13:16:49+00:00"
         },
         {
             "name": "teknoo/immutable",
