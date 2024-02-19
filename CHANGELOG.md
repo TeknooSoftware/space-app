@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta35] - 2024-02-19
+### Beta Release
+- Support Symfony 7.0 (Space stay compliant and tested with Symfony 6.4 (LTS Version)).
+  - An LTS version shipped with Symfony 6.4 will be also shipped
+- Enable PHP 8.3 in docker's devs file.
+- Disable Blackfire (not compliant with XDebug with PHP 8.3).
+
 ## [1.0.0-beta34] - 2024-02-16
 ### Beta Release
 - Upgrade to MongoDb 7.
