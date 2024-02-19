@@ -271,3 +271,18 @@ services:
 
     Teknoo\East\CommonBundle\Contracts\Security\Authenticator\UserConverterInterface:
         class: 'Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\UserConverter'
+
+    #####################
+    # Redis
+    Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+        arguments:
+            - '@Redis'
+            - { 'prefix': 'space_session', 'ttl': 3600 }
+
+    Redis:
+        # you can also use \RedisArray, \RedisCluster, \Relay\Relay or \Predis\Client classes
+        class: Redis
+        calls:
+            - connect:
+                - '%env(string:default:teknoo.space.default.redis.host:SPACE_REDIS_HOST)%'
+                - '%env(int:default:teknoo.space.default.redis.port:SPACE_REDIS_PORT)%'

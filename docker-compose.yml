@@ -3,6 +3,7 @@ networks:
     backend: ~
     bdd: ~
     amqp: ~
+    redis: ~
 volumes:
     caddy_data:
     caddy_config:
@@ -59,14 +60,15 @@ services:
             - bdd
             - backend
             - amqp
+            - redis
         links:
             - db
         volumes:
             - ./appliance/:/var/www/space
         environment:
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
-            - MAILER_SENDER_NAME=Teknoo Space App
             - MAILER_REPLY_TO_NAME=Teknoo Space - Support
+            - MAILER_SENDER_NAME=Teknoo Space App
             - MONGODB_NAME=space
             - PHP_BLACKFIRE_SERVER=blackfire
             - SPACE_CLUSTER_ISSUER=lets-encrypt
@@ -87,6 +89,8 @@ services:
             - SPACE_OCI_REGISTRY_IMAGE=registry:latest
             - SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
             - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
+            - SPACE_REDIS_HOST=redis
+            - SPACE_REDIS_PORT=6379
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
@@ -208,6 +212,11 @@ services:
             - backend
         volumes:
             - ./appliance/public:/var/www/space/public
+    redis:
+        build:
+            context: build.dev/redis
+        networks:
+            - redis
 #    blackfire:
 #        image: blackfire/blackfire:2
 #        ports: ["8307"]

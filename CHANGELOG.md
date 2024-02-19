@@ -6,6 +6,7 @@
   - An LTS version shipped with Symfony 6.4 will be also shipped
 - Enable PHP 8.3 in docker's devs file.
 - Disable Blackfire (not compliant with XDebug with PHP 8.3).
+- Enable Redis
 
 ## [1.0.0-beta34] - 2024-02-16
 ### Beta Release

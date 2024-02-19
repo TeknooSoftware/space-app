@@ -41,6 +41,8 @@ parameters:
     teknoo.space.default.new_job.waiting_time: 5
     teknoo.space.default.support.contact: ''
     teknoo.space.default.user.2fa.provider: 'google'
+    teknoo.space.default.redis.host: ''
+    teknoo.space.default.redis.port: 6379
 
     teknoo.east.common.admin.rendering.clean_html: true
     teknoo.east.common.rendering.clean_html: true
