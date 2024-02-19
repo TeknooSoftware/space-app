@@ -31,3 +31,4 @@
 /public/build/css/*
 /global_variables.php
 /vendor-bin/
+/config/packages/framework.session.backend.yaml

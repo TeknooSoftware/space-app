@@ -42,11 +42,13 @@ RUN set -eux ; \
     pecl install yaml ; \
     pecl install xdebug ; \
     pecl install -o -f amqp ; \
+    pecl install -o -f redis ; \
     docker-php-ext-enable apcu  \
                           mongodb  \
                           yaml  \
                           amqp \
                           xdebug \
+                          redis \
     ; \
     docker-php-ext-install bcmath \
                            bz2 \
