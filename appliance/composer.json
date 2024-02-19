@@ -67,13 +67,13 @@
         "symfony/console": "*",
         "symfony/dotenv": "*",
         "symfony/expression-language": "*",
-        "symfony/flex": "^2.4.1",
+        "symfony/flex": "^2.4.4",
         "symfony/form": "*",
         "symfony/framework-bundle": "*",
         "symfony/http-client": "*",
         "symfony/intl": "*",
         "symfony/mailer": "*",
-        "symfony/mercure-bundle": "^0.3.7",
+        "symfony/mercure-bundle": "^0.3.8",
         "symfony/messenger": "*",
         "symfony/mime": "*",
         "symfony/monolog-bundle": "*",
@@ -83,15 +83,15 @@
         "symfony/property-access": "*",
         "symfony/property-info": "*",
         "symfony/proxy-manager-bridge": "*",
-        "symfony/psr-http-message-bridge": "^6.4",
+        "symfony/psr-http-message-bridge": "^6.4||^7",
         "symfony/runtime": "*",
-        "symfony/security-bundle": "^6.4",
-        "symfony/security-http": "^6.4",
+        "symfony/security-bundle": "*",
+        "symfony/security-http": "*",
         "symfony/serializer": "*",
         "symfony/string": "*",
         "symfony/templating": "*",
         "symfony/translation": "*",
-        "symfony/twig-bundle": "^6.4",
+        "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
         "symfony/yaml": "*",
@@ -186,7 +186,7 @@
                 "https://api.github.com/repos/TeknooSoftware/symfony-recipes/contents/index.json",
                 "flex://defaults"
             ],
-            "require": "^6.4"
+            "require": "^6.4||^7"
         }
     }
 }

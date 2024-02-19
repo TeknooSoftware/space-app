@@ -67,17 +67,16 @@ class ProjectVarsMapperTest extends TestCase
             $this->createMock(PersistedVariable::class),
         ];
 
-        self::assertInstanceOf(
-            ProjectVarsMapper::class,
-            $this->projectVarsType->mapDataToForms(
-                $project,
-                new ArrayIterator(
-                    [
-                        'sets' => $this->createMock(FormInterface::class),
-                    ]
-                ),
+        $this->projectVarsType->mapDataToForms(
+            $project,
+            new ArrayIterator(
+                [
+                    'sets' => $this->createMock(FormInterface::class),
+                ]
             ),
         );
+
+        self::assertTrue(true);
     }
 
     public function testMapFormsToData(): void
@@ -118,16 +117,16 @@ class ProjectVarsMapperTest extends TestCase
                     )
                 ]
             );
-        self::assertInstanceOf(
-            ProjectVarsMapper::class,
-            $this->projectVarsType->mapFormsToData(
-                new ArrayIterator(
-                    [
-                        'sets' => $form,
-                    ]
-                ),
-                $project,
+
+        $this->projectVarsType->mapFormsToData(
+            new ArrayIterator(
+                [
+                    'sets' => $form,
+                ]
             ),
+            $project,
         );
+
+        self::assertTrue(true);
     }
 }

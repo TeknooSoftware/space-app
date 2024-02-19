@@ -36,11 +36,11 @@ class DoctrineClearEntityManagerWorkerSubscriber extends BaseSubscriber
     {
     }
 
-    public function onWorkerMessageHandled()
+    public function onWorkerMessageHandled(): void
     {
     }
 
-    public function onWorkerMessageFailed()
+    public function onWorkerMessageFailed(): void
     {
     }
 }

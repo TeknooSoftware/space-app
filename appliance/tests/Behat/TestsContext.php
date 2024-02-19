@@ -34,6 +34,7 @@ use DI\Container as DiContainer;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
+use Http\Adapter\Guzzle7\Client as ClientAlias;
 use OTPHP\TOTP;
 use phpseclib3\Crypt\RSA;
 use PHPUnit\Framework\Assert;
@@ -119,6 +120,7 @@ use function array_merge;
 use function array_shift;
 use function array_slice;
 use function array_values;
+use function class_exists;
 use function count;
 use function current;
 use function end;
@@ -344,7 +346,13 @@ class TestsContext implements Context
     {
         MockClientInstantiator::$testsContext = $this;
 
-        HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, MockClientInstantiator::class);
+        if (class_exists(SymfonyHttplug::class)) {
+            HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, MockClientInstantiator::class);
+        }
+
+        if (class_exists(ClientAlias::class)) {
+            HttpClientDiscovery::registerInstantiator(ClientAlias::class, MockClientInstantiator::class);
+        }
     }
 
     public function setManifests(string $uri, array $manifests): void
