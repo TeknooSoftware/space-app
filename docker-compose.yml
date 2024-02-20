@@ -80,9 +80,6 @@ services:
             - SPACE_JWT_TTL=31104000
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
-            - SPACE_KUBERNETES_CLUSTER_ENV=prod
-            - SPACE_KUBERNETES_CLUSTER_NAME=Teknoo Space Hydrogen
-            - SPACE_KUBERNETES_CLUSTER_TYPE=kubernetes
             - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
             - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
             - SPACE_OCI_GLOBAL_REGISTRY_USERNAME=spaceuser
@@ -116,8 +113,6 @@ services:
             - SPACE_JWT_TTL=31104000
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
-            - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
-            - SPACE_STORAGE_DEFAULT_SIZE=3Gi
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem
@@ -178,7 +173,6 @@ services:
         working_dir: /var/www/space
         command: ["bin/console", "messenger:consume", "execute_job"]
         environment:
-            - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_HOSTNAME=localhost
             - SPACE_JOB_ROOT=/tmp
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
@@ -186,15 +180,6 @@ services:
             - SPACE_JWT_TTL=31104000
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
-            - SPACE_KUBERNETES_CLUSTER_ENV=prod
-            - SPACE_KUBERNETES_CLUSTER_NAME=Teknoo Space Hydrogen
-            - SPACE_KUBERNETES_CLUSTER_TYPE=kubernetes
-            - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
-            - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
-            - SPACE_OCI_GLOBAL_REGISTRY_USERNAME=spaceuser
-            - SPACE_OCI_REGISTRY_IMAGE=registry:latest
-            - SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
-            - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
