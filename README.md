@@ -132,28 +132,34 @@ Environnements variables configuration
 --------------------------------------
 * Global configuration :
   * `SPACE_HOSTNAME` : (string) url of the Space instance.
-  * `SPACE_JOB_ROOT` : (string) path where run reployment (git clone and build image), `/tmp` by default.
-  * Mercure : 
-    * `SPACE_MERCURE_PUBLISHING_ENABLED` : (int/bool) to enable or not mercure protocol to allow redirection of user to 
-                                           the final job page when it is started. *Optional*
-    * `MERCURE_PUBLISH_URL` : (string) Mercure url to push the job page url to follow the deployment. *Optional*
-    * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
-    * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
   * East PaaS Encryption : 
     * Encryptions capacities in messages between servers and agents or workers : 
     * `TEKNOO_PAAS_SECURITY_ALGORITHM` (with `rsa` ou `dsa`).
     * `TEKNOO_PAAS_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
     * (optional) `TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the private key.
     * `TEKNOO_PAAS_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
-  * Symfony :
-    * `MESSENGER_NEW_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment 
-                                request.
-    * `MESSENGER_HISTORY_SENT_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch deployment 
-                                     event from builder worker to persist it.
-    * `MESSENGER_JOB_DONE_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch the final 
-                                 deployment event from builder worker when it's done.
-    * `MESSENGER_EXECUTE_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a configured 
-                                    deployment of a project to a builder worker.
+    * Default kubernetes annotations for ingresses **(Only one of these options)** *Optional* :
+      * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON` : (json string).
+      * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (php file returning an array).
+* Web configuration
+  * Doctrine ODM
+    * `MONGODB_SERVER` : (string) mongodb DSN.
+    * `MONGODB_NAME` : (string) database name.
+  * Symfony
+    * `APP_SECRET` : (string) `framework.secret` value.
+    * `APP_REMEMBER_SECRET` : (string) `remember_me.secret` value in Symfony firewall.
+    * `MESSENGER_NEW_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment
+      request.
+  * Mailer.
+      * `MAILER_TRANSPORT` : (string) mailer protocol. `smtp` by default. *Optional*
+      * `MAILER_HOST` : (string) mail server. *Optional*
+      * `MAILER_USER` : (string) username to access to the mail server. *Optional*
+      * `MAILER_PASSWORD` : (string) password to access to the mail server. *Optional*
+  * Mercure : 
+    * `SPACE_MERCURE_PUBLISHING_ENABLED` : (int/bool) to enable or not mercure protocol to allow redirection of user to 
+                                           the final job page when it is started. *Optional*
+    * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
+    * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
   * OCI images building :
     * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default.
     * `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account. 
@@ -168,43 +174,30 @@ Environnements variables configuration
     * `SPACE_OCI_GLOBAL_REGISTRY_PWD` : (string) password to access to this registry.
   * Kubernetes :
     * `SPACE_KUBERNETES_CLIENT_TIMEOUT` : (int) max time in seconds allowed for each Kubernetes's API query.
-                                          `3` by default. *Optional*
+      `3` by default. *Optional*
     * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
-                                          `1` by default. *Optional*
+      `1` by default. *Optional*
     * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client account
-                                          `space-client-` by default. *Optional*
-    * `SPACE_KUBERNETES_MASTER` : (string) URL of Kubernetes API server.
+      `space-client-` by default. *Optional*
+    * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
     * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
-                                        (namespace, role, etc..).
-    * `SPACE_KUBERNETES_CA_VALUE` : (string) CA for custom TLS certificate of the Kubernetes API Service. *Optional*
-    * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC. 
-                              `nfs.csi.k8s.io` by default. *Optional*
+      (namespace, role, etc..).
+    * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service. *Optional*
+    * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
+      `nfs.csi.k8s.io` by default. *Optional*
     * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
     * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `kubernetes.io/ingress.class` in ingresses.
-                                                `public` by default. *Optional*
+      `public` by default. *Optional*
     * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
-                               `lets-encrypt` by default. *Optional*
-    * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service 
-                                                             account token creation. `5` by default. *Optional*
-    * Default kubernetes annotations for ingresses **(Only one of these options)** *Optional* :
-      * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON` : (json string).
-      * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (php file returning an array).
-  * Mailer.
-    * `MAILER_TRANSPORT` : (string) mailer protocol. `smtp` by default. *Optional*
-    * `MAILER_HOST` : (string) mail server. *Optional*
-    * `MAILER_USER` : (string) username to access to the mail server. *Optional*
-    * `MAILER_PASSWORD` : (string) password to access to the mail server. *Optional*
-* Web configuration
-  * Doctrine ODM
-    * `MONGODB_SERVER` : (string) mongodb DSN.
-    * `MONGODB_NAME` : (string) database name.
-  * Symfony
-    * `APP_SECRET` : (string) `framework.secret` value.
-    * `APP_REMEMBER_SECRET` : (string) `remember_me.secret` value in Symfony firewall.
+      `lets-encrypt` by default. *Optional*
+    * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
+      account token creation. `5` by default. *Optional*
+
   * Subscription
       * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a 
                                              valid code. *Optional*
       * `SPACE_CODE_GENERATOR_SALT` : (string) salt used to compute the code with the account's name. *Optional*
+
   * Project creation
     * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form. 
     * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form. 
@@ -213,6 +206,7 @@ Environnements variables configuration
                                        `prod` by default. *Optional*
   * Job create
     * `SPACE_NEW_JOB_WAITING_TIME` : (int) time in seconds to wait before redirect user to the job page. *Optional*
+
   * Kubernetes
     * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the 
                                      Space dashboard. *Optional*
@@ -221,14 +215,32 @@ Environnements variables configuration
     * Doctrine ODM :
       * `MONGODB_SERVER` : (string) mongodb DSN
       * `MONGODB_NAME` : (string) database name
-  * `SPACE_WORKER_TIME_LIMIT` : (int) max time allowed for each deployment before kill it. *Optional*
-  * `SPACE_GIT_TIMEOUT` : (int) max time allowed to clone a project in the deployment.
-                          Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
-  * Healthcheck :
+
+  * Symfony Messengers:
+    * `MESSENGER_HISTORY_SENT_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch deployment 
+                                     event from builder worker to persist it.
+    * `MESSENGER_JOB_DONE_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch the final 
+                                 deployment event from builder worker when it's done.
+    * `MESSENGER_EXECUTE_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a configured 
+                                    deployment of a project to a builder worker.
+
+  * Mercure (Only for new Job workers): 
+    * `SPACE_MERCURE_PUBLISHING_ENABLED` : (int/bool) to enable or not mercure protocol to allow redirection of user to 
+                                           the final job page when it is started. *Optional*
+    * `MERCURE_PUBLISH_URL` : (string) Mercure url to push the job page url to follow the deployment. *Optional*
+    * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+  
+  * Healthcheck (for all workers, agents and builders) :
     * `SPACE_PING_FILE` : (string) file used by Space's workers and builder to indicate the state of health, read by
                           the orchestrator. `/tmp/ping_file` by default. *Optional*
     * `SPACE_PING_SECONDS` : (int) number of seconds between each update in the `ping file`, `60` by default. *Optional*
-  * Deployment :
+
+  * Execute job / deployment :
+    *  Global configuration :
+      * `SPACE_JOB_ROOT` : (string) path where run reployment (git clone and build image), `/tmp` by default.
+      * `SPACE_WORKER_TIME_LIMIT` : (int) max time allowed for each deployment before kill it. *Optional*
+      * `SPACE_GIT_TIMEOUT` : (int) max time allowed to clone a project in the deployment.
+                          Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
     * PaaS Compilation :
       * Embedded OCI library with Dockerfile **(Only one of these options)** *Optional* :
         * `SPACE_PAAS_IMAGE_LIBRARY_JSON` : (json string).
@@ -237,19 +249,20 @@ Environnements variables configuration
         * `SPACE_PAAS_GLOBAL_VARIABLES_JSON` : (json string).
         * `SPACE_PAAS_GLOBAL_VARIABLES_FILE` : (php file returning an array).
 
-    * Compilation extensions (to be use with `extends` instruction in the `.paas.yaml`) :
-      * Pods **(Only one of these options)** *Optional* :
-        * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON` : (json string).
-        * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE` : (php file returning an array).
-      * Containers **(Only one of these options)** *Optional* :
-        * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON` : (json string).
-        * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE` : (php file returning an array).
-      * Services **(Only one of these options)** *Optional* :
-        * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON` : (json string).
-        * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
-      * Ingresses **(Only one of these options)** *Optional* :
-        * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON` : (json string).
-        * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+      * Compilation extensions (to be use with `extends` instruction in the `.paas.yaml`) :
+        * Pods **(Only one of these options)** *Optional* :
+          * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON` : (json string).
+          * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+        * Containers **(Only one of these options)** *Optional* :
+          * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON` : (json string).
+          * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+        * Services **(Only one of these options)** *Optional* :
+          * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON` : (json string).
+          * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+        * Ingresses **(Only one of these options)** *Optional* :
+          * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON` : (json string).
+          * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+
     * Hook :
       * Composer :
         * `SPACE_COMPOSER_PATH_JSON` : (json string) path to the composer executable. `$PATH/composer` by default
@@ -276,6 +289,7 @@ Environnements variables configuration
           * `SPACE_MAKE_PATH_FILE` : file alternative
         * `SPACE_MAKE_TIMEOUT` : (int) max time allowed to install dependencies via Make.
                                      Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+
     * OCI Image building :
         * `SPACE_IMG_BUILDER_CMD` : (string) name of the tool to use to create OCI/Docker image. 
                                     `buildah` by default. *Optional*
@@ -283,6 +297,19 @@ Environnements variables configuration
           Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
         * `SPACE_IMG_BUILDER_PLATFORMS` : (string) name of the platform whose image is dedicated.
           `linux/amd64` by default. *Optional*
+        
+    * Kubernetes :
+        * `SPACE_KUBERNETES_CLIENT_TIMEOUT` : (int) max time in seconds allowed for each Kubernetes's API query.
+          `3` by default. *Optional*
+        * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
+          `1` by default. *Optional*
+        * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
+          `nfs.csi.k8s.io` by default. *Optional*
+        * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `kubernetes.io/ingress.class` in ingresses.
+          `public` by default. *Optional*
+        * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
+          `lets-encrypt` by default. *Optional*
+
 
 Commands
 --------
