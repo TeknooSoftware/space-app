@@ -17,6 +17,8 @@ space_project_edit:
         _controller: 'teknoo.space.endpoint.project.edit'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        formOptions:
+            allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooEastPaas/Project/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
@@ -54,6 +56,8 @@ space_project_new:
         _controller: 'teknoo.space.endpoint.project.new'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        formOptions:
+            allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
         route: 'space_project_edit'

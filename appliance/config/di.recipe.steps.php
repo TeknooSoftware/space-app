@@ -302,6 +302,7 @@ return [
 
     UpdateProjectCredentialsFromAccount::class => create()
         ->constructor(
+            get('teknoo.space.kubernetes.cluster.default_name'),
             get('teknoo.space.kubernetes.cluster.default_type'),
             get('teknoo.space.kubernetes.master'),
         ),

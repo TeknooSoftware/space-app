@@ -80,6 +80,7 @@ class PrepareProject
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
         $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
+        $cluster->setLocked(true);
         $cluster->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),

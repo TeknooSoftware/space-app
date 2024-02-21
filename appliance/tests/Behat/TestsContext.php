@@ -2052,6 +2052,14 @@ class TestsContext implements Context
     }
 
     /**
+     * @When the API is called to get the last project as admin
+     */
+    public function theApiIsCalledToGetTheLastProjectAsAdmin(): void
+    {
+        $this->theApiIsCalledToGetTheLastProject('space_api_admin_project_edit');
+    }
+
+    /**
      * @When the API is called to get the last project
      */
     public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_project_edit'): void
@@ -2319,6 +2327,21 @@ class TestsContext implements Context
     public function theApiIsCalledToEditAProjectWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToEditAProject($bodyFields, 'json');
+    }
+
+    /**
+     * @When the API is called to edit a project as admin:
+     * @When the API is called to edit a project as admin with a :format body:
+     */
+    public function theApiIsCalledToEditAProjectAsAdmin(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $this->theApiIsCalledToEditAProject(
+            bodyFields: $bodyFields,
+            format: $format,
+            routeName: 'space_api_admin_project_edit',
+        );
     }
 
     /**

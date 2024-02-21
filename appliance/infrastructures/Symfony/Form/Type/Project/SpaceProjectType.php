@@ -50,6 +50,9 @@ class SpaceProjectType extends AbstractType
         $builder->add(
             'project',
             ProjectType::class,
+            [
+                'allowEditingOfLocked' => $options['allowEditingOfLocked'] ?? false,
+            ],
         );
 
         return $this;
@@ -61,6 +64,7 @@ class SpaceProjectType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => SpaceProject::class,
+            'allowEditingOfLocked' => false,
         ]);
 
         return $this;

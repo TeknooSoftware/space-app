@@ -44,6 +44,8 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
 {
     private UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount;
 
+    private string $defaultClusterName;
+
     private string $defaultClusterType;
 
     private string $defaultClusterAddress;
@@ -55,9 +57,11 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     {
         parent::setUp();
 
+        $this->defaultClusterName = '42';
         $this->defaultClusterType = '42';
         $this->defaultClusterAddress = '42';
         $this->updateProjectCredentialsFromAccount = new UpdateProjectCredentialsFromAccount(
+            $this->defaultClusterName,
             $this->defaultClusterType,
             $this->defaultClusterAddress,
         );

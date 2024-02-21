@@ -113,7 +113,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to get the last project
+    When the API is called to get the last project as admin
     Then get a JSON reponse
     And the serialized project "my project"
 
@@ -150,7 +150,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to edit a project:
+    When the API is called to edit a project as admin:
       | field                                                       | value                                 |
       | space_project.project.name                                  | Behats Test                           |
       | space_project.projectMetadata.projectUrl                    | https://behat.tests                   |
@@ -188,7 +188,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to edit a project with a json body:
+    When the API is called to edit a project as admin with a json body:
       | field                                         | value                                 |
       | project.name                                  | Behats Test                           |
       | projectMetadata.projectUrl                    | https://behat.tests                   |

@@ -42,6 +42,7 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
 class UpdateProjectCredentialsFromAccount
 {
     public function __construct(
+        private string $defaultClusterName,
         private string $defaultClusterType,
         private string $defaultClusterAddress,
     ) {
@@ -81,15 +82,26 @@ class UpdateProjectCredentialsFromAccount
                             continue;
                         }
 
-                        $cluster->setType($this->defaultClusterType);
-                        $cluster->setAddress($this->defaultClusterAddress);
-                        $cluster->setIdentity(
-                            new ClusterCredentials(
-                                caCertificate: $accountCredential->getCaCertificate(),
-                                clientCertificate: $accountCredential->getClientCertificate(),
-                                clientKey: $accountCredential->getClientKey(),
-                                token: $accountCredential->getToken(),
-                            ),
+                        $cluster->visit(
+                            [
+                                'name' => function ($name) use ($cluster, $accountCredential): void {
+                                    if ($this->defaultClusterName !== $name) {
+                                        return;
+                                    }
+
+                                    $cluster->setType($this->defaultClusterType);
+                                    $cluster->setAddress($this->defaultClusterAddress);
+                                    $cluster->setLocked(true);
+                                    $cluster->setIdentity(
+                                        new ClusterCredentials(
+                                            caCertificate: $accountCredential->getCaCertificate(),
+                                            clientCertificate: $accountCredential->getClientCertificate(),
+                                            clientKey: $accountCredential->getClientKey(),
+                                            token: $accountCredential->getToken(),
+                                        ),
+                                    );
+                                }
+                            ]
                         );
                     }
                 }

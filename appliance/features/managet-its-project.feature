@@ -60,13 +60,13 @@ Feature: On a space instance, eacch allowed users can register a new project on 
       | space_project.project.sourceRepository.identity.privateKey |                                       |
       | space_project.project.imagesRegistry.apiUrl                | my-company.registry.demo.teknoo.space |
       | space_project.project.imagesRegistry.identity.username     | my-company-registry                   |
-      | space_project.project.imagesRegistry.identity.password     | my-company-foobar                     |
+      | space_project.project.imagesRegistry.identity.password     |                                       |
       | space_project.project.clusters.0.name                      | Demo Kube Cluster                     |
       | space_project.project.clusters.0.type                      | kubernetes                            |
       | space_project.project.clusters.0.address                   | https://kubernetes.localhost:12345    |
       | space_project.project.clusters.0.environment.name          | prod                                  |
       | space_project.project.clusters.0.identity.caCertificate    | -----BEGIN CERTIFICATE-----FooBar     |
-      | space_project.project.clusters.0.identity.token            | aFakeToken                            |
+      | space_project.project.clusters.0.identity.token            |                                       |
 
   Scenario: Update a project
     Given A Space app instance
@@ -94,13 +94,13 @@ Feature: On a space instance, eacch allowed users can register a new project on 
       | space_project.project.sourceRepository.identity.privateKey |                                       |
       | space_project.project.imagesRegistry.apiUrl                | my-company.registry.demo.teknoo.space |
       | space_project.project.imagesRegistry.identity.username     | my-company-registry                   |
-      | space_project.project.imagesRegistry.identity.password     | my-company-foobar                     |
+      | space_project.project.imagesRegistry.identity.password     |                                       |
       | space_project.project.clusters.0.name                      | Demo Kube Cluster                     |
       | space_project.project.clusters.0.type                      | kubernetes                            |
       | space_project.project.clusters.0.address                   | https://kubernetes.localhost:12345    |
       | space_project.project.clusters.0.environment.name          | prod                                  |
       | space_project.project.clusters.0.identity.caCertificate    | -----BEGIN CERTIFICATE-----FooBar     |
-      | space_project.project.clusters.0.identity.token            | aFakeToken                            |
+      | space_project.project.clusters.0.identity.token            |                                       |
     When it submits the form:
       | field                                                      | value                          |
       | space_project._token                                       | <auto>                         |
@@ -132,13 +132,13 @@ Feature: On a space instance, eacch allowed users can register a new project on 
       | space_project.project.sourceRepository.identity.privateKey |                                       |
       | space_project.project.imagesRegistry.apiUrl                | my-company.registry.demo.teknoo.space |
       | space_project.project.imagesRegistry.identity.username     | my-company-registry                   |
-      | space_project.project.imagesRegistry.identity.password     | my-company-foobar                     |
+      | space_project.project.imagesRegistry.identity.password     |                                       |
       | space_project.project.clusters.0.name                      | Demo Kube Cluster                     |
       | space_project.project.clusters.0.type                      | kubernetes                            |
       | space_project.project.clusters.0.address                   | https://kubernetes.localhost:12345    |
       | space_project.project.clusters.0.environment.name          | prod                                  |
       | space_project.project.clusters.0.identity.caCertificate    | -----BEGIN CERTIFICATE-----FooBar     |
-      | space_project.project.clusters.0.identity.token            | aFakeToken                            |
+      | space_project.project.clusters.0.identity.token            |                                       |
 
   Scenario: Open a project from another account
     Given A Space app instance

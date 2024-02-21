@@ -81,6 +81,7 @@
 {% block _space_project_project_clusters_entry_widget %}
     <div class="col-12 subform">
         <div class="row">
+            {% dump form.name %}
             {{ form_row(form.name, {"colClass": "col-6"}) }}
             {{ form_row(form.type, {"colClass": "col-6"}) }}
             {{ form_row(form.address, {"colClass": "col-6"}) }}
