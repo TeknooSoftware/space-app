@@ -45,6 +45,6 @@ interface DashboardFrameInterface
         ServerRequestInterface $serverRequest,
         string $wildcard = '',
         ?Account $account = null,
-        ?AccountCredential $accountCredential = null,
+        ?AccountCredential $accountCredential = null, //todo Use AccountsCredentialsWallet
     ): DashboardFrameInterface;
 }

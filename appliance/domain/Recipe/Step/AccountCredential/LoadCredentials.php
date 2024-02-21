@@ -77,10 +77,12 @@ class LoadCredentials
 
         /** @var Promise<AccountCredential, mixed, mixed> $fetchedPromise */
         $fetchedPromise = new Promise(
+            //todo Use AccountsCredentialsWallet
             static function (AccountCredential $accountCredential) use ($manager) {
                 $manager->updateWorkPlan(
                     [
                         AccountCredential::class => $accountCredential,
+                        //todo select from AccountsCredentialsWallet if needed, check if need
                         'persistentVolumeClaimName' => $accountCredential->getPersistentVolumeClaimName(),
                         'registryConfigName' => $accountCredential->getRegistryConfigName(),
                         'ociRegistryConfig' => $accountCredential->getRegistryConfigName(),

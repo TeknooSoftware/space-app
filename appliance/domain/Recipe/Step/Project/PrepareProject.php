@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Project;
+namespace Teknoo\Space\Recipe\Step\Project;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Cluster;
@@ -52,6 +52,7 @@ class PrepareProject
     ) {
     }
 
+    //todo Use AccountsCredentialsWallet
     public function __invoke(ManagerInterface $manager, Project $projectInstance, AccountCredential $credential): self
     {
         $projectInstance->setImagesRegistry(

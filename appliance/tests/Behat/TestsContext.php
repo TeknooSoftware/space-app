@@ -815,6 +815,7 @@ class TestsContext implements Context
         $sac = mb_strtolower(str_replace(' ', '-', $accountName));
         $accountCredentials = new AccountCredential(
             account: $account,
+            clusterName: 'Behat Test Cluster',
             registryUrl: $sac . '.registry.demo.teknoo.space',
             registryAccountName: $sac . '-registry',
             registryConfigName: $sac . 'docker-config',

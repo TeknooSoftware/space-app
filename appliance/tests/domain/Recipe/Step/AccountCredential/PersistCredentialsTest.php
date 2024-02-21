@@ -51,6 +51,8 @@ class PersistCredentialsTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
+    private string $clusterName;
+
     private bool $prefereRealDate;
 
     /**
@@ -62,8 +64,14 @@ class PersistCredentialsTest extends TestCase
 
         $this->writer = $this->createMock(AccountCredentialWriter::class);
         $this->datesService = $this->createMock(DatesService::class);
+        $this->clusterName = '42';
         $this->prefereRealDate = true;
-        $this->persistCredentials = new PersistCredentials($this->writer, $this->datesService, $this->prefereRealDate);
+        $this->persistCredentials = new PersistCredentials(
+            $this->writer,
+            $this->datesService,
+            $this->clusterName,
+            $this->prefereRealDate,
+        );
     }
 
     public function testInvoke(): void

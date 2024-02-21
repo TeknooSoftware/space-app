@@ -47,6 +47,7 @@ class PersistCredentials
     public function __construct(
         private AccountCredentialWriter $writer,
         private DatesService $datesService,
+        private string $defaultClusterName,
         private bool $prefereRealDate,
     ) {
     }
@@ -77,6 +78,7 @@ class PersistCredentials
 
         $accountCredential = new AccountCredential(
             account: $object,
+            clusterName: $this->defaultClusterName,
             registryUrl: $registryUrl,
             registryAccountName: $registryAccountName,
             registryConfigName: $registryConfigName,
