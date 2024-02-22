@@ -62,6 +62,7 @@ RUN set -eux ; \
                            gd \
                            gettext \
                            intl \
+                           iconv \
                            mbstring \
                            pcntl \
                            pdo \
