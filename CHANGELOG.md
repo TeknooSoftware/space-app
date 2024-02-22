@@ -1,5 +1,21 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta36] - 2024-02-22
+### Beta Release
+- Support of locked cluster
+- Clean some code
+- use East PaaS 2.6:
+    - `ClusterCredentialsType` does not show `password` and `token`. And add a non mapped `clear` field to force empty field
+      (else the empty value is ignored to avoid to lost data).
+    - `SshIdentityType` does not show `privateKey`. And add a non mapped `clear` field to force empty field
+      (else the empty value is ignored to avoid to lost data).
+    - `XRegistryAuthType` does not show `password`. And add a non mapped `clear` field to force empty field
+      (else the empty value is ignored to avoid to lost data).
+    - Add `locked` status to cluster to forbid cluster's update when the form's option `allowEditingOfLocked` is not set to
+      true. For admin's forms, the attribute is at true.
+      - This new attribute has no impact to deployment, only for CRUD operations
+- Prepare wallet of account credentials, to support severals default clusters in one Space Instance.
+
 ## [1.0.0-beta35] - 2024-02-19
 ### Beta Release
 - Support Symfony 7.0 (Space stay compliant and tested with Symfony 6.4 (LTS Version)).
