@@ -15,4 +15,9 @@ doctrine_mongodb:
                     dir: '%space.project_dir%/config/doctrine'
                     is_bundle: false
                     prefix: 'Teknoo\Space\Object\Persisted'
-            metadata_cache_driver: apcu
+            metadata_cache_driver: apcu #toto update  to use the framework's cache configuration or allow edit via env
+
+when@prod:
+    doctrine_mongodb:
+        auto_generate_proxy_classes: false
+        auto_generate_hydrator_classes: false

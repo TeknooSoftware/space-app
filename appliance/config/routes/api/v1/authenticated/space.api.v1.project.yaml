@@ -7,6 +7,8 @@ space_api_project_new:
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        formOptions:
+            allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
         route: 'space_api_project_edit'
@@ -22,6 +24,8 @@ space_api_project_edit:
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        formOptions:
+            allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooEastPaas/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'

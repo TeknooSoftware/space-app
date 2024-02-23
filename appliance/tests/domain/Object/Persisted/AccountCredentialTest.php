@@ -46,6 +46,8 @@ class AccountCredentialTest extends TestCase
 
     private Account|MockObject $account;
 
+    private string $clusterName;
+
     private string $registryUrl;
 
     private string $registryAccountName;
@@ -78,6 +80,7 @@ class AccountCredentialTest extends TestCase
         parent::setUp();
 
         $this->account = $this->createMock(Account::class);
+        $this->clusterName = '42';
         $this->registryUrl = '42';
         $this->registryAccountName = '42';
         $this->registryConfigName = '42';
@@ -92,6 +95,7 @@ class AccountCredentialTest extends TestCase
         $this->persistentVolumeClaimName = '42';
         $this->accountCredential = new AccountCredential(
             $this->account,
+            $this->clusterName,
             $this->registryUrl,
             $this->registryAccountName,
             $this->registryConfigName,

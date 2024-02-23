@@ -49,3 +49,7 @@ select#new_job_envName {
     height: 100px;
     max-width: 40%;
 }
+
+input[readonly].form-control,textarea[readonly].form-control {
+    background-color: #ced4da !important;
+}

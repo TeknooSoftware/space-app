@@ -25,17 +25,10 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\User;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\East\CommonBundle\Form\Type\StoredPasswordType;
 use Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser;
-use Teknoo\East\Common\Object\StoredPassword;
-use Teknoo\East\Common\Object\User;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)

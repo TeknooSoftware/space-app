@@ -1,4 +1,4 @@
-FROM php:8.2.15-cli
+FROM php:8.3-cli
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
@@ -62,6 +62,7 @@ RUN set -eux ; \
                            gd \
                            gettext \
                            intl \
+                           iconv \
                            mbstring \
                            pcntl \
                            pdo \

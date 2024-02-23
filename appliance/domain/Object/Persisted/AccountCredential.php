@@ -46,6 +46,8 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
 
     private Account $account;
 
+    private string $clusterName;
+
     private string $registryUrl;
 
     private string $registryConfigName;
@@ -72,6 +74,7 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
 
     public function __construct(
         Account $account,
+        string $clusterName,
         string $registryUrl,
         string $registryAccountName,
         string $registryConfigName,
@@ -89,6 +92,7 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
         $this->uniqueConstructorCheck();
 
         $this->account = $account;
+        $this->clusterName = $clusterName;
         $this->registryUrl = $registryUrl;
         $this->registryConfigName = $registryConfigName;
         $this->registryAccountName = $registryAccountName;
@@ -106,6 +110,11 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
     public function getAccount(): Account
     {
         return $this->account;
+    }
+
+    public function getClusterName(): string
+    {
+        return $this->clusterName;
     }
 
     public function getRegistryUrl(): string

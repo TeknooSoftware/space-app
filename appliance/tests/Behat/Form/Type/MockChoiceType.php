@@ -34,7 +34,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MockChoiceType extends ChoiceType
 {
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
