@@ -1,5 +1,38 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta36] - 2024-02-22
+### Beta Release
+- Support of locked cluster
+- Clean some code
+- use East PaaS 2.6:
+    - `ClusterCredentialsType` does not show `password` and `token`. And add a non mapped `clear` field to force empty field
+      (else the empty value is ignored to avoid to lost data).
+    - `SshIdentityType` does not show `privateKey`. And add a non mapped `clear` field to force empty field
+      (else the empty value is ignored to avoid to lost data).
+    - `XRegistryAuthType` does not show `password`. And add a non mapped `clear` field to force empty field
+      (else the empty value is ignored to avoid to lost data).
+    - Add `locked` status to cluster to forbid cluster's update when the form's option `allowEditingOfLocked` is not set to
+      true. For admin's forms, the attribute is at true.
+      - This new attribute has no impact to deployment, only for CRUD operations
+- Prepare wallet of account credentials, to support severals default clusters in one Space Instance.
+
+## [1.0.0-beta35] - 2024-02-19
+### Beta Release
+- Support Symfony 7.0 (Space stay compliant and tested with Symfony 6.4 (LTS Version)).
+  - An LTS version shipped with Symfony 6.4 will be also shipped
+- Enable PHP 8.3 in docker's devs file.
+- Disable Blackfire (not compliant with XDebug with PHP 8.3).
+- Enable Redis
+
+## [1.0.0-beta34] - 2024-02-16
+### Beta Release
+- Upgrade to MongoDb 7.
+- Update libs.
+- Factorize pods' transcribers for Kubernetes.
+- Fix issue in `Job`'s `History` sorting :
+  - `Final` must be at the top of the history chain.
+- Limit verbose about `extra` in history.
+
 ## [1.0.0-beta33] - 2024-02-13
 ### Beta Release
 - Add HTTP API to manage projects and its settings or account's settings. (An API for Job is already present).

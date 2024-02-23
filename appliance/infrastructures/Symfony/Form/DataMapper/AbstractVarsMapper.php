@@ -51,10 +51,10 @@ abstract class AbstractVarsMapper implements DataMapperInterface
      * @param SpaceAccount|SpaceProject|null $data
      * @param Traversable<string, FormInterface> $forms
      */
-    public function mapDataToForms($data, $forms): self
+    public function mapDataToForms($data, $forms): void
     {
         if (!$data instanceof SpaceAccount && !$data instanceof SpaceProject) {
-            return $this;
+            return;
         }
 
         $environments = [];
@@ -89,8 +89,6 @@ abstract class AbstractVarsMapper implements DataMapperInterface
 
         $formArray = iterator_to_array($forms);
         $formArray['sets']->setData($environments);
-
-        return $this;
     }
 
     abstract protected function buildVariable(
@@ -105,10 +103,10 @@ abstract class AbstractVarsMapper implements DataMapperInterface
     /**
      * @param SpaceAccount|SpaceProject|null $data
      */
-    public function mapFormsToData($forms, &$data): self
+    public function mapFormsToData($forms, &$data): void
     {
         if (!$data instanceof SpaceAccount && !$data instanceof SpaceProject) {
-            return $this;
+            return;
         }
 
         $existentVariables = [];
@@ -151,7 +149,5 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         }
 
         $data->variables = $variables;
-
-        return $this;
     }
 }

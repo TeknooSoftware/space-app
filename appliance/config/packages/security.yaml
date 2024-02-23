@@ -101,3 +101,12 @@ security:
         - { path: '^/api', roles: [IS_AUTHENTICATED_FULLY, ~ROLE_RECOVERY] }
         #Default
         - { path: '^/', roles: [ROLE_USER], requires_channel: https }
+
+when@test:
+    security:
+        password_hashers:
+            Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

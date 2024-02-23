@@ -1,4 +1,4 @@
-FROM mongo:4.4.28
+FROM mongo:7
 
 ENV DEBIAN_FRONTEND noninteractive
 

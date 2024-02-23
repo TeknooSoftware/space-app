@@ -99,6 +99,7 @@ class DashboardFrame implements DashboardFrameInterface
         ServerRequestInterface $serverRequest,
         string $wildcard = '',
         ?Account $account = null,
+        //todo Use AccountsCredentialsWallet
         ?AccountCredential $accountCredential = null,
     ): DashboardFrameInterface {
         if (empty($wildcard)) {
@@ -111,6 +112,7 @@ class DashboardFrame implements DashboardFrameInterface
             method: $serverRequest->getMethod(),
             uri: $dashboardUrl,
             headers: [
+                //todo check if user has admin role before use cluster token
                 'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $this->clusterToken),
             ],
         );

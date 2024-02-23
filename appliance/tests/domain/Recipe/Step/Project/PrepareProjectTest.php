@@ -23,13 +23,13 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Project;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Project\PrepareProject;
 use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 
 /**
  * Class PrepareProjectTest.
@@ -38,7 +38,7 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Project\PrepareProject
+ * @covers \Teknoo\Space\Recipe\Step\Project\PrepareProject
  */
 class PrepareProjectTest extends TestCase
 {

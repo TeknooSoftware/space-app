@@ -54,6 +54,7 @@ class UpdateCredentials
         string $registryAccountName,
         #[SensitiveParameter]
         string $registryPassword,
+        //todo Use AccountsCredentialsWallet
         AccountCredential $accountCredential,
         AccountHistory $accountHistory
     ): self {

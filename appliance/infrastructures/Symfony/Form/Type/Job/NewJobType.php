@@ -25,15 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Job;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
-use Teknoo\Space\Object\DTO\NewJob;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)

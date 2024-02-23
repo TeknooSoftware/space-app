@@ -66,17 +66,16 @@ class AccountVarsMapperTest extends TestCase
             $this->createMock(AccountPersistedVariable::class),
         ];
 
-        self::assertInstanceOf(
-            AccountVarsMapper::class,
-            $this->accountVarsType->mapDataToForms(
-                $account,
-                new ArrayIterator(
-                    [
-                        'sets' => $this->createMock(FormInterface::class),
-                    ]
-                ),
+        $this->accountVarsType->mapDataToForms(
+            $account,
+            new ArrayIterator(
+                [
+                    'sets' => $this->createMock(FormInterface::class),
+                ]
             ),
         );
+
+        self::assertTrue(true);
     }
 
     public function testMapFormsToData(): void
@@ -117,16 +116,16 @@ class AccountVarsMapperTest extends TestCase
                     )
                 ]
             );
-        self::assertInstanceOf(
-            AccountVarsMapper::class,
-            $this->accountVarsType->mapFormsToData(
-                new ArrayIterator(
-                    [
-                        'sets' => $form,
-                    ]
-                ),
-                $account,
+
+        $this->accountVarsType->mapFormsToData(
+            new ArrayIterator(
+                [
+                    'sets' => $form,
+                ]
             ),
+            $account,
         );
+
+        self::assertTrue(true);
     }
 }

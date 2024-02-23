@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Project;
+namespace Teknoo\Space\Recipe\Step\Project;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Cluster;
@@ -52,6 +52,7 @@ class PrepareProject
     ) {
     }
 
+    //todo Use AccountsCredentialsWallet
     public function __invoke(ManagerInterface $manager, Project $projectInstance, AccountCredential $credential): self
     {
         $projectInstance->setImagesRegistry(
@@ -80,6 +81,7 @@ class PrepareProject
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
         $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
+        $cluster->setLocked(true);
         $cluster->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),

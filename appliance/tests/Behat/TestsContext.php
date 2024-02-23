@@ -34,6 +34,7 @@ use DI\Container as DiContainer;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
+use Http\Adapter\Guzzle7\Client as ClientAlias;
 use OTPHP\TOTP;
 use phpseclib3\Crypt\RSA;
 use PHPUnit\Framework\Assert;
@@ -119,6 +120,7 @@ use function array_merge;
 use function array_shift;
 use function array_slice;
 use function array_values;
+use function class_exists;
 use function count;
 use function current;
 use function end;
@@ -310,7 +312,12 @@ class TestsContext implements Context
         $this->sfContainer = $this->kernel->getContainer();
 
         $this->setDateTime(new DateTime('2018-10-01 02:03:04', new \DateTimeZone('UTC')));
-        $this->setSerialGenerator(fn () => 0);
+        $counter = 0;
+        $this->setSerialGenerator(
+            function () use (&$counter) {
+                return ++$counter;
+            }
+        );
 
         HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, Symfony::class);
     }
@@ -339,7 +346,13 @@ class TestsContext implements Context
     {
         MockClientInstantiator::$testsContext = $this;
 
-        HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, MockClientInstantiator::class);
+        if (class_exists(SymfonyHttplug::class)) {
+            HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, MockClientInstantiator::class);
+        }
+
+        if (class_exists(ClientAlias::class)) {
+            HttpClientDiscovery::registerInstantiator(ClientAlias::class, MockClientInstantiator::class);
+        }
     }
 
     public function setManifests(string $uri, array $manifests): void
@@ -802,6 +815,7 @@ class TestsContext implements Context
         $sac = mb_strtolower(str_replace(' ', '-', $accountName));
         $accountCredentials = new AccountCredential(
             account: $account,
+            clusterName: 'Behat Test Cluster',
             registryUrl: $sac . '.registry.demo.teknoo.space',
             registryAccountName: $sac . '-registry',
             registryConfigName: $sac . 'docker-config',
@@ -2039,6 +2053,14 @@ class TestsContext implements Context
     }
 
     /**
+     * @When the API is called to get the last project as admin
+     */
+    public function theApiIsCalledToGetTheLastProjectAsAdmin(): void
+    {
+        $this->theApiIsCalledToGetTheLastProject('space_api_admin_project_edit');
+    }
+
+    /**
      * @When the API is called to get the last project
      */
     public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_project_edit'): void
@@ -2306,6 +2328,21 @@ class TestsContext implements Context
     public function theApiIsCalledToEditAProjectWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToEditAProject($bodyFields, 'json');
+    }
+
+    /**
+     * @When the API is called to edit a project as admin:
+     * @When the API is called to edit a project as admin with a :format body:
+     */
+    public function theApiIsCalledToEditAProjectAsAdmin(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $this->theApiIsCalledToEditAProject(
+            bodyFields: $bodyFields,
+            format: $format,
+            routeName: 'space_api_admin_project_edit',
+        );
     }
 
     /**
