@@ -16,3 +16,8 @@ doctrine_mongodb:
                     is_bundle: false
                     prefix: 'Teknoo\Space\Object\Persisted'
             metadata_cache_driver: apcu
+
+when@prod:
+    doctrine_mongodb:
+        auto_generate_proxy_classes: false
+        auto_generate_hydrator_classes: false
