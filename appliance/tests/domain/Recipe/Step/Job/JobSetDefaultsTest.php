@@ -29,20 +29,20 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Recipe\Step\Job\JobAddExtra;
+use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 
 /**
- * Class JobAddExtraTest.
+ * Class JobSetDefaultsTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Job\JobAddExtra
+ * @covers \Teknoo\Space\Recipe\Step\Job\JobSetDefaults
  */
-class JobAddExtraTest extends TestCase
+class JobSetDefaultsTest extends TestCase
 {
-    private JobAddExtra $jobAddExtra;
+    private JobSetDefaults $jobSetDefaults;
 
     private string $storageProvisioner;
 
@@ -54,14 +54,14 @@ class JobAddExtraTest extends TestCase
         parent::setUp();
 
         $this->storageProvisioner = '42';
-        $this->jobAddExtra = new JobAddExtra($this->storageProvisioner);
+        $this->jobSetDefaults = new JobSetDefaults($this->storageProvisioner);
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            JobAddExtra::class,
-            ($this->jobAddExtra)(
+            JobSetDefaults::class,
+            ($this->jobSetDefaults)(
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(Job::class),
                 $this->createMock(AccountCredential::class),

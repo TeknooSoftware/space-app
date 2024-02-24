@@ -60,7 +60,7 @@ class MockClientInstantiator implements InstantiatorInterface
                     $uriPars = explode('v1', $uri);
                     $model = trim(array_pop($uriPars), '/');
 
-                    $body = (string)$request->getBody();
+                    $body = (string) $request->getBody();
 
                     $this->testsContext->setManifests($model, json_decode($body, true));
                 }

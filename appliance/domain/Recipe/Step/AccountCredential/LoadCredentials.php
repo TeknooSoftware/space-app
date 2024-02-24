@@ -83,7 +83,6 @@ class LoadCredentials
                     [
                         AccountCredential::class => $accountCredential,
                         //todo select from AccountsCredentialsWallet if needed, check if need
-                        'persistentVolumeClaimName' => $accountCredential->getPersistentVolumeClaimName(),
                         'registryConfigName' => $accountCredential->getRegistryConfigName(),
                         'ociRegistryConfig' => $accountCredential->getRegistryConfigName(),
                     ],

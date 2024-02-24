@@ -111,7 +111,7 @@ use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
-use Teknoo\Space\Recipe\Step\Job\JobAddExtra;
+use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareCriteria as JobPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
@@ -263,7 +263,7 @@ return array(
         static function (NewJobStepsInterface $previous, ContainerInterface $container): NewJobStepsInterface {
             $previous->add(51, $container->get(LoadAccountFromProject::class));
             $previous->add(52, $container->get(LoadCredentials::class));
-            $previous->add(53, $container->get(JobAddExtra::class));
+            $previous->add(53, $container->get(JobSetDefaults::class));
             $previous->add(65, $container->get(JobUpdaterNotifier::class));
             $previous->add(75, $container->get(PersistJobVar::class));
 

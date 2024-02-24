@@ -35,7 +35,7 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobAddExtra
+class JobSetDefaults
 {
     public function __construct(
         private string $storageProvisioner,
@@ -48,10 +48,10 @@ class JobAddExtra
         //todo Use AccountsCredentialsWallet
         AccountCredential $accountCredential,
     ): self {
-        $job->setExtra(
+        $job->setDefaults(
             [
-                'ociRegistryConfig' => $accountCredential->getRegistryConfigName(),
-                'storageIdentifier' => $this->storageProvisioner,
+                'oci-registry-config-name' => $accountCredential->getRegistryConfigName(),
+                'storage-provider' => $this->storageProvisioner,
             ]
         );
 

@@ -83,7 +83,7 @@ use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
-use Teknoo\Space\Recipe\Step\Job\JobAddExtra;
+use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
@@ -308,7 +308,7 @@ return [
             get('teknoo.space.kubernetes.master'),
         ),
 
-    JobAddExtra::class => create()
+    JobSetDefaults::class => create()
         ->constructor(
             get('teknoo.east.paas.default_storage_provider'),
         ),

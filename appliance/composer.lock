@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ad08520a1e62cf1ed57e10a1a5716a3",
+    "content-hash": "c5a89fb8dfeecdd53433e2e960f36bd5",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4122,21 +4122,21 @@
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "1.8.1",
+            "version": "1.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "bc3dc91a5e9b14aa06d1d9e90647c5c5a2cc5353"
+                "reference": "153ae662783729388a584b4361f2545e4d841e3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/bc3dc91a5e9b14aa06d1d9e90647c5c5a2cc5353",
-                "reference": "bc3dc91a5e9b14aa06d1d9e90647c5c5a2cc5353",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/153ae662783729388a584b4361f2545e4d841e3c",
+                "reference": "153ae662783729388a584b4361f2545e4d841e3c",
                 "shasum": ""
             },
             "require": {
                 "doctrine/deprecations": "^1.0",
-                "php": "^7.4 || ^8.0",
+                "php": "^7.3 || ^8.0",
                 "phpdocumentor/reflection-common": "^2.0",
                 "phpstan/phpdoc-parser": "^1.13"
             },
@@ -4174,9 +4174,9 @@
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
             "support": {
                 "issues": "https://github.com/phpDocumentor/TypeResolver/issues",
-                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.8.1"
+                "source": "https://github.com/phpDocumentor/TypeResolver/tree/1.8.2"
             },
-            "time": "2024-01-18T19:15:27+00:00"
+            "time": "2024-02-23T11:10:43+00:00"
         },
         {
             "name": "phpseclib/phpseclib",
@@ -4290,16 +4290,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.25.0",
+            "version": "1.26.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "bd84b629c8de41aa2ae82c067c955e06f1b00240"
+                "reference": "231e3186624c03d7e7c890ec662b81e6b0405227"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/bd84b629c8de41aa2ae82c067c955e06f1b00240",
-                "reference": "bd84b629c8de41aa2ae82c067c955e06f1b00240",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/231e3186624c03d7e7c890ec662b81e6b0405227",
+                "reference": "231e3186624c03d7e7c890ec662b81e6b0405227",
                 "shasum": ""
             },
             "require": {
@@ -4331,9 +4331,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.25.0"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.26.0"
             },
-            "time": "2024-01-04T17:06:16+00:00"
+            "time": "2024-02-23T16:05:55+00:00"
         },
         {
             "name": "psr/cache",
@@ -11471,16 +11471,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "2.6.0",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "52981aa680d1df9194739ddeac5b82f4403dd60c"
+                "reference": "f2fe0a80fac8b20ce9f3dd22958088913fc4be93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/52981aa680d1df9194739ddeac5b82f4403dd60c",
-                "reference": "52981aa680d1df9194739ddeac5b82f4403dd60c",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/f2fe0a80fac8b20ce9f3dd22958088913fc4be93",
+                "reference": "f2fe0a80fac8b20ce9f3dd22958088913fc4be93",
                 "shasum": ""
             },
             "require": {
@@ -11607,20 +11607,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-21T15:02:37+00:00"
+            "time": "2024-02-24T20:47:33+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "2.6.0",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "ef5c20df47daefbec5698e24bbad44b6deb642a6"
+                "reference": "e54ed73f1467462783946ff6f953f4948e9e7704"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/ef5c20df47daefbec5698e24bbad44b6deb642a6",
-                "reference": "ef5c20df47daefbec5698e24bbad44b6deb642a6",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/e54ed73f1467462783946ff6f953f4948e9e7704",
+                "reference": "e54ed73f1467462783946ff6f953f4948e9e7704",
                 "shasum": ""
             },
             "require": {
@@ -11659,7 +11659,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
                 "teknoo/east-common-symfony": "^2.8",
                 "teknoo/east-foundation-symfony": "^7.6.1",
-                "teknoo/east-paas": "^2.6",
+                "teknoo/east-paas": "^2.7",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.4.4",
                 "teknoo/recipe": "^4.6.1",
@@ -11721,7 +11721,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-21T15:13:26+00:00"
+            "time": "2024-02-24T20:49:19+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13848,12 +13848,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "1be441484ebcaea84a884b1bd57f336955f1dec3"
+                "reference": "aafb7236bf0c11b93b24e951544bd83470b85bec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/1be441484ebcaea84a884b1bd57f336955f1dec3",
-                "reference": "1be441484ebcaea84a884b1bd57f336955f1dec3",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/aafb7236bf0c11b93b24e951544bd83470b85bec",
+                "reference": "aafb7236bf0c11b93b24e951544bd83470b85bec",
                 "shasum": ""
             },
             "conflict": {
@@ -13970,7 +13970,7 @@
                 "doctrine/mongodb-odm-bundle": "<3.0.1",
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<18.0.2",
-                "dompdf/dompdf": "<=2.0.4",
+                "dompdf/dompdf": "<2.0.4",
                 "doublethreedigital/guest-entries": "<3.1.2",
                 "drupal/core": ">=6,<6.38|>=7,<7.96|>=8,<10.1.8|>=10.2,<10.2.2",
                 "drupal/drupal": ">=5,<5.11|>=6,<6.38|>=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
@@ -14580,7 +14580,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-22T22:04:03+00:00"
+            "time": "2024-02-23T16:04:25+00:00"
         },
         {
             "name": "sebastian/cli-parser",

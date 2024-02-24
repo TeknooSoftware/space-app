@@ -318,8 +318,6 @@ class TestsContext implements Context
                 return ++$counter;
             }
         );
-
-        HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, Symfony::class);
     }
 
     /**
@@ -1333,14 +1331,13 @@ class TestsContext implements Context
         $project->setPrefix($this->projectPrefix = '');
 
         $project->setImagesRegistry(
-            new ImageRegistry(
-                $credential->getRegistryUrl(),
-                new XRegistryAuth(
-                    $credential->getRegistryAccountName(),
-                    $credential->getRegistryPassword(),
-                    '',
-                    '',
-                    $credential->getRegistryUrl()
+            repository: new ImageRegistry(
+                apiUrl: $credential->getRegistryUrl(),
+                identity: new XRegistryAuth(
+                    username: $credential->getRegistryAccountName(),
+                    password: $credential->getRegistryPassword(),
+                    auth: $credential->getRegistryConfigName(),
+                    serverAddress: $credential->getRegistryUrl(),
                 )
             )
         );
@@ -1491,14 +1488,13 @@ class TestsContext implements Context
         $project->setPrefix($this->projectPrefix = $prefix);
 
         $project->setImagesRegistry(
-            $imageRegistry = new ImageRegistry(
-                $credential->getRegistryUrl(),
-                new XRegistryAuth(
-                    $credential->getRegistryAccountName(),
-                    $credential->getRegistryPassword(),
-                    '',
-                    '',
-                    $credential->getRegistryUrl()
+            repository: $imageRegistry = new ImageRegistry(
+                apiUrl: $credential->getRegistryUrl(),
+                identity: new XRegistryAuth(
+                    username: $credential->getRegistryAccountName(),
+                    password: $credential->getRegistryPassword(),
+                    auth: $credential->getRegistryConfigName(),
+                    serverAddress: $credential->getRegistryUrl(),
                 )
             )
         );
@@ -3913,7 +3909,7 @@ class TestsContext implements Context
             'containers' => [
                 'php-run' => [
                     'image' => 'registry.teknoo.software/php-run',
-                    'version' => 7.4,
+                    'version' => '7.4',
                     'listen' => [8080],
                     'volumes' => [
                         'extra' => [

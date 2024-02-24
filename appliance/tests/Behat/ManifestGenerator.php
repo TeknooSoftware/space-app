@@ -506,7 +506,7 @@ EOF;
                         "containers": [
                             {
                                 "name": "nginx",
-                                "image": "my-company.registry.demo.teknoo.space/nginx-{$jobId}:alpine",
+                                "image": "my-company.registry.demo.teknoo.space/nginx:alpine-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -549,7 +549,7 @@ EOF;
                             },
                             {
                                 "name": "blackfire",
-                                "image": "blackfire/blackfire:2",
+                                "image": "blackfire/blackfire:2-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -631,7 +631,7 @@ EOF;
                         "containers": [
                             {
                                 "name": "php-run",
-                                "image": "my-company.registry.demo.teknoo.space/php-run-{$jobId}:7.4",
+                                "image": "my-company.registry.demo.teknoo.space/php-run:7.4-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
