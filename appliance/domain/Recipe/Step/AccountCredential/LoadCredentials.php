@@ -81,10 +81,8 @@ class LoadCredentials
             static function (AccountCredential $accountCredential) use ($manager) {
                 $manager->updateWorkPlan(
                     [
-                        AccountCredential::class => $accountCredential,
                         //todo select from AccountsCredentialsWallet if needed, check if need
-                        'registryConfigName' => $accountCredential->getRegistryConfigName(),
-                        'ociRegistryConfig' => $accountCredential->getRegistryConfigName(),
+                        AccountCredential::class => $accountCredential,
                     ],
                 );
             },
