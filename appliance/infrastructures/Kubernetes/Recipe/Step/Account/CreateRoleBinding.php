@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\ClusterRoleBinding;
 use Teknoo\Kubernetes\Model\RoleBinding;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -45,7 +46,6 @@ class CreateRoleBinding
     private const CLUSTER_ROLE_BINDING_SUFFIX = '-cluster-role-binding';
 
     public function __construct(
-        private KubernetesClient $client,
         private DatesService $datesService,
         private bool $prefereRealDate,
     ) {
@@ -119,7 +119,10 @@ class CreateRoleBinding
         string $roleName,
         string $clusterRoleName,
         AccountHistory $accountHistory,
+        ClusterConfig $clusterConfig,
     ): self {
+        $client = $clusterConfig->kubernetesClient;
+
         $roleBindingName = $accountNamespace . self::ROLE_BINDING_SUFFIX;
         $clusterRoleBindingName = $accountNamespace . self::CLUSTER_ROLE_BINDING_SUFFIX;
 
@@ -129,15 +132,15 @@ class CreateRoleBinding
             $clusterRoleName,
             $kubeNamespace
         );
-        $clusterBindingRepository = $this->client->clusterRoleBindings();
+        $clusterBindingRepository = $client->clusterRoleBindings();
         if (!$clusterBindingRepository->exists((string) $clusterRoleBinding->getMetadata('name'))) {
             $clusterBindingRepository->apply($clusterRoleBinding);
         }
 
-        $this->client->setNamespace($kubeNamespace);
+        $client->setNamespace($kubeNamespace);
 
         $roleBinding = $this->createRoleBinding($roleBindingName, $serviceName, $roleName, $kubeNamespace);
-        $bindingRepository = $this->client->roleBindings();
+        $bindingRepository = $client->roleBindings();
         if (!$bindingRepository->exists((string) $roleBinding->getMetadata('name'))) {
             $bindingRepository->apply($roleBinding);
         }

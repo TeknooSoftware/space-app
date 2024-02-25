@@ -41,7 +41,6 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Writer\AccountWriter;
-use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
@@ -112,7 +111,6 @@ return [
 
     CreateNamespace::class => static function (ContainerInterface $container): CreateNamespace {
         return new CreateNamespace(
-            $container->get(KubernetesClient::class . ':create_account'),
             $container->get('teknoo.space.kubernetes.root_namespace'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
@@ -122,12 +120,11 @@ return [
 
     ReloadNamespace::class => create()
         ->constructor(
-            get(KubernetesClient::class . ':create_account'),
+            get('teknoo.space.cluster_catalog'),
         ),
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
         return new CreateServiceAccount(
-            $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
@@ -135,7 +132,6 @@ return [
 
     CreateRole::class => static function (ContainerInterface $container): CreateRole {
         return new CreateRole(
-            $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
@@ -143,7 +139,6 @@ return [
 
     CreateRoleBinding::class => static function (ContainerInterface $container): CreateRoleBinding {
         return new CreateRoleBinding(
-            $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
@@ -153,7 +148,6 @@ return [
         ContainerInterface $container,
     ): CreateSecretServiceAccountToken {
         return new CreateSecretServiceAccountToken(
-            $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
             $container->get(SleepServiceInterface::class),
             (int) $container->get('teknoo.space.kubernetes.secret_account_token_waiting_time'),
@@ -163,7 +157,6 @@ return [
 
     CreateStorage::class => static function (ContainerInterface $container): CreateStorage {
         return new CreateStorage(
-            $container->get(KubernetesClient::class . ':create_account'),
             $container->get(DatesService::class),
             $container->get('teknoo.east.paas.default_storage_provider'),
             !empty($container->get('teknoo.space.prefer-real-date')),
@@ -172,7 +165,6 @@ return [
 
     CreateRegistryAccount::class => static function (ContainerInterface $container): CreateRegistryAccount {
         return new CreateRegistryAccount(
-            client: $container->get(KubernetesClient::class . ':create_account'),
             registryImageName: $container->get('teknoo.space.kubernetes.oci_registry.image'),
             tlsSecretName: $container->get('teknoo.space.kubernetes.oci_registry.tls_secret_name'),
             registryUrl: $container->get('teknoo.space.kubernetes.oci_registry.url'),
@@ -190,7 +182,6 @@ return [
         return new PersistCredentials(
             writer: $container->get(AccountCredentialWriter::class),
             datesService: $container->get(DatesService::class),
-            defaultClusterName: $container->get('teknoo.space.kubernetes.cluster.default_name'),
             prefereRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
@@ -210,10 +201,7 @@ return [
 
     PrepareProject::class => create()
         ->constructor(
-            get('teknoo.space.kubernetes.cluster.default_name'),
-            get('teknoo.space.kubernetes.cluster.default_type'),
-            get('teknoo.space.kubernetes.master'),
-            get('teknoo.space.kubernetes.cluster.default_env'),
+            get('teknoo.space.cluster_catalog'),
         ),
 
     SetRedirectClientAtEnd::class => create()
@@ -303,14 +291,12 @@ return [
 
     UpdateProjectCredentialsFromAccount::class => create()
         ->constructor(
-            get('teknoo.space.kubernetes.cluster.default_name'),
-            get('teknoo.space.kubernetes.cluster.default_type'),
-            get('teknoo.space.kubernetes.master'),
+            get('teknoo.space.cluster_catalog'),
         ),
 
     JobSetDefaults::class => create()
         ->constructor(
-            get('teknoo.east.paas.default_storage_provider'),
+            get('teknoo.space.cluster_catalog'),
         ),
 
     IncludeExtraInWorkplan::class => create(),
@@ -318,7 +304,7 @@ return [
     HealthInterface::class => get(Health::class),
     Health::class => create()
         ->constructor(
-            get(KubernetesClient::class . ':create_account'),
+            get('teknoo.space.cluster_catalog'),
         ),
 
     DashboardInfoInterface::class => get(DashboardInfo::class),
@@ -354,9 +340,8 @@ return [
         );
 
         return new DashboardFrame(
-            dashboardUrl: $container->get('teknoo.space.kubernetes.dashboard'),
+            catalog: $container->get('teknoo.space.cluster_catalog'),
             httpMethodsClient: $httpMethodsClient,
-            clusterToken: $container->get('teknoo.space.kubernetes.create_account.token'),
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
         );
     },

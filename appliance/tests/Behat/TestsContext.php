@@ -96,7 +96,6 @@ use Teknoo\East\Paas\Object\Project as ProjectOrigin;
 use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Immutable\ImmutableTrait;
-use Teknoo\Kubernetes\HttpClient\Instantiator\Symfony;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType;
@@ -813,7 +812,7 @@ class TestsContext implements Context
         $sac = mb_strtolower(str_replace(' ', '-', $accountName));
         $accountCredentials = new AccountCredential(
             account: $account,
-            clusterName: 'Behat Test Cluster',
+            clusterName: 'Demo Kube Cluster',
             registryUrl: $sac . '.registry.demo.teknoo.space',
             registryAccountName: $sac . '-registry',
             registryConfigName: $sac . 'docker-config',
@@ -3720,6 +3719,14 @@ class TestsContext implements Context
     public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace): void
     {
         $expected = trim((new ManifestGenerator())->namespaceCreation($namespace));
+        foreach  ($this->manifests['namespaces/space-client-my-company/secrets'] as &$secret) {
+            if (!empty($secret['data']['.dockerconfigjson'])) {
+                $secret['data']['.dockerconfigjson'] = '===';
+            }
+            if (!empty($secret['data']['htpasswd'])) {
+                $secret['data']['htpasswd'] = '===';
+            }
+        }
         $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         Assert::assertEquals(
             $expected,

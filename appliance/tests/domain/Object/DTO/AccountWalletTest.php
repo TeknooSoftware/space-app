@@ -23,34 +23,25 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
+namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 
 /**
- * Class UpdateProjectCredentialsFromAccountTest.
+ * Class AccountWalletTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount
+ * @covers \Teknoo\Space\Object\DTO\AccountWallet
  */
-class UpdateProjectCredentialsFromAccountTest extends TestCase
+class AccountWalletTest extends TestCase
 {
-    private UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount;
-
-    private string $defaultClusterName;
-
-    private string $defaultClusterType;
-
-    private string $defaultClusterAddress;
+    private AccountWallet $accountWallet;
 
     /**
      * {@inheritdoc}
@@ -59,26 +50,14 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->defaultClusterName = '42';
-        $this->defaultClusterType = '42';
-        $this->defaultClusterAddress = '42';
-        $this->updateProjectCredentialsFromAccount = new UpdateProjectCredentialsFromAccount(
-            $this->createMock(ClusterCatalog::class),
-        );
+        $this->accountWallet = new AccountWallet([$this->createMock(AccountCredential::class)]);
     }
 
-    public function testInvoke(): void
+    public function testConstruct(): void
     {
-        $wallet = new AccountWallet(
-            [$this->createMock(AccountCredential::class)]
-        );
-
         self::assertInstanceOf(
-            UpdateProjectCredentialsFromAccount::class,
-            ($this->updateProjectCredentialsFromAccount)(
-                new SpaceProject($this->createMock(Project::class)),
-                $wallet,
-            )
+            AccountWallet::class,
+            $this->accountWallet,
         );
     }
 }

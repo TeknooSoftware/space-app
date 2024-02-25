@@ -32,6 +32,7 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\NamespaceModel;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -46,7 +47,6 @@ class CreateNamespace
      * @param WriterInterface<Account> $writer
      */
     public function __construct(
-        private KubernetesClient $client,
         private string $rootNamespace,
         private DatesService $datesService,
         private bool $prefereRealDate,
@@ -72,8 +72,10 @@ class CreateNamespace
         string $accountNamespace,
         AccountHistory $accountHistory,
         Account $account,
+        ClusterConfig $cluster,
     ): self {
-        $namespaceRepository = $this->client->namespaces();
+        $client = $cluster->kubernetesClient;
+        $namespaceRepository = $client->namespaces();
 
         $originalNS = $accountNamespace;
         $namespaceValue = $this->rootNamespace . $accountNamespace;
@@ -117,7 +119,7 @@ class CreateNamespace
             $this->prefereRealDate,
         );
 
-        $this->client->setNamespace($namespaceValue);
+        $client->setNamespace($namespaceValue);
 
         $account->setNamespace($accountNamespace);
         $account->setPrefixNamespace($this->rootNamespace);

@@ -228,11 +228,228 @@ class ManifestGenerator
                 }
             },
             "type": "kubernetes.io\/service-account-token"
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-docker-config",
+                "namespace": "space-client-$name",
+                "labels": {
+                    "name": "$name-docker-config",
+                    "group": "private-registry"
+                }
+            },
+            "data": {
+                ".dockerconfigjson": "==="
+            },
+            "type": "kubernetes.io\/dockerconfigjson"
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-registry-auth-secret",
+                "namespace": "space-client-$name",
+                "labels": {
+                    "name": "$name-registry-auth-secret",
+                    "group": "private-registry"
+                }
+            },
+            "data": {
+                "htpasswd": "==="
+            },
+            "type": "Opaque"
+        }
+    ],
+    "namespaces\/space-client-$name\/persistentvolumeclaims": [
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-pvc",
+                "namespace": "space-client-$name",
+                "labels": {
+                    "name": "$name-pvc"
+                }
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "storageClassName": "nfs.csi.k8s.io",
+                "resources": {
+                    "requests": {
+                        "storage": "3Gi"
+                    }
+                }
+            }
+        }
+    ],
+    "namespaces\/space-client-$name\/deployments": [
+        {
+            "kind": "Deployment",
+            "apiVersion": "apps\/v1",
+            "metadata": {
+                "name": "$name-registry-pod-replication-dplmt",
+                "namespace": "space-client-$name",
+                "labels": {
+                    "name": "$name-registry-pod-replication-dplmt",
+                    "group": "private-registry"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "name": "$name-registry-pod"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "name": "$name-registry-pod",
+                            "group": "private-registry"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "registry",
+                                "image": "registry:latest",
+                                "ports": [
+                                    {
+                                        "containerPort": 5000
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "name": "auth-credentials",
+                                        "mountPath": "\/auth",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "name": "images-storage",
+                                        "mountPath": "\/var\/lib\/registry",
+                                        "readOnly": false
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "REGISTRY_AUTH",
+                                        "value": "htpasswd"
+                                    },
+                                    {
+                                        "name": "REGISTRY_AUTH_HTPASSWD_PATH",
+                                        "value": "\/auth\/htpasswd"
+                                    },
+                                    {
+                                        "name": "REGISTRY_AUTH_HTPASSWD_REALM",
+                                        "value": "Space-client-$name Private Registry"
+                                    }
+                                ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "auth-credentials",
+                                "secret": {
+                                    "secretName": "$name-registry-auth-secret"
+                                }
+                            },
+                            {
+                                "name": "images-storage",
+                                "persistentVolumeClaim": {
+                                    "claimName": "$name-pvc"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "namespaces\/space-client-$name\/services": [
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-registry-service",
+                "namespace": "space-client-$name",
+                "labels": {
+                    "name": "$name-registry-service",
+                    "group": "private-registry"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "name": "$name-registry-pod"
+                },
+                "type": "ClusterIP",
+                "ports": [
+                    {
+                        "name": "docker-registry",
+                        "protocol": "TCP",
+                        "port": 5000,
+                        "targetPort": 5000
+                    }
+                ]
+            }
+        }
+    ],
+    "namespaces\/space-client-$name\/ingresses": [
+        {
+            "kind": "Ingress",
+            "apiVersion": "networking.k8s.io\/v1",
+            "metadata": {
+                "name": "$name-registry-ingress",
+                "namespace": "space-client-$name",
+                "labels": {
+                    "name": "$name-registry-ingress",
+                    "group": "private-registry"
+                },
+                "annotations": {
+                    "kubernetes.io\/ingress.class": "public",
+                    "cert-manager.io\/cluster-issuer": "lets-encrypt",
+                    "nginx.ingress.kubernetes.io\/proxy-body-size": "0"
+                }
+            },
+            "spec": {
+                "tls": [
+                    {
+                        "hosts": [
+                            "$name.registry.kubernetes.localhost"
+                        ],
+                        "secretName": "$name-registry-certs"
+                    }
+                ],
+                "rules": [
+                    {
+                        "host": "$name.registry.kubernetes.localhost",
+                        "http": {
+                            "paths": [
+                                {
+                                    "path": "\/",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "$name-registry-service",
+                                            "port": {
+                                                "number": 5000
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
         }
     ]
 }
 EOF;
-        ;
+
     }
 
     public function fullDeployment(

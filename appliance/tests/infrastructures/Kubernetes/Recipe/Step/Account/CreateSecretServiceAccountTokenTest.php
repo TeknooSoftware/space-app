@@ -33,6 +33,7 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Kubernetes\Repository\SecretRepository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -80,7 +81,6 @@ class CreateSecretServiceAccountTokenTest extends TestCase
         $this->secretWaitingTime = 42;
         $this->prefereRealDate = true;
         $this->createSecret = new CreateSecretServiceAccountToken(
-            $this->client,
             $this->datesService,
             $this->sleepService,
             $this->secretWaitingTime,
@@ -90,14 +90,26 @@ class CreateSecretServiceAccountTokenTest extends TestCase
 
     public function testInvoke(): void
     {
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            defaultEnv: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->client,
+            token: 'foo',
+        );
+
         self::assertInstanceOf(
             CreateSecretServiceAccountToken::class,
             ($this->createSecret)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                'foo',
-                'foo',
-                $this->createMock(AccountHistory::class),
+                manager: $this->createMock(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                serviceName: 'foo',
+                accountHistory: $this->createMock(AccountHistory::class),
+                clusterConfig: $clusterConfig,
             )
         );
     }

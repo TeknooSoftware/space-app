@@ -35,6 +35,7 @@ use Teknoo\Kubernetes\HttpClient\InstantiatorInterface;
 use function array_pop;
 use function explode;
 use function json_decode;
+use function str_contains;
 
 class MockClientInstantiator implements InstantiatorInterface
 {
@@ -50,6 +51,7 @@ class MockClientInstantiator implements InstantiatorInterface
         return new class (self::$testsContext) implements HttpClient {
             public function __construct(
                 private readonly TestsContext $testsContext,
+                private int $counter = 0,
             ) {
             }
 
@@ -63,6 +65,36 @@ class MockClientInstantiator implements InstantiatorInterface
                     $body = (string) $request->getBody();
 
                     $this->testsContext->setManifests($model, json_decode($body, true));
+                }
+
+                $uri = $request->getUri();
+                $path = $uri->getPath();
+                $query = $uri->getQuery();
+
+                if (str_contains($path, '/secrets')
+                    && (str_contains($query, 'behat-secret') || str_contains($query, 'my-company-secret'))
+                    && $this->counter++ > 1) {
+                    return new JsonResponse(
+                        [
+                            'items' => [
+                                [
+                                    'metadata' => [
+                                        'name' => 'behat-secret',
+                                        'namespace' => 'space-client-behat',
+                                        'labels' => ['name' => 'behat-secret'],
+                                        'annotations' => [
+                                            'kubernetes.io/service-account.name' => 'behat-account'
+                                        ],
+                                    ],
+                                    'type' => 'kubernetes.io/service-account-token',
+                                    'data' => [
+                                        'token' => 'foo',
+                                        'ca.crt' => 'bar',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    );
                 }
 
                 return new JsonResponse(['items' => []]);

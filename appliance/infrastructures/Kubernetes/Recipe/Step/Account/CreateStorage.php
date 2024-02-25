@@ -30,6 +30,8 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\PersistentVolumeClaim;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
@@ -44,7 +46,6 @@ class CreateStorage
     private const PVC_CLASS_SUFFIX = '-pvc';
 
     public function __construct(
-        private KubernetesClient $client,
         private DatesService $datesService,
         private string $storageProvisioner,
         private bool $prefereRealDate,
@@ -84,8 +85,15 @@ class CreateStorage
         string $accountNamespace,
         AccountHistory $accountHistory,
         string $storageSizeToClaim,
-        ?AccountCredential $accountCredential = null,
+        ClusterConfig $clusterConfig,
+        ?AccountWallet $accountWallet = null,
     ): self {
+        $client = $clusterConfig->kubernetesClient;
+
+        $accountCredential = null;
+        if ($accountWallet) {
+            $accountCredential = $accountWallet[$clusterConfig->name];
+        }
         $pvcName = $accountCredential?->getPersistentVolumeClaimName() ?? $accountNamespace . self::PVC_CLASS_SUFFIX;
 
         $persistentVolumeClaim = $this->createPersistentVolumeClaim(
@@ -94,7 +102,7 @@ class CreateStorage
             $storageSizeToClaim,
         );
 
-        $persistentVolumeClaimRepository = $this->client->persistentVolumeClaims();
+        $persistentVolumeClaimRepository = $client->persistentVolumeClaims();
         if (!$persistentVolumeClaimRepository->exists((string) $persistentVolumeClaim->getMetadata('name'))) {
             $persistentVolumeClaimRepository->apply($persistentVolumeClaim);
         }

@@ -30,6 +30,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\ServiceAccount;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -43,7 +44,6 @@ class CreateServiceAccount
     private const SERVICE_SUFFIX = '-account';
 
     public function __construct(
-        private KubernetesClient $client,
         private DatesService $datesService,
         private bool $prefereRealDate,
     ) {
@@ -66,13 +66,15 @@ class CreateServiceAccount
         ManagerInterface $manager,
         string $kubeNamespace,
         string $accountNamespace,
-        AccountHistory $accountHistory
+        AccountHistory $accountHistory,
+        ClusterConfig $clusterConfig,
     ): self {
         $serviceName = $accountNamespace . self::SERVICE_SUFFIX;
 
-        $this->client->setNamespace($kubeNamespace);
+        $client = $clusterConfig->kubernetesClient;
+        $client->setNamespace($kubeNamespace);
         $account = $this->createAccount($serviceName, $kubeNamespace);
-        $accountRepository = $this->client->serviceAccounts();
+        $accountRepository = $client->serviceAccounts();
         if (!$accountRepository->exists((string) $account->getMetadata('name'))) {
             $accountRepository->apply($account);
         }

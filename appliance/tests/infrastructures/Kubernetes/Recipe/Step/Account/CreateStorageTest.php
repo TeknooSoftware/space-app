@@ -31,6 +31,8 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
@@ -47,8 +49,6 @@ class CreateStorageTest extends TestCase
 {
     private CreateStorage $createStorage;
 
-    private Client|MockObject $client;
-
     private DatesService|MockObject $datesService;
 
     private string $storageProvisioner;
@@ -62,12 +62,10 @@ class CreateStorageTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->storageProvisioner = '42';
         $this->prefereRealDate = true;
         $this->createStorage = new CreateStorage(
-            $this->client,
             $this->datesService,
             $this->storageProvisioner,
             $this->prefereRealDate
@@ -76,15 +74,27 @@ class CreateStorageTest extends TestCase
 
     public function testInvoke(): void
     {
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            defaultEnv: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+        );
+
         self::assertInstanceOf(
             CreateStorage::class,
             ($this->createStorage)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                'foo',
-                $this->createMock(AccountHistory::class),
-                'foo',
-                $this->createMock(AccountCredential::class),
+                manager: $this->createMock(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountHistory: $this->createMock(AccountHistory::class),
+                storageSizeToClaim: 'foo',
+                clusterConfig: $clusterConfig,
+                accountWallet: $this->createMock(AccountWallet::class),
             )
         );
     }

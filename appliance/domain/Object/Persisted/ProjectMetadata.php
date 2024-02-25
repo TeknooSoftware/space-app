@@ -29,12 +29,16 @@ use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Contracts\Object\VisitableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Common\Object\VisitableTrait;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
+
+use function array_flip;
+use function array_intersect_key;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -51,6 +55,9 @@ class ProjectMetadata implements
     use ObjectTrait;
     use GroupsTrait;
     use ExportConfigurationsTrait;
+    use VisitableTrait {
+        VisitableTrait::runVisit as realRunVisit;
+    }
 
     private Project $project;
 
@@ -89,13 +96,19 @@ class ProjectMetadata implements
         return $this;
     }
 
-    public function visit($visitors): VisitableInterface
+    /**
+     * @param array<string, callable> $visitors
+     */
+    private function runVisit(array &$visitors): void
     {
-        if (isset($visitors['projectUrl'])) {
-            $visitors['projectUrl']($this->projectUrl);
-        }
+        $visitors = array_intersect_key(
+            $visitors,
+            array_flip(
+                ['projectUrl'],
+            ),
+        );
 
-        return $this;
+        $this->realRunVisit($visitors);
     }
 
     public function export(ParametersBag $bag): self

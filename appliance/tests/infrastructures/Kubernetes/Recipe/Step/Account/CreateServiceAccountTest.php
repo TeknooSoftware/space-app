@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAccount;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -46,8 +47,6 @@ class CreateServiceAccountTest extends TestCase
 {
     private CreateServiceAccount $createServiceAccount;
 
-    private Client|MockObject $client;
-
     private DatesService|MockObject $datesService;
 
     private bool $prefereRealDate;
@@ -59,11 +58,9 @@ class CreateServiceAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDate = true;
         $this->createServiceAccount = new CreateServiceAccount(
-            $this->client,
             $this->datesService,
             $this->prefereRealDate
         );
@@ -71,13 +68,25 @@ class CreateServiceAccountTest extends TestCase
 
     public function testInvoke(): void
     {
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            defaultEnv: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+        );
+
         self::assertInstanceOf(
             CreateServiceAccount::class,
             ($this->createServiceAccount)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                'foo',
-                $this->createMock(AccountHistory::class),
+                manager: $this->createMock(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountHistory: $this->createMock(AccountHistory::class),
+                clusterConfig: $clusterConfig,
             )
         );
     }

@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -46,8 +47,6 @@ class CreateRoleBindingTest extends TestCase
 {
     private CreateRoleBinding $createRoleBinding;
 
-    private Client|MockObject $client;
-
     private DatesService|MockObject $datesService;
 
     private bool $prefereRealDate;
@@ -59,11 +58,9 @@ class CreateRoleBindingTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDate = true;
         $this->createRoleBinding = new CreateRoleBinding(
-            $this->client,
             $this->datesService,
             $this->prefereRealDate
         );
@@ -71,16 +68,28 @@ class CreateRoleBindingTest extends TestCase
 
     public function testInvoke(): void
     {
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            defaultEnv: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+        );
+
         self::assertInstanceOf(
             CreateRoleBinding::class,
             ($this->createRoleBinding)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                $this->createMock(AccountHistory::class),
+                manager: $this->createMock(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                serviceName: 'foo',
+                roleName: 'foo',
+                clusterRoleName: 'foo',
+                accountHistory: $this->createMock(AccountHistory::class),
+                clusterConfig: $clusterConfig,
             )
         );
     }

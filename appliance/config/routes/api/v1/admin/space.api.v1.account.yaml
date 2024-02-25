@@ -14,6 +14,7 @@ space_api_admin_account_new:
         route: 'space_api_admin_account_edit'
         template: '@@TeknooEastPaas/api/AdminAccount/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        clusterCatalog: '@teknoo.space.cluster_catalog'
 
 space_api_admin_account_edit:
     path: '/account/{id}'

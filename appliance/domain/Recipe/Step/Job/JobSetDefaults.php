@@ -25,9 +25,12 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Job;
 
+use DomainException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\Job;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -38,22 +41,41 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
 class JobSetDefaults
 {
     public function __construct(
-        private string $storageProvisioner,
+        private ClusterCatalog $catalog,
     ) {
     }
 
     public function __invoke(
         ManagerInterface $manager,
         Job $job,
-        //todo Use AccountsCredentialsWallet
-        AccountCredential $accountCredential,
+        AccountWallet $accountWallet,
     ): self {
-        $job->setDefaults(
-            [
-                'oci-registry-config-name' => $accountCredential->getRegistryConfigName(),
-                'storage-provider' => $this->storageProvisioner,
-            ]
-        );
+        $defaults = [];
+        /**
+         * @param Cluster[] $clusters
+         */
+        $defaultsGenerator = function (iterable $clusters) use (&$defaults, $accountWallet): void {
+            foreach ($clusters as $cluster) {
+                $credential = $accountWallet[$cluster];
+                $config = $this->catalog->getCluster($cluster);
+
+                $registryConfigName = $credential?->getRegistryConfigName();
+                if (empty($registryConfigName)) {
+                    throw new DomainException("Error, there are no registry config name for {$cluster}");
+                }
+
+                $defaults = [
+                    'oci-registry-config-name' => $registryConfigName,
+                    'storage-provider' => $config->storageProvisioner,
+                ];
+
+                break;
+            }
+        };
+
+        $job->visit(['clusters' => $defaultsGenerator]);
+
+        $job->setDefaults($defaults);
 
         return $this;
     }

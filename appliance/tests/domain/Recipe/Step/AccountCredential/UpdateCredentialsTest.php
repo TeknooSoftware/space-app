@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
@@ -71,12 +72,12 @@ class UpdateCredentialsTest extends TestCase
         self::assertInstanceOf(
             UpdateCredentials::class,
             ($this->updateCredentials)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                'foo',
-                'foo',
-                $this->createMock(AccountCredential::class),
-                $this->createMock(AccountHistory::class),
+                manager: $this->createMock(ManagerInterface::class),
+                registryUrl: 'foo',
+                registryAccountName: 'foo',
+                registryPassword: 'foo',
+                accountWallet: $this->createMock(AccountWallet::class),
+                accountHistory: $this->createMock(AccountHistory::class),
             ),
         );
     }

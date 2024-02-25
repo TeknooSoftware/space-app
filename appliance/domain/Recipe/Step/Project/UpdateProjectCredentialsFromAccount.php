@@ -25,11 +25,14 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Project;
 
+use DomainException;
 use Teknoo\East\Paas\Contracts\Object\ImageRegistryInterface;
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\XRegistryAuth;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 
@@ -42,21 +45,28 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
 class UpdateProjectCredentialsFromAccount
 {
     public function __construct(
-        private string $defaultClusterName,
-        private string $defaultClusterType,
-        private string $defaultClusterAddress,
+        private ClusterCatalog $catalog,
     ) {
     }
 
     public function __invoke(
         SpaceProject $project,
-        //todo Use AccountsCredentialsWallet
-        AccountCredential $accountCredential,
+        AccountWallet $accountWallet
     ): UpdateProjectCredentialsFromAccount {
+        $accountCredential = null;
+        foreach ($accountWallet as $accountCredential) {
+            break;
+        }
+
+        if (empty($accountCredential)) {
+            throw new DomainException("Error, no available credentials for this account");
+        }
+
+        $catalog = $this->catalog;
         $eastProject = $project->project;
         $eastProject->visit(
             [
-                'imagesRegistry' => function (
+                'imagesRegistry' => static function (
                     ImageRegistryInterface $imageRegistry,
                 ) use (
                     $eastProject,
@@ -73,26 +83,29 @@ class UpdateProjectCredentialsFromAccount
                                 username: $accountCredential->getRegistryAccountName(),
                                 password: $accountCredential->getRegistryPassword(),
                                 auth: $accountCredential->getRegistryConfigName(),
+                                serverAddress: $accountCredential->getRegistryUrl(),
                             ),
                         ),
                     );
                 },
-                'clusters' => function (iterable $clusters) use ($accountCredential): void {
+                'clusters' => static function (iterable $clusters) use ($accountWallet, $catalog): void {
                     foreach ($clusters as $cluster) {
                         if (!$cluster instanceof Cluster) {
                             continue;
                         }
-
                         $cluster->visit(
                             [
-                                'name' => function ($name) use ($cluster, $accountCredential): void {
-                                    if ($this->defaultClusterName !== $name) {
+                                'name' => static function ($name) use ($cluster, $accountWallet, $catalog): void {
+                                    if (!isset($accountWallet[$name])) {
                                         return;
                                     }
 
-                                    $cluster->setType($this->defaultClusterType);
-                                    $cluster->setAddress($this->defaultClusterAddress);
+                                    $clusterConfig = $catalog->getCluster($name);
+                                    $cluster->setType($clusterConfig->type);
+                                    $cluster->setAddress($clusterConfig->masterAddress);
                                     $cluster->setLocked(true);
+
+                                    $accountCredential = $accountWallet[$name];
                                     $cluster->setIdentity(
                                         new ClusterCredentials(
                                             caCertificate: $accountCredential->getCaCertificate(),

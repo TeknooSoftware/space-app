@@ -9,3 +9,4 @@ space_subscription:
         objectClass: 'Teknoo\Space\Object\DTO\SpaceSubscription'
         template: '@@TeknooEastPaas/Account/subscription.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.cluster_catalog'

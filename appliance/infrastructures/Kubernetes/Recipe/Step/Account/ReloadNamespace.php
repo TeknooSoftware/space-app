@@ -29,6 +29,8 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client as KubernetesClient;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -39,43 +41,48 @@ use Teknoo\Kubernetes\Client as KubernetesClient;
 class ReloadNamespace
 {
     public function __construct(
-        private KubernetesClient $client,
+        private readonly ClusterCatalog $catalog,
     ) {
     }
 
     public function __invoke(
-        Account $account,
         ManagerInterface $manager,
+        Account $account,
+        AccountWallet $accountWallet,
     ): self {
-        $account->requireAccountNamespace(
-            new class ($manager, $this->client) implements AccountAwareInterface {
-                public function __construct(
-                    public ManagerInterface $manager,
-                    private KubernetesClient $client,
-                ) {
+        foreach ($accountWallet as $credential) {
+            $clusterConfig = $this->catalog->getCluster($credential->getClusterName());
+
+            $account->requireAccountNamespace(
+                new class ($manager, $clusterConfig->kubernetesClient) implements AccountAwareInterface {
+                    public function __construct(
+                        public ManagerInterface $manager,
+                        private KubernetesClient $client,
+                    ) {
+                    }
+
+                    public function passAccountNamespace(
+                        Account $account,
+                        ?string $name,
+                        ?string $namespace,
+                        ?string $prefixNamespace,
+                        bool $useHierarchicalNamespaces,
+                    ): AccountAwareInterface {
+                        $kubeNamespace = $prefixNamespace . $namespace;
+                        $this->client->setNamespace($kubeNamespace);
+
+                        $this->manager->updateWorkPlan(
+                            [
+                                'accountNamespace' => $namespace,
+                                'kubeNamespace' => $kubeNamespace,
+                            ]
+                        );
+
+                        return $this;
+                    }
                 }
-
-                public function passAccountNamespace(
-                    Account $account,
-                    ?string $name,
-                    ?string $namespace,
-                    ?string $prefixNamespace,
-                    bool $useHierarchicalNamespaces,
-                ): AccountAwareInterface {
-                    $kubeNamespace = $prefixNamespace . $namespace;
-                    $this->client->setNamespace($kubeNamespace);
-
-                    $this->manager->updateWorkPlan(
-                        [
-                            'accountNamespace' => $namespace,
-                            'kubeNamespace' => $kubeNamespace,
-                        ]
-                    );
-
-                    return $this;
-                }
-            }
-        );
+            );
+        }
 
         return $this;
     }

@@ -26,10 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -43,8 +44,10 @@ interface DashboardFrameInterface
         ManagerInterface $manager,
         EastClient $client,
         ServerRequestInterface $serverRequest,
+        User $user,
+        string $clusterName,
         string $wildcard = '',
         ?Account $account = null,
-        ?AccountCredential $accountCredential = null, //todo Use AccountsCredentialsWallet
+        ?AccountWallet $accountWallet = null,
     ): DashboardFrameInterface;
 }

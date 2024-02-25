@@ -27,6 +27,7 @@ namespace Teknoo\Space\Query\AccountCredential;
 
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
 use Teknoo\East\Common\Query\Expr\ObjectReference;
 use Teknoo\East\Paas\Object\Account;
@@ -42,8 +43,9 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements QueryElementInterface<AccountCredential>
+ * @implements QueryCollectionInterface<AccountCredential>
  */
-class LoadFromAccountQuery implements QueryElementInterface, ImmutableInterface
+class LoadFromAccountQuery implements QueryElementInterface, QueryCollectionInterface, ImmutableInterface
 {
     use ImmutableTrait;
 
@@ -62,6 +64,21 @@ class LoadFromAccountQuery implements QueryElementInterface, ImmutableInterface
         PromiseInterface $promise
     ): QueryElementInterface {
         $repository->findOneBy(
+            [
+                'account' => new ObjectReference($this->account),
+            ],
+            $promise
+        );
+
+        return $this;
+    }
+
+    public function execute(
+        LoaderInterface $loader,
+        RepositoryInterface $repository,
+        PromiseInterface $promise
+    ): QueryCollectionInterface {
+        $repository->findBy(
             [
                 'account' => new ObjectReference($this->account),
             ],

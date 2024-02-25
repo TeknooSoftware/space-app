@@ -7,10 +7,10 @@ services:
         autoconfigure: true
         bind:
             $appHostname: '%teknoo.space.hostname%'
-            $defaultClusterName: '%teknoo.space.kubernetes.cluster.default_name%'
-            $defaultClusterType: '%teknoo.space.kubernetes.cluster.default_type%'
-            $defaultClusterAddress: '%teknoo.space.kubernetes.master%'
-            $defaultClusterEnv: '%teknoo.space.kubernetes.cluster.default_env%'
+            $defaultClusterAddress: '%teknoo.space.kubernetes.default_cluster.master%'
+            $defaultClusterName: '%teknoo.space.kubernetes.default_cluster.name%'
+            $defaultClusterType: '%teknoo.space.kubernetes.default_cluster.type%'
+            $defaultClusterEnv: '%teknoo.space.kubernetes.default_cluster.env%'
             $testTransport: '@zenstruck_messenger_test.transport_registry'
             $cacheExpiredLinks: '@security.authenticator.cache.expired_links'
             $messageLoggerListener: '@?mailer.message_logger_listener'

@@ -31,6 +31,9 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * Class ReloadNamespaceTest.
@@ -55,8 +58,24 @@ class ReloadNamespaceTest extends TestCase
         parent::setUp();
 
         $this->client = $this->createMock(Client::class);
+        $catalog = $this->createMock(ClusterCatalog::class);
+        $catalog->expects(self::any())
+            ->method('getCluster')
+            ->willReturn(
+                new ClusterConfig(
+                    name: 'foo',
+                    type: 'foo',
+                    masterAddress: 'foo',
+                    defaultEnv: 'foo',
+                    storageProvisioner: 'foo',
+                    dashboardAddress: 'foo',
+                    kubernetesClient: $this->client,
+                    token: 'foo',
+                )
+            );
+
         $this->reloadNamespace = new ReloadNamespace(
-            $this->client,
+            $catalog,
         );
     }
 
@@ -65,8 +84,9 @@ class ReloadNamespaceTest extends TestCase
         self::assertInstanceOf(
             ReloadNamespace::class,
             ($this->reloadNamespace)(
-                $this->createMock(Account::class),
-                $this->createMock(ManagerInterface::class),
+                manager: $this->createMock(ManagerInterface::class),
+                account: $this->createMock(Account::class),
+                accountWallet: $this->createMock(AccountWallet::class),
             ),
         );
     }

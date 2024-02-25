@@ -29,7 +29,7 @@ use DateTimeInterface;
 use SensitiveParameter;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Writer\AccountCredentialWriter;
 
@@ -54,30 +54,36 @@ class UpdateCredentials
         string $registryAccountName,
         #[SensitiveParameter]
         string $registryPassword,
-        //todo Use AccountsCredentialsWallet
-        AccountCredential $accountCredential,
+        AccountWallet $accountWallet,
         AccountHistory $accountHistory
     ): self {
-        $newAccountCredential = $accountCredential->updateRegistry(
-            $registryUrl,
-            $registryAccountName,
-            $registryPassword,
-        );
+        $newWallet = [];
 
-        $this->writer->save($newAccountCredential);
+        foreach ($accountWallet as $accountCredential) {
+            $newAccountCredential = $accountCredential->updateRegistry(
+                $registryUrl,
+                $registryAccountName,
+                $registryPassword,
+            );
 
-        $this->datesService->passMeTheDate(
-            static function (DateTimeInterface $dateTime) use ($accountHistory) {
-                $accountHistory->addToHistory(
-                    'teknoo.space.text.account.kubernetes.credential_updated',
-                    $dateTime
-                );
-            },
-            $this->prefereRealDate,
-        );
+            $newWallet[] = $newAccountCredential;
+
+            $this->writer->remove($accountCredential);
+            $this->writer->save($newAccountCredential);
+
+            $this->datesService->passMeTheDate(
+                static function (DateTimeInterface $dateTime) use ($accountHistory) {
+                    $accountHistory->addToHistory(
+                        'teknoo.space.text.account.kubernetes.credential_updated',
+                        $dateTime
+                    );
+                },
+                $this->prefereRealDate,
+            );
+        }
 
         $manager->updateWorkPlan([
-            AccountCredential::class => $newAccountCredential,
+            AccountWallet::class => new AccountWallet($newWallet),
         ]);
 
         $manager->cleanWorkPlan(

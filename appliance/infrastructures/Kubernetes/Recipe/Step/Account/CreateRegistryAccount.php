@@ -36,6 +36,7 @@ use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Model\Service;
 use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Throwable;
 
@@ -68,7 +69,6 @@ class CreateRegistryAccount
     private const CONTAINER_IMAGE_VOLUME = 'images-storage';
 
     public function __construct(
-        private KubernetesClient $client,
         private string $registryImageName,
         private string $tlsSecretName,
         private string $registryUrl,
@@ -331,6 +331,7 @@ class CreateRegistryAccount
         string $accountNamespace,
         string $persistentVolumeClaimName,
         AccountHistory $accountHistory,
+        KubernetesClient $client,
     ): void {
         $username = $accountNamespace;
         $password = $this->createPassword($accountNamespace);
@@ -350,7 +351,7 @@ class CreateRegistryAccount
             $password
         );
 
-        $this->insertModel($this->client->secrets(), $dockerConfigSecret, true);
+        $this->insertModel($client->secrets(), $dockerConfigSecret, true);
 
         $authSecret = $this->createRegistryAuthSecret(
             $kubeNamespace,
@@ -359,7 +360,7 @@ class CreateRegistryAccount
             $password
         );
 
-        $this->insertModel($this->client->secrets(), $authSecret, true);
+        $this->insertModel($client->secrets(), $authSecret, true);
 
         $replication = $this->createRegistryReplication(
             $kubeNamespace,
@@ -368,7 +369,7 @@ class CreateRegistryAccount
             $persistentVolumeClaimName
         );
 
-        $podsModel = $this->client->pods();
+        $podsModel = $client->pods();
         /** @var array<int, Model> $existantPods */
         $existantPods = $podsModel
             ->setLabelSelector(
@@ -379,7 +380,7 @@ class CreateRegistryAccount
             ->find()
             ->all();
 
-        $this->insertModel($this->client->deployments(), $replication, true);
+        $this->insertModel($client->deployments(), $replication, true);
 
         if (!empty($existantPods)) {
             foreach ($existantPods as $pod) {
@@ -393,7 +394,7 @@ class CreateRegistryAccount
             $podName
         );
 
-        $this->insertModel($this->client->services(), $service, true);
+        $this->insertModel($client->services(), $service, true);
 
         $ingress = $this->createRegistryIngress(
             $kubeNamespace,
@@ -403,7 +404,7 @@ class CreateRegistryAccount
             $accountNamespace . '-' . $this->tlsSecretName
         );
 
-        $this->insertModel($this->client->ingresses(), $ingress, true);
+        $this->insertModel($client->ingresses(), $ingress, true);
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory, $registryUrl, $username) {
@@ -434,7 +435,9 @@ class CreateRegistryAccount
         string $accountNamespace,
         AccountHistory $accountHistory,
         string $persistentVolumeClaimName,
+        ClusterConfig $clusterConfig,
     ): self {
+
         try {
             $this->configureRegistry(
                 manager: $manager,
@@ -442,6 +445,7 @@ class CreateRegistryAccount
                 accountNamespace: $accountNamespace,
                 accountHistory: $accountHistory,
                 persistentVolumeClaimName: $persistentVolumeClaimName,
+                client: $clusterConfig->kubernetesClient,
             );
         } catch (Throwable $error) {
             $manager->error($error);

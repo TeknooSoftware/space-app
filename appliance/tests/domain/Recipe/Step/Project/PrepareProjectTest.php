@@ -28,6 +28,8 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 
@@ -64,10 +66,7 @@ class PrepareProjectTest extends TestCase
         $this->defaultClusterAddress = '42';
         $this->defaultClusterEnv = '42';
         $this->prepareProject = new PrepareProject(
-            $this->defaultClusterName,
-            $this->defaultClusterType,
-            $this->defaultClusterAddress,
-            $this->defaultClusterEnv
+            $this->createMock(ClusterCatalog::class),
         );
     }
 
@@ -76,9 +75,9 @@ class PrepareProjectTest extends TestCase
         self::assertInstanceOf(
             PrepareProject::class,
             ($this->prepareProject)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Project::class),
-                $this->createMock(AccountCredential::class),
+                manager: $this->createMock(ManagerInterface::class),
+                projectInstance: $this->createMock(Project::class),
+                accountWallet: $this->createMock(AccountWallet::class),
             ),
         );
     }

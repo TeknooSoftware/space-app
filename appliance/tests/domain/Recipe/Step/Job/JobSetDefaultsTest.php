@@ -28,6 +28,8 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Job;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 
@@ -54,7 +56,9 @@ class JobSetDefaultsTest extends TestCase
         parent::setUp();
 
         $this->storageProvisioner = '42';
-        $this->jobSetDefaults = new JobSetDefaults($this->storageProvisioner);
+        $this->jobSetDefaults = new JobSetDefaults(
+            $this->createMock(ClusterCatalog::class)
+        );
     }
 
     public function testInvoke(): void
@@ -62,9 +66,9 @@ class JobSetDefaultsTest extends TestCase
         self::assertInstanceOf(
             JobSetDefaults::class,
             ($this->jobSetDefaults)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Job::class),
-                $this->createMock(AccountCredential::class),
+                manager: $this->createMock(ManagerInterface::class),
+                job: $this->createMock(Job::class),
+                accountWallet: $this->createMock(AccountWallet::class),
             ),
         );
     }

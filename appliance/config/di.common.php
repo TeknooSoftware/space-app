@@ -91,22 +91,6 @@ return [
         );
     },
 
-    KubernetesClient::class . ':create_account' => static function (ContainerInterface $container): KubernetesClient {
-        $factory = $container->get(ClientFactoryInterface::class);
-
-        $caCertificate = base64_decode($container->get('teknoo.space.kubernetes.create_account.ca_cert'));
-        $credentials = new ClusterCredentials(
-            token: $container->get('teknoo.space.kubernetes.create_account.token'),
-            caCertificate: $caCertificate,
-        );
-
-        return $factory(
-            $container->get('teknoo.space.kubernetes.master'),
-            $credentials,
-            $container->get(RepositoryRegistry::class)
-        );
-    },
-
     MessageFactoryInterface::class => get(MessageFactory::class),
 
     PingFile::class => create()

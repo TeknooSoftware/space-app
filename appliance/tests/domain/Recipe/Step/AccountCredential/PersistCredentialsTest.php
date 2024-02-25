@@ -69,7 +69,6 @@ class PersistCredentialsTest extends TestCase
         $this->persistCredentials = new PersistCredentials(
             $this->writer,
             $this->datesService,
-            $this->clusterName,
             $this->prefereRealDate,
         );
     }
@@ -81,17 +80,18 @@ class PersistCredentialsTest extends TestCase
             ($this->persistCredentials)(
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(ObjectInterface::class),
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                'foo',
-                $this->createMock(AccountHistory::class),
+                clusterName: 'foo',
+                registryUrl: 'foo',
+                registryAccountName: 'foo',
+                registryConfigName: 'foo',
+                registryPassword: 'foo',
+                serviceName: 'foo',
+                roleName: 'foo',
+                roleBindingName: 'foo',
+                caCertificate: 'foo',
+                token: 'foo',
+                persistentVolumeClaimName: 'foo',
+                accountHistory: $this->createMock(AccountHistory::class),
             ),
         );
     }

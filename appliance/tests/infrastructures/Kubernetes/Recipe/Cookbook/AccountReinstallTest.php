@@ -70,8 +70,6 @@ class AccountReinstallTest extends TestCase
 
     private LoadCredentials|MockObject $loadCredentials;
 
-    private RemoveCredentials|MockObject $removeCredentials;
-
     private SetAccountNamespace|MockObject $setAccountNamespace;
 
     private AccountInstall|MockObject $installAccount;
@@ -97,7 +95,6 @@ class AccountReinstallTest extends TestCase
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
         $this->loadCredentials = $this->createMock(LoadCredentials::class);
-        $this->removeCredentials = $this->createMock(RemoveCredentials::class);
         $this->setAccountNamespace = $this->createMock(SetAccountNamespace::class);
         $this->installAccount = $this->createMock(AccountInstall::class);
         $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
@@ -111,7 +108,6 @@ class AccountReinstallTest extends TestCase
             $this->redirectClient,
             $this->loadHistory,
             $this->loadCredentials,
-            $this->removeCredentials,
             $this->setAccountNamespace,
             $this->installAccount,
             $this->updateAccountHistory,

@@ -31,6 +31,7 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountHistory;
@@ -47,7 +48,6 @@ class PersistCredentials
     public function __construct(
         private AccountCredentialWriter $writer,
         private DatesService $datesService,
-        private string $defaultClusterName,
         private bool $prefereRealDate,
     ) {
     }
@@ -66,7 +66,8 @@ class PersistCredentials
         string $caCertificate,
         string $token,
         string $persistentVolumeClaimName,
-        AccountHistory $accountHistory
+        AccountHistory $accountHistory,
+        ClusterConfig $clusterConfig,
     ): self {
         if ($object instanceof SpaceAccount) {
             $object = $object->account;
@@ -78,7 +79,7 @@ class PersistCredentials
 
         $accountCredential = new AccountCredential(
             account: $object,
-            clusterName: $this->defaultClusterName,
+            clusterName: $clusterConfig->name,
             registryUrl: $registryUrl,
             registryAccountName: $registryAccountName,
             registryConfigName: $registryConfigName,

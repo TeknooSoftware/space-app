@@ -25,17 +25,22 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
+use BadMethodCallException;
 use Http\Client\Common\HttpMethodsClientInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 use function http_build_query;
+use function in_array;
 use function str_contains;
 
 /**
@@ -47,20 +52,19 @@ use function str_contains;
 class DashboardFrame implements DashboardFrameInterface
 {
     public function __construct(
-        private string $dashboardUrl,
+        private ClusterCatalog $catalog,
         private HttpMethodsClientInterface $httpMethodsClient,
-        private string $clusterToken,
         private ResponseFactoryInterface $responseFactory,
     ) {
     }
 
-    private function getDashboardUrl(?Account $account, string $wildcard): string
+    private function getDashboardUrl(ClusterConfig $cluster, ?Account $account, string $wildcard): string
     {
         if (!str_contains($wildcard, '#')) {
-            return $this->dashboardUrl . $wildcard;
+            return $cluster->dashboardAddress . $wildcard;
         }
 
-        $urlGenerator = new class ($this->dashboardUrl . $wildcard) implements AccountAwareInterface {
+        $urlGenerator = new class ($cluster->dashboardAddress . $wildcard) implements AccountAwareInterface {
             public function __construct(
                 public string $url,
             ) {
@@ -97,23 +101,40 @@ class DashboardFrame implements DashboardFrameInterface
         ManagerInterface $manager,
         EastClient $client,
         ServerRequestInterface $serverRequest,
+        User $user,
+        string $clusterName,
         string $wildcard = '',
         ?Account $account = null,
-        //todo Use AccountsCredentialsWallet
-        ?AccountCredential $accountCredential = null,
+        ?AccountWallet $accountWallet = null,
     ): DashboardFrameInterface {
         if (empty($wildcard)) {
             $wildcard = '#/workloads';
         }
 
-        $dashboardUrl = $this->getDashboardUrl($account, $wildcard);
+        $isAdmin = !in_array('ROLE_ADMIN', (array) $user->getRoles());
+        $accountCredential = null;
+
+        if (!$isAdmin) {
+            if (null === $accountWallet) {
+                throw new BadMethodCallException(message: "Wallet is mandatory for non admin user", code: 403);
+            }
+
+            if (!isset($accountWallet[$clusterName])) {
+                throw new BadMethodCallException(message: "Cluster is not allowed for this user", code: 403);
+            }
+
+            $accountCredential = $accountWallet[$clusterName];
+        }
+
+        $cluster = $this->catalog->getCluster($clusterName);
+
+        $dashboardUrl = $this->getDashboardUrl($cluster, $account, $wildcard);
 
         $responseDashboard = $this->httpMethodsClient->send(
             method: $serverRequest->getMethod(),
             uri: $dashboardUrl,
             headers: [
-                //todo check if user has admin role before use cluster token
-                'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $this->clusterToken),
+                'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $cluster->token),
             ],
         );
 

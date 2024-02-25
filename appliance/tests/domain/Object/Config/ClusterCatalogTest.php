@@ -23,30 +23,26 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Tests\Unit\Object\Config;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
+use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 
+use function iterator_to_array;
+
 /**
- * Class HealthTest.
+ * Class SearchTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health
+ * @covers \Teknoo\Space\Object\Config\ClusterCatalog
  */
-class HealthTest extends TestCase
+class ClusterCatalogTest extends TestCase
 {
-    private Health $health;
-
-    private Client|MockObject $client;
+    private ClusterCatalog $catalog;
 
     /**
      * {@inheritdoc}
@@ -55,18 +51,14 @@ class HealthTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
-        $this->health = new Health($this->createMock(ClusterCatalog::class));
+        $this->catalog = new ClusterCatalog([$this->createMock(Cluster::class)]);
     }
 
-    public function testInvoke(): void
+    public function testConstruct(): void
     {
         self::assertInstanceOf(
-            Health::class,
-            ($this->health)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ParametersBag::class),
-            )
+            Cluster::class,
+            iterator_to_array($this->catalog)[0],
         );
     }
 }

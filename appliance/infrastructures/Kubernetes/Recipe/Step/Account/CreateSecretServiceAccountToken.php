@@ -34,6 +34,7 @@ use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Repository\SecretRepository;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 use function base64_decode;
@@ -49,7 +50,6 @@ class CreateSecretServiceAccountToken
     private const SECRET_SUFFIX = '-secret';
 
     public function __construct(
-        private KubernetesClient $client,
         private DatesService $datesService,
         private SleepServiceInterface $sleepService,
         private int $secretWaitingTime = 1000,
@@ -86,13 +86,16 @@ class CreateSecretServiceAccountToken
         string $kubeNamespace,
         string $accountNamespace,
         string $serviceName,
-        AccountHistory $accountHistory
+        AccountHistory $accountHistory,
+        ClusterConfig $clusterConfig,
     ): self {
-        $this->client->setNamespace($kubeNamespace);
+        $client = $clusterConfig->kubernetesClient;
+
+        $client->setNamespace($kubeNamespace);
 
         $secretName = $accountNamespace . self::SECRET_SUFFIX;
         $secret = $this->createSecret($secretName, $kubeNamespace, $serviceName);
-        $secretRepository = $this->client->secrets();
+        $secretRepository = $client->secrets();
         if (!$secretRepository->exists((string) $secret->getMetadata('name'))) {
             $secretRepository->apply($secret);
         }

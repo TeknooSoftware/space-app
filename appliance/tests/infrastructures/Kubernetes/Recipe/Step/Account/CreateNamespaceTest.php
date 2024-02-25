@@ -33,6 +33,7 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -47,8 +48,6 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 class CreateNamespaceTest extends TestCase
 {
     private CreateNamespace $createNamespace;
-
-    private Client|MockObject $client;
 
     private string $rootNamespace;
 
@@ -65,13 +64,11 @@ class CreateNamespaceTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
         $this->rootNamespace = '42';
         $this->datesService = $this->createMock(DatesService::class);
         $this->prefereRealDate = true;
         $this->writer = $this->createMock(WriterInterface::class);
         $this->createNamespace = new CreateNamespace(
-            $this->client,
             $this->rootNamespace,
             $this->datesService,
             $this->prefereRealDate,
@@ -81,6 +78,17 @@ class CreateNamespaceTest extends TestCase
 
     public function testInvoke(): void
     {
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            defaultEnv: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+        );
+
         self::assertInstanceOf(
             CreateNamespace::class,
             ($this->createNamespace)(
@@ -88,6 +96,7 @@ class CreateNamespaceTest extends TestCase
                 'foo',
                 $this->createMock(AccountHistory::class),
                 $this->createMock(Account::class),
+                $clusterConfig,
             ),
         );
     }

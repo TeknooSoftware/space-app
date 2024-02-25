@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Query\AccountCredential\LoadFromAccountQuery;
 use Throwable;
@@ -57,7 +58,7 @@ class LoadCredentials
             return $this;
         }
 
-        $errorCallback = null;
+        $errorCallback = fn () => $manager->updateWorkPlan([AccountWallet::class => new AccountWallet([])]);
 
         if (false === $allowEmptyCredentials) {
             $errorCallback = static fn (Throwable $error) => $manager->error(
@@ -75,21 +76,20 @@ class LoadCredentials
             }
         }
 
-        /** @var Promise<AccountCredential, mixed, mixed> $fetchedPromise */
+        /** @var Promise<iterable<AccountCredential>, mixed, mixed> $fetchedPromise */
         $fetchedPromise = new Promise(
-            //todo Use AccountsCredentialsWallet
-            static function (AccountCredential $accountCredential) use ($manager) {
+            /** @var iterable<AccountCredential> */
+            static function (iterable $credentials) use ($manager) {
                 $manager->updateWorkPlan(
                     [
-                        //todo select from AccountsCredentialsWallet if needed, check if need
-                        AccountCredential::class => $accountCredential,
+                        AccountWallet::class => new AccountWallet($credentials),
                     ],
                 );
             },
             $errorCallback
         );
 
-        $this->loader->fetch(
+        $this->loader->query(
             new LoadFromAccountQuery($accountInstance),
             $fetchedPromise,
         );

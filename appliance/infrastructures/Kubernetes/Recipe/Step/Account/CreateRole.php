@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\ClusterRole;
 use Teknoo\Kubernetes\Model\Role;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -45,7 +46,6 @@ class CreateRole
     private const CLUSTER_ROLE_SUFFIX = '-cluster-role';
 
     public function __construct(
-        private KubernetesClient $client,
         private DatesService $datesService,
         private bool $prefereRealDate,
     ) {
@@ -113,19 +113,22 @@ class CreateRole
         ManagerInterface $manager,
         string $kubeNamespace,
         string $accountNamespace,
-        AccountHistory $accountHistory
+        AccountHistory $accountHistory,
+        ClusterConfig $clusterConfig,
     ): self {
+        $client = $clusterConfig->kubernetesClient;
+
         $roleName = $accountNamespace . self::ROLE_SUFFIX;
         $clusterRoleName = $accountNamespace . self::CLUSTER_ROLE_SUFFIX;
 
         $role = $this->createRole($roleName, $kubeNamespace);
-        $roleRepository = $this->client->roles();
+        $roleRepository = $client->roles();
         if (!$roleRepository->exists((string) $role->getMetadata('name'))) {
             $roleRepository->apply($role);
         }
 
         $clusterRole = $this->createClusterRole($clusterRoleName);
-        $clusterRoleRepository = $this->client->clusterRoles();
+        $clusterRoleRepository = $client->clusterRoles();
         if (!$clusterRoleRepository->exists((string) $clusterRole->getMetadata('name'))) {
             $clusterRoleRepository->apply($clusterRole);
         }

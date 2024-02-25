@@ -23,11 +23,9 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Object\Config;
 
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Kubernetes\Client;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -35,24 +33,17 @@ use Teknoo\Space\Writer\AccountCredentialWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class RemoveCredentials
+class Cluster
 {
     public function __construct(
-        private AccountCredentialWriter $writer,
+        public readonly string $name,
+        public readonly string $type,
+        public readonly string $masterAddress,
+        public readonly string $defaultEnv,
+        public readonly string $storageProvisioner,
+        public readonly string $dashboardAddress,
+        public readonly Client $kubernetesClient,
+        public readonly string $token,
     ) {
-    }
-
-    public function __invoke(
-        ?AccountWallet $wallet = null
-    ): self {
-        if (!$wallet) {
-            return $this;
-        }
-
-        foreach ($wallet as $accountCredential) {
-            $this->writer->remove($accountCredential);
-        }
-
-        return $this;
     }
 }

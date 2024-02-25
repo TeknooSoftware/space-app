@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -45,8 +46,6 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 class CreateRegistryAccountTest extends TestCase
 {
     private CreateRegistryAccount $createRegistryAccount;
-
-    private Client|MockObject $client;
 
     private string $registryImageName;
 
@@ -75,7 +74,6 @@ class CreateRegistryAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
         $this->registryImageName = '42';
         $this->tlsSecretName = '42';
         $this->registryUrl = '42';
@@ -87,7 +85,6 @@ class CreateRegistryAccountTest extends TestCase
         $this->spaceRegistryUsername = '42';
         $this->spaceRegistryPwd = '42';
         $this->createRegistryAccount = new CreateRegistryAccount(
-            $this->client,
             $this->registryImageName,
             $this->tlsSecretName,
             $this->registryUrl,
@@ -103,14 +100,26 @@ class CreateRegistryAccountTest extends TestCase
 
     public function testInvoke(): void
     {
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            defaultEnv: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+        );
+
         self::assertInstanceOf(
             CreateRegistryAccount::class,
             ($this->createRegistryAccount)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                'bar',
-                $this->createMock(AccountHistory::class),
-                'foo',
+                manager: $this->createMock(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'bar',
+                accountHistory: $this->createMock(AccountHistory::class),
+                persistentVolumeClaimName: 'foo',
+                clusterConfig: $clusterConfig,
             ),
         );
     }

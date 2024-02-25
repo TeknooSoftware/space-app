@@ -23,36 +23,46 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Object\Config;
 
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use DomainException;
+use IteratorAggregate;
+use Teknoo\East\Paas\Object\Cluster as EastCluster;
+use Traversable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
+ *
+ * @implements IteratorAggregate<Cluster>
  */
-class RemoveCredentials
+class ClusterCatalog implements IteratorAggregate
 {
+    /**
+     * @param array<string, Cluster> $clusters
+     */
     public function __construct(
-        private AccountCredentialWriter $writer,
+        private array $clusters,
     ) {
     }
 
-    public function __invoke(
-        ?AccountWallet $wallet = null
-    ): self {
-        if (!$wallet) {
-            return $this;
+    public function getCluster(string|EastCluster $name): Cluster
+    {
+        if ($name instanceof EastCluster) {
+            $name = (string) $name;
         }
 
-        foreach ($wallet as $accountCredential) {
-            $this->writer->remove($accountCredential);
+        if (!isset($this->clusters[$name])) {
+            throw new DomainException("Cluster {$name} is not available in the catalog");
         }
 
-        return $this;
+        return $this->clusters[$name];
+    }
+
+    public function getIterator(): Traversable
+    {
+        yield from $this->clusters;
     }
 }
