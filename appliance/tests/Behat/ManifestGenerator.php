@@ -449,7 +449,6 @@ class ManifestGenerator
     ]
 }
 EOF;
-
     }
 
     public function fullDeployment(

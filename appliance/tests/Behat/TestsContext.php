@@ -3719,7 +3719,7 @@ class TestsContext implements Context
     public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace): void
     {
         $expected = trim((new ManifestGenerator())->namespaceCreation($namespace));
-        foreach  ($this->manifests['namespaces/space-client-my-company/secrets'] as &$secret) {
+        foreach ($this->manifests['namespaces/space-client-my-company/secrets'] as &$secret) {
             if (!empty($secret['data']['.dockerconfigjson'])) {
                 $secret['data']['.dockerconfigjson'] = '===';
             }

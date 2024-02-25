@@ -71,9 +71,11 @@ class MockClientInstantiator implements InstantiatorInterface
                 $path = $uri->getPath();
                 $query = $uri->getQuery();
 
-                if (str_contains($path, '/secrets')
+                if (
+                    str_contains($path, '/secrets')
                     && (str_contains($query, 'behat-secret') || str_contains($query, 'my-company-secret'))
-                    && $this->counter++ > 1) {
+                    && $this->counter++ > 1
+                ) {
                     return new JsonResponse(
                         [
                             'items' => [

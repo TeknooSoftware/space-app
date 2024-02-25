@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
 use Teknoo\Space\Writer\AccountCredentialWriter;
@@ -80,7 +81,6 @@ class PersistCredentialsTest extends TestCase
             ($this->persistCredentials)(
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(ObjectInterface::class),
-                clusterName: 'foo',
                 registryUrl: 'foo',
                 registryAccountName: 'foo',
                 registryConfigName: 'foo',
@@ -92,6 +92,7 @@ class PersistCredentialsTest extends TestCase
                 token: 'foo',
                 persistentVolumeClaimName: 'foo',
                 accountHistory: $this->createMock(AccountHistory::class),
+                clusterConfig: $this->createMock(Cluster::class),
             ),
         );
     }
