@@ -11,6 +11,7 @@ twig:
         mercureEnabled: '%teknoo.space.mercure.publishing_enabled%'
         supportContact: '%teknoo.space.support.contact%'
         assetsVersion: '%teknoo.space.assets.version%'
+        clustersCatalog: '@teknoo.space.clusters_catalog'
         oauth:
             enabled: '%env(OAUTH_ENABLED)%'
             type: '%teknoo.space.oauth.server.type%'

@@ -186,7 +186,7 @@
                 "https://api.github.com/repos/TeknooSoftware/symfony-recipes/contents/index.json",
                 "flex://defaults"
             ],
-            "require": "^6.4||^7"
+            "require": "^6.4"
         }
     }
 }

@@ -10,7 +10,7 @@ space_dashboard:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_dashboard_frame:
-    path: '/dashboard/frame/'
+    path: '/dashboard/frame/{clusterName}/'
     methods: ['GET', 'POST', 'PUT', 'DELETE']
     schemes: ['https']
     defaults:
@@ -19,7 +19,7 @@ space_dashboard_frame:
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
 
 space_dashboard_frame_url:
-    path: '/dashboard/frame/{wildcard}'
+    path: '/dashboard/frame/{clusterName}/{wildcard}'
     requirements:
         wildcard: .*
     methods: ['GET', 'POST', 'PUT', 'DELETE']

@@ -111,7 +111,7 @@ class DashboardFrame implements DashboardFrameInterface
             $wildcard = '#/workloads';
         }
 
-        $isAdmin = !in_array('ROLE_ADMIN', (array) $user->getRoles());
+        $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
         $accountCredential = null;
 
         if (!$isAdmin) {

@@ -40,7 +40,7 @@ _teknoo_paas_admin_account_new:
         template: '@@TeknooEastPaas/AdminAccount/new.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
-        clusterCatalog: '@teknoo.space.cluster_catalog'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 _teknoo_paas_admin_account_delete:
     path: '/admin/account/delete/{id}'
@@ -73,7 +73,7 @@ space_admin_account_reinstall:
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
-        clusterCatalog: '@teknoo.space.cluster_catalog'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_admin_account_registry_reinstall:
     path: '/admin/account/reinstall-registry/{id}'
@@ -84,4 +84,4 @@ space_admin_account_registry_reinstall:
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
-        clusterCatalog: '@teknoo.space.cluster_catalog'
+        clusterCatalog: '@teknoo.space.clusters_catalog'

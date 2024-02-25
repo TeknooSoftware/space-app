@@ -120,7 +120,7 @@ return [
 
     ReloadNamespace::class => create()
         ->constructor(
-            get('teknoo.space.cluster_catalog'),
+            get('teknoo.space.clusters_catalog'),
         ),
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
@@ -201,7 +201,7 @@ return [
 
     PrepareProject::class => create()
         ->constructor(
-            get('teknoo.space.cluster_catalog'),
+            get('teknoo.space.clusters_catalog'),
         ),
 
     SetRedirectClientAtEnd::class => create()
@@ -291,12 +291,12 @@ return [
 
     UpdateProjectCredentialsFromAccount::class => create()
         ->constructor(
-            get('teknoo.space.cluster_catalog'),
+            get('teknoo.space.clusters_catalog'),
         ),
 
     JobSetDefaults::class => create()
         ->constructor(
-            get('teknoo.space.cluster_catalog'),
+            get('teknoo.space.clusters_catalog'),
         ),
 
     IncludeExtraInWorkplan::class => create(),
@@ -304,7 +304,7 @@ return [
     HealthInterface::class => get(Health::class),
     Health::class => create()
         ->constructor(
-            get('teknoo.space.cluster_catalog'),
+            get('teknoo.space.clusters_catalog'),
         ),
 
     DashboardInfoInterface::class => get(DashboardInfo::class),
@@ -340,7 +340,7 @@ return [
         );
 
         return new DashboardFrame(
-            catalog: $container->get('teknoo.space.cluster_catalog'),
+            catalog: $container->get('teknoo.space.clusters_catalog'),
             httpMethodsClient: $httpMethodsClient,
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
         );

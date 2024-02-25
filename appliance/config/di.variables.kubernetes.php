@@ -44,15 +44,15 @@ return [
     'teknoo.space.kubernetes.default_cluster.type' => env('SPACE_KUBERNETES_CLUSTER_TYPE', 'kubernetes'),
     'teknoo.space.kubernetes.default_cluster.env' => env('SPACE_KUBERNETES_CLUSTER_ENV', 'prod'),
 
-    'teknoo.space.cluster_catalog' => static function (ContainerInterface $container): ClusterCatalog {
+    'teknoo.space.clusters_catalog' => static function (ContainerInterface $container): ClusterCatalog {
         static $clusterCatalog = null;
         if (null !== $clusterCatalog) {
             return $clusterCatalog;
         }
 
         $definitions = [];
-        if ($container->has('teknoo.space.cluster_catalog.definitions')) {
-            $definitions = $container->get('teknoo.space.cluster_catalog.definitions');
+        if ($container->has('teknoo.space.clusters_catalog.definitions')) {
+            $definitions = $container->get('teknoo.space.clusters_catalog.definitions');
         } else {
             $definitions[] = [
                 'master' => $container->get('teknoo.space.kubernetes.default_cluster.master'),
