@@ -1,5 +1,25 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta37] - 2024-02-26
+### Beta Release
+- Use East PaaS 2.7 with defaults instead extra
+- Use East Common 2.9 and `VisitableTrait` and Recipe's loop feature
+- Prepare Space to manage several cluster :
+  - a Space's Project can use external Kubernetes Cluster, but Space app could manage 
+    (create namespace and service account, install OCI registry, display dashboard, ...) only one cluster.
+- Centralize cluster's configuration into a new object, generated at bootstrap `Teknoo\Space\Object\Config\Cluster`, 
+  grouped into a `Teknoo\Space\Object\Config\ClusterCatalog`.
+  - Several clusters will can defined via the DI key `teknoo.space.cluster_catalog.definitions`. (In a future version)
+  - Cookbooks has been updated to use now this catalog.
+  - The source repository and the image registry **MUST** be shared between all clusters
+  - **This work will still take several versions of Space**, We will work on :
+    - Account installation to support clusters with an external OCI registry. 
+      - Not install an oci/docker registry in the client's namespace, just put the dockerconfig secret)
+    - the rework of `AccountCredentials` :
+      - split clusters's config and registry's config.
+      - Encrypt token and password
+    - on the encryption of secret persisested variables
+
 ## [1.0.0-beta36] - 2024-02-22
 ### Beta Release
 - Support of locked cluster

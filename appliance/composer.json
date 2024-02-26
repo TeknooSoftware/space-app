@@ -126,6 +126,7 @@
         "symfony/error-handler": "*",
         "symfony/stopwatch": "*",
         "symfony/web-profiler-bundle": "*",
+        "symfony/var-dumper": "^6.4",
         "webmozart/assert": "^1.11",
         "zenstruck/messenger-test": "^1.9.1"
     },
@@ -186,7 +187,7 @@
                 "https://api.github.com/repos/TeknooSoftware/symfony-recipes/contents/index.json",
                 "flex://defaults"
             ],
-            "require": "^6.4"
+            "require": "^6.4||^7"
         }
     }
 }
