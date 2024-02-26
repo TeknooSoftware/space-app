@@ -89,7 +89,7 @@ class CreateSecretServiceAccountToken
         AccountHistory $accountHistory,
         ClusterConfig $clusterConfig,
     ): self {
-        $client = $clusterConfig->kubernetesClient;
+        $client = $clusterConfig->getKubernetesClient();
 
         $client->setNamespace($kubeNamespace);
 

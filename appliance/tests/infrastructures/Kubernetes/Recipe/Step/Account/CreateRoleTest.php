@@ -67,6 +67,7 @@ class CreateRoleTest extends TestCase
     {
         $clusterConfig = new ClusterConfig(
             name: 'foo',
+            sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
             defaultEnv: 'foo',

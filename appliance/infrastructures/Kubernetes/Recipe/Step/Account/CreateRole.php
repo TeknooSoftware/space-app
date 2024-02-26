@@ -116,7 +116,7 @@ class CreateRole
         AccountHistory $accountHistory,
         ClusterConfig $clusterConfig,
     ): self {
-        $client = $clusterConfig->kubernetesClient;
+        $client = $clusterConfig->getKubernetesClient();
 
         $roleName = $accountNamespace . self::ROLE_SUFFIX;
         $clusterRoleName = $accountNamespace . self::CLUSTER_ROLE_SUFFIX;

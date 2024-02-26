@@ -54,7 +54,7 @@ class ReloadNamespace
             $clusterConfig = $this->catalog->getCluster($credential->getClusterName());
 
             $account->requireAccountNamespace(
-                new class ($manager, $clusterConfig->kubernetesClient) implements AccountAwareInterface {
+                new class ($manager, $clusterConfig->getKubernetesClient()) implements AccountAwareInterface {
                     public function __construct(
                         public ManagerInterface $manager,
                         private KubernetesClient $client,

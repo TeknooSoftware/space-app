@@ -42,9 +42,11 @@ class ClusterCatalog implements IteratorAggregate
 {
     /**
      * @param array<string, Cluster> $clusters
+     * @param array<string, string> $aliases
      */
     public function __construct(
         private array $clusters,
+        private array $aliases,
     ) {
     }
 
@@ -52,6 +54,10 @@ class ClusterCatalog implements IteratorAggregate
     {
         if ($name instanceof EastCluster) {
             $name = (string) $name;
+        }
+
+        if (isset($this->aliases[$name])) {
+            $name = $this->aliases[$name];
         }
 
         if (!isset($this->clusters[$name])) {

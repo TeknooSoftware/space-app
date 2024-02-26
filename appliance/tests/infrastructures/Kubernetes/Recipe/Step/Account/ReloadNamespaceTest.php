@@ -64,6 +64,7 @@ class ReloadNamespaceTest extends TestCase
             ->willReturn(
                 new ClusterConfig(
                     name: 'foo',
+                    sluggyName: 'foo',
                     type: 'foo',
                     masterAddress: 'foo',
                     defaultEnv: 'foo',

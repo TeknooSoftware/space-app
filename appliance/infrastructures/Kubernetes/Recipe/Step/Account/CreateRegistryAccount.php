@@ -445,7 +445,7 @@ class CreateRegistryAccount
                 accountNamespace: $accountNamespace,
                 accountHistory: $accountHistory,
                 persistentVolumeClaimName: $persistentVolumeClaimName,
-                client: $clusterConfig->kubernetesClient,
+                client: $clusterConfig->getKubernetesClient(),
             );
         } catch (Throwable $error) {
             $manager->error($error);

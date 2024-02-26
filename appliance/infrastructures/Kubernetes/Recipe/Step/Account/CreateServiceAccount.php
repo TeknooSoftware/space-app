@@ -71,7 +71,7 @@ class CreateServiceAccount
     ): self {
         $serviceName = $accountNamespace . self::SERVICE_SUFFIX;
 
-        $client = $clusterConfig->kubernetesClient;
+        $client = $clusterConfig->getKubernetesClient();
         $client->setNamespace($kubeNamespace);
         $account = $this->createAccount($serviceName, $kubeNamespace);
         $accountRepository = $client->serviceAccounts();

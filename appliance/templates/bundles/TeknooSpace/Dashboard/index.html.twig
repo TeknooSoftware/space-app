@@ -21,26 +21,30 @@
         </div>
 
         {% set clusterSelected = null %}
+
         {% if k8s is defined %}
             <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
-                <div class="col mt-4">
+                <div class="col mt-4 d-inline-flex align-items-center">
                     <form action="?" method="get">
-                        <label>
-                            Cluster :
-                            <select name="cluster">
-                                {% for clusterConfig in clustersCatalog %}
-                                    {% if clusterSelected is empty %}
-                                        {% set clusterSelected = clusterConfig %}
-                                        <option value="{{ clusterConfig.name }}">{{ clusterConfig.name }}</option>
+                        <select name="cluster" class="form-select form-control" onchange="form.submit()">
+                            {%- for clusterConfig in clustersCatalog -%}
+                                {% if clusterSelected is empty %}
+                                    {% set clusterSelected = clusterConfig.sluggyName %}
+                                {% endif %}
+                                <option
+                                    {% if clusterSelected == clusterConfig.sluggyName %}
+                                        selected="selected"
                                     {% endif %}
-                                {% endfor %}
-                            </select>
-                        </label>
+                                    value="{{ clusterConfig.sluggyName }}">
+                                        {{ clusterConfig.name }}
+                                </option>
+                            {%- endfor -%}
+                        </select>
                     </form>
                 </div>
             </div>
             {% for clusterName, clusterValues in k8s %}
-                {% if clusterSelected is not empty and clusterName == clusterSelected.name %}
+                {% if clusterSelected is not empty and clusterName == clusterSelected %}
                 <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
                 {% if clusterValues.health is defined %}
                 <div class="col mt-4">
@@ -147,7 +151,7 @@
                 <iframe id="dashboard"
                         class="w-100 min-vh-100"
                         title="Kuberntes Dashboard"
-                        src="{{ path('space_dashboard_frame', {'clusterName': clusterSelected.name}) }}#/workloads?namespace={{ dashboard.namespace }}"
+                        src="{{ path('space_dashboard_frame', {'clusterName': clusterSelected}) }}#/workloads?namespace={{ dashboard.namespace }}"
                         sandbox="allow-scripts allow-forms allow-same-origin"
                 ></iframe>
             </div><!--end row-->

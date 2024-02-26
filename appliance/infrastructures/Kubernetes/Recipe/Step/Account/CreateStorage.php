@@ -88,7 +88,7 @@ class CreateStorage
         ClusterConfig $clusterConfig,
         ?AccountWallet $accountWallet = null,
     ): self {
-        $client = $clusterConfig->kubernetesClient;
+        $client = $clusterConfig->getKubernetesClient();
 
         $accountCredential = null;
         if ($accountWallet) {

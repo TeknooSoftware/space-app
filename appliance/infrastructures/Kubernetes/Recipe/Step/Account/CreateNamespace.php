@@ -74,7 +74,7 @@ class CreateNamespace
         Account $account,
         ClusterConfig $cluster,
     ): self {
-        $client = $cluster->kubernetesClient;
+        $client = $cluster->getKubernetesClient();
         $namespaceRepository = $client->namespaces();
 
         $originalNS = $accountNamespace;

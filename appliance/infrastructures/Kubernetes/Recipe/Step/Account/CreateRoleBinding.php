@@ -121,7 +121,7 @@ class CreateRoleBinding
         AccountHistory $accountHistory,
         ClusterConfig $clusterConfig,
     ): self {
-        $client = $clusterConfig->kubernetesClient;
+        $client = $clusterConfig->getKubernetesClient();
 
         $roleBindingName = $accountNamespace . self::ROLE_BINDING_SUFFIX;
         $clusterRoleBindingName = $accountNamespace . self::CLUSTER_ROLE_BINDING_SUFFIX;

@@ -42,6 +42,7 @@ use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountCredential;
 
 /**
  * Class DashboardFrameTest.
@@ -73,6 +74,7 @@ class DashboardFrameTest extends TestCase
         $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
         $clusterConfig = new ClusterConfig(
             name: 'foo',
+            sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
             defaultEnv: 'foo',
@@ -81,7 +83,11 @@ class DashboardFrameTest extends TestCase
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
         );
-        $this->catalog = new ClusterCatalog(['clusterName' => $clusterConfig]);
+
+        $this->catalog = new ClusterCatalog(
+            ['clusterName' => $clusterConfig],
+            ['cluster-name' => 'clusterName'],
+        );
 
         $this->dashboardFrame = new DashboardFrame(
             $this->catalog,
@@ -114,6 +120,14 @@ class DashboardFrameTest extends TestCase
             ->method('send')
             ->willReturn($response);
 
+        $wallet = $this->createMock(AccountWallet::class);
+        $wallet->expects(self::any())
+            ->method('offsetExists')
+            ->willReturn(true);
+        $wallet->expects(self::any())
+            ->method('offsetGet')
+            ->willReturn($this->createMock(AccountCredential::class));
+
         self::assertInstanceOf(
             DashboardFrame::class,
             ($this->dashboardFrame)(
@@ -124,7 +138,7 @@ class DashboardFrameTest extends TestCase
                 clusterName: 'clusterName',
                 wildcard: '*',
                 account: $this->createMock(Account::class),
-                accountWallet: $this->createMock(AccountWallet::class),
+                accountWallet: $wallet,
             )
         );
     }

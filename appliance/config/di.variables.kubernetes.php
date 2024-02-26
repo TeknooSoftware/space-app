@@ -33,9 +33,11 @@ use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 
 use function DI\env;
+use function preg_replace;
+use function strtolower;
+use function trim;
 
 return [
-
     'teknoo.space.kubernetes.default_cluster.master' => env('SPACE_KUBERNETES_MASTER', null),
     'teknoo.space.kubernetes.default_cluster.dashboard' => env('SPACE_KUBERNETES_DASHBOARD', null),
     'teknoo.space.kubernetes.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN', null),
@@ -70,7 +72,11 @@ return [
         $storageProvisioner = $container->get('teknoo.east.paas.default_storage_provider');
         $factory = $container->get(ClientFactoryInterface::class);
 
+        $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', $text)));
+
         $clustersList = [];
+        $aliases = [];
+
         foreach ($definitions as $definition) {
             $caCertificate = base64_decode($definition['create_account']['ca_cert']);
             $credentials = new ClusterCredentials(
@@ -78,25 +84,29 @@ return [
                 token: $definition['create_account']['token'],
             );
 
-            $client = $factory(
+            $clientInit = fn() => $factory(
                 $definition['master'],
                 $credentials,
                 $container->get(RepositoryRegistry::class)
             );
 
-            $clustersList[(string) $definition['name']] = new Cluster(
-                name: $definition['name'],
+            $name = (string) $definition['name'];
+            $sluggyName = $sluggyfier($definition['name']);
+            $aliases[$sluggyName] = $name;
+            $clustersList[$name] = new Cluster(
+                name: $name,
+                sluggyName: $sluggyName,
                 type: $definition['type'],
                 masterAddress: $definition['master'],
                 defaultEnv: $definition['env'],
                 storageProvisioner: $definition['storage_provisioner'] ?? $storageProvisioner,
                 dashboardAddress: $definition['dashboard'],
-                kubernetesClient: $client,
+                kubernetesClient: $clientInit,
                 token: $definition['create_account']['token'],
             );
         }
 
-        return $clusterCatalog = new ClusterCatalog($clustersList);
+        return $clusterCatalog = new ClusterCatalog($clustersList, $aliases);
     },
 
     //Generic

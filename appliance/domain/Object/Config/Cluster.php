@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Object\Config;
 
+use RuntimeException;
 use Teknoo\Kubernetes\Client;
 
 /**
@@ -35,15 +36,45 @@ use Teknoo\Kubernetes\Client;
  */
 class Cluster
 {
+    private ?Client $kubernetesClient = null;
+
+    /**
+     * @var callable|null
+     */
+    private $clientInit = null;
+
     public function __construct(
         public readonly string $name,
+        public readonly string $sluggyName,
         public readonly string $type,
         public readonly string $masterAddress,
         public readonly string $defaultEnv,
         public readonly string $storageProvisioner,
         public readonly string $dashboardAddress,
-        public readonly Client $kubernetesClient,
+        callable|Client $kubernetesClient,
         public readonly string $token,
     ) {
+        if ($kubernetesClient instanceof Client) {
+            $this->kubernetesClient = $kubernetesClient;
+        } else {
+            $this->clientInit = $kubernetesClient;
+        }
+    }
+
+    public function getKubernetesClient(): Client
+    {
+        if (
+            null === $this->kubernetesClient
+            && null !== $this->clientInit
+        ) {
+            $this->kubernetesClient = ($this->clientInit)();
+            $this->clientInit = null;
+        }
+
+        if (null === $this->kubernetesClient) {
+            throw new RuntimeException("Error during kubernetes client's initializing");
+        }
+
+        return $this->kubernetesClient;
     }
 }

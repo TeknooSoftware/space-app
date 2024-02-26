@@ -52,16 +52,16 @@ class Health implements HealthInterface
         $values = [];
 
         foreach ($this->catalog as $cluster) {
-            $client = $cluster->kubernetesClient;
+            $client = $cluster->getKubernetesClient();
             try {
                 $values = [
-                    $cluster->name => [
+                    $cluster->sluggyName => [
                         'health' => $client->health(),
                         'version' => $client->version(),
                     ],
                 ];
             } catch (Throwable $error) {
-                $values[$cluster->name]['error'] = $error;
+                $values[$cluster->sluggyName]['error'] = $error;
             }
         }
 
