@@ -51,8 +51,6 @@ class CreateStorageTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private string $storageProvisioner;
-
     private bool $prefereRealDate;
 
     /**
@@ -63,11 +61,9 @@ class CreateStorageTest extends TestCase
         parent::setUp();
 
         $this->datesService = $this->createMock(DatesService::class);
-        $this->storageProvisioner = '42';
         $this->prefereRealDate = true;
         $this->createStorage = new CreateStorage(
             $this->datesService,
-            $this->storageProvisioner,
             $this->prefereRealDate
         );
     }

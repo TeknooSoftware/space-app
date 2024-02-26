@@ -111,6 +111,8 @@ class DashboardFrame implements DashboardFrameInterface
             $wildcard = '#/workloads';
         }
 
+        $clusterConfig = $this->catalog->getCluster($clusterName);
+
         $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
         $accountCredential = null;
 
@@ -119,22 +121,20 @@ class DashboardFrame implements DashboardFrameInterface
                 throw new BadMethodCallException(message: "Wallet is mandatory for non admin user", code: 403);
             }
 
-            if (!isset($accountWallet[$clusterName])) {
+            if (!isset($accountWallet[$clusterConfig->name])) {
                 throw new BadMethodCallException(message: "Cluster is not allowed for this user", code: 403);
             }
 
-            $accountCredential = $accountWallet[$clusterName];
+            $accountCredential = $accountWallet[$clusterConfig->name];
         }
 
-        $cluster = $this->catalog->getCluster($clusterName);
-
-        $dashboardUrl = $this->getDashboardUrl($cluster, $account, $wildcard);
+        $dashboardUrl = $this->getDashboardUrl($clusterConfig, $account, $wildcard);
 
         $responseDashboard = $this->httpMethodsClient->send(
             method: $serverRequest->getMethod(),
             uri: $dashboardUrl,
             headers: [
-                'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $cluster->token),
+                'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $clusterConfig->token),
             ],
         );
 

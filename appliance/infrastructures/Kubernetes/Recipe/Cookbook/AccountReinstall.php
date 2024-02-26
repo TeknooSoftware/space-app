@@ -63,6 +63,7 @@ class AccountReinstall implements CookbookInterface
         private SetRedirectClientAtEnd $redirectClient,
         private LoadHistory $loadHistory,
         private LoadCredentials $loadCredentials,
+        private RemoveCredentials $removeCredentials,
         private SetAccountNamespace $setAccountNamespace,
         private AccountInstall $installAccount,
         private UpdateAccountHistory $updateAccountHistory,
@@ -82,6 +83,8 @@ class AccountReinstall implements CookbookInterface
         $recipe = $recipe->require(new Ingredient('string', 'storageSizeToClaim'));
 
         $recipe = $this->prepareRecipeForAccount($recipe);
+
+        $recipe = $recipe->cook($this->removeCredentials, RemoveCredentials::class, [], 70);
 
         $recipe = $recipe->cook($this->setAccountNamespace, SetAccountNamespace::class, [], 80);
 

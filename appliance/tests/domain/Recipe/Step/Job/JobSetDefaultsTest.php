@@ -46,8 +46,6 @@ class JobSetDefaultsTest extends TestCase
 {
     private JobSetDefaults $jobSetDefaults;
 
-    private string $storageProvisioner;
-
     /**
      * {@inheritdoc}
      */
@@ -55,7 +53,6 @@ class JobSetDefaultsTest extends TestCase
     {
         parent::setUp();
 
-        $this->storageProvisioner = '42';
         $this->jobSetDefaults = new JobSetDefaults(
             $this->createMock(ClusterCatalog::class)
         );

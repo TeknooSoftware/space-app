@@ -88,6 +88,7 @@ services:
             - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
             - SPACE_REDIS_HOST=redis
             - SPACE_REDIS_PORT=6379
+            - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/public.pem

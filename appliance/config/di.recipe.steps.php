@@ -158,7 +158,6 @@ return [
     CreateStorage::class => static function (ContainerInterface $container): CreateStorage {
         return new CreateStorage(
             $container->get(DatesService::class),
-            $container->get('teknoo.east.paas.default_storage_provider'),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },

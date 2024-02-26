@@ -47,7 +47,6 @@ class CreateStorage
 
     public function __construct(
         private DatesService $datesService,
-        private string $storageProvisioner,
         private bool $prefereRealDate,
     ) {
     }
@@ -55,7 +54,8 @@ class CreateStorage
     private function createPersistentVolumeClaim(
         string $name,
         string $namespace,
-        string $storageSize
+        string $storageSize,
+        string $storageProvisioner,
     ): PersistentVolumeClaim {
         return new PersistentVolumeClaim([
             'metadata' => [
@@ -69,7 +69,7 @@ class CreateStorage
                 'accessModes' => [
                     'ReadWriteOnce'
                 ],
-                'storageClassName' => $this->storageProvisioner,
+                'storageClassName' => $storageProvisioner,
                 'resources' => [
                     'requests' => [
                         'storage' => $storageSize
@@ -100,6 +100,7 @@ class CreateStorage
             $pvcName,
             $kubeNamespace,
             $storageSizeToClaim,
+            $clusterConfig->storageProvisioner,
         );
 
         $persistentVolumeClaimRepository = $client->persistentVolumeClaims();
