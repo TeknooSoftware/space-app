@@ -18,7 +18,7 @@
     - the rework of `AccountCredentials` :
       - split clusters's config and registry's config.
       - Encrypt token and password
-    - on the encryption of secret persisested variables
+    - on the encryption of secret persisted variables
 
 ## [1.0.0-beta36] - 2024-02-22
 ### Beta Release
