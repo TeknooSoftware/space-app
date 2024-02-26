@@ -1,4 +1,5 @@
 framework:
     router:
+        default_uri: 'https://%env(SPACE_HOSTNAME)%/'
         strict_requirements: ~
         utf8: true
