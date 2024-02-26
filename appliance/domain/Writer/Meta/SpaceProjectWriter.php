@@ -62,7 +62,7 @@ class SpaceProjectWriter implements WriterInterface
     public function save(
         ObjectInterface $object,
         PromiseInterface $promise = null,
-        ?bool $prefereRealDateOnUpdate = null,
+        ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceProject) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));
@@ -81,19 +81,19 @@ class SpaceProjectWriter implements WriterInterface
 
         /** @var Promise<Project, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (Project $project, PromiseInterface $next) use ($object, $prefereRealDateOnUpdate) {
+            function (Project $project, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
                 if ($object->projectMetadata instanceof ProjectMetadata) {
                     $metadata = $object->projectMetadata;
                     $metadata->setProject($object->project);
 
-                    $this->metadataWriter->save($metadata, $next, $prefereRealDateOnUpdate);
+                    $this->metadataWriter->save($metadata, $next, $preferRealDateOnUpdate);
                 }
 
                 $ids = [];
                 foreach ($object->variables as $var) {
                     $this->persistedVariableWriter->save(
                         object: $var,
-                        prefereRealDateOnUpdate: $prefereRealDateOnUpdate
+                        preferRealDateOnUpdate: $preferRealDateOnUpdate
                     );
                     $ids[] = $var->getId();
                 }
@@ -121,7 +121,7 @@ class SpaceProjectWriter implements WriterInterface
         $this->projectWriter->save(
             $object->project,
             $persistedPromise->next($promise),
-            $prefereRealDateOnUpdate
+            $preferRealDateOnUpdate
         );
 
         return $this;

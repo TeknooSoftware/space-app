@@ -52,7 +52,7 @@ class UpdateCredentialsTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -63,8 +63,8 @@ class UpdateCredentialsTest extends TestCase
 
         $this->writer = $this->createMock(AccountCredentialWriter::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDate = true;
-        $this->updateCredentials = new UpdateCredentials($this->writer, $this->datesService, $this->prefereRealDate);
+        $this->preferRealDate = true;
+        $this->updateCredentials = new UpdateCredentials($this->writer, $this->datesService, $this->preferRealDate);
     }
 
     public function testInvoke(): void

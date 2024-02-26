@@ -57,7 +57,7 @@ class CreateSecretServiceAccountTokenTest extends TestCase
 
     private int $secretWaitingTime;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -79,12 +79,12 @@ class CreateSecretServiceAccountTokenTest extends TestCase
         $this->datesService = $this->createMock(DatesService::class);
         $this->sleepService = $this->createMock(SleepServiceInterface::class);
         $this->secretWaitingTime = 42;
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->createSecret = new CreateSecretServiceAccountToken(
             $this->datesService,
             $this->sleepService,
             $this->secretWaitingTime,
-            $this->prefereRealDate
+            $this->preferRealDate
         );
     }
 

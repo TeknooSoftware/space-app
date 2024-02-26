@@ -49,7 +49,7 @@ class CreateServiceAccountTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -59,10 +59,10 @@ class CreateServiceAccountTest extends TestCase
         parent::setUp();
 
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->createServiceAccount = new CreateServiceAccount(
             $this->datesService,
-            $this->prefereRealDate
+            $this->preferRealDate
         );
     }
 

@@ -45,7 +45,7 @@ class CreateServiceAccount
 
     public function __construct(
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -90,7 +90,7 @@ class CreateServiceAccount
                     ]
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->updateWorkPlan(['serviceName' => $serviceName]);

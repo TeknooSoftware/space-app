@@ -11,7 +11,7 @@ services:
         bind:
             $adminRoleName: 'ROLE_ADMIN'
             $codeGeneratorSalt: '%env(SPACE_CODE_GENERATOR_SALT)%'
-            $spaceDashbordRoute: 'space_dashboard'
+            $spaceDashboardRoute: 'space_dashboard'
             $spaceUpdatePasswordRoute: 'space_update_password'
             $enableCodeRestriction: '%env(default:teknoo.space.default.code.subscription.required:SPACE_CODE_SUBSCRIPTION_REQUIRED)%'
             $default2FAProviderName: '%teknoo.space.user.2fa.provider%'
@@ -45,6 +45,7 @@ services:
         resource: '../infrastructures/Twig/Extension/*'
         exclude:
             - '../infrastructures/Twig/Extension/CollectionSerializing'
+            - '../infrastructures/Twig/Extension/ObjectSerializing'
             - '../infrastructures/Twig/Extension/MFARoutesFinder/'
         tags:
             - { name: twig.extension }

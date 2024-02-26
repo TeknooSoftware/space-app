@@ -53,7 +53,7 @@ class CreateNamespaceTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     private WriterInterface|MockObject $writer;
 
@@ -66,12 +66,12 @@ class CreateNamespaceTest extends TestCase
 
         $this->rootNamespace = '42';
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->writer = $this->createMock(WriterInterface::class);
         $this->createNamespace = new CreateNamespace(
             $this->rootNamespace,
             $this->datesService,
-            $this->prefereRealDate,
+            $this->preferRealDate,
             $this->writer
         );
     }

@@ -50,7 +50,7 @@ class PersistedVariableWriterTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    protected bool $prefereRealDateOnUpdate = false;
+    protected bool $preferRealDateOnUpdate = false;
 
     /**
      * {@inheritdoc}
@@ -61,12 +61,12 @@ class PersistedVariableWriterTest extends TestCase
 
         $this->manager = $this->createMock(ManagerInterface::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDateOnUpdate = true;
+        $this->preferRealDateOnUpdate = true;
 
         $this->persistedVariableWriter = new PersistedVariableWriter(
             $this->manager,
             $this->datesService,
-            $this->prefereRealDateOnUpdate,
+            $this->preferRealDateOnUpdate,
         );
     }
 

@@ -74,7 +74,7 @@ class SpaceAccountWriter implements WriterInterface
     public function save(
         ObjectInterface $object,
         PromiseInterface $promise = null,
-        ?bool $prefereRealDateOnUpdate = null,
+        ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceAccount) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));
@@ -95,12 +95,12 @@ class SpaceAccountWriter implements WriterInterface
 
         /** @var Promise<Account, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (Account $account, PromiseInterface $next) use ($object, $prefereRealDateOnUpdate) {
+            function (Account $account, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
                 if ($object->accountData instanceof AccountData) {
                     $data = $object->accountData;
                     $data->setAccount($object->account);
 
-                    $this->dataWriter->save(object: $data, prefereRealDateOnUpdate: $prefereRealDateOnUpdate);
+                    $this->dataWriter->save(object: $data, preferRealDateOnUpdate: $preferRealDateOnUpdate);
                     $next->success($account);
                 }
 
@@ -108,7 +108,7 @@ class SpaceAccountWriter implements WriterInterface
                 foreach ($object->variables as $var) {
                     $this->accountPersistedVariableWriter->save(
                         object: $var,
-                        prefereRealDateOnUpdate: $prefereRealDateOnUpdate
+                        preferRealDateOnUpdate: $preferRealDateOnUpdate
                     );
                     $ids[] = $var->getId();
                 }
@@ -136,7 +136,7 @@ class SpaceAccountWriter implements WriterInterface
         $this->accountWriter->save(
             $object->account,
             $persistedPromise->next($promise),
-            $prefereRealDateOnUpdate
+            $preferRealDateOnUpdate
         );
 
         return $this;

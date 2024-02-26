@@ -50,7 +50,7 @@ class ReinstallAccountErrorHandlerTest extends TestCase
 
     private AccountHistoryWriter|MockObject $writer;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -61,11 +61,11 @@ class ReinstallAccountErrorHandlerTest extends TestCase
 
         $this->datesService = $this->createMock(DatesService::class);
         $this->writer = $this->createMock(AccountHistoryWriter::class);
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->reinstallAccountErrorHandler = new ReinstallAccountErrorHandler(
             $this->datesService,
             $this->writer,
-            $this->prefereRealDate
+            $this->preferRealDate
         );
     }
 

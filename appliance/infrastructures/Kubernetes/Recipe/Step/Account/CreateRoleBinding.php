@@ -47,7 +47,7 @@ class CreateRoleBinding
 
     public function __construct(
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -156,7 +156,7 @@ class CreateRoleBinding
                     ]
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->updateWorkPlan(['roleBindingName' => $roleBindingName]);

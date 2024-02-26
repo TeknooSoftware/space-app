@@ -74,7 +74,7 @@ class CreateRegistryAccount
         private string $registryUrl,
         private string $clusterIssuer,
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
         private string $ingressClass,
         private string $spaceRegistryUrl,
         private string $spaceRegistryUsername,
@@ -418,7 +418,7 @@ class CreateRegistryAccount
                     ]
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->updateWorkPlan([

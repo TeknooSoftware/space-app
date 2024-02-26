@@ -50,7 +50,7 @@ class PrepareAccountErrorHandlerTest extends TestCase
 
     private AccountHistoryWriter|MockObject $writer;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -61,11 +61,11 @@ class PrepareAccountErrorHandlerTest extends TestCase
 
         $this->datesService = $this->createMock(DatesService::class);
         $this->writer = $this->createMock(AccountHistoryWriter::class);
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->prepareAccountErrorHandler = new PrepareAccountErrorHandler(
             $this->datesService,
             $this->writer,
-            $this->prefereRealDate
+            $this->preferRealDate
         );
     }
 

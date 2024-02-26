@@ -58,7 +58,7 @@ class SpaceUserWriter implements WriterInterface
     public function save(
         ObjectInterface $object,
         PromiseInterface $promise = null,
-        ?bool $prefereRealDateOnUpdate = null,
+        ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceUser) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));
@@ -77,12 +77,12 @@ class SpaceUserWriter implements WriterInterface
 
         /** @var Promise<User, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (User $user, PromiseInterface $next) use ($object, $prefereRealDateOnUpdate) {
+            function (User $user, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
                 if ($object->userData instanceof UserData) {
                     $data = $object->userData;
                     $data->setUser($object->user);
 
-                    $this->dataWriter->save(object: $data, prefereRealDateOnUpdate: $prefereRealDateOnUpdate);
+                    $this->dataWriter->save(object: $data, preferRealDateOnUpdate: $preferRealDateOnUpdate);
                     $next->success($user);
                 }
             },
@@ -99,7 +99,7 @@ class SpaceUserWriter implements WriterInterface
         $this->userWriter->save(
             $object->user,
             $persistedPromise->next($promise),
-            $prefereRealDateOnUpdate
+            $preferRealDateOnUpdate
         );
 
         return $this;

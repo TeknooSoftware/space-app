@@ -44,7 +44,7 @@ class UpdateCredentials
     public function __construct(
         private AccountCredentialWriter $writer,
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -78,7 +78,7 @@ class UpdateCredentials
                         $dateTime
                     );
                 },
-                $this->prefereRealDate,
+                $this->preferRealDate,
             );
         }
 

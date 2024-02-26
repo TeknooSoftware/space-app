@@ -49,7 +49,7 @@ class CreateNamespace
     public function __construct(
         private string $rootNamespace,
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
         private WriterInterface $writer,
     ) {
     }
@@ -116,7 +116,7 @@ class CreateNamespace
                     ]
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $client->setNamespace($namespaceValue);

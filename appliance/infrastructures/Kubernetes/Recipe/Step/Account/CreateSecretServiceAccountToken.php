@@ -53,7 +53,7 @@ class CreateSecretServiceAccountToken
         private DatesService $datesService,
         private SleepServiceInterface $sleepService,
         private int $secretWaitingTime = 1000,
-        private bool $prefereRealDate = false,
+        private bool $preferRealDate = false,
     ) {
     }
 
@@ -137,7 +137,7 @@ class CreateSecretServiceAccountToken
                     $dateTime
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->updateWorkPlan($workPlan);

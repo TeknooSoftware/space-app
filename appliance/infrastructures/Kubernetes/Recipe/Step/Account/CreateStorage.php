@@ -47,7 +47,7 @@ class CreateStorage
 
     public function __construct(
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -119,7 +119,7 @@ class CreateStorage
                     ]
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->updateWorkPlan(['persistentVolumeClaimName' => $pvcName]);

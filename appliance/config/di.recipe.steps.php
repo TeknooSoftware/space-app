@@ -169,7 +169,7 @@ return [
             registryUrl: $container->get('teknoo.space.kubernetes.oci_registry.url'),
             clusterIssuer: $container->get('teknoo.space.kubernetes.cluster_issuer'),
             datesService: $container->get(DatesService::class),
-            prefereRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
+            preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
             ingressClass: $container->get('teknoo.east.paas.kubernetes.ingress.default_ingress_class'),
             spaceRegistryUrl: $container->get('teknoo.space.kubernetes.oci_space_global_registry.url'),
             spaceRegistryUsername: $container->get('teknoo.space.kubernetes.oci_space_global_registry.username'),
@@ -181,7 +181,7 @@ return [
         return new PersistCredentials(
             writer: $container->get(AccountCredentialWriter::class),
             datesService: $container->get(DatesService::class),
-            prefereRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
+            preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
 

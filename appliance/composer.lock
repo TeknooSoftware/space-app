@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d032c45e5cb0a6d5d3ea353a5ba8165",
+    "content-hash": "17214c376893312bf4b6496fd3f4c775",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -404,16 +404,16 @@
         },
         {
             "name": "doctrine/collections",
-            "version": "2.1.4",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "72328a11443a0de79967104ad36ba7b30bded134"
+                "reference": "07e16cd7b80a2cffed99e36b541876af172f0257"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/72328a11443a0de79967104ad36ba7b30bded134",
-                "reference": "72328a11443a0de79967104ad36ba7b30bded134",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/07e16cd7b80a2cffed99e36b541876af172f0257",
+                "reference": "07e16cd7b80a2cffed99e36b541876af172f0257",
                 "shasum": ""
             },
             "require": {
@@ -425,7 +425,7 @@
                 "ext-json": "*",
                 "phpstan/phpstan": "^1.8",
                 "phpstan/phpstan-phpunit": "^1.0",
-                "phpunit/phpunit": "^9.5",
+                "phpunit/phpunit": "^10.5",
                 "vimeo/psalm": "^5.11"
             },
             "type": "library",
@@ -470,7 +470,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/collections/issues",
-                "source": "https://github.com/doctrine/collections/tree/2.1.4"
+                "source": "https://github.com/doctrine/collections/tree/2.2.0"
             },
             "funding": [
                 {
@@ -486,7 +486,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-03T09:22:33+00:00"
+            "time": "2024-02-25T22:55:36+00:00"
         },
         {
             "name": "doctrine/common",
@@ -11081,16 +11081,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "2.9.0",
+            "version": "2.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "228fd05cf53eb73d3b0077533847bc2089111020"
+                "reference": "f82839667deaaa23d380754a54a08a1bf4be200b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/228fd05cf53eb73d3b0077533847bc2089111020",
-                "reference": "228fd05cf53eb73d3b0077533847bc2089111020",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/f82839667deaaa23d380754a54a08a1bf4be200b",
+                "reference": "f82839667deaaa23d380754a54a08a1bf4be200b",
                 "shasum": ""
             },
             "require": {
@@ -11201,20 +11201,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-25T15:33:44+00:00"
+            "time": "2024-02-26T22:51:41+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "2.9.0",
+            "version": "2.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "adbab9c4617463b384b157219b45fd0a2b8b8a96"
+                "reference": "1c8331c6581587fb1e9269e427f174fa178cf5f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/adbab9c4617463b384b157219b45fd0a2b8b8a96",
-                "reference": "adbab9c4617463b384b157219b45fd0a2b8b8a96",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/1c8331c6581587fb1e9269e427f174fa178cf5f0",
+                "reference": "1c8331c6581587fb1e9269e427f174fa178cf5f0",
                 "shasum": ""
             },
             "require": {
@@ -11238,7 +11238,7 @@
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.0.4",
-                "teknoo/east-common": "^2.9",
+                "teknoo/east-common": "^2.9.1",
                 "teknoo/east-foundation-symfony": "^7.6.1",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/recipe": "^4.6.1",
@@ -11289,7 +11289,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-25T15:05:43+00:00"
+            "time": "2024-02-26T22:52:34+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -11473,16 +11473,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "f4c935be9c35930bd3620e24f16292eb5ca608b8"
+                "reference": "7ff07df42a5f9fcdd7742bc587e730580bb7cd62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/f4c935be9c35930bd3620e24f16292eb5ca608b8",
-                "reference": "f4c935be9c35930bd3620e24f16292eb5ca608b8",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/7ff07df42a5f9fcdd7742bc587e730580bb7cd62",
+                "reference": "7ff07df42a5f9fcdd7742bc587e730580bb7cd62",
                 "shasum": ""
             },
             "require": {
@@ -11492,7 +11492,7 @@
                 "php": "^8.1",
                 "php-di/php-di": "^7.0.6",
                 "psr/http-client": "^1.0.3",
-                "teknoo/east-common": "^2.9",
+                "teknoo/east-common": "^2.9.1",
                 "teknoo/east-foundation": "^7.6.1",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/recipe": "^4.6.1",
@@ -11609,20 +11609,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-25T16:13:06+00:00"
+            "time": "2024-02-26T22:57:54+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "a81860b6d1f5b69f6ae158f01e8603b6d1c978ec"
+                "reference": "8624533aecb2e80af4816d3ae9e6d0d62fb2a9b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/a81860b6d1f5b69f6ae158f01e8603b6d1c978ec",
-                "reference": "a81860b6d1f5b69f6ae158f01e8603b6d1c978ec",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/8624533aecb2e80af4816d3ae9e6d0d62fb2a9b4",
+                "reference": "8624533aecb2e80af4816d3ae9e6d0d62fb2a9b4",
                 "shasum": ""
             },
             "require": {
@@ -11661,7 +11661,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
                 "teknoo/east-common-symfony": "^2.9",
                 "teknoo/east-foundation-symfony": "^7.6.1",
-                "teknoo/east-paas": "^2.7",
+                "teknoo/east-paas": "^2.7.1",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.4.4",
                 "teknoo/recipe": "^4.6.1",
@@ -11723,7 +11723,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-02-25T15:53:50+00:00"
+            "time": "2024-02-26T23:03:06+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13850,12 +13850,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "aafb7236bf0c11b93b24e951544bd83470b85bec"
+                "reference": "af831491cd2810d41a1283e5bf050b887ff4d96a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/aafb7236bf0c11b93b24e951544bd83470b85bec",
-                "reference": "aafb7236bf0c11b93b24e951544bd83470b85bec",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/af831491cd2810d41a1283e5bf050b887ff4d96a",
+                "reference": "af831491cd2810d41a1283e5bf050b887ff4d96a",
                 "shasum": ""
             },
             "conflict": {
@@ -14047,7 +14047,7 @@
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
                 "genix/cms": "<=1.1.11",
                 "getgrav/grav": "<1.7.44",
-                "getkirby/cms": "<3.5.8.3-dev|>=3.6,<3.6.6.3-dev|>=3.7,<3.7.5.2-dev|>=3.8,<3.8.4.1-dev|>=3.9,<3.9.6",
+                "getkirby/cms": "<=3.6.6.4|>=3.7,<=3.7.5.3|>=3.8,<=3.8.4.2|>=3.9,<=3.9.8|==3.10|>=4,<4.1.1",
                 "getkirby/kirby": "<=2.5.12",
                 "getkirby/panel": "<2.5.14",
                 "getkirby/starterkit": "<=3.7.0.2",
@@ -14582,7 +14582,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-02-23T16:04:25+00:00"
+            "time": "2024-02-26T20:04:43+00:00"
         },
         {
             "name": "sebastian/cli-parser",

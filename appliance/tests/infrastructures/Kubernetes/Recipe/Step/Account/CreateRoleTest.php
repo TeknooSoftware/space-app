@@ -49,7 +49,7 @@ class CreateRoleTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -59,8 +59,8 @@ class CreateRoleTest extends TestCase
         parent::setUp();
 
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDate = true;
-        $this->createRole = new CreateRole($this->datesService, $this->prefereRealDate);
+        $this->preferRealDate = true;
+        $this->createRole = new CreateRole($this->datesService, $this->preferRealDate);
     }
 
     public function testInvoke(): void

@@ -57,7 +57,7 @@ class CreateRegistryAccountTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     private string $ingressClass;
 
@@ -79,7 +79,7 @@ class CreateRegistryAccountTest extends TestCase
         $this->registryUrl = '42';
         $this->clusterIssuer = '42';
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->ingressClass = '42';
         $this->spaceRegistryUrl = '42';
         $this->spaceRegistryUsername = '42';
@@ -90,7 +90,7 @@ class CreateRegistryAccountTest extends TestCase
             $this->registryUrl,
             $this->clusterIssuer,
             $this->datesService,
-            $this->prefereRealDate,
+            $this->preferRealDate,
             $this->ingressClass,
             $this->spaceRegistryUrl,
             $this->spaceRegistryUsername,

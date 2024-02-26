@@ -54,7 +54,7 @@ class PersistCredentialsTest extends TestCase
 
     private string $clusterName;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -66,11 +66,11 @@ class PersistCredentialsTest extends TestCase
         $this->writer = $this->createMock(AccountCredentialWriter::class);
         $this->datesService = $this->createMock(DatesService::class);
         $this->clusterName = '42';
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->persistCredentials = new PersistCredentials(
             $this->writer,
             $this->datesService,
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
     }
 

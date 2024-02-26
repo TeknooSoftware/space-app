@@ -48,7 +48,7 @@ class PersistCredentials
     public function __construct(
         private AccountCredentialWriter $writer,
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -103,7 +103,7 @@ class PersistCredentials
                     $dateTime
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->updateWorkPlan([
