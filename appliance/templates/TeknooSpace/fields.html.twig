@@ -63,21 +63,6 @@
     {% endif %}
 {% endblock checkbox_widget %}
 
-{% block _type_blocks_entry_widget %}
-    <div class="col-12 subform">
-        <div class="row">
-            {{ form_errors(form) }}
-            {{ form_row(form.name, {"colClass": "col-6"}) }}
-            {{ form_row(form.type, {"colClass": "col-5"}) }}
-            <div class="col-1 pt-2 align-self-center">
-                <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
-                    <i class="mdi mdi-trash-can "></i>
-                </button>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block _space_project_project_clusters_entry_widget %}
     <div class="col-12 subform">
         <div class="row">
