@@ -1,4 +1,4 @@
-{# templates/bundles/TeknooEastPaasBundle/views/AdminAccount/list.html.twig #}
+{# templates/bundles/TeknooEastPaasBundle/AdminAccount/list.html.twig #}
 
 {% extends '@TeknooSpace/dashboard.list.html.twig' %}
 
@@ -15,7 +15,8 @@
 
 {% block topHeaderButton %}
     <li class="list-inline-item mb-0 ms-1">
-        <a rel="noopener" class="btn btn-outline-light" href="{{ path('_teknoo_paas_admin_account_new') }}" title="{{ 'teknoo.space.text.admin_create_account'|trans }}">
+        <a rel="noopener" class="btn btn-outline-light" href="{{ path('_teknoo_paas_admin_account_new') }}"
+           title="{{ 'teknoo.space.text.admin_create_account'|trans }}">
             <i class="uil uil-book-medical"></i>
             {{ 'teknoo.space.action.new_account'|trans }}
         </a>
@@ -26,9 +27,24 @@
     <thead class="bg-light">
     <tr>
         <th id="item-id" class="border-bottom text-start">#</th>
-        <th id="account-name" class="border-bottom"><a class="text-primary" href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'name') }}">{{ 'teknoo.space.text.admin_cols_account_name'|trans }}</a></th>
-        <th id="account-created" class="border-bottom"><a class="text-primary" href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'createdAt') }}">{{ 'teknoo.space.text.admin_cols_account_created_at'|trans }}</a></th>
-        <th id="account-updated" class="border-bottom"><a class="text-primary" href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'updatedAt') }}">{{ 'teknoo.space.text.admin_cols_account_updated_at'|trans }}</a></th>
+        <th id="account-name" class="border-bottom">
+            <a class="text-primary"
+               href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'name') }}">
+                {{ 'teknoo.space.text.admin_cols_account_name'|trans }}
+            </a>
+        </th>
+        <th id="account-created" class="border-bottom">
+            <a class="text-primary"
+               href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'createdAt') }}">
+                {{ 'teknoo.space.text.admin_cols_account_created_at'|trans }}
+            </a>
+        </th>
+        <th id="account-updated" class="border-bottom">
+            <a class="text-primary"
+               href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'updatedAt') }}">
+                {{ 'teknoo.space.text.admin_cols_account_updated_at'|trans }}
+            </a>
+        </th>
         <th scope="col" class="border-bottom text-end">{{ 'teknoo.space.text.admin_cols_account_action'|trans }}</th>
     </tr>
     </thead>
@@ -41,19 +57,33 @@
 {% endblock %}
 
 {% block listTableRow %}
-    <tr {% if loop.index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
+    <tr {% if loop.index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
         <td>{{ object.id|slice(0, 6) }}</td>
         <td>
-            <a class="text-primary" href="{{ path('_teknoo_paas_admin_account_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_account'|trans }}">
+            <a class="text-primary" href="{{ path('_teknoo_paas_admin_account_edit', {'id':object.id}) }}"
+               title="{{ 'teknoo.space.action.edit_account'|trans }}">
                 {{ object.account }}
             </a>
         </td>
         <td>{{ object.account.createdAt|date('Y M d H:i:s') }}</td>
         <td>{{ object.account.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
-            <a class="text-primary" href="{{ path('_teknoo_paas_admin_account_edit', {'id':object.id}) }}" title="{{ 'teknoo.space.action.edit_account'|trans }}"><span class="mdi mdi-pencil"></span></a>
-            <a class="text-primary" href="{{ path('_teknoo_paas_admin_project_new', {'accountId':object.id}) }}" title="{{ 'teknoo.space.action.new_project'|trans }}"><span class="mdi mdi-shape-circle-plus"></span></a>
-            <a class="text-primary" onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{ path('_teknoo_paas_admin_account_delete', {'id':object.id}) }}" title="Delete this entry"><span class="mdi mdi-trash-can"></span></a>
+            <a class="text-primary"
+               href="{{ path('_teknoo_paas_admin_account_edit', {'id':object.id}) }}"
+               title="{{ 'teknoo.space.action.edit_account'|trans }}">
+                <span class="mdi mdi-pencil"></span>
+            </a>
+            <a class="text-primary"
+               href="{{ path('_teknoo_paas_admin_project_new', {'accountId':object.id}) }}"
+               title="{{ 'teknoo.space.action.new_project'|trans }}">
+                <span class="mdi mdi-shape-circle-plus"></span>
+            </a>
+            <a class="text-primary"
+               onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
+               href="{{ path('_teknoo_paas_admin_account_delete', {'id':object.id}) }}"
+               title="Delete this entry">
+                <span class="mdi mdi-trash-can"></span>
+            </a>
         </td>
     </tr>
 {% endblock %}

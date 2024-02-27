@@ -1,4 +1,0 @@
-space_admin_account:
-    resource: '@TeknooEastPaasBundle/Resources/config/routing_admin_account.yaml'
-    prefix: '/admin'
-    schemes: ['https']

@@ -4,7 +4,9 @@
 
 {% block title %}{{ 'teknoo.space.title.admin_project.edit'|trans }} : {{ objectInstance }} - {% endblock %}
 
-{% block instanceMainTitle %}<i class="uil uil-trowel"></i> {{ 'teknoo.space.title.admin_project.edit'|trans }} : {{ objectInstance }}{% endblock %}
+{%- block instanceMainTitle -%}
+    <i class="uil uil-trowel"></i> {{ 'teknoo.space.title.admin_project.edit'|trans }} : {{ objectInstance }}
+{%- endblock -%}
 
 {% block breadcrumbListLink path('_teknoo_paas_admin_project_list') %}
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_project.edit'|trans }}{% endblock %}
@@ -22,7 +24,13 @@
         {{ form_row(formView.project.sourceRepository.defaultBranch) }}
         {{ form_row(formView.project.sourceRepository.identity.name) }}
         {{ form_row(formView.project.sourceRepository.identity.privateKey, {"colClass": "col-11"}) }}
-        {{ form_row(formView.project.sourceRepository.identity.clear, {"colClass": "col-1 align-self-center pt-4", 'label_attr':{'class': 'switch-custom'}}) }}
+        {{ form_row(
+            formView.project.sourceRepository.identity.clear, {
+                "colClass": "col-1 align-self-center pt-4",
+                'label_attr': {
+                    'class': 'switch-custom'
+                }
+            }) }}
     </div>
     <div class="row">
         <div class="col-12"><h3>{{ 'teknoo.space.title.image_builder'|trans }}</h3></div>
@@ -30,9 +38,17 @@
         {{ form_row(formView.project.imagesRegistry.identity.auth) }}
         {{ form_row(formView.project.imagesRegistry.identity.username) }}
         {{ form_row(formView.project.imagesRegistry.identity.password, {"colClass": "col-5"}) }}
-        {{ form_row(formView.project.imagesRegistry.identity.clear, {"colClass": "col-1 align-self-center pt-4", 'label_attr':{'class': 'switch-custom'}}) }}
+        {{ form_row(
+            formView.project.imagesRegistry.identity.clear, {
+                "colClass": "col-1 align-self-center pt-4",
+                'label_attr': {
+                    'class': 'switch-custom'
+                }
+            }) }}
     </div>
-    <div class="row subforms" data-subforms="clusters" data-prototype="{{ form_widget(formView.project.clusters.vars.prototype)|e('html_attr') }}">
+    <div class="row subforms"
+         data-subforms="clusters"
+         data-prototype="{{ form_widget(formView.project.clusters.vars.prototype)|e('html_attr') }}">
         <div class="col-12">
             <h3>{{ 'teknoo.space.title.clusters'|trans }}</h3>
         </div>
@@ -44,7 +60,9 @@
 {% endblock %}
 
 {% block addsFormButton %}
-    <button type="button" data-subforms-id="clusters" class="btn btn-outline-secondary btn-full-large btn-block btn-add-subform mb-2">
+    <button type="button"
+            data-subforms-id="clusters"
+            class="btn btn-outline-secondary btn-full-large btn-block btn-add-subform mb-2">
         <i class="uil uil-focus-add"></i>
         {{ 'teknoo.space.action.add_cluster'|trans }}
     </button>
@@ -53,19 +71,23 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.project_actions'|trans }}</h5>
-        <a href="{{ path('space_project_edit_refresh_credentials', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_project_edit_refresh_credentials', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-refresh"></i>
             {{ 'teknoo.space.action.project_refresh'|trans }}
         </a>
-        <a href="{{ path('space_project_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_project_edit_variables', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>
-        <a href="{{ path('space_job_list', {'projectId':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_job_list', {'projectId':objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-list-ul"></i>
             {{ 'teknoo.space.action.jobs'|trans }}
         </a>
-        <a href="{{ path('space_admin_new_job', {'projectId':objectInstance.id}) }}" class="btn btn-success btn-full-large btn-block">
+        <a href="{{ path('space_admin_job_new', {'projectId':objectInstance.id}) }}"
+           class="btn btn-success btn-full-large btn-block">
             <i class="uil uil-play"></i>
             {{ 'teknoo.space.action.start_job'|trans }}
         </a>

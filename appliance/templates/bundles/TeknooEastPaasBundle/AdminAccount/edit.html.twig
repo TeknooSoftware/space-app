@@ -1,12 +1,14 @@
-{# templates/bundles/TeknooEastPaasBundle/views/AdminAccount/edit.html.twig #}
+{# templates/bundles/TeknooEastPaasBundle/AdminAccount/edit.html.twig #}
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
 {% macro printHistory(history, index) %}
-    <tr {% if index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
+    <tr {% if index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
         <td>{{ history.date|date('Y M d H:i:s') }}</td>
-        <td>{{ history.message|trans}}</td>
-        <td><pre>{{ history.extra|json_encode }}</pre></td>
+        <td>{{ history.message|trans }}</td>
+        <td>
+            <pre>{{ history.extra|json_encode }}</pre>
+        </td>
     </tr>
     {% if history.previous is not empty %}
         {{ _self.printHistory(history.previous, index+1) }}
@@ -14,7 +16,9 @@
 {% endmacro %}
 
 {% block title %}{{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }} - {% endblock %}
-{% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }}{% endblock %}
+{%- block instanceMainTitle -%}
+    <i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }}
+{%- endblock -%}
 
 {% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
@@ -51,8 +55,12 @@
             <div class="accordion" id="account-history">
                 <div class="accordion-item rounded">
                     <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button border-0 bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                                aria-expanded="true" aria-controls="collapseOne">
+                        <button class="accordion-button border-0 bg-light"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne"
+                                aria-expanded="true"
+                                aria-controls="collapseOne">
                             {{ 'teknoo.space.title.admin_account.history'|trans }}
                         </button>
                     </h2>
@@ -82,19 +90,23 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
-        <a href="{{ path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}" class="btn btn-outline-dark btn-full-large btn-block mb-2">
+        <a href="{{ path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large btn-block mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>
-        <a href="{{ path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}" class="btn btn-soft-success btn-full-large btn-block">
+        <a href="{{ path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}"
+           class="btn btn-soft-success btn-full-large btn-block">
             <i class="uil uil-trowel"></i>
             {{ 'teknoo.space.action.new_project'|trans }}
         </a>
-        <a href="{{ path('space_admin_account_reinstall', {'id':objectInstance.id}) }}" class="btn btn-soft-danger btn-full-large btn-block mt-2">
+        <a href="{{ path('space_admin_account_reinstall', {'id':objectInstance.id}) }}"
+           class="btn btn-soft-danger btn-full-large btn-block mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_reconfigure_kubernetes'|trans }}
         </a>
-        <a href="{{ path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}" class="btn btn-outline-danger btn-full-large btn-block mt-2">
+        <a href="{{ path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-danger btn-full-large btn-block mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_reconfigure_registry'|trans }}
         </a>

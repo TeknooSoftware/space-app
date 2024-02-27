@@ -1,4 +1,4 @@
-space_api_admin_user_new:
+space_api_v1_admin_user_new:
     path: '/user/new'
     methods: ['POST', 'PUT']
     schemes: ['https']
@@ -9,11 +9,11 @@ space_api_admin_user_new:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
-        route: 'space_api_admin_user_edit'
-        template: '@@TeknooEastPaas/api/AdminUser/item.json.twig'
+        route: 'space_api_v1_admin_user_edit'
+        template: '@@TeknooSpace/api/AdminUser/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
 
-space_api_admin_user_edit:
+space_api_v1_admin_user_edit:
     path: '/user/{id}'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
@@ -23,10 +23,10 @@ space_api_admin_user_edit:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
-        template: '@@TeknooEastPaas/api/AdminUser/item.json.twig'
+        template: '@@TeknooSpace/api/AdminUser/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
 
-space_api_admin_user_list:
+space_api_v1_admin_user_list:
     path: '/users'
     methods: ['GET', 'POST']
     schemes: ['https']
@@ -37,9 +37,9 @@ space_api_admin_user_list:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
-        template: '@@TeknooEastPaas/api/AdminUser/list.json.twig'
+        template: '@@TeknooSpace/api/AdminUser/list.json.twig'
 
-space_api_admin_user_delete:
+space_api_v1_admin_user_delete:
     path: '/user/{id}/delete'
     methods: ['GET', 'DELETE']
     schemes: ['https']
@@ -50,4 +50,4 @@ space_api_admin_user_delete:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
         objectViewKey: 'userInstance'
-        template: '@@TeknooEastPaas/api/AdminUser/deleted.json.twig'
+        template: '@@TeknooSpace/api/AdminUser/deleted.json.twig'

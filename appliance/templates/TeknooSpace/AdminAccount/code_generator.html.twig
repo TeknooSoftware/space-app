@@ -1,0 +1,22 @@
+{# templates/TeknooSpace/AdminAccount/code_generator.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.admin_account.code_generator'|trans }} - {% endblock %}
+{%- block instanceMainTitle -%}
+    <i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.code_generator'|trans }}
+{%- endblock -%}
+
+{% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_account'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.admin_account.code_generator'|trans }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.company, {"largeRow": true}) }}
+        {{ form_row(formView.code, {"largeRow": true}) }}
+    </div>
+{% endblock %}
+
+{% block btnSaveLabel %}<i class="uil uil-angle-double-down"></i>
+    {{ 'teknoo.space.action.admin_generate'|trans }}{% endblock %}

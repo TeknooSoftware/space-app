@@ -1,10 +1,15 @@
-{# templates/bundles/TeknooEastPaasBundle/views/AdminAccount/new.html.twig #}
+{# templates/bundles/TeknooEastPaasBundle/AdminAccount/new.html.twig #}
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% block title %}{{ 'teknoo.space.title.admin_account.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }} - {% endblock %}
+{%- block title -%}
+    {{ 'teknoo.space.title.admin_account.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }} -
+{%- endblock -%}
 
-{% block instanceMainTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }}{% endblock %}
+{%- block instanceMainTitle -%}
+    <i class="uil uil-data-sharing"></i>
+    {{ 'teknoo.space.title.admin_account.new'|trans }} : {{ 'teknoo.space.title.admin.new'|trans }}
+{%- endblock -%}
 
 {% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_account.new'|trans }}{% endblock %}

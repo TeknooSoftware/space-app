@@ -1,4 +1,4 @@
-space_api_job_new:
+space_api_v1_job_new:
     path: '/project/{projectId}/job/new'
     methods: ['POST', 'PUT']
     schemes: ['https']
@@ -10,9 +10,9 @@ space_api_job_new:
         objectClass: 'Teknoo\Space\Object\DTO\NewJob'
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Job/new.json.twig'
+        template: '@@TeknooSpace/api/Job/new.json.twig'
 
-space_api_job_new_pending:
+space_api_v1_job_new_pending:
     path: '/project/{projectId}/job/pending/{newJobId}'
     methods: ['GET']
     schemes: ['https']
@@ -22,9 +22,9 @@ space_api_job_new_pending:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Job/pending.json.twig'
+        template: '@@TeknooSpace/api/Job/pending.json.twig'
 
-space_api_job_restart:
+space_api_v1_job_restart:
     path: '/project/{projectId}/job/restart/{jobId}'
     methods: ['GET']
     schemes: ['https']
@@ -37,9 +37,9 @@ space_api_job_restart:
         objectClass: 'Teknoo\Space\Object\DTO\NewJob'
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Job/pending.json.twig'
+        template: '@@TeknooSpace/api/Job/pending.json.twig'
 
-space_api_job_list:
+space_api_v1_job_list:
     path: '/project/{projectId}/jobs'
     methods: ['GET', 'POST']
     schemes: ['https']
@@ -53,9 +53,9 @@ space_api_job_list:
         loader: '@Teknoo\East\Paas\Loader\JobLoader'
         projectKey: 'Teknoo\Space\Object\DTO\SpaceProject'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Job/list.json.twig'
+        template: '@@TeknooSpace/api/Job/list.json.twig'
 
-space_api_job_get:
+space_api_v1_job_get:
     path: '/project/{projectId}/job/get/{id}'
     methods: ['GET']
     schemes: ['https']
@@ -65,9 +65,9 @@ space_api_job_get:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\East\Paas\Loader\JobLoader'
         objectViewKey: 'jobInstance'
-        template: '@@TeknooEastPaas/api/Job/get.json.twig'
+        template: '@@TeknooSpace/api/Job/get.json.twig'
 
-space_api_job_delete:
+space_api_v1_job_delete:
     path: '/project/{projectId}/job/delete/{id}'
     methods: ['GET', 'DELETE']
     schemes: ['https']
@@ -78,4 +78,4 @@ space_api_job_delete:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\East\Paas\Loader\JobLoader'
         objectViewKey: 'jobInstance'
-        template: '@@TeknooEastPaas/api/Job/deleted.json.twig'
+        template: '@@TeknooSpace/api/Job/deleted.json.twig'

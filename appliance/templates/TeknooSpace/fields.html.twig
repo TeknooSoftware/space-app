@@ -1,0 +1,294 @@
+{# templates/TeknooSpace/fields.html.twig #}
+{% use "bootstrap_5_layout.html.twig" %}
+
+{% block form_label %}
+    {% if  required %}
+        {% if label is not same as(false) and label is empty %}
+            {% if label_format is not empty %}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {% else %}
+                {% set label = name|humanize %}
+            {% endif %}
+            {% set label = label|trans(label_translation_parameters, translation_domain)  ~ '&nbsp;<span class="text-danger">*</span>' %}
+        {% endif %}
+        {% set label_html = true %}
+    {% endif %}
+    {{- parent() -}}
+{% endblock %}
+
+{% block form_row %}
+    {% set colClass = colClass|default('col-6') %}
+    {% if largeRow is defined %}
+        {% set colClass = 'col-12' %}
+    {% endif %}
+    {% if centerRow is defined %}
+        {% set colClass = 'col-6 offset-3' %}
+    {% endif %}
+    <div class="{{ colClass }}">
+        <div class="mb-3">
+            {{ form_label(form, null, {'label_attr':{'class':'form-label'}}) }}
+            <div class="position-relative">
+                {% if pictureInstance is defined and pictureInstance is not empty %}
+                    <img src="{{ path('_teknoo_common_media', {"id": pictureInstance.id}) }}"
+                         class="avatar avatar-large mb-4 d-block"
+                         alt="picture">
+                {% endif %}
+                {{ form_errors(form) }}
+                {{ form_widget(form, {'attr':{'class':'form-control'}|merge(attr)}) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block checkbox_widget %}
+    {% set parent_label_class = parent_label_class|default(label_attr.class|default('')) %}
+    {% if 'checkbox-custom' in parent_label_class %}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' custom-control-input')|trim}) %}
+        <div class="custom-control custom-checkbox{{ 'checkbox-inline' in parent_label_class ? ' custom-control-inline' }}">
+            {{- parent() -}}
+        </div>
+    {% elseif 'switch-custom' in parent_label_class %}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) %}
+        <div class="form-check form-switch{{ 'switch-inline' in parent_label_class ? ' custom-control-inline' }}">
+            {{- parent() -}}
+        </div>
+    {% else %}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) %}
+        <div class="form-check{{ 'checkbox-inline' in parent_label_class ? ' form-check-inline' }}">
+            {{- parent() -}}
+        </div>
+    {% endif %}
+{% endblock checkbox_widget %}
+
+{% block _type_blocks_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_errors(form) }}
+            {{ form_row(form.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.type, {"colClass": "col-5"}) }}
+            <div class="col-1 pt-2 align-self-center">
+                <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
+                    <i class="mdi mdi-trash-can "></i>
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _space_project_project_clusters_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.type, {"colClass": "col-6"}) }}
+            {{ form_row(form.address, {"colClass": "col-6"}) }}
+            {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.identity.caCertificate, {"colClass": "col-12"}) }}
+            {{ form_row(form.identity.clientCertificate, {"colClass": "col-12"}) }}
+            {{ form_row(form.identity.clientKey, {"colClass": "col-12"}) }}
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ form_row(form.identity.token, {"colClass": "col-9"}) }}
+                {{ form_row(
+                    form.identity.clear, {
+                        "colClass": "col-1 align-self-center pt-4",
+                        'label_attr':{
+                            'class': 'switch-custom'
+                        }
+                    }) }}
+                {{ form_row(
+                    form.locked, {
+                        "colClass": "col-1 align-self-center pt-4",
+                        'label_attr':{
+                            'class': 'switch-custom'
+                        }
+                    }) }}
+            {% else %}
+                {{ form_row(form.identity.token, {"colClass": "col-10"}) }}
+                {{ form_row(
+                    form.identity.clear, {
+                        "colClass": "col-1 align-self-center pt-4",
+                        'label_attr':{'class': 'switch-custom'}
+                    }) }}
+                {% do form.locked.setRendered %}
+            {% endif %}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _account_vars_sets_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.environmentName, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row subforms"
+                 data-subforms="variables"
+                 data-prototype="{{ form_widget(form.variables.vars.prototype)|e('html_attr') }}">
+                <div class="col-12">
+                    <h3>
+                        {{ 'teknoo.space.text.variables'|trans }}
+                        <button type="button"
+                                data-subforms-id="variables"
+                                class="btn btn-outline-secondary btn-block btn-add-subform align-self-center">
+                            <i class="uil uil-focus-add"></i>
+                            {{ 'teknoo.space.action.add_variable'|trans }}
+                        </button>
+                    </h3>
+                </div>
+                {% for envVar in form.variables %}
+                    {{ form_widget(envVar, {"largeRow": true}) }}
+                {% endfor %}
+            </div>
+            {% do form.variables.setRendered %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _account_vars_sets_entry_variables_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.id) }}
+            {{ form_row(form.name, {"colClass": "col-10"}) }}
+            {{ form_row(
+                form.secret, {
+                    "colClass": "col-2 d-flex flex-column  justify-content-end",
+                    'label_attr': {'class': 'switch-custom'}
+                }) }}
+            {{ form_row(form.wasSecret) }}
+            {% do form.persisted.setRendered %}
+            {{ form_row(form.value, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _project_vars_sets_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.environmentName, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row subforms"
+                 data-subforms="variables"
+                 data-prototype="{{ form_widget(form.variables.vars.prototype)|e('html_attr') }}">
+                <div class="col-12">
+                    <h3>
+                        {{ 'teknoo.space.text.variables'|trans }}
+                        <button type="button"
+                                data-subforms-id="variables"
+                                class="btn btn-outline-secondary btn-block btn-add-subform align-self-center">
+                            <i class="uil uil-focus-add"></i>
+                            {{ 'teknoo.space.action.add_variable'|trans }}
+                        </button>
+                    </h3>
+                </div>
+                {% for envVar in form.variables %}
+                    {{ form_widget(envVar, {"largeRow": true}) }}
+                {% endfor %}
+            </div>
+            {% do form.variables.setRendered %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _project_vars_sets_entry_variables_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.id) }}
+            {{ form_row(form.name, {"colClass": "col-10"}) }}
+            {{ form_row(
+                form.secret, {
+                    "colClass": "col-2 d-flex flex-column  justify-content-end",
+                    'label_attr':{'class': 'switch-custom'}
+                }) }}
+            {{ form_row(form.wasSecret) }}
+            {% do form.persisted.setRendered %}
+            {{ form_row(form.value, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _new_job_variables_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.id) }}
+            {{ form_row(form.name, {"colClass": "col-8"}) }}
+            {{ form_row(
+                form.secret, {
+                    "colClass": "col-2 d-flex flex-column  justify-content-end",
+                    'label_attr':{'class': 'switch-custom'}
+                }) }}
+            {{ form_row(form.wasSecret) }}
+            {{ form_row(
+                form.persisted, {
+                    "colClass": "col-2 d-flex flex-column  justify-content-end",
+                    'label_attr':{'class': 'switch-custom'}
+                }) }}
+            {{ form_row(form.value, {"colClass": "col-11"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _support_attachments_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.file, {"colClass": "col-10"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-icon action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        {%- for error in errors -%}
+            <div class="alert bg-soft-danger fw-medium space-form-error" role="alert">
+                <i class="uil uil-exclamation-octagon fs-5 align-middle me-1"></i> {{ error.message|trans }}
+            </div>
+        {%- endfor -%}
+    {%- endif -%}
+{%- endblock form_errors -%}

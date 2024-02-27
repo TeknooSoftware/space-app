@@ -34,22 +34,38 @@
         </div>{# end col #}
         <div class="col-9">
             <div class="card">
-                <div class="card-body"d>
+                <div class="card-body" d>
                     <table class="table card-text">
                         <tr>
                             <th scope="row">QRCode</th>
                             <td class="text-center">
-                                <img src="{{ path(space_2fa_route_finder(app.user, 'qrcode')) }}" alt="QRCode"/>
-                                {% form_theme formView with ['bootstrap_5_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
-                                {{ form_start(formView, {"attr":{"class":"form-horizontal", "action": path(space_2fa_route_finder(app.user, 'validate'))}}) }}
+                                <img src="{{ path(space_2fa_route_finder(app.user, 'qrcode')) }}" alt="QRCode">
+                                {% form_theme formView with [
+                                    'bootstrap_5_layout.html.twig',
+                                    '@TeknooSpace/fields.html.twig'] %}
+                                {{ form_start(
+                                    formView, {
+                                        "attr": {
+                                            "class":"form-horizontal",
+                                            "action": path(space_2fa_route_finder(app.user, 'validate'))
+                                        }
+                                    }) }}
                                 {{ form_errors(formView) }}
                                 <div class="d-flex justify-content-center">
                                     <div class="row">
                                         <div class="col-6">
-                                            {{ form_row(formView.code, {'label': 'Validation code', 'row_attr': {'class': 'form-floating',}, 'largeRow': true}) }}
+                                            {{ form_row(
+                                                formView.code, {
+                                                    'label': 'Validation code',
+                                                    'row_attr': {'class': 'form-floating',},
+                                                    'largeRow': true
+                                                }) }}
                                         </div>
                                         <div class="col-6 align-self-center">
-                                            <input type="submit" class="btn btn-primary" name="validate" value="{{ 'teknoo.space.action.2fa.validate'|trans }}" />
+                                            <input type="submit"
+                                                   class="btn btn-primary"
+                                                   name="validate"
+                                                   value="{{ 'teknoo.space.action.2fa.validate'|trans }}">
                                         </div>
                                     </div>
                                 </div>

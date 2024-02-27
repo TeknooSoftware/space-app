@@ -1,4 +1,4 @@
-{# templates/bundles/TeknooEastCommonBundle/views/AdminMedia/list.html.twig #}
+{# templates/bundles/TeknooEastCommonBundle/AdminMedia/list.html.twig #}
 
 {% extends '@TeknooSpace/dashboard.list.html.twig' %}
 
@@ -15,7 +15,10 @@
 
 {% block topHeaderButton %}
     <li class="list-inline-item mb-0 ms-1">
-        <a rel="noopener" class="btn btn-outline-light" href="{{ path('_teknoo_common_admin_media_new') }}" title="{{ 'teknoo.space.text.admin_create_media'|trans }}">
+        <a rel="noopener"
+           class="btn btn-outline-light"
+           href="{{ path('_teknoo_common_admin_media_new') }}"
+           title="{{ 'teknoo.space.text.admin_create_media'|trans }}">
             <i class="uil uil-book-medical"></i>
             {{ 'teknoo.space.action.new_media'|trans }}
         </a>
@@ -26,7 +29,12 @@
     <thead class="bg-light">
     <tr>
         <th scope="col" class="border-bottom text-start">#</th>
-        <th scope="col" class="border-bottom"><a class="text-primary" href="{{ path('_teknoo_common_admin_media_list') }}{{ utils.orderUrl(queryParams, 'name') }}">{{ 'teknoo.space.text.admin_cols_media_name'|trans }}</a></th>
+        <th scope="col" class="border-bottom">
+            <a class="text-primary"
+               href="{{ path('_teknoo_common_admin_media_list') }}{{ utils.orderUrl(queryParams, 'name') }}">
+                {{ 'teknoo.space.text.admin_cols_media_name'|trans }}
+            </a>
+        </th>
         <th scope="col" class="border-bottom">{{ 'teknoo.space.text.admin_cols_media_alternative'|trans }}</th>
         <th scope="col" class="border-bottom">{{ 'teknoo.space.text.admin_cols_media_mime'|trans }}</th>
         <th scope="col" class="border-bottom">{{ 'teknoo.space.text.admin_cols_media_image'|trans }}</th>
@@ -44,19 +52,37 @@
 {% block listTableRow %}
     <tr {% if loop.index is even %}class="table-row-even"{% else %}class="table-row-odd"{% endif %}>
         <td>{{ object.id|slice(0, 6) }}</td>
-        <td>{% if object.metadata is not empty %}{{ object.metadata.fileName }}{% else %}{{ object.name }}{% endif %}</td>
+        <td>
+            {% if object.metadata is not empty %}
+                {{ object.metadata.fileName }}
+            {% else %}
+                {{ object.name }}
+            {% endif %}
+        </td>
         <td>{% if object.metadata is not empty %}{{ object.metadata.alternative }}{% endif %}</td>
         <td>{% if object.metadata is not empty %}{{ object.metadata.contentType }}{% endif %}</td>
         <td>
             {% if object.metadata is empty or 'application/pdf' != object.metadata.contentType %}
             <div class="d-flex">
-                <img class="img-fluid avatar avatar-small me-2 rounded" src="{{ path('_teknoo_common_media', {'id':object.id}) }}" alt="{% if object.metadata is not empty %}{{ object.metadata.alternative }}{% endif %}"/>
+                <img class="img-fluid avatar avatar-small me-2 rounded"
+                     src="{{ path('_teknoo_common_media', {'id':object.id}) }}"
+                     alt="{% if object.metadata is not empty %}{{ object.metadata.alternative }}{% endif %}">
             </div>
             {% endif %}
         </td>
         <td class="text-end">
-            <a class="text-primary" href="{{ path('_teknoo_common_media', {'id':object.id}) }}" target="_blank" title="{{ 'teknoo.space.action.open_media'|trans }}"><span class="mdi mdi-folder-open"></span></a>
-            <a class="text-primary" onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');" href="{{ path('_teknoo_common_admin_media_delete', {'id':object.id}) }}" title="{{ 'teknoo.space.action.delete_media'|trans }}"><span class="mdi mdi-trash-can"></span></a>
+            <a class="text-primary"
+               href="{{ path('_teknoo_common_media', {'id':object.id}) }}"
+               target="_blank"
+               title="{{ 'teknoo.space.action.open_media'|trans }}">
+                <span class="mdi mdi-folder-open"></span>
+            </a>
+            <a class="text-primary"
+               onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
+               href="{{ path('_teknoo_common_admin_media_delete', {'id':object.id}) }}"
+               title="{{ 'teknoo.space.action.delete_media'|trans }}">
+                <span class="mdi mdi-trash-can"></span>
+            </a>
         </td>
     </tr>
 {% endblock %}

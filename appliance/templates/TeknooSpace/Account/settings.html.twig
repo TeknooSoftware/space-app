@@ -1,0 +1,45 @@
+{# templates/TeknooSpace/Account/settings.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.account.settings'|trans }} - {% endblock %}
+
+{%- block instanceMainTitle -%}
+    <i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.account.settings'|trans }}
+{%- endblock -%}
+
+{% block breadcrumbListLink %}{{ path('space_account_settings') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ objectInstance.account }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
+    </div>
+{% endblock %}
+
+{% block crudSecondaryForm %}
+    <div class="col-12">
+    <div class="rounded shadow p-4 bg-white mt-4">
+        <div class="row">
+            {{ form_row(formView.accountData.legalName, {"largeRow": true}) }}
+            {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
+            {{ form_row(formView.accountData.zipCode) }}
+            {{ form_row(formView.accountData.cityName) }}
+            {{ form_row(formView.accountData.countryName) }}
+            {{ form_row(formView.accountData.vatNumber) }}
+        </div>
+    </div>
+    </div>{# end col #}
+{% endblock %}
+
+{% block btnExtraBottom %}
+    <div class="widget mt-2 mb-2 pb-2">
+        <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
+        <a href="{{ path('space_account_edit_variables') }}"
+           class="btn btn-outline-dark btn-full-large btn-block mb-2">
+            <i class="uil uil-setting"></i>
+            {{ 'teknoo.space.action.persisted_vars'|trans }}
+        </a>
+    </div>
+{% endblock %}

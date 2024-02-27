@@ -1,4 +1,4 @@
-space_api_project_new:
+space_api_v1_project_new:
     path: '/project/new'
     methods: ['POST', 'PUT']
     schemes: ['https']
@@ -11,11 +11,11 @@ space_api_project_new:
             allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
-        route: 'space_api_project_edit'
-        template: '@@TeknooEastPaas/api/Project/item.json.twig'
+        route: 'space_api_v1_project_edit'
+        template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
 
-space_api_project_edit:
+space_api_v1_project_edit:
     path: '/project/{id}'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
@@ -27,10 +27,10 @@ space_api_project_edit:
         formOptions:
             allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Project/item.json.twig'
+        template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
 
-space_api_project_edit_variables:
+space_api_v1_project_edit_variables:
     path: '/project/{id}/variables'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
@@ -41,10 +41,10 @@ space_api_project_edit_variables:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\VarsType'
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         populateFormOptions: true
-        template: '@@TeknooEastPaas/api/Project/variables.json.twig'
+        template: '@@TeknooSpace/api/Project/variables.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
 
-space_api_project_list:
+space_api_v1_project_list:
     path: '/projects'
     methods: ['GET', 'POST']
     schemes: ['https']
@@ -55,9 +55,9 @@ space_api_project_list:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Project/list.json.twig'
+        template: '@@TeknooSpace/api/Project/list.json.twig'
 
-space_api_project_delete:
+space_api_v1_project_delete:
     path: '/project/{id}/delete'
     methods: ['GET', 'DELETE']
     schemes: ['https']
@@ -68,4 +68,4 @@ space_api_project_delete:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectViewKey: 'projectInstance'
-        template: '@@TeknooEastPaas/api/Project/deleted.json.twig'
+        template: '@@TeknooSpace/api/Project/deleted.json.twig'

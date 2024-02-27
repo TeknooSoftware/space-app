@@ -16,4 +16,4 @@ twig:
             enabled: '%env(OAUTH_ENABLED)%'
             type: '%teknoo.space.oauth.server.type%'
     paths:
-        '%kernel.project_dir%/templates/bundles/TeknooSpace': TeknooSpace
+        '%kernel.project_dir%/templates/TeknooSpace': TeknooSpace

@@ -1,0 +1,35 @@
+{# templates/TeknooSpace/User/settings.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.user.settings'|trans }} - {% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.settings'|trans }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('space_my_settings') }}{% endblock %}
+{% block breadcrumFormTitle %}{{ 'teknoo.space.title.user.settings'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ objectInstance.user }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.user.firstName) }}
+        {{ form_row(formView.user.lastName) }}
+        {{ form_row(formView.user.email, {"largeRow": true}) }}
+        {{ form_row(
+            formView.userData.picture.image,
+            {"colClass":"col-10", "pictureInstance": objectInstance.userData.picture}
+        ) }}
+        {{ form_row(
+            formView.userData.removePicture, {
+                "colClass":"col-2 d-flex flex-column justify-content-end",
+                'label_attr': {
+                    'class': 'switch-custom'
+                }
+            }) }}
+        {% do formView.userData.picture.name.setRendered() %}
+        {% do formView.userData.picture.alternative.setRendered() %}
+    </div>
+    <div class="row">
+        {{ form_row(formView.user.storedPassword.password) }}
+    </div>
+{% endblock %}

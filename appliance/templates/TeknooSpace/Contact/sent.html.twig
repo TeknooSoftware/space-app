@@ -1,0 +1,28 @@
+{# templates/TeknooSpace/Contact/sent.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.static.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.contact.support.sent'|trans }} - {% endblock %}
+{% block instanceMainTitle %}<i class="uil uil-fast-mail"></i> {{ 'teknoo.space.title.contact'|trans }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('space_dashboard') }}{% endblock %}
+{% block breadcrumbListTitle %}{{ 'teknoo.space.title.contact.support.sent'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.text.contact.sent'|trans }}{% endblock %}
+
+{% block mainContent %}
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center pt-5">
+                <div class="icon d-flex align-items-center justify-content-center bg-soft-primary rounded-circle mx-auto"
+                     style="height: 90px; width:90px;">
+                    <i class="uil uil-thumbs-up align-middle h1 mb-0"></i>
+                </div>
+                <h1 class="my-4 fw-bold">{{ 'teknoo.space.text.contact.sent_thanks'|trans }}</h1>
+                <p class="text-muted para-desc mx-auto">{{ 'teknoo.space.text.contact.message_after_sent'|trans }}</p>
+                <a href="{{ path('space_dashboard') }}" class="btn btn-soft-primary mt-3">
+                    {{ 'teknoo.space.action.go_to_dashboard'|trans }}
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

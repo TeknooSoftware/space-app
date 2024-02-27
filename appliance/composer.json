@@ -126,7 +126,7 @@
         "symfony/error-handler": "*",
         "symfony/stopwatch": "*",
         "symfony/web-profiler-bundle": "*",
-        "symfony/var-dumper": "^6.4",
+        "symfony/var-dumper": "^6.4||^7.0.4",
         "webmozart/assert": "^1.11",
         "zenstruck/messenger-test": "^1.9.1"
     },

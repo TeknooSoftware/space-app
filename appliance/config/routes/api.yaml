@@ -1,7 +1,7 @@
-api_v1_authenticated:
+prefix_space_api_v1_authenticated:
     resource: 'api/v1/authenticated/*.yaml'
     prefix: '/api/v1'
 
-api_v1_admin:
+prefix_space_api_v1_admin:
     resource: 'api/v1/admin/*.yaml'
     prefix: '/api/v1/admin'

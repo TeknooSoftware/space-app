@@ -10,7 +10,7 @@ space_job_new:
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         route: 'space_job_new_pending'
-        template: '@@TeknooEastPaas/Job/new.html.twig'
+        template: '@@TeknooSpace/Job/new.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_restart:
@@ -26,7 +26,7 @@ space_job_restart:
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         route: 'space_job_new_pending'
-        template: '@@TeknooEastPaas/Job/new.html.twig'
+        template: '@@TeknooSpace/Job/new.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_new_pending:
@@ -36,7 +36,7 @@ space_job_new_pending:
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
-        template: '@@TeknooEastPaas/Job/pending.html.twig'
+        template: '@@TeknooSpace/Job/pending.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_get:
@@ -48,7 +48,7 @@ space_job_get:
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         loader: '@Teknoo\East\Paas\Loader\JobLoader'
         objectViewKey: 'jobInstance'
-        template: '@@TeknooEastPaas/Job/get.html.twig'
+        template: '@@TeknooSpace/Job/get.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_list:
@@ -64,7 +64,7 @@ space_job_list:
         loader: '@Teknoo\East\Paas\Loader\JobLoader'
         projectKey: 'Teknoo\Space\Object\DTO\SpaceProject'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/Job/list.html.twig'
+        template: '@@TeknooSpace/Job/list.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_delete:

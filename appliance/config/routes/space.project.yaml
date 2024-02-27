@@ -7,7 +7,7 @@ space_project_list:
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/Project/list.html.twig'
+        template: '@@TeknooSpace/Project/list.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_edit:
@@ -20,7 +20,7 @@ space_project_edit:
         formOptions:
             allowEditingOfLocked: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/Project/edit.html.twig'
+        template: '@@TeknooSpace/Project/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
@@ -33,7 +33,7 @@ space_project_edit_variables:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\VarsType'
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         populateFormOptions: true
-        template: '@@TeknooEastPaas/Project/variables.html.twig'
+        template: '@@TeknooSpace/Project/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
@@ -61,7 +61,7 @@ space_project_new:
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
         route: 'space_project_edit'
-        template: '@@TeknooEastPaas/Project/new.html.twig'
+        template: '@@TeknooSpace/Project/new.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 

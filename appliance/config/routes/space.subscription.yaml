@@ -7,6 +7,6 @@ space_subscription:
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceSubscription'
-        template: '@@TeknooEastPaas/Account/subscription.html.twig'
+        template: '@@TeknooSpace/Account/subscription.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
         clusterCatalog: '@teknoo.space.clusters_catalog'

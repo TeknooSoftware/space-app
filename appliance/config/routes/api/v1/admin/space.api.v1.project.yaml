@@ -1,4 +1,4 @@
-space_api_admin_project_new:
+space_api_v1_admin_project_new:
     path: '/project/new/{accountId}'
     methods: ['POST', 'PUT']
     schemes: ['https']
@@ -13,11 +13,11 @@ space_api_admin_project_new:
             allowEditingOfLocked: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
-        route: 'space_api_admin_project_edit'
-        template: '@@TeknooEastPaas/api/Project/item.json.twig'
+        route: 'space_api_v1_admin_project_edit'
+        template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
 
-space_api_admin_project_edit:
+space_api_v1_admin_project_edit:
     path: '/project/{id}'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
@@ -30,11 +30,11 @@ space_api_admin_project_edit:
             allowEditingOfLocked: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
-        route: 'space_api_admin_project_edit'
-        template: '@@TeknooEastPaas/api/Project/item.json.twig'
+        route: 'space_api_v1_admin_project_edit'
+        template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
 
-space_api_admin_project_list:
+space_api_v1_admin_project_list:
     path: '/projects'
     methods: ['GET', 'POST']
     schemes: ['https']
@@ -45,4 +45,4 @@ space_api_admin_project_list:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooEastPaas/api/Project/list.json.twig'
+        template: '@@TeknooSpace/api/Project/list.json.twig'

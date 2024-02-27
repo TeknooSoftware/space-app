@@ -1,0 +1,14 @@
+{# templates/TeknooSpace/api/Job/pending.json.twig #}
+{% apply spaceless %}
+{% if newJobResult.error_message is defined and newJobResult.error_message is not empty %}
+{% set object = {"error": {"code": newJobResult.error_code|default(500), "message": newJobResult.error_message}} %}
+{{ object|space_object_serialization({}, "json", {"error": true}) }}
+{% else %}
+{% set object = {
+    "id": newJobResult.job_id,
+    "api_url": url("space_api_v1_job_get", {"projectId": newJobResult.project_id, "id": newJobResult.job_id}),
+    "user_url": newJobResult.job_url
+} %}
+{{ object|space_object_serialization({}, "json", {"error": false}) }}
+{% endif %}
+{% endapply %}

@@ -1186,7 +1186,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'account_login',
+                route: 'space_account_login',
             ),
         );
 
@@ -1196,7 +1196,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'post',
             url: $this->getPathFromRoute(
-                route: 'account_check',
+                route: 'space_account_check',
             ),
             params: [
                 '_username' => $email,
@@ -1293,7 +1293,7 @@ class TestsContext implements Context
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertEquals(
-            $this->getPathFromRoute('account_login'),
+            $this->getPathFromRoute('space_account_login'),
             $this->currentUrl,
         );
 
@@ -1956,7 +1956,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_job_list',
+                route: 'space_api_v1_job_list',
                 parameters: [
                     'projectId' => $project->getId(),
                 ],
@@ -1978,8 +1978,8 @@ class TestsContext implements Context
             method: 'GET',
             url: $this->getPathFromRoute(
                 route: match ($role) {
-                    'admin' => 'space_api_admin_project_list',
-                    default => 'space_api_project_list',
+                    'admin' => 'space_api_v1_admin_project_list',
+                    default => 'space_api_v1_project_list',
                 }
             ),
             headers: [
@@ -1997,7 +1997,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_list',
+                route: 'space_api_v1_admin_user_list',
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -2014,7 +2014,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_list',
+                route: 'space_api_v1_admin_account_list',
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -2034,7 +2034,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_job_get',
+                route: 'space_api_v1_job_get',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
@@ -2052,13 +2052,13 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToGetTheLastProjectAsAdmin(): void
     {
-        $this->theApiIsCalledToGetTheLastProject('space_api_admin_project_edit');
+        $this->theApiIsCalledToGetTheLastProject('space_api_v1_admin_project_edit');
     }
 
     /**
      * @When the API is called to get the last project
      */
-    public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_project_edit'): void
+    public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_v1_project_edit'): void
     {
         $project = $this->recall(Project::class);
 
@@ -2087,7 +2087,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_edit',
+                route: 'space_api_v1_admin_user_edit',
                 parameters: [
                     'id' => $user->getId(),
                 ],
@@ -2109,7 +2109,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit',
+                route: 'space_api_v1_admin_account_edit',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2126,7 +2126,7 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToGetTheLastProjectsVariables(): void
     {
-        $this->theApiIsCalledToGetTheLastProject('space_api_project_edit_variables');
+        $this->theApiIsCalledToGetTheLastProject('space_api_v1_project_edit_variables');
     }
 
     /**
@@ -2147,7 +2147,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_job_get',
+                route: 'space_api_v1_job_get',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
@@ -2171,7 +2171,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_project_delete',
+                route: 'space_api_v1_project_delete',
                 parameters: [
                     'id' => $project->getId(),
                 ],
@@ -2194,7 +2194,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_delete',
+                route: 'space_api_v1_admin_user_delete',
                 parameters: [
                     'id' => $user->getId(),
                 ],
@@ -2217,7 +2217,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_delete',
+                route: 'space_api_v1_admin_account_delete',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2241,7 +2241,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_job_delete',
+                route: 'space_api_v1_job_delete',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
@@ -2306,7 +2306,7 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToEditAProjectsVariablesWithAJsonBody(TableNode $bodyFields): void
     {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_project_edit_variables');
+        $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_v1_project_edit_variables');
     }
 
     /**
@@ -2314,7 +2314,7 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields): void
     {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_project_edit_variables');
+        $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_v1_project_edit_variables');
     }
 
     /**
@@ -2336,7 +2336,7 @@ class TestsContext implements Context
         $this->theApiIsCalledToEditAProject(
             bodyFields: $bodyFields,
             format: $format,
-            routeName: 'space_api_admin_project_edit',
+            routeName: 'space_api_v1_admin_project_edit',
         );
     }
 
@@ -2346,7 +2346,7 @@ class TestsContext implements Context
     public function theApiIsCalledToEditAProject(
         TableNode $bodyFields,
         string $format = 'default',
-        string $routeName = 'space_api_project_edit',
+        string $routeName = 'space_api_v1_project_edit',
     ): void {
         $project = $this->recall(Project::class);
 
@@ -2375,14 +2375,14 @@ class TestsContext implements Context
     ): void {
         if ('admin' === $role) {
             $url = $this->getPathFromRoute(
-                route: 'space_api_admin_project_new',
+                route: 'space_api_v1_admin_project_new',
                 parameters: [
                     'accountId' => $this->recall(Account::class)->getId(),
                 ]
             );
         } else {
             $url = $this->getPathFromRoute(
-                route: 'space_api_project_new',
+                route: 'space_api_v1_project_new',
             );
         }
 
@@ -2403,7 +2403,7 @@ class TestsContext implements Context
     ): void {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_new',
+                route: 'space_api_v1_admin_user_new',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2420,7 +2420,7 @@ class TestsContext implements Context
     ): void {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_new',
+                route: 'space_api_v1_admin_account_new',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2440,7 +2440,7 @@ class TestsContext implements Context
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_edit',
+                route: 'space_api_v1_admin_user_edit',
                 parameters: [
                     'id' => $user->getId(),
                 ]
@@ -2463,7 +2463,7 @@ class TestsContext implements Context
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit',
+                route: 'space_api_v1_admin_account_edit',
                 parameters: [
                     'id' => $account->getId(),
                 ]
@@ -2480,7 +2480,7 @@ class TestsContext implements Context
     {
         $this->executeRequest(
             method: 'get',
-            url: $this->getPathFromRoute('space_api_my_settings'),
+            url: $this->getPathFromRoute('space_api_v1_my_settings'),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -2495,7 +2495,7 @@ class TestsContext implements Context
     {
         $this->executeRequest(
             method: 'get',
-            url: $this->getPathFromRoute('space_api_account_settings'),
+            url: $this->getPathFromRoute('space_api_v1_account_settings'),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -2511,7 +2511,7 @@ class TestsContext implements Context
     {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_my_settings',
+                route: 'space_api_v1_my_settings',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2526,7 +2526,7 @@ class TestsContext implements Context
     {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_account_settings',
+                route: 'space_api_v1_account_settings',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2546,14 +2546,14 @@ class TestsContext implements Context
     ): void {
         if (null === $role) {
             $url = $this->getPathFromRoute(
-                route: 'space_api_account_edit_variables',
+                route: 'space_api_v1_account_edit_variables',
             );
         } else {
             $account = $this->recall(Account::class);
             Assert::assertNotEmpty($account);
 
             $url = $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit_variables',
+                route: 'space_api_v1_admin_account_edit_variables',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2575,14 +2575,14 @@ class TestsContext implements Context
     {
         if (null === $role) {
             $url = $this->getPathFromRoute(
-                route: 'space_api_account_edit_variables',
+                route: 'space_api_v1_account_edit_variables',
             );
         } else {
             $account = $this->recall(Account::class);
             Assert::assertNotEmpty($account);
 
             $url = $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit_variables',
+                route: 'space_api_v1_admin_account_edit_variables',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2660,7 +2660,7 @@ class TestsContext implements Context
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_job_new',
+                route: 'space_api_v1_job_new',
                 parameters: [
                     'projectId' => $project->getId(),
                 ]
@@ -3838,7 +3838,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'account_logout',
+                route: 'space_account_logout',
             ),
             clearCookies: true,
         );

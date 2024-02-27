@@ -1,0 +1,45 @@
+space_admin_account_edit_variables:
+    path: '/admin/account/variables/{id}'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        template: '@@TeknooSpace/AdminAccount/variables.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+
+space_admin_account_reinstall:
+    path: '/admin/account/reinstall/{id}'
+    methods: ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.reinstall'
+        allowEmptyCredentials: true
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        route: '_teknoo_paas_admin_account_edit'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_admin_account_registry_reinstall:
+    path: '/admin/account/reinstall-registry/{id}'
+    methods: ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.registry-reinstall'
+        allowEmptyCredentials: true
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        route: '_teknoo_paas_admin_account_edit'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_admin_account_code_generator:
+    path: '/admin/subscription/code'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.code_generator'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\CodeGeneratorType'
+        objectClass: 'Teknoo\East\Common\Object\EmptyObject'
+        template: '@@TeknooSpace/AdminAccount/code_generator.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
