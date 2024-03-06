@@ -59,6 +59,7 @@ use Symfony\Component\Mailer\Test\Constraint\EmailCount;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
@@ -86,6 +87,7 @@ use Teknoo\East\Paas\Infrastructures\Image\Contracts\ProcessFactoryInterface;
 use Teknoo\East\Paas\Infrastructures\PhpSecLib\Configuration\Algorithm;
 use Teknoo\East\Paas\Job\History\SerialGenerator;
 use Teknoo\East\Paas\Object\Account as AccountOrigin;
+use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Environment;
@@ -99,6 +101,7 @@ use Teknoo\Immutable\ImmutableTrait;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
@@ -176,6 +179,10 @@ class TestsContext implements Context
      */
     private array $workMemory = [];
 
+    private array $quotasAllowed = [];
+
+    private string $quotasMode = '';
+
     private bool $hasBeenRedirected = false;
 
     private bool $isApiCall = false;
@@ -220,6 +227,7 @@ class TestsContext implements Context
         private readonly CacheItemPoolInterface $cacheExpiredLinks,
         private readonly NormalizerInterface $normalizer,
         private readonly ?MessageLoggerListener $messageLoggerListener,
+        private readonly SubscriptionPlanCatalog $planCatalog,
         private readonly string $appHostname,
         private readonly string $defaultClusterName,
         private readonly string $defaultClusterType,
@@ -243,6 +251,8 @@ class TestsContext implements Context
         $this->clientIp = '127.0.0.1';
         $this->currentUrl = null;
         $this->workMemory = [];
+        $this->quotasAllowed = [];
+        $this->quotasMode = '';
         $this->hasBeenRedirected = false;
         $this->formName = null;
         $this->originalProjectName = null;
@@ -276,6 +286,19 @@ class TestsContext implements Context
         if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'])) {
             unset($_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY']);
         }
+
+        if (!empty($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'])) {
+            $this->clearRouterCache();
+            unset($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN']);
+        }
+    }
+
+    private function clearRouterCache(): void
+    {
+        //Hack to reset router cache to update attribute from env value
+        // (not needed on dev or prod env, only in behat)
+        $rc = new \ReflectionClass(Router::class);
+        $rc->setStaticPropertyValue('cache', []);
     }
 
     /**
@@ -288,6 +311,11 @@ class TestsContext implements Context
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->timeoutService->disable();
         $this->cacheExpiredLinks->clear();
+
+        if (!empty($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'])) {
+            $this->clearRouterCache();
+            unset($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN']);
+        }
     }
 
     private function setDateTime(DateTimeInterface $dateTime): void
@@ -616,6 +644,17 @@ class TestsContext implements Context
     }
 
     /**
+     * @Given a subscription plan :id is selected
+     */
+    public function aSubscriptionPlanIsSelected(string $id): void
+    {
+        $_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'] = $id;
+        $this->quotasMode = $id;
+
+        $this->clearRouterCache();
+    }
+
+    /**
      * @param Cookie[] $cookies
      * @return array
      */
@@ -829,6 +868,19 @@ class TestsContext implements Context
         $accountCredentials->setId($this->generateId());
 
         $this->persistAndRegister($accountCredentials);
+    }
+
+    /**
+     * @Given quotas defined for this account
+     */
+    public function quotasDefinedForThisAccount()
+    {
+        $this->recall(Account::class)?->setQuotas(
+            $this->quotasAllowed = [
+                new AccountQuota('compute', 'cpu', '10'),
+                new AccountQuota('memory', 'memory', '1 Gi'),
+            ]
+        );
     }
 
     /**
@@ -1754,7 +1806,7 @@ class TestsContext implements Context
     /**
      * @When It goes to delete the project :projectName of :accountName
      */
-    public function itGoesToDeleteTheProjectOf(string $projectName, string $accountName)
+    public function itGoesToDeleteTheProjectOf(string $projectName, string $accountName): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1893,6 +1945,52 @@ class TestsContext implements Context
     public function theProjectHasACompletePaasFile(): void
     {
         $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
+        $this->quotasMode = '';
+    }
+
+    /**
+     * @Given a project with a paas file using extends
+     */
+    public function aProjectWithAPaasFileUsingExtends(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
+        $this->quotasMode = '';
+    }
+
+    /**
+     * @Given the project has a complete paas file without resources
+     */
+    public function aProjectWithAPaasFileWithoutResource()
+    {
+        $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
+        $this->quotasMode = 'automatic';
+    }
+
+    /**
+     * @Given the project has a complete paas file with partial resources
+     */
+    public function aProjectWithAPaasFileWithPartialResources()
+    {
+        $this->paasFile = __DIR__ . '/Project/Default/paas.with-partial-resources.yaml';
+        $this->quotasMode = 'partial';
+    }
+
+    /**
+     * @Given the project has a complete paas file with resources
+     */
+    public function aProjectWithAPaasFileWithResources()
+    {
+        $this->paasFile = __DIR__ . '/Project/Default/paas.with-resources.yaml';
+        $this->quotasMode = 'full';
+    }
+
+    /**
+     * @Given the project has a complete paas file with limited quota
+     */
+    public function aProjectWithAPaasFileWithLimitedQuota()
+    {
+        $this->paasFile = __DIR__ . '/Project/Default/paas.with-quotas-exceeded.yaml';
+        $this->quotasMode = 'limited';
     }
 
     /**
@@ -2730,6 +2828,14 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then with the subscription plan :id
+     */
+    public function withTheSubscriptionPlan(string $id): void
+    {
+        $this->quotasMode = $id;
+    }
+
+    /**
      * @Then the project is deleted
      */
     public function theProjectIsDeleted(): void
@@ -3455,14 +3561,6 @@ class TestsContext implements Context
     }
 
     /**
-     * @Given a project with a paas file using extends
-     */
-    public function aProjectWithAPaasFileUsingExtends(): void
-    {
-        $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
-    }
-
-    /**
      * @Given simulate a too long image building
      */
     public function simulateATooLongImageBuilding(): void
@@ -3546,6 +3644,25 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then it has an error about a quota exceeded
+     */
+    public function itHasAnErrorAboutQuotaExceeded(): void
+    {
+        $jobs = $this->listObjects(JobOrigin::class);
+        Assert::assertNotEmpty($jobs);
+
+        /** @var JobOrigin $job */
+        $job = current($jobs);
+        Assert::assertInstanceOf(JobOrigin::class, $job);
+
+        Assert::assertTrue($job->getHistory()->isFinal());
+        Assert::assertStringContainsString(
+            'Error, available capacity for',
+            $job->getHistory()->getExtra()['result'][1] ?? []
+        );
+    }
+
+    /**
      * @Then job must be successful finished
      */
     public function jobMustBeSuccessfulFinished(): void
@@ -3564,7 +3681,6 @@ class TestsContext implements Context
         );
     }
 
-
     /**
      * @Then some Kubernetes manifests have been created and executed
      */
@@ -3577,7 +3693,7 @@ class TestsContext implements Context
         $job = current($jobs);
         Assert::assertInstanceOf(JobOrigin::class, $job);
 
-        $json = stripslashes(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        $json = json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
         $id = $job->getId();
         if (strlen($id) < 9) {
@@ -3591,12 +3707,21 @@ class TestsContext implements Context
             jobId: $jobId,
             hncSuffix: $this->hncSuffix,
             useHnc: $this->useHnc,
+            quoteMode: $this->quotasMode,
         );
 
         Assert::assertEquals(
             $expected,
             $json,
         );
+    }
+
+    /**
+     * @Then any Kubernetes manifests must not be created
+     */
+    public function anyKubernetesManifestsMustNotBeCreated(): void
+    {
+        Assert::assertEmpty($this->manifests);
     }
 
     /**
@@ -3718,8 +3843,24 @@ class TestsContext implements Context
      */
     public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace): void
     {
-        $expected = trim((new ManifestGenerator())->namespaceCreation($namespace));
-        foreach ($this->manifests['namespaces/space-client-my-company/secrets'] as &$secret) {
+        $quotasAllowed = null;
+        if (!empty($this->quotasMode)) {
+            $quotasAllowed = $this->planCatalog->getSubscriptionPlan($this->quotasMode);
+        }
+
+        $expected = trim(
+            (new ManifestGenerator())->namespaceCreation(
+                $namespace,
+                $this->quotasMode,
+                $quotasAllowed?->getQuotas() ?? [],
+            )
+        );
+
+        Assert::assertNotEmpty(
+            $this->manifests["namespaces/space-client-$namespace/secrets"],
+        );
+
+        foreach ($this->manifests["namespaces/space-client-$namespace/secrets"] as &$secret) {
             if (!empty($secret['data']['.dockerconfigjson'])) {
                 $secret['data']['.dockerconfigjson'] = '===';
             }
@@ -3727,6 +3868,7 @@ class TestsContext implements Context
                 $secret['data']['htpasswd'] = '===';
             }
         }
+
         $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         Assert::assertEquals(
             $expected,

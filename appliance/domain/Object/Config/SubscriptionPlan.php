@@ -25,50 +25,42 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Object\Config;
 
-use DomainException;
-use IteratorAggregate;
-use Teknoo\East\Paas\Object\Cluster as EastCluster;
-use Traversable;
+use Teknoo\East\Paas\Object\AccountQuota;
+
+use function array_map;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
- *
- * @implements IteratorAggregate<Cluster>
  */
-class ClusterCatalog implements IteratorAggregate
+class SubscriptionPlan
 {
+    /** @var iterable<AccountQuota> */
+    private readonly iterable $quotas;
+
     /**
-     * @param array<string, Cluster> $clusters
-     * @param array<string, string> $aliases
+     * @param array<array{category: string, type: string, capacity: string, requires: string}> $quotas
      */
     public function __construct(
-        private readonly array $clusters,
-        private readonly array $aliases,
+        public readonly string $id,
+        public readonly string $name,
+        array $quotas,
     ) {
+        $final = [];
+        foreach ($quotas as $def) {
+            $final[$def['type']] = AccountQuota::create($def);
+        }
+
+        $this->quotas = $final;
     }
 
-    public function getCluster(string|EastCluster $name): Cluster
+    /**
+     * @return iterable<AccountQuota>
+     */
+    public function getQuotas(): iterable
     {
-        if ($name instanceof EastCluster) {
-            $name = (string) $name;
-        }
-
-        if (isset($this->aliases[$name])) {
-            $name = $this->aliases[$name];
-        }
-
-        if (!isset($this->clusters[$name])) {
-            throw new DomainException("Cluster {$name} is not available in the catalog");
-        }
-
-        return $this->clusters[$name];
-    }
-
-    public function getIterator(): Traversable
-    {
-        yield from $this->clusters;
+        return $this->quotas;
     }
 }

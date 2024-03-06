@@ -44,6 +44,37 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
+    And a Kubernetes namespace "behat" is created and populated
+
+  Scenario: Create a account from the API with subscription plan
+    Given A Space app instance
+    And a kubernetes client
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create an account as admin:
+      | field                                            | value         |
+      | admin_space_account.account.name                 | Test Behat    |
+      | admin_space_account.account.prefix_namespace     | space-client- |
+      | admin_space_account.account.namespace            | behat         |
+      | admin_space_account.accountData.legalName        | sasu demo     |
+      | admin_space_account.accountData.streetAddress    | Auge          |
+      | admin_space_account.accountData.zipCode          | 14000         |
+      | admin_space_account.accountData.cityName         | Caen          |
+      | admin_space_account.accountData.countryName      | France        |
+      | admin_space_account.accountData.vatNumber        | FR0102030405  |
+      | admin_space_account.accountData.subscriptionPlan | test-1        |
+    Then get a JSON reponse
+    And the serialized account "Test Behat" for admin
+    And there is an account in the memory
+    And with the subscription plan "test-1"
+    And a Kubernetes namespace "behat" is created and populated
 
   Scenario: Create a account from the API with a json body
     Given A Space app instance
@@ -71,6 +102,37 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
+    And a Kubernetes namespace "behat" is created and populated
+
+  Scenario: Create a account from the API with a json body with subscription plan
+    Given A Space app instance
+    And a kubernetes client
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create an account as admin with a json body:
+      | field                        | value         |
+      | account.name                 | Test Behat    |
+      | account.prefix_namespace     | space-client- |
+      | account.namespace            | behat         |
+      | accountData.legalName        | sasu demo     |
+      | accountData.streetAddress    | Auge          |
+      | accountData.zipCode          | 14000         |
+      | accountData.cityName         | Caen          |
+      | accountData.countryName      | France        |
+      | accountData.vatNumber        | FR0102030405  |
+      | accountData.subscriptionPlan | test-1        |
+    Then get a JSON reponse
+    And the serialized account "Test Behat" for admin
+    And there is an account in the memory
+    And with the subscription plan "test-1"
+    And a Kubernetes namespace "behat" is created and populated
 
   Scenario: Get an account from the API
     Given A Space app instance

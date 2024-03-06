@@ -23,52 +23,53 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Object\Config;
+namespace Teknoo\Space\Recipe\Step\Account;
 
-use DomainException;
-use IteratorAggregate;
-use Teknoo\East\Paas\Object\Cluster as EastCluster;
-use Traversable;
+use RuntimeException;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
- *
- * @implements IteratorAggregate<Cluster>
  */
-class ClusterCatalog implements IteratorAggregate
+class SetQuota
 {
-    /**
-     * @param array<string, Cluster> $clusters
-     * @param array<string, string> $aliases
-     */
     public function __construct(
-        private readonly array $clusters,
-        private readonly array $aliases,
+        private SubscriptionPlanCatalog $catalog
     ) {
     }
 
-    public function getCluster(string|EastCluster $name): Cluster
-    {
-        if ($name instanceof EastCluster) {
-            $name = (string) $name;
+    public function __invoke(
+        ManagerInterface $manager,
+        SpaceAccount $spaceAccount,
+        ?string $subscriptionPlanId = null,
+    ): self {
+        $accountData = $spaceAccount->accountData;
+
+        if (null === $accountData) {
+            throw new RuntimeException('Missing Space Account data');
         }
 
-        if (isset($this->aliases[$name])) {
-            $name = $this->aliases[$name];
+        if (!empty($subscriptionPlanId)) {
+            $accountData->setSubscriptionPlan($subscriptionPlanId);
         }
 
-        if (!isset($this->clusters[$name])) {
-            throw new DomainException("Cluster {$name} is not available in the catalog");
-        }
+        $accountData->visit(
+            'subscriptionPlan',
+            function (string $planId) use ($spaceAccount): void {
+                if (empty($planId)) {
+                    return;
+                }
 
-        return $this->clusters[$name];
-    }
+                $plan = $this->catalog->getSubscriptionPlan($planId);
+                $spaceAccount->account->setQuotas($plan->getQuotas());
+            }
+        );
 
-    public function getIterator(): Traversable
-    {
-        yield from $this->clusters;
+        return $this;
     }
 }

@@ -25,10 +25,13 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
+use ArrayObject;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
+use Teknoo\East\Paas\Infrastructures\Kubernetes\Transcriber\IngressTranscriber as BaseIngressTranscriber;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\Kubernetes\RepositoryRegistry;
+use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
 use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 
@@ -46,6 +49,8 @@ return [
     'teknoo.space.kubernetes.default_cluster.type' => env('SPACE_KUBERNETES_CLUSTER_TYPE', 'kubernetes'),
     'teknoo.space.kubernetes.default_cluster.env' => env('SPACE_KUBERNETES_CLUSTER_ENV', 'prod'),
 
+    BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
+
     'teknoo.space.clusters_catalog' => static function (ContainerInterface $container): ClusterCatalog {
         static $clusterCatalog = null;
         if (null !== $clusterCatalog) {
@@ -55,17 +60,25 @@ return [
         $definitions = [];
         if ($container->has('teknoo.space.clusters_catalog.definitions')) {
             $definitions = $container->get('teknoo.space.clusters_catalog.definitions');
-        } else {
-            $definitions[] = [
-                'master' => $container->get('teknoo.space.kubernetes.default_cluster.master'),
-                'dashboard' => $container->get('teknoo.space.kubernetes.default_cluster.dashboard'),
-                'create_account' => [
-                    'token' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.token'),
-                    'ca_cert' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.ca_cert'),
-                ],
-                'name' => $container->get('teknoo.space.kubernetes.default_cluster.name'),
-                'type' => $container->get('teknoo.space.kubernetes.default_cluster.type'),
-                'env' => $container->get('teknoo.space.kubernetes.default_cluster.env'),
+
+            if ($definitions instanceof ArrayObject) {
+                $definitions = $definitions->getArrayCopy();
+            }
+        }
+
+        if (empty($definitions)) {
+            $definitions = [
+                [
+                    'master' => $container->get('teknoo.space.kubernetes.default_cluster.master'),
+                    'dashboard' => $container->get('teknoo.space.kubernetes.default_cluster.dashboard'),
+                    'create_account' => [
+                        'token' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.token'),
+                        'ca_cert' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.ca_cert'),
+                    ],
+                    'name' => $container->get('teknoo.space.kubernetes.default_cluster.name'),
+                    'type' => $container->get('teknoo.space.kubernetes.default_cluster.type'),
+                    'env' => $container->get('teknoo.space.kubernetes.default_cluster.env'),
+                ]
             ];
         }
 
@@ -100,7 +113,7 @@ return [
                 masterAddress: $definition['master'],
                 defaultEnv: $definition['env'],
                 storageProvisioner: $definition['storage_provisioner'] ?? $storageProvisioner,
-                dashboardAddress: $definition['dashboard'],
+                dashboardAddress: $definition['dashboard'] ?? '',
                 kubernetesClient: $clientInit,
                 token: $definition['create_account']['token'],
             );

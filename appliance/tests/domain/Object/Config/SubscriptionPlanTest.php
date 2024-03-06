@@ -23,26 +23,24 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\AccountData;
+namespace Teknoo\Space\Tests\Unit\Object\Config;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
-use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
+use Teknoo\East\Paas\Object\AccountQuota;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 
 /**
- * Class AccountDataTypeTest.
+ * Class SubscriptionPlan.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType
+ * @covers \Teknoo\Space\Object\Config\SubscriptionPlan
  */
-class AccountDataTypeTest extends TestCase
+class SubscriptionPlanTest extends TestCase
 {
-    private AccountDataType $accountDataType;
+    private SubscriptionPlan $plan;
 
     /**
      * {@inheritdoc}
@@ -51,27 +49,25 @@ class AccountDataTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountDataType = new AccountDataType($this->createMock(SubscriptionPlanCatalog::class));
-    }
-
-    public function testBuildForm(): void
-    {
-        self::assertInstanceOf(
-            AccountDataType::class,
-            $this->accountDataType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->plan = new SubscriptionPlan(
+            id: 'foo',
+            name: 'Foo',
+            quotas: [
+                [
+                    'category' => 'compute',
+                    'type' => 'cpu',
+                    'capacity' => '5',
+                    'require' => '2',
+                ]
+            ]
         );
     }
 
-    public function testConfigureOptions(): void
+    public function testConstruct(): void
     {
         self::assertInstanceOf(
-            AccountDataType::class,
-            $this->accountDataType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+            AccountQuota::class,
+            $this->plan->getQuotas()['cpu'],
         );
     }
 }

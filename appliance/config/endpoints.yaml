@@ -88,6 +88,13 @@ services:
             - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall'
             - '@service_container'
 
+    teknoo.space.endpoint.admin.account.refresh-quota:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota'
+            - '@service_container'
+
     teknoo.space.endpoint.project.list:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true

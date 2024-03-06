@@ -77,6 +77,7 @@
                                             {{ form_row(formView.account.accountData.cityName) }}
                                             {{ form_row(formView.account.accountData.countryName) }}
                                             {{ form_row(formView.account.accountData.vatNumber) }}
+                                            {% do formView.account.accountData.subscriptionPlan.setRendered %}
                                             {% if formView.code is defined %}
                                                 {{ form_row(formView.code, {"largeRow": true}) }}
                                             {% endif %}

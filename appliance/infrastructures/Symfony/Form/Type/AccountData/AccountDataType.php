@@ -27,10 +27,13 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Traversable;
 
@@ -45,6 +48,11 @@ use function iterator_to_array;
  */
 class AccountDataType extends AbstractType
 {
+    public function __construct(
+        private SubscriptionPlanCatalog $planCatalog,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         $builder->add(
@@ -101,7 +109,29 @@ class AccountDataType extends AbstractType
             ],
         );
 
-        $builder->setDataMapper(new class () implements DataMapperInterface {
+        $catalog = [];
+        foreach ($this->planCatalog as $plan) {
+            $catalog[$plan->name] = $plan->id;
+        }
+
+        $canUpdateSubscription = $options['can_update_subscription'] ?? false;
+        $builder->add(
+            'subscriptionPlan',
+            ChoiceType::class,
+            [
+                'required' => false,
+                'label' => 'teknoo.space.form.account_data.data.subscription_plan',
+                'disabled' => !$canUpdateSubscription,
+                'choices' => $catalog,
+            ],
+        );
+
+        $builder->setDataMapper(new class ($canUpdateSubscription) implements DataMapperInterface {
+            public function __construct(
+                private bool $canUpdateSubscription,
+            ) {
+            }
+
             /**
              * @param Traversable<string, FormInterface> $forms
              * @param ?\Teknoo\Space\Object\Persisted\AccountData $data
@@ -136,6 +166,10 @@ class AccountDataType extends AbstractType
                 $data->setCityName($forms['cityName']->getData() ?? '');
                 $data->setCountryName($forms['countryName']->getData() ?? '');
                 $data->setVatNumber($forms['vatNumber']->getData() ?? '');
+
+                if ($this->canUpdateSubscription) {
+                    $data->setSubscriptionPlan($forms['subscriptionPlan']->getData() ?? '');
+                }
             }
         });
 
@@ -148,6 +182,7 @@ class AccountDataType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => AccountData::class,
+            'can_update_subscription' => false,
         ]);
 
         return $this;

@@ -3,6 +3,7 @@ di_bridge:
         - { priority: 0, file: '%kernel.project_dir%/config/di.hook.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.variables.east.common.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.variables.east.paas.php' }
+        - { priority: 0, file: '%kernel.project_dir%/config/di.variables.from.envs.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.variables.kubernetes.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.variables.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.common.php' }

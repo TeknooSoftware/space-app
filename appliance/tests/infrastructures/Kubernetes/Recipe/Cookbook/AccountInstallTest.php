@@ -32,6 +32,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
@@ -61,6 +62,8 @@ class AccountInstallTest extends TestCase
 
     private CreateServiceAccount|MockObject $createServiceAccount;
 
+    private CreateQuota|MockObject $createQuota;
+
     private CreateRole|MockObject $createRole;
 
     private CreateRoleBinding|MockObject $createRoleBinding;
@@ -87,6 +90,7 @@ class AccountInstallTest extends TestCase
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->createNamespace = $this->createMock(CreateNamespace::class);
         $this->createServiceAccount = $this->createMock(CreateServiceAccount::class);
+        $this->createQuota = $this->createMock(CreateQuota::class);
         $this->createRole = $this->createMock(CreateRole::class);
         $this->createRoleBinding = $this->createMock(CreateRoleBinding::class);
         $this->createSecret = $this->createMock(CreateSecretServiceAccountToken::class);
@@ -99,6 +103,7 @@ class AccountInstallTest extends TestCase
             $this->recipe,
             $this->createNamespace,
             $this->createServiceAccount,
+            $this->createQuota,
             $this->createRole,
             $this->createRoleBinding,
             $this->createSecret,

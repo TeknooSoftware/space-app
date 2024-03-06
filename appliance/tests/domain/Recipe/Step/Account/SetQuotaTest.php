@@ -23,26 +23,31 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\AccountData;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
+use Teknoo\East\Common\Service\FindSlugService;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
+use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Recipe\Step\Account\SetQuota;
 
 /**
- * Class AccountDataTypeTest.
+ * Class SetQuotaTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType
+ * @covers \Teknoo\Space\Recipe\Step\Account\SetQuota
  */
-class AccountDataTypeTest extends TestCase
+class SetQuotaTest extends TestCase
 {
-    private AccountDataType $accountDataType;
+    private SetQuota $setQuota;
+
+    private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
 
     /**
      * {@inheritdoc}
@@ -51,26 +56,21 @@ class AccountDataTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountDataType = new AccountDataType($this->createMock(SubscriptionPlanCatalog::class));
-    }
+        $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
 
-    public function testBuildForm(): void
-    {
-        self::assertInstanceOf(
-            AccountDataType::class,
-            $this->accountDataType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->setQuota = new SetQuota(
+            $this->subscriptionPlanCatalog,
         );
     }
 
-    public function testConfigureOptions(): void
+    public function testInvoke(): void
     {
         self::assertInstanceOf(
-            AccountDataType::class,
-            $this->accountDataType->configureOptions(
-                $this->createMock(OptionsResolver::class),
+            SetQuota::class,
+            ($this->setQuota)(
+                $this->createMock(ManagerInterface::class),
+                new SpaceAccount($this->createMock(Account::class)),
+                'foo',
             ),
         );
     }

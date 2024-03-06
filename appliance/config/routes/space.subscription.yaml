@@ -10,3 +10,4 @@ space_subscription:
         template: '@@TeknooSpace/Account/subscription.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
         clusterCatalog: '@teknoo.space.clusters_catalog'
+        subscriptionPlanId: "%teknoo.space.subscription.plan_default%"

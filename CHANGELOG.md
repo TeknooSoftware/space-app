@@ -1,5 +1,38 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta38] - 2024-02-06
+### Beta Release
+- Update to Teknoo East PaaS 2.8+ :
+  - Add support of quotas into an Account
+  - Quota are defined for each account, quotas are categorized
+    - `compute`, like `cpu` or `gpu`
+    - `memory`, like `memory`, `storage`, `huge-page`
+  - Add `quotas` section under `paas` section in the deployment file (`.paas.yaml`)
+  - Add `resource` section for each container, with `require` and `limit`
+    - `require`: minimum fraction of resources types required to be started
+    - `limit`: maximum fraction of resources types for the container. (For a container, not a replicas)
+    - If containers have no resources defined (or not fully defined), East PaaS, thanks to its `ResourceManager` will
+      share remaining resources to containers.
+    - requirements and limits can be relative (a % of the quota's capacity)
+  - If the sum of requirements exceed the quota, the deployment compilation will be failed and will never be executed.
+- Support administration of quotas in account. (Not available from user's interface, only from the admin interface)
+- Support `ResourceQuota` in the kubernetes cluster, and update them from Space admin interface for an account
+  - Quota are automatically during the account creation (from the Space admin interface, or during a subscription)
+  - Admin can refresh Quota in the Kubernetes cluster from the Space admin interface
+- Add `subscriptionPlan` into `AccountData` and `SubscriptionPlan` and its catalog as config objetcts 
+  (like `ClusterConfig` and `ClusterCatalog`).
+  - A SubscriptionPlan is only a string id, an human readable name and the set of quota to apply to account.
+- Add `SetQuota` step into Account creation and editing, to update account's quota from the Subscription plan catalog.
+  - Admin can update account's plan, not users cannot do it.
+- Rework PHP DI definitions and migrate dynamics var env's value from a json or a file into a 
+  dedicated file `di.variables.from.envs.php`.
+- Add env vars `SPACE_KUBERNETES_CLUSTER_CATALOG_JSON` or `SPACE_KUBERNETES_CLUSTER_CATALOG_FILE` to define clusters 
+  catalog introduced into the version `1.0.0-beta37`.
+- Add env var `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` or `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` to define subscription 
+  plan with quota.
+- Update README 
+- Complete and clean tests
+
 ## [1.0.0-beta37] - 2024-02-26
 ### Beta Release
 - Use East PaaS 2.7 with defaults instead extra

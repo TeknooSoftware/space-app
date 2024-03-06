@@ -28,7 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\East\Paas\Infrastructures\Doctrine\Form\Type\AccountType;
+use Teknoo\East\Paas\Infrastructures\Doctrine\Form\Type\AccountType as EastPaaSAccountType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
@@ -45,11 +45,14 @@ class AdminSpaceAccountType extends AbstractType
         $builder->add(
             'accountData',
             AccountDataType::class,
+            [
+                'can_update_subscription' => true,
+            ]
         );
 
         $builder->add(
             'account',
-            AccountType::class,
+            EastPaaSAccountType::class,
             [
                 'doctrine_type' => $options['doctrine_type'],
                 'namespace_in_readonly' => $options['namespace_in_readonly'],

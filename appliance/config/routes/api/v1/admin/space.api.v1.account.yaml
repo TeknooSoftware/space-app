@@ -8,7 +8,7 @@ space_api_v1_admin_account_new:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
-            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
         route: 'space_api_v1_admin_account_edit'
@@ -26,7 +26,7 @@ space_api_v1_admin_account_edit:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
-            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
             namespace_in_readonly: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooSpace/api/AdminAccount/item.json.twig'

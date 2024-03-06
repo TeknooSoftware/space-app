@@ -1,5 +1,13 @@
 paas: #Dedicated to compiler
     version: v1
+    quotas:
+        - category: compute
+          type: cpu
+          capacity: 2
+          requires: 1.5
+        - category: memory
+          type: memory
+          capacity: '512Mi'
 
 #Config
 maps:
@@ -125,6 +133,9 @@ pods:
             sleep:
                 image: registry.hub.docker.com/bash
                 version: alpine
+                resources:
+                    - type: cpu
+                      require: 100m
     demo:
         replicas: 1
         upgrade:
@@ -169,6 +180,11 @@ pods:
                     probe:
                         tcp:
                             port: 8181
+                resources:
+                    - type: cpu
+                      require: 100m
+                    - type: memory
+                      require: '64Mi'
             blackfire:
                 image: 'blackfire/blackfire'
                 version: '2-${JOB_ENV_TAG}'
@@ -177,6 +193,11 @@ pods:
                 variables:
                     BLACKFIRE_SERVER_ID: 'foo'
                     BLACKFIRE_SERVER_TOKEN: 'bar'
+                resources:
+                    - type: cpu
+                      require: 100m
+                    - type: memory
+                      require: '128Mi'
 
 #Pods expositions
 services:

@@ -25,11 +25,46 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat;
 
+use Teknoo\East\Paas\Object\AccountQuota;
+
+use function json_decode;
+use function json_encode;
+
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
+
 class ManifestGenerator
 {
-    public function namespaceCreation(string $name): string
+    /**
+     * @param AccountQuota[] $quotas
+     */
+    public function namespaceCreation(string $name, string $quoteMode, array $accountQuotas): string
     {
-        return <<<"EOF"
+        $quotas = '';
+        if (!empty($quoteMode)) {
+            $quotasHards = [];
+            foreach ($accountQuotas as $accountQuota) {
+                $quotasHards["requests.{$accountQuota->type}"] = $accountQuota->requires;
+                $quotasHards["limits.{$accountQuota->type}"] = $accountQuota->capacity;
+            }
+
+            $quotas = ', "namespaces\/space-client-' . $name . '\/resourcequotas":' . json_encode([[
+                'kind' => 'ResourceQuota',
+                'apiVersion' => 'v1',
+                'metadata' => [
+                    'name' => $name . '-quota',
+                    'namespace' => 'space-client-' . $name,
+                    'labels' => [
+                        'name' => $name . '-quota',
+                    ],
+                ],
+                'spec' => [
+                    'hard' => $quotasHards,
+                ],
+            ]]);
+        }
+
+        $json = <<<"EOF"
 {
     "namespaces": [
         {
@@ -56,7 +91,7 @@ class ManifestGenerator
                 }
             }
         }
-    ],
+    ]$quotas,
     "namespaces\/space-client-$name\/roles": [
         {
             "kind": "Role",
@@ -449,6 +484,14 @@ class ManifestGenerator
     ]
 }
 EOF;
+
+        return json_encode(
+            value: json_decode(
+                json: $json,
+                associative: true
+            ),
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
     }
 
     public function fullDeployment(
@@ -456,6 +499,7 @@ EOF;
         string $jobId,
         string $hncSuffix,
         bool $useHnc,
+        string $quoteMode,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -484,7 +528,142 @@ EOF;
 
         $secret = base64_encode($projectPrefix . 'world');
 
-        return <<<"EOF"
+        $prefixResource = ', "resources": ';
+        $automaticResources = $prefixResource . json_encode(
+            [
+                'requests' => [
+                    'cpu' => '200m',
+                    'memory' => '20.480Mi',
+                ],
+                'limits' => [
+                    'cpu' => '1.600',
+                    'memory' => '163.840Mi',
+                ],
+            ],
+        );
+
+        $phpRunResources = match ($quoteMode) {
+            'automatic' => $automaticResources,
+            'partial' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '68m',
+                        'memory' => '9.600Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '561m',
+                        'memory' => '80Mi',
+                    ],
+                ],
+            ),
+            'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '200m',
+                        'memory' => '64Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '500m',
+                        'memory' => '96Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $shellResources = match ($quoteMode) {
+            'automatic' => $automaticResources,
+            'partial' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '9.600Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '80Mi',
+                    ],
+                ],
+            ),
+            'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '32Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '32Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $nginxResources = match ($quoteMode) {
+            'automatic' => $automaticResources,
+            'partial' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '68m',
+                        'memory' => '9.600Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '561m',
+                        'memory' => '80Mi',
+                    ],
+                ],
+            ),
+            'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '81m',
+                        'memory' => '64Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '81m',
+                        'memory' => '64Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $wafResources = match ($quoteMode) {
+            'automatic' => $automaticResources,
+            'partial', 'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '64Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '64Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $blackfireResources = match ($quoteMode) {
+            'automatic' => $automaticResources,
+            'partial', 'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '128Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '128Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $json = <<<"EOF"
 {
     $hncManifest"namespaces/space-behat-my-comany{$hncSuffix}/secrets": [
         {
@@ -664,7 +843,7 @@ EOF;
                                 "name": "sleep",
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always",
-                                "ports": []
+                                "ports": []$shellResources
                             }
                         ],
                         "imagePullSecrets": [
@@ -742,7 +921,7 @@ EOF;
                                     },
                                     "successThreshold": 3,
                                     "failureThreshold": 2
-                                }
+                                }$nginxResources
                             },
                             {
                                 "name": "waf",
@@ -761,7 +940,7 @@ EOF;
                                     },
                                     "successThreshold": 1,
                                     "failureThreshold": 1
-                                }
+                                }$wafResources
                             },
                             {
                                 "name": "blackfire",
@@ -781,7 +960,7 @@ EOF;
                                         "name": "BLACKFIRE_SERVER_TOKEN",
                                         "value": "bar"
                                     }
-                                ]
+                                ]$blackfireResources
                             }
                         ],
                         "imagePullSecrets": [
@@ -938,7 +1117,7 @@ EOF;
                                     },
                                     "successThreshold": 1,
                                     "failureThreshold": 1
-                                }
+                                }$phpRunResources
                             }
                         ],
                         "imagePullSecrets": [
@@ -1121,12 +1300,74 @@ EOF;
                                 }
                             ]
                         }
+                    },{
+                        "host": "alias1.demo-paas.teknoo.software",
+                        "http": {
+                            "paths": [
+                                {
+                                    "path": "/",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}demo",
+                                            "port": {
+                                                "number": 8080
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "path": "/php",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}php-service",
+                                            "port": {
+                                                "number": 9876
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },{
+                        "host": "alias2.demo-paas.teknoo.software",
+                        "http": {
+                            "paths": [
+                                {
+                                    "path": "/",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}demo",
+                                            "port": {
+                                                "number": 8080
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "path": "/php",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}php-service",
+                                            "port": {
+                                                "number": 9876
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ],
                 "tls": [
                     {
                         "hosts": [
-                            "demo-paas.teknoo.software"
+                            "demo-paas.teknoo.software",
+                            "alias1.demo-paas.teknoo.software",
+                            "alias2.demo-paas.teknoo.software"
                         ],
                         "secretName": "{$projectPrefix}demo-vault-secret"
                     }
@@ -1182,5 +1423,13 @@ EOF;
     ]
 }
 EOF;
+
+        return json_encode(
+            value: json_decode(
+                json: $json,
+                associative: true
+            ),
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
     }
 }

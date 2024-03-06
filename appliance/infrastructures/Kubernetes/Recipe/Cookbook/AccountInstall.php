@@ -33,6 +33,7 @@ use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
@@ -58,6 +59,7 @@ class AccountInstall implements CookbookInterface
         RecipeInterface $recipe,
         private CreateNamespace $createNamespace,
         private CreateServiceAccount $createServiceAccount,
+        private CreateQuota $createQuota,
         private CreateRole $createRole,
         private CreateRoleBinding $createRoleBinding,
         private CreateSecretServiceAccountToken $createSecret,
@@ -90,19 +92,21 @@ class AccountInstall implements CookbookInterface
 
         $recipe = $recipe->cook($this->createServiceAccount, CreateServiceAccount::class, [], 20);
 
-        $recipe = $recipe->cook($this->createRole, CreateRole::class, [], 30);
+        $recipe = $recipe->cook($this->createQuota, CreateQuota::class, [], 30);
 
-        $recipe = $recipe->cook($this->createRoleBinding, CreateRoleBinding::class, [], 40);
+        $recipe = $recipe->cook($this->createRole, CreateRole::class, [], 40);
 
-        $recipe = $recipe->cook($this->createSecret, CreateSecretServiceAccountToken::class, [], 50);
+        $recipe = $recipe->cook($this->createRoleBinding, CreateRoleBinding::class, [], 50);
 
-        $recipe = $recipe->cook($this->createStorage, CreateStorage::class, [], 60);
+        $recipe = $recipe->cook($this->createSecret, CreateSecretServiceAccountToken::class, [], 60);
 
-        $recipe = $recipe->cook($this->createRegistryAccount, CreateRegistryAccount::class, [], 70);
+        $recipe = $recipe->cook($this->createStorage, CreateStorage::class, [], 70);
 
-        $recipe = $recipe->cook($this->persistCredentials, PersistCredentials::class, [], 80);
+        $recipe = $recipe->cook($this->createRegistryAccount, CreateRegistryAccount::class, [], 80);
 
-        $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 90);
+        $recipe = $recipe->cook($this->persistCredentials, PersistCredentials::class, [], 90);
+
+        $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 100);
 
         $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
 
