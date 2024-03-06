@@ -43,6 +43,7 @@ parameters:
     teknoo.space.default.user.2fa.provider: 'google'
     teknoo.space.default.redis.host: ''
     teknoo.space.default.redis.port: 6379
+    teknoo.space.default.subscription.plan_default: ''
 
     teknoo.east.common.admin.rendering.clean_html: true
     teknoo.east.common.rendering.clean_html: true
@@ -75,6 +76,8 @@ parameters:
     teknoo.space.rendering.clean_html: true
 
     teknoo.space.support.contact: '%env(string:default:teknoo.space.default.support.contact:SPACE_SUPPORT_CONTACT)%'
+
+    teknoo.space.subscription.plan_default: '%env(string:default:teknoo.space.default.subscription.plan_default:SPACE_SUBSCRIPTION_DEFAULT_PLAN)%'
 
     teknoo.space.user.2fa.provider: '%env(string:default:teknoo.space.default.user.2fa.provider:SPACE_2FA_PROVIDER)%'
     teknoo.space.user.2fa.routes:

@@ -71,7 +71,7 @@ class CreateNamespace
         ManagerInterface $manager,
         string $accountNamespace,
         AccountHistory $accountHistory,
-        Account $account,
+        Account $accountInstance,
         ClusterConfig $cluster,
     ): self {
         $client = $cluster->getKubernetesClient();
@@ -81,7 +81,7 @@ class CreateNamespace
         $namespaceValue = $this->rootNamespace . $accountNamespace;
         $counter = 2;
 
-        $accountId = $account->getId();
+        $accountId = $accountInstance->getId();
         do {
             $model = $namespaceRepository->setFieldSelector(['metadata.name' => $namespaceValue])->first();
             if (null === $model) {
@@ -121,9 +121,9 @@ class CreateNamespace
 
         $client->setNamespace($namespaceValue);
 
-        $account->setNamespace($accountNamespace);
-        $account->setPrefixNamespace($this->rootNamespace);
-        $this->writer->save($account);
+        $accountInstance->setNamespace($accountNamespace);
+        $accountInstance->setPrefixNamespace($this->rootNamespace);
+        $this->writer->save($accountInstance);
 
         $manager->updateWorkPlan(['kubeNamespace' => $namespaceValue]);
 

@@ -23,26 +23,26 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\AccountData;
+namespace Teknoo\Space\Tests\Unit\Object\Config;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 
+use function iterator_to_array;
+
 /**
- * Class AccountDataTypeTest.
+ * Class SearchTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType
+ * @covers \Teknoo\Space\Object\Config\SubscriptionPlanCatalog
  */
-class AccountDataTypeTest extends TestCase
+class SubscriptionPlanCatalogTest extends TestCase
 {
-    private AccountDataType $accountDataType;
+    private SubscriptionPlanCatalog $catalog;
 
     /**
      * {@inheritdoc}
@@ -51,27 +51,16 @@ class AccountDataTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountDataType = new AccountDataType($this->createMock(SubscriptionPlanCatalog::class));
-    }
-
-    public function testBuildForm(): void
-    {
-        self::assertInstanceOf(
-            AccountDataType::class,
-            $this->accountDataType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->catalog = new SubscriptionPlanCatalog(
+            ['Foo' => $this->createMock(SubscriptionPlan::class)],
         );
     }
 
-    public function testConfigureOptions(): void
+    public function testConstruct(): void
     {
         self::assertInstanceOf(
-            AccountDataType::class,
-            $this->accountDataType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+            SubscriptionPlan::class,
+            iterator_to_array($this->catalog)['Foo'],
         );
     }
 }

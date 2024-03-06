@@ -65,9 +65,11 @@ use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
@@ -103,6 +105,7 @@ use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
+use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
 use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
@@ -160,6 +163,7 @@ return array(
             get(OriginalRecipeInterface::class),
             get(CreateNamespace::class),
             get(CreateServiceAccount::class),
+            get(CreateQuota::class),
             get(CreateRole::class),
             get(CreateRoleBinding::class),
             get(CreateSecretServiceAccountToken::class),
@@ -187,6 +191,21 @@ return array(
             get('teknoo.east.paas.default_storage_size'),
         ),
 
+    AccountRefreshQuota::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(AccountPrepareRedirection::class),
+            get(SetRedirectClientAtEnd::class),
+            get(LoadHistory::class),
+            get(LoadCredentials::class),
+            get(ReloadNamespace::class),
+            get(CreateQuota::class),
+            get(UpdateAccountHistory::class),
+            get(ReinstallAccountErrorHandler::class),
+            get(ObjectAccessControlInterface::class),
+        ),
+
     AccountRegistryReinstall::class => create()
         ->constructor(
             get(OriginalRecipeInterface::class),
@@ -212,6 +231,7 @@ return array(
         ): NewAccountEndPointStepsInterface {
             $previous->add(54, $container->get(ExtractFromAccountDTO::class));
             $previous->add(55, $container->get(SetAccountNamespace::class));
+            $previous->add(55, $container->get(SetQuota::class));
             $previous->add(61, $container->get(CreateAccountHistory::class));
             $previous->add(62, new RecipeBowl($container->get(AccountInstall::class), 0));
             $previous->add(69, $container->get(UpdateAccountHistory::class));
@@ -242,6 +262,7 @@ return array(
             $previous->add(11, $container->get(ExtractFromAccountDTO::class));
             $previous->add(25, $container->get(LoadHistory::class));
             $previous->add(58, $container->get(SetAccountNamespace::class));
+            $previous->add(58, $container->get(SetQuota::class));
             $previous->add(59, $container->get(CreateAccountHistory::class));
 
             return $previous;

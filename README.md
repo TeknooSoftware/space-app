@@ -186,11 +186,6 @@ Environnements variables configuration
         * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
           account
           `space-client-` by default. *Optional*
-        * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
-        * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
-          (namespace, role, etc..).
-        * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
-          *Optional*
         * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
           `nfs.csi.k8s.io` by default. *Optional*
         * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
@@ -201,24 +196,56 @@ Environnements variables configuration
           `lets-encrypt` by default. *Optional*
         * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
           account token creation. `5` by default. *Optional*
+      * Managed kubernetes cluster :
+        * One cluster (legacy):
+          * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
+          * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
+              Space dashboard. *Optional*
+          * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
+            (namespace, role, etc..).
+          * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
+            *Optional*
+          * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
+          * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
+                `kubernetes` by default. *Optional*
+          * `SPACE_KUBERNETES_CLUSTER_ENV` : (string) name of the default environment created with the project.
+                `prod` by default. *Optional*
+        * Several clusters : 
+          * `SPACE_KUBERNETES_CLUSTER_CATALOG_JSON` : (json string).
+          * `SPACE_KUBERNETES_CLUSTER_CATALOG_FILE` : (php file returning an array).
+          * Dictionary's structure (`.` represent a subarray) :
+            * `master` : (string) Default URL of Kubernetes API server.
+            * `dashboard` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
+               Space dashboard. *Optional*
+            * `create_account.token`: (string) Service account's token dedicated to creation of new client account
+               (namespace, role, etc..).
+            * `create_account.ca_cert` : (string) Default CA for custom TLS certificate of the K8S API Service.
+                 *Optional*
+            * `name` : (string) name of the default Kubernetes cluster in the project's form.
+            * `type` : (string) type of cluster in the project's form.
+                  `kubernetes` by default. *Optional*
+            * `env` : (string) name of the default environment created with the project.
+                  `prod` by default. *Optional*
 
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a
           valid code. *Optional*
         * `SPACE_CODE_GENERATOR_SALT` : (string) salt used to compute the code with the account's name. *Optional*
+        * `SPACE_SUBSCRIPTION_DEFAULT_PLAN` : (string) *Optional* Defaut plan to apply when a new account is created
+        * Plan (to apply quota) *Optional*
+          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` : (json string).
+          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` : (php file returning an array).
+          * Dictionary's structure (`[].` represent a collection of subarray) :
+              * `id` : (string) Plan identifier.
+              * `name` : (string) Humain readable plan name
+              * `quotas[].category` : (string) `compute` or `memory` - Category of the quota 
+              * `quotas[].type` : (string) name of the quota
+              * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's `limit`)
+              * `quotas[].require` : (string) *Optional* Total of requires / requests allowed for an account
 
-    * Project creation
-        * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
-        * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
-          `kubernetes` by default. *Optional*
-        * `SPACE_KUBERNETES_CLUSTER_ENV` : (string) name of the default environment created with the project.
-          `prod` by default. *Optional*
     * Job create
         * `SPACE_NEW_JOB_WAITING_TIME` : (int) time in seconds to wait before redirect user to the job page. *Optional*
-
-    * Kubernetes
-        * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
-          Space dashboard. *Optional*
+        
 * Workers configuration :
     * Workers only (not builder) :
         * Doctrine ODM :

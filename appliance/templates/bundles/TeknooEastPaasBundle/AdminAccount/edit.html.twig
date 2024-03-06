@@ -32,21 +32,46 @@
         {{ form_row(formView.account.use_hierarchical_namespaces, {'label_attr':{'class': 'switch-custom'}}) }}
         {{ form_row(formView.account.users, {"largeRow": true}) }}
     </div>
+    {% do formView.account.quotas.setRendered %}
 {% endblock %}
 
 {% block crudSecondaryForm %}
     <div class="col-12">
-    <div class="rounded shadow p-4 bg-white mt-4">
-        <div class="row">
-            {{ form_row(formView.accountData.legalName, {"largeRow": true}) }}
-            {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
-            {{ form_row(formView.accountData.zipCode) }}
-            {{ form_row(formView.accountData.cityName) }}
-            {{ form_row(formView.accountData.countryName) }}
-            {{ form_row(formView.accountData.vatNumber) }}
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row subforms"
+                 data-subforms="quotas"
+                 data-prototype="{{ form_widget(formView.account.quotas.vars.prototype)|e('html_attr') }}">
+                <div class="col-12">
+                    <h3>{{ 'teknoo.space.title.quotas'|trans }}</h3>
+                </div>
+                {% for quota in formView.account.quotas %}
+                    {{ form_widget(quota, {"largeRow": true}) }}
+                {% endfor %}
+            </div>
         </div>
     </div>
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row">
+                {{ form_row(formView.accountData.legalName, {"largeRow": true}) }}
+                {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
+                {{ form_row(formView.accountData.zipCode) }}
+                {{ form_row(formView.accountData.cityName) }}
+                {{ form_row(formView.accountData.countryName) }}
+                {{ form_row(formView.accountData.vatNumber) }}
+                {{ form_row(formView.accountData.subscriptionPlan) }}
+            </div>
+        </div>
     </div>{# end col #}
+{% endblock %}
+
+{% block addsFormButton %}
+    <button type="button"
+            data-subforms-id="quotas"
+            class="btn btn-outline-secondary btn-full-large btn-block btn-add-subform mb-2">
+        <i class="uil uil-focus-add"></i>
+        {{ 'teknoo.space.action.add_quota'|trans }}
+    </button>
 {% endblock %}
 
 {% block blockExtra %}
@@ -101,9 +126,14 @@
             {{ 'teknoo.space.action.new_project'|trans }}
         </a>
         <a href="{{ path('space_admin_account_reinstall', {'id':objectInstance.id}) }}"
-           class="btn btn-soft-danger btn-full-large btn-block mt-2">
+           class="btn btn-outline-danger btn-full-large btn-block mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_reconfigure_kubernetes'|trans }}
+        </a>
+        <a href="{{ path('space_admin_account_refresh_quota', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-danger btn-full-large btn-block mt-2">
+            <i class="mdi mdi-shape-circle-plus"></i>
+            {{ 'teknoo.space.action.admin_refresh_quota'|trans }}
         </a>
         <a href="{{ path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}"
            class="btn btn-outline-danger btn-full-large btn-block mt-2">

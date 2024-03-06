@@ -44,6 +44,9 @@ class SpaceAccountType extends AbstractType
         $builder->add(
             'accountData',
             AccountDataType::class,
+            [
+                'can_update_subscription' => false,
+            ]
         );
 
         $builder->add(

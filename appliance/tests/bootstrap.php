@@ -17,6 +17,6 @@ if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
 
 date_default_timezone_set('UTC');
 
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '384M');
 
 error_reporting(E_ALL | E_STRICT);

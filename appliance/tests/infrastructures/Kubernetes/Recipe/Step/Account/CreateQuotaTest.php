@@ -23,24 +23,34 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Object\Config;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Class ClusterTest.
+ * Class CreateQuotaTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\Config\Cluster
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota
  */
-class ClusterTest extends TestCase
+class CreateQuotaTest extends TestCase
 {
-    private ClusterConfig $cluster;
+    private CreateQuota $createQuota;
+
+    private DatesService|MockObject $datesService;
+
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -49,9 +59,16 @@ class ClusterTest extends TestCase
     {
         parent::setUp();
 
-        $this->cluster = new ClusterConfig(
+        $this->datesService = $this->createMock(DatesService::class);
+        $this->preferRealDate = true;
+        $this->createQuota = new CreateQuota($this->datesService, $this->preferRealDate);
+    }
+
+    public function testInvoke(): void
+    {
+        $clusterConfig = new ClusterConfig(
             name: 'foo',
-            sluggyName: 'bar',
+            sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
             defaultEnv: 'foo',
@@ -60,13 +77,17 @@ class ClusterTest extends TestCase
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
         );
-    }
 
-    public function testConstruct(): void
-    {
         self::assertInstanceOf(
-            Client::class,
-            $this->cluster->getKubernetesClient(),
+            CreateQuota::class,
+            ($this->createQuota)(
+                manager: $this->createMock(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountInstance: $this->createMock(Account::class),
+                accountHistory: $this->createMock(AccountHistory::class),
+                clusterConfig: $clusterConfig,
+            )
         );
     }
 }

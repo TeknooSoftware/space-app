@@ -109,6 +109,24 @@
     </div>
 {% endblock %}
 
+{% block _admin_space_account_account_quotas_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.category, {"colClass": "col-3"}) }}
+            {{ form_row(form.type, {"colClass": "col-4"}) }}
+            {{ form_row(form.capacity, {"colClass": "col-2"}) }}
+            {{ form_row(form.requires, {"colClass": "col-2"}) }}
+            <div class="col-1 align-self-center">
+                <div class="form-group">
+                    <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 {% block _account_vars_sets_entry_widget %}
     <div class="col-12 subform">
         <div class="row">

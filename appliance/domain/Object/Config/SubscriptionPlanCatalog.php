@@ -27,7 +27,6 @@ namespace Teknoo\Space\Object\Config;
 
 use DomainException;
 use IteratorAggregate;
-use Teknoo\East\Paas\Object\Cluster as EastCluster;
 use Traversable;
 
 /**
@@ -36,39 +35,29 @@ use Traversable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements IteratorAggregate<Cluster>
+ * @implements IteratorAggregate<SubscriptionPlan>
  */
-class ClusterCatalog implements IteratorAggregate
+class SubscriptionPlanCatalog implements IteratorAggregate
 {
     /**
-     * @param array<string, Cluster> $clusters
-     * @param array<string, string> $aliases
+     * @param array<string, SubscriptionPlan> $subscriptionPlans
      */
     public function __construct(
-        private readonly array $clusters,
-        private readonly array $aliases,
+        private readonly array $subscriptionPlans,
     ) {
     }
 
-    public function getCluster(string|EastCluster $name): Cluster
+    public function getSubscriptionPlan(string $id): SubscriptionPlan
     {
-        if ($name instanceof EastCluster) {
-            $name = (string) $name;
+        if (!isset($this->subscriptionPlans[$id])) {
+            throw new DomainException("Subscription Plan {$id} is not available in the catalog");
         }
 
-        if (isset($this->aliases[$name])) {
-            $name = $this->aliases[$name];
-        }
-
-        if (!isset($this->clusters[$name])) {
-            throw new DomainException("Cluster {$name} is not available in the catalog");
-        }
-
-        return $this->clusters[$name];
+        return $this->subscriptionPlans[$id];
     }
 
     public function getIterator(): Traversable
     {
-        yield from $this->clusters;
+        yield from $this->subscriptionPlans;
     }
 }

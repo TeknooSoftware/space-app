@@ -49,6 +49,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
@@ -73,6 +74,7 @@ use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
+use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
 use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
@@ -125,6 +127,13 @@ return [
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
         return new CreateServiceAccount(
+            $container->get(DatesService::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
+    CreateQuota::class => static function (ContainerInterface $container): CreateQuota {
+        return new CreateQuota(
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
@@ -277,6 +286,9 @@ return [
 
     CreateAccount::class => create()
         ->constructor(get(SpaceAccountWriter::class)),
+
+    SetQuota::class => create()
+        ->constructor(get('teknoo.space.subscription_plan_catalog')),
 
     CreateUserInterface::class => get(CreateUser::class),
 

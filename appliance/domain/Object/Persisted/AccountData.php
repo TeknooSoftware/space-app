@@ -71,6 +71,7 @@ class AccountData implements
         'cityName' => ['crud'],
         'countryName' => ['crud'],
         'vatNumber' => ['crud'],
+        'subscriptionPlan' => ['default', 'crud'],
     ];
 
     public function __construct(
@@ -81,6 +82,7 @@ class AccountData implements
         private string $cityName = '',
         private string $countryName = '',
         ?string $vatNumber = '',
+        private ?string $subscriptionPlan = null,
     ) {
         //Issue with doctine
         $this->vatNumber = $vatNumber;
@@ -135,6 +137,13 @@ class AccountData implements
         return $this;
     }
 
+    public function setSubscriptionPlan(?string $subscriptionPlan): AccountData
+    {
+        $this->subscriptionPlan = $subscriptionPlan;
+
+        return $this;
+    }
+
     /**
      * @param array<string, callable> $visitors
      */
@@ -143,7 +152,7 @@ class AccountData implements
         $visitors = array_intersect_key(
             $visitors,
             array_flip(
-                ['legalName', 'streetAddress', 'zipCode', 'cityName', 'countryName', 'vatNumber'],
+                ['legalName', 'streetAddress', 'zipCode', 'cityName', 'countryName', 'vatNumber', 'subscriptionPlan'],
             ),
         );
 
@@ -160,6 +169,7 @@ class AccountData implements
             'cityName' => $this->cityName,
             'countryName' => $this->countryName,
             'vatNumber' => $this->vatNumber,
+            'subscriptionPlan' => (string) $this->subscriptionPlan,
         ];
 
         $this->setGroupsConfiguration(self::$exportConfigurations);
