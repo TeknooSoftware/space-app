@@ -117,6 +117,7 @@ use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareCriteria as JobPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
+use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareCriteria as ProjectPrepareCriteria;
@@ -321,6 +322,7 @@ return array(
             get(LoadPersistedVariablesForJob::class),
             get(FormHandlingInterface::class),
             get(FormProcessingInterface::class),
+            get(NewJobSetDefaults::class),
             get(NewJobNotifierInterface::class),
             get(JumpIf::class),
             get(CallNewJobInterface::class),

@@ -49,12 +49,14 @@ class NewJob implements ObjectInterface, MessageInterface
 
     /**
      * @param JobVar[] $variables
+     * @param array<string, string> $storageProvisionerPerCluster
      */
     public function __construct(
         public string $newJobId = '',
         public array $variables = [],
         public ?string $projectId = null,
         public ?string $envName = null,
+        public array $storageProvisionerPerCluster = [],
     ) {
         if (empty($this->newJobId)) {
             $this->newJobId = substr(

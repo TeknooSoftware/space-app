@@ -168,11 +168,11 @@ return [
         )
         ->parameter(
             'jsonKey',
-            'SPACE_KUBERNETES_CLUSTER_CATALOG_JSON',
+            'SPACE_CLUSTER_CATALOG_JSON',
         )
         ->parameter(
             'fileKey',
-            'SPACE_KUBERNETES_CLUSTER_CATALOG_FILE',
+            'SPACE_CLUSTER_CATALOG_FILE',
         ),
 
     'teknoo.east.paas.compilation.containers_images_library' => factory($loadFromEnv)

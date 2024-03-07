@@ -23,11 +23,12 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Object\Config;
+namespace Teknoo\Space\Recipe\Step\NewJob;
 
-use Teknoo\East\Paas\Object\AccountQuota;
-
-use function array_map;
+use Teknoo\East\Paas\Object\Cluster;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Object\DTO\SpaceProject;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -35,34 +36,29 @@ use function array_map;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SubscriptionPlan
+class NewJobSetDefaults
 {
-    /** @var iterable<AccountQuota> */
-    private readonly iterable $quotas;
-
-    /**
-     * @param array<array{category: string, type: string, capacity: string, requires: string}> $quotas
-     * @param string[] $clusters
-     */
     public function __construct(
-        public readonly string $id,
-        public readonly string $name,
-        array $quotas,
-        public readonly array $clusters = [],
+        private ClusterCatalog $catalog,
     ) {
-        $final = [];
-        foreach ($quotas as $def) {
-            $final[$def['type']] = AccountQuota::create($def);
-        }
-
-        $this->quotas = $final;
     }
 
-    /**
-     * @return iterable<AccountQuota>
-     */
-    public function getQuotas(): iterable
-    {
-        return $this->quotas;
+    public function __invoke(
+        SpaceProject $project,
+        NewJob $newJob,
+    ): self {
+
+        $project->project->visit(['clusters' => function (iterable $clusters) use ($newJob): void {
+            /** @var Cluster[] $clusters */
+            foreach ($clusters as $cluster) {
+                if ($cluster->isLocked()) {
+                    $config = $this->catalog->getCluster($cluster);
+
+                    $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
+                }
+            }
+        }]);
+
+        return $this;
     }
 }

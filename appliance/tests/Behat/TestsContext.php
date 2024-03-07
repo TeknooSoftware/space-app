@@ -215,6 +215,12 @@ class TestsContext implements Context
 
     private string $publicKey = __DIR__ . '/../var/keys/public.pem';
 
+    private readonly string $defaultClusterName;
+
+    private readonly string $defaultClusterAddress;
+
+    private readonly string $defaultClusterEnv;
+
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -229,11 +235,14 @@ class TestsContext implements Context
         private readonly ?MessageLoggerListener $messageLoggerListener,
         private readonly SubscriptionPlanCatalog $planCatalog,
         private readonly string $appHostname,
-        private readonly string $defaultClusterName,
+        string $defaultClusterName,
         private readonly string $defaultClusterType,
-        private readonly string $defaultClusterAddress,
-        private readonly string $defaultClusterEnv,
+        string $defaultClusterAddress,
+        string $defaultClusterEnv,
     ) {
+        $this->defaultClusterName = str_replace('Legacy ', '', $defaultClusterName);
+        $this->defaultClusterAddress = str_replace('legacy-', '', $defaultClusterAddress);
+        $this->defaultClusterEnv = str_replace('legacy-', '', $defaultClusterEnv);
     }
 
     /**
@@ -1406,6 +1415,7 @@ class TestsContext implements Context
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
         $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
+        $cluster->setLocked(true);
         $cluster->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),
@@ -1420,6 +1430,7 @@ class TestsContext implements Context
         $clusterDev->setType($this->defaultClusterType);
         $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
         $clusterDev->setEnvironment(new Environment('dev'));
+        $clusterDev->setLocked(true);
         $clusterDev->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),
@@ -1567,6 +1578,7 @@ class TestsContext implements Context
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
         $cluster->setEnvironment($env = new Environment($this->defaultClusterEnv));
+        $cluster->setLocked(true);
         $this->register($env);
         $cluster->setIdentity(
             new ClusterCredentials(

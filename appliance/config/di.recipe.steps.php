@@ -86,6 +86,7 @@ use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
+use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
@@ -305,10 +306,12 @@ return [
             get('teknoo.space.clusters_catalog'),
         ),
 
-    JobSetDefaults::class => create()
+    NewJobSetDefaults::class => create()
         ->constructor(
             get('teknoo.space.clusters_catalog'),
         ),
+
+    JobSetDefaults::class => create(),
 
     IncludeExtraInWorkplan::class => create(),
 

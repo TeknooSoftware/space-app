@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\App\Config;
 
 use ArrayObject;
+use DomainException;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Transcriber\IngressTranscriber as BaseIngressTranscriber;
@@ -66,16 +67,19 @@ return [
             }
         }
 
-        if (empty($definitions)) {
+        $master = $container->get('teknoo.space.kubernetes.default_cluster.master');
+        $clusterName = $container->get('teknoo.space.kubernetes.default_cluster.name');
+
+        if (empty($definitions) && !empty($clusterName) && !empty($master)) {
             $definitions = [
                 [
-                    'master' => $container->get('teknoo.space.kubernetes.default_cluster.master'),
+                    'master' => $master,
                     'dashboard' => $container->get('teknoo.space.kubernetes.default_cluster.dashboard'),
                     'create_account' => [
                         'token' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.token'),
                         'ca_cert' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.ca_cert'),
                     ],
-                    'name' => $container->get('teknoo.space.kubernetes.default_cluster.name'),
+                    'name' => $clusterName,
                     'type' => $container->get('teknoo.space.kubernetes.default_cluster.type'),
                     'env' => $container->get('teknoo.space.kubernetes.default_cluster.env'),
                 ]
@@ -91,6 +95,11 @@ return [
         $aliases = [];
 
         foreach ($definitions as $definition) {
+            $name = (string) $definition['name'];
+            if (isset($clustersList[$name])) {
+                throw new DomainException("Error, the cluster $name is already defined in the catalog");
+            }
+
             $caCertificate = base64_decode($definition['create_account']['ca_cert']);
             $credentials = new ClusterCredentials(
                 caCertificate: $caCertificate,
@@ -102,8 +111,6 @@ return [
                 $credentials,
                 $container->get(RepositoryRegistry::class)
             );
-
-            $name = (string) $definition['name'];
             $sluggyName = $sluggyfier($definition['name']);
             $aliases[$sluggyName] = $name;
             $clustersList[$name] = new Cluster(

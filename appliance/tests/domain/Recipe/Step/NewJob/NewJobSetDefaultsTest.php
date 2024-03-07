@@ -23,14 +23,14 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\NewJob;
 
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Job;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\East\Paas\Object\Project;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\NewJob;
-use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
+use Teknoo\Space\Object\DTO\SpaceProject;
+use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 
 /**
  * Class JobSetDefaultsTest.
@@ -39,11 +39,11 @@ use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Job\JobSetDefaults
+ * @covers \Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults
  */
-class JobSetDefaultsTest extends TestCase
+class NewJobSetDefaultsTest extends TestCase
 {
-    private JobSetDefaults $jobSetDefaults;
+    private NewJobSetDefaults $newJobSetDefaults;
 
     /**
      * {@inheritdoc}
@@ -52,17 +52,17 @@ class JobSetDefaultsTest extends TestCase
     {
         parent::setUp();
 
-        $this->jobSetDefaults = new JobSetDefaults();
+        $this->newJobSetDefaults = new NewJobSetDefaults(
+            $this->createMock(ClusterCatalog::class)
+        );
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            JobSetDefaults::class,
-            ($this->jobSetDefaults)(
-                manager: $this->createMock(ManagerInterface::class),
-                job: $this->createMock(Job::class),
-                accountWallet: $this->createMock(AccountWallet::class),
+            NewJobSetDefaults::class,
+            ($this->newJobSetDefaults)(
+                project: new SpaceProject($this->createMock(Project::class)),
                 newJob: $this->createMock(NewJob::class),
             ),
         );

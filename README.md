@@ -211,8 +211,8 @@ Environnements variables configuration
           * `SPACE_KUBERNETES_CLUSTER_ENV` : (string) name of the default environment created with the project.
                 `prod` by default. *Optional*
         * Several clusters : 
-          * `SPACE_KUBERNETES_CLUSTER_CATALOG_JSON` : (json string).
-          * `SPACE_KUBERNETES_CLUSTER_CATALOG_FILE` : (php file returning an array).
+          * `SPACE_CLUSTER_CATALOG_JSON` : (json string).
+          * `SPACE_CLUSTER_CATALOG_FILE` : (php file returning an array).
           * Dictionary's structure (`.` represent a subarray) :
             * `master` : (string) Default URL of Kubernetes API server.
             * `dashboard` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
@@ -226,6 +226,7 @@ Environnements variables configuration
                   `kubernetes` by default. *Optional*
             * `env` : (string) name of the default environment created with the project.
                   `prod` by default. *Optional*
+            * `storage_provisioner` : (string) Default storage provisioner *Optional*
 
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a
@@ -242,6 +243,7 @@ Environnements variables configuration
               * `quotas[].type` : (string) name of the quota
               * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's `limit`)
               * `quotas[].require` : (string) *Optional* Total of requires / requests allowed for an account
+              * `clusters`: (string[]) *Optional* List of clusters allowed with this plan (available later)
 
     * Job create
         * `SPACE_NEW_JOB_WAITING_TIME` : (int) time in seconds to wait before redirect user to the job page. *Optional*

@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta39] - 2024-02-07
+### Beta Release
+- Fix issue with `JobStart` cookbook requires the cluster catalog (not available here)
+  - Complete NewJob to pass from the webserver required value of the cluster catalog, needed by `JobStart` cookbook.
+
 ## [1.0.0-beta38] - 2024-02-06
 ### Beta Release
 - Update to Teknoo East PaaS 2.8+ :
@@ -26,7 +31,7 @@
   - Admin can update account's plan, not users cannot do it.
 - Rework PHP DI definitions and migrate dynamics var env's value from a json or a file into a 
   dedicated file `di.variables.from.envs.php`.
-- Add env vars `SPACE_KUBERNETES_CLUSTER_CATALOG_JSON` or `SPACE_KUBERNETES_CLUSTER_CATALOG_FILE` to define clusters 
+- Add env vars `SPACE_CLUSTER_CATALOG_JSON` or `SPACE_CLUSTER_CATALOG_FILE` to define clusters 
   catalog introduced into the version `1.0.0-beta37`.
 - Add env var `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` or `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` to define subscription 
   plan with quota.

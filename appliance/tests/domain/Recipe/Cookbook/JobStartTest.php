@@ -43,6 +43,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Recipe\Cookbook\JobStart;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
+use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 
 /**
@@ -75,6 +76,8 @@ class JobStartTest extends TestCase
 
     private FormProcessingInterface|MockObject $formProcessing;
 
+    private NewJobSetDefaults|MockObject $newJobSetDefaults;
+
     private NewJobNotifierInterface|MockObject $newJobNotifier;
 
 
@@ -105,6 +108,7 @@ class JobStartTest extends TestCase
         $this->loadPersistedVariablesForJob = $this->createMock(LoadPersistedVariablesForJob::class);
         $this->formHandling = $this->createMock(FormHandlingInterface::class);
         $this->formProcessing = $this->createMock(FormProcessingInterface::class);
+        $this->newJobSetDefaults = $this->createMock(NewJobSetDefaults::class);
         $this->newJobNotifier = $this->createMock(NewJobNotifierInterface::class);
         $this->jumpIf = $this->createMock(JumpIf::class);
         $this->callNewJob = $this->createMock(CallNewJobInterface::class);
@@ -121,6 +125,7 @@ class JobStartTest extends TestCase
             $this->loadPersistedVariablesForJob,
             $this->formHandling,
             $this->formProcessing,
+            $this->newJobSetDefaults,
             $this->newJobNotifier,
             $this->jumpIf,
             $this->callNewJob,
