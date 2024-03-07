@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta40] - 2024-02-07
+### Beta Release
+- Fix issue with relative resources requires :
+  - % of initial quota capacity and not remaining capacity
+- Fix issue when a soft quota is relative to the hard limit
+- Fix template url to got to a project when the user is an admin 
+
 ## [1.0.0-beta39] - 2024-02-07
 ### Beta Release
 - Fix issue with `JobStart` cookbook requires the cluster catalog (not available here)

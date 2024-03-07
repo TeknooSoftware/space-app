@@ -28,6 +28,7 @@ namespace Teknoo\Space\Object\Config;
 use Teknoo\East\Paas\Object\AccountQuota;
 
 use function array_map;
+use function is_string;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -41,14 +42,19 @@ class SubscriptionPlan
     private readonly iterable $quotas;
 
     /**
+     * @var string[]
+     */
+    private readonly array $clusters;
+
+    /**
      * @param array<array{category: string, type: string, capacity: string, requires: string}> $quotas
-     * @param string[] $clusters
+     * @param string|string[] $clusters
      */
     public function __construct(
         public readonly string $id,
         public readonly string $name,
         array $quotas,
-        public readonly array $clusters = [],
+        string|array $clusters = [],
     ) {
         $final = [];
         foreach ($quotas as $def) {
@@ -56,6 +62,19 @@ class SubscriptionPlan
         }
 
         $this->quotas = $final;
+        if (is_string($clusters)) {
+            $this->clusters = [$clusters];
+        } else {
+            $this->clusters = $clusters;
+        }
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getClusters(): array
+    {
+        return $this->clusters;
     }
 
     /**

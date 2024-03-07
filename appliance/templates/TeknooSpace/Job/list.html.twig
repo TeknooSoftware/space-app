@@ -20,7 +20,11 @@
 {% block breadcrumbListTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
 {% block additionalBreadcrumbs %}
     <li class="breadcrumb-item text-capitalize">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': projectId}) }}">{{ project }}</a>
+        {% else %}
         <a href="{{ path('space_project_edit', {'id': projectId}) }}">{{ project }}</a>
+        {% endif %}
     </li>
     <li class="breadcrumb-item text-capitalize active">
         <a href="{{ path('space_job_list', {'projectId': projectId}) }}">{{ 'teknoo.space.title.job'|trans }}</a>

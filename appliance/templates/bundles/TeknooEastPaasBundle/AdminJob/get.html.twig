@@ -48,7 +48,7 @@
 {%- block breadcrumbAddsItems -%}
     {% if jobInstance.project is not empty %}
         <li class="breadcrumb-item text-capitalize">
-            <a href="{{ path('space_project_edit', {'id': jobInstance.project.id}) }}">
+            <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': jobInstance.project.id}) }}">
                 {{ jobInstance.project }}
             </a>
         </li>

@@ -46,8 +46,11 @@
 {% block breadcrumbAddsItems %}
     {% if jobInstance.project is not empty %}
         <li class="breadcrumb-item text-capitalize">
-            <a href="{{ path('space_project_edit', {'id': jobInstance.project.id}) }}">{{ jobInstance.project }}
-            </a>
+            {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': jobInstance.project.id}) }}">{{ jobInstance.project }}</a>
+            {% else %}
+            <a href="{{ path('space_project_edit', {'id': jobInstance.project.id}) }}">{{ jobInstance.project }}</a>
+            {% endif %}
         </li>
     {% endif %}
 {% endblock %}
@@ -60,7 +63,11 @@
                     <div class="widget">
                         {% if jobInstance.project is not empty %}
                             <h5 class="widget-title">{{ 'teknoo.space.text.job_actions'|trans }}</h5>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('_teknoo_paas_admin_project_edit', {'id':jobInstance.project.id}) }}"
+                            {% else %}
                             <a href="{{ path('space_project_edit', {'id':jobInstance.project.id}) }}"
+                            {% endif %}
                                title="{{ 'teknoo.space.action.job_open_project'|trans }}"
                                class="btn btn-soft-primary btn-full-large btn-block mb-2">
                                 <i class="mdi mdi-pencil"></i>

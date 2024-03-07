@@ -18,7 +18,11 @@
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
 {% block breadcrumbAddsItems %}
     <li class="breadcrumb-item text-capitalize">
+        {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': objectInstance.id}) }}">{{ objectInstance }}</a>
+        {% else %}
         <a href="{{ path('space_project_edit', {'id': objectInstance.id}) }}">{{ objectInstance }}</a>
+        {% endif %}
     </li>
 {% endblock %}
 {% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.project.variables'|trans }}{% endblock %}

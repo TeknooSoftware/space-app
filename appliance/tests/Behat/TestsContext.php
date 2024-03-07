@@ -3669,7 +3669,7 @@ class TestsContext implements Context
 
         Assert::assertTrue($job->getHistory()->isFinal());
         Assert::assertStringContainsString(
-            'Error, available capacity for',
+            'Error, remaining available capacity for',
             $job->getHistory()->getExtra()['result'][1] ?? []
         );
     }

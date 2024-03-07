@@ -62,7 +62,11 @@
     <tr {% if loop.index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
         <td>
             <a class="text-primary space-project-name"
+               {% if is_granted('ROLE_ADMIN') %}
+               href="{{ path('_teknoo_paas_admin_project_edit', {'id':object.id}) }}"
+               {% else %}
                href="{{ path('space_project_edit', {'id':object.id}) }}"
+               {% endif %}
                title="{{ 'teknoo.space.action.edit_project'|trans }}">
                 {{ object.project }}
             </a>
@@ -71,7 +75,11 @@
         <td>{{ object.project.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
             <a class="text-primary"
+               {% if is_granted('ROLE_ADMIN') %}
+               href="{{ path('_teknoo_paas_admin_project_edit', {'id':object.id}) }}"
+               {% else %}
                href="{{ path('space_project_edit', {'id':object.id}) }}"
+               {% endif %}
                title="{{ 'teknoo.space.action.edit_project'|trans }}">
                 <span class="mdi mdi-pencil"></span>
             </a>

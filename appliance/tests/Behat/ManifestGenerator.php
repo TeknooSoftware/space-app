@@ -617,11 +617,11 @@ EOF;
             'full' => $prefixResource . json_encode(
                 [
                     'requests' => [
-                        'cpu' => '81m',
+                        'cpu' => '200m',
                         'memory' => '64Mi',
                     ],
                     'limits' => [
-                        'cpu' => '81m',
+                        'cpu' => '200m',
                         'memory' => '64Mi',
                     ],
                 ],
