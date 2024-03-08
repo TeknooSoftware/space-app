@@ -27,7 +27,6 @@ namespace Teknoo\Space\Object\Config;
 
 use Teknoo\East\Paas\Object\AccountQuota;
 
-use function array_map;
 use function is_string;
 
 /**
