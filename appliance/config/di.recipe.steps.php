@@ -175,6 +175,10 @@ return [
     CreateRegistryAccount::class => static function (ContainerInterface $container): CreateRegistryAccount {
         return new CreateRegistryAccount(
             registryImageName: $container->get('teknoo.space.kubernetes.oci_registry.image'),
+            registryCpuRequests: $container->get('teknoo.space.kubernetes.oci_registry.requests.cpu'),
+            registryMemoryRequests: $container->get('teknoo.space.kubernetes.oci_registry.requests.memory'),
+            registryCpuLimits: $container->get('teknoo.space.kubernetes.oci_registry.limits.cpu'),
+            registryMemoryLimits: $container->get('teknoo.space.kubernetes.oci_registry.limits.memory'),
             tlsSecretName: $container->get('teknoo.space.kubernetes.oci_registry.tls_secret_name'),
             registryUrl: $container->get('teknoo.space.kubernetes.oci_registry.url'),
             clusterIssuer: $container->get('teknoo.space.kubernetes.cluster_issuer'),

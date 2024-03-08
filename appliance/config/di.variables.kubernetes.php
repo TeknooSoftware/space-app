@@ -137,7 +137,11 @@ return [
         1,
     ),
 
-    'teknoo.space.kubernetes.oci_registry.image' => env('SPACE_OCI_REGISTRY_IMAGE'),
+    'teknoo.space.kubernetes.oci_registry.image' => env('SPACE_OCI_REGISTRY_IMAGE', 'registry:latest'),
+    'teknoo.space.kubernetes.oci_registry.requests.cpu' => env('SPACE_OCI_REGISTRY_REQUESTS_CPU', '10m'),
+    'teknoo.space.kubernetes.oci_registry.requests.memory' => env('SPACE_OCI_REGISTRY_REQUESTS_MEMORY', '30Mi'),
+    'teknoo.space.kubernetes.oci_registry.limits.cpu' => env('SPACE_OCI_REGISTRY_LIMITS_CPU', '100m'),
+    'teknoo.space.kubernetes.oci_registry.limits.memory' => env('SPACE_OCI_REGISTRY_LIMITS_MEMORY', '256Mi'),
     'teknoo.space.kubernetes.oci_registry.url' => env('SPACE_OCI_REGISTRY_URL'),
     'teknoo.space.kubernetes.oci_registry.tls_secret_name' => env('SPACE_OCI_REGISTRY_TLS_SECRET'),
     'teknoo.space.kubernetes.oci_registry.storage_claiming_size' => env('SPACE_OCI_REGISTRY_PVC_SIZE'),

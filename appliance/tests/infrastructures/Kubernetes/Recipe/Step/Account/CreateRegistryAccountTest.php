@@ -49,6 +49,14 @@ class CreateRegistryAccountTest extends TestCase
 
     private string $registryImageName;
 
+    private string $registryCpuRequests;
+
+    private string $registryMemoryRequests;
+
+    private string $registryCpuLimits;
+
+    private string $registryMemoryLimits;
+
     private string $tlsSecretName;
 
     private string $registryUrl;
@@ -75,6 +83,10 @@ class CreateRegistryAccountTest extends TestCase
         parent::setUp();
 
         $this->registryImageName = '42';
+        $this->registryCpuRequests = '42';
+        $this->registryMemoryRequests = '42';
+        $this->registryCpuLimits = '42';
+        $this->registryMemoryLimits = '42';
         $this->tlsSecretName = '42';
         $this->registryUrl = '42';
         $this->clusterIssuer = '42';
@@ -86,6 +98,10 @@ class CreateRegistryAccountTest extends TestCase
         $this->spaceRegistryPwd = '42';
         $this->createRegistryAccount = new CreateRegistryAccount(
             $this->registryImageName,
+            $this->registryCpuRequests,
+            $this->registryMemoryRequests,
+            $this->registryCpuLimits,
+            $this->registryMemoryLimits,
             $this->tlsSecretName,
             $this->registryUrl,
             $this->clusterIssuer,

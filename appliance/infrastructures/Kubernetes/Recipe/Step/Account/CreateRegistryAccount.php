@@ -70,6 +70,10 @@ class CreateRegistryAccount
 
     public function __construct(
         private string $registryImageName,
+        private string $registryCpuRequests,
+        private string $registryMemoryRequests,
+        private string $registryCpuLimits,
+        private string $registryMemoryLimits,
         private string $tlsSecretName,
         private string $registryUrl,
         private string $clusterIssuer,
@@ -145,6 +149,16 @@ class CreateRegistryAccount
                                         'value' => ucfirst($namespace) . ' Private Registry',
                                     ],
                                 ],
+                                'resources' => [
+                                    'requests' => [
+                                        'cpu' => $this->registryCpuRequests,
+                                        'memory' => $this->registryMemoryRequests
+                                    ],
+                                    'limits' => [
+                                        'cpu' => $this->registryCpuLimits,
+                                        'memory' => $this->registryMemoryLimits
+                                    ],
+                                ]
                             ],
                         ],
                         'volumes' => [

@@ -382,7 +382,17 @@ class ManifestGenerator
                                         "name": "REGISTRY_AUTH_HTPASSWD_REALM",
                                         "value": "Space-client-$name Private Registry"
                                     }
-                                ]
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "cpu": "10m",
+                                        "memory": "30Mi"
+                                    },
+                                    "limits": {
+                                        "cpu": "100m",
+                                        "memory": "256Mi"
+                                    }
+                                }
                             }
                         ],
                         "volumes": [

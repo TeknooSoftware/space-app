@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta41] - 2024-02-08
+### Beta Release
+- Add requests and limits on cpu and memory to accounts'registries deployments. 
+  This customized with following envs vars:
+  - `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
+
 ## [1.0.0-beta40] - 2024-02-07
 ### Beta Release
 - Fix issue with relative resources requires :
