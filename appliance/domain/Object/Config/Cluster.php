@@ -37,6 +37,7 @@ use Teknoo\Kubernetes\Client;
 class Cluster
 {
     private ?Client $kubernetesClient = null;
+    private Client $kubernetesRegistryClient;
 
     /**
      * @var callable|null
@@ -53,9 +54,11 @@ class Cluster
         public readonly string $dashboardAddress,
         callable|Client $kubernetesClient,
         public readonly string $token,
+        public readonly bool $supportRegistry,
     ) {
         if ($kubernetesClient instanceof Client) {
             $this->kubernetesClient = $kubernetesClient;
+            $this->kubernetesRegistryClient = clone $kubernetesClient;
         } else {
             $this->clientInit = $kubernetesClient;
         }
@@ -68,6 +71,9 @@ class Cluster
             && null !== $this->clientInit
         ) {
             $this->kubernetesClient = ($this->clientInit)();
+            if ($this->supportRegistry) {
+                $this->kubernetesRegistryClient = clone $this->kubernetesClient;
+            }
             $this->clientInit = null;
         }
 
@@ -76,5 +82,18 @@ class Cluster
         }
 
         return $this->kubernetesClient;
+    }
+
+    public function getKubernetesRegistryClient(): Client
+    {
+        if (!$this->supportRegistry) {
+            throw new RuntimeException("Error this cluster does not support OCI registry");
+        }
+
+        if (null === $this->kubernetesClient) {
+            $this->getKubernetesClient();
+        }
+
+        return $this->kubernetesRegistryClient;
     }
 }

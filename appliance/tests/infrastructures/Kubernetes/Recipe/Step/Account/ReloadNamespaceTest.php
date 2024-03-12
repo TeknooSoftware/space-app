@@ -72,11 +72,13 @@ class ReloadNamespaceTest extends TestCase
                     dashboardAddress: 'foo',
                     kubernetesClient: $this->client,
                     token: 'foo',
+                    supportRegistry: true,
                 )
             );
 
         $this->reloadNamespace = new ReloadNamespace(
             $catalog,
+            'foo',
         );
     }
 

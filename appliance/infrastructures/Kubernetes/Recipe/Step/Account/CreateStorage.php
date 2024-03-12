@@ -28,12 +28,10 @@ namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
 use DateTimeInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\PersistentVolumeClaim;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -81,26 +79,24 @@ class CreateStorage
 
     public function __invoke(
         ManagerInterface $manager,
-        string $kubeNamespace,
+        string $registryNamespace,
         string $accountNamespace,
         AccountHistory $accountHistory,
         string $storageSizeToClaim,
-        ClusterConfig $clusterConfig,
-        ?AccountWallet $accountWallet = null,
+        ClusterCatalog $clusterCatalog,
+        ?AccountRegistry $accountRegistry = null,
     ): self {
-        $client = $clusterConfig->getKubernetesClient();
+        $clusterRegistry = $clusterCatalog->getClusterForRegistry();
+        $client = $clusterRegistry->getKubernetesRegistryClient();
+        $client->setNamespace($registryNamespace);
 
-        $accountCredential = null;
-        if ($accountWallet) {
-            $accountCredential = $accountWallet[$clusterConfig->name];
-        }
-        $pvcName = $accountCredential?->getPersistentVolumeClaimName() ?? $accountNamespace . self::PVC_CLASS_SUFFIX;
+        $pvcName = $accountRegistry?->getPersistentVolumeClaimName() ?? $accountNamespace . self::PVC_CLASS_SUFFIX;
 
         $persistentVolumeClaim = $this->createPersistentVolumeClaim(
             $pvcName,
-            $kubeNamespace,
+            $registryNamespace,
             $storageSizeToClaim,
-            $clusterConfig->storageProvisioner,
+            $clusterRegistry->storageProvisioner,
         );
 
         $persistentVolumeClaimRepository = $client->persistentVolumeClaims();
@@ -116,7 +112,7 @@ class CreateStorage
                     false,
                     [
                         'persistentVolumeClaim' => $pvcName
-                    ]
+                    ],
                 );
             },
             $this->preferRealDate,

@@ -82,6 +82,7 @@ return [
                     'name' => $clusterName,
                     'type' => $container->get('teknoo.space.kubernetes.default_cluster.type'),
                     'env' => $container->get('teknoo.space.kubernetes.default_cluster.env'),
+                    'support_registry' => true,
                 ]
             ];
         }
@@ -123,6 +124,7 @@ return [
                 dashboardAddress: $definition['dashboard'] ?? '',
                 kubernetesClient: $clientInit,
                 token: $definition['create_account']['token'],
+                supportRegistry: !empty($definition['support_registry']),
             );
         }
 
@@ -130,7 +132,14 @@ return [
     },
 
     //Generic
-    'teknoo.space.kubernetes.root_namespace' => env('SPACE_KUBERNETES_ROOT_NAMESPACE'),
+    'teknoo.space.kubernetes.root_namespace' => env(
+        'SPACE_KUBERNETES_ROOT_NAMESPACE',
+        'space-client-',
+    ),
+    'teknoo.space.kubernetes.registry_root_namespace' => env(
+        'SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE',
+        'space-registry-',
+    ),
     'teknoo.space.kubernetes.cluster_issuer' => env('SPACE_CLUSTER_ISSUER'),
     'teknoo.space.kubernetes.secret_account_token_waiting_time' => env(
         'SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME',

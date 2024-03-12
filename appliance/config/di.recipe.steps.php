@@ -50,7 +50,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
@@ -68,6 +68,7 @@ use Teknoo\Space\Loader\AccountCredentialLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
+use Teknoo\Space\Loader\AccountRegistryLoader;
 use Teknoo\Space\Loader\PersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\UserDataLoader;
@@ -79,9 +80,11 @@ use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
 use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
 use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -99,6 +102,7 @@ use Teknoo\Space\Recipe\Step\Subscription\CreateAccount;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
 use Teknoo\Space\Writer\AccountCredentialWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
+use Teknoo\Space\Writer\AccountRegistryWriter;
 use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
 use Teknoo\Space\Writer\Meta\SpaceUserWriter;
 
@@ -115,6 +119,7 @@ return [
     CreateNamespace::class => static function (ContainerInterface $container): CreateNamespace {
         return new CreateNamespace(
             $container->get('teknoo.space.kubernetes.root_namespace'),
+            $container->get('teknoo.space.kubernetes.registry_root_namespace'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
             $container->get(AccountWriter::class),
@@ -124,6 +129,7 @@ return [
     ReloadNamespace::class => create()
         ->constructor(
             get('teknoo.space.clusters_catalog'),
+            get('teknoo.space.kubernetes.registry_root_namespace'),
         ),
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
@@ -172,8 +178,8 @@ return [
         );
     },
 
-    CreateRegistryAccount::class => static function (ContainerInterface $container): CreateRegistryAccount {
-        return new CreateRegistryAccount(
+    CreateRegistryDeployment::class => static function (ContainerInterface $container): CreateRegistryDeployment {
+        return new CreateRegistryDeployment(
             registryImageName: $container->get('teknoo.space.kubernetes.oci_registry.image'),
             registryCpuRequests: $container->get('teknoo.space.kubernetes.oci_registry.requests.cpu'),
             registryMemoryRequests: $container->get('teknoo.space.kubernetes.oci_registry.requests.memory'),
@@ -199,17 +205,22 @@ return [
         );
     },
 
-    UpdateCredentials::class => static function (ContainerInterface $container): UpdateCredentials {
-        return new UpdateCredentials(
-            $container->get(AccountCredentialWriter::class),
-            $container->get(DatesService::class),
-            !empty($container->get('teknoo.space.prefer-real-date')),
+    PersistRegistryCredentials::class => static function (ContainerInterface $container): PersistRegistryCredentials {
+        return new PersistRegistryCredentials(
+            writer: $container->get(AccountRegistryWriter::class),
+            datesService: $container->get(DatesService::class),
+            preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
 
     RemoveCredentials::class => create()
         ->constructor(
             get(AccountCredentialWriter::class),
+        ),
+
+    RemoveRegistryCredentials::class => create()
+        ->constructor(
+            get(AccountRegistryWriter::class),
         ),
 
     PrepareProject::class => create()
@@ -256,6 +267,9 @@ return [
 
     LoadCredentials::class => create()
         ->constructor(get(AccountCredentialLoader::class)),
+
+    LoadRegistryCredentials::class => create()
+        ->constructor(get(AccountRegistryLoader::class)),
 
     LoadAccountData::class => create()
         ->constructor(get(AccountDataLoader::class)),

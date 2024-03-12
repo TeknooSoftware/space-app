@@ -36,7 +36,7 @@ use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Model\Service;
 use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Throwable;
 
@@ -55,7 +55,7 @@ use const JSON_THROW_ON_ERROR;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CreateRegistryAccount
+class CreateRegistryDeployment
 {
     /**
      * @use InsertModelTrait<Deployment|Ingress|Secret|Service>
@@ -342,10 +342,12 @@ class CreateRegistryAccount
     private function configureRegistry(
         ManagerInterface $manager,
         string $kubeNamespace,
+        string $registryNamespace,
         string $accountNamespace,
         string $persistentVolumeClaimName,
         AccountHistory $accountHistory,
         KubernetesClient $client,
+        ClusterCatalog $clusterCatalog,
     ): void {
         $username = $accountNamespace;
         $password = $this->createPassword($accountNamespace);
@@ -357,18 +359,8 @@ class CreateRegistryAccount
         $dockerConfigSecretName = $accountNamespace . '-docker-config';
         $authSecretName = $accountNamespace . '-registry-auth-secret';
 
-        $dockerConfigSecret = $this->createDockerConfigSecret(
-            $kubeNamespace,
-            $dockerConfigSecretName,
-            $registryUrl,
-            $username,
-            $password
-        );
-
-        $this->insertModel($client->secrets(), $dockerConfigSecret, true);
-
         $authSecret = $this->createRegistryAuthSecret(
-            $kubeNamespace,
+            $registryNamespace,
             $authSecretName,
             $username,
             $password
@@ -377,7 +369,7 @@ class CreateRegistryAccount
         $this->insertModel($client->secrets(), $authSecret, true);
 
         $replication = $this->createRegistryReplication(
-            $kubeNamespace,
+            $registryNamespace,
             $podName,
             $authSecretName,
             $persistentVolumeClaimName
@@ -403,7 +395,7 @@ class CreateRegistryAccount
         }
 
         $service = $this->createRegistryService(
-            $kubeNamespace,
+            $registryNamespace,
             $serviceName,
             $podName
         );
@@ -411,7 +403,7 @@ class CreateRegistryAccount
         $this->insertModel($client->services(), $service, true);
 
         $ingress = $this->createRegistryIngress(
-            $kubeNamespace,
+            $registryNamespace,
             $ingressName,
             $registryUrl,
             $serviceName,
@@ -419,6 +411,22 @@ class CreateRegistryAccount
         );
 
         $this->insertModel($client->ingresses(), $ingress, true);
+
+        $dockerConfigSecret = $this->createDockerConfigSecret(
+            $kubeNamespace,
+            $dockerConfigSecretName,
+            $registryUrl,
+            $username,
+            $password
+        );
+
+        foreach ($clusterCatalog as $cluster) {
+            $this->insertModel(
+                $cluster->getKubernetesClient()->secrets(),
+                $dockerConfigSecret,
+                true,
+            );
+        }
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory, $registryUrl, $username) {
@@ -446,20 +454,26 @@ class CreateRegistryAccount
     public function __invoke(
         ManagerInterface $manager,
         string $kubeNamespace,
+        string $registryNamespace,
         string $accountNamespace,
         AccountHistory $accountHistory,
+        ClusterCatalog $clusterCatalog,
         string $persistentVolumeClaimName,
-        ClusterConfig $clusterConfig,
     ): self {
+        $clusterRegistry = $clusterCatalog->getClusterForRegistry();
+        $client = $clusterRegistry->getKubernetesRegistryClient();
+        $client->setNamespace($registryNamespace);
 
         try {
             $this->configureRegistry(
                 manager: $manager,
                 kubeNamespace: $kubeNamespace,
+                registryNamespace: $registryNamespace,
                 accountNamespace: $accountNamespace,
-                accountHistory: $accountHistory,
                 persistentVolumeClaimName: $persistentVolumeClaimName,
-                client: $clusterConfig->getKubernetesClient(),
+                accountHistory: $accountHistory,
+                client: $client,
+                clusterCatalog: $clusterCatalog,
             );
         } catch (Throwable $error) {
             $manager->error($error);

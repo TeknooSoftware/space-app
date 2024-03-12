@@ -28,6 +28,7 @@ namespace Teknoo\Space\Object\Config;
 use DomainException;
 use IteratorAggregate;
 use Teknoo\East\Paas\Object\Cluster as EastCluster;
+use Teknoo\Kubernetes\Client;
 use Traversable;
 
 /**
@@ -48,6 +49,17 @@ class ClusterCatalog implements IteratorAggregate
         private readonly array $clusters,
         private readonly array $aliases,
     ) {
+    }
+
+    public function getClusterForRegistry(): Cluster
+    {
+        foreach ($this->clusters as $cluster) {
+            if ($cluster->supportRegistry) {
+                return $cluster;
+            }
+        }
+
+        throw new DomainException("Missing cluster configuration able to support privates registries");
     }
 
     public function getCluster(string|EastCluster $name): Cluster

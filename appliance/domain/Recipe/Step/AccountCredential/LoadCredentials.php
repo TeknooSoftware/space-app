@@ -80,11 +80,9 @@ class LoadCredentials
         $fetchedPromise = new Promise(
             /** @var iterable<AccountCredential> */
             static function (iterable $credentials) use ($manager) {
-                $manager->updateWorkPlan(
-                    [
-                        AccountWallet::class => new AccountWallet($credentials),
-                    ],
-                );
+                $manager->updateWorkPlan([
+                    AccountWallet::class => new AccountWallet($credentials),
+                ]);
             },
             $errorCallback
         );

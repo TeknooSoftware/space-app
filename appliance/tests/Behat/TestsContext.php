@@ -109,6 +109,7 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\PersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
@@ -644,6 +645,7 @@ class TestsContext implements Context
         $this->buildRepository(Project::class);
 
         $this->buildRepository(AccountCredential::class);
+        $this->buildRepository(AccountRegistry::class);
         $this->buildRepository(AccountData::class);
         $this->buildRepository(AccountHistory::class);
         $this->buildRepository(AccountPersistedVariable::class);
@@ -861,10 +863,6 @@ class TestsContext implements Context
         $accountCredentials = new AccountCredential(
             account: $account,
             clusterName: 'Demo Kube Cluster',
-            registryUrl: $sac . '.registry.demo.teknoo.space',
-            registryAccountName: $sac . '-registry',
-            registryConfigName: $sac . 'docker-config',
-            registryPassword: $sac . '-foobar',
             serviceAccountName:  $sac . '-account',
             roleName: $sac . '-role',
             roleBindingName: $sac . '-role-binding',
@@ -872,11 +870,23 @@ class TestsContext implements Context
             clientCertificate: "",
             clientKey: "",
             token: "aFakeToken",
-            persistentVolumeClaimName: $sac . '-pvc',
         );
         $accountCredentials->setId($this->generateId());
 
         $this->persistAndRegister($accountCredentials);
+
+        $accountRegistry = new AccountRegistry(
+            account: $account,
+            registryNamespace: $sac . '-registry',
+            registryUrl: $sac . '.registry.demo.teknoo.space',
+            registryAccountName: $sac . '-registry',
+            registryConfigName: $sac . 'docker-config',
+            registryPassword: $sac . '-foobar',
+            persistentVolumeClaimName: $sac . '-pvc',
+        );
+        $accountRegistry->setId($this->generateId());
+
+        $this->persistAndRegister($accountRegistry);
     }
 
     /**
@@ -1382,6 +1392,8 @@ class TestsContext implements Context
     {
         /** @var AccountCredential $credential */
         $credential = $this->recall(AccountCredential::class);
+        /** @var AccountRegistry $registry */
+        $registry = $this->recall(AccountRegistry::class);
 
         $account = $this->recall(Account::class);
         $project = new Project($account);
@@ -1392,12 +1404,12 @@ class TestsContext implements Context
 
         $project->setImagesRegistry(
             repository: new ImageRegistry(
-                apiUrl: $credential->getRegistryUrl(),
+                apiUrl: $registry->getRegistryUrl(),
                 identity: new XRegistryAuth(
-                    username: $credential->getRegistryAccountName(),
-                    password: $credential->getRegistryPassword(),
-                    auth: $credential->getRegistryConfigName(),
-                    serverAddress: $credential->getRegistryUrl(),
+                    username: $registry->getRegistryAccountName(),
+                    password: $registry->getRegistryPassword(),
+                    auth: $registry->getRegistryConfigName(),
+                    serverAddress: $registry->getRegistryUrl(),
                 )
             )
         );
@@ -1541,6 +1553,8 @@ class TestsContext implements Context
     {
         /** @var AccountCredential $credential */
         $credential = $this->recall(AccountCredential::class);
+        /** @var AccountRegistry $registry */
+        $registry = $this->recall(AccountRegistry::class);
 
         $account = $this->recall(Account::class);
         $project = new Project($account);
@@ -1551,12 +1565,12 @@ class TestsContext implements Context
 
         $project->setImagesRegistry(
             repository: $imageRegistry = new ImageRegistry(
-                apiUrl: $credential->getRegistryUrl(),
+                apiUrl: $registry->getRegistryUrl(),
                 identity: new XRegistryAuth(
-                    username: $credential->getRegistryAccountName(),
-                    password: $credential->getRegistryPassword(),
-                    auth: $credential->getRegistryConfigName(),
-                    serverAddress: $credential->getRegistryUrl(),
+                    username: $registry->getRegistryAccountName(),
+                    password: $registry->getRegistryPassword(),
+                    auth: $registry->getRegistryConfigName(),
+                    serverAddress: $registry->getRegistryUrl(),
                 )
             )
         );
@@ -3872,10 +3886,17 @@ class TestsContext implements Context
             $this->manifests["namespaces/space-client-$namespace/secrets"],
         );
 
+        Assert::assertNotEmpty(
+            $this->manifests["namespaces/space-registry-$namespace/secrets"],
+        );
+
         foreach ($this->manifests["namespaces/space-client-$namespace/secrets"] as &$secret) {
             if (!empty($secret['data']['.dockerconfigjson'])) {
                 $secret['data']['.dockerconfigjson'] = '===';
             }
+        }
+
+        foreach ($this->manifests["namespaces/space-registry-$namespace/secrets"] as &$secret) {
             if (!empty($secret['data']['htpasswd'])) {
                 $secret['data']['htpasswd'] = '===';
             }

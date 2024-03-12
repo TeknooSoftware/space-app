@@ -30,22 +30,23 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Class CreateRegistryAccountTest.
+ * Class CreateRegistryDeploymentTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment
  */
-class CreateRegistryAccountTest extends TestCase
+class CreateRegistryDeploymentTest extends TestCase
 {
-    private CreateRegistryAccount $createRegistryAccount;
+    private CreateRegistryDeployment $createRegistryAccount;
 
     private string $registryImageName;
 
@@ -96,7 +97,7 @@ class CreateRegistryAccountTest extends TestCase
         $this->spaceRegistryUrl = '42';
         $this->spaceRegistryUsername = '42';
         $this->spaceRegistryPwd = '42';
-        $this->createRegistryAccount = new CreateRegistryAccount(
+        $this->createRegistryAccount = new CreateRegistryDeployment(
             $this->registryImageName,
             $this->registryCpuRequests,
             $this->registryMemoryRequests,
@@ -126,17 +127,19 @@ class CreateRegistryAccountTest extends TestCase
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
+            supportRegistry: true,
         );
 
         self::assertInstanceOf(
-            CreateRegistryAccount::class,
+            CreateRegistryDeployment::class,
             ($this->createRegistryAccount)(
                 manager: $this->createMock(ManagerInterface::class),
                 kubeNamespace: 'foo',
+                registryNamespace: 'foo',
                 accountNamespace: 'bar',
                 accountHistory: $this->createMock(AccountHistory::class),
                 persistentVolumeClaimName: 'foo',
-                clusterConfig: $clusterConfig,
+                clusterCatalog: new ClusterCatalog(['defaults' => $clusterConfig], []),
             ),
         );
     }

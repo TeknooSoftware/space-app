@@ -37,6 +37,7 @@ use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
 use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
@@ -44,6 +45,8 @@ use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -63,7 +66,9 @@ class AccountReinstall implements CookbookInterface
         private SetRedirectClientAtEnd $redirectClient,
         private LoadHistory $loadHistory,
         private LoadCredentials $loadCredentials,
+        private LoadRegistryCredentials $loadRegistryCredentials,
         private RemoveCredentials $removeCredentials,
+        private RemoveRegistryCredentials $removeRegistryCredentials,
         private SetAccountNamespace $setAccountNamespace,
         private AccountInstall $installAccount,
         private UpdateAccountHistory $updateAccountHistory,
@@ -81,10 +86,13 @@ class AccountReinstall implements CookbookInterface
         $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
         $recipe = $recipe->require(new Ingredient('string', 'id'));
         $recipe = $recipe->require(new Ingredient('string', 'storageSizeToClaim'));
+        $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
 
         $recipe = $this->prepareRecipeForAccount($recipe);
 
         $recipe = $recipe->cook($this->removeCredentials, RemoveCredentials::class, [], 70);
+
+        $recipe = $recipe->cook($this->removeRegistryCredentials, RemoveRegistryCredentials::class, [], 70);
 
         $recipe = $recipe->cook($this->setAccountNamespace, SetAccountNamespace::class, [], 80);
 

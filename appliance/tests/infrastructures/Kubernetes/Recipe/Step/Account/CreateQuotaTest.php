@@ -76,6 +76,7 @@ class CreateQuotaTest extends TestCase
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
+            supportRegistry: true,
         );
 
         self::assertInstanceOf(

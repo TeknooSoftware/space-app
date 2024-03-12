@@ -23,36 +23,34 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Tests\Unit\Writer;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
+use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Object\Persisted\AccountHistory;
-use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Writer\AccountRegistryWriter;
 
 /**
- * Class UpdateCredentialsTest.
+ * Class AccountRegistryWriterTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials
+ * @covers \Teknoo\Space\Writer\AccountRegistryWriter
  */
-class UpdateCredentialsTest extends TestCase
+class AccountRegistryWriterTest extends TestCase
 {
-    private UpdateCredentials $updateCredentials;
+    private AccountRegistryWriter $accountRegistryWriter;
 
-    private AccountCredentialWriter|MockObject $writer;
+    private ManagerInterface|MockObject $manager;
 
     private DatesService|MockObject $datesService;
 
-    private bool $preferRealDate;
+    protected bool $preferRealDateOnUpdate = false;
 
     /**
      * {@inheritdoc}
@@ -61,23 +59,26 @@ class UpdateCredentialsTest extends TestCase
     {
         parent::setUp();
 
-        $this->writer = $this->createMock(AccountCredentialWriter::class);
+        $this->manager = $this->createMock(ManagerInterface::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->preferRealDate = true;
-        $this->updateCredentials = new UpdateCredentials($this->writer, $this->datesService, $this->preferRealDate);
+        $this->preferRealDateOnUpdate = true;
+
+
+        $this->accountRegistryWriter = new AccountRegistryWriter(
+            $this->manager,
+            $this->datesService,
+            $this->preferRealDateOnUpdate,
+        );
     }
 
-    public function testInvoke(): void
+    public function testSave(): void
     {
         self::assertInstanceOf(
-            UpdateCredentials::class,
-            ($this->updateCredentials)(
-                manager: $this->createMock(ManagerInterface::class),
-                registryUrl: 'foo',
-                registryAccountName: 'foo',
-                registryPassword: 'foo',
-                accountWallet: $this->createMock(AccountWallet::class),
-                accountHistory: $this->createMock(AccountHistory::class),
+            AccountRegistryWriter::class,
+            $this->accountRegistryWriter->save(
+                $this->createMock(ObjectInterface::class),
+                $this->createMock(PromiseInterface::class),
+                true,
             ),
         );
     }

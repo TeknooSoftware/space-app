@@ -43,6 +43,7 @@ use Teknoo\Space\Contracts\DbSource\Repository\AccountCredentialRepositoryInterf
 use Teknoo\Space\Contracts\DbSource\Repository\AccountDataRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountHistoryRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountPersistedVariableRepositoryInterface;
+use Teknoo\Space\Contracts\DbSource\Repository\AccountRegistryRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\PersistedVariableRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\ProjectMetadataRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\UserDataRepositoryInterface;
@@ -50,6 +51,7 @@ use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountCredentialReposi
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountDataRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountHistoryRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountPersistedVariableRepository;
+use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountRegistryRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\PersistedVariableRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\ProjectMetadataRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\UserDataRepository;
@@ -57,6 +59,7 @@ use Teknoo\Space\Loader\AccountCredentialLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
+use Teknoo\Space\Loader\AccountRegistryLoader;
 use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Loader\Meta\SpaceProjectLoader;
 use Teknoo\Space\Loader\Meta\SpaceUserLoader;
@@ -67,6 +70,7 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\PersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
@@ -74,6 +78,7 @@ use Teknoo\Space\Writer\AccountCredentialWriter;
 use Teknoo\Space\Writer\AccountDataWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountPersistedVariableWriter;
+use Teknoo\Space\Writer\AccountRegistryWriter;
 use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
 use Teknoo\Space\Writer\Meta\SpaceProjectWriter;
 use Teknoo\Space\Writer\Meta\SpaceUserWriter;
@@ -105,6 +110,27 @@ return [
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
     'teknoo.space.deleting.account_credential' => create(DeletingService::class)
         ->constructor(get(AccountCredentialWriter::class), get(DatesService::class)),
+
+    //AccountRegistry
+    AccountRegistryRepositoryInterface::class => get(AccountRegistryRepository::class),
+    AccountRegistryRepository::class => static function (ContainerInterface $container): AccountRegistryRepository {
+        $repository = $container->get(ObjectManager::class)?->getRepository(AccountRegistry::class);
+        if ($repository instanceof DocumentRepository) {
+            return new AccountRegistryRepository($repository);
+        }
+
+        throw new NonManagedRepositoryException(sprintf(
+            "Error, repository of class %s are not currently managed",
+            $repository::class
+        ));
+    },
+
+    AccountRegistryLoader::class => create(AccountRegistryLoader::class)
+        ->constructor(get(AccountRegistryRepositoryInterface::class)),
+    AccountRegistryWriter::class => create(AccountRegistryWriter::class)
+        ->constructor(get(ManagerInterface::class), get(DatesService::class)),
+    'teknoo.space.deleting.account_registry' => create(DeletingService::class)
+        ->constructor(get(AccountRegistryWriter::class), get(DatesService::class)),
 
     //AccountData
     AccountDataRepositoryInterface::class => get(AccountDataRepository::class),

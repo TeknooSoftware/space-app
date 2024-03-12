@@ -187,9 +187,10 @@ Environnements variables configuration
           `3` by default. *Optional*
         * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
           `1` by default. *Optional*
-        * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
-          account
-          `space-client-` by default. *Optional*
+        * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client 
+           account. `space-client-` by default. *Optional*
+        * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace dedicated 
+          to registry for each client account. `space-registry-` by default. *Optional*
         * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
           `nfs.csi.k8s.io` by default. *Optional*
         * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
@@ -231,6 +232,7 @@ Environnements variables configuration
             * `env` : (string) name of the default environment created with the project.
                   `prod` by default. *Optional*
             * `storage_provisioner` : (string) Default storage provisioner *Optional*
+            * `support_registry` : (bool) If the cluster can host private OCI registries *Optional*
 
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a

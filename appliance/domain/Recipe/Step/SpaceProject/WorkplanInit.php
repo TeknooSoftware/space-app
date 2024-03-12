@@ -64,7 +64,7 @@ class WorkplanInit
 
             $projectInstance->listMeYourEnvironments(
                 static function (Environment $env) use (&$environmentsList) {
-                    $environmentsList[(string)$env] = (string)$env;
+                    $environmentsList[(string) $env] = (string) $env;
                 }
             );
 
