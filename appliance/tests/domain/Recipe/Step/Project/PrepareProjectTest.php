@@ -31,6 +31,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 
 /**
@@ -78,6 +79,7 @@ class PrepareProjectTest extends TestCase
                 manager: $this->createMock(ManagerInterface::class),
                 projectInstance: $this->createMock(Project::class),
                 accountWallet: $this->createMock(AccountWallet::class),
+                accountRegistry: $this->createMock(AccountRegistry::class),
             ),
         );
     }

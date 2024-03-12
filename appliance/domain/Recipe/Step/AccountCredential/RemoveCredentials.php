@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Step\AccountCredential;
 
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
 use Teknoo\Space\Writer\AccountCredentialWriter;
 
 /**

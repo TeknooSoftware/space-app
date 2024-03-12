@@ -1,6 +1,20 @@
 # Teknoo Software - Space - Change Log
 
-## [1.0.0-beta41] - 2024-02-08
+## [1.0.0-beta42] - 2024-03-12
+### Beta Release
+- Split `AccountCredential` (and loader, writers, steps and cookbook) to `AccountCredential` and `AccountRegistry`
+  - `AccountCredential` keeps only credentials about a cluster
+  - `AccountRegistry` keeps only credentials about registry OCI
+  - Fix `JobSetDefaults` with this new architecture
+- Private OCI registry are into dedicated namespace, not included into the client namespace
+  - Add `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` env to set the prefix namespace for this new namespace
+- Fix `CreateNamespace` to find an available namespaces available on each clusters. Warning, the namespace must be
+  the same on each clusters, if a previous namespace already exist on a cluster, it will be not deleted.
+- Complete `Config\Cluster` to define the cluster able to host private registry
+  - Add `getKubernetesRegistryClient` method to get a clone of kubernetes client dedicated to registry operations, 
+    in the dedicated namespace.
+
+## [1.0.0-beta41] - 2024-03-08
 ### Beta Release
 - Add requests and limits on cpu and memory to accounts'registries deployments. 
   This customized with following envs vars:
@@ -10,19 +24,19 @@
   - `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
   - `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
 
-## [1.0.0-beta40] - 2024-02-07
+## [1.0.0-beta40] - 2024-03-07
 ### Beta Release
 - Fix issue with relative resources requires :
   - % of initial quota capacity and not remaining capacity
 - Fix issue when a soft quota is relative to the hard limit
 - Fix template url to got to a project when the user is an admin 
 
-## [1.0.0-beta39] - 2024-02-07
+## [1.0.0-beta39] - 2024-03-07
 ### Beta Release
 - Fix issue with `JobStart` cookbook requires the cluster catalog (not available here)
   - Complete NewJob to pass from the webserver required value of the cluster catalog, needed by `JobStart` cookbook.
 
-## [1.0.0-beta38] - 2024-02-06
+## [1.0.0-beta38] - 2024-03-06
 ### Beta Release
 - Update to Teknoo East PaaS 2.8+ :
   - Add support of quotas into an Account

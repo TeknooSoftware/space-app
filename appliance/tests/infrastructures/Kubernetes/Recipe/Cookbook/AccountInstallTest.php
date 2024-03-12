@@ -33,7 +33,7 @@ use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
@@ -41,6 +41,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAcc
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
 
 /**
  * Class AccountInstallTest.
@@ -72,9 +73,11 @@ class AccountInstallTest extends TestCase
 
     private CreateStorage|MockObject $createStorage;
 
-    private CreateRegistryAccount|MockObject $createRegistryAccount;
+    private CreateRegistryDeployment|MockObject $createRegistryAccount;
 
     private PersistCredentials|MockObject $persistCredentials;
+
+    private PersistRegistryCredentials|MockObject $persistRegistryCredentials;
 
     private PrepareAccountErrorHandler|MockObject $errorHandler;
 
@@ -95,8 +98,9 @@ class AccountInstallTest extends TestCase
         $this->createRoleBinding = $this->createMock(CreateRoleBinding::class);
         $this->createSecret = $this->createMock(CreateSecretServiceAccountToken::class);
         $this->createStorage = $this->createMock(CreateStorage::class);
-        $this->createRegistryAccount = $this->createMock(CreateRegistryAccount::class);
+        $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
         $this->persistCredentials = $this->createMock(PersistCredentials::class);
+        $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredentials::class);
         $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
         $this->defaultStorageSizeToClaim = '42';
         $this->accountInstall = new AccountInstall(
@@ -110,6 +114,7 @@ class AccountInstallTest extends TestCase
             $this->createStorage,
             $this->createRegistryAccount,
             $this->persistCredentials,
+            $this->persistRegistryCredentials,
             $this->errorHandler,
             $this->defaultStorageSizeToClaim,
         );

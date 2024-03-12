@@ -37,6 +37,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Cookbook\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection;
@@ -65,6 +66,8 @@ class RefreshProjectCredentialsTest extends TestCase
 
     private LoadCredentials|MockObject $loadCredentials;
 
+    private LoadRegistryCredentials|MockObject $loadRegistryCredentials;
+
     private UpdateProjectCredentialsFromAccount|MockObject $updateProjectCredentialsFromAccount;
 
     private SaveObject|MockObject $saveObject;
@@ -89,6 +92,7 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
         $this->loadCredentials = $this->createMock(LoadCredentials::class);
+        $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredentials::class);
         $this->updateProjectCredentialsFromAccount = $this->createMock(UpdateProjectCredentialsFromAccount::class);
         $this->saveObject = $this->createMock(SaveObject::class);
         $this->spaceProjectPrepareRedirection = $this->createMock(PrepareRedirection::class);
@@ -101,6 +105,7 @@ class RefreshProjectCredentialsTest extends TestCase
             $this->objectAccessControl,
             $this->loadAccountFromProject,
             $this->loadCredentials,
+            $this->loadRegistryCredentials,
             $this->updateProjectCredentialsFromAccount,
             $this->saveObject,
             $this->spaceProjectPrepareRedirection,

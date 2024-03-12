@@ -27,6 +27,8 @@ namespace Teknoo\Space\Recipe\Step\Account;
 
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
@@ -58,17 +60,19 @@ class SetQuota
             $accountData->setSubscriptionPlan($subscriptionPlanId);
         }
 
-        $accountData->visit(
-            'subscriptionPlan',
-            function (string $planId) use ($spaceAccount): void {
+        /** @var Promise<string, ?SubscriptionPlan, mixed> $promise */
+        $promise = new Promise(
+            function (string $planId): ?SubscriptionPlan {
                 if (empty($planId)) {
-                    return;
+                    return null;
                 }
 
-                $plan = $this->catalog->getSubscriptionPlan($planId);
-                $spaceAccount->account->setQuotas($plan->getQuotas());
-            }
+                return $this->catalog->getSubscriptionPlan($planId);
+            },
         );
+        $accountData->visit('subscriptionPlan', $promise);
+
+        $spaceAccount->account->setQuotas($promise->fetchResult()?->getQuotas());
 
         return $this;
     }

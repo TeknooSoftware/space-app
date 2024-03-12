@@ -48,14 +48,6 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
 
     private string $clusterName;
 
-    private string $registryUrl;
-
-    private string $registryConfigName;
-
-    private string $registryAccountName;
-
-    private string $registryPassword;
-
     private string $serviceAccountName;
 
     private string $roleName;
@@ -70,33 +62,23 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
 
     private string $token;
 
-    private string $persistentVolumeClaimName = '';
-
     public function __construct(
         Account $account,
         string $clusterName,
-        string $registryUrl,
-        string $registryAccountName,
-        string $registryConfigName,
-        #[SensitiveParameter]
-        string $registryPassword,
         string $serviceAccountName,
         string $roleName,
         string $roleBindingName,
         string $caCertificate,
         string $clientCertificate,
+        #[SensitiveParameter]
         string $clientKey,
+        #[SensitiveParameter]
         string $token,
-        string $persistentVolumeClaimName,
     ) {
         $this->uniqueConstructorCheck();
 
         $this->account = $account;
         $this->clusterName = $clusterName;
-        $this->registryUrl = $registryUrl;
-        $this->registryConfigName = $registryConfigName;
-        $this->registryAccountName = $registryAccountName;
-        $this->registryPassword = $registryPassword;
         $this->serviceAccountName = $serviceAccountName;
         $this->roleName = $roleName;
         $this->roleBindingName = $roleBindingName;
@@ -104,7 +86,6 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
         $this->clientCertificate = $clientCertificate;
         $this->clientKey = $clientKey;
         $this->token = $token;
-        $this->persistentVolumeClaimName = $persistentVolumeClaimName;
     }
 
     public function getAccount(): Account
@@ -115,26 +96,6 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
     public function getClusterName(): string
     {
         return $this->clusterName;
-    }
-
-    public function getRegistryUrl(): string
-    {
-        return $this->registryUrl;
-    }
-
-    public function getRegistryConfigName(): string
-    {
-        return $this->registryConfigName;
-    }
-
-    public function getRegistryAccountName(): string
-    {
-        return $this->registryAccountName;
-    }
-
-    public function getRegistryPassword(): string
-    {
-        return $this->registryPassword;
     }
 
     public function getServiceAccountName(): string
@@ -170,24 +131,5 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
     public function getToken(): string
     {
         return $this->token;
-    }
-
-    public function getPersistentVolumeClaimName(): string
-    {
-        return $this->persistentVolumeClaimName;
-    }
-
-    public function updateRegistry(
-        string $registryUrl,
-        string $registryAccountName,
-        string $registryPassword,
-    ): self {
-        $that = clone $this;
-
-        $that->registryUrl = $registryUrl;
-        $that->registryAccountName = $registryAccountName;
-        $that->registryPassword = $registryPassword;
-
-        return $that;
     }
 }

@@ -31,6 +31,7 @@ use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 
 /**
@@ -78,6 +79,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ($this->updateProjectCredentialsFromAccount)(
                 new SpaceProject($this->createMock(Project::class)),
                 $wallet,
+                $this->createMock(AccountRegistry::class),
             )
         );
     }

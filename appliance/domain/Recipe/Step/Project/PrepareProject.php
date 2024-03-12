@@ -37,6 +37,7 @@ use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -51,8 +52,12 @@ class PrepareProject
     ) {
     }
 
-    public function __invoke(ManagerInterface $manager, Project $projectInstance, AccountWallet $accountWallet): self
-    {
+    public function __invoke(
+        ManagerInterface $manager,
+        Project $projectInstance,
+        AccountWallet $accountWallet,
+        AccountRegistry $accountRegistry,
+    ): self {
         $projectInstance->setSourceRepository(
             new GitRepository(
                 '',
@@ -61,22 +66,20 @@ class PrepareProject
             )
         );
 
+        $projectInstance->setImagesRegistry(
+            new ImageRegistry(
+                $accountRegistry->getRegistryUrl(),
+                new XRegistryAuth(
+                    username: $accountRegistry->getRegistryAccountName(),
+                    password: $accountRegistry->getRegistryPassword(),
+                    auth: $accountRegistry->getRegistryConfigName(),
+                    serverAddress: $accountRegistry->getRegistryUrl(),
+                )
+            )
+        );
+
         $clusters = [];
         foreach ($accountWallet as $credential) {
-            if (empty($clusters)) {
-                $projectInstance->setImagesRegistry(
-                    new ImageRegistry(
-                        $credential->getRegistryUrl(),
-                        new XRegistryAuth(
-                            username: $credential->getRegistryAccountName(),
-                            password: $credential->getRegistryPassword(),
-                            auth: $credential->getRegistryConfigName(),
-                            serverAddress: $credential->getRegistryUrl(),
-                        )
-                    )
-                );
-            }
-
             $clusterConfig = $this->catalog->getCluster($credential->getClusterName());
 
             $cluster = new Cluster();

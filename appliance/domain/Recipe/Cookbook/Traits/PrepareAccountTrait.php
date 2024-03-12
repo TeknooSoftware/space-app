@@ -32,6 +32,7 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtE
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -53,6 +54,14 @@ trait PrepareAccountTrait
 
         $recipe = $recipe->cook($this->loadHistory, LoadHistory::class, [], 50);
 
-        return $recipe->cook($this->loadCredentials, LoadCredentials::class, [], 60);
+        if (isset($this->loadCredentials)) {
+            $recipe = $recipe->cook($this->loadCredentials, LoadCredentials::class, [], 60);
+        }
+
+        if (isset($this->loadRegistryCredentials)) {
+            $recipe = $recipe->cook($this->loadRegistryCredentials, LoadRegistryCredentials::class, [], 60);
+        }
+
+        return $recipe;
     }
 }

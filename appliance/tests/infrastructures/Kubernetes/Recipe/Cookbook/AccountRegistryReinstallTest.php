@@ -33,16 +33,18 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
 
 /**
  * Class AccountRegistryReinstallTest.
@@ -71,13 +73,17 @@ class AccountRegistryReinstallTest extends TestCase
 
     private LoadCredentials|MockObject $loadCredentials;
 
+    private LoadRegistryCredentials|MockObject $loadRegistryCredentials;
+
+    private RemoveRegistryCredentials|MockObject $removeRegistryCredentials;
+
     private ReloadNamespace|MockObject $reloadNamespace;
 
     private CreateStorage|MockObject $createStorage;
 
-    private CreateRegistryAccount|MockObject $createRegistryAccount;
+    private CreateRegistryDeployment|MockObject $createRegistryAccount;
 
-    private UpdateCredentials|MockObject $updateCredentials;
+    private PersistRegistryCredentials|MockObject $persistRegistryCredentials;
 
     private UpdateAccountHistory|MockObject $updateAccountHistory;
 
@@ -100,10 +106,12 @@ class AccountRegistryReinstallTest extends TestCase
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
         $this->loadCredentials = $this->createMock(LoadCredentials::class);
+        $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredentials::class);
+        $this->removeRegistryCredentials = $this->createMock(RemoveRegistryCredentials::class);
         $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
         $this->createStorage = $this->createMock(CreateStorage::class);
-        $this->createRegistryAccount = $this->createMock(CreateRegistryAccount::class);
-        $this->updateCredentials = $this->createMock(UpdateCredentials::class);
+        $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
+        $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredentials::class);
         $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
         $this->errorHandler = $this->createMock(ReinstallAccountErrorHandler::class);
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
@@ -115,10 +123,12 @@ class AccountRegistryReinstallTest extends TestCase
             $this->redirectClient,
             $this->loadHistory,
             $this->loadCredentials,
+            $this->loadRegistryCredentials,
             $this->reloadNamespace,
+            $this->removeRegistryCredentials,
             $this->createStorage,
             $this->createRegistryAccount,
-            $this->updateCredentials,
+            $this->persistRegistryCredentials,
             $this->updateAccountHistory,
             $this->errorHandler,
             $this->objectAccessControl,

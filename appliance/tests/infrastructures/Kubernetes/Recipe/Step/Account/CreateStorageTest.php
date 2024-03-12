@@ -32,9 +32,9 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
  * Class CreateStorageTest.
@@ -80,18 +80,19 @@ class CreateStorageTest extends TestCase
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
+            supportRegistry: true,
         );
 
         self::assertInstanceOf(
             CreateStorage::class,
             ($this->createStorage)(
                 manager: $this->createMock(ManagerInterface::class),
-                kubeNamespace: 'foo',
+                registryNamespace: 'foo',
                 accountNamespace: 'foo',
                 accountHistory: $this->createMock(AccountHistory::class),
                 storageSizeToClaim: 'foo',
-                clusterConfig: $clusterConfig,
-                accountWallet: $this->createMock(AccountWallet::class),
+                clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
+                accountRegistry: $this->createMock(AccountRegistry::class),
             )
         );
     }

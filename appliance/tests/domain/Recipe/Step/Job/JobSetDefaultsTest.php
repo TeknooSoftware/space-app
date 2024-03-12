@@ -28,8 +28,8 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Job;
-use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 
 /**
@@ -62,7 +62,7 @@ class JobSetDefaultsTest extends TestCase
             ($this->jobSetDefaults)(
                 manager: $this->createMock(ManagerInterface::class),
                 job: $this->createMock(Job::class),
-                accountWallet: $this->createMock(AccountWallet::class),
+                accountRegistry: $this->createMock(AccountRegistry::class),
                 newJob: $this->createMock(NewJob::class),
             ),
         );

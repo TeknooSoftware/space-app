@@ -25,8 +25,8 @@ parameters:
             message: '#runVisit\(\) is unused#'
             path:  domain/Object
         -
-            message: '#CreateRegistryAccount::insertModel\(\) expects#'
-            path:  infrastructures/Kubernetes/Recipe/Step/Account/CreateRegistryAccount.php
+            message: '#CreateRegistryDeployment::insertModel\(\) expects#'
+            path:  infrastructures/Kubernetes/Recipe/Step/Account/CreateRegistryDeployment.php
         -
             message: '#expects (string\|null|string|bool|array<[, a-zA-Z\\]+>|[, a-zA-Z\\|]+), mixed given#'
             path:  infrastructures/Symfony/Form/Type/

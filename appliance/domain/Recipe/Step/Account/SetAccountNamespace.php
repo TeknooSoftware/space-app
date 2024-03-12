@@ -32,6 +32,7 @@ use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\Promise;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -90,12 +91,12 @@ class SetAccountNamespace
     ): self {
         $sluggable = $this->createSluggableObject($manager, $accountInstance);
 
-        $accountNamespace = (string) $accountInstance;
-        $accountInstance->namespaceIsItDefined(
-            function ($ns) use (&$accountNamespace) {
-                $accountNamespace = $ns;
-            }
+        /** @var Promise<string, string, string> $promise */
+        $promise = new Promise(
+            static fn (string $ns) => $ns,
         );
+        $accountInstance->namespaceIsItDefined($promise,);
+        $accountNamespace = $promise->fetchResult((string) $accountInstance);
 
         $this->findSlugService->process(
             $this->accountLoader,

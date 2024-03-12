@@ -71,6 +71,17 @@ class ManifestGenerator
             "kind": "Namespace",
             "apiVersion": "v1",
             "metadata": {
+                "name": "space-registry-$name",
+                "labels": {
+                    "name": "space-registry-$name",
+                    "id": "#ID#"
+                }
+            }
+        },
+        {
+            "kind": "Namespace",
+            "apiVersion": "v1",
+            "metadata": {
                 "name": "space-client-$name",
                 "labels": {
                     "name": "space-client-$name",
@@ -279,31 +290,15 @@ class ManifestGenerator
                 ".dockerconfigjson": "==="
             },
             "type": "kubernetes.io\/dockerconfigjson"
-        },
-        {
-            "kind": "Secret",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "$name-registry-auth-secret",
-                "namespace": "space-client-$name",
-                "labels": {
-                    "name": "$name-registry-auth-secret",
-                    "group": "private-registry"
-                }
-            },
-            "data": {
-                "htpasswd": "==="
-            },
-            "type": "Opaque"
         }
     ],
-    "namespaces\/space-client-$name\/persistentvolumeclaims": [
+    "namespaces\/space-registry-$name\/persistentvolumeclaims": [
         {
             "kind": "PersistentVolumeClaim",
             "apiVersion": "v1",
             "metadata": {
                 "name": "$name-pvc",
-                "namespace": "space-client-$name",
+                "namespace": "space-registry-$name",
                 "labels": {
                     "name": "$name-pvc"
                 }
@@ -321,13 +316,31 @@ class ManifestGenerator
             }
         }
     ],
-    "namespaces\/space-client-$name\/deployments": [
+    "namespaces\/space-registry-$name\/secrets": [
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-registry-auth-secret",
+                "namespace": "space-registry-$name",
+                "labels": {
+                    "name": "$name-registry-auth-secret",
+                    "group": "private-registry"
+                }
+            },
+            "data": {
+                "htpasswd": "==="
+            },
+            "type": "Opaque"
+        }
+    ],
+    "namespaces\/space-registry-$name\/deployments": [
         {
             "kind": "Deployment",
             "apiVersion": "apps\/v1",
             "metadata": {
                 "name": "$name-registry-pod-replication-dplmt",
-                "namespace": "space-client-$name",
+                "namespace": "space-registry-$name",
                 "labels": {
                     "name": "$name-registry-pod-replication-dplmt",
                     "group": "private-registry"
@@ -380,17 +393,17 @@ class ManifestGenerator
                                     },
                                     {
                                         "name": "REGISTRY_AUTH_HTPASSWD_REALM",
-                                        "value": "Space-client-$name Private Registry"
+                                        "value": "Space-registry-$name Private Registry"
                                     }
                                 ],
                                 "resources": {
                                     "requests": {
-                                        "cpu": "10m",
-                                        "memory": "30Mi"
+                                        "cpu": "100m",
+                                        "memory": "32Mi"
                                     },
                                     "limits": {
-                                        "cpu": "100m",
-                                        "memory": "256Mi"
+                                        "cpu": "300m",
+                                        "memory": "512Mi"
                                     }
                                 }
                             }
@@ -414,13 +427,13 @@ class ManifestGenerator
             }
         }
     ],
-    "namespaces\/space-client-$name\/services": [
+    "namespaces\/space-registry-$name\/services": [
         {
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
                 "name": "$name-registry-service",
-                "namespace": "space-client-$name",
+                "namespace": "space-registry-$name",
                 "labels": {
                     "name": "$name-registry-service",
                     "group": "private-registry"
@@ -442,13 +455,13 @@ class ManifestGenerator
             }
         }
     ],
-    "namespaces\/space-client-$name\/ingresses": [
+    "namespaces\/space-registry-$name\/ingresses": [
         {
             "kind": "Ingress",
             "apiVersion": "networking.k8s.io\/v1",
             "metadata": {
                 "name": "$name-registry-ingress",
-                "namespace": "space-client-$name",
+                "namespace": "space-registry-$name",
                 "labels": {
                     "name": "$name-registry-ingress",
                     "group": "private-registry"

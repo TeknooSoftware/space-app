@@ -55,17 +55,12 @@ class PersistCredentials
     public function __invoke(
         ManagerInterface $manager,
         ObjectInterface $object,
-        string $registryUrl,
-        string $registryAccountName,
-        string $registryConfigName,
-        #[SensitiveParameter]
-        string $registryPassword,
         string $serviceName,
         string $roleName,
         string $roleBindingName,
         string $caCertificate,
+        #[SensitiveParameter]
         string $token,
-        string $persistentVolumeClaimName,
         AccountHistory $accountHistory,
         ClusterConfig $clusterConfig,
     ): self {
@@ -80,10 +75,6 @@ class PersistCredentials
         $accountCredential = new AccountCredential(
             account: $object,
             clusterName: $clusterConfig->name,
-            registryUrl: $registryUrl,
-            registryAccountName: $registryAccountName,
-            registryConfigName: $registryConfigName,
-            registryPassword: $registryPassword,
             serviceAccountName: $serviceName,
             roleName: $roleName,
             roleBindingName: $roleBindingName,
@@ -91,7 +82,6 @@ class PersistCredentials
             clientCertificate: '',
             clientKey: '',
             token: $token,
-            persistentVolumeClaimName: $persistentVolumeClaimName,
         );
 
         $this->writer->save($accountCredential);
@@ -111,8 +101,6 @@ class PersistCredentials
         ]);
 
         $manager->cleanWorkPlan(
-            'registryAccountName',
-            'registryPassword',
             'caCertificate',
             'token',
             'clientCertificate',

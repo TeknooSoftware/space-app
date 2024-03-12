@@ -30,10 +30,13 @@ use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\NamespaceModel;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
+
+use function array_values;
+use function count;
+use function iterator_to_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -48,6 +51,7 @@ class CreateNamespace
      */
     public function __construct(
         private string $rootNamespace,
+        private string $registryRootNamespace,
         private DatesService $datesService,
         private bool $preferRealDate,
         private WriterInterface $writer,
@@ -72,60 +76,89 @@ class CreateNamespace
         string $accountNamespace,
         AccountHistory $accountHistory,
         Account $accountInstance,
-        ClusterConfig $cluster,
+        ClusterCatalog $clusterCatalog,
     ): self {
-        $client = $cluster->getKubernetesClient();
-        $namespaceRepository = $client->namespaces();
-
         $originalNS = $accountNamespace;
         $namespaceValue = $this->rootNamespace . $accountNamespace;
+        $registryNamespaceValue = $this->registryRootNamespace . $accountNamespace;
         $counter = 2;
 
         $accountId = $accountInstance->getId();
-        do {
-            $model = $namespaceRepository->setFieldSelector(['metadata.name' => $namespaceValue])->first();
-            if (null === $model) {
-                $namespace = $this->createNamespaceModel($namespaceValue, $accountId);
-                $namespaceRepository->apply($namespace);
 
-                break;
-            } else {
-                /** @var array{metadata: array{labels: array{id: ?string}}} $arr */
-                $arr = $model->toArray();
+        $catalogArray = array_values(iterator_to_array($clusterCatalog));
+        $catalogArrayCount = count($catalogArray);
+        $namespaceRepositoryList = [];
 
-                if (
-                    isset($arr['metadata']['labels']['id'])
-                    && $arr['metadata']['labels']['id'] === $accountId
-                ) {
+        for ($i = 0; $i < $catalogArrayCount; $i++) {
+            $mustReset = false;
+            $namespaceRepositoryList[$i] ??= $catalogArray[$i]->getKubernetesClient()->namespaces();
+
+            do {
+                $model = $namespaceRepositoryList[$i]->setFieldSelector(['metadata.name' => $namespaceValue])->first();
+                if (null === $model) {
                     break;
+                } else {
+                    /** @var array{metadata: array{labels: array{id: ?string}}} $arr */
+                    $arr = $model->toArray();
+
+                    if (
+                        isset($arr['metadata']['labels']['id'])
+                        && $arr['metadata']['labels']['id'] === $accountId
+                    ) {
+                        break;
+                    }
+
+                    $accountNamespace = $originalNS . '-' . ($counter++);
+                    $mustReset = true;
+                    $namespaceValue = $this->rootNamespace . $accountNamespace;
+                    $registryNamespaceValue = $this->registryRootNamespace . $accountNamespace;
                 }
+            } while (true);
 
-                $accountNamespace = $originalNS . '-' . ($counter++);
-                $namespaceValue = $this->rootNamespace . $accountNamespace;
+            if ($mustReset) {
+                $i = 0;
             }
-        } while (true);
+        }
 
+        //Create registry namespace
+        $clusterForRegistry = $clusterCatalog->getClusterForRegistry();
+        $registryClient = $clusterForRegistry->getKubernetesRegistryClient();
+        $ns = $registryClient->namespaces();
+        $ns->apply($this->createNamespaceModel($registryNamespaceValue, $accountId));
+
+        //Apply model
+        $namespaceModel = $this->createNamespaceModel($namespaceValue, $accountId);
+        for ($i = 0; $i < $catalogArrayCount; $i++) {
+            $client = $catalogArray[$i]->getKubernetesClient();
+            $namespaceRepository = $client->namespaces();
+            $namespaceRepository->apply($namespaceModel);
+
+            $client->setNamespace($namespaceValue);
+        }
+
+        //Update Account's history
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory, $namespaceValue) {
                 $accountHistory->addToHistory(
                     'teknoo.space.text.account.kubernetes.namespace',
                     $dateTime,
                     false,
-                    [
-                        'namespace' => $namespaceValue
-                    ]
+                    ['namespace' => $namespaceValue],
                 );
             },
             $this->preferRealDate,
         );
 
-        $client->setNamespace($namespaceValue);
-
+        //Update Account instance
         $accountInstance->setNamespace($accountNamespace);
         $accountInstance->setPrefixNamespace($this->rootNamespace);
         $this->writer->save($accountInstance);
 
-        $manager->updateWorkPlan(['kubeNamespace' => $namespaceValue]);
+        //Update workplan
+        $manager->updateWorkPlan([
+            'kubeNamespace' => $namespaceValue,
+            'registryNamespace' => $registryNamespaceValue,
+        ]);
 
         return $this;
     }

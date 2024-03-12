@@ -48,14 +48,6 @@ class AccountCredentialTest extends TestCase
 
     private string $clusterName;
 
-    private string $registryUrl;
-
-    private string $registryAccountName;
-
-    private string $registryConfigName;
-
-    private string $registryPassword;
-
     private string $serviceAccountName;
 
     private string $roleName;
@@ -70,8 +62,6 @@ class AccountCredentialTest extends TestCase
 
     private string $token;
 
-    private string $persistentVolumeClaimName;
-
     /**
      * {@inheritdoc}
      */
@@ -81,10 +71,6 @@ class AccountCredentialTest extends TestCase
 
         $this->account = $this->createMock(Account::class);
         $this->clusterName = '42';
-        $this->registryUrl = '42';
-        $this->registryAccountName = '42';
-        $this->registryConfigName = '42';
-        $this->registryPassword = '42';
         $this->serviceAccountName = '42';
         $this->roleName = '42';
         $this->roleBindingName = '42';
@@ -92,14 +78,9 @@ class AccountCredentialTest extends TestCase
         $this->clientCertificate = '42';
         $this->clientKey = '42';
         $this->token = '42';
-        $this->persistentVolumeClaimName = '42';
         $this->accountCredential = new AccountCredential(
             $this->account,
             $this->clusterName,
-            $this->registryUrl,
-            $this->registryAccountName,
-            $this->registryConfigName,
-            $this->registryPassword,
             $this->serviceAccountName,
             $this->roleName,
             $this->roleBindingName,
@@ -107,7 +88,6 @@ class AccountCredentialTest extends TestCase
             $this->clientCertificate,
             $this->clientKey,
             $this->token,
-            $this->persistentVolumeClaimName,
         );
     }
 
@@ -119,46 +99,6 @@ class AccountCredentialTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($this->accountCredential, $expected);
         self::assertEquals($expected, $this->accountCredential->getAccount());
-    }
-
-    public function testGetRegistryUrl(): void
-    {
-        $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
-            ->getProperty('registryUrl');
-        $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getRegistryUrl());
-    }
-
-    public function testGetRegistryConfigName(): void
-    {
-        $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
-            ->getProperty('registryConfigName');
-        $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getRegistryConfigName());
-    }
-
-    public function testGetRegistryAccountName(): void
-    {
-        $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
-            ->getProperty('registryAccountName');
-        $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getRegistryAccountName());
-    }
-
-    public function testGetRegistryPassword(): void
-    {
-        $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
-            ->getProperty('registryPassword');
-        $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getRegistryPassword());
     }
 
     public function testGetServiceAccountName(): void
@@ -229,28 +169,5 @@ class AccountCredentialTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($this->accountCredential, $expected);
         self::assertEquals($expected, $this->accountCredential->getToken());
-    }
-
-    public function testGetPersistentVolumeClaimName(): void
-    {
-        $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
-            ->getProperty('persistentVolumeClaimName');
-        $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getPersistentVolumeClaimName());
-    }
-
-    public function testUpdateRegistry(): void
-    {
-        self::assertInstanceOf(
-            AccountCredential::class,
-            $new = $this->accountCredential->updateRegistry('foo', 'bar', 'foo'),
-        );
-
-        self::assertNotSame(
-            $new,
-            $this->accountCredential,
-        );
     }
 }

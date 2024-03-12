@@ -36,7 +36,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
@@ -44,10 +44,12 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtE
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -67,10 +69,12 @@ class AccountRegistryReinstall implements CookbookInterface
         private SetRedirectClientAtEnd $redirectClient,
         private LoadHistory $loadHistory,
         private LoadCredentials $loadCredentials,
+        private LoadRegistryCredentials $loadRegistryCredentials,
         private ReloadNamespace $reloadNamespace,
+        private RemoveRegistryCredentials $removeRegistryCredentials,
         private CreateStorage $createStorage,
-        private CreateRegistryAccount $createRegistryAccount,
-        private UpdateCredentials $updateCredentials,
+        private CreateRegistryDeployment $createRegistryAccount,
+        private PersistRegistryCredentials $persistRegistryCredentials,
         private UpdateAccountHistory $updateAccountHistory,
         private ReinstallAccountErrorHandler $errorHandler,
         private ObjectAccessControlInterface $objectAccessControl,
@@ -91,24 +95,26 @@ class AccountRegistryReinstall implements CookbookInterface
 
         $recipe = $recipe->cook($this->reloadNamespace, ReloadNamespace::class, [], 70);
 
+        $recipe = $recipe->cook($this->removeRegistryCredentials, RemoveRegistryCredentials::class, [], 80);
+
         $recipe = $recipe->cook(
             action: new StartLoopingOn(),
             name: StartLoopingOn::class,
             with: [
                 'collection' => 'clusterCatalog'
             ],
-            position: 75
+            position: 85
         );
 
-        $recipe = $recipe->cook($this->createStorage, CreateStorage::class, [], 80);
+        $recipe = $recipe->cook($this->createStorage, CreateStorage::class, [], 90);
 
-        $recipe = $recipe->cook($this->createRegistryAccount, CreateRegistryAccount::class, [], 90);
+        $recipe = $recipe->cook($this->createRegistryAccount, CreateRegistryDeployment::class, [], 100);
 
-        $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 95);
+        $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 105);
 
-        $recipe = $recipe->cook($this->updateCredentials, UpdateCredentials::class, [], 100);
+        $recipe = $recipe->cook($this->persistRegistryCredentials, PersistRegistryCredentials::class, [], 110);
 
-        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 110);
+        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 120);
 
         $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
 

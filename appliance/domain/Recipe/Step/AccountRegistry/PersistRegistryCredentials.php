@@ -23,15 +23,18 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Recipe\Step\AccountRegistry;
 
 use DateTimeInterface;
 use SensitiveParameter;
+use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\AccountHistory;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountRegistryWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -39,10 +42,10 @@ use Teknoo\Space\Writer\AccountCredentialWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class UpdateCredentials
+class PersistRegistryCredentials
 {
     public function __construct(
-        private AccountCredentialWriter $writer,
+        private AccountRegistryWriter $writer,
         private DatesService $datesService,
         private bool $preferRealDate,
     ) {
@@ -50,40 +53,48 @@ class UpdateCredentials
 
     public function __invoke(
         ManagerInterface $manager,
+        ObjectInterface $object,
+        string $registryNamespace,
         string $registryUrl,
         string $registryAccountName,
+        string $registryConfigName,
         #[SensitiveParameter]
         string $registryPassword,
-        AccountWallet $accountWallet,
-        AccountHistory $accountHistory
+        string $persistentVolumeClaimName,
+        AccountHistory $accountHistory,
     ): self {
-        $newWallet = [];
-
-        foreach ($accountWallet as $accountCredential) {
-            $newAccountCredential = $accountCredential->updateRegistry(
-                $registryUrl,
-                $registryAccountName,
-                $registryPassword,
-            );
-
-            $newWallet[] = $newAccountCredential;
-
-            $this->writer->remove($accountCredential);
-            $this->writer->save($newAccountCredential);
-
-            $this->datesService->passMeTheDate(
-                static function (DateTimeInterface $dateTime) use ($accountHistory) {
-                    $accountHistory->addToHistory(
-                        'teknoo.space.text.account.kubernetes.credential_updated',
-                        $dateTime
-                    );
-                },
-                $this->preferRealDate,
-            );
+        if ($object instanceof SpaceAccount) {
+            $object = $object->account;
         }
 
+        if (!$object instanceof Account) {
+            return $this;
+        }
+
+        $accountRegistry = new AccountRegistry(
+            account: $object,
+            registryNamespace: $registryNamespace,
+            registryUrl: $registryUrl,
+            registryAccountName: $registryAccountName,
+            registryConfigName: $registryConfigName,
+            registryPassword: $registryPassword,
+            persistentVolumeClaimName: $persistentVolumeClaimName,
+        );
+
+        $this->writer->save($accountRegistry);
+
+        $this->datesService->passMeTheDate(
+            static function (DateTimeInterface $dateTime) use ($accountHistory) {
+                $accountHistory->addToHistory(
+                    'teknoo.space.text.account.kubernetes.registry_persisted',
+                    $dateTime
+                );
+            },
+            $this->preferRealDate,
+        );
+
         $manager->updateWorkPlan([
-            AccountWallet::class => new AccountWallet($newWallet),
+            AccountRegistry::class => $accountRegistry,
         ]);
 
         $manager->cleanWorkPlan(

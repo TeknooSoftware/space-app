@@ -35,6 +35,7 @@ use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -51,17 +52,9 @@ class UpdateProjectCredentialsFromAccount
 
     public function __invoke(
         SpaceProject $project,
-        AccountWallet $accountWallet
+        AccountWallet $accountWallet,
+        AccountRegistry $accountRegistry,
     ): UpdateProjectCredentialsFromAccount {
-        $accountCredential = null;
-        foreach ($accountWallet as $accountCredential) {
-            break;
-        }
-
-        if (empty($accountCredential)) {
-            throw new DomainException("Error, no available credentials for this account");
-        }
-
         $catalog = $this->catalog;
         $eastProject = $project->project;
         $eastProject->visit(
@@ -70,7 +63,7 @@ class UpdateProjectCredentialsFromAccount
                     ImageRegistryInterface $imageRegistry,
                 ) use (
                     $eastProject,
-                    $accountCredential,
+                    $accountRegistry,
                 ): void {
                     if (!$imageRegistry instanceof ImageRegistry) {
                         return;
@@ -78,12 +71,12 @@ class UpdateProjectCredentialsFromAccount
 
                     $eastProject->setImagesRegistry(
                         new ImageRegistry(
-                            $accountCredential->getRegistryUrl(),
+                            $accountRegistry->getRegistryUrl(),
                             new XRegistryAuth(
-                                username: $accountCredential->getRegistryAccountName(),
-                                password: $accountCredential->getRegistryPassword(),
-                                auth: $accountCredential->getRegistryConfigName(),
-                                serverAddress: $accountCredential->getRegistryUrl(),
+                                username: $accountRegistry->getRegistryAccountName(),
+                                password: $accountRegistry->getRegistryPassword(),
+                                auth: $accountRegistry->getRegistryConfigName(),
+                                serverAddress: $accountRegistry->getRegistryUrl(),
                             ),
                         ),
                     );

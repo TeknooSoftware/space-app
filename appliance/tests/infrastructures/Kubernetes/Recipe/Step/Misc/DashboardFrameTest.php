@@ -82,6 +82,7 @@ class DashboardFrameTest extends TestCase
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
+            supportRegistry: true,
         );
 
         $this->catalog = new ClusterCatalog(

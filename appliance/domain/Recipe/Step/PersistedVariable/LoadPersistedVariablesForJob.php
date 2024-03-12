@@ -90,7 +90,7 @@ class LoadPersistedVariablesForJob
             static function (iterable $persistedVariables) use ($newJob, $project): void {
                 $project->projectMetadata?->visit(
                     [
-                        'projectUrl' => function (string $projectUrl) use (&$newJob): void {
+                        'projectUrl' => function (string $projectUrl) use ($newJob): void {
                             $newJob->variables['PROJECT_URL'] = new JobVar(
                                 name: 'PROJECT_URL',
                                 value: $projectUrl,

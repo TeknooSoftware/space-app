@@ -100,6 +100,7 @@ class CreateSecretServiceAccountTokenTest extends TestCase
             dashboardAddress: 'foo',
             kubernetesClient: $this->client,
             token: 'foo',
+            supportRegistry: true,
         );
 
         self::assertInstanceOf(

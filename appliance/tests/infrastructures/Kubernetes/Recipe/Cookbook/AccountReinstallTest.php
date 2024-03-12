@@ -42,6 +42,8 @@ use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
 
 /**
  * Class AccountReinstallTest.
@@ -70,7 +72,11 @@ class AccountReinstallTest extends TestCase
 
     private LoadCredentials|MockObject $loadCredentials;
 
+    private LoadRegistryCredentials|MockObject $loadRegistryCredentials;
+
     private RemoveCredentials|MockObject $removeCredentials;
+
+    private RemoveRegistryCredentials|MockObject $removeRegistryCredentials;
 
     private SetAccountNamespace|MockObject $setAccountNamespace;
 
@@ -97,7 +103,9 @@ class AccountReinstallTest extends TestCase
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
         $this->loadCredentials = $this->createMock(LoadCredentials::class);
+        $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredentials::class);
         $this->removeCredentials = $this->createMock(RemoveCredentials::class);
+        $this->removeRegistryCredentials = $this->createMock(RemoveRegistryCredentials::class);
         $this->setAccountNamespace = $this->createMock(SetAccountNamespace::class);
         $this->installAccount = $this->createMock(AccountInstall::class);
         $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
@@ -111,7 +119,9 @@ class AccountReinstallTest extends TestCase
             $this->redirectClient,
             $this->loadHistory,
             $this->loadCredentials,
+            $this->loadRegistryCredentials,
             $this->removeCredentials,
+            $this->removeRegistryCredentials,
             $this->setAccountNamespace,
             $this->installAccount,
             $this->updateAccountHistory,
