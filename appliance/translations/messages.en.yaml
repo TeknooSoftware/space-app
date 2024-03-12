@@ -161,6 +161,7 @@ teknoo.space.text.account.kubernetes.credential_updated: 'Credential updated'
 teknoo.space.text.account.kubernetes.namespace: 'Kubernetes namespace setup'
 teknoo.space.text.account.kubernetes.persistent_volume_claim: "Kubernetes persistent volume claimed"
 teknoo.space.text.account.kubernetes.registry_account: 'Container registry setup'
+teknoo.space.text.account.kubernetes.registry_persisted: 'Container registry persisted'
 teknoo.space.text.account.kubernetes.role: 'Kubernetes role setup'
 teknoo.space.text.account.kubernetes.role_binding: 'Kubernetes role binding setup'
 teknoo.space.text.account.kubernetes.secret: 'Kubernetes secrets generated'

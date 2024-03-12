@@ -12,7 +12,7 @@
         <tr>
             <td colspan="3" class="col-12">
                 {% if history.extra.result.message is defined %}
-                    {{ history.extra.result.message|nl2br }}
+                    {{ history.extra.result.message|trans|nl2br }}
                 {% elseif history.extra.result is defined %}
                     <pre class="text-breakspace">{{ history.extra.result|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
                 {% else %}
