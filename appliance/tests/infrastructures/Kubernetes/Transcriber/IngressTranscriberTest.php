@@ -29,6 +29,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\Ingress;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\IngressPath;
+use Teknoo\East\Paas\Compilation\CompiledDeployment\Value\DefaultsBag;
 use Teknoo\East\Paas\Contracts\Compilation\CompiledDeploymentInterface;
 use Teknoo\Kubernetes\Client as KubeClient;
 use Teknoo\Kubernetes\Repository\IngressRepository;
@@ -115,7 +116,7 @@ class IngressTranscriberTest extends TestCase
 
         self::assertInstanceOf(
             IngressTranscriber::class,
-            $this->buildTranscriber()->transcribe($cd, $kubeClient, $promise)
+            $this->buildTranscriber()->transcribe($cd, $kubeClient, $promise, $this->createMock(DefaultsBag::class))
         );
     }
 
@@ -184,7 +185,7 @@ class IngressTranscriberTest extends TestCase
 
         self::assertInstanceOf(
             IngressTranscriber::class,
-            $this->buildTranscriber()->transcribe($cd, $kubeClient, $promise)
+            $this->buildTranscriber()->transcribe($cd, $kubeClient, $promise, $this->createMock(DefaultsBag::class))
         );
     }
 }
