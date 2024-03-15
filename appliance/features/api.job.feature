@@ -243,8 +243,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and paas file is valid with url encoded body
-  with encrypted message
+  Scenario: Execute a job from an owned projet with prefix and paas file is valid with url encoded body with encrypted message
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -391,8 +390,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without resources
-  defined and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without resources defined and the request has a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -431,8 +429,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without resources
-  defined and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without resources defined and the request has a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -472,8 +469,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without partial
-  resources defined and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without partial resources defined and the request has a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -512,8 +508,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without partial
-  resources defined and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without partial resources defined and the request has a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -553,8 +548,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without full
-  resources defined and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid without full resources defined and the request has a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -593,8 +587,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid full partial
-  resources defined and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid full partial resources defined and the request has a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -634,8 +627,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid with quota exceeded
-  and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid with quota exceeded and the request has a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -674,8 +666,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And it has an error about a quota exceeded
     And any Kubernetes manifests must not be created
 
-  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid with with quota
-  exceeded and the request has a json body
+  Scenario: Execute a job from an owned projet with prefix and defined quota and paas file is valid with with quota exceeded and the request has a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -714,6 +705,160 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And the serialized job
     And it has an error about a quota exceeded
     And any Kubernetes manifests must not be created
+
+  Scenario: Execute a job, with server's defaults, from a projet with prefix and paas file is valid and have defaults
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-comany"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard website project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with defaults
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed
+
+  Scenario: Execute a job, with server's defaults, from a projet with prefix and paas file is valid and have defaults, with encrypted message
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-comany"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard website project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with defaults
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed
+
+  Scenario: Execute a job, with server's defaults, from a projet with prefix and paas file is valid and have defaults for the cluster
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-comany"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard website project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with defaults for the cluster
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed
+
+  Scenario: Execute a job, with server's defaults, from a projet with prefix and paas file is valid and have defaults for the cluster, with encrypted message
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-comany"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard website project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with defaults for the cluster
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed
 
   Scenario: Execute a job from a non-owned projet with prefix and paas file is valid with a json body
     Given A Space app instance
@@ -825,8 +970,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with hierarchical namespace and paas file with extends is valid with
-  json body
+  Scenario: Execute a job from an owned projet with hierarchical namespace and paas file with extends is valid with json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -866,8 +1010,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with hierarchical namespace and prefix and paas file is valid with
-  json body
+  Scenario: Execute a job from an owned projet with hierarchical namespace and prefix and paas file is valid with json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -906,8 +1049,7 @@ Feature: On a space instance, an API is available to manage jobs and allowing de
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
 
-  Scenario: Execute a job from an owned projet with hierarchical namespace and prefix and paas file with extends is
-  valid with a json body
+  Scenario: Execute a job from an owned projet with hierarchical namespace and prefix and paas file with extends is valid with a json body
     Given A Space app instance
     And a kubernetes client
     And extensions libraries provided by administrators

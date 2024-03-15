@@ -100,16 +100,16 @@ audit: 		## Run an audit on vendors to detect CVE and deprecated libraries
 ### Testing:
 .PHONY: test
 test: 		## Run tests (units tests and behavior tests, with a code coverage) to check if the installation can work properly
-	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
 	rm -rf var/cache/test
+	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	APP_ENV=test ${PHP} vendor/bin/behat
 	rm -rf var/cache/test
 
 .PHONY: test-without-coverage
 test-without-coverage: ## Run tests (units tests and behavior tests without a code coverage)
-	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	rm -rf var/cache/test
+	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	APP_ENV=test ${PHP} vendor/bin/behat
 	rm -rf var/cache/test

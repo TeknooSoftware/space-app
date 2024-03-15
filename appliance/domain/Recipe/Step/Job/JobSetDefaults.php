@@ -57,9 +57,8 @@ class JobSetDefaults
                 if ($cluster->isLocked()) {
                     $clusterName = (string) $cluster;
                     if (isset($newJob->storageProvisionerPerCluster[$clusterName])) {
-                        $defaults['storage-provider'] = $newJob->storageProvisionerPerCluster[$clusterName];
-
-                        break;
+                        $provisioner = $newJob->storageProvisionerPerCluster[$clusterName];
+                        $defaults['clusters'][$clusterName]['storage-provider'] = $provisioner;
                     }
                 }
             }

@@ -10,6 +10,9 @@ parameters:
             message: '#is never read, only written#'
             path:  domain/Object/Persisted/
         -
+            message: '#Cannot assign offset string to array#'
+            path:  domain/Recipe/Step/Job/JobSetDefaults.php
+        -
             message: '#Sluggable#'
             path:  domain/Recipe/Step/Account/SetAccountNamespace.php
         -

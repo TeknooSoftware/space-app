@@ -184,6 +184,8 @@ class TestsContext implements Context
 
     private string $quotasMode = '';
 
+    private string $defaultsMode = '';
+
     private bool $hasBeenRedirected = false;
 
     private bool $isApiCall = false;
@@ -263,6 +265,7 @@ class TestsContext implements Context
         $this->workMemory = [];
         $this->quotasAllowed = [];
         $this->quotasMode = '';
+        $this->defaultsMode = '';
         $this->hasBeenRedirected = false;
         $this->formName = null;
         $this->originalProjectName = null;
@@ -1970,8 +1973,29 @@ class TestsContext implements Context
      */
     public function theProjectHasACompletePaasFile(): void
     {
-        $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.yaml';
         $this->quotasMode = '';
+        $this->defaultsMode = '';
+    }
+
+    /**
+     * @Given the project has a complete paas file with defaults
+     */
+    public function theProjectHasACompletePaasFileWithDefaults(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.yaml';
+        $this->quotasMode = '';
+        $this->defaultsMode = 'generic';
+    }
+
+    /**
+     * @Given the project has a complete paas file with defaults for the cluster
+     */
+    public function theProjectHasACompletePaasFileWithDefaultsForCluster(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.with-clusters.yaml';
+        $this->quotasMode = '';
+        $this->defaultsMode = 'cluster';
     }
 
     /**
@@ -1988,7 +2012,7 @@ class TestsContext implements Context
      */
     public function aProjectWithAPaasFileWithoutResource()
     {
-        $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.yaml';
         $this->quotasMode = 'automatic';
     }
 
@@ -1997,7 +2021,7 @@ class TestsContext implements Context
      */
     public function aProjectWithAPaasFileWithPartialResources()
     {
-        $this->paasFile = __DIR__ . '/Project/Default/paas.with-partial-resources.yaml';
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.with-partial-resources.yaml';
         $this->quotasMode = 'partial';
     }
 
@@ -2006,7 +2030,7 @@ class TestsContext implements Context
      */
     public function aProjectWithAPaasFileWithResources()
     {
-        $this->paasFile = __DIR__ . '/Project/Default/paas.with-resources.yaml';
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.with-resources.yaml';
         $this->quotasMode = 'full';
     }
 
@@ -2015,7 +2039,7 @@ class TestsContext implements Context
      */
     public function aProjectWithAPaasFileWithLimitedQuota()
     {
-        $this->paasFile = __DIR__ . '/Project/Default/paas.with-quotas-exceeded.yaml';
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.with-quotas-exceeded.yaml';
         $this->quotasMode = 'limited';
     }
 
@@ -3734,6 +3758,7 @@ class TestsContext implements Context
             hncSuffix: $this->hncSuffix,
             useHnc: $this->useHnc,
             quoteMode: $this->quotasMode,
+            defaultsMods: $this->defaultsMode,
         );
 
         Assert::assertEquals(

@@ -523,6 +523,7 @@ EOF;
         string $hncSuffix,
         bool $useHnc,
         string $quoteMode,
+        string $defaultsMods,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -548,6 +549,16 @@ EOF;
     
 EOF;
         }
+
+        $storageClass = match ($defaultsMods) {
+            'cluster' => 'cluster-default-behat-provider',
+            default => 'nfs.csi.k8s.io',
+        };
+
+        $imagePullSecrets = match ($defaultsMods) {
+            'generic', 'cluster' => 'oci-registry-behat',
+            default => 'my-companydocker-config',
+        };
 
         $secret = base64_encode($projectPrefix . 'world');
 
@@ -784,7 +795,7 @@ EOF;
                 "accessModes": [
                     "ReadWriteOnce"
                 ],
-                "storageClassName": "nfs.csi.k8s.io",
+                "storageClassName": "$storageClass",
                 "resources": {
                     "requests": {
                         "storage": "3Gi"
@@ -871,7 +882,7 @@ EOF;
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ]
                     }
@@ -988,7 +999,7 @@ EOF;
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ],
                         "securityContext": {
@@ -1145,7 +1156,7 @@ EOF;
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ],
                         "affinity": {
