@@ -62,7 +62,7 @@ class AccountWallet implements IteratorAggregate
         return null !== $this->get($cluster, $environment);
     }
 
-    public function get(string|Cluster $cluster, string|Environment $environment): mixed
+    public function get(string|Cluster $cluster, string|Environment $environment): ?AccountEnvironment
     {
         $cluster = (string) $cluster;
         $environment = (string) $environment;

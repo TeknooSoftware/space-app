@@ -27,6 +27,7 @@ namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
 
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,7 +38,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 interface DashboardInfoInterface
 {
     public function __invoke(
-        ManagerInterface $manager,
         ParametersBag $parametersBag,
+        ?AccountWallet $accountWallet = null,
     ): DashboardInfoInterface;
 }

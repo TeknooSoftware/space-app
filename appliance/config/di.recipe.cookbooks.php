@@ -480,6 +480,7 @@ return array(
         ->constructor(
             get(OriginalRecipeInterface::class),
             get(HealthInterface::class),
+            get(LoadEnvironments::class),
             get(DashboardInfoInterface::class),
             get(Render::class),
             get(RenderError::class),

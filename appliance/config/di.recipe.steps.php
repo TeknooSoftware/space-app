@@ -338,7 +338,9 @@ return [
 
     DashboardInfoInterface::class => get(DashboardInfo::class),
     DashboardInfo::class => create()
-        ->constructor(),
+        ->constructor(
+            get('teknoo.space.clusters_catalog'),
+        ),
 
     DashboardFrameInterface::class => get(DashboardFrame::class),
     DashboardFrame::class => function (ContainerInterface $container): DashboardFrame {
