@@ -43,7 +43,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -68,7 +68,7 @@ class AccountRegistryReinstall implements CookbookInterface
         private PrepareRedirection $prepareRedirection,
         private SetRedirectClientAtEnd $redirectClient,
         private LoadHistory $loadHistory,
-        private LoadCredentials $loadCredentials,
+        private LoadEnvironments $loadCredentials,
         private LoadRegistryCredentials $loadRegistryCredentials,
         private ReloadNamespace $reloadNamespace,
         private RemoveRegistryCredentials $removeRegistryCredentials,

@@ -23,17 +23,17 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
 use DomainException;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
-use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Query\AccountCredential\LoadFromAccountQuery;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery;
 use Throwable;
 
 /**
@@ -42,10 +42,10 @@ use Throwable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class LoadCredentials
+class LoadEnvironments
 {
     public function __construct(
-        private AccountCredentialLoader $loader,
+        private AccountEnvironmentLoader $loader,
     ) {
     }
 
@@ -76,9 +76,9 @@ class LoadCredentials
             }
         }
 
-        /** @var Promise<iterable<AccountCredential>, mixed, mixed> $fetchedPromise */
+        /** @var Promise<iterable<AccountEnvironment>, mixed, mixed> $fetchedPromise */
         $fetchedPromise = new Promise(
-            /** @var iterable<AccountCredential> */
+            /** @var iterable<AccountEnvironment> */
             static function (iterable $credentials) use ($manager) {
                 $manager->updateWorkPlan([
                     AccountWallet::class => new AccountWallet($credentials),

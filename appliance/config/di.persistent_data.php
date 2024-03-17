@@ -39,7 +39,7 @@ use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\East\Paas\Writer\AccountWriter;
 use Teknoo\East\Paas\Writer\ProjectWriter;
-use Teknoo\Space\Contracts\DbSource\Repository\AccountCredentialRepositoryInterface;
+use Teknoo\Space\Contracts\DbSource\Repository\AccountEnvironmentRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountDataRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountHistoryRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountPersistedVariableRepositoryInterface;
@@ -47,7 +47,7 @@ use Teknoo\Space\Contracts\DbSource\Repository\AccountRegistryRepositoryInterfac
 use Teknoo\Space\Contracts\DbSource\Repository\PersistedVariableRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\ProjectMetadataRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\UserDataRepositoryInterface;
-use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountCredentialRepository;
+use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountEnvironmentRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountDataRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountHistoryRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountPersistedVariableRepository;
@@ -55,7 +55,7 @@ use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountRegistryReposito
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\PersistedVariableRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\ProjectMetadataRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\UserDataRepository;
-use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
@@ -66,7 +66,7 @@ use Teknoo\Space\Loader\Meta\SpaceUserLoader;
 use Teknoo\Space\Loader\PersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\UserDataLoader;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
@@ -74,7 +74,7 @@ use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\PersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountDataWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountPersistedVariableWriter;
@@ -90,12 +90,14 @@ use function DI\create;
 use function DI\get;
 
 return [
-    //AccountCredential
-    AccountCredentialRepositoryInterface::class => get(AccountCredentialRepository::class),
-    AccountCredentialRepository::class => static function (ContainerInterface $container): AccountCredentialRepository {
-        $repository = $container->get(ObjectManager::class)?->getRepository(AccountCredential::class);
+    //AccountEnvironment
+    AccountEnvironmentRepositoryInterface::class => get(AccountEnvironmentRepository::class),
+    AccountEnvironmentRepository::class => static function (
+        ContainerInterface $container
+    ): AccountEnvironmentRepository {
+        $repository = $container->get(ObjectManager::class)?->getRepository(AccountEnvironment::class);
         if ($repository instanceof DocumentRepository) {
-            return new AccountCredentialRepository($repository);
+            return new AccountEnvironmentRepository($repository);
         }
 
         throw new NonManagedRepositoryException(sprintf(
@@ -104,12 +106,12 @@ return [
         ));
     },
 
-    AccountCredentialLoader::class => create(AccountCredentialLoader::class)
-        ->constructor(get(AccountCredentialRepositoryInterface::class)),
-    AccountCredentialWriter::class => create(AccountCredentialWriter::class)
+    AccountEnvironmentLoader::class => create(AccountEnvironmentLoader::class)
+        ->constructor(get(AccountEnvironmentRepositoryInterface::class)),
+    AccountEnvironmentWriter::class => create(AccountEnvironmentWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
     'teknoo.space.deleting.account_credential' => create(DeletingService::class)
-        ->constructor(get(AccountCredentialWriter::class), get(DatesService::class)),
+        ->constructor(get(AccountEnvironmentWriter::class), get(DatesService::class)),
 
     //AccountRegistry
     AccountRegistryRepositoryInterface::class => get(AccountRegistryRepository::class),
@@ -270,9 +272,9 @@ return [
         ->constructor(
             get(AccountWriter::class),
             get(AccountDataWriter::class),
-            get(AccountCredentialLoader::class),
+            get(AccountEnvironmentLoader::class),
             get(AccountHistoryLoader::class),
-            get(AccountCredentialWriter::class),
+            get(AccountEnvironmentWriter::class),
             get(AccountHistoryWriter::class),
             get(AccountPersistedVariableWriter::class),
             get(BatchManipulationManagerInterface::class),

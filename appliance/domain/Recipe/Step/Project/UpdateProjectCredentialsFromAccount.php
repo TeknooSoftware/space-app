@@ -29,12 +29,13 @@ use DomainException;
 use Teknoo\East\Paas\Contracts\Object\ImageRegistryInterface;
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
+use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
@@ -83,33 +84,39 @@ class UpdateProjectCredentialsFromAccount
                 },
                 'clusters' => static function (iterable $clusters) use ($accountWallet, $catalog): void {
                     foreach ($clusters as $cluster) {
-                        if (!$cluster instanceof Cluster) {
-                            continue;
-                        }
-                        $cluster->visit(
-                            [
-                                'name' => static function ($name) use ($cluster, $accountWallet, $catalog): void {
-                                    if (!isset($accountWallet[$name])) {
+                        if ($cluster instanceof Cluster && $cluster->isLocked()) {
+                            $cluster->visit(
+                                'environment',
+                                static function (Environment $environment) use (
+                                    $cluster,
+                                    $accountWallet,
+                                    $catalog,
+                                ): void {
+                                    $clusterName = (string) $cluster;
+                                    if (!$accountWallet->has($clusterName, $environment)) {
                                         return;
                                     }
 
-                                    $clusterConfig = $catalog->getCluster($name);
+                                    $clusterConfig = $catalog->getCluster($clusterName);
                                     $cluster->setType($clusterConfig->type);
+                                    $cluster->useHierarchicalNamespaces($clusterConfig->useHnc);
                                     $cluster->setAddress($clusterConfig->masterAddress);
                                     $cluster->setLocked(true);
 
-                                    $accountCredential = $accountWallet[$name];
+                                    /** @var AccountEnvironment $accountEnvironment */
+                                    $accountEnvironment = $accountWallet->get($clusterName, $environment);
+                                    $cluster->setNamespace($accountEnvironment->getNamespace());
                                     $cluster->setIdentity(
                                         new ClusterCredentials(
-                                            caCertificate: $accountCredential->getCaCertificate(),
-                                            clientCertificate: $accountCredential->getClientCertificate(),
-                                            clientKey: $accountCredential->getClientKey(),
-                                            token: $accountCredential->getToken(),
+                                            caCertificate: $accountEnvironment->getCaCertificate(),
+                                            clientCertificate: $accountEnvironment->getClientCertificate(),
+                                            clientKey: $accountEnvironment->getClientKey(),
+                                            token: $accountEnvironment->getToken(),
                                         ),
                                     );
-                                }
-                            ]
-                        );
+                                },
+                            );
+                        }
                     }
                 }
             ]

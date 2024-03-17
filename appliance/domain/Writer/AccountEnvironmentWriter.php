@@ -29,7 +29,7 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Common\Writer\PersistTrait;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,12 +37,12 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements WriterInterface<AccountCredential>
+ * @implements WriterInterface<AccountEnvironment>
  */
-class AccountCredentialWriter implements WriterInterface
+class AccountEnvironmentWriter implements WriterInterface
 {
     /**
-     * @use PersistTrait<AccountCredential>
+     * @use PersistTrait<AccountEnvironment>
      */
     use PersistTrait;
 

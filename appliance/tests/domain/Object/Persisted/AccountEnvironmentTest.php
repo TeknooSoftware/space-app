@@ -29,24 +29,28 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
- * Class AccountCredentialTest.
+ * Class AccountEnvironmentTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\Persisted\AccountCredential
+ * @covers \Teknoo\Space\Object\Persisted\AccountEnvironment
  */
-class AccountCredentialTest extends TestCase
+class AccountEnvironmentTest extends TestCase
 {
-    private AccountCredential $accountCredential;
+    private AccountEnvironment $accountEnvironment;
 
     private Account|MockObject $account;
 
     private string $clusterName;
+
+    private string $envName;
+
+    private string $namespace;
 
     private string $serviceAccountName;
 
@@ -71,6 +75,8 @@ class AccountCredentialTest extends TestCase
 
         $this->account = $this->createMock(Account::class);
         $this->clusterName = '42';
+        $this->envName = '42';
+        $this->namespace = '42';
         $this->serviceAccountName = '42';
         $this->roleName = '42';
         $this->roleBindingName = '42';
@@ -78,9 +84,11 @@ class AccountCredentialTest extends TestCase
         $this->clientCertificate = '42';
         $this->clientKey = '42';
         $this->token = '42';
-        $this->accountCredential = new AccountCredential(
+        $this->accountEnvironment = new AccountEnvironment(
             $this->account,
             $this->clusterName,
+            $this->envName,
+            $this->namespace,
             $this->serviceAccountName,
             $this->roleName,
             $this->roleBindingName,
@@ -94,80 +102,80 @@ class AccountCredentialTest extends TestCase
     public function testGetAccount(): void
     {
         $expected = $this->createMock(Account::class);
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('account');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getAccount());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getAccount());
     }
 
     public function testGetServiceAccountName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('serviceAccountName');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getServiceAccountName());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getServiceAccountName());
     }
 
     public function testGetRoleName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('roleName');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getRoleName());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getRoleName());
     }
 
     public function testGetRoleBindingName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('roleBindingName');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getRoleBindingName());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getRoleBindingName());
     }
 
     public function testGetCaCertificate(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('caCertificate');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getCaCertificate());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getCaCertificate());
     }
 
     public function testGetClientCertificate(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('clientCertificate');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getClientCertificate());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getClientCertificate());
     }
 
     public function testGetClientKey(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('clientKey');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getClientKey());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getClientKey());
     }
 
     public function testGetToken(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountCredential::class))
+        $property = (new ReflectionClass(AccountEnvironment::class))
             ->getProperty('token');
         $property->setAccessible(true);
-        $property->setValue($this->accountCredential, $expected);
-        self::assertEquals($expected, $this->accountCredential->getToken());
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getToken());
     }
 }

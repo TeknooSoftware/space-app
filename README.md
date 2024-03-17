@@ -213,8 +213,6 @@ Environnements variables configuration
           * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
           * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
                 `kubernetes` by default. *Optional*
-          * `SPACE_KUBERNETES_CLUSTER_ENV` : (string) name of the default environment created with the project.
-                `prod` by default. *Optional*
         * Several clusters : 
           * `SPACE_CLUSTER_CATALOG_JSON` : (json string).
           * `SPACE_CLUSTER_CATALOG_FILE` : (php file returning an array).
@@ -229,10 +227,9 @@ Environnements variables configuration
             * `name` : (string) name of the default Kubernetes cluster in the project's form.
             * `type` : (string) type of cluster in the project's form.
                   `kubernetes` by default. *Optional*
-            * `env` : (string) name of the default environment created with the project.
-                  `prod` by default. *Optional*
             * `storage_provisioner` : (string) Default storage provisioner *Optional*
             * `support_registry` : (bool) If the cluster can host private OCI registries *Optional*
+            * `use_hnc` : (bool) If the cluster use hierarchical namespace *Optional*
 
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a
@@ -245,6 +242,7 @@ Environnements variables configuration
           * Dictionary's structure (`[].` represent a collection of subarray) :
               * `id` : (string) Plan identifier.
               * `name` : (string) Humain readable plan name
+              * `envsCountAllowed` : (int) count of managed clusters's namespace/env allowed for this plan
               * `quotas[].category` : (string) `compute` or `memory` - Category of the quota 
               * `quotas[].type` : (string) name of the quota
               * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's `limit`)

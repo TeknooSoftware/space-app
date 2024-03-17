@@ -27,7 +27,6 @@ services:
             - SPACE_JWT_ENABLE_IN_QUERY=0
             - SPACE_JWT_PASSPHRASE=ToChange!
             - SPACE_KUBERNETES_CA_VALUE=
-            - SPACE_KUBERNETES_CLUSTER_ENV=ToChange!
             - SPACE_KUBERNETES_CLUSTER_NAME=ToChange!
             - SPACE_KUBERNETES_CLUSTER_TYPE=ToChange!
             - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!

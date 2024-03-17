@@ -23,31 +23,45 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Doctrine\Repository\ODM;
+namespace Teknoo\Space\Tests\Unit\Loader;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
-use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountCredentialRepository;
-use Teknoo\Tests\East\Common\Doctrine\DBSource\ODM\RepositoryTestTrait;
+use Teknoo\Space\Contracts\DbSource\Repository\AccountEnvironmentRepositoryInterface;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 
 /**
- * Class AccountCredentialRepositoryTest.
+ * Class AccountEnvironmentLoaderTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountCredentialRepository
+ * @covers \Teknoo\Space\Loader\AccountEnvironmentLoader
  */
-class AccountCredentialRepositoryTest extends TestCase
+class AccountEnvironmentLoaderTest extends TestCase
 {
-    use RepositoryTestTrait;
+    private AccountEnvironmentLoader $accountEnvironmentLoader;
+
+    private AccountEnvironmentRepositoryInterface|MockObject $repository;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function buildRepository(): RepositoryInterface
+    protected function setUp(): void
     {
-        return new AccountCredentialRepository($this->getDoctrineObjectRepositoryMock());
+        parent::setUp();
+
+        $this->repository = $this->createMock(AccountEnvironmentRepositoryInterface::class);
+        $this->accountEnvironmentLoader = new AccountEnvironmentLoader($this->repository);
+    }
+
+    public function testConstruct(): void
+    {
+        self::assertInstanceOf(
+            AccountEnvironmentLoader::class,
+            $this->accountEnvironmentLoader,
+        );
     }
 }

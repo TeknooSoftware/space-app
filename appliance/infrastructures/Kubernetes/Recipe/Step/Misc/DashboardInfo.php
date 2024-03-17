@@ -53,7 +53,6 @@ class DashboardInfo implements DashboardInfoInterface
                 ?string $name,
                 ?string $namespace,
                 ?string $prefixNamespace,
-                bool $useHierarchicalNamespaces,
             ): AccountAwareInterface {
                 $this->namespace = $prefixNamespace . $namespace;
 

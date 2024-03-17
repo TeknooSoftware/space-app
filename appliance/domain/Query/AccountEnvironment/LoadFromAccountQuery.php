@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Query\AccountCredential;
+namespace Teknoo\Space\Query\AccountEnvironment;
 
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
@@ -34,7 +34,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -42,8 +42,8 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements QueryElementInterface<AccountCredential>
- * @implements QueryCollectionInterface<AccountCredential>
+ * @implements QueryElementInterface<AccountEnvironment>
+ * @implements QueryCollectionInterface<AccountEnvironment>
  */
 class LoadFromAccountQuery implements QueryElementInterface, QueryCollectionInterface, ImmutableInterface
 {

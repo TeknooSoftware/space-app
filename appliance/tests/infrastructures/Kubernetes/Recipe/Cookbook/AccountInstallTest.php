@@ -40,7 +40,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServ
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
-use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
 
 /**
@@ -75,7 +75,7 @@ class AccountInstallTest extends TestCase
 
     private CreateRegistryDeployment|MockObject $createRegistryAccount;
 
-    private PersistCredentials|MockObject $persistCredentials;
+    private PersistEnvironments|MockObject $persistCredentials;
 
     private PersistRegistryCredentials|MockObject $persistRegistryCredentials;
 
@@ -99,7 +99,7 @@ class AccountInstallTest extends TestCase
         $this->createSecret = $this->createMock(CreateSecretServiceAccountToken::class);
         $this->createStorage = $this->createMock(CreateStorage::class);
         $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
-        $this->persistCredentials = $this->createMock(PersistCredentials::class);
+        $this->persistCredentials = $this->createMock(PersistEnvironments::class);
         $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredentials::class);
         $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
         $this->defaultStorageSizeToClaim = '42';

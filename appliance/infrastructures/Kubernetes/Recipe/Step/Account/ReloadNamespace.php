@@ -76,7 +76,6 @@ class ReloadNamespace
                         ?string $name,
                         ?string $namespace,
                         ?string $prefixNamespace,
-                        bool $useHierarchicalNamespaces,
                     ): AccountAwareInterface {
                         $kubeNamespace = $prefixNamespace . $namespace;
                         $this->client->setNamespace($kubeNamespace);

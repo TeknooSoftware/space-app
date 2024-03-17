@@ -30,7 +30,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 

@@ -23,12 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Loader;
+namespace Teknoo\Space\Contracts\DbSource\Repository;
 
-use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
-use Teknoo\East\Common\Loader\LoaderTrait;
-use Teknoo\Space\Contracts\DbSource\Repository\AccountCredentialRepositoryInterface;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -36,17 +34,8 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements LoaderInterface<AccountCredential>
+ * @extends RepositoryInterface<AccountEnvironment>
  */
-class AccountCredentialLoader implements LoaderInterface
+interface AccountEnvironmentRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * @use LoaderTrait<AccountCredential>
-     */
-    use LoaderTrait;
-
-    public function __construct(AccountCredentialRepositoryInterface $repository)
-    {
-        $this->repository = $repository;
-    }
 }

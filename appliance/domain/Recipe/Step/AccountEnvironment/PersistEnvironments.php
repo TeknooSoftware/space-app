@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
 use DateTimeInterface;
 use SensitiveParameter;
@@ -33,9 +33,9 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountHistory;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -43,10 +43,10 @@ use Teknoo\Space\Writer\AccountCredentialWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class PersistCredentials
+class PersistEnvironments
 {
     public function __construct(
-        private AccountCredentialWriter $writer,
+        private AccountEnvironmentWriter $writer,
         private DatesService $datesService,
         private bool $preferRealDate,
     ) {
@@ -55,6 +55,8 @@ class PersistCredentials
     public function __invoke(
         ManagerInterface $manager,
         ObjectInterface $object,
+        string $environmentName,
+        string $namespace,
         string $serviceName,
         string $roleName,
         string $roleBindingName,
@@ -72,9 +74,11 @@ class PersistCredentials
             return $this;
         }
 
-        $accountCredential = new AccountCredential(
+        $accountEnvironment = new AccountEnvironment(
             account: $object,
             clusterName: $clusterConfig->name,
+            environmentName: $environmentName,
+            namespace: $namespace,
             serviceAccountName: $serviceName,
             roleName: $roleName,
             roleBindingName: $roleBindingName,
@@ -84,7 +88,7 @@ class PersistCredentials
             token: $token,
         );
 
-        $this->writer->save($accountCredential);
+        $this->writer->save($accountEnvironment);
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory) {
@@ -97,7 +101,7 @@ class PersistCredentials
         );
 
         $manager->updateWorkPlan([
-            AccountCredential::class => $accountCredential,
+            AccountEnvironment::class => $accountEnvironment,
         ]);
 
         $manager->cleanWorkPlan(

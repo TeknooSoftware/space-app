@@ -39,7 +39,7 @@ use Teknoo\Immutable\ImmutableTrait;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountCredential implements IdentifiedObjectInterface, TimestampableInterface, ImmutableInterface
+class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInterface, ImmutableInterface
 {
     use ObjectTrait;
     use ImmutableTrait;
@@ -47,6 +47,10 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
     private Account $account;
 
     private string $clusterName;
+
+    private string $environmentName;
+
+    private string $namespace;
 
     private string $serviceAccountName;
 
@@ -65,6 +69,8 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
     public function __construct(
         Account $account,
         string $clusterName,
+        string $environmentName,
+        string $namespace,
         string $serviceAccountName,
         string $roleName,
         string $roleBindingName,
@@ -79,6 +85,8 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
 
         $this->account = $account;
         $this->clusterName = $clusterName;
+        $this->namespace = $namespace;
+        $this->environmentName = $environmentName;
         $this->serviceAccountName = $serviceAccountName;
         $this->roleName = $roleName;
         $this->roleBindingName = $roleBindingName;
@@ -96,6 +104,16 @@ class AccountCredential implements IdentifiedObjectInterface, TimestampableInter
     public function getClusterName(): string
     {
         return $this->clusterName;
+    }
+
+    public function getEnvironmentName(): string
+    {
+        return $this->environmentName;
+    }
+
+    public function getNamespace(): string
+    {
+        return $this->namespace;
     }
 
     public function getServiceAccountName(): string

@@ -49,12 +49,12 @@ class Cluster
         public readonly string $sluggyName,
         public readonly string $type,
         public readonly string $masterAddress,
-        public readonly string $defaultEnv,
         public readonly string $storageProvisioner,
         public readonly string $dashboardAddress,
         callable|Client $kubernetesClient,
         public readonly string $token,
         public readonly bool $supportRegistry,
+        public readonly bool $useHnc,
     ) {
         if ($kubernetesClient instanceof Client) {
             $this->kubernetesClient = $kubernetesClient;

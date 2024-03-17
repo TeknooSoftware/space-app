@@ -2,8 +2,8 @@
 
 ## [1.0.0-beta42] - 2024-03-12
 ### Beta Release
-- Split `AccountCredential` (and loader, writers, steps and cookbook) to `AccountCredential` and `AccountRegistry`
-  - `AccountCredential` keeps only credentials about a cluster
+- Split `AccountEnvironment` (and loader, writers, steps and cookbook) to `AccountEnvironment` and `AccountRegistry`
+  - `AccountEnvironment` keeps only credentials about a cluster
   - `AccountRegistry` keeps only credentials about registry OCI
   - Fix `JobSetDefaults` with this new architecture
 - Private OCI registry are into dedicated namespace, not included into the client namespace

@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Doctrine\Repository\ODM;
 
 use Teknoo\East\Common\Doctrine\DBSource\ODM\RepositoryTrait;
-use Teknoo\Space\Contracts\DbSource\Repository\AccountCredentialRepositoryInterface;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Contracts\DbSource\Repository\AccountEnvironmentRepositoryInterface;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -35,10 +35,10 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountCredentialRepository implements AccountCredentialRepositoryInterface
+class AccountEnvironmentRepository implements AccountEnvironmentRepositoryInterface
 {
     /**
-     * @use RepositoryTrait<AccountCredential>
+     * @use RepositoryTrait<AccountEnvironment>
      */
     use RepositoryTrait;
 }

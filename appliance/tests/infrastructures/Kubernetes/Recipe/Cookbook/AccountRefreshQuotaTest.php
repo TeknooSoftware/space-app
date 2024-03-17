@@ -39,8 +39,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\UpdateCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\UpdateCredentials;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -70,7 +70,7 @@ class AccountRefreshQuotaTest extends TestCase
 
     private LoadHistory|MockObject $loadHistory;
 
-    private LoadCredentials|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadCredentials;
 
     private ReloadNamespace|MockObject $reloadNamespace;
 
@@ -94,7 +94,7 @@ class AccountRefreshQuotaTest extends TestCase
         $this->prepareRedirection = $this->createMock(PrepareRedirection::class);
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
-        $this->loadCredentials = $this->createMock(LoadCredentials::class);
+        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
         $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
         $this->createQuota = $this->createMock(CreateQuota::class);
         $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);

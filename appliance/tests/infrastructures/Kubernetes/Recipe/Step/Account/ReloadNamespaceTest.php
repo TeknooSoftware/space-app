@@ -67,12 +67,12 @@ class ReloadNamespaceTest extends TestCase
                     sluggyName: 'foo',
                     type: 'foo',
                     masterAddress: 'foo',
-                    defaultEnv: 'foo',
                     storageProvisioner: 'foo',
                     dashboardAddress: 'foo',
                     kubernetesClient: $this->client,
                     token: 'foo',
                     supportRegistry: true,
+                    useHnc: false,
                 )
             );
 

@@ -36,8 +36,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
@@ -70,11 +70,11 @@ class AccountReinstallTest extends TestCase
 
     private LoadHistory|MockObject $loadHistory;
 
-    private LoadCredentials|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadCredentials;
 
     private LoadRegistryCredentials|MockObject $loadRegistryCredentials;
 
-    private RemoveCredentials|MockObject $removeCredentials;
+    private RemoveEnvironments|MockObject $removeCredentials;
 
     private RemoveRegistryCredentials|MockObject $removeRegistryCredentials;
 
@@ -102,9 +102,9 @@ class AccountReinstallTest extends TestCase
         $this->prepareRedirection = $this->createMock(PrepareRedirection::class);
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
-        $this->loadCredentials = $this->createMock(LoadCredentials::class);
+        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
         $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredentials::class);
-        $this->removeCredentials = $this->createMock(RemoveCredentials::class);
+        $this->removeCredentials = $this->createMock(RemoveEnvironments::class);
         $this->removeRegistryCredentials = $this->createMock(RemoveRegistryCredentials::class);
         $this->setAccountNamespace = $this->createMock(SetAccountNamespace::class);
         $this->installAccount = $this->createMock(AccountInstall::class);

@@ -23,28 +23,29 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Loader;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\Space\Contracts\DbSource\Repository\AccountCredentialRepositoryInterface;
-use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
- * Class AccountCredentialLoaderTest.
+ * Class LoadCredentialsTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Loader\AccountCredentialLoader
+ * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments
  */
-class AccountCredentialLoaderTest extends TestCase
+class LoadCredentialsTest extends TestCase
 {
-    private AccountCredentialLoader $accountCredentialLoader;
+    private LoadEnvironments $loadCredentials;
 
-    private AccountCredentialRepositoryInterface|MockObject $repository;
+    private AccountEnvironmentLoader|MockObject $loader;
 
     /**
      * {@inheritdoc}
@@ -53,15 +54,19 @@ class AccountCredentialLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(AccountCredentialRepositoryInterface::class);
-        $this->accountCredentialLoader = new AccountCredentialLoader($this->repository);
+        $this->loader = $this->createMock(AccountEnvironmentLoader::class);
+        $this->loadCredentials = new LoadEnvironments($this->loader);
     }
 
-    public function testConstruct(): void
+    public function testInvoke(): void
     {
         self::assertInstanceOf(
-            AccountCredentialLoader::class,
-            $this->accountCredentialLoader,
+            LoadEnvironments::class,
+            ($this->loadCredentials)(
+                $this->createMock(ManagerInterface::class),
+                $this->createMock(Account::class),
+                true,
+            ),
         );
     }
 }

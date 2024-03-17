@@ -27,6 +27,7 @@
         </div>
 
         {% set clusterSelected = null %}
+        {% set envName = null %}
 
         {% if k8s is defined %}
             <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
@@ -159,13 +160,13 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-        {% if clusterSelected is not empty and dashboard.namespace is defined and dashboard.namespace is not null %}
+        {% if clusterSelected is not empty and envName is not empty and dashboard.namespace is defined and dashboard.namespace is not null %}
         <div class="row mt-3">
             <div class="col-12">
                 <iframe id="dashboard"
                         class="w-100 min-vh-100"
                         title="Kuberntes Dashboard"
-                        src="{{ path('space_dashboard_frame', {'clusterName': clusterSelected}) }}#/workloads?namespace={{ dashboard.namespace }}"
+                        src="{{ path('space_dashboard_frame', {'clusterName': clusterSelected, 'envName': envName}) }}#/workloads?namespace={{ dashboard.namespace }}"
                         sandbox="allow-scripts allow-forms allow-same-origin"
                 ></iframe>
             </div>{#end row#}

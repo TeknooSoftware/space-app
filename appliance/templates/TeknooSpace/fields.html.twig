@@ -67,9 +67,16 @@
     <div class="col-12 subform">
         <div class="row">
             {{ form_row(form.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
             {{ form_row(form.type, {"colClass": "col-6"}) }}
             {{ form_row(form.address, {"colClass": "col-6"}) }}
-            {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.namespace, {"colClass": "col-9"}) }}
+            {{ form_row(form.useHierarchicalNamespaces, {
+                "colClass": "col-3 align-self-center pt-4",
+                'label_attr':{
+                    'class': 'switch-custom'
+                }
+            }) }}
             {{ form_row(form.identity.caCertificate, {"colClass": "col-12"}) }}
             {{ form_row(form.identity.clientCertificate, {"colClass": "col-12"}) }}
             {{ form_row(form.identity.clientKey, {"colClass": "col-12"}) }}

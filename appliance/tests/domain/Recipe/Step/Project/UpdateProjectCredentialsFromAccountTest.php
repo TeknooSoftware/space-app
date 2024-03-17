@@ -30,7 +30,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 
@@ -71,7 +71,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     public function testInvoke(): void
     {
         $wallet = new AccountWallet(
-            [$this->createMock(AccountCredential::class)]
+            [$this->createMock(AccountEnvironment::class)]
         );
 
         self::assertInstanceOf(

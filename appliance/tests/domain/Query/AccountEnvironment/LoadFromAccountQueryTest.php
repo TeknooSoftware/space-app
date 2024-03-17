@@ -23,29 +23,30 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Tests\Unit\Query\AccountEnvironment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
-use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery;
 
 /**
- * Class RemoveCredentialsTest.
+ * Class LoadFromAccountQueryTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials
+ * @covers \Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery
  */
-class RemoveCredentialsTest extends TestCase
+class LoadFromAccountQueryTest extends TestCase
 {
-    private RemoveCredentials $removeCredentials;
+    private LoadFromAccountQuery $loadFromAccountQuery;
 
-    private AccountCredentialWriter|MockObject $writer;
+    private Account|MockObject $account;
 
     /**
      * {@inheritdoc}
@@ -54,17 +55,19 @@ class RemoveCredentialsTest extends TestCase
     {
         parent::setUp();
 
-        $this->writer = $this->createMock(AccountCredentialWriter::class);
-        $this->removeCredentials = new RemoveCredentials($this->writer);
+        $this->account = $this->createMock(Account::class);
+        $this->loadFromAccountQuery = new LoadFromAccountQuery($this->account);
     }
 
-    public function testInvoke(): void
+    public function testFetch(): void
     {
         self::assertInstanceOf(
-            RemoveCredentials::class,
-            ($this->removeCredentials)(
-                $this->createMock(AccountWallet::class),
-            ),
+            LoadFromAccountQuery::class,
+            $this->loadFromAccountQuery->fetch(
+                $this->createMock(LoaderInterface::class),
+                $this->createMock(RepositoryInterface::class),
+                $this->createMock(PromiseInterface::class),
+            )
         );
     }
 }

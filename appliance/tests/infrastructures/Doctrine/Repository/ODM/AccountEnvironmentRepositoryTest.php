@@ -23,51 +23,31 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Query\AccountCredential;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Doctrine\Repository\ODM;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
-use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
-use Teknoo\East\Paas\Object\Account;
-use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Query\AccountCredential\LoadFromAccountQuery;
+use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountEnvironmentRepository;
+use Teknoo\Tests\East\Common\Doctrine\DBSource\ODM\RepositoryTestTrait;
 
 /**
- * Class LoadFromAccountQueryTest.
+ * Class AccountEnvironmentRepositoryTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Query\AccountCredential\LoadFromAccountQuery
+ * @covers \Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountEnvironmentRepository
  */
-class LoadFromAccountQueryTest extends TestCase
+class AccountEnvironmentRepositoryTest extends TestCase
 {
-    private LoadFromAccountQuery $loadFromAccountQuery;
-
-    private Account|MockObject $account;
+    use RepositoryTestTrait;
 
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    protected function setUp(): void
+    public function buildRepository(): RepositoryInterface
     {
-        parent::setUp();
-
-        $this->account = $this->createMock(Account::class);
-        $this->loadFromAccountQuery = new LoadFromAccountQuery($this->account);
-    }
-
-    public function testFetch(): void
-    {
-        self::assertInstanceOf(
-            LoadFromAccountQuery::class,
-            $this->loadFromAccountQuery->fetch(
-                $this->createMock(LoaderInterface::class),
-                $this->createMock(RepositoryInterface::class),
-                $this->createMock(PromiseInterface::class),
-            )
-        );
+        return new AccountEnvironmentRepository($this->getDoctrineObjectRepositoryMock());
     }
 }

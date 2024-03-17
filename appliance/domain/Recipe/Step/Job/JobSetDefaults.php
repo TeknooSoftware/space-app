@@ -64,7 +64,7 @@ class JobSetDefaults
             }
         };
 
-        $job->visit(['clusters' => $defaultsGenerator]);
+        $job->visit('clusters', $defaultsGenerator);
 
         $job->setDefaults($defaults);
 

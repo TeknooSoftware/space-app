@@ -23,34 +23,38 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Writer;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Persisted\AccountHistory;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
- * Class AccountCredentialWriterTest.
+ * Class PersistCredentialsTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Writer\AccountCredentialWriter
+ * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments
  */
-class AccountCredentialWriterTest extends TestCase
+class PersistCredentialsTest extends TestCase
 {
-    private AccountCredentialWriter $accountCredentialWriter;
+    private PersistEnvironments $persistCredentials;
 
-    private ManagerInterface|MockObject $manager;
+    private AccountEnvironmentWriter|MockObject $writer;
 
     private DatesService|MockObject $datesService;
 
-    protected bool $preferRealDateOnUpdate = false;
+    private string $clusterName;
+
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -59,26 +63,33 @@ class AccountCredentialWriterTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = $this->createMock(ManagerInterface::class);
+        $this->writer = $this->createMock(AccountEnvironmentWriter::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->preferRealDateOnUpdate = true;
-
-
-        $this->accountCredentialWriter = new AccountCredentialWriter(
-            $this->manager,
+        $this->clusterName = '42';
+        $this->preferRealDate = true;
+        $this->persistCredentials = new PersistEnvironments(
+            $this->writer,
             $this->datesService,
-            $this->preferRealDateOnUpdate,
+            $this->preferRealDate,
         );
     }
 
-    public function testSave(): void
+    public function testInvoke(): void
     {
         self::assertInstanceOf(
-            AccountCredentialWriter::class,
-            $this->accountCredentialWriter->save(
+            PersistEnvironments::class,
+            ($this->persistCredentials)(
+                $this->createMock(ManagerInterface::class),
                 $this->createMock(ObjectInterface::class),
-                $this->createMock(PromiseInterface::class),
-                true,
+                environmentName: 'foo',
+                namespace: 'foo',
+                serviceName: 'foo',
+                roleName: 'foo',
+                roleBindingName: 'foo',
+                caCertificate: 'foo',
+                token: 'foo',
+                accountHistory: $this->createMock(AccountHistory::class),
+                clusterConfig: $this->createMock(Cluster::class),
             ),
         );
     }

@@ -107,9 +107,9 @@ use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirec
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
@@ -172,7 +172,7 @@ return array(
             get(CreateSecretServiceAccountToken::class),
             get(CreateStorage::class),
             get(CreateRegistryDeployment::class),
-            get(PersistCredentials::class),
+            get(PersistEnvironments::class),
             get(PersistRegistryCredentials::class),
             get(PrepareAccountErrorHandler::class),
             get('teknoo.east.paas.default_storage_size'),
@@ -185,9 +185,9 @@ return array(
             get(AccountPrepareRedirection::class),
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
-            get(LoadCredentials::class),
+            get(LoadEnvironments::class),
             get(LoadRegistryCredentials::class),
-            get(RemoveCredentials::class),
+            get(RemoveEnvironments::class),
             get(RemoveRegistryCredentials::class),
             get(SetAccountNamespace::class),
             get(AccountInstall::class),
@@ -204,7 +204,7 @@ return array(
             get(AccountPrepareRedirection::class),
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
-            get(LoadCredentials::class),
+            get(LoadEnvironments::class),
             get(ReloadNamespace::class),
             get(CreateQuota::class),
             get(UpdateAccountHistory::class),
@@ -219,7 +219,7 @@ return array(
             get(AccountPrepareRedirection::class),
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
-            get(LoadCredentials::class),
+            get(LoadEnvironments::class),
             get(LoadRegistryCredentials::class),
             get(ReloadNamespace::class),
             get(RemoveRegistryCredentials::class),
@@ -241,8 +241,6 @@ return array(
             $previous->add(55, $container->get(SetAccountNamespace::class));
             $previous->add(55, $container->get(SetQuota::class));
             $previous->add(61, $container->get(CreateAccountHistory::class));
-            $previous->add(62, new RecipeBowl($container->get(AccountInstall::class), 0));
-            $previous->add(69, $container->get(UpdateAccountHistory::class));
 
             return $previous;
         }
@@ -253,7 +251,7 @@ return array(
             NewProjectEndPointStepsInterface $previous,
             ContainerInterface $container
         ): NewProjectEndPointStepsInterface {
-            $previous->add(06, $container->get(LoadCredentials::class));
+            $previous->add(06, $container->get(LoadEnvironments::class));
             $previous->add(06, $container->get(LoadRegistryCredentials::class));
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(15, $container->get(PrepareProject::class));
@@ -292,7 +290,7 @@ return array(
     NewJobStepsInterface::class => decorate(
         static function (NewJobStepsInterface $previous, ContainerInterface $container): NewJobStepsInterface {
             $previous->add(51, $container->get(LoadAccountFromProject::class));
-            $previous->add(52, $container->get(LoadCredentials::class));
+            $previous->add(52, $container->get(LoadEnvironments::class));
             $previous->add(52, $container->get(LoadRegistryCredentials::class));
             $previous->add(53, $container->get(JobSetDefaults::class));
             $previous->add(65, $container->get(JobUpdaterNotifier::class));
@@ -468,7 +466,7 @@ return array(
             get(LoadObject::class),
             get(ObjectAccessControlInterface::class),
             get(LoadAccountFromProject::class),
-            get(LoadCredentials::class),
+            get(LoadEnvironments::class),
             get(LoadRegistryCredentials::class),
             get(UpdateProjectCredentialsFromAccount::class),
             get(SaveObject::class),
@@ -491,7 +489,7 @@ return array(
     DashboardFrame::class => create()
         ->constructor(
             get(OriginalRecipeInterface::class),
-            get(LoadCredentials::class),
+            get(LoadEnvironments::class),
             get(DashboardFrameInterface::class),
             get(RenderError::class),
             get('teknoo.east.common.cookbook.default_error_template'),

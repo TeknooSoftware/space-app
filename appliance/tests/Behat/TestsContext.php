@@ -105,7 +105,7 @@ use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
@@ -647,7 +647,7 @@ class TestsContext implements Context
         $this->buildRepository(Job::class);
         $this->buildRepository(Project::class);
 
-        $this->buildRepository(AccountCredential::class);
+        $this->buildRepository(AccountEnvironment::class);
         $this->buildRepository(AccountRegistry::class);
         $this->buildRepository(AccountData::class);
         $this->buildRepository(AccountHistory::class);
@@ -863,7 +863,7 @@ class TestsContext implements Context
         $this->persistAndRegister($accountData);
 
         $sac = mb_strtolower(str_replace(' ', '-', $accountName));
-        $accountCredentials = new AccountCredential(
+        $accountEnvironments = new AccountEnvironment(
             account: $account,
             clusterName: 'Demo Kube Cluster',
             serviceAccountName:  $sac . '-account',
@@ -874,9 +874,9 @@ class TestsContext implements Context
             clientKey: "",
             token: "aFakeToken",
         );
-        $accountCredentials->setId($this->generateId());
+        $accountEnvironments->setId($this->generateId());
 
-        $this->persistAndRegister($accountCredentials);
+        $this->persistAndRegister($accountEnvironments);
 
         $accountRegistry = new AccountRegistry(
             account: $account,
@@ -1393,8 +1393,8 @@ class TestsContext implements Context
      */
     public function aStandardWebsiteProject(string $projectName): void
     {
-        /** @var AccountCredential $credential */
-        $credential = $this->recall(AccountCredential::class);
+        /** @var AccountEnvironment $credential */
+        $credential = $this->recall(AccountEnvironment::class);
         /** @var AccountRegistry $registry */
         $registry = $this->recall(AccountRegistry::class);
 
@@ -1554,8 +1554,8 @@ class TestsContext implements Context
      */
     public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix): void
     {
-        /** @var AccountCredential $credential */
-        $credential = $this->recall(AccountCredential::class);
+        /** @var AccountEnvironment $credential */
+        $credential = $this->recall(AccountEnvironment::class);
         /** @var AccountRegistry $registry */
         $registry = $this->recall(AccountRegistry::class);
 

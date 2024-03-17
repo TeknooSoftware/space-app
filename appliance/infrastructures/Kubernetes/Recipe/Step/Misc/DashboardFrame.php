@@ -75,7 +75,6 @@ class DashboardFrame implements DashboardFrameInterface
                 ?string $name,
                 ?string $namespace,
                 ?string $prefixNamespace,
-                bool $useHierarchicalNamespaces,
             ): AccountAwareInterface {
                 $kubeNamespace = $prefixNamespace . $namespace;
                 $this->url .= '?' . http_build_query([
@@ -106,6 +105,7 @@ class DashboardFrame implements DashboardFrameInterface
         string $wildcard = '',
         ?Account $account = null,
         ?AccountWallet $accountWallet = null,
+        ?string $envName = null,
     ): DashboardFrameInterface {
         if (empty($wildcard)) {
             $wildcard = '#/workloads';
@@ -114,18 +114,22 @@ class DashboardFrame implements DashboardFrameInterface
         $clusterConfig = $this->catalog->getCluster($clusterName);
 
         $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
-        $accountCredential = null;
+        $accountEnvironment = null;
 
         if (!$isAdmin) {
             if (null === $accountWallet) {
                 throw new BadMethodCallException(message: "Wallet is mandatory for non admin user", code: 403);
             }
 
-            if (!isset($accountWallet[$clusterConfig->name])) {
+            if (null === $envName) {
+                throw new BadMethodCallException(message: "Environment name is mandatory", code: 400);
+            }
+
+            if (!$accountWallet->has($clusterConfig->name, $envName)) {
                 throw new BadMethodCallException(message: "Cluster is not allowed for this user", code: 403);
             }
 
-            $accountCredential = $accountWallet[$clusterConfig->name];
+            $accountEnvironment = $accountWallet->get($clusterConfig->name, $envName);
         }
 
         $dashboardUrl = $this->getDashboardUrl($clusterConfig, $account, $wildcard);
@@ -134,7 +138,7 @@ class DashboardFrame implements DashboardFrameInterface
             method: $serverRequest->getMethod(),
             uri: $dashboardUrl,
             headers: [
-                'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $clusterConfig->token),
+                'Authorization' => 'Bearer ' . trim($accountEnvironment?->getToken() ?? $clusterConfig->token),
             ],
         );
 

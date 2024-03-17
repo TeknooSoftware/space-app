@@ -39,8 +39,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccount
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
@@ -65,9 +65,9 @@ class AccountReinstall implements CookbookInterface
         private PrepareRedirection $prepareRedirection,
         private SetRedirectClientAtEnd $redirectClient,
         private LoadHistory $loadHistory,
-        private LoadCredentials $loadCredentials,
+        private LoadEnvironments $loadCredentials,
         private LoadRegistryCredentials $loadRegistryCredentials,
-        private RemoveCredentials $removeCredentials,
+        private RemoveEnvironments $removeCredentials,
         private RemoveRegistryCredentials $removeRegistryCredentials,
         private SetAccountNamespace $setAccountNamespace,
         private AccountInstall $installAccount,
@@ -90,7 +90,7 @@ class AccountReinstall implements CookbookInterface
 
         $recipe = $this->prepareRecipeForAccount($recipe);
 
-        $recipe = $recipe->cook($this->removeCredentials, RemoveCredentials::class, [], 70);
+        $recipe = $recipe->cook($this->removeCredentials, RemoveEnvironments::class, [], 70);
 
         $recipe = $recipe->cook($this->removeRegistryCredentials, RemoveRegistryCredentials::class, [], 70);
 

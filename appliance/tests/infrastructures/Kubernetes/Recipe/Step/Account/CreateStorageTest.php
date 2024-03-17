@@ -75,12 +75,12 @@ class CreateStorageTest extends TestCase
             sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
-            defaultEnv: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
             supportRegistry: true,
+            useHnc: false,
         );
 
         self::assertInstanceOf(

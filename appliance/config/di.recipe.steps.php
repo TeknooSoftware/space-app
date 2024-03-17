@@ -64,7 +64,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser;
-use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
@@ -77,9 +77,9 @@ use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirec
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\RemoveCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
@@ -100,7 +100,7 @@ use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrep
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 use Teknoo\Space\Recipe\Step\Subscription\CreateAccount;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountRegistryWriter;
 use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
@@ -197,9 +197,9 @@ return [
         );
     },
 
-    PersistCredentials::class => static function (ContainerInterface $container): PersistCredentials {
-        return new PersistCredentials(
-            writer: $container->get(AccountCredentialWriter::class),
+    PersistEnvironments::class => static function (ContainerInterface $container): PersistEnvironments {
+        return new PersistEnvironments(
+            writer: $container->get(AccountEnvironmentWriter::class),
             datesService: $container->get(DatesService::class),
             preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
         );
@@ -213,9 +213,9 @@ return [
         );
     },
 
-    RemoveCredentials::class => create()
+    RemoveEnvironments::class => create()
         ->constructor(
-            get(AccountCredentialWriter::class),
+            get(AccountEnvironmentWriter::class),
         ),
 
     RemoveRegistryCredentials::class => create()
@@ -223,10 +223,7 @@ return [
             get(AccountRegistryWriter::class),
         ),
 
-    PrepareProject::class => create()
-        ->constructor(
-            get('teknoo.space.clusters_catalog'),
-        ),
+    PrepareProject::class => create(),
 
     SetRedirectClientAtEnd::class => create()
         ->constructor(
@@ -265,8 +262,8 @@ return [
             get(AccountHistoryWriter::class),
         ),
 
-    LoadCredentials::class => create()
-        ->constructor(get(AccountCredentialLoader::class)),
+    LoadEnvironments::class => create()
+        ->constructor(get(AccountEnvironmentLoader::class)),
 
     LoadRegistryCredentials::class => create()
         ->constructor(get(AccountRegistryLoader::class)),

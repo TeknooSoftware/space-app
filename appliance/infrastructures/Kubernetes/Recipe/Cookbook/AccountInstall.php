@@ -43,7 +43,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Recipe\Step\AccountCredential\PersistCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
 
 /**
@@ -66,7 +66,7 @@ class AccountInstall implements CookbookInterface
         private CreateSecretServiceAccountToken $createSecret,
         private CreateStorage $createStorage,
         private CreateRegistryDeployment $createRegistryAccount,
-        private PersistCredentials $persistCredentials,
+        private PersistEnvironments $persistCredentials,
         private PersistRegistryCredentials $persistRegistryCredentials,
         private PrepareAccountErrorHandler $errorHandler,
         string $defaultStorageSizeToClaim,
@@ -102,7 +102,7 @@ class AccountInstall implements CookbookInterface
 
         $recipe = $recipe->cook($this->createSecret, CreateSecretServiceAccountToken::class, [], 70);
 
-        $recipe = $recipe->cook($this->persistCredentials, PersistCredentials::class, [], 80);
+        $recipe = $recipe->cook($this->persistCredentials, PersistEnvironments::class, [], 80);
 
         $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 90);
 

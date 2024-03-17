@@ -23,10 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountCredential;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,10 +34,10 @@ use Teknoo\Space\Writer\AccountCredentialWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class RemoveCredentials
+class RemoveEnvironments
 {
     public function __construct(
-        private AccountCredentialWriter $writer,
+        private AccountEnvironmentWriter $writer,
     ) {
     }
 
@@ -48,8 +48,8 @@ class RemoveCredentials
             return $this;
         }
 
-        foreach ($wallet as $accountCredential) {
-            $this->writer->remove($accountCredential);
+        foreach ($wallet as $accountEnvironment) {
+            $this->writer->remove($accountEnvironment);
         }
 
         return $this;
