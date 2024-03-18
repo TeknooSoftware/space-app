@@ -26,26 +26,27 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
-use Teknoo\Space\Object\Persisted\AccountRegistry;
-use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
+use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
 
 /**
- * Class UpdateProjectCredentialsFromAccountTest.
+ * Class AddManagedEnvironmentToProjectTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount
+ * @covers \Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject
  */
-class UpdateProjectCredentialsFromAccountTest extends TestCase
+class AddManagedEnvironmentToProjectTest extends TestCase
 {
-    private UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount;
+    private AddManagedEnvironmentToProject $addManagedEnvironmentToProject;
+
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->updateProjectCredentialsFromAccount = new UpdateProjectCredentialsFromAccount(
+        $this->addManagedEnvironmentToProject = new AddManagedEnvironmentToProject(
             $this->createMock(ClusterCatalog::class),
         );
     }
@@ -66,11 +67,11 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
         );
 
         self::assertInstanceOf(
-            UpdateProjectCredentialsFromAccount::class,
-            ($this->updateProjectCredentialsFromAccount)(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $this->createMock(ManagerInterface::class),
                 new SpaceProject($this->createMock(Project::class)),
                 $wallet,
-                $this->createMock(AccountRegistry::class),
             )
         );
     }
