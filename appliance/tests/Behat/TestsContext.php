@@ -222,8 +222,6 @@ class TestsContext implements Context
 
     private readonly string $defaultClusterAddress;
 
-    private readonly string $defaultClusterEnv;
-
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -241,11 +239,9 @@ class TestsContext implements Context
         string $defaultClusterName,
         private readonly string $defaultClusterType,
         string $defaultClusterAddress,
-        string $defaultClusterEnv,
     ) {
         $this->defaultClusterName = str_replace('Legacy ', '', $defaultClusterName);
         $this->defaultClusterAddress = str_replace('legacy-', '', $defaultClusterAddress);
-        $this->defaultClusterEnv = str_replace('legacy-', '', $defaultClusterEnv);
     }
 
     /**
@@ -552,7 +548,7 @@ class TestsContext implements Context
         return $final;
     }
 
-    public function listObjects(string $className): iterable
+    public function listObjects(string $className): array
     {
         return $this->objects[$className] ?? [];
     }
@@ -844,7 +840,6 @@ class TestsContext implements Context
         $account->setId($this->generateId());
         $account->setName($accountName);
         $account->setNamespace($accountNamespace);
-        $account->setUseHierarchicalNamespaces($this->useHnc);
         $account->setPrefixNamespace('space-behat-');
 
         $this->persistAndRegister($account);
@@ -866,9 +861,27 @@ class TestsContext implements Context
         $accountEnvironments = new AccountEnvironment(
             account: $account,
             clusterName: 'Demo Kube Cluster',
-            serviceAccountName:  $sac . '-account',
-            roleName: $sac . '-role',
-            roleBindingName: $sac . '-role-binding',
+            environmentName: 'Dev',
+            namespace: $accountNamespace . '-dev',
+            serviceAccountName:  $sac . 'dev-account',
+            roleName: $sac . 'dev-role',
+            roleBindingName: $sac . 'dev-role-binding',
+            caCertificate: "-----BEGIN CERTIFICATE-----FooBar",
+            clientCertificate: "",
+            clientKey: "",
+            token: "aFakeToken",
+        );
+        $accountEnvironments->setId($this->generateId());
+
+        $this->persistAndRegister($accountEnvironments);
+        $accountEnvironments = new AccountEnvironment(
+            account: $account,
+            clusterName: 'Demo Kube Cluster',
+            environmentName: 'prod',
+            namespace: $accountNamespace . '-prod',
+            serviceAccountName:  $sac . 'prod-account',
+            roleName: $sac . 'prod-role',
+            roleBindingName: $sac . 'prod-role-binding',
             caCertificate: "-----BEGIN CERTIFICATE-----FooBar",
             clientCertificate: "",
             clientKey: "",
@@ -1164,7 +1177,7 @@ class TestsContext implements Context
         if (!$this->isApiCall) {
             $crawler = $this->createCrawler();
             $node = $crawler->filter('.space-form-success');
-            $nodeValue = trim((string)$node?->getNode(0)?->textContent);
+            $nodeValue = trim((string)$node->getNode(0)?->textContent);
             Assert::assertEquals(
                 $this->translator->trans('teknoo.space.alert.data_saved'),
                 $nodeValue,
@@ -1302,7 +1315,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('h6#welcome-message');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.text.welcome_back', ['user' => $fullName,]),
@@ -1330,7 +1343,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('p#2fa-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertNotEmpty($nodeValue);
     }
@@ -1373,7 +1386,7 @@ class TestsContext implements Context
 
         $crawler = $this->createCrawler();
         $node = $crawler->filter('#login-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertNotEmpty($nodeValue);
     }
@@ -1429,7 +1442,9 @@ class TestsContext implements Context
         $cluster->setName($this->defaultClusterName);
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
+        $cluster->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $cluster->setEnvironment(new Environment('prod'));
         $cluster->setLocked(true);
         $cluster->setIdentity(
             new ClusterCredentials(
@@ -1444,6 +1459,8 @@ class TestsContext implements Context
         $clusterDev->setName($this->defaultClusterName);
         $clusterDev->setType($this->defaultClusterType);
         $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
+        $clusterDev->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
         $clusterDev->setEnvironment(new Environment('dev'));
         $clusterDev->setLocked(true);
         $clusterDev->setIdentity(
@@ -1594,7 +1611,9 @@ class TestsContext implements Context
         $cluster->setName($this->defaultClusterName);
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->setEnvironment($env = new Environment($this->defaultClusterEnv));
+        $cluster->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $cluster->setEnvironment($env = new Environment('prod'));
         $cluster->setLocked(true);
         $this->register($env);
         $cluster->setIdentity(
@@ -1610,6 +1629,8 @@ class TestsContext implements Context
         $clusterDev->setName($this->defaultClusterName);
         $clusterDev->setType($this->defaultClusterType);
         $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
+        $clusterDev->useHierarchicalNamespaces($this->useHnc);
         $clusterDev->setEnvironment(new Environment('dev'));
         $clusterDev->setIdentity(
             new ClusterCredentials(
@@ -1738,7 +1759,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
@@ -1778,7 +1799,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
@@ -1897,7 +1918,7 @@ class TestsContext implements Context
 
         $crawler = $this->createCrawler();
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
@@ -2089,7 +2110,7 @@ class TestsContext implements Context
         );
 
         $node = $this->createCrawler()->filter('.jwt-token-value');
-        $this->jwtToken = trim((string) $node?->getNode(0)?->textContent);
+        $this->jwtToken = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertNotEmpty($this->jwtToken);
     }
@@ -3825,7 +3846,7 @@ class TestsContext implements Context
         $node = $crawler->filter('.space-form-error');
 
         Assert::assertNotEmpty(
-            trim((string) $node?->getNode(0)?->textContent),
+            trim((string) $node->getNode(0)?->textContent),
         );
     }
 
@@ -3837,7 +3858,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $this->translator->trans('The password fields must match.'),
@@ -3853,7 +3874,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.error.code_not_accepted'),
@@ -3966,14 +3987,14 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
         );
 
         $node = $crawler->filter('small#space-account-name');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $accountName,
@@ -4015,14 +4036,14 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
         );
 
         $node = $crawler->filter('span#space-user-name');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $fullName,
@@ -4357,6 +4378,7 @@ class TestsContext implements Context
             }
         );
 
+        /** @noinspection PhpParamsInspection */
         $this->sfContainer->get(DiContainer::class)->set(
             'teknoo.east.paas.img_builder.build.platforms',
             'space',

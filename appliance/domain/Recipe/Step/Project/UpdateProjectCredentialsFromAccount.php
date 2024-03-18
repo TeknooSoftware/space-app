@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Project;
 
-use DomainException;
 use Teknoo\East\Paas\Contracts\Object\ImageRegistryInterface;
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
@@ -52,12 +51,12 @@ class UpdateProjectCredentialsFromAccount
     }
 
     public function __invoke(
-        SpaceProject $project,
+        SpaceProject $spaceProject,
         AccountWallet $accountWallet,
         AccountRegistry $accountRegistry,
     ): UpdateProjectCredentialsFromAccount {
         $catalog = $this->catalog;
-        $eastProject = $project->project;
+        $eastProject = $spaceProject->project;
         $eastProject->visit(
             [
                 'imagesRegistry' => static function (
@@ -84,7 +83,7 @@ class UpdateProjectCredentialsFromAccount
                 },
                 'clusters' => static function (iterable $clusters) use ($accountWallet, $catalog): void {
                     foreach ($clusters as $cluster) {
-                        if ($cluster instanceof Cluster && $cluster->isLocked()) {
+                        if ($cluster instanceof Cluster) {
                             $cluster->visit(
                                 'environment',
                                 static function (Environment $environment) use (

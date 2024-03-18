@@ -65,6 +65,8 @@ class SpaceProject implements IdentifiedObjectInterface, NormalizableInterface
         Project|Account $projectOrAccount,
         public ?ProjectMetadata $projectMetadata = null,
         public iterable $variables = [],
+        public ?string $addClusterName = null,
+        public ?string $addClusterEnv = null,
     ) {
         if ($projectOrAccount instanceof Account) {
             $this->project = new Project($projectOrAccount);

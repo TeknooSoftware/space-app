@@ -51,7 +51,6 @@ use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewJobErrorsHandlersInterf
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewJobStepsInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewProjectEndPointStepsInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\RunJobStepsInterface;
-use Teknoo\Recipe\Bowl\RecipeBowl;
 use Teknoo\Recipe\RecipeInterface as OriginalRecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
@@ -121,6 +120,7 @@ use Teknoo\Space\Recipe\Step\Job\PrepareCriteria as JobPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
+use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareCriteria as ProjectPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
@@ -255,6 +255,8 @@ return array(
             $previous->add(06, $container->get(LoadRegistryCredentials::class));
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(15, $container->get(PrepareProject::class));
+            $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
+            $previous->add(59, $container->get(UpdateProjectCredentialsFromAccount::class));
             $previous->add(69, $container->get(SpaceProjectPrepareRedirection::class));
 
             return $previous;
@@ -281,7 +283,10 @@ return array(
             EditProjectEndPointStepsInterface $previous,
             ContainerInterface $container
         ): EditProjectEndPointStepsInterface {
+            $previous->add(11, $container->get(LoadAccountFromProject::class));
             $previous->add(11, $container->get(WorkplanInit::class));
+            $previous->add(12, $container->get(LoadEnvironments::class));
+            $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
 
             return $previous;
         }

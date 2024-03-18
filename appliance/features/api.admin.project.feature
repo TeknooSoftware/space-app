@@ -49,7 +49,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | space_project.project.imagesRegistry.identity.auth          |                                       |
       | space_project.project.imagesRegistry.identity.username      | teknoo-software                       |
       | space_project.project.imagesRegistry.identity.password      | azertyy                               |
-      | space_project.project.clusters.0.name                       | Teknoo Space K8s                      |
+      | space_project.project.clusters.0.name                       | Demo Kube Cluster                      |
       | space_project.project.clusters.0.type                       | kubernetes                            |
       | space_project.project.clusters.0.address                    | https://k8s.teknoo.space              |
       | space_project.project.clusters.0.environment.name           | prod                                  |
@@ -87,7 +87,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | project.imagesRegistry.identity.auth          |                                       |
       | project.imagesRegistry.identity.username      | teknoo-software                       |
       | project.imagesRegistry.identity.password      | azertyy                               |
-      | project.clusters.0.name                       | Teknoo Space K8s                      |
+      | project.clusters.0.name                       | Demo Kube Cluster                      |
       | project.clusters.0.type                       | kubernetes                            |
       | project.clusters.0.address                    | https://k8s.teknoo.space              |
       | project.clusters.0.environment.name           | prod                                  |
@@ -163,7 +163,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | space_project.project.imagesRegistry.identity.auth          |                                       |
       | space_project.project.imagesRegistry.identity.username      | teknoo-software                       |
       | space_project.project.imagesRegistry.identity.password      | azertyy                               |
-      | space_project.project.clusters.0.name                       | Teknoo Space K8s                      |
+      | space_project.project.clusters.0.name                       | Demo Kube Cluster                      |
       | space_project.project.clusters.0.type                       | kubernetes                            |
       | space_project.project.clusters.0.address                    | https://k8s.teknoo.space              |
       | space_project.project.clusters.0.environment.name           | prod                                  |
@@ -201,7 +201,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | project.imagesRegistry.identity.auth          |                                       |
       | project.imagesRegistry.identity.username      | teknoo-software                       |
       | project.imagesRegistry.identity.password      | azertyy                               |
-      | project.clusters.0.name                       | Teknoo Space K8s                      |
+      | project.clusters.0.name                       | Demo Kube Cluster                      |
       | project.clusters.0.type                       | kubernetes                            |
       | project.clusters.0.address                    | https://k8s.teknoo.space              |
       | project.clusters.0.environment.name           | prod                                  |

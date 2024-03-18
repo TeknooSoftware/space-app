@@ -42,12 +42,8 @@ Feature: On a space instance, eacch allowed users can register a new project on 
       | space_project.project.imagesRegistry.apiUrl                | <auto>                          |
       | space_project.project.imagesRegistry.identity.username     | <auto>                          |
       | space_project.project.imagesRegistry.identity.password     | <auto>                          |
-      | space_project.project.clusters.0.name                      | <auto>                          |
-      | space_project.project.clusters.0.type                      | <auto>                          |
-      | space_project.project.clusters.0.address                   | <auto>                          |
-      | space_project.project.clusters.0.environment.name          | <auto>                          |
-      | space_project.project.clusters.0.identity.caCertificate    | <auto>                          |
-      | space_project.project.clusters.0.identity.token            | <auto>                          |
+      | space_project.addClusterName                               | Demo Kube Cluster               |
+      | space_project.addClusterEnv                                | prod                            |
     Then the project must be persisted
     And the user obtains the form:
       | field                                                      | value                                 |

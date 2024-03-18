@@ -91,6 +91,7 @@ use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
+use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
@@ -315,6 +316,11 @@ return [
         ->constructor(get(UserDataLoader::class)),
 
     LoadAccountFromProject::class => create(),
+
+    AddManagedEnvironmentToProject::class => create()
+        ->constructor(
+            get('teknoo.space.clusters_catalog'),
+        ),
 
     UpdateProjectCredentialsFromAccount::class => create()
         ->constructor(
