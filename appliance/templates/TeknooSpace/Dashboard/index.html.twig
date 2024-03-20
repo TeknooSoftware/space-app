@@ -47,7 +47,7 @@
                             {%- if accountWallet is not empty -%}
                                 {%- for accountEnv in accountWallet -%}
                                     {% set currentValue = accountEnv.clusterName ~ '~' ~ accountEnv.environmentName %}
-                                    {% if clusterSelected is empty %}
+                                    {% if clusterSelectedStr is empty %}
                                         {% set clusterSelectedStr = currentValue %}
                                     {% endif %}
                                     <option
@@ -64,7 +64,7 @@
                                 {%- endfor -%}
                             {%- else -%}
                             {%- for clusterConfig in clustersCatalog -%}
-                                {% if clusterSelected is empty %}
+                                {% if clusterSelectedStr is empty %}
                                     {% set clusterSelectedStr = clusterConfig.sluggyName %}
                                 {% endif %}
                                 <option

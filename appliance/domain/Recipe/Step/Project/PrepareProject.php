@@ -50,7 +50,6 @@ class PrepareProject
     public function __invoke(
         ManagerInterface $manager,
         Project $projectInstance,
-        AccountWallet $accountWallet,
         AccountRegistry $accountRegistry,
     ): self {
         $projectInstance->setSourceRepository(

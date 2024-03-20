@@ -23,26 +23,27 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Object\Persisted\AccountRegistry;
-use Teknoo\Space\Recipe\Step\Project\PrepareProject;
+use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 
 /**
- * Class PrepareProjectTest.
+ * Class LoadCredentialsTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Project\PrepareProject
+ * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes
  */
-class PrepareProjectTest extends TestCase
+class CreateResumesTest extends TestCase
 {
-    private PrepareProject $prepareProject;
+    private CreateResumes $loadCredentials;
 
     /**
      * {@inheritdoc}
@@ -51,17 +52,16 @@ class PrepareProjectTest extends TestCase
     {
         parent::setUp();
 
-        $this->prepareProject = new PrepareProject();
+        $this->loadCredentials = new CreateResumes();
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            PrepareProject::class,
-            ($this->prepareProject)(
-                manager: $this->createMock(ManagerInterface::class),
-                projectInstance: $this->createMock(Project::class),
-                accountRegistry: $this->createMock(AccountRegistry::class),
+            CreateResumes::class,
+            ($this->loadCredentials)(
+                new AccountWallet([$this->createMock(AccountEnvironment::class)]),
+                $this->createMock(ParametersBag::class),
             ),
         );
     }

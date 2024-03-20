@@ -29,7 +29,6 @@
         {{ form_row(formView.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
         {{ form_row(formView.account.prefix_namespace) }}
         {{ form_row(formView.account.namespace) }}
-        {{ form_row(formView.account.use_hierarchical_namespaces, {'label_attr':{'class': 'switch-custom'}}) }}
         {{ form_row(formView.account.users, {"largeRow": true}) }}
     </div>
     {% do formView.account.quotas.setRendered %}
@@ -79,17 +78,17 @@
         <div class="col-12 mb-4">
             <div class="accordion" id="account-history">
                 <div class="accordion-item rounded">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button border-0 bg-light"
+                    <h2 class="accordion-header" id="headingHistory">
+                        <button class="accordion-button collapsed border-0 bg-light"
                                 type="button"
                                 data-bs-toggle="collapse"
-                                data-bs-target="#collapseOne"
+                                data-bs-target="#collapseHistory"
                                 aria-expanded="true"
                                 aria-controls="collapseOne">
                             {{ 'teknoo.space.title.admin_account.history'|trans }}
                         </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse border-0 collapse show" aria-labelledby="headingOne"
+                    <div id="collapseHistory" class="accordion-collapse border-0 collapse accordion-vh-limited" aria-labelledby="headingHistory"
                          data-bs-parent="#account-history">
                         <div class="accordion-body text-muted table-responsive bg-white shadow rounded">
                             <table class="table mb-0 table-center">

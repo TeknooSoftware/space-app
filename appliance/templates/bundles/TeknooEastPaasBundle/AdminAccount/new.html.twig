@@ -20,7 +20,6 @@
         {{ form_row(formView.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
         {{ form_row(formView.account.prefix_namespace) }}
         {{ form_row(formView.account.namespace) }}
-        {{ form_row(formView.account.use_hierarchical_namespaces, {'label_attr':{'class': 'switch-custom'}}) }}
         {{ form_row(formView.account.users, {"largeRow": true}) }}
     </div>
     {% do formView.account.quotas.setRendered %}

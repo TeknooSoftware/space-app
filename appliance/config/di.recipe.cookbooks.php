@@ -106,6 +106,7 @@ use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirec
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
@@ -219,7 +220,6 @@ return array(
             get(AccountPrepareRedirection::class),
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
-            get(LoadEnvironments::class),
             get(LoadRegistryCredentials::class),
             get(ReloadNamespace::class),
             get(RemoveRegistryCredentials::class),
@@ -251,10 +251,12 @@ return array(
             NewProjectEndPointStepsInterface $previous,
             ContainerInterface $container
         ): NewProjectEndPointStepsInterface {
-            $previous->add(06, $container->get(LoadEnvironments::class));
             $previous->add(06, $container->get(LoadRegistryCredentials::class));
+            $previous->add(06, $container->get(LoadEnvironments::class));
+            $previous->add(07, $container->get(CreateResumes::class));
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(15, $container->get(PrepareProject::class));
+            $previous->add(57, $container->get(LoadRegistryCredentials::class));
             $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
             $previous->add(59, $container->get(UpdateProjectCredentialsFromAccount::class));
             $previous->add(69, $container->get(SpaceProjectPrepareRedirection::class));
@@ -269,6 +271,8 @@ return array(
             ContainerInterface $container
         ): EditAccountEndPointStepsInterface {
             $previous->add(11, $container->get(ExtractFromAccountDTO::class));
+            $previous->add(12, $container->get(LoadEnvironments::class));
+            $previous->add(13, $container->get(CreateResumes::class));
             $previous->add(25, $container->get(LoadHistory::class));
             $previous->add(58, $container->get(SetAccountNamespace::class));
             $previous->add(58, $container->get(SetQuota::class));
@@ -286,6 +290,7 @@ return array(
             $previous->add(11, $container->get(LoadAccountFromProject::class));
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(12, $container->get(LoadEnvironments::class));
+            $previous->add(13, $container->get(CreateResumes::class));
             $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
 
             return $previous;

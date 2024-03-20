@@ -77,6 +77,7 @@ use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirec
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
@@ -265,6 +266,8 @@ return [
 
     LoadEnvironments::class => create()
         ->constructor(get(AccountEnvironmentLoader::class)),
+
+    CreateResumes::class => create(),
 
     LoadRegistryCredentials::class => create()
         ->constructor(get(AccountRegistryLoader::class)),
