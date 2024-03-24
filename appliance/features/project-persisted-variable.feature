@@ -20,7 +20,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     When it submits the form:
       | field                                     | value  |
       | project_vars._token                       | <auto> |
-      | project_vars.sets.0.environmentName       | prod   |
+      | project_vars.sets.0.envName       | prod   |
       | project_vars.sets.0.variables.0.id        |        |
       | project_vars.sets.0.variables.0.name      | var1   |
       | project_vars.sets.0.variables.0.wasSecret |        |
@@ -30,7 +30,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.0.variables.1.secret    | 1      |
       | project_vars.sets.0.variables.1.wasSecret |        |
       | project_vars.sets.0.variables.1.value     | value2 |
-      | project_vars.sets.1.environmentName       | dev    |
+      | project_vars.sets.1.envName       | dev    |
       | project_vars.sets.1.variables.0.id        |        |
       | project_vars.sets.1.variables.0.name      | var3   |
       | project_vars.sets.1.variables.0.wasSecret |        |
@@ -42,7 +42,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | x  | var3 | 0      | value3 | dev         |
     And the user obtains the form:
       | field                                        | value  |
-      | project_vars.sets.prod.environmentName       | prod   |
+      | project_vars.sets.prod.envName       | prod   |
       | project_vars.sets.prod.variables.0.id        | x      |
       | project_vars.sets.prod.variables.0.name      | var1   |
       | project_vars.sets.prod.variables.0.secret    |        |
@@ -53,7 +53,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.prod.variables.1.secret    | 1      |
       | project_vars.sets.prod.variables.1.wasSecret | 1      |
       | project_vars.sets.prod.variables.1.value     |        |
-      | project_vars.sets.dev.environmentName        | dev    |
+      | project_vars.sets.dev.envName        | dev    |
       | project_vars.sets.dev.variables.0.id         | x      |
       | project_vars.sets.dev.variables.0.name       | var3   |
       | project_vars.sets.dev.variables.0.secret     |        |
@@ -82,7 +82,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     And open the project variables page
     Then the user obtains the form:
       | field                                        | value  |
-      | project_vars.sets.prod.environmentName       | prod   |
+      | project_vars.sets.prod.envName       | prod   |
       | project_vars.sets.prod.variables.0.id        | aaa    |
       | project_vars.sets.prod.variables.0.name      | var1   |
       | project_vars.sets.prod.variables.0.secret    |        |
@@ -98,7 +98,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.prod.variables.2.secret    |        |
       | project_vars.sets.prod.variables.2.wasSecret |        |
       | project_vars.sets.prod.variables.2.value     | value3 |
-      | project_vars.sets.dev.environmentName        | dev    |
+      | project_vars.sets.dev.envName        | dev    |
       | project_vars.sets.dev.variables.0.id         | ddd    |
       | project_vars.sets.dev.variables.0.name       | var4   |
       | project_vars.sets.dev.variables.0.secret     |        |
@@ -107,7 +107,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     When it submits the form:
       | field                                        | value    |
       | project_vars._token                          | <auto>   |
-      | project_vars.sets.prod.environmentName       | prod     |
+      | project_vars.sets.prod.envName       | prod     |
       | project_vars.sets.prod.variables.1.id        | <auto>   |
       | project_vars.sets.prod.variables.1.name      | var2     |
       | project_vars.sets.prod.variables.1.wasSecret | 1        |
@@ -116,7 +116,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.prod.variables.3.name      | var5     |
       | project_vars.sets.prod.variables.3.wasSecret |          |
       | project_vars.sets.prod.variables.3.value     | value5   |
-      | project_vars.sets.dev.environmentName        | dev      |
+      | project_vars.sets.dev.envName        | dev      |
       | project_vars.sets.dev.variables.0.name       | var3     |
       | project_vars.sets.dev.variables.0.id         | <auto>   |
       | project_vars.sets.dev.variables.0.wasSecret  |          |
@@ -128,7 +128,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | x   | var5 | 0      | value5   | prod        |
     And the user obtains the form:
       | field                                        | value    |
-      | project_vars.sets.prod.environmentName       | prod     |
+      | project_vars.sets.prod.envName       | prod     |
       | project_vars.sets.prod.variables.0.id        | bbb      |
       | project_vars.sets.prod.variables.0.name      | var2     |
       | project_vars.sets.prod.variables.0.secret    |          |
@@ -139,7 +139,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.prod.variables.1.secret    |          |
       | project_vars.sets.prod.variables.1.wasSecret |          |
       | project_vars.sets.prod.variables.1.value     | value5   |
-      | project_vars.sets.dev.environmentName        | dev      |
+      | project_vars.sets.dev.envName        | dev      |
       | project_vars.sets.dev.variables.0.name       | var3     |
       | project_vars.sets.dev.variables.0.id         | ddd      |
       | project_vars.sets.dev.variables.0.secret     |          |

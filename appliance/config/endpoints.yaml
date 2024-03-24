@@ -74,27 +74,12 @@ services:
             - '@Teknoo\Space\Recipe\Cookbook\AccountEditSettings'
             - '@service_container'
 
-    teknoo.space.endpoint.admin.account.environment.install:
-        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
-        public: true
-        arguments:
-            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall'
-            - '@service_container'
-
     teknoo.space.endpoint.admin.account.environment.reinstall:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
             - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentReinstall'
             - '@service_container'
-
-    teknoo.space.endpoint.admin.account.registry.install:
-        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
-        public: true
-        arguments:
-            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryInstall'
-            - '@service_container'
-
 
     teknoo.space.endpoint.admin.account.registry.reinstall:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'

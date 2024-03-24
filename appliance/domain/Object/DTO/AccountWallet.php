@@ -70,7 +70,7 @@ class AccountWallet implements IteratorAggregate
         foreach ($this->credentials as $credential) {
             if (
                 $credential->getClusterName() === $cluster
-                && $credential->getEnvironmentName() === $environment
+                && $credential->getEnvName() === $environment
             ) {
                 return $credential;
             }

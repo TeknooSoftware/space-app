@@ -18,7 +18,7 @@ Feature: On space, users on a same account can define some variables and secrets
     When it submits the form:
       | field                                     | value  |
       | account_vars._token                       | <auto> |
-      | account_vars.sets.0.environmentName       | prod1  |
+      | account_vars.sets.0.envName       | prod1  |
       | account_vars.sets.0.variables.0.id        |        |
       | account_vars.sets.0.variables.0.name      | var1   |
       | account_vars.sets.0.variables.0.wasSecret |        |
@@ -28,7 +28,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.0.variables.1.secret    | 1      |
       | account_vars.sets.0.variables.1.wasSecret |        |
       | account_vars.sets.0.variables.1.value     | value2 |
-      | account_vars.sets.1.environmentName       | prod2  |
+      | account_vars.sets.1.envName       | prod2  |
       | account_vars.sets.1.variables.0.id        |        |
       | account_vars.sets.1.variables.0.name      | var3   |
       | account_vars.sets.1.variables.0.wasSecret |        |
@@ -40,7 +40,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | x  | var3 | 0      | value3 | prod2       |
     And the user obtains the form:
       | field                                         | value  |
-      | account_vars.sets.prod1.environmentName       | prod1  |
+      | account_vars.sets.prod1.envName       | prod1  |
       | account_vars.sets.prod1.variables.0.id        | x      |
       | account_vars.sets.prod1.variables.0.name      | var1   |
       | account_vars.sets.prod1.variables.0.secret    |        |
@@ -51,7 +51,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.prod1.variables.1.secret    | 1      |
       | account_vars.sets.prod1.variables.1.wasSecret | 1      |
       | account_vars.sets.prod1.variables.1.value     |        |
-      | account_vars.sets.prod2.environmentName       | prod2  |
+      | account_vars.sets.prod2.envName       | prod2  |
       | account_vars.sets.prod2.variables.0.id        | x      |
       | account_vars.sets.prod2.variables.0.name      | var3   |
       | account_vars.sets.prod2.variables.0.secret    |        |
@@ -78,7 +78,7 @@ Feature: On space, users on a same account can define some variables and secrets
     And open the account variables page
     Then the user obtains the form:
       | field                                         | value  |
-      | account_vars.sets.prod1.environmentName       | prod1  |
+      | account_vars.sets.prod1.envName       | prod1  |
       | account_vars.sets.prod1.variables.0.id        | aaa    |
       | account_vars.sets.prod1.variables.0.name      | var1   |
       | account_vars.sets.prod1.variables.0.secret    |        |
@@ -94,7 +94,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.prod1.variables.2.secret    |        |
       | account_vars.sets.prod1.variables.2.wasSecret |        |
       | account_vars.sets.prod1.variables.2.value     | value3 |
-      | account_vars.sets.prod2.environmentName       | prod2  |
+      | account_vars.sets.prod2.envName       | prod2  |
       | account_vars.sets.prod2.variables.0.id        | ddd    |
       | account_vars.sets.prod2.variables.0.name      | var4   |
       | account_vars.sets.prod2.variables.0.secret    |        |
@@ -103,7 +103,7 @@ Feature: On space, users on a same account can define some variables and secrets
     When it submits the form:
       | field                                         | value    |
       | account_vars._token                           | <auto>   |
-      | account_vars.sets.prod1.environmentName       | prod1    |
+      | account_vars.sets.prod1.envName       | prod1    |
       | account_vars.sets.prod1.variables.1.id        | <auto>   |
       | account_vars.sets.prod1.variables.1.name      | var2     |
       | account_vars.sets.prod1.variables.1.wasSecret | 1        |
@@ -112,7 +112,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.prod1.variables.3.name      | var5     |
       | account_vars.sets.prod1.variables.3.wasSecret |          |
       | account_vars.sets.prod1.variables.3.value     | value5   |
-      | account_vars.sets.prod2.environmentName       | prod2    |
+      | account_vars.sets.prod2.envName       | prod2    |
       | account_vars.sets.prod2.variables.0.name      | var3     |
       | account_vars.sets.prod2.variables.0.id        | <auto>   |
       | account_vars.sets.prod2.variables.0.wasSecret |          |
@@ -124,7 +124,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | x   | var5 | 0      | value5   | prod1       |
     And the user obtains the form:
       | field                                         | value    |
-      | account_vars.sets.prod1.environmentName       | prod1    |
+      | account_vars.sets.prod1.envName       | prod1    |
       | account_vars.sets.prod1.variables.0.id        | bbb      |
       | account_vars.sets.prod1.variables.0.name      | var2     |
       | account_vars.sets.prod1.variables.0.secret    |          |
@@ -135,7 +135,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.prod1.variables.1.secret    |          |
       | account_vars.sets.prod1.variables.1.wasSecret |          |
       | account_vars.sets.prod1.variables.1.value     | value5   |
-      | account_vars.sets.prod2.environmentName       | prod2    |
+      | account_vars.sets.prod2.envName       | prod2    |
       | account_vars.sets.prod2.variables.0.name      | var3     |
       | account_vars.sets.prod2.variables.0.id        | ddd      |
       | account_vars.sets.prod2.variables.0.secret    |          |

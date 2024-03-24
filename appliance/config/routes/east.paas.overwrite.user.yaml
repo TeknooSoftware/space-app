@@ -11,7 +11,7 @@ _teknoo_common_admin_user_list:
         cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
 
 _teknoo_common_admin_user_edit:
-    path: '/admin/user/edit/{id}'
+    path: '/admin/user/{id}/edit'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.edit'
@@ -39,7 +39,7 @@ _teknoo_common_admin_user_new:
         cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
 
 _teknoo_common_admin_user_delete:
-    path: '/admin/user/delete/{id}'
+    path: '/admin/user/{id}/delete'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

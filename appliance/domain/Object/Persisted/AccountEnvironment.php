@@ -48,7 +48,7 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
 
     private string $clusterName;
 
-    private string $environmentName;
+    private string $envName;
 
     private string $namespace;
 
@@ -69,7 +69,7 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
     public function __construct(
         Account $account,
         string $clusterName,
-        string $environmentName,
+        string $envName,
         string $namespace,
         string $serviceAccountName,
         string $roleName,
@@ -86,7 +86,7 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
         $this->account = $account;
         $this->clusterName = $clusterName;
         $this->namespace = $namespace;
-        $this->environmentName = $environmentName;
+        $this->envName = $envName;
         $this->serviceAccountName = $serviceAccountName;
         $this->roleName = $roleName;
         $this->roleBindingName = $roleBindingName;
@@ -106,9 +106,9 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
         return $this->clusterName;
     }
 
-    public function getEnvironmentName(): string
+    public function getEnvName(): string
     {
-        return $this->environmentName;
+        return $this->envName;
     }
 
     public function getNamespace(): string

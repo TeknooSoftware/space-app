@@ -49,7 +49,7 @@ class AccountPersistedVariable implements IdentifiedObjectInterface, Timestampab
 
     private ?string $value = null;
 
-    private string $environmentName;
+    private string $envName;
 
     private bool $secret = false;
 
@@ -58,7 +58,7 @@ class AccountPersistedVariable implements IdentifiedObjectInterface, Timestampab
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
     ) {
         $this->uniqueConstructorCheck();
@@ -67,7 +67,7 @@ class AccountPersistedVariable implements IdentifiedObjectInterface, Timestampab
         $this->account = $account;
         $this->name = $name;
         $this->value = $value;
-        $this->environmentName = $environmentName;
+        $this->envName = $envName;
         $this->secret = $secret;
     }
 
@@ -86,9 +86,9 @@ class AccountPersistedVariable implements IdentifiedObjectInterface, Timestampab
         return $this->value;
     }
 
-    public function getEnvironmentName(): string
+    public function getEnvName(): string
     {
-        return $this->environmentName;
+        return $this->envName;
     }
 
     public function isSecret(): bool

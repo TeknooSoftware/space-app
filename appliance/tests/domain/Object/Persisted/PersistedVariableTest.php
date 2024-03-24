@@ -52,7 +52,7 @@ class PersistedVariableTest extends TestCase
 
     private string $value;
 
-    private string $environmentName;
+    private string $envName;
 
     private bool $secret;
 
@@ -67,14 +67,14 @@ class PersistedVariableTest extends TestCase
         $this->id = '42';
         $this->name = '42';
         $this->value = '42';
-        $this->environmentName = '42';
+        $this->envName = '42';
         $this->secret = true;
         $this->persistedVariable = new PersistedVariable(
             $this->project,
             $this->id,
             $this->name,
             $this->value,
-            $this->environmentName,
+            $this->envName,
             $this->secret,
         );
     }
@@ -109,14 +109,14 @@ class PersistedVariableTest extends TestCase
         self::assertEquals($expected, $this->persistedVariable->getValue());
     }
 
-    public function testGetEnvironmentName(): void
+    public function testGetEnvName(): void
     {
         $expected = '42';
         $property = (new ReflectionClass(PersistedVariable::class))
-            ->getProperty('environmentName');
+            ->getProperty('envName');
         $property->setAccessible(true);
         $property->setValue($this->persistedVariable, $expected);
-        self::assertEquals($expected, $this->persistedVariable->getEnvironmentName());
+        self::assertEquals($expected, $this->persistedVariable->getEnvName());
     }
 
     public function testIsSecret(): void

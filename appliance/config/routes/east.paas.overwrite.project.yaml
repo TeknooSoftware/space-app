@@ -11,7 +11,7 @@ _teknoo_paas_admin_project_list:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_project_edit:
-    path: '/admin/project/edit/{id}'
+    path: '/admin/project/{id}/edit'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.paas.endpoint.admin.edit.project'
@@ -25,7 +25,7 @@ _teknoo_paas_admin_project_edit:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_project_new:
-    path: '/admin/project/new/{accountId}'
+    path: '/admin/account/{accountId}/project/new'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.paas.endpoint.admin.new.project'
@@ -43,7 +43,7 @@ _teknoo_paas_admin_project_new:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_project_delete:
-    path: '/admin/project/delete/{id}'
+    path: '/admin/project/{id}/delete'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

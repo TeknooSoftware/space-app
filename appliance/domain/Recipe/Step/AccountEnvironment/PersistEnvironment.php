@@ -55,7 +55,7 @@ class PersistEnvironment
     public function __invoke(
         ManagerInterface $manager,
         ObjectInterface $object,
-        string $environmentName,
+        string $envName,
         string $kubeNamespace,
         string $serviceName,
         string $roleName,
@@ -77,7 +77,7 @@ class PersistEnvironment
         $accountEnvironment = new AccountEnvironment(
             account: $object,
             clusterName: $clusterConfig->name,
-            environmentName: $environmentName,
+            envName: $envName,
             namespace: $kubeNamespace,
             serviceAccountName: $serviceName,
             roleName: $roleName,

@@ -41,9 +41,9 @@ class ReloadEnvironement
         ManagerInterface $manager,
         AccountWallet $wallet,
         string $clusterName,
-        string $environmentName,
+        string $envName,
     ): self {
-        $environment = $wallet->get($clusterName, $environmentName);
+        $environment = $wallet->get($clusterName, $envName);
         if ($environment) {
             $manager->updateWorkPlan([
                 AccountEnvironment::class => $environment,

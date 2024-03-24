@@ -1,5 +1,5 @@
 space_admin_account_edit_variables:
-    path: '/admin/account/variables/{id}'
+    path: '/admin/account/{id}/variables'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
@@ -10,8 +10,8 @@ space_admin_account_edit_variables:
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
-space_admin_account_reinstall:
-    path: '/admin/account/reinstall/{id}'
+space_admin_account_environment_reinstall:
+    path: '/admin/account/{id}/environment/{clusterName}/{envName}/reinstall'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.space.endpoint.admin.account.reinstall'
@@ -22,10 +22,10 @@ space_admin_account_reinstall:
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_admin_account_registry_reinstall:
-    path: '/admin/account/reinstall-registry/{id}'
+    path: '/admin/account/{id}/registry/reinstall'
     methods: ['GET']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.registry-reinstall'
+        _controller: 'teknoo.space.endpoint.admin.account.registry.reinstall'
         allowEmptyCredentials: true
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
@@ -34,7 +34,7 @@ space_admin_account_registry_reinstall:
 
 
 space_admin_account_refresh_quota:
-    path: '/admin/account/refresh-quota/{id}'
+    path: '/admin/account/{id}/refresh-quota'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.space.endpoint.admin.account.refresh-quota'

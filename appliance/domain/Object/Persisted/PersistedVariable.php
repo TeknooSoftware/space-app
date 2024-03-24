@@ -59,7 +59,7 @@ class PersistedVariable implements
 
     private ?string $value = null;
 
-    private string $environmentName;
+    private string $envName;
 
     private bool $secret = false;
 
@@ -71,7 +71,7 @@ class PersistedVariable implements
         'id' => ['default', 'crud_variables'],
         'name' => ['crud_variables'],
         'value' => ['crud_variables'],
-        'environmentName' => ['crud_variables'],
+        'envName' => ['crud_variables'],
         'secret' => ['crud_variables'],
     ];
 
@@ -80,7 +80,7 @@ class PersistedVariable implements
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
     ) {
         $this->uniqueConstructorCheck();
@@ -89,7 +89,7 @@ class PersistedVariable implements
         $this->project = $project;
         $this->name = $name;
         $this->value = $value;
-        $this->environmentName = $environmentName;
+        $this->envName = $envName;
         $this->secret = $secret;
     }
 
@@ -108,9 +108,9 @@ class PersistedVariable implements
         return $this->value;
     }
 
-    public function getEnvironmentName(): string
+    public function getEnvName(): string
     {
-        return $this->environmentName;
+        return $this->envName;
     }
 
     public function isSecret(): bool
@@ -130,7 +130,7 @@ class PersistedVariable implements
             'id' => $this->getId(),
             'name' => $this->getName(),
             'value' => $value,
-            'environmentName' => $this->getEnvironmentName(),
+            'envName' => $this->getEnvName(),
             'secret' => $this->isSecret(),
         ];
 

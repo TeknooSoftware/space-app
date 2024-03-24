@@ -80,7 +80,7 @@ class AccountEnvironmentReinstall implements CookbookInterface
         $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
         $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
         $recipe = $recipe->require(new Ingredient('string', 'id'));
-        $recipe = $recipe->require(new Ingredient('string', 'environmentName'));
+        $recipe = $recipe->require(new Ingredient('string', 'envName'));
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
 
         $recipe = $this->prepareRecipeForAccount($recipe);

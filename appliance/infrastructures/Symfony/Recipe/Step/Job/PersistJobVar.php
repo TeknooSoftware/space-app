@@ -56,7 +56,7 @@ class PersistJobVar
                     id: $variable->getId(),
                     name: $variable->name,
                     value: $variable->value,
-                    environmentName: $newJob->envName ?? 'default',
+                    envName: $newJob->envName ?? 'default',
                     secret: $variable->secret,
                 );
 

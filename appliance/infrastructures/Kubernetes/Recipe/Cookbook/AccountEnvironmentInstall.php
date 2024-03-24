@@ -80,7 +80,7 @@ class AccountEnvironmentInstall implements CookbookInterface
         $recipe = $recipe->require(new Ingredient(AccountHistory::class));
         $recipe = $recipe->require(new Ingredient(AccountRegistry::class));
         $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
-        $recipe = $recipe->require(new Ingredient('string', 'environmentName'));
+        $recipe = $recipe->require(new Ingredient('string', 'envName'));
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
 
         $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);

@@ -45,7 +45,7 @@ class AccountVarsMapper extends AbstractVarsMapper
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
     ): AccountPersistedVariable|PersistedVariable {
         return new AccountPersistedVariable(
@@ -53,7 +53,7 @@ class AccountVarsMapper extends AbstractVarsMapper
             id: $id,
             name: $name,
             value: $value,
-            environmentName: $environmentName,
+            envName: $envName,
             secret: $secret,
         );
     }

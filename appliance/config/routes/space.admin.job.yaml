@@ -1,6 +1,6 @@
 
 space_admin_job_new:
-    path: '/admin/project/{projectId}/new-job'
+    path: '/admin/project/{projectId}/job/new'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
     defaults:
@@ -15,7 +15,7 @@ space_admin_job_new:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_admin_job_restart:
-    path: '/admin/project/{projectId}/restart-job/{jobId}'
+    path: '/admin/project/{projectId}/job/{jobId}/restart'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
     defaults:

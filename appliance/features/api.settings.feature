@@ -84,7 +84,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables:
       | field                                     | value  |
-      | account_vars.sets.0.environmentName       | prod1  |
+      | account_vars.sets.0.envName       | prod1  |
       | account_vars.sets.0.variables.0.id        |        |
       | account_vars.sets.0.variables.0.name      | var1   |
       | account_vars.sets.0.variables.0.wasSecret |        |
@@ -94,7 +94,7 @@ Feature: On a space instance, an API is available to manage its user and account
       | account_vars.sets.0.variables.1.secret    | 1      |
       | account_vars.sets.0.variables.1.wasSecret |        |
       | account_vars.sets.0.variables.1.value     | value2 |
-      | account_vars.sets.1.environmentName       | prod2  |
+      | account_vars.sets.1.envName       | prod2  |
       | account_vars.sets.1.variables.0.id        |        |
       | account_vars.sets.1.variables.0.name      | var3   |
       | account_vars.sets.1.variables.0.wasSecret |        |
@@ -119,7 +119,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables with a json body:
       | field                        | value  |
-      | sets.0.environmentName       | prod1  |
+      | sets.0.envName       | prod1  |
       | sets.0.variables.0.id        |        |
       | sets.0.variables.0.name      | var1   |
       | sets.0.variables.0.wasSecret |        |
@@ -129,7 +129,7 @@ Feature: On a space instance, an API is available to manage its user and account
       | sets.0.variables.1.secret    | 1      |
       | sets.0.variables.1.wasSecret |        |
       | sets.0.variables.1.value     | value2 |
-      | sets.1.environmentName       | prod2  |
+      | sets.1.envName       | prod2  |
       | sets.1.variables.0.id        |        |
       | sets.1.variables.0.name      | var3   |
       | sets.1.variables.0.wasSecret |        |
@@ -160,7 +160,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables:
       | field                                         | value    |
-      | account_vars.sets.prod1.environmentName       | prod1    |
+      | account_vars.sets.prod1.envName       | prod1    |
       | account_vars.sets.prod1.variables.1.id        | bbb      |
       | account_vars.sets.prod1.variables.1.name      | var2     |
       | account_vars.sets.prod1.variables.1.secret    | 0        |
@@ -171,7 +171,7 @@ Feature: On a space instance, an API is available to manage its user and account
       | account_vars.sets.prod1.variables.3.secret    | 0        |
       | account_vars.sets.prod1.variables.3.wasSecret | 0        |
       | account_vars.sets.prod1.variables.3.value     | value5   |
-      | account_vars.sets.prod2.environmentName       | prod2    |
+      | account_vars.sets.prod2.envName       | prod2    |
       | account_vars.sets.prod2.variables.0.name      | var3     |
       | account_vars.sets.prod2.variables.0.id        | ddd      |
       | account_vars.sets.prod2.variables.0.secret    | 0        |
@@ -203,7 +203,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables with a json body:
       | field                            | value    |
-      | sets.prod1.environmentName       | prod1    |
+      | sets.prod1.envName       | prod1    |
       | sets.prod1.variables.1.id        | bbb      |
       | sets.prod1.variables.1.name      | var2     |
       | sets.prod1.variables.1.secret    | 0        |
@@ -214,7 +214,7 @@ Feature: On a space instance, an API is available to manage its user and account
       | sets.prod1.variables.3.secret    | 0        |
       | sets.prod1.variables.3.wasSecret |          |
       | sets.prod1.variables.3.value     | value5   |
-      | sets.prod2.environmentName       | prod2    |
+      | sets.prod2.envName       | prod2    |
       | sets.prod2.variables.0.name      | var3     |
       | sets.prod2.variables.0.id        | ddd      |
       | sets.prod2.variables.0.secret    | 0        |

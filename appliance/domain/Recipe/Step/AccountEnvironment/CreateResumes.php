@@ -45,7 +45,7 @@ class CreateResumes
         foreach ($wallet as $env) {
             $resumes[] = new AccountEnvironmentResume(
                 clusterName: $env->getClusterName(),
-                envName: $env->getEnvironmentName(),
+                envName: $env->getEnvName(),
             );
         }
 

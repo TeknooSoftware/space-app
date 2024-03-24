@@ -81,7 +81,7 @@ class PersistCredentialsTest extends TestCase
             actual: ($this->persistCredentials)(
                 manager: $this->createMock(ManagerInterface::class),
                 object: $this->createMock(ObjectInterface::class),
-                environmentName: 'foo',
+                envName: 'foo',
                 kubeNamespace: 'foo',
                 serviceName: 'foo',
                 roleName: 'foo',

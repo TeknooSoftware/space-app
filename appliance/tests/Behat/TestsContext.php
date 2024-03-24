@@ -861,7 +861,7 @@ class TestsContext implements Context
         $accountEnvironments = new AccountEnvironment(
             account: $account,
             clusterName: 'Demo Kube Cluster',
-            environmentName: 'Dev',
+            envName: 'Dev',
             namespace: $accountNamespace . '-dev',
             serviceAccountName:  $sac . 'dev-account',
             roleName: $sac . 'dev-role',
@@ -877,7 +877,7 @@ class TestsContext implements Context
         $accountEnvironments = new AccountEnvironment(
             account: $account,
             clusterName: 'Demo Kube Cluster',
-            environmentName: 'prod',
+            envName: 'prod',
             namespace: $accountNamespace . '-prod',
             serviceAccountName:  $sac . 'prod-account',
             roleName: $sac . 'prod-role',
@@ -1225,7 +1225,7 @@ class TestsContext implements Context
 
             Assert::assertEquals(
                 $expVar['environment'],
-                $var->getEnvironmentName(),
+                $var->getEnvName(),
             );
         }
     }
@@ -1257,7 +1257,7 @@ class TestsContext implements Context
                 id: $var['id'],
                 name: $var['name'],
                 value: $var['value'],
-                environmentName: $var['environment'],
+                envName: $var['environment'],
                 secret: !empty($var['secret']),
             );
 
@@ -1677,7 +1677,7 @@ class TestsContext implements Context
                 id: null,
                 name: 'var ' . $i,
                 value: 'value ' . $i,
-                environmentName: 'prod',
+                envName: 'prod',
                 secret: ($i % 3) === 0
             );
 
@@ -1964,7 +1964,7 @@ class TestsContext implements Context
 
             Assert::assertEquals(
                 $expVar['environment'],
-                $var->getEnvironmentName(),
+                $var->getEnvName(),
             );
         }
     }
@@ -1981,7 +1981,7 @@ class TestsContext implements Context
                 id: $var['id'],
                 name: $var['name'],
                 value: $var['value'],
-                environmentName: $var['environment'],
+                envName: $var['environment'],
                 secret: !empty($var['secret']),
             );
 

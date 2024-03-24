@@ -337,7 +337,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to edit a project's variables:
       | field                                      | value            |
-      | project_vars.sets.prod.environmentName     | prod             |
+      | project_vars.sets.prod.envName     | prod             |
       | project_vars.sets.prod.variables.20.name   | DB_NAME          |
       | project_vars.sets.prod.variables.20.value  | space_project_db |
       | project_vars.sets.prod.variables.21.name   | DB_PWD           |
@@ -364,7 +364,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to edit a project's variables:
       | field                                      | value            |
-      | project_vars.sets.prod.environmentName     | prod             |
+      | project_vars.sets.prod.envName     | prod             |
       | project_vars.sets.prod.variables.20.name   | DB_NAME          |
       | project_vars.sets.prod.variables.20.value  | space_project_db |
       | project_vars.sets.prod.variables.21.name   | DB_PWD           |
@@ -389,7 +389,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to edit a project's variables with a json body:
       | field                        | value            |
-      | sets.prod.environmentName    | prod             |
+      | sets.prod.envName    | prod             |
       | sets.prod.variables.0.name   | DB_NAME          |
       | sets.prod.variables.0.value  | space_project_db |
       | sets.prod.variables.1.name   | DB_PWD           |
@@ -416,7 +416,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to edit a project's variables with a json body:
       | field                        | value            |
-      | sets.prod.environmentName    | prod             |
+      | sets.prod.envName    | prod             |
       | sets.prod.variables.0.name   | DB_NAME          |
       | sets.prod.variables.0.value  | space_project_db |
       | sets.prod.variables.1.name   | DB_PWD           |

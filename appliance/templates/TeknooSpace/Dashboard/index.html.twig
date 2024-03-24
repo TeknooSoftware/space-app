@@ -46,7 +46,7 @@
                         <select name="cluster" class="form-select form-control" onchange="form.submit()">
                             {%- if accountWallet is not empty -%}
                                 {%- for accountEnv in accountWallet -%}
-                                    {% set currentValue = accountEnv.clusterName ~ '~' ~ accountEnv.environmentName %}
+                                    {% set currentValue = accountEnv.clusterName ~ '~' ~ accountEnv.envName %}
                                     {% if clusterSelectedStr is empty %}
                                         {% set clusterSelectedStr = currentValue %}
                                     {% endif %}
@@ -55,11 +55,11 @@
                                                 selected="selected"
                                                 {% set clusterSelected = clustersCatalog.getCluster(accountEnv.clusterName) %}
                                                 {% set clusterSlug = clusterSelected.sluggyName %}
-                                                {% set envName = accountEnv.environmentName %}
+                                                {% set envName = accountEnv.envName %}
                                                 {% set namespace = accountEnv.namespace %}
                                             {% endif %}
                                             value="{{ currentValue }}">
-                                        {{ accountEnv.clusterName }} - {{ accountEnv.environmentName }}
+                                        {{ accountEnv.clusterName }} - {{ accountEnv.envName }}
                                     </option>
                                 {%- endfor -%}
                             {%- else -%}

@@ -1,5 +1,5 @@
 space_job_new:
-    path: '/project/{projectId}/new-job'
+    path: '/project/{projectId}/job/new'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
     defaults:
@@ -14,7 +14,7 @@ space_job_new:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_restart:
-    path: '/project/{projectId}/restart-job/{jobId}'
+    path: '/project/{projectId}/{jobId}/restart'
     methods: ['GET']
     schemes: ['https']
     defaults:
@@ -68,7 +68,7 @@ space_job_list:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_delete:
-    path: '/job/delete/{id}'
+    path: '/job/{id}/delete'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

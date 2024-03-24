@@ -60,9 +60,9 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         $environments = [];
         $varsSet = [];
         foreach ($data->variables as $variable) {
-            $environmentName = $variable->getEnvironmentName();
-            if (!isset($environments[$environmentName])) {
-                $environments[$environmentName] = new JobVarsSet($environmentName);
+            $envName = $variable->getEnvName();
+            if (!isset($environments[$envName])) {
+                $environments[$envName] = new JobVarsSet($envName);
             }
 
             $value = '';
@@ -71,7 +71,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
             }
 
             $vName = $variable->getName();
-            $varsSet[$environmentName][$vName] = new JobVar(
+            $varsSet[$envName][$vName] = new JobVar(
                 id: $variable->getId(),
                 name: $vName,
                 value: $value,
@@ -96,7 +96,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
     ): AccountPersistedVariable|PersistedVariable;
 
@@ -119,7 +119,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         $formArray = iterator_to_array($forms);
         foreach ($formArray['sets']->getData() as $set) {
             /** @var JobVarsSet $set */
-            $environmentName = $set->environmentName;
+            $envName = $set->envName;
             foreach ($set->variables as $variable) {
                 $value = $variable->value;
                 if (
@@ -136,7 +136,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
                     id: $variable->getId(),
                     name: $variable->name,
                     value: $value,
-                    environmentName: $environmentName,
+                    envName: $envName,
                     secret: $variable->secret,
                 );
 
