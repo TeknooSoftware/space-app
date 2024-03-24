@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\Kubernetes\Model\ResourceQuota;
+use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
@@ -42,6 +43,11 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
  */
 class CreateQuota
 {
+    /**
+     * @use InsertModelTrait<ResourceQuota>
+     */
+    use InsertModelTrait;
+
     private const QUOTA_SUFFIX = '-quota';
 
     public function __construct(
@@ -100,7 +106,11 @@ class CreateQuota
                     quotas: $quotas,
                 );
 
-                $client->resourceQuotas()->apply($model);
+                $this->insertModel(
+                    $client->resourceQuotas(),
+                    $model,
+                    true,
+                );
 
                 $this->datesService->passMeTheDate(
                     static function (DateTimeInterface $dateTime) use ($accountHistory, $name) {

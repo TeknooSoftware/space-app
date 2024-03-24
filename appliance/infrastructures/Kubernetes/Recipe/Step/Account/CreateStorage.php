@@ -79,7 +79,7 @@ class CreateStorage
 
     public function __invoke(
         ManagerInterface $manager,
-        string $registryNamespace,
+        string $kubeNamespace,
         string $accountNamespace,
         AccountHistory $accountHistory,
         string $storageSizeToClaim,
@@ -88,13 +88,13 @@ class CreateStorage
     ): self {
         $clusterRegistry = $clusterCatalog->getClusterForRegistry();
         $client = $clusterRegistry->getKubernetesRegistryClient();
-        $client->setNamespace($registryNamespace);
+        $client->setNamespace($kubeNamespace);
 
         $pvcName = $accountRegistry?->getPersistentVolumeClaimName() ?? $accountNamespace . self::PVC_CLASS_SUFFIX;
 
         $persistentVolumeClaim = $this->createPersistentVolumeClaim(
             $pvcName,
-            $registryNamespace,
+            $kubeNamespace,
             $storageSizeToClaim,
             $clusterRegistry->storageProvisioner,
         );

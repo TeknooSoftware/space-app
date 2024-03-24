@@ -27,21 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Cookbook;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 
 /**
@@ -70,8 +63,6 @@ class AccountRegistryInstallTest extends TestCase
 
     private PrepareAccountErrorHandler|MockObject $errorHandler;
 
-    private ObjectAccessControlInterface|MockObject $objectAccessControlInterface;
-
     private string $defaultStorageSizeToClaim;
 
     /**
@@ -87,7 +78,6 @@ class AccountRegistryInstallTest extends TestCase
         $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
         $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredential::class);
         $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
-        $this->objectAccessControlInterface = $this->createMock(ObjectAccessControlInterface::class);
         $this->defaultStorageSizeToClaim = '42';
 
         $this->accountInstall = new AccountRegistryInstall(
@@ -97,7 +87,6 @@ class AccountRegistryInstallTest extends TestCase
             createRegistryAccount: $this->createRegistryAccount,
             persistRegistryCredential: $this->persistRegistryCredentials,
             errorHandler: $this->errorHandler,
-            objectAccessControl: $this->objectAccessControlInterface,
             defaultStorageSizeToClaim: $this->defaultStorageSizeToClaim,
         );
     }

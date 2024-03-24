@@ -87,7 +87,7 @@ class CreateStorageTest extends TestCase
             CreateStorage::class,
             ($this->createStorage)(
                 manager: $this->createMock(ManagerInterface::class),
-                registryNamespace: 'foo',
+                kubeNamespace: 'foo',
                 accountNamespace: 'foo',
                 accountHistory: $this->createMock(AccountHistory::class),
                 storageSizeToClaim: 'foo',

@@ -44,7 +44,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
-    And a Kubernetes namespace "behat" is created and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
 
   Scenario: Create a account from the API with subscription plan
     Given A Space app instance
@@ -74,7 +74,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
     And with the subscription plan "test-1"
-    And a Kubernetes namespace "behat" is created and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
 
   Scenario: Create a account from the API with a json body
     Given A Space app instance
@@ -102,7 +102,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
-    And a Kubernetes namespace "behat" is created and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
 
   Scenario: Create a account from the API with a json body with subscription plan
     Given A Space app instance
@@ -132,7 +132,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
     And with the subscription plan "test-1"
-    And a Kubernetes namespace "behat" is created and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
 
   Scenario: Get an account from the API
     Given A Space app instance

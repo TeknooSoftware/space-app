@@ -57,7 +57,6 @@ class AccountRegistryInstall implements CookbookInterface
         private readonly CreateRegistryDeployment $createRegistryAccount,
         private readonly PersistRegistryCredential $persistRegistryCredential,
         private readonly PrepareAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
         string $defaultStorageSizeToClaim,
     ) {
         $this->fill($recipe);
@@ -72,15 +71,13 @@ class AccountRegistryInstall implements CookbookInterface
         $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
         $recipe = $recipe->require(new Ingredient('string', 'storageSizeToClaim'));
 
-        $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);
+        $recipe = $recipe->cook($this->createNamespace, CreateNamespace::class, [], 10);
 
-        $recipe = $recipe->cook($this->createNamespace, CreateNamespace::class, [], 20);
+        $recipe = $recipe->cook($this->createStorage, CreateStorage::class, [], 20);
 
-        $recipe = $recipe->cook($this->createStorage, CreateStorage::class, [], 30);
+        $recipe = $recipe->cook($this->createRegistryAccount, CreateRegistryDeployment::class, [], 30);
 
-        $recipe = $recipe->cook($this->createRegistryAccount, CreateRegistryDeployment::class, [], 40);
-
-        $recipe = $recipe->cook($this->persistRegistryCredential, PersistRegistryCredential::class, [], 50);
+        $recipe = $recipe->cook($this->persistRegistryCredential, PersistRegistryCredential::class, [], 40);
 
         $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
 

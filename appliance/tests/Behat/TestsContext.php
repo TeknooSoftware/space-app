@@ -3911,15 +3911,10 @@ class TestsContext implements Context
     }
 
     /**
-     * @Then a Kubernetes namespace :namespace is created and populated
+     * @Then a Kubernetes namespace dedicated to registry for :namespace is applied and populated
      */
-    public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace): void
+    public function aKubernetesNamespaceDedicatedToRegistryIsAppliedAndPopulated(string $namespace): void
     {
-        $quotasAllowed = null;
-        if (!empty($this->quotasMode)) {
-            $quotasAllowed = $this->planCatalog->getSubscriptionPlan($this->quotasMode);
-        }
-
         $expected = trim(
             (new ManifestGenerator())->registryCreation(
                 $namespace,
@@ -3927,22 +3922,47 @@ class TestsContext implements Context
         );
 
         Assert::assertNotEmpty(
-            $this->manifests["namespaces/space-client-$namespace/secrets"],
+            $this->manifests["namespaces/space-registry-$namespace/secrets"],
+        );
+
+        foreach ($this->manifests["namespaces/space-registry-$namespace/secrets"] as &$secret) {
+            if (!empty($secret['data']['htpasswd'])) {
+                $secret['data']['htpasswd'] = '===';
+            }
+        }
+
+        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        Assert::assertEquals(
+            $expected,
+            $json,
+        );
+    }
+
+    /**
+     * @Then a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated
+     */
+    public function aKubernetesNamespaceDedicatedToClusterIsAppliedAndPopulated(string $namespace): void
+    {
+        $quotasAllowed = null;
+        if (!empty($this->quotasMode)) {
+            $quotasAllowed = $this->planCatalog->getSubscriptionPlan($this->quotasMode);
+        }
+
+        $expected = trim(
+            (new ManifestGenerator())->namespaceCreation(
+                $namespace,
+                $this->quotasMode,
+                $quotasAllowed?->getQuotas() ?? [],
+            )
         );
 
         Assert::assertNotEmpty(
-            $this->manifests["namespaces/space-registry-$namespace/secrets"],
+            $this->manifests["namespaces/space-client-$namespace/secrets"],
         );
 
         foreach ($this->manifests["namespaces/space-client-$namespace/secrets"] as &$secret) {
             if (!empty($secret['data']['.dockerconfigjson'])) {
                 $secret['data']['.dockerconfigjson'] = '===';
-            }
-        }
-
-        foreach ($this->manifests["namespaces/space-registry-$namespace/secrets"] as &$secret) {
-            if (!empty($secret['data']['htpasswd'])) {
-                $secret['data']['htpasswd'] = '===';
             }
         }
 

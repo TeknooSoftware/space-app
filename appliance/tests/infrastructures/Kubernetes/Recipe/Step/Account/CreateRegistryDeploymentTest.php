@@ -135,7 +135,6 @@ class CreateRegistryDeploymentTest extends TestCase
             ($this->createRegistryAccount)(
                 manager: $this->createMock(ManagerInterface::class),
                 kubeNamespace: 'foo',
-                registryNamespace: 'foo',
                 accountNamespace: 'bar',
                 accountHistory: $this->createMock(AccountHistory::class),
                 persistentVolumeClaimName: 'foo',

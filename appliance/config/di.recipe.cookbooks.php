@@ -69,6 +69,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryInsta
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentReinstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateDockerSecret;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
@@ -174,6 +175,7 @@ return array(
             get(CreateQuota::class),
             get(CreateRole::class),
             get(CreateRoleBinding::class),
+            get(CreateDockerSecret::class),
             get(CreateSecretServiceAccountToken::class),
             get(PersistEnvironment::class),
             get(PrepareAccountErrorHandler::class),
@@ -206,7 +208,6 @@ return array(
             get(CreateRegistryDeployment::class),
             get(PersistRegistryCredential::class),
             get(PrepareAccountErrorHandler::class),
-            get(ObjectAccessControlInterface::class),
             get('teknoo.east.paas.default_storage_size'),
         ),
 
@@ -235,6 +236,7 @@ return array(
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
             get(LoadEnvironments::class),
+            get(ReloadNamespace::class),
             get(CreateQuota::class),
             get(UpdateAccountHistory::class),
             get(ReinstallAccountErrorHandler::class),

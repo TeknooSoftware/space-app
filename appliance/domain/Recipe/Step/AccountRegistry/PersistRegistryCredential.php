@@ -54,7 +54,7 @@ class PersistRegistryCredential
     public function __invoke(
         ManagerInterface $manager,
         ObjectInterface $object,
-        string $registryNamespace,
+        string $kubeNamespace,
         string $registryUrl,
         string $registryAccountName,
         string $registryConfigName,
@@ -73,7 +73,7 @@ class PersistRegistryCredential
 
         $accountRegistry = new AccountRegistry(
             account: $object,
-            registryNamespace: $registryNamespace,
+            registryNamespace: $kubeNamespace,
             registryUrl: $registryUrl,
             registryAccountName: $registryAccountName,
             registryConfigName: $registryConfigName,

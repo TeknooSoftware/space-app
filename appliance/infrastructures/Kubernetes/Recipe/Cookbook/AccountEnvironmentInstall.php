@@ -32,6 +32,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateDockerSecret;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
@@ -41,6 +42,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAcc
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
@@ -62,6 +64,7 @@ class AccountEnvironmentInstall implements CookbookInterface
         private readonly CreateQuota $createQuota,
         private readonly CreateRole $createRole,
         private readonly CreateRoleBinding $createRoleBinding,
+        private readonly CreateDockerSecret $createDockerSecret,
         private readonly CreateSecretServiceAccountToken $createSecret,
         private readonly PersistEnvironment $persistCredentials,
         private readonly PrepareAccountErrorHandler $errorHandler,
@@ -75,6 +78,7 @@ class AccountEnvironmentInstall implements CookbookInterface
         $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
         $recipe = $recipe->require(new Ingredient(Account::class));
         $recipe = $recipe->require(new Ingredient(AccountHistory::class));
+        $recipe = $recipe->require(new Ingredient(AccountRegistry::class));
         $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
         $recipe = $recipe->require(new Ingredient('string', 'environmentName'));
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
@@ -93,9 +97,11 @@ class AccountEnvironmentInstall implements CookbookInterface
 
         $recipe = $recipe->cook($this->createRoleBinding, CreateRoleBinding::class, [], 70);
 
-        $recipe = $recipe->cook($this->createSecret, CreateSecretServiceAccountToken::class, [], 80);
+        $recipe = $recipe->cook($this->createDockerSecret, CreateDockerSecret::class, [], 80);
 
-        $recipe = $recipe->cook($this->persistCredentials, PersistEnvironment::class, [], 90);
+        $recipe = $recipe->cook($this->createSecret, CreateSecretServiceAccountToken::class, [], 90);
+
+        $recipe = $recipe->cook($this->persistCredentials, PersistEnvironment::class, [], 100);
 
         $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
 

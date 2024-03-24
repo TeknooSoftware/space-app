@@ -32,6 +32,7 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateDockerSecret;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
@@ -73,6 +74,8 @@ class AccountEnvironmentInstallTest extends TestCase
 
     private CreateRoleBinding|MockObject $createRoleBinding;
 
+    private CreateDockerSecret|MockObject $createDockerSecret;
+
     private CreateSecretServiceAccountToken|MockObject $createSecret;
 
     private PersistEnvironment|MockObject $persistCredentials;
@@ -95,6 +98,7 @@ class AccountEnvironmentInstallTest extends TestCase
         $this->createQuota = $this->createMock(CreateQuota::class);
         $this->createRole = $this->createMock(CreateRole::class);
         $this->createRoleBinding = $this->createMock(CreateRoleBinding::class);
+        $this->createDockerSecret = $this->createMock(CreateDockerSecret::class);
         $this->createSecret = $this->createMock(CreateSecretServiceAccountToken::class);
         $this->persistCredentials = $this->createMock(PersistEnvironment::class);
         $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
@@ -108,6 +112,7 @@ class AccountEnvironmentInstallTest extends TestCase
             createQuota: $this->createQuota,
             createRole: $this->createRole,
             createRoleBinding: $this->createRoleBinding,
+            createDockerSecret: $this->createDockerSecret,
             createSecret: $this->createSecret,
             persistCredentials: $this->persistCredentials,
             errorHandler: $this->errorHandler,

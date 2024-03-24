@@ -80,9 +80,6 @@ class CreateRegistryDeployment
         private DatesService $datesService,
         private bool $preferRealDate,
         private string $ingressClass,
-        private string $spaceRegistryUrl,
-        private string $spaceRegistryUsername,
-        private string $spaceRegistryPwd,
     ) {
     }
 
@@ -265,50 +262,6 @@ class CreateRegistryDeployment
          ]);
     }
 
-    private function createDockerConfigSecret(
-        string $namespace,
-        string $name,
-        string $url,
-        string $username,
-        #[SensitiveParameter]
-        string $password,
-    ): Secret {
-        return new Secret([
-            'metadata' => [
-                'name' => $name,
-                'namespace' => $namespace,
-                'labels' => [
-                    'name' => $name,
-                    'group' => self::LABEL_GROUP,
-                ],
-            ],
-            'data' => [
-                '.dockerconfigjson' => base64_encode(
-                    json_encode(
-                        [
-                            'auths' => [
-                                $url => [
-                                    'username' => $username,
-                                    'password' => $password,
-                                    'auth' => base64_encode($username . ':' . $password)
-                                ],
-                                $this->spaceRegistryUrl => [
-                                    'username' => $this->spaceRegistryUsername,
-                                    'password' => $this->spaceRegistryPwd,
-                                    'auth' => base64_encode(
-                                        string: $this->spaceRegistryUsername . ':' . $this->spaceRegistryPwd,
-                                    ),
-                                ],
-                            ],
-                        ],
-                        JSON_THROW_ON_ERROR
-                    )
-                )
-            ],
-            'type' => 'kubernetes.io/dockerconfigjson',
-        ]);
-    }
-
     private function createRegistryAuthSecret(
         string $namespace,
         string $name,
@@ -342,7 +295,6 @@ class CreateRegistryDeployment
     private function configureRegistry(
         ManagerInterface $manager,
         string $kubeNamespace,
-        string $registryNamespace,
         string $accountNamespace,
         string $persistentVolumeClaimName,
         AccountHistory $accountHistory,
@@ -360,7 +312,7 @@ class CreateRegistryDeployment
         $authSecretName = $accountNamespace . '-registry-auth-secret';
 
         $authSecret = $this->createRegistryAuthSecret(
-            $registryNamespace,
+            $kubeNamespace,
             $authSecretName,
             $username,
             $password
@@ -369,7 +321,7 @@ class CreateRegistryDeployment
         $this->insertModel($client->secrets(), $authSecret, true);
 
         $replication = $this->createRegistryReplication(
-            $registryNamespace,
+            $kubeNamespace,
             $podName,
             $authSecretName,
             $persistentVolumeClaimName
@@ -395,7 +347,7 @@ class CreateRegistryDeployment
         }
 
         $service = $this->createRegistryService(
-            $registryNamespace,
+            $kubeNamespace,
             $serviceName,
             $podName
         );
@@ -403,7 +355,7 @@ class CreateRegistryDeployment
         $this->insertModel($client->services(), $service, true);
 
         $ingress = $this->createRegistryIngress(
-            $registryNamespace,
+            $kubeNamespace,
             $ingressName,
             $registryUrl,
             $serviceName,
@@ -411,22 +363,6 @@ class CreateRegistryDeployment
         );
 
         $this->insertModel($client->ingresses(), $ingress, true);
-
-        $dockerConfigSecret = $this->createDockerConfigSecret(
-            $kubeNamespace,
-            $dockerConfigSecretName,
-            $registryUrl,
-            $username,
-            $password
-        );
-
-        foreach ($clusterCatalog as $cluster) {
-            $this->insertModel(
-                $cluster->getKubernetesClient()->secrets(),
-                $dockerConfigSecret,
-                true,
-            );
-        }
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory, $registryUrl, $username) {
@@ -454,7 +390,6 @@ class CreateRegistryDeployment
     public function __invoke(
         ManagerInterface $manager,
         string $kubeNamespace,
-        string $registryNamespace,
         string $accountNamespace,
         AccountHistory $accountHistory,
         ClusterCatalog $clusterCatalog,
@@ -462,13 +397,12 @@ class CreateRegistryDeployment
     ): self {
         $clusterRegistry = $clusterCatalog->getClusterForRegistry();
         $client = $clusterRegistry->getKubernetesRegistryClient();
-        $client->setNamespace($registryNamespace);
+        $client->setNamespace($kubeNamespace);
 
         try {
             $this->configureRegistry(
                 manager: $manager,
                 kubeNamespace: $kubeNamespace,
-                registryNamespace: $registryNamespace,
                 accountNamespace: $accountNamespace,
                 persistentVolumeClaimName: $persistentVolumeClaimName,
                 accountHistory: $accountHistory,

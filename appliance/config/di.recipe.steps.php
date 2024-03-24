@@ -47,6 +47,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateDockerSecret;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
@@ -194,6 +195,13 @@ return [
             datesService: $container->get(DatesService::class),
             preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
             ingressClass: $container->get('teknoo.east.paas.kubernetes.ingress.default_ingress_class'),
+        );
+    },
+
+    CreateDockerSecret::class => static function (ContainerInterface $container): CreateDockerSecret {
+        return new CreateDockerSecret(
+            datesService: $container->get(DatesService::class),
+            preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
             spaceRegistryUrl: $container->get('teknoo.space.kubernetes.oci_space_global_registry.url'),
             spaceRegistryUsername: $container->get('teknoo.space.kubernetes.oci_space_global_registry.username'),
             spaceRegistryPwd: $container->get('teknoo.space.kubernetes.oci_space_global_registry.pwd'),
