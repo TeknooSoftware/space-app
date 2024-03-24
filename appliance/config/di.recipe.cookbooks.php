@@ -51,6 +51,7 @@ use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewJobErrorsHandlersInterf
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewJobStepsInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\NewProjectEndPointStepsInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Additional\RunJobStepsInterface;
+use Teknoo\Recipe\Bowl\RecipeBowl;
 use Teknoo\Recipe\RecipeInterface as OriginalRecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
@@ -63,10 +64,11 @@ use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountReinstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
@@ -108,12 +110,13 @@ use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
-use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
-use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
+use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -162,24 +165,23 @@ return array(
             get('teknoo.east.common.cookbook.default_error_template'),
         ),
 
-    AccountInstall::class => create()
+    AccountEnvironmentInstall::class => create()
         ->constructor(
             get(OriginalRecipeInterface::class),
             get(CreateNamespace::class),
+            get(SelectClusterConfig::class),
             get(CreateServiceAccount::class),
             get(CreateQuota::class),
             get(CreateRole::class),
             get(CreateRoleBinding::class),
             get(CreateSecretServiceAccountToken::class),
-            get(CreateStorage::class),
-            get(CreateRegistryDeployment::class),
-            get(PersistEnvironments::class),
-            get(PersistRegistryCredentials::class),
+            get(PersistEnvironment::class),
             get(PrepareAccountErrorHandler::class),
+            get(ObjectAccessControlInterface::class),
             get('teknoo.east.paas.default_storage_size'),
         ),
 
-    AccountReinstall::class => create()
+    AccountEnvironmentReinstall::class => create()
         ->constructor(
             get(OriginalRecipeInterface::class),
             get(LoadObject::class),
@@ -187,11 +189,38 @@ return array(
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
             get(LoadEnvironments::class),
-            get(LoadRegistryCredentials::class),
-            get(RemoveEnvironments::class),
-            get(RemoveRegistryCredentials::class),
-            get(SetAccountNamespace::class),
-            get(AccountInstall::class),
+            get(ReloadNamespace::class),
+            get(RemoveEnvironment::class),
+            get(AccountEnvironmentInstall::class),
+            get(UpdateAccountHistory::class),
+            get(ReinstallAccountErrorHandler::class),
+            get(ObjectAccessControlInterface::class),
+            get('teknoo.east.paas.default_storage_size'),
+        ),
+
+    AccountRegistryInstall::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(CreateNamespace::class),
+            get(CreateStorage::class),
+            get(CreateRegistryDeployment::class),
+            get(PersistRegistryCredential::class),
+            get(PrepareAccountErrorHandler::class),
+            get(ObjectAccessControlInterface::class),
+            get('teknoo.east.paas.default_storage_size'),
+        ),
+
+    AccountRegistryReinstall::class => create()
+        ->constructor(
+            get(OriginalRecipeInterface::class),
+            get(LoadObject::class),
+            get(AccountPrepareRedirection::class),
+            get(SetRedirectClientAtEnd::class),
+            get(LoadHistory::class),
+            get(LoadRegistryCredential::class),
+            get(ReloadNamespace::class),
+            get(RemoveRegistryCredential::class),
+            get(AccountRegistryInstall::class),
             get(UpdateAccountHistory::class),
             get(ReinstallAccountErrorHandler::class),
             get(ObjectAccessControlInterface::class),
@@ -206,30 +235,10 @@ return array(
             get(SetRedirectClientAtEnd::class),
             get(LoadHistory::class),
             get(LoadEnvironments::class),
-            get(ReloadNamespace::class),
             get(CreateQuota::class),
             get(UpdateAccountHistory::class),
             get(ReinstallAccountErrorHandler::class),
             get(ObjectAccessControlInterface::class),
-        ),
-
-    AccountRegistryReinstall::class => create()
-        ->constructor(
-            get(OriginalRecipeInterface::class),
-            get(LoadObject::class),
-            get(AccountPrepareRedirection::class),
-            get(SetRedirectClientAtEnd::class),
-            get(LoadHistory::class),
-            get(LoadRegistryCredentials::class),
-            get(ReloadNamespace::class),
-            get(RemoveRegistryCredentials::class),
-            get(CreateStorage::class),
-            get(CreateRegistryDeployment::class),
-            get(PersistRegistryCredentials::class),
-            get(UpdateAccountHistory::class),
-            get(ReinstallAccountErrorHandler::class),
-            get(ObjectAccessControlInterface::class),
-            get('teknoo.east.paas.default_storage_size'),
         ),
 
     NewAccountEndPointStepsInterface::class => decorate(
@@ -241,6 +250,8 @@ return array(
             $previous->add(55, $container->get(SetAccountNamespace::class));
             $previous->add(55, $container->get(SetQuota::class));
             $previous->add(61, $container->get(CreateAccountHistory::class));
+            $previous->add(62, new RecipeBowl($container->get(AccountRegistryInstall::class), 0));
+            $previous->add(69, $container->get(UpdateAccountHistory::class));
 
             return $previous;
         }
@@ -251,12 +262,12 @@ return array(
             NewProjectEndPointStepsInterface $previous,
             ContainerInterface $container
         ): NewProjectEndPointStepsInterface {
-            $previous->add(06, $container->get(LoadRegistryCredentials::class));
+            $previous->add(06, $container->get(LoadRegistryCredential::class));
             $previous->add(06, $container->get(LoadEnvironments::class));
             $previous->add(07, $container->get(CreateResumes::class));
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(15, $container->get(PrepareProject::class));
-            $previous->add(57, $container->get(LoadRegistryCredentials::class));
+            $previous->add(57, $container->get(LoadRegistryCredential::class));
             $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
             $previous->add(59, $container->get(UpdateProjectCredentialsFromAccount::class));
             $previous->add(69, $container->get(SpaceProjectPrepareRedirection::class));
@@ -277,6 +288,7 @@ return array(
             $previous->add(58, $container->get(SetAccountNamespace::class));
             $previous->add(58, $container->get(SetQuota::class));
             $previous->add(59, $container->get(CreateAccountHistory::class));
+            $previous->add(69, $container->get(UpdateAccountHistory::class));
 
             return $previous;
         }
@@ -301,7 +313,7 @@ return array(
         static function (NewJobStepsInterface $previous, ContainerInterface $container): NewJobStepsInterface {
             $previous->add(51, $container->get(LoadAccountFromProject::class));
             $previous->add(52, $container->get(LoadEnvironments::class));
-            $previous->add(52, $container->get(LoadRegistryCredentials::class));
+            $previous->add(52, $container->get(LoadRegistryCredential::class));
             $previous->add(53, $container->get(JobSetDefaults::class));
             $previous->add(65, $container->get(JobUpdaterNotifier::class));
             $previous->add(75, $container->get(PersistJobVar::class));
@@ -477,7 +489,7 @@ return array(
             get(ObjectAccessControlInterface::class),
             get(LoadAccountFromProject::class),
             get(LoadEnvironments::class),
-            get(LoadRegistryCredentials::class),
+            get(LoadRegistryCredential::class),
             get(UpdateProjectCredentialsFromAccount::class),
             get(SaveObject::class),
             get(SpaceProjectPrepareRedirection::class),

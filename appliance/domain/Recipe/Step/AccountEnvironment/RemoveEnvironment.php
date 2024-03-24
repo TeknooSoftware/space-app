@@ -23,10 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountRegistry;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
-use Teknoo\Space\Object\Persisted\AccountRegistry;
-use Teknoo\Space\Writer\AccountRegistryWriter;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,18 +34,18 @@ use Teknoo\Space\Writer\AccountRegistryWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class RemoveRegistryCredentials
+class RemoveEnvironment
 {
     public function __construct(
-        private AccountRegistryWriter $writer,
+        private AccountEnvironmentWriter $writer,
     ) {
     }
 
     public function __invoke(
-        ?AccountRegistry $registry = null
+        ?AccountEnvironment $accountEnvironment = null
     ): self {
-        if ($registry) {
-            $this->writer->remove($registry);
+        if ($accountEnvironment) {
+            $this->writer->remove($accountEnvironment);
         }
 
         return $this;

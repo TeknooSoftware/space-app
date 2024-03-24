@@ -23,11 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
-use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -35,35 +35,20 @@ use Teknoo\East\Paas\Object\Account;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ReloadNamespace
+class ReloadEnvironement
 {
     public function __invoke(
         ManagerInterface $manager,
-        Account $account,
+        AccountWallet $wallet,
+        string $clusterName,
+        string $environmentName,
     ): self {
-        $account->requireAccountNamespace(
-            new class (
-                $manager,
-            ) implements AccountAwareInterface {
-                public function __construct(
-                    public ManagerInterface $manager,
-                ) {
-                }
-
-                public function passAccountNamespace(
-                    Account $account,
-                    ?string $name,
-                    ?string $namespace,
-                    ?string $prefixNamespace,
-                ): AccountAwareInterface {
-                    $this->manager->updateWorkPlan([
-                        'accountNamespace' => $namespace,
-                    ]);
-
-                    return $this;
-                }
-            }
-        );
+        $environment = $wallet->get($clusterName, $environmentName);
+        if ($environment) {
+            $manager->updateWorkPlan([
+                AccountEnvironment::class => $environment,
+            ]);
+        }
 
         return $this;
     }

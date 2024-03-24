@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
+namespace Teknoo\Space\Recipe\Step\AccountRegistry;
 
 use DateTimeInterface;
 use SensitiveParameter;
@@ -31,11 +31,10 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\AccountHistory;
-use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use Teknoo\Space\Writer\AccountRegistryWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -43,10 +42,10 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class PersistEnvironments
+class PersistRegistryCredential
 {
     public function __construct(
-        private AccountEnvironmentWriter $writer,
+        private AccountRegistryWriter $writer,
         private DatesService $datesService,
         private bool $preferRealDate,
     ) {
@@ -55,16 +54,14 @@ class PersistEnvironments
     public function __invoke(
         ManagerInterface $manager,
         ObjectInterface $object,
-        string $environmentName,
-        string $namespace,
-        string $serviceName,
-        string $roleName,
-        string $roleBindingName,
-        string $caCertificate,
+        string $registryNamespace,
+        string $registryUrl,
+        string $registryAccountName,
+        string $registryConfigName,
         #[SensitiveParameter]
-        string $token,
+        string $registryPassword,
+        string $persistentVolumeClaimName,
         AccountHistory $accountHistory,
-        ClusterConfig $clusterConfig,
     ): self {
         if ($object instanceof SpaceAccount) {
             $object = $object->account;
@@ -74,26 +71,22 @@ class PersistEnvironments
             return $this;
         }
 
-        $accountEnvironment = new AccountEnvironment(
+        $accountRegistry = new AccountRegistry(
             account: $object,
-            clusterName: $clusterConfig->name,
-            environmentName: $environmentName,
-            namespace: $namespace,
-            serviceAccountName: $serviceName,
-            roleName: $roleName,
-            roleBindingName: $roleBindingName,
-            caCertificate: $caCertificate,
-            clientCertificate: '',
-            clientKey: '',
-            token: $token,
+            registryNamespace: $registryNamespace,
+            registryUrl: $registryUrl,
+            registryAccountName: $registryAccountName,
+            registryConfigName: $registryConfigName,
+            registryPassword: $registryPassword,
+            persistentVolumeClaimName: $persistentVolumeClaimName,
         );
 
-        $this->writer->save($accountEnvironment);
+        $this->writer->save($accountRegistry);
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory) {
                 $accountHistory->addToHistory(
-                    'teknoo.space.text.account.kubernetes.credential_persisted',
+                    'teknoo.space.text.account.kubernetes.registry_persisted',
                     $dateTime
                 );
             },
@@ -101,14 +94,12 @@ class PersistEnvironments
         );
 
         $manager->updateWorkPlan([
-            AccountEnvironment::class => $accountEnvironment,
+            AccountRegistry::class => $accountRegistry,
         ]);
 
         $manager->cleanWorkPlan(
-            'caCertificate',
-            'token',
-            'clientCertificate',
-            'clientKey',
+            'registryAccountName',
+            'registryPassword',
         );
 
         return $this;

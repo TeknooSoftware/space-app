@@ -31,6 +31,9 @@ parameters:
             message: '#CreateRegistryDeployment::insertModel\(\) expects#'
             path:  infrastructures/Kubernetes/Recipe/Step/Account/CreateRegistryDeployment.php
         -
+            message: '#to string#'
+            path:  infrastructures/Symfony/Form/Type/
+        -
             message: '#expects (string\|null|string|bool|array<[, a-zA-Z\\]+>|[, a-zA-Z\\|]+), mixed given#'
             path:  infrastructures/Symfony/Form/Type/
         -
@@ -39,31 +42,3 @@ parameters:
         -
             message: '#on mixed#'
             path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
-services:
-    -
-        class: Teknoo\States\PHPStan\MethodsClassExtension
-        arguments:
-            parser: @defaultAnalysisParser
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: Teknoo\States\PHPStan\Analyser\ASTVisitor
-        arguments:
-            parser: @defaultAnalysisParser
-
-    -
-        class: Teknoo\States\PHPStan\Analyser\NodeScopeResolver
-        autowired: PHPStan\Analyser\NodeScopeResolver
-        arguments:
-            parser: @defaultAnalysisParser
-            reflector: @nodeScopeResolverReflector
-            polluteScopeWithLoopInitialAssignments: %polluteScopeWithLoopInitialAssignments%
-            polluteScopeWithAlwaysIterableForeach: %polluteScopeWithAlwaysIterableForeach%
-            earlyTerminatingMethodCalls: %earlyTerminatingMethodCalls%
-            earlyTerminatingFunctionCalls: %earlyTerminatingFunctionCalls%
-            universalObjectCratesClasses: %universalObjectCratesClasses%
-            implicitThrows: %exceptions.implicitThrows%
-            treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
-            detectDeadTypeInMultiCatch: %featureToggles.detectDeadTypeInMultiCatch%
-            paramOutType: %featureToggles.paramOutType%

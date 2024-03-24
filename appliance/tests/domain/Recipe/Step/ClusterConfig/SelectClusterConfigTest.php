@@ -23,29 +23,26 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\ClusterConfig;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountEnvironment;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
-use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
- * Class RemoveCredentialsTest.
+ * Class SelectClusterConfigTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments
+ * @covers \Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig
  */
-class RemoveCredentialsTest extends TestCase
+class SelectClusterConfigTest extends TestCase
 {
-    private RemoveEnvironments $removeCredentials;
-
-    private AccountEnvironmentWriter|MockObject $writer;
+    private SelectClusterConfig $selectClusterConfig;
 
     /**
      * {@inheritdoc}
@@ -54,16 +51,17 @@ class RemoveCredentialsTest extends TestCase
     {
         parent::setUp();
 
-        $this->writer = $this->createMock(AccountEnvironmentWriter::class);
-        $this->removeCredentials = new RemoveEnvironments($this->writer);
+        $this->selectClusterConfig = new SelectClusterConfig();
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            RemoveEnvironments::class,
-            ($this->removeCredentials)(
-                $this->createMock(AccountWallet::class),
+            SelectClusterConfig::class,
+            ($this->selectClusterConfig)(
+                $this->createMock(ManagerInterface::class),
+                new ClusterCatalog(['foo' => $this->createMock(Cluster::class)], []),
+                'foo',
             ),
         );
     }

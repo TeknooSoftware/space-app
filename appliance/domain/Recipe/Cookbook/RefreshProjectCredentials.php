@@ -38,7 +38,7 @@ use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
@@ -59,7 +59,7 @@ class RefreshProjectCredentials implements CookbookInterface
         private readonly ObjectAccessControlInterface $objectAccessControl,
         private readonly LoadAccountFromProject $loadAccountFromProject,
         private readonly LoadEnvironments $loadCredentials,
-        private readonly LoadRegistryCredentials $loadRegistryCredentials,
+        private readonly LoadRegistryCredential $loadRegistryCredential,
         private readonly UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount,
         private readonly SaveObject $saveObject,
         private readonly SpaceProjectPrepareRedirection $spaceProjectPrepareRedirection,
@@ -97,7 +97,7 @@ class RefreshProjectCredentials implements CookbookInterface
 
         $recipe = $recipe->cook($this->loadCredentials, LoadEnvironments::class, [], 30);
 
-        $recipe = $recipe->cook($this->loadRegistryCredentials, LoadRegistryCredentials::class, [], 30);
+        $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 30);
 
         $recipe = $recipe->cook(
             $this->updateProjectCredentialsFromAccount,

@@ -32,7 +32,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
@@ -42,11 +42,11 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments
+ * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment
  */
 class PersistCredentialsTest extends TestCase
 {
-    private PersistEnvironments $persistCredentials;
+    private PersistEnvironment $persistCredentials;
 
     private AccountEnvironmentWriter|MockObject $writer;
 
@@ -67,7 +67,7 @@ class PersistCredentialsTest extends TestCase
         $this->datesService = $this->createMock(DatesService::class);
         $this->clusterName = '42';
         $this->preferRealDate = true;
-        $this->persistCredentials = new PersistEnvironments(
+        $this->persistCredentials = new PersistEnvironment(
             $this->writer,
             $this->datesService,
             $this->preferRealDate,
@@ -77,12 +77,12 @@ class PersistCredentialsTest extends TestCase
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            PersistEnvironments::class,
-            ($this->persistCredentials)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ObjectInterface::class),
+            PersistEnvironment::class,
+            actual: ($this->persistCredentials)(
+                manager: $this->createMock(ManagerInterface::class),
+                object: $this->createMock(ObjectInterface::class),
                 environmentName: 'foo',
-                namespace: 'foo',
+                kubeNamespace: 'foo',
                 serviceName: 'foo',
                 roleName: 'foo',
                 roleBindingName: 'foo',

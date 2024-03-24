@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountRegistry;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
 use DateTimeInterface;
 use SensitiveParameter;
@@ -31,10 +31,11 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Object\Persisted\AccountRegistry;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountHistory;
-use Teknoo\Space\Writer\AccountRegistryWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -42,10 +43,10 @@ use Teknoo\Space\Writer\AccountRegistryWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class PersistRegistryCredentials
+class PersistEnvironment
 {
     public function __construct(
-        private AccountRegistryWriter $writer,
+        private AccountEnvironmentWriter $writer,
         private DatesService $datesService,
         private bool $preferRealDate,
     ) {
@@ -54,14 +55,16 @@ class PersistRegistryCredentials
     public function __invoke(
         ManagerInterface $manager,
         ObjectInterface $object,
-        string $registryNamespace,
-        string $registryUrl,
-        string $registryAccountName,
-        string $registryConfigName,
+        string $environmentName,
+        string $kubeNamespace,
+        string $serviceName,
+        string $roleName,
+        string $roleBindingName,
+        string $caCertificate,
         #[SensitiveParameter]
-        string $registryPassword,
-        string $persistentVolumeClaimName,
+        string $token,
         AccountHistory $accountHistory,
+        ClusterConfig $clusterConfig,
     ): self {
         if ($object instanceof SpaceAccount) {
             $object = $object->account;
@@ -71,22 +74,26 @@ class PersistRegistryCredentials
             return $this;
         }
 
-        $accountRegistry = new AccountRegistry(
+        $accountEnvironment = new AccountEnvironment(
             account: $object,
-            registryNamespace: $registryNamespace,
-            registryUrl: $registryUrl,
-            registryAccountName: $registryAccountName,
-            registryConfigName: $registryConfigName,
-            registryPassword: $registryPassword,
-            persistentVolumeClaimName: $persistentVolumeClaimName,
+            clusterName: $clusterConfig->name,
+            environmentName: $environmentName,
+            namespace: $kubeNamespace,
+            serviceAccountName: $serviceName,
+            roleName: $roleName,
+            roleBindingName: $roleBindingName,
+            caCertificate: $caCertificate,
+            clientCertificate: '',
+            clientKey: '',
+            token: $token,
         );
 
-        $this->writer->save($accountRegistry);
+        $this->writer->save($accountEnvironment);
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory) {
                 $accountHistory->addToHistory(
-                    'teknoo.space.text.account.kubernetes.registry_persisted',
+                    'teknoo.space.text.account.kubernetes.credential_persisted',
                     $dateTime
                 );
             },
@@ -94,12 +101,14 @@ class PersistRegistryCredentials
         );
 
         $manager->updateWorkPlan([
-            AccountRegistry::class => $accountRegistry,
+            AccountEnvironment::class => $accountEnvironment,
         ]);
 
         $manager->cleanWorkPlan(
-            'registryAccountName',
-            'registryPassword',
+            'caCertificate',
+            'token',
+            'clientCertificate',
+            'clientKey',
         );
 
         return $this;

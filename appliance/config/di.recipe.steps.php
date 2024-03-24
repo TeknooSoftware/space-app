@@ -40,7 +40,6 @@ use Teknoo\East\CommonBundle\Contracts\Recipe\Step\BuildQrCodeInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
-use Teknoo\East\Paas\Writer\AccountWriter;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
@@ -79,13 +78,15 @@ use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
-use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
-use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
+use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -112,10 +113,13 @@ use function DI\create;
 use function DI\get;
 
 return [
+    SelectClusterConfig::class => create(),
+
     SetAccountNamespace::class => create()
         ->constructor(
             get(FindSlugService::class),
             get(AccountLoader::class),
+            get('teknoo.space.kubernetes.root_namespace'),
         ),
 
     CreateNamespace::class => static function (ContainerInterface $container): CreateNamespace {
@@ -124,15 +128,12 @@ return [
             $container->get('teknoo.space.kubernetes.registry_root_namespace'),
             $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
-            $container->get(AccountWriter::class),
         );
     },
 
-    ReloadNamespace::class => create()
-        ->constructor(
-            get('teknoo.space.clusters_catalog'),
-            get('teknoo.space.kubernetes.registry_root_namespace'),
-        ),
+    ReloadNamespace::class => create(),
+
+    ReloadEnvironement::class => create(),
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
         return new CreateServiceAccount(
@@ -199,28 +200,28 @@ return [
         );
     },
 
-    PersistEnvironments::class => static function (ContainerInterface $container): PersistEnvironments {
-        return new PersistEnvironments(
+    PersistEnvironment::class => static function (ContainerInterface $container): PersistEnvironment {
+        return new PersistEnvironment(
             writer: $container->get(AccountEnvironmentWriter::class),
             datesService: $container->get(DatesService::class),
             preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
 
-    PersistRegistryCredentials::class => static function (ContainerInterface $container): PersistRegistryCredentials {
-        return new PersistRegistryCredentials(
+    PersistRegistryCredential::class => static function (ContainerInterface $container): PersistRegistryCredential {
+        return new PersistRegistryCredential(
             writer: $container->get(AccountRegistryWriter::class),
             datesService: $container->get(DatesService::class),
             preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
 
-    RemoveEnvironments::class => create()
+    RemoveEnvironment::class => create()
         ->constructor(
             get(AccountEnvironmentWriter::class),
         ),
 
-    RemoveRegistryCredentials::class => create()
+    RemoveRegistryCredential::class => create()
         ->constructor(
             get(AccountRegistryWriter::class),
         ),
@@ -269,7 +270,7 @@ return [
 
     CreateResumes::class => create(),
 
-    LoadRegistryCredentials::class => create()
+    LoadRegistryCredential::class => create()
         ->constructor(get(AccountRegistryLoader::class)),
 
     LoadAccountData::class => create()

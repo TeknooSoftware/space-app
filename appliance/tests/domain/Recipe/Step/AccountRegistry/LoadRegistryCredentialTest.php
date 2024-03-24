@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Loader\AccountRegistryLoader;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 
 /**
  * Class LoadRegistrysTest.
@@ -39,11 +39,11 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials
+ * @covers \Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential
  */
-class LoadRegistryCredentialsTest extends TestCase
+class LoadRegistryCredentialTest extends TestCase
 {
-    private LoadRegistryCredentials $loadRegistryCredentials;
+    private LoadRegistryCredential $loadRegistryCredential;
 
     private AccountRegistryLoader|MockObject $loader;
 
@@ -55,14 +55,14 @@ class LoadRegistryCredentialsTest extends TestCase
         parent::setUp();
 
         $this->loader = $this->createMock(AccountRegistryLoader::class);
-        $this->loadRegistryCredentials = new LoadRegistryCredentials($this->loader);
+        $this->loadRegistryCredential = new LoadRegistryCredential($this->loader);
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            LoadRegistryCredentials::class,
-            ($this->loadRegistryCredentials)(
+            LoadRegistryCredential::class,
+            ($this->loadRegistryCredential)(
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(Account::class),
                 true,

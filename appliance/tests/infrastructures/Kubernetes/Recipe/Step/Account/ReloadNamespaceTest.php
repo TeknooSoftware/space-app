@@ -76,10 +76,7 @@ class ReloadNamespaceTest extends TestCase
                 )
             );
 
-        $this->reloadNamespace = new ReloadNamespace(
-            $catalog,
-            'foo',
-        );
+        $this->reloadNamespace = new ReloadNamespace();
     }
 
     public function testInvoke(): void
@@ -89,7 +86,6 @@ class ReloadNamespaceTest extends TestCase
             ($this->reloadNamespace)(
                 manager: $this->createMock(ManagerInterface::class),
                 account: $this->createMock(Account::class),
-                accountWallet: $this->createMock(AccountWallet::class),
             ),
         );
     }

@@ -23,11 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Recipe\Step\ClusterConfig;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
-use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -35,35 +35,18 @@ use Teknoo\East\Paas\Object\Account;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ReloadNamespace
+class SelectClusterConfig
 {
     public function __invoke(
         ManagerInterface $manager,
-        Account $account,
+        ClusterCatalog $clusterCatalog,
+        string $clusterName,
     ): self {
-        $account->requireAccountNamespace(
-            new class (
-                $manager,
-            ) implements AccountAwareInterface {
-                public function __construct(
-                    public ManagerInterface $manager,
-                ) {
-                }
+        $clusterConfig = $clusterCatalog->getCluster($clusterName);
 
-                public function passAccountNamespace(
-                    Account $account,
-                    ?string $name,
-                    ?string $namespace,
-                    ?string $prefixNamespace,
-                ): AccountAwareInterface {
-                    $this->manager->updateWorkPlan([
-                        'accountNamespace' => $namespace,
-                    ]);
-
-                    return $this;
-                }
-            }
-        );
+        $manager->updateWorkPlan([
+            ClusterConfig::class => $clusterConfig,
+        ]);
 
         return $this;
     }

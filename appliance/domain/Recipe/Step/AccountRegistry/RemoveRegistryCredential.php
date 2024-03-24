@@ -23,10 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
+namespace Teknoo\Space\Recipe\Step\AccountRegistry;
 
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
+use Teknoo\Space\Writer\AccountRegistryWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,22 +34,18 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class RemoveEnvironments
+class RemoveRegistryCredential
 {
     public function __construct(
-        private AccountEnvironmentWriter $writer,
+        private AccountRegistryWriter $writer,
     ) {
     }
 
     public function __invoke(
-        ?AccountWallet $wallet = null
+        ?AccountRegistry $registry = null
     ): self {
-        if (!$wallet) {
-            return $this;
-        }
-
-        foreach ($wallet as $accountEnvironment) {
-            $this->writer->remove($accountEnvironment);
+        if ($registry) {
+            $this->writer->remove($registry);
         }
 
         return $this;

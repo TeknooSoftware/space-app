@@ -41,7 +41,7 @@ use Throwable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class LoadRegistryCredentials
+class LoadRegistryCredential
 {
     public function __construct(
         private AccountRegistryLoader $loader,

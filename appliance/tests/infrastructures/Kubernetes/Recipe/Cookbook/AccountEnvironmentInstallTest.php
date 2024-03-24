@@ -27,10 +27,11 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Cookbook;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
@@ -40,26 +41,29 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServ
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironments;
-use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
+use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
- * Class AccountInstallTest.
+ * Class AccountEnvironmentInstallTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountInstall
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall
  */
-class AccountInstallTest extends TestCase
+class AccountEnvironmentInstallTest extends TestCase
 {
-    private AccountInstall $accountInstall;
+    private AccountEnvironmentInstall $accountInstall;
 
     private RecipeInterface|MockObject $recipe;
 
     private CreateNamespace|MockObject $createNamespace;
+
+    private SelectClusterConfig|MockObject $selectClusterConfig;
 
     private CreateServiceAccount|MockObject $createServiceAccount;
 
@@ -71,17 +75,11 @@ class AccountInstallTest extends TestCase
 
     private CreateSecretServiceAccountToken|MockObject $createSecret;
 
-    private CreateStorage|MockObject $createStorage;
-
-    private CreateRegistryDeployment|MockObject $createRegistryAccount;
-
-    private PersistEnvironments|MockObject $persistCredentials;
-
-    private PersistRegistryCredentials|MockObject $persistRegistryCredentials;
+    private PersistEnvironment|MockObject $persistCredentials;
 
     private PrepareAccountErrorHandler|MockObject $errorHandler;
 
-    private string $defaultStorageSizeToClaim;
+    private ObjectAccessControlInterface|MockObject $objectAccessControlInterface;
 
     /**
      * {@inheritdoc}
@@ -92,38 +90,35 @@ class AccountInstallTest extends TestCase
 
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->createNamespace = $this->createMock(CreateNamespace::class);
+        $this->selectClusterConfig = $this->createMock(SelectClusterConfig::class);
         $this->createServiceAccount = $this->createMock(CreateServiceAccount::class);
         $this->createQuota = $this->createMock(CreateQuota::class);
         $this->createRole = $this->createMock(CreateRole::class);
         $this->createRoleBinding = $this->createMock(CreateRoleBinding::class);
         $this->createSecret = $this->createMock(CreateSecretServiceAccountToken::class);
-        $this->createStorage = $this->createMock(CreateStorage::class);
-        $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
-        $this->persistCredentials = $this->createMock(PersistEnvironments::class);
-        $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredentials::class);
+        $this->persistCredentials = $this->createMock(PersistEnvironment::class);
         $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
-        $this->defaultStorageSizeToClaim = '42';
-        $this->accountInstall = new AccountInstall(
-            $this->recipe,
-            $this->createNamespace,
-            $this->createServiceAccount,
-            $this->createQuota,
-            $this->createRole,
-            $this->createRoleBinding,
-            $this->createSecret,
-            $this->createStorage,
-            $this->createRegistryAccount,
-            $this->persistCredentials,
-            $this->persistRegistryCredentials,
-            $this->errorHandler,
-            $this->defaultStorageSizeToClaim,
+        $this->objectAccessControlInterface = $this->createMock(ObjectAccessControlInterface::class);
+
+        $this->accountInstall = new AccountEnvironmentInstall(
+            recipe: $this->recipe,
+            createNamespace: $this->createNamespace,
+            selectClusterConfig: $this->selectClusterConfig,
+            createServiceAccount: $this->createServiceAccount,
+            createQuota: $this->createQuota,
+            createRole: $this->createRole,
+            createRoleBinding: $this->createRoleBinding,
+            createSecret: $this->createSecret,
+            persistCredentials: $this->persistCredentials,
+            errorHandler: $this->errorHandler,
+            objectAccessControl: $this->objectAccessControlInterface,
         );
     }
 
     public function testConstruct(): void
     {
         self::assertInstanceOf(
-            AccountInstall::class,
+            AccountEnvironmentInstall::class,
             $this->accountInstall,
         );
     }

@@ -26,21 +26,21 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes
+ * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement
  */
-class CreateResumesTest extends TestCase
+class ReloadEnvironementTest extends TestCase
 {
-    private CreateResumes $loadCredentials;
+    private ReloadEnvironement $reloadEnvironement;
 
     /**
      * {@inheritdoc}
@@ -49,16 +49,18 @@ class CreateResumesTest extends TestCase
     {
         parent::setUp();
 
-        $this->loadCredentials = new CreateResumes();
+        $this->reloadEnvironement = new ReloadEnvironement();
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            CreateResumes::class,
-            ($this->loadCredentials)(
+            ReloadEnvironement::class,
+            ($this->reloadEnvironement)(
+                $this->createMock(ManagerInterface::class),
                 new AccountWallet([$this->createMock(AccountEnvironment::class)]),
-                $this->createMock(ParametersBag::class),
+                'foo',
+                'bar'
             ),
         );
     }

@@ -3921,10 +3921,8 @@ class TestsContext implements Context
         }
 
         $expected = trim(
-            (new ManifestGenerator())->namespaceCreation(
+            (new ManifestGenerator())->registryCreation(
                 $namespace,
-                $this->quotasMode,
-                $quotasAllowed?->getQuotas() ?? [],
             )
         );
 

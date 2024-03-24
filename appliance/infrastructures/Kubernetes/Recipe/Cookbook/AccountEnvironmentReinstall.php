@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
@@ -36,17 +35,16 @@ use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
-use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -54,51 +52,53 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredentials;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountReinstall implements CookbookInterface
+class AccountEnvironmentReinstall implements CookbookInterface
 {
     use BaseCookbookTrait;
     use PrepareAccountTrait;
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private PrepareRedirection $prepareRedirection,
-        private SetRedirectClientAtEnd $redirectClient,
-        private LoadHistory $loadHistory,
-        private LoadEnvironments $loadCredentials,
-        private LoadRegistryCredentials $loadRegistryCredentials,
-        private RemoveEnvironments $removeCredentials,
-        private RemoveRegistryCredentials $removeRegistryCredentials,
-        private SetAccountNamespace $setAccountNamespace,
-        private AccountInstall $installAccount,
-        private UpdateAccountHistory $updateAccountHistory,
-        private ReinstallAccountErrorHandler $errorHandler,
-        private ObjectAccessControlInterface $objectAccessControl,
-        string $defaultStorageSizeToClaim,
+        private readonly LoadObject $loadObject,
+        private readonly PrepareRedirection $prepareRedirection,
+        private readonly SetRedirectClientAtEnd $redirectClient,
+        private readonly LoadHistory $loadHistory,
+        private readonly LoadEnvironments $loadCredentials,
+        private readonly ReloadNamespace $reloadNamespace,
+        private readonly ReloadEnvironement $reloadEnvironement,
+        private readonly RemoveEnvironment $removeEnvironment,
+        private readonly AccountEnvironmentInstall $accountEnvironmentInstall,
+        private readonly UpdateAccountHistory $updateAccountHistory,
+        private readonly ReinstallAccountErrorHandler $errorHandler,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
-        $this->addToWorkplan('storageSizeToClaim', $defaultStorageSizeToClaim);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(ServerRequestInterface::class, 'request'));
         $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
-        $recipe = $recipe->require(new Ingredient('string', 'id'));
-        $recipe = $recipe->require(new Ingredient('string', 'storageSizeToClaim'));
         $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
+        $recipe = $recipe->require(new Ingredient('string', 'id'));
+        $recipe = $recipe->require(new Ingredient('string', 'environmentName'));
+        $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
 
         $recipe = $this->prepareRecipeForAccount($recipe);
 
-        $recipe = $recipe->cook($this->removeCredentials, RemoveEnvironments::class, [], 70);
+        $recipe = $recipe->cook($this->reloadNamespace, ReloadNamespace::class, [], 70);
 
-        $recipe = $recipe->cook($this->removeRegistryCredentials, RemoveRegistryCredentials::class, [], 70);
+        $recipe = $recipe->cook($this->reloadEnvironement, ReloadEnvironement::class, [], 80);
 
-        $recipe = $recipe->cook($this->setAccountNamespace, SetAccountNamespace::class, [], 80);
+        $recipe = $recipe->cook($this->removeEnvironment, RemoveEnvironment::class, [], 90);
 
-        $recipe = $recipe->cook(new RecipeBowl($this->installAccount, 0), AccountInstall::class, [], 90);
+        $recipe = $recipe->cook(
+            new RecipeBowl($this->accountEnvironmentInstall, 0),
+            AccountEnvironmentInstall::class,
+            [],
+            100
+        );
 
-        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 100);
+        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 110);
 
         $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
 
