@@ -66,7 +66,7 @@ class RefreshProjectCredentialsTest extends TestCase
 
     private LoadEnvironments|MockObject $loadCredentials;
 
-    private LoadRegistryCredential|MockObject $loadRegistryCredentials;
+    private LoadRegistryCredential|MockObject $loadRegistryCredential;
 
     private UpdateProjectCredentialsFromAccount|MockObject $updateProjectCredentialsFromAccount;
 
@@ -92,7 +92,7 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
         $this->loadCredentials = $this->createMock(LoadEnvironments::class);
-        $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredential::class);
+        $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
         $this->updateProjectCredentialsFromAccount = $this->createMock(UpdateProjectCredentialsFromAccount::class);
         $this->saveObject = $this->createMock(SaveObject::class);
         $this->spaceProjectPrepareRedirection = $this->createMock(PrepareRedirection::class);
@@ -105,7 +105,7 @@ class RefreshProjectCredentialsTest extends TestCase
             $this->objectAccessControl,
             $this->loadAccountFromProject,
             $this->loadCredentials,
-            $this->loadRegistryCredentials,
+            $this->loadRegistryCredential,
             $this->updateProjectCredentialsFromAccount,
             $this->saveObject,
             $this->spaceProjectPrepareRedirection,

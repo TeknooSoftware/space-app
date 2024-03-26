@@ -40,10 +40,12 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccount
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\UpdateCredentials;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
  * Class AccountRefreshQuotaTest.
@@ -74,6 +76,10 @@ class AccountRefreshQuotaTest extends TestCase
 
     private ReloadNamespace|MockObject $reloadNamespace;
 
+    private ReloadEnvironement|MockObject $reloadEnvironement;
+
+    private SelectClusterConfig|MockObject $selectClusterConfig;
+
     private CreateQuota|MockObject $createQuota;
 
     private UpdateAccountHistory|MockObject $updateAccountHistory;
@@ -96,6 +102,8 @@ class AccountRefreshQuotaTest extends TestCase
         $this->loadHistory = $this->createMock(LoadHistory::class);
         $this->loadCredentials = $this->createMock(LoadEnvironments::class);
         $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
+        $this->reloadEnvironement = $this->createMock(ReloadEnvironement::class);
+        $this->selectClusterConfig = $this->createMock(SelectClusterConfig::class);
         $this->createQuota = $this->createMock(CreateQuota::class);
         $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
         $this->errorHandler = $this->createMock(ReinstallAccountErrorHandler::class);
@@ -108,6 +116,8 @@ class AccountRefreshQuotaTest extends TestCase
             $this->loadHistory,
             $this->loadCredentials,
             $this->reloadNamespace,
+            $this->reloadEnvironement,
+            $this->selectClusterConfig,
             $this->createQuota,
             $this->updateAccountHistory,
             $this->errorHandler,

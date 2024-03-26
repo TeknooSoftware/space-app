@@ -58,9 +58,7 @@ class ReloadEnvironementTest extends TestCase
             ReloadEnvironement::class,
             ($this->reloadEnvironement)(
                 $this->createMock(ManagerInterface::class),
-                new AccountWallet([$this->createMock(AccountEnvironment::class)]),
-                'foo',
-                'bar'
+                $this->createMock(AccountEnvironment::class),
             ),
         );
     }

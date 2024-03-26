@@ -112,6 +112,7 @@ use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
@@ -237,6 +238,8 @@ return array(
             get(LoadHistory::class),
             get(LoadEnvironments::class),
             get(ReloadNamespace::class),
+            get(ReloadEnvironement::class),
+            get(SelectClusterConfig::class),
             get(CreateQuota::class),
             get(UpdateAccountHistory::class),
             get(ReinstallAccountErrorHandler::class),

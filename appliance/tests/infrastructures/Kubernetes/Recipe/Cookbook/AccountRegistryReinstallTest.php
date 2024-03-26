@@ -68,7 +68,7 @@ class AccountRegistryReinstallTest extends TestCase
 
     private LoadHistory|MockObject $loadHistory;
 
-    private LoadRegistryCredential|MockObject $loadRegistryCredentials;
+    private LoadRegistryCredential|MockObject $loadRegistryCredential;
 
     private RemoveRegistryCredential|MockObject $removeRegistryCredentials;
 
@@ -96,7 +96,7 @@ class AccountRegistryReinstallTest extends TestCase
         $this->prepareRedirection = $this->createMock(PrepareRedirection::class);
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
-        $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredential::class);
+        $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
         $this->removeRegistryCredentials = $this->createMock(RemoveRegistryCredential::class);
         $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
         $this->accountRegistryInstall = $this->createMock(AccountRegistryInstall::class);
@@ -111,7 +111,7 @@ class AccountRegistryReinstallTest extends TestCase
             prepareRedirection: $this->prepareRedirection,
             redirectClient: $this->redirectClient,
             loadHistory: $this->loadHistory,
-            loadRegistryCredential: $this->loadRegistryCredentials,
+            loadRegistryCredential: $this->loadRegistryCredential,
             reloadNamespace: $this->reloadNamespace,
             removeRegistryCredential: $this->removeRegistryCredentials,
             accountRegistryInstall: $this->accountRegistryInstall,

@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
@@ -39,16 +38,13 @@ class ReloadEnvironement
 {
     public function __invoke(
         ManagerInterface $manager,
-        AccountWallet $wallet,
-        string $clusterName,
-        string $envName,
+        AccountEnvironment $environment,
     ): self {
-        $environment = $wallet->get($clusterName, $envName);
-        if ($environment) {
-            $manager->updateWorkPlan([
-                AccountEnvironment::class => $environment,
-            ]);
-        }
+        $manager->updateWorkPlan([
+            'envName' => $environment->getEnvName(),
+            'clusterName' => $environment->getClusterName(),
+            'kubeNamespace' => $environment->getNamespace(),
+        ]);
 
         return $this;
     }

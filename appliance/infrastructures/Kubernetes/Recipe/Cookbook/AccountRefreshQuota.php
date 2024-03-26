@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook;
 
-use Psr\Http\Message\ServerRequestInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Recipe\Step\EndLooping;
@@ -41,11 +40,14 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccount
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -60,26 +62,28 @@ class AccountRefreshQuota implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private LoadObject $loadObject,
-        private PrepareRedirection $prepareRedirection,
-        private SetRedirectClientAtEnd $redirectClient,
-        private LoadHistory $loadHistory,
-        private LoadEnvironments $loadCredentials,
-        private ReloadNamespace $reloadNamespace,
-        private CreateQuota $createQuota,
-        private UpdateAccountHistory $updateAccountHistory,
-        private ReinstallAccountErrorHandler $errorHandler,
-        private ObjectAccessControlInterface $objectAccessControl,
+        private readonly LoadObject $loadObject,
+        private readonly PrepareRedirection $prepareRedirection,
+        private readonly SetRedirectClientAtEnd $redirectClient,
+        private readonly LoadHistory $loadHistory,
+        private readonly LoadEnvironments $loadCredentials,
+        private readonly ReloadNamespace $reloadNamespace,
+        private readonly ReloadEnvironement $reloadEnvironement,
+        private readonly SelectClusterConfig $selectClusterConfig,
+        private readonly CreateQuota $createQuota,
+        private readonly UpdateAccountHistory $updateAccountHistory,
+        private readonly ReinstallAccountErrorHandler $errorHandler,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(ServerRequestInterface::class, 'request'));
         $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
+        $recipe = $recipe->require(new Ingredient(AccountWallet::class));
+        $recipe = $recipe->require(new Ingredient(ClusterCatalog::class));
         $recipe = $recipe->require(new Ingredient('string', 'id'));
-        $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
 
         $recipe = $this->prepareRecipeForAccount($recipe);
 
@@ -89,16 +93,20 @@ class AccountRefreshQuota implements CookbookInterface
             action: new StartLoopingOn(),
             name: StartLoopingOn::class,
             with: [
-                'collection' => 'clusterCatalog'
+                'collection' => AccountWallet::class,
             ],
             position: 75
         );
 
-        $recipe = $recipe->cook($this->createQuota, CreateQuota::class, [], 80);
+        $recipe = $recipe->cook($this->reloadEnvironement, ReloadEnvironement::class, [], 80);
 
-        $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 90);
+        $recipe = $recipe->cook($this->selectClusterConfig, SelectClusterConfig::class, [], 90);
 
-        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 100);
+        $recipe = $recipe->cook($this->createQuota, CreateQuota::class, [], 100);
+
+        $recipe = $recipe->cook(new EndLooping(), EndLooping::class, [], 110);
+
+        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 120);
 
         $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
 
