@@ -29,9 +29,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Form\Type\AccountType as EastPaaSAccountType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnvironmentResumesType;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
@@ -61,7 +63,10 @@ class AdminSpaceAccountType extends AbstractType
             ]
         );
 
-        if (!empty($options['subscriptionPlan'])) {
+        if (
+            !empty($options['subscriptionPlan'])
+            && $options['subscriptionPlan'] instanceof SubscriptionPlan
+        ) {
             $builder->add(
                 'environmentResumes',
                 CollectionType::class,
@@ -72,7 +77,13 @@ class AdminSpaceAccountType extends AbstractType
                     'prototype' => true,
                     'entry_options' => [
                         'subscriptionPlan' => $options['subscriptionPlan'],
-                    ]
+                    ],
+                    'constraints' => [
+                        new Count([
+                            'max' => $options['subscriptionPlan']->envsCountAllowed,
+                            'maxMessage' => 'You cannot add more than {{ limit }} fooBars.',
+                        ]),
+                    ],
                 ],
             );
         }
