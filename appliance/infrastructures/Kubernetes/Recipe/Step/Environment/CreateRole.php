@@ -23,12 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use DateTimeInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\ClusterRole;
 use Teknoo\Kubernetes\Model\Role;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;

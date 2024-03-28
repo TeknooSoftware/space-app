@@ -23,39 +23,31 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
-use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Kubernetes\Repository\SecretRepository;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Class CreateSecretTest.
+ * Class CreateServiceAccountTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount
  */
-class CreateSecretServiceAccountTokenTest extends TestCase
+class CreateServiceAccountTest extends TestCase
 {
-    private CreateSecretServiceAccountToken $createSecret;
-
-    private Client|MockObject $client;
+    private CreateServiceAccount $createServiceAccount;
 
     private DatesService|MockObject $datesService;
-
-    private SleepServiceInterface|MockObject $sleepService;
-
-    private int $secretWaitingTime;
 
     private bool $preferRealDate;
 
@@ -66,24 +58,10 @@ class CreateSecretServiceAccountTokenTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
-        $this->client
-            ->expects(self::any())
-            ->method('__call')
-            ->willReturnCallback(
-                fn ($name) => match ($name) {
-                    'secrets' => $this->createMock(SecretRepository::class),
-                }
-            );
-
         $this->datesService = $this->createMock(DatesService::class);
-        $this->sleepService = $this->createMock(SleepServiceInterface::class);
-        $this->secretWaitingTime = 42;
         $this->preferRealDate = true;
-        $this->createSecret = new CreateSecretServiceAccountToken(
+        $this->createServiceAccount = new CreateServiceAccount(
             $this->datesService,
-            $this->sleepService,
-            $this->secretWaitingTime,
             $this->preferRealDate
         );
     }
@@ -97,19 +75,18 @@ class CreateSecretServiceAccountTokenTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->client,
+            kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
         );
 
         self::assertInstanceOf(
-            CreateSecretServiceAccountToken::class,
-            ($this->createSecret)(
+            CreateServiceAccount::class,
+            ($this->createServiceAccount)(
                 manager: $this->createMock(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
-                serviceName: 'foo',
                 accountHistory: $this->createMock(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )

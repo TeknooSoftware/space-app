@@ -23,11 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use DateTimeInterface;
 use SensitiveParameter;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Model\Secret;

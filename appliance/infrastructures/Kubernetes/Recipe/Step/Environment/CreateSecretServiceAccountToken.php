@@ -23,14 +23,13 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use DateTimeInterface;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
-use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Repository\SecretRepository;

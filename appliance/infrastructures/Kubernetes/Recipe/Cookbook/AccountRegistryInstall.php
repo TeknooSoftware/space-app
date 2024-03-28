@@ -25,17 +25,16 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook;
 
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
-use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
+use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;

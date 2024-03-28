@@ -23,7 +23,10 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Object\DTO;
+namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
+
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -31,12 +34,15 @@ namespace Teknoo\Space\Object\DTO;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountEnvironmentResume
+class DeleteEnvFromResumes extends AbstractDeleteFromResumes
 {
     public function __construct(
-        public readonly string $clusterName,
-        public readonly string $envName,
-        public readonly ?string $accountEnvironmentId = null,
+        private AccountEnvironmentWriter $writer,
     ) {
+    }
+
+    protected function delete(AccountEnvironment $accountEnvironment): void
+    {
+        $this->writer->remove($accountEnvironment);
     }
 }

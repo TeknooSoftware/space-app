@@ -23,29 +23,30 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Class CreateRoleBindingTest.
+ * Class CreateQuotaTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota
  */
-class CreateRoleBindingTest extends TestCase
+class CreateQuotaTest extends TestCase
 {
-    private CreateRoleBinding $createRoleBinding;
+    private CreateQuota $createQuota;
 
     private DatesService|MockObject $datesService;
 
@@ -60,10 +61,7 @@ class CreateRoleBindingTest extends TestCase
 
         $this->datesService = $this->createMock(DatesService::class);
         $this->preferRealDate = true;
-        $this->createRoleBinding = new CreateRoleBinding(
-            $this->datesService,
-            $this->preferRealDate
-        );
+        $this->createQuota = new CreateQuota($this->datesService, $this->preferRealDate);
     }
 
     public function testInvoke(): void
@@ -82,14 +80,12 @@ class CreateRoleBindingTest extends TestCase
         );
 
         self::assertInstanceOf(
-            CreateRoleBinding::class,
-            ($this->createRoleBinding)(
+            CreateQuota::class,
+            ($this->createQuota)(
                 manager: $this->createMock(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
-                serviceName: 'foo',
-                roleName: 'foo',
-                clusterRoleName: 'foo',
+                accountInstance: $this->createMock(Account::class),
                 accountHistory: $this->createMock(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )

@@ -23,31 +23,30 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateDockerSecret;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
-use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
- * Class CreateStorageTest.
+ * Class CreateDockerSecretTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateDockerSecret
  */
-class CreateStorageTest extends TestCase
+class CreateDockerSecretTest extends TestCase
 {
-    private CreateStorage $createStorage;
+    private CreateDockerSecret $createDockerSecret;
 
     private DatesService|MockObject $datesService;
 
@@ -62,9 +61,12 @@ class CreateStorageTest extends TestCase
 
         $this->datesService = $this->createMock(DatesService::class);
         $this->preferRealDate = true;
-        $this->createStorage = new CreateStorage(
+        $this->createDockerSecret = new CreateDockerSecret(
             $this->datesService,
-            $this->preferRealDate
+            $this->preferRealDate,
+            'foo',
+            'bar',
+            'foo',
         );
     }
 
@@ -84,15 +86,14 @@ class CreateStorageTest extends TestCase
         );
 
         self::assertInstanceOf(
-            CreateStorage::class,
-            ($this->createStorage)(
-                manager: $this->createMock(ManagerInterface::class),
-                kubeNamespace: 'foo',
-                accountNamespace: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
-                storageSizeToClaim: 'foo',
-                clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
-                accountRegistry: $this->createMock(AccountRegistry::class),
+            CreateDockerSecret::class,
+            ($this->createDockerSecret)(
+                $this->createMock(Account::class),
+                $this->createMock(AccountHistory::class),
+                $this->createMock(AccountRegistry::class),
+                'foo',
+                'foo',
+                $this->createMock(ClusterConfig::class),
             )
         );
     }

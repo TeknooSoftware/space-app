@@ -47,25 +47,27 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateDockerSecret;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAccount;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateDockerSecret;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRoleBinding;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm as PrepareAccountForm;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser;
-use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
 use Teknoo\Space\Loader\AccountRegistryLoader;
@@ -77,13 +79,13 @@ use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirec
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvNamespace;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
-use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
@@ -132,6 +134,11 @@ return [
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },
+
+    DeleteNamespaceFromResumes::class => create()
+        ->constructor(
+            get('teknoo.space.clusters_catalog'),
+        ),
 
     ReloadNamespace::class => create(),
 
@@ -279,6 +286,9 @@ return [
 
     CreateResumes::class => create(),
 
+    DeleteEnvFromResumes::class => create()
+        ->constructor(get(AccountEnvironmentWriter::class)),
+
     LoadRegistryCredential::class => create()
         ->constructor(get(AccountRegistryLoader::class)),
 
@@ -302,6 +312,11 @@ return [
     AccountPrepareRedirection::class => create(),
 
     WorkplanInit::class => create(),
+
+    PrepareAccountForm::class => create()
+        ->constructor(
+            get('teknoo.space.subscription_plan_catalog')
+        ),
 
     SpaceProjectPrepareRedirection::class => create(),
 

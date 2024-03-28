@@ -25,11 +25,13 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
-use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+
+use function array_flip;
+use function in_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,26 +39,32 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CreateResumes
+abstract class AbstractDeleteFromResumes
 {
+    abstract protected function delete(AccountEnvironment $accountEnvironment): void;
+
     public function __invoke(
         AccountWallet $wallet,
-        ParametersBag $parametersBag,
-        ?SpaceAccount $spaceAccount = null,
+        SpaceAccount $spaceAccount,
     ): self {
-        $resumes = [];
-        /** @var AccountEnvironment $env */
-        foreach ($wallet as $env) {
-            $resumes[] = new AccountEnvironmentResume(
-                clusterName: $env->getClusterName(),
-                envName: $env->getEnvName(),
-                accountEnvironmentId: $env->getId(),
-            );
+        if (empty($spaceAccount->environmentResumes)) {
+            return $this;
         }
 
-        $parametersBag->set('accountEnvsResumes', $resumes);
-        if (null !== $spaceAccount) {
-            $spaceAccount->environmentResumes = $resumes;
+        $idsInResumes = [];
+        foreach ($spaceAccount->environmentResumes as $resume) {
+            if (!empty($resume->accountEnvironmentId)) {
+                $idsInResumes[] = $resume->accountEnvironmentId;
+            }
+        }
+
+        $idsInResumes = array_flip($idsInResumes);
+
+        /** @var AccountEnvironment $env */
+        foreach ($wallet as $env) {
+            if (!empty($env->getId()) && !in_array($env->getId(), $idsInResumes)) {
+                $this->delete($env);
+            }
         }
 
         return $this;

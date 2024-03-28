@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry;
 
 use DateTimeInterface;
 use SensitiveParameter;
@@ -41,13 +41,10 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 use Throwable;
 
 use function base64_encode;
-use function json_encode;
-use function password_hash;
 use function hash;
+use function password_hash;
 use function random_int;
 use function ucfirst;
-
-use const JSON_THROW_ON_ERROR;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)

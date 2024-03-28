@@ -65,22 +65,24 @@ use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryInstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentReinstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateDockerSecret;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateQuota;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRole;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRoleBinding;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateSecretServiceAccountToken;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateServiceAccount;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateStorage;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateDockerSecret;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRoleBinding;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm as PrepareAccountForm;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier;
@@ -110,6 +112,7 @@ use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
@@ -251,12 +254,15 @@ return array(
             NewAccountEndPointStepsInterface $previous,
             ContainerInterface $container,
         ): NewAccountEndPointStepsInterface {
+            //After ObjectAccessControlInterface
             $previous->add(54, $container->get(ExtractFromAccountDTO::class));
             $previous->add(55, $container->get(SetAccountNamespace::class));
             $previous->add(55, $container->get(SetQuota::class));
+            //After SaveObject
             $previous->add(61, $container->get(CreateAccountHistory::class));
             $previous->add(62, new RecipeBowl($container->get(AccountRegistryInstall::class), 0));
             $previous->add(69, $container->get(UpdateAccountHistory::class));
+            //After RedirectClientInterface
 
             return $previous;
         }
@@ -267,14 +273,18 @@ return array(
             NewProjectEndPointStepsInterface $previous,
             ContainerInterface $container
         ): NewProjectEndPointStepsInterface {
+            //Before CreateObject
             $previous->add(06, $container->get(LoadRegistryCredential::class));
             $previous->add(06, $container->get(LoadEnvironments::class));
             $previous->add(07, $container->get(CreateResumes::class));
+            //After CreateObject
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(15, $container->get(PrepareProject::class));
+            //After ObjectAccessControlInterface
             $previous->add(57, $container->get(LoadRegistryCredential::class));
             $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
             $previous->add(59, $container->get(UpdateProjectCredentialsFromAccount::class));
+            //After SaveObject
             $previous->add(69, $container->get(SpaceProjectPrepareRedirection::class));
 
             return $previous;
@@ -286,13 +296,21 @@ return array(
             EditAccountEndPointStepsInterface $previous,
             ContainerInterface $container
         ): EditAccountEndPointStepsInterface {
+            //After LoadObject
             $previous->add(11, $container->get(ExtractFromAccountDTO::class));
             $previous->add(12, $container->get(LoadEnvironments::class));
             $previous->add(13, $container->get(CreateResumes::class));
+            //After ObjectAccessControlInterface
             $previous->add(25, $container->get(LoadHistory::class));
+            //Before FormHandlingInterface
+            $previous->add(29, $container->get(PrepareAccountForm::class));
+            //After FormProcessingInterface
             $previous->add(58, $container->get(SetAccountNamespace::class));
             $previous->add(58, $container->get(SetQuota::class));
             $previous->add(59, $container->get(CreateAccountHistory::class));
+            //After SaveObject
+            $previous->add(61, $container->get(DeleteEnvFromResumes::class));
+            $previous->add(61, $container->get(DeleteNamespaceFromResumes::class));
             $previous->add(69, $container->get(UpdateAccountHistory::class));
 
             return $previous;
@@ -304,10 +322,12 @@ return array(
             EditProjectEndPointStepsInterface $previous,
             ContainerInterface $container
         ): EditProjectEndPointStepsInterface {
+            //After LoadObject
             $previous->add(11, $container->get(LoadAccountFromProject::class));
             $previous->add(11, $container->get(WorkplanInit::class));
             $previous->add(12, $container->get(LoadEnvironments::class));
             $previous->add(13, $container->get(CreateResumes::class));
+            //After FormProcessingInterface
             $previous->add(58, $container->get(AddManagedEnvironmentToProject::class));
 
             return $previous;
@@ -316,11 +336,14 @@ return array(
 
     NewJobStepsInterface::class => decorate(
         static function (NewJobStepsInterface $previous, ContainerInterface $container): NewJobStepsInterface {
+            //After PrepareJob
             $previous->add(51, $container->get(LoadAccountFromProject::class));
             $previous->add(52, $container->get(LoadEnvironments::class));
             $previous->add(52, $container->get(LoadRegistryCredential::class));
             $previous->add(53, $container->get(JobSetDefaults::class));
+            //After SaveJob
             $previous->add(65, $container->get(JobUpdaterNotifier::class));
+            //After SerializeJob
             $previous->add(75, $container->get(PersistJobVar::class));
 
             return $previous;

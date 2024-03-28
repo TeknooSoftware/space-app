@@ -29,7 +29,7 @@ parameters:
             path:  domain/Object
         -
             message: '#CreateRegistryDeployment::insertModel\(\) expects#'
-            path:  infrastructures/Kubernetes/Recipe/Step/Account/CreateRegistryDeployment.php
+            path:  infrastructures/Kubernetes/Recipe/Step/Registry/CreateRegistryDeployment.php
         -
             message: '#to string#'
             path:  infrastructures/Symfony/Form/Type/

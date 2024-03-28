@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry;
 
 use DateTimeInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;

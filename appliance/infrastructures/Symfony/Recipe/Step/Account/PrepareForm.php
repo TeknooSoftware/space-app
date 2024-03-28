@@ -23,13 +23,14 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account;
 
-use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use RuntimeException;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -37,27 +38,43 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CreateResumes
+class PrepareForm
 {
+    public function __construct(
+        private SubscriptionPlanCatalog $catalog,
+    ) {
+    }
+
+    /**
+     * @param array<string, mixed> $formOptions
+     */
     public function __invoke(
-        AccountWallet $wallet,
-        ParametersBag $parametersBag,
+        ManagerInterface $manager,
         ?SpaceAccount $spaceAccount = null,
+        array $formOptions = [],
     ): self {
-        $resumes = [];
-        /** @var AccountEnvironment $env */
-        foreach ($wallet as $env) {
-            $resumes[] = new AccountEnvironmentResume(
-                clusterName: $env->getClusterName(),
-                envName: $env->getEnvName(),
-                accountEnvironmentId: $env->getId(),
-            );
+        $accountData = $spaceAccount?->accountData;
+
+        if (null === $accountData) {
+            throw new RuntimeException('Missing Space Account data');
         }
 
-        $parametersBag->set('accountEnvsResumes', $resumes);
-        if (null !== $spaceAccount) {
-            $spaceAccount->environmentResumes = $resumes;
-        }
+        /** @var Promise<string, ?SubscriptionPlan, mixed> $promise */
+        $promise = new Promise(
+            function (string $planId): ?SubscriptionPlan {
+                if (empty($planId)) {
+                    return null;
+                }
+
+                return $this->catalog->getSubscriptionPlan($planId);
+            },
+        );
+        $accountData->visit('subscriptionPlan', $promise);
+
+        $formOptions['subscriptionPlan'] = $promise->fetchResult();
+        $manager->updateWorkPlan([
+            'formOptions' => $formOptions,
+        ]);
 
         return $this;
     }

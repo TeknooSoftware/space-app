@@ -23,7 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Object\DTO;
+namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
+
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -31,12 +35,24 @@ namespace Teknoo\Space\Object\DTO;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountEnvironmentResume
+class DeleteNamespaceFromResumes extends AbstractDeleteFromResumes
 {
     public function __construct(
-        public readonly string $clusterName,
-        public readonly string $envName,
-        public readonly ?string $accountEnvironmentId = null,
+        private ClusterCatalog $clusterCatalog,
     ) {
+    }
+
+    protected function delete(AccountEnvironment $accountEnvironment): void
+    {
+        $clusterConfig = $this->clusterCatalog->getCluster($accountEnvironment->getClusterName());
+        $client = $clusterConfig->getKubernetesClient();
+        $namespace = $accountEnvironment->getNamespace();
+
+        $repository = $client->namespaces();
+        $nsModel = $repository->setLabelSelector(['name' => $namespace,])->first();
+
+        if (!empty($nsModel)) {
+            $repository->delete($nsModel);
+        }
     }
 }

@@ -23,58 +23,33 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
-use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Class CreateRegistryDeploymentTest.
+ * Class CreateRoleTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateRegistryDeployment
+ * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole
  */
-class CreateRegistryDeploymentTest extends TestCase
+class CreateRoleTest extends TestCase
 {
-    private CreateRegistryDeployment $createRegistryAccount;
-
-    private string $registryImageName;
-
-    private string $registryCpuRequests;
-
-    private string $registryMemoryRequests;
-
-    private string $registryCpuLimits;
-
-    private string $registryMemoryLimits;
-
-    private string $tlsSecretName;
-
-    private string $registryUrl;
-
-    private string $clusterIssuer;
+    private CreateRole $createRole;
 
     private DatesService|MockObject $datesService;
 
     private bool $preferRealDate;
-
-    private string $ingressClass;
-
-    private string $spaceRegistryUrl;
-
-    private string $spaceRegistryUsername;
-
-    private string $spaceRegistryPwd;
 
     /**
      * {@inheritdoc}
@@ -83,36 +58,9 @@ class CreateRegistryDeploymentTest extends TestCase
     {
         parent::setUp();
 
-        $this->registryImageName = '42';
-        $this->registryCpuRequests = '42';
-        $this->registryMemoryRequests = '42';
-        $this->registryCpuLimits = '42';
-        $this->registryMemoryLimits = '42';
-        $this->tlsSecretName = '42';
-        $this->registryUrl = '42';
-        $this->clusterIssuer = '42';
         $this->datesService = $this->createMock(DatesService::class);
         $this->preferRealDate = true;
-        $this->ingressClass = '42';
-        $this->spaceRegistryUrl = '42';
-        $this->spaceRegistryUsername = '42';
-        $this->spaceRegistryPwd = '42';
-        $this->createRegistryAccount = new CreateRegistryDeployment(
-            $this->registryImageName,
-            $this->registryCpuRequests,
-            $this->registryMemoryRequests,
-            $this->registryCpuLimits,
-            $this->registryMemoryLimits,
-            $this->tlsSecretName,
-            $this->registryUrl,
-            $this->clusterIssuer,
-            $this->datesService,
-            $this->preferRealDate,
-            $this->ingressClass,
-            $this->spaceRegistryUrl,
-            $this->spaceRegistryUsername,
-            $this->spaceRegistryPwd
-        );
+        $this->createRole = new CreateRole($this->datesService, $this->preferRealDate);
     }
 
     public function testInvoke(): void
@@ -131,15 +79,14 @@ class CreateRegistryDeploymentTest extends TestCase
         );
 
         self::assertInstanceOf(
-            CreateRegistryDeployment::class,
-            ($this->createRegistryAccount)(
+            CreateRole::class,
+            ($this->createRole)(
                 manager: $this->createMock(ManagerInterface::class),
                 kubeNamespace: 'foo',
-                accountNamespace: 'bar',
+                accountNamespace: 'foo',
                 accountHistory: $this->createMock(AccountHistory::class),
-                persistentVolumeClaimName: 'foo',
-                clusterCatalog: new ClusterCatalog(['defaults' => $clusterConfig], []),
-            ),
+                clusterConfig: $clusterConfig,
+            )
         );
     }
 }
