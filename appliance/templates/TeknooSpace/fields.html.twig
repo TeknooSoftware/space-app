@@ -64,12 +64,19 @@
 {% endblock checkbox_widget %}
 
 {% block _space_project_project_clusters_entry_widget %}
-    <div class="col-12 subform">
+    <div class="col-12 subform cluster-subform">
         <div class="row">
             {{ form_row(form.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
             {{ form_row(form.type, {"colClass": "col-6"}) }}
             {{ form_row(form.address, {"colClass": "col-6"}) }}
-            {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
+            {{ form_row(form.namespace, {"colClass": "col-9"}) }}
+            {{ form_row(form.useHierarchicalNamespaces, {
+                "colClass": "col-3 align-self-center pt-4",
+                'label_attr':{
+                    'class': 'switch-custom'
+                }
+            }) }}
             {{ form_row(form.identity.caCertificate, {"colClass": "col-12"}) }}
             {{ form_row(form.identity.clientCertificate, {"colClass": "col-12"}) }}
             {{ form_row(form.identity.clientKey, {"colClass": "col-12"}) }}
@@ -100,7 +107,12 @@
             {% endif %}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">>
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -118,7 +130,12 @@
             {{ form_row(form.requires, {"colClass": "col-2"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-outline-danger btn-block action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -130,10 +147,15 @@
 {% block _account_vars_sets_entry_widget %}
     <div class="col-12 subform">
         <div class="row">
-            {{ form_row(form.environmentName, {"colClass": "col-11"}) }}
+            {{ form_row(form.envName, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-icon action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -146,7 +168,7 @@
                         {{ 'teknoo.space.text.variables'|trans }}
                         <button type="button"
                                 data-subforms-id="variables"
-                                class="btn btn-outline-secondary btn-block btn-add-subform align-self-center">
+                                class="btn btn-outline-secondary btn-add-subform align-self-center">
                             <i class="uil uil-focus-add"></i>
                             {{ 'teknoo.space.action.add_variable'|trans }}
                         </button>
@@ -172,11 +194,17 @@
                     'label_attr': {'class': 'switch-custom'}
                 }) }}
             {{ form_row(form.wasSecret) }}
+            {{ form_row(form.encryptionAlgorithm) }}
             {% do form.persisted.setRendered %}
             {{ form_row(form.value, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-icon action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -188,10 +216,15 @@
 {% block _project_vars_sets_entry_widget %}
     <div class="col-12 subform">
         <div class="row">
-            {{ form_row(form.environmentName, {"colClass": "col-11"}) }}
+            {{ form_row(form.envName, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-icon action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -204,7 +237,7 @@
                         {{ 'teknoo.space.text.variables'|trans }}
                         <button type="button"
                                 data-subforms-id="variables"
-                                class="btn btn-outline-secondary btn-block btn-add-subform align-self-center">
+                                class="btn btn-outline-secondary btn-add-subform align-self-center">
                             <i class="uil uil-focus-add"></i>
                             {{ 'teknoo.space.action.add_variable'|trans }}
                         </button>
@@ -230,11 +263,17 @@
                     'label_attr':{'class': 'switch-custom'}
                 }) }}
             {{ form_row(form.wasSecret) }}
+            {{ form_row(form.encryptionAlgorithm) }}
             {% do form.persisted.setRendered %}
             {{ form_row(form.value, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-icon action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -254,6 +293,7 @@
                     'label_attr':{'class': 'switch-custom'}
                 }) }}
             {{ form_row(form.wasSecret) }}
+            {{ form_row(form.encryptionAlgorithm) }}
             {{ form_row(
                 form.persisted, {
                     "colClass": "col-2 d-flex flex-column  justify-content-end",
@@ -262,7 +302,73 @@
             {{ form_row(form.value, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-icon action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _admin_space_account_environmentResumes_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.accountEnvironmentId) }}
+            {{ form_row(form.clusterName, {"colClass": "col-5"}) }}
+            {{ form_row(form.envName, {"colClass": "col-5"}) }}
+            <div class="col-2 align-self-center">
+                <div class="form-group">
+                    {% if form.vars.data.envName is defined
+                          and form.parent.parent.vars.data.account.id is defined
+                          and form.vars.data.envName is not empty %}
+                    <a href="{{ path('space_admin_account_environment_reinstall', {'id': form.parent.parent.vars.data.account.id, 'envName': form.vars.data.envName, 'clusterName': form.vars.data.clusterName}) }}"
+                       class="ml-1 btn btn-icon btn-small disableable-on-update"
+                       aria-description="{{ 'teknoo.space.action.environment.reinstall'|trans }}"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="bottom"
+                       data-disabled-message="{{ 'teknoo.space.text.environment.reinstall.need_saving'|trans }}"
+                       title="{{ 'teknoo.space.action.environment.reinstall'|trans }}">
+                        <i class="mdi mdi-refresh"></i>
+                    </a>
+                    {% endif %}
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
+                        <i class="mdi mdi-trash-can "></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _space_account_environmentResumes_entry_widget %}
+    <div class="col-12 subform">
+        <div class="row">
+            {{ form_row(form.accountEnvironmentId) }}
+            {{ form_row(form.clusterName, {"colClass": "col-5"}) }}
+            {{ form_row(form.envName, {"colClass": "col-5"}) }}
+            <div class="col-2 align-self-center">
+                <div class="form-group">
+                    {% if form.vars.data.envName is defined
+                          and form.parent.parent.vars.data.account.id is defined
+                          and form.vars.data.envName is not empty %}
+                    {% endif %}
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>
@@ -277,7 +383,12 @@
             {{ form_row(form.file, {"colClass": "col-10"}) }}
             <div class="col-1 align-self-center">
                 <div class="form-group">
-                    <button type="button" class="btn btn-icon action-remove btn-small">
+                    <button type="button"
+                            class="btn btn-icon action-remove btn-small"
+                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
                         <i class="mdi mdi-trash-can "></i>
                     </button>
                 </div>

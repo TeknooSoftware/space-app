@@ -19,7 +19,11 @@ function addSubForm(collectionHolder) {
 document.addEventListener("DOMContentLoaded",function () {
   document.addEventListener('click',function (event) {
     let button = event.target.closest('button');
-    if (button && button.classList.contains('btn-add-subform')) {
+    if (!button) {
+      return false;
+    }
+
+    if (button.classList.contains('btn-add-subform')) {
       // prevent the link from creating a "#" on the URL
       event.preventDefault();
 
@@ -36,7 +40,7 @@ document.addEventListener("DOMContentLoaded",function () {
       return false;
     }
 
-    if (button && button.classList.contains('action-remove')) {
+    if (button.classList.contains('action-remove')) {
       // prevent the link from creating a "#" on the URL
       event.preventDefault();
       event.target.closest('.subform').remove();
@@ -44,6 +48,36 @@ document.addEventListener("DOMContentLoaded",function () {
       return false;
     }
 
+    if (button.classList.contains('btn-select-managed-cluster')) {
+      // prevent the link from creating a "#" on the URL
+      event.preventDefault();
+
+      let clusterName = button.dataset.cluster;
+      let envName = button.dataset.env;
+
+      let form = event.target.closest('form');
+      form.querySelector('input[type="hidden"].add-cluster-name').value = clusterName;
+      form.querySelector('input[type="hidden"].add-env-name').value = envName;
+
+      form.submit();
+    }
+
     return false;
+  });
+
+  document.querySelectorAll('form').forEach(function (form) {
+    form.addEventListener('change', function () {
+      form.querySelectorAll('.disableable-on-update').forEach(function (button) {
+        if (button.hasAttribute('href')) {
+          button.setAttribute('href', '#');
+          button.addEventListener('click', function (event) {
+            event.preventDefault();
+            alert(button.dataset.disabledMessage);
+
+            return false;
+          });
+        }
+      });
+    });
   });
 });

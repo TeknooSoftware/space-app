@@ -29,6 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountPersistedVariableRepositoryInterface;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
+use Teknoo\Space\Service\PersistedVariableEncryption;
 
 /**
  * Class AccountPersistedVariableLoaderTest.
@@ -46,6 +47,8 @@ class AccountPersistedVariableLoaderTest extends TestCase
 
     private AccountPersistedVariableRepositoryInterface|MockObject $repository;
 
+    private PersistedVariableEncryption|MockObject $persistedVariableEncryption;
+
     /**
      * {@inheritdoc}
      */
@@ -54,7 +57,11 @@ class AccountPersistedVariableLoaderTest extends TestCase
         parent::setUp();
 
         $this->repository = $this->createMock(AccountPersistedVariableRepositoryInterface::class);
-        $this->accountPersistedVariableLoader = new AccountPersistedVariableLoader($this->repository);
+        $this->persistedVariableEncryption = $this->createMock(PersistedVariableEncryption::class);
+        $this->accountPersistedVariableLoader = new AccountPersistedVariableLoader(
+            $this->repository,
+            $this->persistedVariableEncryption,
+        );
     }
 
     public function testConstruct(): void

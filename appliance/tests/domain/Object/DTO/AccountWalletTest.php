@@ -27,7 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * Class AccountWalletTest.
@@ -50,7 +50,7 @@ class AccountWalletTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountWallet = new AccountWallet([$this->createMock(AccountCredential::class)]);
+        $this->accountWallet = new AccountWallet([$this->createMock(AccountEnvironment::class)]);
     }
 
     public function testConstruct(): void

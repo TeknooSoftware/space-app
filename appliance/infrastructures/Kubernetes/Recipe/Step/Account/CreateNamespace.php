@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
 
 use DateTimeInterface;
-use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
@@ -34,9 +33,8 @@ use Teknoo\Kubernetes\Model\NamespaceModel;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
-use function array_values;
-use function count;
-use function iterator_to_array;
+use function strtolower;
+use function var_export;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -46,15 +44,11 @@ use function iterator_to_array;
  */
 class CreateNamespace
 {
-    /**
-     * @param WriterInterface<Account> $writer
-     */
     public function __construct(
         private string $rootNamespace,
         private string $registryRootNamespace,
         private DatesService $datesService,
         private bool $preferRealDate,
-        private WriterInterface $writer,
     ) {
     }
 
@@ -73,91 +67,72 @@ class CreateNamespace
 
     public function __invoke(
         ManagerInterface $manager,
-        string $accountNamespace,
-        AccountHistory $accountHistory,
         Account $accountInstance,
+        AccountHistory $accountHistory,
+        string $accountNamespace,
         ClusterCatalog $clusterCatalog,
+        bool $forRegistry,
+        ?string $clusterName = null,
+        ?string $envName = null,
     ): self {
-        $originalNS = $accountNamespace;
-        $namespaceValue = $this->rootNamespace . $accountNamespace;
-        $registryNamespaceValue = $this->registryRootNamespace . $accountNamespace;
-        $counter = 2;
+        if ($forRegistry) {
+            $namespaceValue = $this->registryRootNamespace . $accountNamespace;
+            $client = $clusterCatalog->getClusterForRegistry()->getKubernetesClient();
+        } else {
+            if (empty($clusterName)) {
+                throw new \LogicException('Missing clusterName where create the namespace');
+            }
+
+            $namespaceValue = strtolower($this->rootNamespace . $accountNamespace . '-' . $envName);
+            $clusterConfig = $clusterCatalog->getCluster($clusterName);
+            $client = $clusterConfig->getKubernetesClient();
+        }
 
         $accountId = $accountInstance->getId();
+        $accountName = (string) $accountInstance;
 
-        $catalogArray = array_values(iterator_to_array($clusterCatalog));
-        $catalogArrayCount = count($catalogArray);
-        $namespaceRepositoryList = [];
+        $repository = $client->namespaces();
+        $model = $repository->setFieldSelector(['metadata.name' => $namespaceValue])->first();
 
-        for ($i = 0; $i < $catalogArrayCount; $i++) {
-            $mustReset = false;
-            $namespaceRepositoryList[$i] ??= $catalogArray[$i]->getKubernetesClient()->namespaces();
-
-            do {
-                $model = $namespaceRepositoryList[$i]->setFieldSelector(['metadata.name' => $namespaceValue])->first();
-                if (null === $model) {
-                    break;
-                } else {
-                    /** @var array{metadata: array{labels: array{id: ?string}}} $arr */
-                    $arr = $model->toArray();
-
-                    if (
-                        isset($arr['metadata']['labels']['id'])
-                        && $arr['metadata']['labels']['id'] === $accountId
-                    ) {
-                        break;
-                    }
-
-                    $accountNamespace = $originalNS . '-' . ($counter++);
-                    $mustReset = true;
-                    $namespaceValue = $this->rootNamespace . $accountNamespace;
-                    $registryNamespaceValue = $this->registryRootNamespace . $accountNamespace;
-                }
-            } while (true);
-
-            if ($mustReset) {
-                $i = 0;
-            }
+        $modelArray = [];
+        if ($model) {
+            /** @var array{metadata: array{labels: array{id: ?string}}} $modelArray */
+            $modelArray = $model->toArray();
         }
 
-        //Create registry namespace
-        $clusterForRegistry = $clusterCatalog->getClusterForRegistry();
-        $registryClient = $clusterForRegistry->getKubernetesRegistryClient();
-        $ns = $registryClient->namespaces();
-        $ns->apply($this->createNamespaceModel($registryNamespaceValue, $accountId));
-
-        //Apply model
-        $namespaceModel = $this->createNamespaceModel($namespaceValue, $accountId);
-        for ($i = 0; $i < $catalogArrayCount; $i++) {
-            $client = $catalogArray[$i]->getKubernetesClient();
-            $namespaceRepository = $client->namespaces();
-            $namespaceRepository->apply($namespaceModel);
-
-            $client->setNamespace($namespaceValue);
+        if (
+            !empty($modelArray)
+            && (
+                empty($modelArray['metadata']['labels']['id'])
+                || $modelArray['metadata']['labels']['id'] !== $accountId
+            )
+        ) {
+            throw new \DomainException(
+                "Error the namespace `{$namespaceValue}` is not owned by the account {$accountName} ({$accountId})"
+            );
         }
+
+        $repository->apply($this->createNamespaceModel($namespaceValue, $accountId));
 
         //Update Account's history
         $this->datesService->passMeTheDate(
-            static function (DateTimeInterface $dateTime) use ($accountHistory, $namespaceValue) {
+            static function (DateTimeInterface $dateTime) use ($accountHistory, $namespaceValue, $forRegistry) {
                 $accountHistory->addToHistory(
                     'teknoo.space.text.account.kubernetes.namespace',
                     $dateTime,
                     false,
-                    ['namespace' => $namespaceValue],
+                    [
+                        'namespace' => $namespaceValue,
+                        'for-registry' => var_export($forRegistry, true),
+                    ],
                 );
             },
             $this->preferRealDate,
         );
 
-        //Update Account instance
-        $accountInstance->setNamespace($accountNamespace);
-        $accountInstance->setPrefixNamespace($this->rootNamespace);
-        $this->writer->save($accountInstance);
-
         //Update workplan
         $manager->updateWorkPlan([
             'kubeNamespace' => $namespaceValue,
-            'registryNamespace' => $registryNamespaceValue,
         ]);
 
         return $this;

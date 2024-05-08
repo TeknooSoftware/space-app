@@ -26,13 +26,17 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Cookbook\Traits;
 
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
+use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
+use Teknoo\East\Common\Recipe\Step\Render;
+use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Recipe\Value;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -48,6 +52,18 @@ trait PrepareAccountTrait
 
         $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 20);
 
+        if (isset($this->jumpIf)) {
+            $recipe = $recipe->cook(
+                $this->jumpIf,
+                JumpIf::class,
+                [
+                    'testValue' => 'api',
+                    'nextStep' => new Value(LoadHistory::class),
+                ],
+                21,
+            );
+        }
+
         $recipe = $recipe->cook($this->prepareRedirection, PrepareRedirection::class, [], 30);
 
         $recipe = $recipe->cook($this->redirectClient, SetRedirectClientAtEnd::class, [], 40);
@@ -55,12 +71,35 @@ trait PrepareAccountTrait
         $recipe = $recipe->cook($this->loadHistory, LoadHistory::class, [], 50);
 
         if (isset($this->loadCredentials)) {
-            $recipe = $recipe->cook($this->loadCredentials, LoadCredentials::class, [], 60);
+            $recipe = $recipe->cook($this->loadCredentials, LoadEnvironments::class, [], 60);
         }
 
-        if (isset($this->loadRegistryCredentials)) {
-            $recipe = $recipe->cook($this->loadRegistryCredentials, LoadRegistryCredentials::class, [], 60);
+        if (isset($this->loadRegistryCredential)) {
+            $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 60);
         }
+
+        if (!isset($this->jumpIf) || !isset($this->render)) {
+            return $recipe;
+        }
+
+        $recipe = $recipe->cook(
+            $this->jumpIf,
+            JumpIf::class,
+            [
+                'testValue' => 'api',
+                'nextStep' => new Value(Render::class),
+            ],
+            130,
+        );
+
+        $recipe = $recipe->cook(
+            new Stop(),
+            Stop::class,
+            [],
+            135,
+        );
+
+        $recipe = $recipe->cook($this->render, Render::class, [], 140);
 
         return $recipe;
     }

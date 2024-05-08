@@ -34,6 +34,8 @@ use Throwable;
 
 use function json_encode;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -53,13 +55,14 @@ class RunJobHandler
         $processMessage = function (MessageJob $job) use ($client): void {
             $this->logger->info(
                 (string) json_encode(
-                    [
+                    value: [
                         'action' => 'run',
                         'class' => $job::class,
                         'projectId' => $job->getProjectId(),
                         'envName' => $job->getEnvironment(),
                         'jobId' => $job->getJobId(),
-                    ]
+                    ],
+                    flags: JSON_THROW_ON_ERROR,
                 )
             );
 

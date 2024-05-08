@@ -27,7 +27,6 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
@@ -58,8 +57,6 @@ class CreateNamespaceTest extends TestCase
 
     private bool $preferRealDate;
 
-    private WriterInterface|MockObject $writer;
-
     /**
      * {@inheritdoc}
      */
@@ -71,13 +68,12 @@ class CreateNamespaceTest extends TestCase
         $this->registryRootNamespace = '42';
         $this->datesService = $this->createMock(DatesService::class);
         $this->preferRealDate = true;
-        $this->writer = $this->createMock(WriterInterface::class);
+
         $this->createNamespace = new CreateNamespace(
             $this->rootNamespace,
             $this->registryRootNamespace,
             $this->datesService,
             $this->preferRealDate,
-            $this->writer
         );
     }
 
@@ -88,22 +84,23 @@ class CreateNamespaceTest extends TestCase
             sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
-            defaultEnv: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
             supportRegistry: true,
+            useHnc: false,
         );
 
         self::assertInstanceOf(
             CreateNamespace::class,
             ($this->createNamespace)(
-                $this->createMock(ManagerInterface::class),
-                'foo',
-                $this->createMock(AccountHistory::class),
-                $this->createMock(Account::class),
-                new ClusterCatalog(['default' => $clusterConfig], []),
+                manager: $this->createMock(ManagerInterface::class),
+                accountInstance: $this->createMock(Account::class),
+                accountHistory: $this->createMock(AccountHistory::class),
+                accountNamespace: 'foo',
+                clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
+                forRegistry: true,
             ),
         );
     }

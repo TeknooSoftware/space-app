@@ -33,7 +33,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -41,7 +41,7 @@ use Teknoo\Space\Object\Persisted\PersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements DeletingQueryInterface<PersistedVariable>
+ * @implements DeletingQueryInterface<ProjectPersistedVariable>
  */
 class DeleteVariablesQuery implements DeletingQueryInterface, ImmutableInterface
 {
@@ -68,7 +68,7 @@ class DeleteVariablesQuery implements DeletingQueryInterface, ImmutableInterface
     public function delete(QueryExecutorInterface $queryBuilder, PromiseInterface $promise): DeletingQueryInterface
     {
         $queryBuilder->filterOn(
-            PersistedVariable::class,
+            ProjectPersistedVariable::class,
             [
                 'project' => new ObjectReference($this->project),
                 'id' => new NotIn($this->notIds),

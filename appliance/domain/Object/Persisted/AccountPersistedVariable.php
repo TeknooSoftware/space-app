@@ -27,10 +27,10 @@ namespace Teknoo\Space\Object\Persisted;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
-use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
-use Teknoo\Immutable\ImmutableTrait;
+use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -38,28 +38,26 @@ use Teknoo\Immutable\ImmutableTrait;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountPersistedVariable implements IdentifiedObjectInterface, TimestampableInterface, ImmutableInterface
+class AccountPersistedVariable implements
+    IdentifiedObjectInterface,
+    TimestampableInterface,
+    ImmutableInterface,
+    EncryptableVariableInterface,
+    NormalizableInterface
 {
-    use ObjectTrait;
-    use ImmutableTrait;
+    use PersistedVariableTrait;
 
     private Account $account;
-
-    private string $name;
-
-    private ?string $value = null;
-
-    private string $environmentName;
-
-    private bool $secret = false;
 
     public function __construct(
         Account $account,
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
+        ?string $encryptionAlgorithm,
+        bool $needEncryption = false,
     ) {
         $this->uniqueConstructorCheck();
 
@@ -67,32 +65,14 @@ class AccountPersistedVariable implements IdentifiedObjectInterface, Timestampab
         $this->account = $account;
         $this->name = $name;
         $this->value = $value;
-        $this->environmentName = $environmentName;
+        $this->envName = $envName;
         $this->secret = $secret;
+        $this->encryptionAlgorithm = $encryptionAlgorithm;
+        $this->needEncryption = $needEncryption;
     }
 
     public function getAccount(): Account
     {
         return $this->account;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getValue(): ?string
-    {
-        return $this->value;
-    }
-
-    public function getEnvironmentName(): string
-    {
-        return $this->environmentName;
-    }
-
-    public function isSecret(): bool
-    {
-        return $this->secret;
     }
 }

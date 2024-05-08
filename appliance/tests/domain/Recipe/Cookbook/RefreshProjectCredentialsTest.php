@@ -36,8 +36,8 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Cookbook\RefreshProjectCredentials;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection;
@@ -64,9 +64,9 @@ class RefreshProjectCredentialsTest extends TestCase
 
     private LoadAccountFromProject|MockObject $loadAccountFromProject;
 
-    private LoadCredentials|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadCredentials;
 
-    private LoadRegistryCredentials|MockObject $loadRegistryCredentials;
+    private LoadRegistryCredential|MockObject $loadRegistryCredential;
 
     private UpdateProjectCredentialsFromAccount|MockObject $updateProjectCredentialsFromAccount;
 
@@ -91,8 +91,8 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->loadObject = $this->createMock(LoadObject::class);
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
-        $this->loadCredentials = $this->createMock(LoadCredentials::class);
-        $this->loadRegistryCredentials = $this->createMock(LoadRegistryCredentials::class);
+        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
+        $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
         $this->updateProjectCredentialsFromAccount = $this->createMock(UpdateProjectCredentialsFromAccount::class);
         $this->saveObject = $this->createMock(SaveObject::class);
         $this->spaceProjectPrepareRedirection = $this->createMock(PrepareRedirection::class);
@@ -105,7 +105,7 @@ class RefreshProjectCredentialsTest extends TestCase
             $this->objectAccessControl,
             $this->loadAccountFromProject,
             $this->loadCredentials,
-            $this->loadRegistryCredentials,
+            $this->loadRegistryCredential,
             $this->updateProjectCredentialsFromAccount,
             $this->saveObject,
             $this->spaceProjectPrepareRedirection,

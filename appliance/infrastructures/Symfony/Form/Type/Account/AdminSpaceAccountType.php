@@ -26,10 +26,14 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Account;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Form\Type\AccountType as EastPaaSAccountType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
+use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnvironmentResumesType;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
@@ -43,14 +47,6 @@ class AdminSpaceAccountType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         $builder->add(
-            'accountData',
-            AccountDataType::class,
-            [
-                'can_update_subscription' => true,
-            ]
-        );
-
-        $builder->add(
             'account',
             EastPaaSAccountType::class,
             [
@@ -58,6 +54,39 @@ class AdminSpaceAccountType extends AbstractType
                 'namespace_in_readonly' => $options['namespace_in_readonly'],
             ],
         );
+
+        $builder->add(
+            'accountData',
+            AccountDataType::class,
+            [
+                'can_update_subscription' => true,
+            ]
+        );
+
+        if (
+            !empty($options['subscriptionPlan'])
+            && $options['subscriptionPlan'] instanceof SubscriptionPlan
+        ) {
+            $builder->add(
+                'environmentResumes',
+                CollectionType::class,
+                [
+                    'entry_type' => AccountEnvironmentResumesType::class,
+                    'allow_add' => true,
+                    'allow_delete' => true,
+                    'prototype' => true,
+                    'entry_options' => [
+                        'subscriptionPlan' => $options['subscriptionPlan'],
+                    ],
+                    'constraints' => [
+                        new Count([
+                            'max' => $options['subscriptionPlan']->envsCountAllowed,
+                            'maxMessage' => "teknoo.space.error.space_account.environments.exceeded.{{ limit }}",
+                        ]),
+                    ],
+                ],
+            );
+        }
 
         return $this;
     }
@@ -70,6 +99,7 @@ class AdminSpaceAccountType extends AbstractType
             'data_class' => SpaceAccount::class,
             'doctrine_type' => '',
             'namespace_in_readonly' => false,
+            'subscriptionPlan' => null,
         ]);
 
         return $this;

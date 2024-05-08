@@ -6,10 +6,10 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My First Company" with the account namespace "my-first-comany"
+    And an account for "My First Company" with the account namespace "my-first-company"
     And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
     And "5" standard websites projects "project X" and a prefix "a-prefix"
-    And an account for "My Other Company" with the account namespace "my-other-comany"
+    And an account for "My Other Company" with the account namespace "my-other-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "5" standard websites projects "other project X" and a prefix "other-prefix"
     And the platform is booted
@@ -28,7 +28,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -49,7 +49,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | space_project.project.imagesRegistry.identity.auth          |                                       |
       | space_project.project.imagesRegistry.identity.username      | teknoo-software                       |
       | space_project.project.imagesRegistry.identity.password      | azertyy                               |
-      | space_project.project.clusters.0.name                       | Teknoo Space K8s                      |
+      | space_project.project.clusters.0.name                       | Demo Kube Cluster                     |
       | space_project.project.clusters.0.type                       | kubernetes                            |
       | space_project.project.clusters.0.address                    | https://k8s.teknoo.space              |
       | space_project.project.clusters.0.environment.name           | prod                                  |
@@ -66,7 +66,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -87,7 +87,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | project.imagesRegistry.identity.auth          |                                       |
       | project.imagesRegistry.identity.username      | teknoo-software                       |
       | project.imagesRegistry.identity.password      | azertyy                               |
-      | project.clusters.0.name                       | Teknoo Space K8s                      |
+      | project.clusters.0.name                       | Demo Kube Cluster                     |
       | project.clusters.0.type                       | kubernetes                            |
       | project.clusters.0.address                    | https://k8s.teknoo.space              |
       | project.clusters.0.environment.name           | prod                                  |
@@ -104,7 +104,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And the platform is booted
@@ -122,7 +122,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And "10" project's variables
@@ -141,7 +141,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And the platform is booted
@@ -163,7 +163,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | space_project.project.imagesRegistry.identity.auth          |                                       |
       | space_project.project.imagesRegistry.identity.username      | teknoo-software                       |
       | space_project.project.imagesRegistry.identity.password      | azertyy                               |
-      | space_project.project.clusters.0.name                       | Teknoo Space K8s                      |
+      | space_project.project.clusters.0.name                       | Demo Kube Cluster                     |
       | space_project.project.clusters.0.type                       | kubernetes                            |
       | space_project.project.clusters.0.address                    | https://k8s.teknoo.space              |
       | space_project.project.clusters.0.environment.name           | prod                                  |
@@ -179,7 +179,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And the platform is booted
@@ -201,7 +201,7 @@ Feature: On a space instance, an API is available to manage projects and integra
       | project.imagesRegistry.identity.auth          |                                       |
       | project.imagesRegistry.identity.username      | teknoo-software                       |
       | project.imagesRegistry.identity.password      | azertyy                               |
-      | project.clusters.0.name                       | Teknoo Space K8s                      |
+      | project.clusters.0.name                       | Demo Kube Cluster                     |
       | project.clusters.0.type                       | kubernetes                            |
       | project.clusters.0.address                    | https://k8s.teknoo.space              |
       | project.clusters.0.environment.name           | prod                                  |
@@ -217,7 +217,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And "10" project's variables
@@ -229,7 +229,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to edit a project's variables:
       | field                                      | value            |
-      | project_vars.sets.prod.environmentName     | prod             |
+      | project_vars.sets.prod.envName             | prod             |
       | project_vars.sets.prod.variables.20.name   | DB_NAME          |
       | project_vars.sets.prod.variables.20.value  | space_project_db |
       | project_vars.sets.prod.variables.21.name   | DB_PWD           |
@@ -243,7 +243,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And "10" project's variables
@@ -255,7 +255,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to edit a project's variables with a json body:
       | field                        | value            |
-      | sets.prod.environmentName    | prod             |
+      | sets.prod.envName            | prod             |
       | sets.prod.variables.0.name   | DB_NAME          |
       | sets.prod.variables.0.value  | space_project_db |
       | sets.prod.variables.1.name   | DB_PWD           |
@@ -269,7 +269,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And the platform is booted
@@ -278,7 +278,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to delete the last project
+    When the API is called to delete the last project as admin
     Then get a JSON reponse
     And the serialized deleted project
     And the project is deleted
@@ -288,7 +288,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard website project "my project" and a prefix "a-prefix"
     And the platform is booted
@@ -297,7 +297,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to delete the last project with DELETE method
+    When the API is called to delete the last project with DELETE method as admin
     Then get a JSON reponse
     And the serialized deleted project
     And the project is deleted

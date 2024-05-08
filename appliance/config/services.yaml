@@ -17,6 +17,7 @@ services:
             $default2FAProviderName: '%teknoo.space.user.2fa.provider%'
             $routesFor2FAByProviders: '%teknoo.space.user.2fa.routes%'
             $planCatalog : '@teknoo.space.subscription_plan_catalog'
+            $clusterCatalog: '@teknoo.space.clusters_catalog'
 
     ###################
     # Generic
@@ -153,6 +154,7 @@ services:
             - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
             - '@Teknoo\East\Foundation\Time\SleepServiceInterface'
+            - '@Teknoo\Space\Service\PersistedVariableEncryption'
             - '%env(default:teknoo.space.default.new_job.waiting_time:SPACE_NEW_JOB_WAITING_TIME)%'
         tags:
             - 'messenger.message_handler'
@@ -209,7 +211,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar'
         public: true
         arguments:
-            - '@Teknoo\Space\Writer\PersistedVariableWriter'
+            - '@Teknoo\Space\Writer\ProjectPersistedVariableWriter'
 
     Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ObjectAccessControl:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ObjectAccessControl'

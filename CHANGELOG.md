@@ -1,5 +1,55 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-beta43] - 2024-05-08
+### Beta Release
+- Huge and massive update. The last version before the RC1.
+- Use last available libraries
+  - Use `States` v6.2+ 
+  - Use `East Common` v2.10+ 
+  - Use `East PaaS` v3.3.1+
+    - Use `DefaultsCompiler`, `DefaultsBag` instead `$storageIdentifier`, `$defaultStorageSize`, `$ociRegistryConfig`.
+      - Update `JobSetDefaults` and `NewJobSetDefaults`.
+    - Allow configuration of heterogeneous clusters, Job's namespace and hierarchical namespaces are now managed from
+      the cluster's definition and not from the account and the job.
+    - Remove namespaces information from `Job` and `JobUnit`.
+    - Remove namespaces information from `CompiledDeploymentInterface` (and remove `foreachNamespace`).
+    - See the `East PaaS` changelog to get other update information
+  - Use `scheb/2fa` v7.3+
+- Allow an account to have several managed environment.
+  - Rename cookbook `AccountCredential` to `AccountEnvironment`.
+  - Rename cookbook `AccountInstall` to `AccountEnvironmentInstall`.
+  - Rename cookbook `AccountReinstall` to `AccountEnvironmentReinstall`.
+  - The 'first' environment is not longer created automatically at accounts' creations.
+  - Management of environment in account's setting.
+  - `SubscriptionPlan` requires the count of allowed managed environments (minimum is 1)
+  - Add steps to load `SubscriptionPlan` of an account.
+  - Add `AccountEnvironmentResume` as DTO to manage Accounts' environments.
+  - When an environment is created, the kubernetes's namespace is computed from the account name and the environment 
+    name.
+    - If the namespace already exist and the namespace is not owned by the account, an error is thrown, Space will no 
+      longer increment until an available namespace. (Change in `CreateNamespace` steps and simplify the code).
+  - If the count of environments exceed the count of allowed environments, an error is also thrown.
+  - Fix issue with docker secret not created into the environment namespace introduced in last Space version.
+- Improve `additional steps` of `East PaaS` cookbook to be more readable.
+- Rename all property and variables `environmentName` to `envName` to have consistency with the library `East PaaS`.
+- Rename `PersistedVariable` to `ProjectPersistedVariable`, to clarify difference with `AccountPersistedVariable`.
+- Improve API endpoints to be consistency.
+  - Add admin endpoints to install/reinstall and refresh quotas, registries or environments.
+  - Add user endpoints to install/reinstall environments.
+- Improve HTTP endpoints to be consistency.
+- Support encryption of secrets in persisted variables (`AccountPersistedVariable` and `ProjectPersistedVariable`)
+  - Build on `Teknoo\East\Paas\Contracts\Security\EncryptionInterface`, but with differents keys to those used for
+    messages between workers.
+  - Add `encryptionAlgorithm` property to `AccountPersistedVariable` and `ProjectPersistedVariable`.
+  - Add `Teknoo\Space\Contracts\Object\EncryptableVariableInterface`
+  - Non encrypted secret are automatically encrypted at next save.
+  - The Web interface / API cannot decrypt secret, only the `new_job` worker.
+  - Encryption is optional, but if the secret encryption is disable, encrypted secret are unusable.
+- Improve functionals tests (with Behat) to support all API operations in all availables configurations. 
+- Some other templates and translations fixes.
+- Update documentation.
+- Fix issues with big histories in account or project.
+
 ## [1.0.0-beta42] - 2024-03-12
 ### Beta Release
 - Split `AccountCredential` (and loader, writers, steps and cookbook) to `AccountCredential` and `AccountRegistry`

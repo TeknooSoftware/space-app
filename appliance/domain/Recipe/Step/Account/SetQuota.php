@@ -25,11 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Account;
 
-use RuntimeException;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
-use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
@@ -40,39 +36,11 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
  */
 class SetQuota
 {
-    public function __construct(
-        private SubscriptionPlanCatalog $catalog
-    ) {
-    }
-
     public function __invoke(
-        ManagerInterface $manager,
         SpaceAccount $spaceAccount,
-        ?string $subscriptionPlanId = null,
+        ?SubscriptionPlan $plan = null,
     ): self {
-        $accountData = $spaceAccount->accountData;
-
-        if (null === $accountData) {
-            throw new RuntimeException('Missing Space Account data');
-        }
-
-        if (!empty($subscriptionPlanId)) {
-            $accountData->setSubscriptionPlan($subscriptionPlanId);
-        }
-
-        /** @var Promise<string, ?SubscriptionPlan, mixed> $promise */
-        $promise = new Promise(
-            function (string $planId): ?SubscriptionPlan {
-                if (empty($planId)) {
-                    return null;
-                }
-
-                return $this->catalog->getSubscriptionPlan($planId);
-            },
-        );
-        $accountData->visit('subscriptionPlan', $promise);
-
-        $spaceAccount->account->setQuotas($promise->fetchResult()?->getQuotas());
+        $spaceAccount->account->setQuotas($plan?->getQuotas());
 
         return $this;
     }

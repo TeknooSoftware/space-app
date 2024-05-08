@@ -16,52 +16,79 @@
         {{ form_row(formView.projectMetadata.projectUrl) }}
         {{ form_row(formView.project.prefix) }}
     </div>
-    <div class="row">
-        <div class="col-12"><h3>{{ 'teknoo.space.title.git'|trans }}</h3></div>
-        {{ form_row(formView.project.sourceRepository.pullUrl, {"largeRow": true}) }}
-        {{ form_row(formView.project.sourceRepository.defaultBranch) }}
-        {{ form_row(formView.project.sourceRepository.identity.name) }}
-        {{ form_row(formView.project.sourceRepository.identity.privateKey, {"colClass": "col-11"}) }}
-        {{ form_row(
-            formView.project.sourceRepository.identity.clear, {
-                "colClass": "col-1 align-self-center pt-4",
-                'label_attr': {
-                    'class': 'switch-custom'
-                }
-            }) }}
-    </div>
-    <div class="row">
-        <div class="col-12"><h3>{{ 'teknoo.space.title.image_builder'|trans }}</h3></div>
-        {{ form_row(formView.project.imagesRegistry.apiUrl) }}
-        {{ form_row(formView.project.imagesRegistry.identity.auth) }}
-        {{ form_row(formView.project.imagesRegistry.identity.username) }}
-        {{ form_row(formView.project.imagesRegistry.identity.password, {"colClass": "col-5"}) }}
-        {{ form_row(
-            formView.project.imagesRegistry.identity.clear, {
-                "colClass": "col-1 align-self-center pt-4",
-                'label_attr': {
-                    'class': 'switch-custom'
-                }
-            }) }}
-    </div>
-    <div class="row subforms"
-         data-subforms="clusters"
-         data-prototype="{{ form_widget(formView.project.clusters.vars.prototype)|e('html_attr') }}">
-        <div class="col-12">
-            <h3>{{ 'teknoo.space.title.clusters'|trans }}</h3>
+    {{ form_row(formView.addClusterName, {'attr':{'class': 'add-cluster-name'}}) }}
+    {{ form_row(formView.addClusterEnv, {'attr':{'class': 'add-env-name'}}) }}
+
+    {% include '@TeknooSpace/Project/managed_cluster.modal.html.twig' %}
+{% endblock %}
+
+{% block crudSecondaryForm %}
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row">
+                <div class="col-12"><h3>{{ 'teknoo.space.title.git'|trans }}</h3></div>
+                {{ form_row(formView.project.sourceRepository.pullUrl, {"largeRow": true}) }}
+                {{ form_row(formView.project.sourceRepository.defaultBranch) }}
+                {{ form_row(formView.project.sourceRepository.identity.name) }}
+                {{ form_row(formView.project.sourceRepository.identity.privateKey, {"colClass": "col-11"}) }}
+                {{ form_row(
+                    formView.project.sourceRepository.identity.clear, {
+                        "colClass": "col-1 align-self-center pt-4",
+                        'label_attr': {
+                            'class': 'switch-custom'
+                        }
+                    }) }}
+            </div>
         </div>
-        {% for cluster in formView.project.clusters %}
-            {{ form_widget(cluster, {"largeRow": true}) }}
-        {% endfor %}
     </div>
-    {% do formView.project.clusters.setRendered %}
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row">
+                <div class="col-12"><h3>{{ 'teknoo.space.title.image_builder'|trans }}</h3></div>
+                {{ form_row(formView.project.imagesRegistry.apiUrl) }}
+                {{ form_row(formView.project.imagesRegistry.identity.auth) }}
+                {{ form_row(formView.project.imagesRegistry.identity.username) }}
+                {{ form_row(formView.project.imagesRegistry.identity.password, {"colClass": "col-5"}) }}
+                {{ form_row(
+                    formView.project.imagesRegistry.identity.clear, {
+                        "colClass": "col-1 align-self-center pt-4",
+                        'label_attr': {
+                            'class': 'switch-custom'
+                        }
+                    }) }}
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row subforms"
+                 data-subforms="clusters"
+                 data-prototype="{{ form_widget(formView.project.clusters.vars.prototype)|e('html_attr') }}">
+                <div class="col-12">
+                    <h3>{{ 'teknoo.space.title.clusters'|trans }}</h3>
+                </div>
+                {% for cluster in formView.project.clusters %}
+                    {{ form_widget(cluster, {"largeRow": true}) }}
+                {% endfor %}
+            </div>
+            {% do formView.project.clusters.setRendered %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block addsFormButton %}
+    {% if accountEnvsResumes is defined and accountEnvsResumes is not empty %}
+        <button type="button"
+                data-bs-toggle="modal" data-bs-target="#accounts-envs"
+                class="btn btn-secondary btn-full-large mb-2">
+            <i class="uil uil-focus-target"></i>
+            {{ 'teknoo.space.action.add_managed_cluster'|trans }}
+        </button>
+    {% endif %}
     <button type="button"
             data-subforms-id="clusters"
-            class="btn btn-outline-secondary btn-full-large btn-block btn-add-subform mb-2">
+            class="btn btn-outline-secondary btn-full-large btn-add-subform mb-2">
         <i class="uil uil-focus-add"></i>
-        {{ 'teknoo.space.action.add_cluster'|trans }}
+        {{ 'teknoo.space.action.add_external_cluster'|trans }}
     </button>
 {% endblock %}

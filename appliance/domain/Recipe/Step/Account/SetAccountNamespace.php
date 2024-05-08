@@ -43,8 +43,9 @@ use Teknoo\Recipe\Promise\Promise;
 class SetAccountNamespace
 {
     public function __construct(
-        private FindSlugService $findSlugService,
-        private AccountLoader $accountLoader,
+        private readonly FindSlugService $findSlugService,
+        private readonly AccountLoader $accountLoader,
+        private string $rootNamespace,
     ) {
     }
 
@@ -55,10 +56,14 @@ class SetAccountNamespace
         ManagerInterface $manager,
         Account $accountInstance
     ): SluggableInterface {
-        return new class ($accountInstance, $manager) implements SluggableInterface, IdentifiedObjectInterface {
+        return new class ($accountInstance, $manager, $this->rootNamespace) implements
+            SluggableInterface,
+            IdentifiedObjectInterface
+        {
             public function __construct(
                 private Account $account,
                 private ManagerInterface $manager,
+                private string $rootNamespace,
             ) {
             }
 
@@ -78,6 +83,7 @@ class SetAccountNamespace
             public function setSlug(string $slug): SluggableInterface
             {
                 $this->account->setNamespace($slug);
+                $this->account->setPrefixNamespace($this->rootNamespace);
                 $this->manager->updateWorkPlan(['accountNamespace' => $slug]);
 
                 return $this;

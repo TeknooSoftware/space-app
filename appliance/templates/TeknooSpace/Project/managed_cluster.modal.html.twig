@@ -1,0 +1,27 @@
+{# templates/TeknooSpace/Project/managed_cluster.modal.html.twig #}
+{% if accountEnvsResumes is defined and accountEnvsResumes is not empty %}
+    <div class="modal fade" id="accounts-envs" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded shadow border-0">
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="icon d-flex align-items-center justify-content-center bg-soft-danger rounded-circle mx-auto" style="height: 95px; width:95px;">
+                            <h1 class="mb-0"><i class="uil uil-server align-middle"></i></h1>
+                        </div>
+                        <div class="mt-4">
+                            <h4>{{ 'teknoo.space.text.managed_cluster_for'|trans }}</h4>
+                            <div class="mt-4">
+                                {% for envResume in accountEnvsResumes %}
+                                    <button class="btn btn-outline-primary btn-full-large mb-2 btn-select-managed-cluster" data-cluster="{{ envResume.clusterName }}" data-env="{{ envResume.envName }}">{{ envResume.clusterName }} : {{ envResume.envName }}</button>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-light btn-full-large" data-bs-dismiss="modal">{{ 'teknoo.space.action.close'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

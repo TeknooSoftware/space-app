@@ -30,7 +30,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 
@@ -47,12 +47,6 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
 {
     private UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount;
 
-    private string $defaultClusterName;
-
-    private string $defaultClusterType;
-
-    private string $defaultClusterAddress;
-
     /**
      * {@inheritdoc}
      */
@@ -60,9 +54,6 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->defaultClusterName = '42';
-        $this->defaultClusterType = '42';
-        $this->defaultClusterAddress = '42';
         $this->updateProjectCredentialsFromAccount = new UpdateProjectCredentialsFromAccount(
             $this->createMock(ClusterCatalog::class),
         );
@@ -71,7 +62,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     public function testInvoke(): void
     {
         $wallet = new AccountWallet(
-            [$this->createMock(AccountCredential::class)]
+            [$this->createMock(AccountEnvironment::class)]
         );
 
         self::assertInstanceOf(

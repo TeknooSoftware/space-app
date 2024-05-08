@@ -27,30 +27,63 @@
         </div>
 
         {% set clusterSelected = null %}
+        {% set clusterSelectedStr = app.request.get('cluster', null) %}
+        {% set clusterSlug = null %}
+        {% set envName = '_all' %}
+        {% set namespace = '_all' %}
+        {% if clusterSelectedStr is not empty %}
+            {% set clusterArray = clusterSelectedStr|split('~') %}
+            {% set clusterSlug = clusterArray[0] %}
+            {% if clusterArray[1] is defined %}
+                {% set envName = clusterArray[1] %}
+            {% endif %}
+        {% endif %}
 
         {% if k8s is defined %}
             <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
                 <div class="col mt-4 d-inline-flex align-items-center">
                     <form action="?" method="get">
-                        <select name="cluster" class="form-select form-control" onchange="form.submit()">
-                            {%- for clusterConfig in clustersCatalog -%}
-                                {% if clusterSelected is empty %}
-                                    {% set clusterSelected = clusterConfig.sluggyName %}
-                                {% endif %}
-                                <option
-                                    {% if clusterSelected == clusterConfig.sluggyName %}
-                                        selected="selected"
+                        <select name="cluster" class="form-select form-control" onchange="form.submit()"> %}
+                            {%- if accountWallet is not empty -%}
+                                {%- for accountEnv in accountWallet -%}
+                                    {% set currentValue = accountEnv.clusterName ~ '~' ~ accountEnv.envName %}
+                                    {% if clusterSelectedStr is empty %}
+                                        {% set clusterSelectedStr = currentValue %}
                                     {% endif %}
-                                    value="{{ clusterConfig.sluggyName }}">
-                                        {{ clusterConfig.name }}
-                                </option>
-                            {%- endfor -%}
+                                    <option
+                                            {% if clusterSelectedStr == currentValue %}
+                                                selected="selected"
+                                                {% set clusterSelected = clustersCatalog.getCluster(accountEnv.clusterName) %}
+                                                {% set clusterSlug = clusterSelected.sluggyName %}
+                                                {% set envName = accountEnv.envName %}
+                                                {% set namespace = accountEnv.namespace %}
+                                            {% endif %}
+                                            value="{{ currentValue }}">
+                                        {{ accountEnv.clusterName }} - {{ accountEnv.envName }}
+                                    </option>
+                                {%- endfor -%}
+                            {%- else -%}
+                                {%- for clusterConfig in clustersCatalog -%}
+                                    {% if clusterSelectedStr is empty %}
+                                        {% set clusterSelectedStr = clusterConfig.sluggyName %}
+                                    {% endif %}
+                                    <option
+                                        {% if clusterSelectedStr == clusterConfig.sluggyName %}
+                                            selected="selected"
+                                            {% set clusterSlug = clusterConfig.sluggyName %}
+                                            {% set clusterSelected = clusterConfig %}
+                                        {% endif %}
+                                        value="{{ clusterConfig.sluggyName }}">
+                                            {{ clusterConfig.name }}
+                                    </option>
+                                {%- endfor -%}
+                            {%- endif -%}
                         </select>
                     </form>
                 </div>
             </div>
             {% for clusterName, clusterValues in k8s %}
-                {% if clusterSelected is not empty and clusterName == clusterSelected %}
+                {% if clusterSlug is not empty and clusterName == clusterSlug %}
                 <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
                 {% if clusterValues.health is defined %}
                 <div class="col mt-4">
@@ -159,13 +192,13 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-        {% if clusterSelected is not empty and dashboard.namespace is defined and dashboard.namespace is not null %}
+        {% if clusterSlug is not empty and envName is not empty and clusterSelected.dashboardAddress is defined and clusterSelected.dashboardAddress is not null %}
         <div class="row mt-3">
             <div class="col-12">
                 <iframe id="dashboard"
                         class="w-100 min-vh-100"
                         title="Kuberntes Dashboard"
-                        src="{{ path('space_dashboard_frame', {'clusterName': clusterSelected}) }}#/workloads?namespace={{ dashboard.namespace }}"
+                        src="{{ path('space_dashboard_frame', {'clusterName': clusterSlug, 'envName': envName}) }}#/workloads?namespace={{ namespace }}"
                         sandbox="allow-scripts allow-forms allow-same-origin"
                 ></iframe>
             </div>{#end row#}

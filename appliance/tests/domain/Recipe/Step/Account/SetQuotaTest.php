@@ -25,12 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Service\FindSlugService;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 
@@ -47,8 +43,6 @@ class SetQuotaTest extends TestCase
 {
     private SetQuota $setQuota;
 
-    private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
-
     /**
      * {@inheritdoc}
      */
@@ -56,11 +50,7 @@ class SetQuotaTest extends TestCase
     {
         parent::setUp();
 
-        $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
-
-        $this->setQuota = new SetQuota(
-            $this->subscriptionPlanCatalog,
-        );
+        $this->setQuota = new SetQuota();
     }
 
     public function testInvoke(): void
@@ -68,9 +58,7 @@ class SetQuotaTest extends TestCase
         self::assertInstanceOf(
             SetQuota::class,
             ($this->setQuota)(
-                $this->createMock(ManagerInterface::class),
                 new SpaceAccount($this->createMock(Account::class)),
-                'foo',
             ),
         );
     }

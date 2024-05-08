@@ -19,8 +19,11 @@ space_api_v1_account_settings:
     defaults:
         _controller: 'teknoo.space.endpoint.account.settings'
         api: 'json'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
+        formOptions:
+            enableEnvManagement: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
         template: '@@TeknooSpace/api/Account/settings.json.twig'
@@ -30,7 +33,7 @@ space_api_v1_account_edit_variables:
     path: '/account/variables'
     methods: ['GET', 'POST', 'PUT']
     defaults:
-        _controller: 'teknoo.space.endpoint.account.settings'
+        _controller: 'teknoo.space.endpoint.account.settings_without_steps'
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'

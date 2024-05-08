@@ -1,8 +1,8 @@
 space_admin_account_edit_variables:
-    path: '/admin/account/variables/{id}'
+    path: '/admin/account/{id}/variables'
     methods: ['GET', 'POST', 'PUT']
     defaults:
-        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        _controller: 'teknoo.space.endpoint.admin.account.edit_without_steps'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
@@ -10,11 +10,11 @@ space_admin_account_edit_variables:
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
-space_admin_account_reinstall:
-    path: '/admin/account/reinstall/{id}'
+space_admin_account_environment_reinstall:
+    path: '/admin/account/{id}/environment/{envName}/{clusterName}/reinstall'
     methods: ['GET']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.reinstall'
+        _controller: 'teknoo.space.endpoint.admin.account.environment.reinstall'
         allowEmptyCredentials: true
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
@@ -22,23 +22,21 @@ space_admin_account_reinstall:
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_admin_account_registry_reinstall:
-    path: '/admin/account/reinstall-registry/{id}'
+    path: '/admin/account/{id}/registry/reinstall'
     methods: ['GET']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.registry-reinstall'
+        _controller: 'teknoo.space.endpoint.admin.account.registry.reinstall'
         allowEmptyCredentials: true
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
-
 space_admin_account_refresh_quota:
-    path: '/admin/account/refresh-quota/{id}'
+    path: '/admin/account/{id}/quota/refresh'
     methods: ['GET']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.refresh-quota'
-        allowEmptyCredentials: true
+        _controller: 'teknoo.space.endpoint.admin.account.quota.refresh'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

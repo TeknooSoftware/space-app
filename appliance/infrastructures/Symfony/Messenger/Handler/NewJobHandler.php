@@ -36,9 +36,12 @@ use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception\BadEncryptionConfigurationException;
+use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
 
 use function json_encode;
@@ -64,6 +67,7 @@ class NewJobHandler
         private JobError $jobErrorNotifier,
         private ?EncryptionInterface $encryption,
         private SleepServiceInterface $sleepService,
+        private PersistedVariableEncryption $encryptionService,
         private int $waitingTimeSecond = 0,
     ) {
     }
@@ -75,8 +79,25 @@ class NewJobHandler
     private function convertToJson(array $variables): string
     {
         $final = [];
+
+        /** @var Promise<EncryptableVariableInterface, mixed, mixed> $promise */
+        $promise = new Promise(
+            static function (JobVar $jobVar) use (&$final): void {
+                $final[(string) $jobVar->name] = (string) $jobVar->value;
+            },
+            fn (Throwable $error) => throw $error,
+        );
+
+        /** @var JobVar $variable */
         foreach ($variables as $variable) {
-            $final[(string) $variable->name] = (string) $variable->value;
+            if (empty($variable->encryptionAlgorithm)) {
+                $final[(string) $variable->name] = (string) $variable->value;
+            } else {
+                $this->encryptionService->decrypt(
+                    $variable,
+                    $promise,
+                );
+            }
         }
 
         return json_encode($final, JSON_THROW_ON_ERROR);
@@ -96,13 +117,14 @@ class NewJobHandler
         $processMessage = function (NewJob $newJob) use ($client): void {
             $this->logger->info(
                 (string) json_encode(
-                    [
+                    value: [
                         'action' => 'start',
                         'class' => $newJob::class,
                         'projectId' => $newJob->projectId,
                         'envName' => $newJob->envName,
                         'newJobId' => $newJob->newJobId,
-                    ]
+                    ],
+                    flags: JSON_THROW_ON_ERROR
                 )
             );
 

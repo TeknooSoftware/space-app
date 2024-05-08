@@ -59,7 +59,7 @@ space_api_v1_project_list:
 
 space_api_v1_project_delete:
     path: '/project/{id}/delete'
-    methods: ['GET', 'DELETE']
+    methods: ['POST', 'DELETE']
     schemes: ['https']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

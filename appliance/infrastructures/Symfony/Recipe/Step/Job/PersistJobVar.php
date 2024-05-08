@@ -28,8 +28,8 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\NewJob;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
-use Teknoo\Space\Writer\PersistedVariableWriter;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
+use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -40,7 +40,7 @@ use Teknoo\Space\Writer\PersistedVariableWriter;
 class PersistJobVar
 {
     public function __construct(
-        private PersistedVariableWriter $writer,
+        private ProjectPersistedVariableWriter $writer,
     ) {
     }
 
@@ -51,13 +51,16 @@ class PersistJobVar
     ): PersistJobVar {
         foreach ($newJob->variables as $variable) {
             if ($variable->persisted) {
-                $persistedVariable = new PersistedVariable(
+                $nE = !empty($variable->value) && $variable->secret;
+                $persistedVariable = new ProjectPersistedVariable(
                     project: $project,
                     id: $variable->getId(),
                     name: $variable->name,
                     value: $variable->value,
-                    environmentName: $newJob->envName ?? 'default',
+                    envName: $newJob->envName ?? 'default',
                     secret: $variable->secret,
+                    encryptionAlgorithm: $variable->encryptionAlgorithm,
+                    needEncryption: $nE,
                 );
 
                 $this->writer->save($persistedVariable);

@@ -46,7 +46,6 @@ use function iterator_to_array;
 class AccountType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface<Account> $builder
      * @param array<string, string|bool> $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): self
@@ -91,7 +90,7 @@ class AccountType extends AbstractType
                 }
 
                 $forms = iterator_to_array($forms);
-                $data->setName($forms['name']->getData());
+                $data->setName((string) $forms['name']->getData());
             }
         });
 

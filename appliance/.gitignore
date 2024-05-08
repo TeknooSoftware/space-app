@@ -24,8 +24,10 @@
 /public/test.php
 /tests/Behat/jwt/private.pem
 /tests/Behat/jwt/public.pem
-/tests/var/keys/private.pem
-/tests/var/keys/public.pem
+/tests/var/keys/messages/private.pem
+/tests/var/keys/messages/public.pem
+/tests/var/keys/variables/private.pem
+/tests/var/keys/variables/public.pem
 /.env.local.php
 /public/build/js/*
 /public/build/css/*

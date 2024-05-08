@@ -32,7 +32,7 @@ use Teknoo\Space\Object\DTO\JobVarsSet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Traversable;
 
 use function array_values;
@@ -60,9 +60,9 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         $environments = [];
         $varsSet = [];
         foreach ($data->variables as $variable) {
-            $environmentName = $variable->getEnvironmentName();
-            if (!isset($environments[$environmentName])) {
-                $environments[$environmentName] = new JobVarsSet($environmentName);
+            $envName = $variable->getEnvName();
+            if (!isset($environments[$envName])) {
+                $environments[$envName] = new JobVarsSet($envName);
             }
 
             $value = '';
@@ -71,13 +71,14 @@ abstract class AbstractVarsMapper implements DataMapperInterface
             }
 
             $vName = $variable->getName();
-            $varsSet[$environmentName][$vName] = new JobVar(
+            $varsSet[$envName][$vName] = new JobVar(
                 id: $variable->getId(),
                 name: $vName,
                 value: $value,
                 persisted: true,
                 secret: $isSecret,
                 wasSecret: $isSecret,
+                encryptionAlgorithm: $variable->getEncryptionAlgorithm(),
                 persistedVar: $variable,
             );
         }
@@ -96,9 +97,11 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
-    ): AccountPersistedVariable|PersistedVariable;
+        ?string $encryptionAlgorithm,
+        bool $needEncryption,
+    ): AccountPersistedVariable|ProjectPersistedVariable;
 
     /**
      * @param SpaceAccount|SpaceProject|null $data
@@ -111,7 +114,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
 
         $existentVariables = [];
         foreach ($data->variables as $variable) {
-            $existentVariables[$variable->getId()] = $variable->getValue();
+            $existentVariables[$variable->getId()] = $variable;
         }
 
         $variables = [];
@@ -119,16 +122,20 @@ abstract class AbstractVarsMapper implements DataMapperInterface
         $formArray = iterator_to_array($forms);
         foreach ($formArray['sets']->getData() as $set) {
             /** @var JobVarsSet $set */
-            $environmentName = $set->environmentName;
+            $envName = $set->envName;
             foreach ($set->variables as $variable) {
                 $value = $variable->value;
+                $needEncryption = $variable->secret && !empty($value);
+
                 if (
                     empty($value)
-                    && (true === $variable->secret || true === $variable->wasSecret)
+                    && (true === $variable->wasSecret)
                     && !empty($variable->getId())
                     && isset($existentVariables[$variable->getId()])
                 ) {
-                    $value = $existentVariables[$variable->getId()];
+                    $value = $existentVariables[$variable->getId()]->getValue();
+                    $variable->encryptionAlgorithm = $existentVariables[$variable->getId()]->getEncryptionAlgorithm();
+                    $needEncryption = false;
                 }
 
                 $variables[] = $this->buildVariable(
@@ -136,8 +143,10 @@ abstract class AbstractVarsMapper implements DataMapperInterface
                     id: $variable->getId(),
                     name: $variable->name,
                     value: $value,
-                    environmentName: $environmentName,
-                    secret: $variable->secret,
+                    envName: $envName,
+                    secret: $variable->secret || !empty($variable->encryptionAlgorithm),
+                    encryptionAlgorithm: $variable->encryptionAlgorithm,
+                    needEncryption: $needEncryption,
                 );
 
                 if ($variable->secret) {

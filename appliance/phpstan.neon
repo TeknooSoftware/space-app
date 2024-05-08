@@ -10,6 +10,9 @@ parameters:
             message: '#is never read, only written#'
             path:  domain/Object/Persisted/
         -
+            message: '#Cannot assign offset string to array#'
+            path:  domain/Recipe/Step/Job/JobSetDefaults.php
+        -
             message: '#Sluggable#'
             path:  domain/Recipe/Step/Account/SetAccountNamespace.php
         -
@@ -22,13 +25,25 @@ parameters:
             message: '#BatchManipulationManagerInterface::deleteQuery#'
             path:  domain/Writer/Meta/
         -
+            message: '#ObjectInterface given#'
+            path:  domain/Writer/PersistedVariableWriterTrait.php
+        -
             message: '#runVisit\(\) is unused#'
             path:  domain/Object
         -
             message: '#CreateRegistryDeployment::insertModel\(\) expects#'
-            path:  infrastructures/Kubernetes/Recipe/Step/Account/CreateRegistryDeployment.php
+            path:  infrastructures/Kubernetes/Recipe/Step/Registry/CreateRegistryDeployment.php
+        -
+            message: '#to string#'
+            path:  infrastructures/Symfony/Form/Type/
         -
             message: '#expects (string\|null|string|bool|array<[, a-zA-Z\\]+>|[, a-zA-Z\\|]+), mixed given#'
+            path:  infrastructures/Symfony/Form/Type/
+        -
+            message: "#Cannot access offset 'readonly' on mixed#"
+            path:  infrastructures/Symfony/Form/Type/
+        -
+            message: "#Cannot access an offset on mixed#"
             path:  infrastructures/Symfony/Form/Type/
         -
             message: '#Argument of an invalid type mixed supplied for foreach#'
@@ -36,31 +51,3 @@ parameters:
         -
             message: '#on mixed#'
             path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
-services:
-    -
-        class: Teknoo\States\PHPStan\MethodsClassExtension
-        arguments:
-            parser: @defaultAnalysisParser
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: Teknoo\States\PHPStan\Analyser\ASTVisitor
-        arguments:
-            parser: @defaultAnalysisParser
-
-    -
-        class: Teknoo\States\PHPStan\Analyser\NodeScopeResolver
-        autowired: PHPStan\Analyser\NodeScopeResolver
-        arguments:
-            parser: @defaultAnalysisParser
-            reflector: @nodeScopeResolverReflector
-            polluteScopeWithLoopInitialAssignments: %polluteScopeWithLoopInitialAssignments%
-            polluteScopeWithAlwaysIterableForeach: %polluteScopeWithAlwaysIterableForeach%
-            earlyTerminatingMethodCalls: %earlyTerminatingMethodCalls%
-            earlyTerminatingFunctionCalls: %earlyTerminatingFunctionCalls%
-            universalObjectCratesClasses: %universalObjectCratesClasses%
-            implicitThrows: %exceptions.implicitThrows%
-            treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
-            detectDeadTypeInMultiCatch: %featureToggles.detectDeadTypeInMultiCatch%
-            paramOutType: %featureToggles.paramOutType%

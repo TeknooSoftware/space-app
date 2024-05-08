@@ -10,11 +10,9 @@ services:
             $defaultClusterAddress: '%teknoo.space.kubernetes.default_cluster.master%'
             $defaultClusterName: '%teknoo.space.kubernetes.default_cluster.name%'
             $defaultClusterType: '%teknoo.space.kubernetes.default_cluster.type%'
-            $defaultClusterEnv: '%teknoo.space.kubernetes.default_cluster.env%'
             $testTransport: '@zenstruck_messenger_test.transport_registry'
             $cacheExpiredLinks: '@security.authenticator.cache.expired_links'
             $messageLoggerListener: '@?mailer.message_logger_listener'
-            $planCatalog : '@teknoo.space.subscription_plan_catalog'
 
     Teknoo\Space\Tests\Behat\GetTokenStorageService:
         public: true

@@ -29,7 +29,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Teknoo\Space\Object\DTO\JobVar;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * Class JobVarTest.
@@ -56,7 +56,7 @@ class JobVarTest extends TestCase
 
     private bool $wasSecret;
 
-    private PersistedVariable|MockObject $persistedVar;
+    private ProjectPersistedVariable|MockObject $persistedVar;
 
     /**
      * {@inheritdoc}
@@ -71,7 +71,7 @@ class JobVarTest extends TestCase
         $this->persisted = true;
         $this->secret = true;
         $this->wasSecret = true;
-        $this->persistedVar = $this->createMock(PersistedVariable::class);
+        $this->persistedVar = $this->createMock(ProjectPersistedVariable::class);
         $this->jobVar = new JobVar(
             id: $this->id,
             name: $this->name,

@@ -61,7 +61,6 @@ class SetRedirectClientAtEnd
     }
 
     private function redirect(
-        ClientInterface $client,
         string $url,
         int $status
     ): ResponseInterface {
@@ -69,8 +68,6 @@ class SetRedirectClientAtEnd
 
         $headers = ['location' => $url ];
         $response = $this->addHeadersIntoResponse($response, $headers);
-
-        $client->acceptResponse($response);
 
         return $response;
     }
@@ -86,7 +83,6 @@ class SetRedirectClientAtEnd
         array $parameters = array()
     ): SetRedirectClientAtEnd {
         $response = $this->redirect(
-            $client,
             $this->generateUrl(
                 $route,
                 $parameters

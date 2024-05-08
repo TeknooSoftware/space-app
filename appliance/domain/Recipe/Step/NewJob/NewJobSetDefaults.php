@@ -47,17 +47,19 @@ class NewJobSetDefaults
         SpaceProject $project,
         NewJob $newJob,
     ): self {
+        $project->project->visit(
+            'clusters',
+            function (iterable $clusters) use ($newJob): void {
+                /** @var Cluster[] $clusters */
+                foreach ($clusters as $cluster) {
+                    if ($cluster->isLocked()) {
+                        $config = $this->catalog->getCluster($cluster);
 
-        $project->project->visit(['clusters' => function (iterable $clusters) use ($newJob): void {
-            /** @var Cluster[] $clusters */
-            foreach ($clusters as $cluster) {
-                if ($cluster->isLocked()) {
-                    $config = $this->catalog->getCluster($cluster);
-
-                    $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
+                        $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
+                    }
                 }
-            }
-        }]);
+            },
+        );
 
         return $this;
     }

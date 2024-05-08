@@ -99,7 +99,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.code                                     | NWQ4MTC1       |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
-    And a Kubernetes namespace "my-company" is created and populated
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated
     And a session is opened
     And the user is redirected to the dashboard page
 
@@ -144,7 +144,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.code                                     | NWQ4MTC1       |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
-    And a Kubernetes namespace "my-company" is created and populated
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated
     And a session is opened
     And the user is redirected to the dashboard page
 
@@ -186,7 +186,7 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
-    And a Kubernetes namespace "my-company" is created and populated
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated
     And a session is opened
     And the user is redirected to the dashboard page
 
@@ -229,6 +229,6 @@ Feature: On a space instance, subscription can be restricted to some user with a
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
-    And a Kubernetes namespace "my-company" is created and populated
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated
     And a session is opened
     And the user is redirected to the dashboard page

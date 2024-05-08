@@ -72,6 +72,7 @@ class VarsType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => SpaceAccount::class,
+            'subscriptionPlan' => null,
         ]);
 
         return $this;

@@ -14,30 +14,58 @@
 
 {% block crudFormFields %}
     <div class="row">
-        {{ form_row(formView.account.name, {"largeRow": true, 'label': 'teknoo.space.label.account.name'}) }}
+        {{ form_row(formView.account.name, {'label': 'teknoo.space.label.account.name'}) }}
+        {{ form_row(formView.accountData.subscriptionPlan, {'label': 'teknoo.space.label.account.plan'}) }}
     </div>
 {% endblock %}
 
 {% block crudSecondaryForm %}
     <div class="col-12">
-    <div class="rounded shadow p-4 bg-white mt-4">
-        <div class="row">
-            {{ form_row(formView.accountData.legalName, {"largeRow": true}) }}
-            {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
-            {{ form_row(formView.accountData.zipCode) }}
-            {{ form_row(formView.accountData.cityName) }}
-            {{ form_row(formView.accountData.countryName) }}
-            {{ form_row(formView.accountData.vatNumber) }}
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row">
+                <div class="col-12"><h3>{{ 'teknoo.space.title.account.legal_informations'|trans }}</h3></div>
+                {{ form_row(formView.accountData.legalName, {"largeRow": true}) }}
+                {{ form_row(formView.accountData.streetAddress, {"largeRow": true}) }}
+                {{ form_row(formView.accountData.zipCode) }}
+                {{ form_row(formView.accountData.cityName) }}
+                {{ form_row(formView.accountData.countryName) }}
+                {{ form_row(formView.accountData.vatNumber) }}
+            </div>
+        </div>
+    </div>{# end col #}
+    {% if formView.environmentResumes is defined %}
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row subforms"
+                 data-subforms="environments_resumes"
+                 data-prototype="{{ form_widget(formView.environmentResumes.vars.prototype)|e('html_attr') }}">
+                <div class="col-12">
+                    <h3>{{ 'teknoo.space.title.account.environments'|trans }}</h3>
+                </div>
+                {% for resume in formView.environmentResumes %}
+                    {{ form_widget(resume, {"largeRow": true}) }}
+                {% endfor %}
+            </div>
+            {% do formView.environmentResumes.setRendered %}
         </div>
     </div>
-    </div>{# end col #}
+    {% endif %}
+{% endblock %}
+
+{% block addsFormButton %}
+    <button type="button"
+            data-subforms-id="environments_resumes"
+            class="btn btn-outline-secondary btn-full-large btn-add-subform mb-2">
+        <i class="uil uil-focus-add"></i>
+        {{ 'teknoo.space.action.add_account_environment'|trans }}
+    </button>
 {% endblock %}
 
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
         <a href="{{ path('space_account_edit_variables') }}"
-           class="btn btn-outline-dark btn-full-large btn-block mb-2">
+           class="btn btn-outline-dark btn-full-large mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>

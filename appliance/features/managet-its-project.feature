@@ -6,7 +6,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
   Scenario: List projects of an account
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
@@ -21,7 +21,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
   Scenario: Create a new project
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -42,12 +42,8 @@ Feature: On a space instance, eacch allowed users can register a new project on 
       | space_project.project.imagesRegistry.apiUrl                | <auto>                          |
       | space_project.project.imagesRegistry.identity.username     | <auto>                          |
       | space_project.project.imagesRegistry.identity.password     | <auto>                          |
-      | space_project.project.clusters.0.name                      | <auto>                          |
-      | space_project.project.clusters.0.type                      | <auto>                          |
-      | space_project.project.clusters.0.address                   | <auto>                          |
-      | space_project.project.clusters.0.environment.name          | <auto>                          |
-      | space_project.project.clusters.0.identity.caCertificate    | <auto>                          |
-      | space_project.project.clusters.0.identity.token            | <auto>                          |
+      | space_project.addClusterName                               | Demo Kube Cluster               |
+      | space_project.addClusterEnv                                | prod                            |
     Then the project must be persisted
     And the user obtains the form:
       | field                                                      | value                                 |
@@ -71,7 +67,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
   Scenario: Update a project
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project" and a prefix "demo"
@@ -143,7 +139,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
   Scenario: Open a project from another account
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
@@ -159,7 +155,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
   Scenario: Delete a project
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
@@ -177,7 +173,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
   Scenario: Delete a project from another account
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard website project "my project"
