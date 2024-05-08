@@ -57,11 +57,13 @@ class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface
 
     /**
      * @param iterable<AccountPersistedVariable>|AccountPersistedVariable[] $variables
+     * @param AccountEnvironmentResume[] $environmentResumes
      */
     public function __construct(
         public Account $account = new Account(),
         public ?AccountData $accountData = null,
         public iterable $variables = [],
+        public ?array $environmentResumes = null,
     ) {
         if (null === $this->accountData) {
             $this->accountData = new AccountData($this->account);

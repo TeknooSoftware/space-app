@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Project;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\Paas\Infrastructures\Symfony\Form\Type\ProjectType;
@@ -53,6 +54,16 @@ class SpaceProjectType extends AbstractType
             [
                 'allowEditingOfLocked' => $options['allowEditingOfLocked'] ?? false,
             ],
+        );
+
+        $builder->add(
+            'addClusterName',
+            HiddenType::class,
+        );
+
+        $builder->add(
+            'addClusterEnv',
+            HiddenType::class,
         );
 
         return $this;

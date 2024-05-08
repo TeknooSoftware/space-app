@@ -17,6 +17,9 @@ if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
 
 date_default_timezone_set('UTC');
 
-ini_set('memory_limit', '384M');
+//Symfony+Behat memory leak issue
+ini_set('memory_limit', '1G');
+
+gc_enable();
 
 error_reporting(E_ALL | E_STRICT);

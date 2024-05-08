@@ -47,7 +47,7 @@
                                 <ul class="list-unstyled mb-0 mt-0">
                                     {% for iLocale in languagesList %}
                                         <li>
-                                            <a class="btn {% if locale == iLocale %}btn-secondary{% else %}btn-soft-secondary{% endif %} btn-full-large btn-block mt-2"
+                                            <a class="btn {% if locale == iLocale %}btn-secondary{% else %}btn-soft-secondary{% endif %} btn-full-large mt-2"
                                                rel="noopener"
                                                href="{{ functions.updateQueryField('locale', iLocale) }}"
                                                title="{{ iLocale|capitalize }}">
@@ -64,12 +64,12 @@
                             {% block formButton %}
                                 {% block addsFormButton '' %}
                                 <button type="reset"
-                                        class="btn btn-outline-light btn-full-large btn-block mb-2 text-left">
+                                        class="btn btn-outline-light btn-full-large mb-2 text-left">
                                     <i class="uil uil-times-square"></i>
                                     {{ 'teknoo.space.action.admin_reset'|trans }}
                                 </button>
                                 <button type="submit"
-                                        class="btn btn-primary btn-full-large btn-block mb-2"
+                                        class="btn btn-primary btn-full-large mb-2"
                                         name="save">
                                     {% block btnSaveLabel %}<i class="uil uil-save"></i>
                                         {{ 'teknoo.space.action.save'|trans }}{% endblock %}

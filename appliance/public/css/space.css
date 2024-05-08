@@ -53,3 +53,24 @@ select#new_job_envName {
 input[readonly].form-control,textarea[readonly].form-control {
     background-color: #ced4da !important;
 }
+
+div.subforms div.subform.cluster-subform .row {
+    border-bottom: 1px #6c757d solid;
+}
+
+div.subforms div.subform.cluster-subform {
+    padding-bottom: 15px;
+}
+
+div.subforms div.subform.cluster-subform:last-child .row{
+    border-bottom: 0;
+}
+
+div.subforms div.subform.cluster-subform:last-child{
+    padding-bottom: 0;
+}
+
+div.accordion div.accordion-vh-limited {
+    max-height: 40vh;
+    overflow-y: scroll;
+}

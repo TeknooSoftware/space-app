@@ -39,7 +39,7 @@ class JobVarsSet implements ObjectInterface
      * @param array<int, JobVar> $variables
      */
     public function __construct(
-        public string $environmentName = '',
+        public string $envName = '',
         public array $variables = [],
     ) {
     }

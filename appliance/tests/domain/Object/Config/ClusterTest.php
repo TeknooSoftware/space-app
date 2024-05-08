@@ -54,12 +54,12 @@ class ClusterTest extends TestCase
             sluggyName: 'bar',
             type: 'foo',
             masterAddress: 'foo',
-            defaultEnv: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
             kubernetesClient: $this->createMock(Client::class),
             token: 'foo',
             supportRegistry: true,
+            useHnc: true,
         );
     }
 

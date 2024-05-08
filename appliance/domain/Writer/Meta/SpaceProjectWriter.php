@@ -34,10 +34,10 @@ use Teknoo\East\Paas\Writer\ProjectWriter;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Query\PersistedVariable\DeleteVariablesQuery;
-use Teknoo\Space\Writer\PersistedVariableWriter;
+use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 use Teknoo\Space\Writer\ProjectMetadataWriter;
 use Throwable;
 
@@ -54,7 +54,7 @@ class SpaceProjectWriter implements WriterInterface
     public function __construct(
         private ProjectWriter $projectWriter,
         private ProjectMetadataWriter $metadataWriter,
-        private PersistedVariableWriter $persistedVariableWriter,
+        private ProjectPersistedVariableWriter $persistedVariableWriter,
         private BatchManipulationManagerInterface $batchManipulationManager,
     ) {
     }
@@ -98,7 +98,7 @@ class SpaceProjectWriter implements WriterInterface
                     $ids[] = $var->getId();
                 }
 
-                /** @var Promise<PersistedVariable, mixed, mixed> $deletedPromise */
+                /** @var Promise<ProjectPersistedVariable, mixed, mixed> $deletedPromise */
                 $deletedPromise = new Promise(
                     null,
                     fn (Throwable $error) => throw $error,

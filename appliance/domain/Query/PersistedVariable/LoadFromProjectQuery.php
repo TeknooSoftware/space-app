@@ -33,7 +33,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -41,7 +41,7 @@ use Teknoo\Space\Object\Persisted\PersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements QueryCollectionInterface<PersistedVariable>
+ * @implements QueryCollectionInterface<ProjectPersistedVariable>
  */
 class LoadFromProjectQuery implements QueryCollectionInterface, ImmutableInterface
 {

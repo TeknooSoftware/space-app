@@ -38,6 +38,7 @@ use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Service\PersistedVariableEncryption;
 
 /**
  * Class NewJobHandlerTest.
@@ -70,6 +71,8 @@ class NewJobHandlerTest extends TestCase
 
     private SleepServiceInterface|MockObject $sleepService;
 
+    private PersistedVariableEncryption|MockObject $persistedVariableEncryption;
+
     private int $waitingTimeSecond;
 
     /**
@@ -88,6 +91,7 @@ class NewJobHandlerTest extends TestCase
         $this->jobError = $this->createMock(JobError::class);
         $this->encryption = $this->createMock(EncryptionInterface::class);
         $this->sleepService = $this->createMock(SleepServiceInterface::class);
+        $this->persistedVariableEncryption = $this->createMock(PersistedVariableEncryption::class);
         $this->waitingTimeSecond = 1;
         $this->newJobHandler = new NewJobHandler(
             $this->executor,
@@ -99,6 +103,7 @@ class NewJobHandlerTest extends TestCase
             $this->jobError,
             $this->encryption,
             $this->sleepService,
+            $this->persistedVariableEncryption,
             $this->waitingTimeSecond,
         );
     }

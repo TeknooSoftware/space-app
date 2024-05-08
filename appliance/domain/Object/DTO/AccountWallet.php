@@ -25,11 +25,10 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Object\DTO;
 
-use ArrayAccess;
-use BadMethodCallException;
 use IteratorAggregate;
 use Teknoo\East\Paas\Object\Cluster;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\East\Paas\Object\Environment;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Traversable;
 
 /**
@@ -38,13 +37,12 @@ use Traversable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements IteratorAggregate<AccountCredential>
- * @implements ArrayAccess<string, AccountCredential>
+ * @implements IteratorAggregate<AccountEnvironment>
  */
-class AccountWallet implements ArrayAccess, IteratorAggregate
+class AccountWallet implements IteratorAggregate
 {
     /**
-     * @param iterable<AccountCredential>|AccountCredential[] $credentials
+     * @param iterable<AccountEnvironment>|AccountEnvironment[] $credentials
      */
     public function __construct(
         private readonly iterable $credentials
@@ -52,43 +50,32 @@ class AccountWallet implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * @return Traversable<AccountCredential>
+     * @return Traversable<AccountEnvironment>
      */
     public function getIterator(): Traversable
     {
         yield from $this->credentials;
     }
 
-    public function offsetExists(mixed $offset): bool
+    public function has(string|Cluster $cluster, string|Environment $environment): bool
     {
-        return null !== $this->offsetGet($offset);
+        return null !== $this->get($cluster, $environment);
     }
 
-    /**
-     * @param string|Cluster $offset
-     */
-    public function offsetGet(mixed $offset): mixed
+    public function get(string|Cluster $cluster, string|Environment $environment): ?AccountEnvironment
     {
-        if ($offset instanceof Cluster) {
-            $offset = (string) $offset;
-        }
+        $cluster = (string) $cluster;
+        $environment = (string) $environment;
 
         foreach ($this->credentials as $credential) {
-            if ($credential->getClusterName() === $offset) {
+            if (
+                $credential->getClusterName() === $cluster
+                && $credential->getEnvName() === $environment
+            ) {
                 return $credential;
             }
         }
 
         return null;
-    }
-
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        throw new BadMethodCallException('Method not available');
-    }
-
-    public function offsetUnset(mixed $offset): void
-    {
-        throw new BadMethodCallException('Method not available');
     }
 }

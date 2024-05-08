@@ -48,7 +48,7 @@ return [
     'teknoo.space.kubernetes.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE', null),
     'teknoo.space.kubernetes.default_cluster.name' => env('SPACE_KUBERNETES_CLUSTER_NAME', 'localhost'),
     'teknoo.space.kubernetes.default_cluster.type' => env('SPACE_KUBERNETES_CLUSTER_TYPE', 'kubernetes'),
-    'teknoo.space.kubernetes.default_cluster.env' => env('SPACE_KUBERNETES_CLUSTER_ENV', 'prod'),
+    'teknoo.space.kubernetes.default_cluster.use_hnc' => env('SPACE_KUBERNETES_CLUSTER_USE_HNC', false),
 
     BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
 
@@ -81,8 +81,8 @@ return [
                     ],
                     'name' => $clusterName,
                     'type' => $container->get('teknoo.space.kubernetes.default_cluster.type'),
-                    'env' => $container->get('teknoo.space.kubernetes.default_cluster.env'),
                     'support_registry' => true,
+                    'use_hnc' => $container->get('teknoo.space.kubernetes.default_cluster.use_hnc'),
                 ]
             ];
         }
@@ -119,12 +119,12 @@ return [
                 sluggyName: $sluggyName,
                 type: $definition['type'],
                 masterAddress: $definition['master'],
-                defaultEnv: $definition['env'],
                 storageProvisioner: $definition['storage_provisioner'] ?? $storageProvisioner,
                 dashboardAddress: $definition['dashboard'] ?? '',
                 kubernetesClient: $clientInit,
                 token: $definition['create_account']['token'],
                 supportRegistry: !empty($definition['support_registry']),
+                useHnc: !empty($definition['use_hnc']),
             );
         }
 

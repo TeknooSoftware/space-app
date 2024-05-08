@@ -63,6 +63,7 @@ class SetAccountNamespaceTest extends TestCase
         $this->setAccountNamespace = new SetAccountNamespace(
             $this->findSlugService,
             $this->accountLoader,
+            'foo'
         );
     }
 

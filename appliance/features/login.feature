@@ -4,7 +4,7 @@ Feature: On space, users are logged with an email and a password.
   Scenario: Login without 2FA
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -15,7 +15,7 @@ Feature: On space, users are logged with an email and a password.
   Scenario: Login with 2FA
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And the platform is booted
@@ -29,7 +29,7 @@ Feature: On space, users are logged with an email and a password.
   Scenario: Login fail with wrong credential
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "foo@bar"
@@ -38,7 +38,7 @@ Feature: On space, users are logged with an email and a password.
   Scenario: Login fail with wrong 2FA
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And the platform is booted
@@ -64,11 +64,10 @@ Feature: On space, users are logged with an email and a password.
     And a session must be not opened
     And no notification must be sent
 
-  Scenario: Send notification and login when subscribed user input its email with the recovery method
-  and follow the link
+  Scenario: Send notification and login when subscribed user input its email with the recovery method and follow the link
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When an user go to recovery request page
@@ -86,11 +85,10 @@ Feature: On space, users are logged with an email and a password.
     Then it is redirected to the recovery password page
     And a recovery session is opened
 
-  Scenario: Send notification and login when subscribed user test its email with TOTP with the recovery method
-  and follow the link
+  Scenario: Send notification and login when subscribed user test its email with TOTP with the recovery method and follow the link
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And the platform is booted

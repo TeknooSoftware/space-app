@@ -25,10 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Writer;
 
-use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Common\Contracts\Writer\WriterInterface;
-use Teknoo\East\Common\Writer\PersistTrait;
-use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 
 /**
@@ -42,17 +39,7 @@ use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 class AccountPersistedVariableWriter implements WriterInterface
 {
     /**
-     * @use PersistTrait<AccountPersistedVariable>
+     * @use PersistedVariableWriterTrait<AccountPersistedVariable>
      */
-    use PersistTrait;
-
-    public function save(
-        ObjectInterface $object,
-        PromiseInterface $promise = null,
-        ?bool $preferRealDateOnUpdate = null,
-    ): WriterInterface {
-        $this->persist($object, $promise, $preferRealDateOnUpdate);
-
-        return $this;
-    }
+    use PersistedVariableWriterTrait;
 }

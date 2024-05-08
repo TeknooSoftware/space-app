@@ -42,7 +42,7 @@ class JobVarsSetTest extends TestCase
 {
     private JobVarsSet $jobVarsSet;
 
-    private string $environmentName;
+    private string $envName;
 
     private array $variables;
 
@@ -53,9 +53,9 @@ class JobVarsSetTest extends TestCase
     {
         parent::setUp();
 
-        $this->environmentName = '42';
+        $this->envName = '42';
         $this->variables = [];
-        $this->jobVarsSet = new JobVarsSet($this->environmentName, $this->variables);
+        $this->jobVarsSet = new JobVarsSet($this->envName, $this->variables);
     }
 
     public function testConstruct(): void

@@ -21,6 +21,7 @@ RUN set -eux ; \
             wget \
             locales \
             nano  \
+            libgmp10-dev \
             libyaml-dev \
             librabbitmq-dev \
             libbz2-dev \
@@ -53,6 +54,7 @@ RUN set -eux ; \
                            filter \
                            gd \
                            gettext \
+                           gmp \
                            intl \
                            iconv \
                            mbstring \

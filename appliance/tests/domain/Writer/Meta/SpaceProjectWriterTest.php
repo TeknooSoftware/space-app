@@ -32,7 +32,7 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Paas\Writer\ProjectWriter;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Writer\Meta\SpaceProjectWriter;
-use Teknoo\Space\Writer\PersistedVariableWriter;
+use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 use Teknoo\Space\Writer\ProjectMetadataWriter;
 
 /**
@@ -52,7 +52,7 @@ class SpaceProjectWriterTest extends TestCase
 
     private ProjectMetadataWriter|MockObject $metadataWriter;
 
-    private PersistedVariableWriter|MockObject $persistedVariableWriter;
+    private ProjectPersistedVariableWriter|MockObject $persistedVariableWriter;
 
     private BatchManipulationManagerInterface|MockObject $batchManipulationManager;
 
@@ -65,7 +65,7 @@ class SpaceProjectWriterTest extends TestCase
 
         $this->projectWriter = $this->createMock(ProjectWriter::class);
         $this->metadataWriter = $this->createMock(ProjectMetadataWriter::class);
-        $this->persistedVariableWriter = $this->createMock(PersistedVariableWriter::class);
+        $this->persistedVariableWriter = $this->createMock(ProjectPersistedVariableWriter::class);
         $this->batchManipulationManager = $this->createMock(BatchManipulationManagerInterface::class);
         $this->spaceProjectWriter = new SpaceProjectWriter(
             $this->projectWriter,

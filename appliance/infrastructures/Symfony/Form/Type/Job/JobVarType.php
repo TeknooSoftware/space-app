@@ -116,6 +116,14 @@ class JobVarType extends AbstractType
             ],
         );
 
+        $builder->add(
+            'encryptionAlgorithm',
+            HiddenType::class,
+            [
+                'required' => false,
+            ],
+        );
+
         if (!empty($options['use_password_for_secret'])) {
             $builder->addEventListener(
                 FormEvents::POST_SET_DATA,
@@ -144,14 +152,31 @@ class JobVarType extends AbstractType
                     $data = $formEvent->getData();
 
                     if (
-                        $mData instanceof JobVar
-                        && true === $mData->secret
-                        && is_array($data)
+                        !$mData instanceof JobVar
+                        || !is_array($data)
+                    ) {
+                        return;
+                    }
+
+                    if (!empty($mData->getId())) {
+                        $data['id'] = $mData->getId();
+                    }
+
+                    $data['wasSecret'] = $mData->wasSecret;
+                    $data['encryptionAlgorithm'] = $mData->encryptionAlgorithm;
+
+                    if (!empty($data['encryptionAlgorithm'])) {
+                        $data['secret'] = true;
+                    }
+
+                    if (
+                        true === $mData->secret
                         && empty($data['value'])
                     ) {
                         $data['value'] = $mData->value;
-                        $formEvent->setData($data);
                     }
+
+                    $formEvent->setData($data);
                 }
             );
         }

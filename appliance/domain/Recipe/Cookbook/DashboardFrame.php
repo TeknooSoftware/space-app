@@ -31,7 +31,7 @@ use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -45,7 +45,7 @@ class DashboardFrame implements CookbookInterface
 
     public function __construct(
         RecipeInterface $recipe,
-        private readonly LoadCredentials $loadCredentials,
+        private readonly LoadEnvironments $loadEnvironments,
         private readonly DashboardFrameInterface $dashboard,
         private readonly RenderError $renderError,
         private readonly string $defaultErrorTemplate,
@@ -55,7 +55,7 @@ class DashboardFrame implements CookbookInterface
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->cook($this->loadCredentials, LoadCredentials::class, [], 10);
+        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
 
         $recipe = $recipe->cook($this->dashboard, DashboardFrameInterface::class, [], 40);
 

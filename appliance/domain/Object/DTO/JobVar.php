@@ -27,8 +27,10 @@ namespace Teknoo\Space\Object\DTO;
 
 use JsonSerializable;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
+use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
+use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -36,7 +38,7 @@ use Teknoo\Space\Object\Persisted\PersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobVar implements ObjectInterface, JsonSerializable
+class JobVar implements ObjectInterface, JsonSerializable, EncryptableVariableInterface
 {
     public function __construct(
         private ?string $id = null,
@@ -45,7 +47,8 @@ class JobVar implements ObjectInterface, JsonSerializable
         public bool $persisted = false,
         public bool $secret = false,
         public ?bool $wasSecret = null,
-        private PersistedVariable|AccountPersistedVariable|null $persistedVar = null,
+        public ?string $encryptionAlgorithm = null,
+        private ProjectPersistedVariable|AccountPersistedVariable|null $persistedVar = null,
     ) {
         if (null === $this->wasSecret) {
             $this->wasSecret = $this->secret;
@@ -69,6 +72,40 @@ class JobVar implements ObjectInterface, JsonSerializable
         return $that;
     }
 
+    public function isSecret(): bool
+    {
+        return $this->secret;
+    }
+
+    public function isEncrypted(): bool
+    {
+        return !empty($this->encryptionAlgorithm);
+    }
+
+    public function mustEncrypt(): bool
+    {
+        return false;
+    }
+
+    public function getContent(): string
+    {
+        return (string) $this->value;
+    }
+
+    public function getEncryptionAlgorithm(): ?string
+    {
+        return $this->encryptionAlgorithm;
+    }
+
+    public function cloneWith(string $content, ?string $encryptionAlgorithm): SensitiveContentInterface
+    {
+        $that = clone $this;
+        $that->value = $content;
+        $that->encryptionAlgorithm = $encryptionAlgorithm;
+
+        return $that;
+    }
+
     /**
      * @return array<string, string|bool|null>
      */
@@ -80,6 +117,7 @@ class JobVar implements ObjectInterface, JsonSerializable
             'value' => $this->value,
             'persisted' => $this->persisted,
             'secret' => $this->secret,
+            'encryptionAlgorithm' => $this->encryptionAlgorithm,
         ];
     }
 }

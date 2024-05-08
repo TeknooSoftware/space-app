@@ -74,21 +74,35 @@ services:
             - '@Teknoo\Space\Recipe\Cookbook\AccountEditSettings'
             - '@service_container'
 
-    teknoo.space.endpoint.admin.account.reinstall:
+    teknoo.space.endpoint.account.settings_without_steps:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountReinstall'
+            - '@Teknoo\Space\Recipe\Cookbook\AccountEditSettings:without-steps'
             - '@service_container'
 
-    teknoo.space.endpoint.admin.account.registry-reinstall:
+    teknoo.space.endpoint.admin.account.edit_without_steps:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\EditAccountEndPointInterface:without-steps'
+            - '@service_container'
+
+    teknoo.space.endpoint.admin.account.environment.reinstall:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentReinstall'
+            - '@service_container'
+
+    teknoo.space.endpoint.admin.account.registry.reinstall:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
             - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReinstall'
             - '@service_container'
 
-    teknoo.space.endpoint.admin.account.refresh-quota:
+    teknoo.space.endpoint.admin.account.quota.refresh:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:

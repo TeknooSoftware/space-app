@@ -21,6 +21,7 @@ RUN set -eux ; \
             wget \
             locales \
             nano  \
+            libgmp10-dev \
             libyaml-dev \
             librabbitmq-dev \
             libbz2-dev \
@@ -58,6 +59,7 @@ RUN set -eux ; \
                            filter \
                            gd \
                            gettext \
+                           gmp \
                            intl \
                            iconv \
                            mbstring \
@@ -74,17 +76,17 @@ RUN set -eux ; \
                            xsl  \
                            zip \
     ; \
-#    wget -O - https://packagecloud.io/gpg.key | apt-key add - ; \
-#    wget -q -O - https://packages.blackfire.io/gpg.key | sudo dd of=/usr/share/keyrings/blackfire-archive-keyring.asc ; \
-#    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/blackfire-archive-keyring.asc] http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sources.list.d/blackfire.list ; \
-#    apt-get update ; \
-#    apt-get install -y blackfire-php \
-#    ; \
+    wget -O - https://packagecloud.io/gpg.key | apt-key add - ; \
+    wget -q -O - https://packages.blackfire.io/gpg.key | sudo dd of=/usr/share/keyrings/blackfire-archive-keyring.asc ; \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/blackfire-archive-keyring.asc] http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sources.list.d/blackfire.list ; \
+    apt-get update ; \
+    apt-get install -y blackfire-php \
+    ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
-#    printf "blackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /usr/local/etc/php/conf.d/90-blackfire.ini ; \
-#    mkdir -p /run/php/ ; \
-#    mkdir -p /var/log/blackfire/ ; \
+    printf "blackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /usr/local/etc/php/conf.d/90-blackfire.ini ; \
+    mkdir -p /run/php/ ; \
+    mkdir -p /var/log/blackfire/ ; \
     cd /usr/local/bin ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \

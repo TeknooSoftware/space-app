@@ -32,7 +32,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
-use Teknoo\Space\Writer\PersistedVariableWriter;
+use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
 /**
  * Class PersistJobVarTest.
@@ -47,7 +47,7 @@ class PersistJobVarTest extends TestCase
 {
     private PersistJobVar $persistJobVar;
 
-    private PersistedVariableWriter|MockObject $writer;
+    private ProjectPersistedVariableWriter|MockObject $writer;
 
     /**
      * {@inheritdoc}
@@ -56,7 +56,7 @@ class PersistJobVarTest extends TestCase
     {
         parent::setUp();
 
-        $this->writer = $this->createMock(PersistedVariableWriter::class);
+        $this->writer = $this->createMock(ProjectPersistedVariableWriter::class);
         $this->persistJobVar = new PersistJobVar($this->writer);
     }
 

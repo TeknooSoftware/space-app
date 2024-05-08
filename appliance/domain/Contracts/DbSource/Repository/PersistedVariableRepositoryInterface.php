@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Contracts\DbSource\Repository;
 
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,7 +34,7 @@ use Teknoo\Space\Object\Persisted\PersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @extends RepositoryInterface<PersistedVariable>
+ * @extends RepositoryInterface<ProjectPersistedVariable>
  */
 interface PersistedVariableRepositoryInterface extends RepositoryInterface
 {

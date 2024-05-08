@@ -51,7 +51,7 @@ class VarsSetType extends AbstractType
         parent::buildForm($builder, $options);
 
         $builder->add(
-            'environmentName',
+            'envName',
             ChoiceType::class,
             [
                 'required' => true,

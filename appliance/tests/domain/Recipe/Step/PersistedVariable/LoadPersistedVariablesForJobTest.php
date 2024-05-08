@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
-use Teknoo\Space\Loader\PersistedVariableLoader;
+use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
@@ -50,7 +50,7 @@ class LoadPersistedVariablesForJobTest extends TestCase
 
     private AccountPersistedVariableLoader|MockObject $loaderAccountPV;
 
-    private PersistedVariableLoader|MockObject $loaderPV;
+    private ProjectPersistedVariableLoader|MockObject $loaderPV;
 
     /**
      * {@inheritdoc}
@@ -60,7 +60,7 @@ class LoadPersistedVariablesForJobTest extends TestCase
         parent::setUp();
 
         $this->loaderAccountPV = $this->createMock(AccountPersistedVariableLoader::class);
-        $this->loaderPV = $this->createMock(PersistedVariableLoader::class);
+        $this->loaderPV = $this->createMock(ProjectPersistedVariableLoader::class);
         $this->loadPersistedVariablesForJob = new LoadPersistedVariablesForJob($this->loaderAccountPV, $this->loaderPV);
     }
 

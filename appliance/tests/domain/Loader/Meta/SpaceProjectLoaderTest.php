@@ -32,7 +32,7 @@ use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
 use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Loader\Meta\SpaceProjectLoader;
-use Teknoo\Space\Loader\PersistedVariableLoader;
+use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 
 /**
@@ -52,7 +52,7 @@ class SpaceProjectLoaderTest extends TestCase
 
     private ProjectMetadataLoader|MockObject $metadataLoader;
 
-    private PersistedVariableLoader|MockObject $persistedVariableLoader;
+    private ProjectPersistedVariableLoader|MockObject $persistedVariableLoader;
 
     /**
      * {@inheritdoc}
@@ -63,7 +63,7 @@ class SpaceProjectLoaderTest extends TestCase
 
         $this->projectLoader = $this->createMock(ProjectLoader::class);
         $this->metadataLoader = $this->createMock(ProjectMetadataLoader::class);
-        $this->persistedVariableLoader = $this->createMock(PersistedVariableLoader::class);
+        $this->persistedVariableLoader = $this->createMock(ProjectPersistedVariableLoader::class);
         $this->spaceProjectLoader = new SpaceProjectLoader(
             projectLoader: $this->projectLoader,
             metadataLoader: $this->metadataLoader,

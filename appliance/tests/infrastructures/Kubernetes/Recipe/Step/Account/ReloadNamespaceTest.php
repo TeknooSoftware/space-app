@@ -33,7 +33,6 @@ use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * Class ReloadNamespaceTest.
@@ -67,19 +66,16 @@ class ReloadNamespaceTest extends TestCase
                     sluggyName: 'foo',
                     type: 'foo',
                     masterAddress: 'foo',
-                    defaultEnv: 'foo',
                     storageProvisioner: 'foo',
                     dashboardAddress: 'foo',
                     kubernetesClient: $this->client,
                     token: 'foo',
                     supportRegistry: true,
+                    useHnc: false,
                 )
             );
 
-        $this->reloadNamespace = new ReloadNamespace(
-            $catalog,
-            'foo',
-        );
+        $this->reloadNamespace = new ReloadNamespace();
     }
 
     public function testInvoke(): void
@@ -89,7 +85,6 @@ class ReloadNamespaceTest extends TestCase
             ($this->reloadNamespace)(
                 manager: $this->createMock(ManagerInterface::class),
                 account: $this->createMock(Account::class),
-                accountWallet: $this->createMock(AccountWallet::class),
             ),
         );
     }

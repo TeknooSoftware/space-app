@@ -32,7 +32,7 @@ use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 
 /**
@@ -59,12 +59,14 @@ class SpaceProject implements IdentifiedObjectInterface, NormalizableInterface
     ];
 
     /**
-     * @param iterable<PersistedVariable>|PersistedVariable[] $variables
+     * @param iterable<ProjectPersistedVariable>|ProjectPersistedVariable[] $variables
      */
     public function __construct(
         Project|Account $projectOrAccount,
         public ?ProjectMetadata $projectMetadata = null,
         public iterable $variables = [],
+        public ?string $addClusterName = null,
+        public ?string $addClusterEnv = null,
     ) {
         if ($projectOrAccount instanceof Account) {
             $this->project = new Project($projectOrAccount);

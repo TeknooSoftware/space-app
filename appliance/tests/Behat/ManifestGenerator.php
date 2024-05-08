@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat;
 
 use Teknoo\East\Paas\Object\AccountQuota;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 use function json_decode;
 use function json_encode;
@@ -38,32 +39,8 @@ class ManifestGenerator
     /**
      * @param AccountQuota[] $quotas
      */
-    public function namespaceCreation(string $name, string $quoteMode, array $accountQuotas): string
+    public function registryCreation(string $name): string
     {
-        $quotas = '';
-        if (!empty($quoteMode)) {
-            $quotasHards = [];
-            foreach ($accountQuotas as $accountQuota) {
-                $quotasHards["requests.{$accountQuota->type}"] = $accountQuota->requires;
-                $quotasHards["limits.{$accountQuota->type}"] = $accountQuota->capacity;
-            }
-
-            $quotas = ', "namespaces\/space-client-' . $name . '\/resourcequotas":' . json_encode([[
-                'kind' => 'ResourceQuota',
-                'apiVersion' => 'v1',
-                'metadata' => [
-                    'name' => $name . '-quota',
-                    'namespace' => 'space-client-' . $name,
-                    'labels' => [
-                        'name' => $name . '-quota',
-                    ],
-                ],
-                'spec' => [
-                    'hard' => $quotasHards,
-                ],
-            ]]);
-        }
-
         $json = <<<"EOF"
 {
     "namespaces": [
@@ -77,219 +54,6 @@ class ManifestGenerator
                     "id": "#ID#"
                 }
             }
-        },
-        {
-            "kind": "Namespace",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "space-client-$name",
-                "labels": {
-                    "name": "space-client-$name",
-                    "id": "#ID#"
-                }
-            }
-        }
-    ],
-    "namespaces\/space-client-$name\/serviceaccounts": [
-        {
-            "kind": "ServiceAccount",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "$name-account",
-                "namespace": "space-client-$name",
-                "labels": {
-                    "name": "$name-account"
-                }
-            }
-        }
-    ]$quotas,
-    "namespaces\/space-client-$name\/roles": [
-        {
-            "kind": "Role",
-            "apiVersion": "rbac.authorization.k8s.io\/v1",
-            "metadata": {
-                "name": "$name-role",
-                "namespace": "space-client-$name",
-                "labels": {
-                    "name": "$name-role"
-                }
-            },
-            "rules": [
-                {
-                    "apiGroups": [
-                        ""
-                    ],
-                    "resources": [
-                        "pods",
-                        "pods\/log",
-                        "pods\/exec",
-                        "services",
-                        "secrets",
-                        "replicationcontrollers",
-                        "persistentvolumeclaims",
-                        "configmaps"
-                    ],
-                    "verbs": [
-                        "get",
-                        "watch",
-                        "list",
-                        "create",
-                        "update",
-                        "patch",
-                        "delete",
-                        "deletecollection"
-                    ]
-                },
-                {
-                    "apiGroups": [
-                        "apps"
-                    ],
-                    "resources": [
-                        "deployments",
-                        "replicasets",
-                        "statefulsets"
-                    ],
-                    "verbs": [
-                        "get",
-                        "watch",
-                        "list",
-                        "create",
-                        "update",
-                        "patch",
-                        "delete",
-                        "deletecollection"
-                    ]
-                },
-                {
-                    "apiGroups": [
-                        "networking.k8s.io"
-                    ],
-                    "resources": [
-                        "ingresses"
-                    ],
-                    "verbs": [
-                        "get",
-                        "watch",
-                        "list",
-                        "create",
-                        "update",
-                        "patch",
-                        "delete",
-                        "deletecollection"
-                    ]
-                }
-            ]
-        }
-    ],
-    "clusterroles": [
-        {
-            "kind": "ClusterRole",
-            "apiVersion": "rbac.authorization.k8s.io\/v1",
-            "metadata": {
-                "name": "$name-cluster-role",
-                "labels": {
-                    "name": "$name-cluster-role"
-                }
-            },
-            "rules": [
-                {
-                    "apiGroups": [
-                        ""
-                    ],
-                    "resources": [
-                        "namespaces"
-                    ],
-                    "verbs": [
-                        "get",
-                        "watch"
-                    ]
-                }
-            ]
-        }
-    ],
-    "clusterrolebindings": [
-        {
-            "kind": "ClusterRoleBinding",
-            "apiVersion": "rbac.authorization.k8s.io\/v1",
-            "metadata": {
-                "name": "$name-cluster-role-binding",
-                "labels": {
-                    "name": "$name-cluster-role-binding"
-                }
-            },
-            "subjects": [
-                {
-                    "kind": "ServiceAccount",
-                    "name": "$name-account",
-                    "namespace": "space-client-$name",
-                    "apiGroup": ""
-                }
-            ],
-            "roleRef": {
-                "kind": "ClusterRole",
-                "name": "$name-cluster-role",
-                "apiGroup": "rbac.authorization.k8s.io"
-            }
-        }
-    ],
-    "namespaces\/space-client-$name\/rolebindings": [
-        {
-            "kind": "RoleBinding",
-            "apiVersion": "rbac.authorization.k8s.io\/v1",
-            "metadata": {
-                "name": "$name-role-binding",
-                "namespace": "space-client-$name",
-                "labels": {
-                    "name": "$name-role-binding"
-                }
-            },
-            "subjects": [
-                {
-                    "kind": "ServiceAccount",
-                    "name": "$name-account",
-                    "namespace": "space-client-$name",
-                    "apiGroup": ""
-                }
-            ],
-            "roleRef": {
-                "kind": "Role",
-                "name": "$name-role",
-                "namespace": "space-client-$name",
-                "apiGroup": "rbac.authorization.k8s.io"
-            }
-        }
-    ],
-    "namespaces\/space-client-$name\/secrets": [
-        {
-            "kind": "Secret",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "$name-secret",
-                "namespace": "space-client-$name",
-                "labels": {
-                    "name": "$name-secret"
-                },
-                "annotations": {
-                    "kubernetes.io\/service-account.name": "$name-account"
-                }
-            },
-            "type": "kubernetes.io\/service-account-token"
-        },
-        {
-            "kind": "Secret",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "$name-docker-config",
-                "namespace": "space-client-$name",
-                "labels": {
-                    "name": "$name-docker-config",
-                    "group": "private-registry"
-                }
-            },
-            "data": {
-                ".dockerconfigjson": "==="
-            },
-            "type": "kubernetes.io\/dockerconfigjson"
         }
     ],
     "namespaces\/space-registry-$name\/persistentvolumeclaims": [
@@ -517,12 +281,317 @@ EOF;
         );
     }
 
+    /**
+     * @param AccountQuota[] $accountQuotas
+     */
+    public function namespaceCreation(
+        string $name,
+        string $namespace,
+        array $accountQuotas,
+        AccountRegistry $registry,
+    ): string {
+        $quotas = '';
+        if (!empty($accountQuotas)) {
+            $quotasHards = [];
+            foreach ($accountQuotas as $accountQuota) {
+                $quotasHards["requests.{$accountQuota->type}"] = $accountQuota->requires;
+                $quotasHards["limits.{$accountQuota->type}"] = $accountQuota->capacity;
+            }
+
+            $quotas = ', "namespaces\/space-client-' . $namespace . '\/resourcequotas":' . json_encode([[
+                'kind' => 'ResourceQuota',
+                'apiVersion' => 'v1',
+                'metadata' => [
+                    'name' => $name . '-quota',
+                    'namespace' => 'space-client-' . $namespace,
+                    'labels' => [
+                        'name' => $name . '-quota',
+                    ],
+                ],
+                'spec' => [
+                    'hard' => $quotasHards,
+                ],
+            ]]);
+        }
+
+        $json = <<<"EOF"
+{
+    "namespaces": [
+        {
+            "kind": "Namespace",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "space-client-$namespace",
+                "labels": {
+                    "name": "space-client-$namespace",
+                    "id": "#ID#"
+                }
+            }
+        }
+    ],
+    "namespaces\/space-client-$namespace\/serviceaccounts": [
+        {
+            "kind": "ServiceAccount",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-account",
+                "namespace": "space-client-$namespace",
+                "labels": {
+                    "name": "$name-account"
+                }
+            }
+        }
+    ]$quotas,
+    "namespaces\/space-client-$namespace\/roles": [
+        {
+            "kind": "Role",
+            "apiVersion": "rbac.authorization.k8s.io\/v1",
+            "metadata": {
+                "name": "$name-role",
+                "namespace": "space-client-$namespace",
+                "labels": {
+                    "name": "$name-role"
+                }
+            },
+            "rules": [
+                {
+                    "apiGroups": [
+                        ""
+                    ],
+                    "resources": [
+                        "pods",
+                        "pods\/log",
+                        "pods\/exec",
+                        "services",
+                        "secrets",
+                        "replicationcontrollers",
+                        "persistentvolumeclaims",
+                        "configmaps"
+                    ],
+                    "verbs": [
+                        "get",
+                        "watch",
+                        "list",
+                        "create",
+                        "update",
+                        "patch",
+                        "delete",
+                        "deletecollection"
+                    ]
+                },
+                {
+                    "apiGroups": [
+                        "apps"
+                    ],
+                    "resources": [
+                        "deployments",
+                        "replicasets",
+                        "statefulsets"
+                    ],
+                    "verbs": [
+                        "get",
+                        "watch",
+                        "list",
+                        "create",
+                        "update",
+                        "patch",
+                        "delete",
+                        "deletecollection"
+                    ]
+                },
+                {
+                    "apiGroups": [
+                        "networking.k8s.io"
+                    ],
+                    "resources": [
+                        "ingresses"
+                    ],
+                    "verbs": [
+                        "get",
+                        "watch",
+                        "list",
+                        "create",
+                        "update",
+                        "patch",
+                        "delete",
+                        "deletecollection"
+                    ]
+                }
+            ]
+        }
+    ],
+    "clusterroles": [
+        {
+            "kind": "ClusterRole",
+            "apiVersion": "rbac.authorization.k8s.io\/v1",
+            "metadata": {
+                "name": "$name-cluster-role",
+                "labels": {
+                    "name": "$name-cluster-role"
+                }
+            },
+            "rules": [
+                {
+                    "apiGroups": [
+                        ""
+                    ],
+                    "resources": [
+                        "namespaces"
+                    ],
+                    "verbs": [
+                        "get",
+                        "watch"
+                    ]
+                }
+            ]
+        }
+    ],
+    "clusterrolebindings": [
+        {
+            "kind": "ClusterRoleBinding",
+            "apiVersion": "rbac.authorization.k8s.io\/v1",
+            "metadata": {
+                "name": "$name-cluster-role-binding",
+                "labels": {
+                    "name": "$name-cluster-role-binding"
+                }
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "$name-account",
+                    "namespace": "space-client-$namespace",
+                    "apiGroup": ""
+                }
+            ],
+            "roleRef": {
+                "kind": "ClusterRole",
+                "name": "$name-cluster-role",
+                "apiGroup": "rbac.authorization.k8s.io"
+            }
+        }
+    ],
+    "namespaces\/space-client-$namespace\/rolebindings": [
+        {
+            "kind": "RoleBinding",
+            "apiVersion": "rbac.authorization.k8s.io\/v1",
+            "metadata": {
+                "name": "$name-role-binding",
+                "namespace": "space-client-$namespace",
+                "labels": {
+                    "name": "$name-role-binding"
+                }
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "$name-account",
+                    "namespace": "space-client-$namespace",
+                    "apiGroup": ""
+                }
+            ],
+            "roleRef": {
+                "kind": "Role",
+                "name": "$name-role",
+                "namespace": "space-client-$namespace",
+                "apiGroup": "rbac.authorization.k8s.io"
+            }
+        }
+    ],
+    "namespaces\/space-client-$namespace\/secrets": [
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "{$registry->getRegistryConfigName()}",
+                "namespace": "space-client-$namespace",
+                "labels": {
+                    "name": "{$registry->getRegistryConfigName()}",
+                    "group": "private-registry"
+                }
+            },
+            "data": {
+                ".dockerconfigjson": "==="
+            },
+            "type": "kubernetes.io\/dockerconfigjson"
+        },
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-secret",
+                "namespace": "space-client-$namespace",
+                "labels": {
+                    "name": "$name-secret"
+                },
+                "annotations": {
+                    "kubernetes.io\/service-account.name": "$name-account"
+                }
+            },
+            "type": "kubernetes.io\/service-account-token"
+        }
+    ]
+}
+EOF;
+
+        return json_encode(
+            value: json_decode(
+                json: $json,
+                associative: true
+            ),
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
+    }
+
+    /**
+     * @param array<string, <string> $namespaces
+     * @param AccountQuota[] $accountQuotas
+     */
+    public function quotaRefresh(
+        string $accountNs,
+        array $namespaces,
+        array $accountQuotas,
+    ): string {
+        $quotas = [];
+
+        $quotasHards = [];
+        foreach ($accountQuotas as $accountQuota) {
+            $quotasHards["requests.{$accountQuota->type}"] = $accountQuota->requires;
+            $quotasHards["limits.{$accountQuota->type}"] = $accountQuota->capacity;
+        }
+
+        foreach ($namespaces as $namespace) {
+            $quotas['namespaces/' . $namespace . '/resourcequotas'] = [
+                [
+                    'kind' => 'ResourceQuota',
+                    'apiVersion' => 'v1',
+                    'metadata' => [
+                        'name' => $accountNs . '-quota',
+                        'namespace' => $namespace,
+                        'labels' => [
+                            'name' => $accountNs . '-quota',
+                        ],
+                    ],
+                    'spec' => [
+                        'hard' => $quotasHards,
+                    ],
+                ]
+            ];
+        }
+
+        return json_encode(
+            value: $quotas,
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
+    }
+
     public function fullDeployment(
         string $projectPrefix,
         string $jobId,
         string $hncSuffix,
         bool $useHnc,
-        string $quoteMode,
+        string $quotaMode,
+        string $defaultsMods,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -532,15 +601,15 @@ EOF;
         $hncManifest = '';
         if ($useHnc) {
             $hncManifest = <<<"EOF"
-"namespaces/default/subnamespacesanchors": [
+"namespaces/space-behat-my-company-prod/subnamespacesanchors": [
         {
             "kind": "SubnamespaceAnchor",
             "apiVersion": "hnc.x-k8s.io/v1",
             "metadata": {
                 "name": "{$nameHnc}",
-                "namespace": "space-behat-my-comany",
+                "namespace": "space-behat-my-company-prod",
                 "labels": {
-                    "name": "space-behat-my-comany{$hncSuffix}"
+                    "name": "space-behat-my-company-prod{$hncSuffix}"
                 }
             }
         }
@@ -548,6 +617,16 @@ EOF;
     
 EOF;
         }
+
+        $storageClass = match ($defaultsMods) {
+            'cluster' => 'cluster-default-behat-provider',
+            default => 'nfs.csi.k8s.io',
+        };
+
+        $imagePullSecrets = match ($defaultsMods) {
+            'generic', 'cluster' => 'oci-registry-behat',
+            default => 'my-company-docker-config',
+        };
 
         $secret = base64_encode($projectPrefix . 'world');
 
@@ -565,7 +644,7 @@ EOF;
             ],
         );
 
-        $phpRunResources = match ($quoteMode) {
+        $phpRunResources = match ($quotaMode) {
             'automatic' => $automaticResources,
             'partial' => $prefixResource . json_encode(
                 [
@@ -594,7 +673,7 @@ EOF;
             default => ''
         };
 
-        $shellResources = match ($quoteMode) {
+        $shellResources = match ($quotaMode) {
             'automatic' => $automaticResources,
             'partial' => $prefixResource . json_encode(
                 [
@@ -623,7 +702,7 @@ EOF;
             default => ''
         };
 
-        $nginxResources = match ($quoteMode) {
+        $nginxResources = match ($quotaMode) {
             'automatic' => $automaticResources,
             'partial' => $prefixResource . json_encode(
                 [
@@ -652,7 +731,7 @@ EOF;
             default => ''
         };
 
-        $wafResources = match ($quoteMode) {
+        $wafResources = match ($quotaMode) {
             'automatic' => $automaticResources,
             'partial', 'full' => $prefixResource . json_encode(
                 [
@@ -669,7 +748,7 @@ EOF;
             default => ''
         };
 
-        $blackfireResources = match ($quoteMode) {
+        $blackfireResources = match ($quotaMode) {
             'automatic' => $automaticResources,
             'partial', 'full' => $prefixResource . json_encode(
                 [
@@ -688,13 +767,13 @@ EOF;
 
         $json = <<<"EOF"
 {
-    $hncManifest"namespaces/space-behat-my-comany{$hncSuffix}/secrets": [
+    $hncManifest"namespaces/space-behat-my-company-prod{$hncSuffix}/secrets": [
         {
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map-vault-secret",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map-vault"
                 }
@@ -710,7 +789,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map-vault2-secret",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map-vault2"
                 }
@@ -725,7 +804,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}volume-vault-secret",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}volume-vault"
                 }
@@ -737,13 +816,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/configmaps": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/configmaps": [
         {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map1-map",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map1"
                 }
@@ -758,7 +837,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map2-map",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map2"
                 }
@@ -769,13 +848,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/persistentvolumeclaims": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/persistentvolumeclaims": [
         {
             "kind": "PersistentVolumeClaim",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}data",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}data"
                 }
@@ -784,7 +863,7 @@ EOF;
                 "accessModes": [
                     "ReadWriteOnce"
                 ],
-                "storageClassName": "nfs.csi.k8s.io",
+                "storageClassName": "$storageClass",
                 "resources": {
                     "requests": {
                         "storage": "3Gi"
@@ -797,7 +876,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}data-replicated",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}data-replicated"
                 }
@@ -815,13 +894,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/deployments": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/deployments": [
         {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}shell-dplmt",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}shell"
                 },
@@ -846,7 +925,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}shell-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}shell",
                             "vname": "{$projectPrefix}shell-v1"
@@ -871,7 +950,7 @@ EOF;
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ]
                     }
@@ -883,7 +962,7 @@ EOF;
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-dplmt",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 },
@@ -904,7 +983,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}demo-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}demo",
                             "vname": "{$projectPrefix}demo-v1"
@@ -988,7 +1067,7 @@ EOF;
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ],
                         "securityContext": {
@@ -999,13 +1078,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/statefulsets": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/statefulsets": [
         {
             "kind": "StatefulSet",
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}php-pods-sfset",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-pods"
                 },
@@ -1031,7 +1110,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}php-pods-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}php-pods",
                             "vname": "{$projectPrefix}php-pods-v1"
@@ -1145,7 +1224,7 @@ EOF;
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ],
                         "affinity": {
@@ -1217,13 +1296,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/services": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/services": [
         {
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}php-service",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-service"
                 }
@@ -1248,7 +1327,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}demo",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 }
@@ -1275,13 +1354,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/ingresses": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/ingresses": [
         {
             "kind": "Ingress",
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-ingress",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 },
@@ -1402,7 +1481,7 @@ EOF;
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-secure-ingress",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo-secure"
                 },

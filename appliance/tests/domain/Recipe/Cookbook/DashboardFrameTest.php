@@ -33,7 +33,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Recipe\Cookbook\DashboardFrame;
-use Teknoo\Space\Recipe\Step\AccountCredential\LoadCredentials;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
  * Class DashboardFrameTest.
@@ -51,7 +51,7 @@ class DashboardFrameTest extends TestCase
 
     private RecipeInterface|MockObject $recipe;
 
-    private LoadCredentials|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadCredentials;
 
     private DashboardFrameInterface|MockObject $dashboard;
 
@@ -67,7 +67,7 @@ class DashboardFrameTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadCredentials = $this->createMock(LoadCredentials::class);
+        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
         $this->dashboard = $this->createMock(DashboardFrameInterface::class);
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';

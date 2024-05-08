@@ -92,25 +92,27 @@ class AccountVarsMapperTest extends TestCase
             ->willReturn(
                 [
                     new JobVarsSet(
-                        'foo',
-                        [
+                        envName: 'foo',
+                        variables: [
                             new JobVar(
-                                'foo',
-                                'bar',
-                                'foo',
-                                false,
-                                true,
-                                true,
-                                $this->createMock(AccountPersistedVariable::class),
+                                id: 'foo',
+                                name: 'bar',
+                                value: 'foo',
+                                persisted: false,
+                                secret: true,
+                                wasSecret: true,
+                                encryptionAlgorithm: 'rsa',
+                                persistedVar: $this->createMock(AccountPersistedVariable::class),
                             ),
                             new JobVar(
-                                null,
-                                'bar',
-                                'foo',
-                                true,
-                                true,
-                                false,
-                                $this->createMock(AccountPersistedVariable::class)
+                                id: null,
+                                name: 'bar',
+                                value: 'foo',
+                                persisted: true,
+                                secret: true,
+                                wasSecret: false,
+                                encryptionAlgorithm: 'rsa',
+                                persistedVar: $this->createMock(AccountPersistedVariable::class)
                             ),
                         ]
                     )

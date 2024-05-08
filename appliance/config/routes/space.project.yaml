@@ -11,7 +11,7 @@ space_project_list:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_edit:
-    path: '/project/edit/{id}'
+    path: '/project/{id}/edit'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.project.edit'
@@ -66,7 +66,7 @@ space_project_new:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_project_delete:
-    path: '/project/delete/{id}'
+    path: '/project/{id}/delete'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

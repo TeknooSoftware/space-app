@@ -33,6 +33,7 @@ use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
 use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\SaveObject;
+use Teknoo\East\Paas\Recipe\Traits\AdditionalStepsTrait;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
@@ -45,6 +46,11 @@ use Teknoo\Recipe\RecipeInterface;
  */
 trait EditOwnsSettingsTrait
 {
+    use AdditionalStepsTrait;
+
+    /**
+     * @param iterable<int, callable> $additionalSteps
+     */
     public function __construct(
         RecipeInterface $recipe,
         private readonly FormHandlingInterface $formHandling,
@@ -54,8 +60,11 @@ trait EditOwnsSettingsTrait
         private readonly RenderError $renderError,
         private readonly string $objectClass,
         private readonly string $defaultErrorTemplate,
+        iterable $additionalSteps = [],
     ) {
         $this->fill($recipe);
+
+        $this->additionalSteps = $additionalSteps;
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
@@ -89,6 +98,8 @@ trait EditOwnsSettingsTrait
         $recipe = $recipe->cook($this->renderForm, RenderFormInterface::class, $mapping, 70);
 
         $recipe = $recipe->onError(new Bowl($this->renderError, []));
+
+        $recipe = $this->registerAdditionalSteps($recipe, $this->additionalSteps);
 
         $this->addToWorkplan('errorTemplate', $this->defaultErrorTemplate);
 

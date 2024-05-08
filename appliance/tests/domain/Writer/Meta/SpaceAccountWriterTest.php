@@ -31,9 +31,9 @@ use Teknoo\East\Common\Contracts\DBSource\BatchManipulationManagerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Paas\Writer\AccountWriter;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountDataWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountPersistedVariableWriter;
@@ -56,11 +56,11 @@ class SpaceAccountWriterTest extends TestCase
 
     private AccountDataWriter|MockObject $dataWriter;
 
-    private AccountCredentialLoader|MockObject $credentialLoader;
+    private AccountEnvironmentLoader|MockObject $credentialLoader;
 
     private AccountHistoryLoader|MockObject $historyLoader;
 
-    private AccountCredentialWriter|MockObject $credentialWriter;
+    private AccountEnvironmentWriter|MockObject $credentialWriter;
 
     private AccountHistoryWriter|MockObject $historyWriter;
 
@@ -77,9 +77,9 @@ class SpaceAccountWriterTest extends TestCase
 
         $this->accountWriter = $this->createMock(AccountWriter::class);
         $this->dataWriter = $this->createMock(AccountDataWriter::class);
-        $this->credentialLoader = $this->createMock(AccountCredentialLoader::class);
+        $this->credentialLoader = $this->createMock(AccountEnvironmentLoader::class);
         $this->historyLoader = $this->createMock(AccountHistoryLoader::class);
-        $this->credentialWriter = $this->createMock(AccountCredentialWriter::class);
+        $this->credentialWriter = $this->createMock(AccountEnvironmentWriter::class);
         $this->historyWriter = $this->createMock(AccountHistoryWriter::class);
         $this->accountPersistedVariableWriter = $this->createMock(AccountPersistedVariableWriter::class);
         $this->batchManipulationManager = $this->createMock(BatchManipulationManagerInterface::class);

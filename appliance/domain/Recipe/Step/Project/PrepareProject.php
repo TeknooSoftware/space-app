@@ -36,7 +36,7 @@ use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
@@ -47,15 +47,9 @@ use Teknoo\Space\Object\Persisted\AccountRegistry;
  */
 class PrepareProject
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         ManagerInterface $manager,
         Project $projectInstance,
-        AccountWallet $accountWallet,
         AccountRegistry $accountRegistry,
     ): self {
         $projectInstance->setSourceRepository(
@@ -77,30 +71,6 @@ class PrepareProject
                 )
             )
         );
-
-        $clusters = [];
-        foreach ($accountWallet as $credential) {
-            $clusterConfig = $this->catalog->getCluster($credential->getClusterName());
-
-            $cluster = new Cluster();
-            $cluster->setName($credential->getClusterName());
-            $cluster->setType($clusterConfig->type);
-            $cluster->setAddress($clusterConfig->masterAddress);
-            $cluster->setEnvironment(new Environment($clusterConfig->defaultEnv));
-            $cluster->setLocked(true);
-            $cluster->setIdentity(
-                new ClusterCredentials(
-                    caCertificate: $credential->getCaCertificate(),
-                    clientCertificate: $credential->getClientCertificate(),
-                    clientKey: $credential->getClientKey(),
-                    token: $credential->getToken()
-                )
-            );
-
-            $clusters[] = $cluster;
-        }
-
-        $projectInstance->setClusters($clusters);
 
         return $this;
     }

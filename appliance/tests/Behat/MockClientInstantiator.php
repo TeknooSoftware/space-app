@@ -31,10 +31,12 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Teknoo\Kubernetes\HttpClient\InstantiatorInterface;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 use function array_pop;
 use function explode;
 use function json_decode;
+use function parse_str;
 use function str_contains;
 
 class MockClientInstantiator implements InstantiatorInterface
@@ -64,12 +66,43 @@ class MockClientInstantiator implements InstantiatorInterface
 
                     $body = (string) $request->getBody();
 
-                    $this->testsContext->setManifests($model, json_decode($body, true));
+                    if ('DELETE' === $request->getMethod()) {
+                        $a = explode('/', $model);
+                        $this->testsContext->setDeletedManifests(array_pop($a));
+                    } else {
+                        $this->testsContext->setManifests($model, json_decode($body, true));
+                    }
                 }
 
                 $uri = $request->getUri();
                 $path = $uri->getPath();
                 $query = $uri->getQuery();
+
+                if ('/api/v1/namespaces' === $path) {
+                    $qs = [];
+                    parse_str($query, $qs);
+                    if (!empty($qs['labelSelector'])) {
+                        foreach ($this->testsContext->listObjects(AccountEnvironment::class) as $env) {
+                            if ('name=' . $env->getNamespace() === $qs['labelSelector']) {
+                                return new JsonResponse(
+                                    [
+                                        'items' => [
+                                            [
+                                                'metadata' => [
+                                                    'name' => $env->getNamespace(),
+                                                    'labels' => [
+                                                        'name' => $env->getNamespace(),
+                                                        'id' => $env->getAccount()->getId(),
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                );
+                            }
+                        }
+                    }
+                }
 
                 if (
                     str_contains($path, '/secrets')

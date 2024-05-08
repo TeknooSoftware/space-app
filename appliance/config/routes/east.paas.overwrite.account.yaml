@@ -11,7 +11,7 @@ _teknoo_paas_admin_account_list:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 _teknoo_paas_admin_account_edit:
-    path: '/admin/account/edit/{id}'
+    path: '/admin/account/{id}/edit'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
@@ -24,6 +24,7 @@ _teknoo_paas_admin_account_edit:
         template: '@@TeknooEastPaas/AdminAccount/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 _teknoo_paas_admin_account_new:
     path: '/admin/account/new'
@@ -43,7 +44,7 @@ _teknoo_paas_admin_account_new:
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 _teknoo_paas_admin_account_delete:
-    path: '/admin/account/delete/{id}'
+    path: '/admin/account/{id}/delete'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

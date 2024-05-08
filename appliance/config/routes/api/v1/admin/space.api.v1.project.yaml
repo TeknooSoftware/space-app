@@ -1,5 +1,5 @@
 space_api_v1_admin_project_new:
-    path: '/project/new/{accountId}'
+    path: '/account/{accountId}/project/new'
     methods: ['POST', 'PUT']
     schemes: ['https']
     defaults:
@@ -46,3 +46,17 @@ space_api_v1_admin_project_list:
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooSpace/api/Project/list.json.twig'
+
+space_api_v1_admin_project_delete:
+    path: '/project/{id}/delete'
+    methods: ['POST', 'DELETE']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        api: 'json'
+        deleter: '@teknoo.space.deleting.space_project'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        objectViewKey: 'projectInstance'
+        template: '@@TeknooSpace/api/Project/deleted.json.twig'
+
