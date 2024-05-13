@@ -5,7 +5,7 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
-    <document name="Teknoo\Space\Object\Persisted\ProjectPersistedVariable" collection="persisted_variables">
+    <document name="Teknoo\Space\Object\Persisted\ProjectPersistedVariable" collection="project_persisted_variables">
         <id type="string" strategy="UUID"/>
         <field field-name="name" name="name" type="string" nullable="false" index="true"/>
         <field field-name="value" name="value" type="string" nullable="true"/>
