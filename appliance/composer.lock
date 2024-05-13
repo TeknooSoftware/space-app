@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "36cd3603e4f7e58213f0cd484b54a0d2",
+    "content-hash": "ac6af2349c0bbdd2f4571117824d4003",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11412,16 +11412,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "3.3.4",
+            "version": "3.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "fc139fc85dd09a1e79872d1f5149f77537bbde5a"
+                "reference": "fead63e2608d6e0ffc56d76c145c4c58399c5bbd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/fc139fc85dd09a1e79872d1f5149f77537bbde5a",
-                "reference": "fc139fc85dd09a1e79872d1f5149f77537bbde5a",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/fead63e2608d6e0ffc56d76c145c4c58399c5bbd",
+                "reference": "fead63e2608d6e0ffc56d76c145c4c58399c5bbd",
                 "shasum": ""
             },
             "require": {
@@ -11549,20 +11549,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-05-08T09:10:18+00:00"
+            "time": "2024-05-13T20:31:05+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "3.3.4",
+            "version": "3.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "5d777b1c8ed600de373ba0a5a0ee40674ac53dfc"
+                "reference": "b21d9dc1e5330ab1f4afc302c2a6af94c91526a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/5d777b1c8ed600de373ba0a5a0ee40674ac53dfc",
-                "reference": "5d777b1c8ed600de373ba0a5a0ee40674ac53dfc",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/b21d9dc1e5330ab1f4afc302c2a6af94c91526a5",
+                "reference": "b21d9dc1e5330ab1f4afc302c2a6af94c91526a5",
                 "shasum": ""
             },
             "require": {
@@ -11601,7 +11601,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
                 "teknoo/east-common-symfony": "^2.11",
                 "teknoo/east-foundation-symfony": "^7.7",
-                "teknoo/east-paas": "^3.3.4",
+                "teknoo/east-paas": "^3.3.5",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.5.2",
                 "teknoo/recipe": "^5.1",
@@ -11663,7 +11663,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-05-08T09:11:34+00:00"
+            "time": "2024-05-13T20:32:01+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13858,12 +13858,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6bdc6b064ecc2d47fd9aad5f3dce20f2a7dfcd64"
+                "reference": "60e42fbc5481d71199ae7734b7faf28b16b9b2a3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6bdc6b064ecc2d47fd9aad5f3dce20f2a7dfcd64",
-                "reference": "6bdc6b064ecc2d47fd9aad5f3dce20f2a7dfcd64",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/60e42fbc5481d71199ae7734b7faf28b16b9b2a3",
+                "reference": "60e42fbc5481d71199ae7734b7faf28b16b9b2a3",
                 "shasum": ""
             },
             "conflict": {
@@ -14186,7 +14186,7 @@
                 "magneto/core": "<1.9.4.4-dev",
                 "maikuolan/phpmussel": ">=1,<1.6",
                 "mainwp/mainwp": "<=4.4.3.3",
-                "mantisbt/mantisbt": "<2.26.1",
+                "mantisbt/mantisbt": "<2.26.2",
                 "marcwillmann/turn": "<0.3.3",
                 "matyhtf/framework": "<3.0.6",
                 "mautic/core": "<4.4.12|>=5.0.0.0-alpha,<5.0.4",
@@ -14643,7 +14643,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-05-10T22:04:19+00:00"
+            "time": "2024-05-13T15:05:08+00:00"
         },
         {
             "name": "sebastian/cli-parser",

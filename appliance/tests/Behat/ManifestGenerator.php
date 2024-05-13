@@ -1258,7 +1258,7 @@ EOF;
                                         "mountPath": "/opt/extra",
                                         "readOnly": false
                                     }
-                                ]
+                                ]$phpRunResources
                             }
                         ],
                         "volumes": [
