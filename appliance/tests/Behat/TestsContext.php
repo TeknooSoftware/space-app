@@ -145,6 +145,7 @@ use function key;
 use function mb_strtolower;
 use function method_exists;
 use function pcntl_alarm;
+use function preg_replace;
 use function random_int;
 use function spl_object_hash;
 use function str_contains;
@@ -4274,7 +4275,7 @@ class TestsContext implements Context
 
         $expected = (new ManifestGenerator())->fullDeployment(
             projectPrefix: $this->projectPrefix,
-            jobId: $jobId,
+            jobId: strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '', (string) $job->getProject()))),
             hncSuffix: $this->hncSuffix,
             useHnc: $this->useHnc,
             quotaMode: $this->quotasMode,
