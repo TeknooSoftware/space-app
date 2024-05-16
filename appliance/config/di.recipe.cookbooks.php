@@ -451,8 +451,6 @@ return array(
             $previous->add(53, $container->get(JobSetDefaults::class));
             //After SaveJob
             $previous->add(65, $container->get(JobUpdaterNotifier::class));
-            //After SerializeJob
-            $previous->add(75, $container->get(PersistJobVar::class));
 
             return $previous;
         }
@@ -491,6 +489,7 @@ return array(
             diGet(NewJobNotifierInterface::class),
             diGet(JumpIf::class),
             diGet(CallNewJobInterface::class),
+            diGet(PersistJobVar::class),
             diGet(RedirectClientInterface::class),
             diGet(RenderFormInterface::class),
             diGet(RenderError::class),

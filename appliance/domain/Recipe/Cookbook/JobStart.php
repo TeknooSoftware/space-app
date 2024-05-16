@@ -43,6 +43,7 @@ use Teknoo\Recipe\Ingredient\IngredientWithCondition;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
@@ -70,6 +71,7 @@ class JobStart implements CookbookInterface
         private readonly NewJobNotifierInterface $newJobNotifier,
         private readonly JumpIf $jumpIf,
         private readonly CallNewJobInterface $callNewJob,
+        private readonly PersistJobVar $persistJobVar,
         private readonly RedirectClientInterface $redirectClient,
         private readonly RenderFormInterface $renderForm,
         private readonly RenderError $renderError,
@@ -137,6 +139,8 @@ class JobStart implements CookbookInterface
         $recipe = $recipe->cook($this->newJobNotifier, NewJobNotifierInterface::class, [], 70);
 
         $recipe = $recipe->cook($this->callNewJob, CallNewJobInterface::class, [], 80);
+
+        $recipe = $recipe->cook($this->persistJobVar, PersistJobVar::class, [], 80);
 
         $recipe = $recipe->cook(
             $this->jumpIf,

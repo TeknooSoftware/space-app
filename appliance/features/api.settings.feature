@@ -332,7 +332,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables:
       | field                                     | value  |
-      | account_vars.sets.0.envName               | prod1  |
+      | account_vars.sets.0.envName               | prod   |
       | account_vars.sets.0.variables.0.id        |        |
       | account_vars.sets.0.variables.0.name      | var1   |
       | account_vars.sets.0.variables.0.wasSecret |        |
@@ -342,16 +342,16 @@ Feature: On a space instance, an API is available to manage its user and account
       | account_vars.sets.0.variables.1.secret    | 1      |
       | account_vars.sets.0.variables.1.wasSecret |        |
       | account_vars.sets.0.variables.1.value     | value2 |
-      | account_vars.sets.1.envName               | prod2  |
+      | account_vars.sets.1.envName               | dev    |
       | account_vars.sets.1.variables.0.id        |        |
       | account_vars.sets.1.variables.0.name      | var3   |
       | account_vars.sets.1.variables.0.wasSecret |        |
       | account_vars.sets.1.variables.0.value     | value3 |
     Then the account must have these persisted variables
       | id | name | secret | value  | environment |
-      | x  | var1 | 0      | value1 | prod1       |
-      | x  | var2 | 1      | value2 | prod1       |
-      | x  | var3 | 0      | value3 | prod2       |
+      | x  | var1 | 0      | value1 | prod        |
+      | x  | var2 | 1      | value2 | prod        |
+      | x  | var3 | 0      | value3 | dev         |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Create new account variables via the API with a json body
@@ -368,7 +368,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables with a json body:
       | field                        | value  |
-      | sets.0.envName               | prod1  |
+      | sets.0.envName               | prod   |
       | sets.0.variables.0.id        |        |
       | sets.0.variables.0.name      | var1   |
       | sets.0.variables.0.wasSecret |        |
@@ -378,16 +378,16 @@ Feature: On a space instance, an API is available to manage its user and account
       | sets.0.variables.1.secret    | 1      |
       | sets.0.variables.1.wasSecret |        |
       | sets.0.variables.1.value     | value2 |
-      | sets.1.envName               | prod2  |
+      | sets.1.envName               | dev    |
       | sets.1.variables.0.id        |        |
       | sets.1.variables.0.name      | var3   |
       | sets.1.variables.0.wasSecret |        |
       | sets.1.variables.0.value     | value3 |
     Then the account must have these persisted variables
       | id | name | secret | value  | environment |
-      | x  | var1 | 0      | value1 | prod1       |
-      | x  | var2 | 1      | value2 | prod1       |
-      | x  | var3 | 0      | value3 | prod2       |
+      | x  | var1 | 0      | value1 | prod        |
+      | x  | var2 | 1      | value2 | prod        |
+      | x  | var3 | 0      | value3 | dev         |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Update or delete account variables via the API
@@ -398,10 +398,11 @@ Feature: On a space instance, an API is available to manage its user and account
     And the 2FA authentication enable for last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
-      | aaa | var1 | 0      | value1 | prod1       |
-      | bbb | var2 | 1      | value2 | prod1       |
-      | ccc | var3 | 0      | value3 | prod1       |
-      | ddd | var4 | 0      | value4 | prod2       |
+      | aaa | var1 | 0      | value1 | prod        |
+      | bbb | var2 | 1      | value2 | prod        |
+      | ccc | var3 | 0      | value3 | prod        |
+      | ddd | var4 | 0      | value4 | dev         |
+      | eee | var6 | 1      | value6 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -409,29 +410,35 @@ Feature: On a space instance, an API is available to manage its user and account
     And get a JWT token for the user
     And the user logs out
     When the API is called to update account's variables:
-      | field                                         | value    |
-      | account_vars.sets.prod1.envName               | prod1    |
-      | account_vars.sets.prod1.variables.1.id        | bbb      |
-      | account_vars.sets.prod1.variables.1.name      | var2     |
-      | account_vars.sets.prod1.variables.1.secret    | 0        |
-      | account_vars.sets.prod1.variables.1.wasSecret | 1        |
-      | account_vars.sets.prod1.variables.1.value     |          |
-      | account_vars.sets.prod1.variables.3.id        |          |
-      | account_vars.sets.prod1.variables.3.name      | var5     |
-      | account_vars.sets.prod1.variables.3.secret    | 0        |
-      | account_vars.sets.prod1.variables.3.wasSecret | 0        |
-      | account_vars.sets.prod1.variables.3.value     | value5   |
-      | account_vars.sets.prod2.envName               | prod2    |
-      | account_vars.sets.prod2.variables.0.name      | var3     |
-      | account_vars.sets.prod2.variables.0.id        | ddd      |
-      | account_vars.sets.prod2.variables.0.secret    | 0        |
-      | account_vars.sets.prod2.variables.0.wasSecret |          |
-      | account_vars.sets.prod2.variables.0.value     | value3.1 |
+      | field                                        | value    |
+      | account_vars.sets.prod.envName               | prod     |
+      | account_vars.sets.prod.variables.1.id        | bbb      |
+      | account_vars.sets.prod.variables.1.name      | var2     |
+      | account_vars.sets.prod.variables.1.secret    | 0        |
+      | account_vars.sets.prod.variables.1.wasSecret | 1        |
+      | account_vars.sets.prod.variables.1.value     |          |
+      | account_vars.sets.prod.variables.3.id        |          |
+      | account_vars.sets.prod.variables.3.name      | var5     |
+      | account_vars.sets.prod.variables.3.secret    | 0        |
+      | account_vars.sets.prod.variables.3.wasSecret | 0        |
+      | account_vars.sets.prod.variables.3.value     | value5   |
+      | account_vars.sets.dev.envName                | dev      |
+      | account_vars.sets.dev.variables.0.name       | var3     |
+      | account_vars.sets.dev.variables.0.id         | ddd      |
+      | account_vars.sets.dev.variables.0.secret     | 0        |
+      | account_vars.sets.dev.variables.0.wasSecret  |          |
+      | account_vars.sets.dev.variables.0.value      | value3.1 |
+      | account_vars.sets.dev.variables.1.name       | var6     |
+      | account_vars.sets.dev.variables.1.id         | eee      |
+      | account_vars.sets.dev.variables.1.secret     | 1        |
+      | account_vars.sets.dev.variables.1.wasSecret  | 1        |
+      | account_vars.sets.dev.variables.1.value      | value7   |
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 0      | value2   | prod1       |
-      | ddd | var3 | 0      | value3.1 | prod2       |
-      | x   | var5 | 0      | value5   | prod1       |
+      | bbb | var2 | 0      | value2   | prod        |
+      | ddd | var3 | 0      | value3.1 | dev         |
+      | eee | var6 | 1      | value7   | dev         |
+      | x   | var5 | 0      | value5   | prod        |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Update or delete account variables via the API with a json body
@@ -442,10 +449,11 @@ Feature: On a space instance, an API is available to manage its user and account
     And the 2FA authentication enable for last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
-      | aaa | var1 | 0      | value1 | prod1       |
-      | bbb | var2 | 1      | value2 | prod1       |
-      | ccc | var3 | 0      | value3 | prod1       |
-      | ddd | var4 | 0      | value4 | prod2       |
+      | aaa | var1 | 0      | value1 | prod        |
+      | bbb | var2 | 1      | value2 | prod        |
+      | ccc | var3 | 0      | value3 | prod        |
+      | ddd | var4 | 0      | value4 | dev         |
+      | eee | var6 | 1      | value6 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -453,29 +461,35 @@ Feature: On a space instance, an API is available to manage its user and account
     And get a JWT token for the user
     And the user logs out
     When the API is called to update account's variables with a json body:
-      | field                            | value    |
-      | sets.prod1.envName               | prod1    |
-      | sets.prod1.variables.1.id        | bbb      |
-      | sets.prod1.variables.1.name      | var2     |
-      | sets.prod1.variables.1.secret    | 0        |
-      | sets.prod1.variables.1.wasSecret | 1        |
-      | sets.prod1.variables.1.value     |          |
-      | sets.prod1.variables.3.id        |          |
-      | sets.prod1.variables.3.name      | var5     |
-      | sets.prod1.variables.3.secret    | 0        |
-      | sets.prod1.variables.3.wasSecret |          |
-      | sets.prod1.variables.3.value     | value5   |
-      | sets.prod2.envName               | prod2    |
-      | sets.prod2.variables.0.name      | var3     |
-      | sets.prod2.variables.0.id        | ddd      |
-      | sets.prod2.variables.0.secret    | 0        |
-      | sets.prod2.variables.0.wasSecret |          |
-      | sets.prod2.variables.0.value     | value3.1 |
+      | field                           | value    |
+      | sets.prod.envName               | prod     |
+      | sets.prod.variables.1.id        | bbb      |
+      | sets.prod.variables.1.name      | var2     |
+      | sets.prod.variables.1.secret    | 0        |
+      | sets.prod.variables.1.wasSecret | 1        |
+      | sets.prod.variables.1.value     |          |
+      | sets.prod.variables.3.id        |          |
+      | sets.prod.variables.3.name      | var5     |
+      | sets.prod.variables.3.secret    | 0        |
+      | sets.prod.variables.3.wasSecret |          |
+      | sets.prod.variables.3.value     | value5   |
+      | sets.dev.envName                | dev      |
+      | sets.dev.variables.0.name       | var3     |
+      | sets.dev.variables.0.id         | ddd      |
+      | sets.dev.variables.0.secret     | 0        |
+      | sets.dev.variables.0.wasSecret  |          |
+      | sets.dev.variables.0.value      | value3.1 |
+      | sets.dev.variables.1.name       | var6     |
+      | sets.dev.variables.1.id         | eee      |
+      | sets.dev.variables.1.secret     | 1        |
+      | sets.dev.variables.1.wasSecret  | 1        |
+      | sets.dev.variables.1.value      | value7   |
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 0      | value2   | prod1       |
-      | ddd | var3 | 0      | value3.1 | prod2       |
-      | x   | var5 | 0      | value5   | prod1       |
+      | bbb | var2 | 0      | value2   | prod        |
+      | ddd | var3 | 0      | value3.1 | dev         |
+      | eee | var6 | 1      | value7   | dev         |
+      | x   | var5 | 0      | value5   | prod        |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Create new account variables via the API with secrets encryptions
@@ -493,7 +507,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables:
       | field                                     | value  |
-      | account_vars.sets.0.envName               | prod1  |
+      | account_vars.sets.0.envName               | prod   |
       | account_vars.sets.0.variables.0.id        |        |
       | account_vars.sets.0.variables.0.name      | var1   |
       | account_vars.sets.0.variables.0.wasSecret |        |
@@ -503,16 +517,16 @@ Feature: On a space instance, an API is available to manage its user and account
       | account_vars.sets.0.variables.1.secret    | 1      |
       | account_vars.sets.0.variables.1.wasSecret |        |
       | account_vars.sets.0.variables.1.value     | value2 |
-      | account_vars.sets.1.envName               | prod2  |
+      | account_vars.sets.1.envName               | dev    |
       | account_vars.sets.1.variables.0.id        |        |
       | account_vars.sets.1.variables.0.name      | var3   |
       | account_vars.sets.1.variables.0.wasSecret |        |
       | account_vars.sets.1.variables.0.value     | value3 |
     Then the account must have these persisted variables
       | id | name | secret | value  | environment |
-      | x  | var1 | 0      | value1 | prod1       |
-      | x  | var2 | 1      | value2 | prod1       |
-      | x  | var3 | 0      | value3 | prod2       |
+      | x  | var1 | 0      | value1 | prod        |
+      | x  | var2 | 1      | value2 | prod        |
+      | x  | var3 | 0      | value3 | dev         |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Create new account variables via the API with a json body with secrets encryptions
@@ -530,7 +544,7 @@ Feature: On a space instance, an API is available to manage its user and account
     And the user logs out
     When the API is called to update account's variables with a json body:
       | field                        | value  |
-      | sets.0.envName               | prod1  |
+      | sets.0.envName               | prod   |
       | sets.0.variables.0.id        |        |
       | sets.0.variables.0.name      | var1   |
       | sets.0.variables.0.wasSecret |        |
@@ -540,16 +554,16 @@ Feature: On a space instance, an API is available to manage its user and account
       | sets.0.variables.1.secret    | 1      |
       | sets.0.variables.1.wasSecret |        |
       | sets.0.variables.1.value     | value2 |
-      | sets.1.envName               | prod2  |
+      | sets.1.envName               | dev    |
       | sets.1.variables.0.id        |        |
       | sets.1.variables.0.name      | var3   |
       | sets.1.variables.0.wasSecret |        |
       | sets.1.variables.0.value     | value3 |
     Then the account must have these persisted variables
       | id | name | secret | value  | environment |
-      | x  | var1 | 0      | value1 | prod1       |
-      | x  | var2 | 1      | value2 | prod1       |
-      | x  | var3 | 0      | value3 | prod2       |
+      | x  | var1 | 0      | value1 | prod        |
+      | x  | var2 | 1      | value2 | prod        |
+      | x  | var3 | 0      | value3 | dev         |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Update or delete account variables via the API with secrets encryptions
@@ -561,10 +575,11 @@ Feature: On a space instance, an API is available to manage its user and account
     And the 2FA authentication enable for last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
-      | aaa | var1 | 0      | value1 | prod1       |
-      | bbb | var2 | 1      | value2 | prod1       |
-      | ccc | var3 | 0      | value3 | prod1       |
-      | ddd | var4 | 0      | value4 | prod2       |
+      | aaa | var1 | 0      | value1 | prod        |
+      | bbb | var2 | 1      | value2 | prod        |
+      | ccc | var3 | 0      | value3 | prod        |
+      | ddd | var4 | 0      | value4 | dev         |
+      | eee | var6 | 1      | value6 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -572,29 +587,35 @@ Feature: On a space instance, an API is available to manage its user and account
     And get a JWT token for the user
     And the user logs out
     When the API is called to update account's variables:
-      | field                                         | value    |
-      | account_vars.sets.prod1.envName               | prod1    |
-      | account_vars.sets.prod1.variables.1.id        | bbb      |
-      | account_vars.sets.prod1.variables.1.name      | var2     |
-      | account_vars.sets.prod1.variables.1.secret    | 1        |
-      | account_vars.sets.prod1.variables.1.wasSecret | 1        |
-      | account_vars.sets.prod1.variables.1.value     |          |
-      | account_vars.sets.prod1.variables.3.id        |          |
-      | account_vars.sets.prod1.variables.3.name      | var5     |
-      | account_vars.sets.prod1.variables.3.secret    | 0        |
-      | account_vars.sets.prod1.variables.3.wasSecret | 0        |
-      | account_vars.sets.prod1.variables.3.value     | value5   |
-      | account_vars.sets.prod2.envName               | prod2    |
-      | account_vars.sets.prod2.variables.0.name      | var3     |
-      | account_vars.sets.prod2.variables.0.id        | ddd      |
-      | account_vars.sets.prod2.variables.0.secret    | 0        |
-      | account_vars.sets.prod2.variables.0.wasSecret |          |
-      | account_vars.sets.prod2.variables.0.value     | value3.1 |
+      | field                                        | value    |
+      | account_vars.sets.prod.envName               | prod     |
+      | account_vars.sets.prod.variables.1.id        | bbb      |
+      | account_vars.sets.prod.variables.1.name      | var2     |
+      | account_vars.sets.prod.variables.1.secret    | 1        |
+      | account_vars.sets.prod.variables.1.wasSecret | 1        |
+      | account_vars.sets.prod.variables.1.value     |          |
+      | account_vars.sets.prod.variables.3.id        |          |
+      | account_vars.sets.prod.variables.3.name      | var5     |
+      | account_vars.sets.prod.variables.3.secret    | 0        |
+      | account_vars.sets.prod.variables.3.wasSecret | 0        |
+      | account_vars.sets.prod.variables.3.value     | value5   |
+      | account_vars.sets.dev.envName                | dev      |
+      | account_vars.sets.dev.variables.0.name       | var3     |
+      | account_vars.sets.dev.variables.0.id         | ddd      |
+      | account_vars.sets.dev.variables.0.secret     | 0        |
+      | account_vars.sets.dev.variables.0.wasSecret  |          |
+      | account_vars.sets.dev.variables.0.value      | value3.1 |
+      | account_vars.sets.dev.variables.1.name       | var6     |
+      | account_vars.sets.dev.variables.1.id         | eee      |
+      | account_vars.sets.dev.variables.1.secret     | 1        |
+      | account_vars.sets.dev.variables.1.wasSecret  | 1        |
+      | account_vars.sets.dev.variables.1.value      | value7   |
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 1      | value2   | prod1       |
-      | ddd | var3 | 0      | value3.1 | prod2       |
-      | x   | var5 | 0      | value5   | prod1       |
+      | bbb | var2 | 1      | value2   | prod        |
+      | ddd | var3 | 0      | value3.1 | dev         |
+      | eee | var6 | 1      | value7   | dev         |
+      | x   | var5 | 0      | value5   | prod        |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Update or delete account variables via the API with a json body with secrets encryptions
@@ -606,10 +627,12 @@ Feature: On a space instance, an API is available to manage its user and account
     And the 2FA authentication enable for last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
-      | aaa | var1 | 0      | value1 | prod1       |
-      | bbb | var2 | 1      | value2 | prod1       |
-      | ccc | var3 | 0      | value3 | prod1       |
-      | ddd | var4 | 0      | value4 | prod2       |
+      | aaa | var1 | 0      | value1 | prod        |
+      | bbb | var2 | 1      | value2 | prod        |
+      | ccc | var3 | 0      | value3 | prod        |
+      | ddd | var4 | 0      | value4 | dev         |
+      | eee | var6 | 1      | value7 | dev         |
+      | eee | var6 | 1      | value6 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -617,29 +640,35 @@ Feature: On a space instance, an API is available to manage its user and account
     And get a JWT token for the user
     And the user logs out
     When the API is called to update account's variables with a json body:
-      | field                            | value    |
-      | sets.prod1.envName               | prod1    |
-      | sets.prod1.variables.1.id        | bbb      |
-      | sets.prod1.variables.1.name      | var2     |
-      | sets.prod1.variables.1.secret    | 1        |
-      | sets.prod1.variables.1.wasSecret | 1        |
-      | sets.prod1.variables.1.value     |          |
-      | sets.prod1.variables.3.id        |          |
-      | sets.prod1.variables.3.name      | var5     |
-      | sets.prod1.variables.3.secret    | 0        |
-      | sets.prod1.variables.3.wasSecret |          |
-      | sets.prod1.variables.3.value     | value5   |
-      | sets.prod2.envName               | prod2    |
-      | sets.prod2.variables.0.name      | var3     |
-      | sets.prod2.variables.0.id        | ddd      |
-      | sets.prod2.variables.0.secret    | 0        |
-      | sets.prod2.variables.0.wasSecret |          |
-      | sets.prod2.variables.0.value     | value3.1 |
+      | field                           | value    |
+      | sets.prod.envName               | prod     |
+      | sets.prod.variables.1.id        | bbb      |
+      | sets.prod.variables.1.name      | var2     |
+      | sets.prod.variables.1.secret    | 1        |
+      | sets.prod.variables.1.wasSecret | 1        |
+      | sets.prod.variables.1.value     |          |
+      | sets.prod.variables.3.id        |          |
+      | sets.prod.variables.3.name      | var5     |
+      | sets.prod.variables.3.secret    | 0        |
+      | sets.prod.variables.3.wasSecret |          |
+      | sets.prod.variables.3.value     | value5   |
+      | sets.dev.envName                | dev      |
+      | sets.dev.variables.0.name       | var3     |
+      | sets.dev.variables.0.id         | ddd      |
+      | sets.dev.variables.0.secret     | 0        |
+      | sets.dev.variables.0.wasSecret  |          |
+      | sets.dev.variables.0.value      | value3.1 |
+      | sets.dev.variables.1.name       | var6     |
+      | sets.dev.variables.1.id         | eee      |
+      | sets.dev.variables.1.secret     | 1        |
+      | sets.dev.variables.1.wasSecret  | 1        |
+      | sets.dev.variables.1.value      | value7   |
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 1      | value2   | prod1       |
-      | ddd | var3 | 0      | value3.1 | prod2       |
-      | x   | var5 | 0      | value5   | prod1       |
+      | bbb | var2 | 1      | value2   | prod        |
+      | ddd | var3 | 0      | value3.1 | dev         |
+      | eee | var6 | 1      | value7   | dev         |
+      | x   | var5 | 0      | value5   | prod        |
     And no Kubernetes manifests must not be deleted
 
   Scenario: Get account variables via the API
@@ -650,10 +679,10 @@ Feature: On a space instance, an API is available to manage its user and account
     And the 2FA authentication enable for last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
-      | aaa | var1 | 0      | value1 | prod1       |
-      | bbb | var2 | 1      | value2 | prod1       |
-      | ccc | var3 | 0      | value3 | prod1       |
-      | ddd | var4 | 0      | value4 | prod2       |
+      | aaa | var1 | 0      | value1 | prod        |
+      | bbb | var2 | 1      | value2 | prod        |
+      | ccc | var3 | 0      | value3 | prod        |
+      | ddd | var4 | 0      | value4 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page

@@ -28,6 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
@@ -46,12 +47,12 @@ class PersistJobVar
 
     public function __invoke(
         NewJob $newJob,
-        Project $project,
-        Job $job,
+        SpaceProject $spaceProject,
     ): PersistJobVar {
+        $project = $spaceProject->project;
         foreach ($newJob->variables as $variable) {
-            if ($variable->persisted) {
-                $nE = !empty($variable->value) && $variable->secret;
+            if ($variable->persisted && $variable->canUpdatePersisted) {
+                $nE = !empty($variable->value) && $variable->secret && empty($variable->encryptionAlgorithm);
                 $persistedVariable = new ProjectPersistedVariable(
                     project: $project,
                     id: $variable->getId(),

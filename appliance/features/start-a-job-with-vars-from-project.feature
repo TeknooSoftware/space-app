@@ -42,6 +42,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And Space executes the job
     And it is forwared to job page
     And it has an error about a timeout
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars and it takes too long with a paas file extends
     Given A Space app instance
@@ -82,6 +85,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And Space executes the job
     And it is forwared to job page
     And it has an error about a timeout
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and paas file is valid
     Given A Space app instance
@@ -123,6 +129,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and paas file is valid and override the project's var
     Given A Space app instance
@@ -162,6 +171,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and paas file is valid with encrypted message
     Given A Space app instance
@@ -202,6 +214,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and paas file is valid with encrypted message with secrets encryptions
     Given A Space app instance
@@ -242,6 +257,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and defined quota and paas file is valid without resources defined
     Given A Space app instance
@@ -282,6 +300,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and prefix and defined quota and paas file is valid without resources defined
     Given A Space app instance
@@ -323,6 +344,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and with secrets encryptions and prefix and defined quota and paas file is valid without resources defined
     Given A Space app instance
@@ -365,6 +389,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and defined quota and paas file is valid with partial resources defined
     Given A Space app instance
@@ -405,6 +432,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and prefix and defined quota and paas file is valid with partial resources defined
     Given A Space app instance
@@ -446,6 +476,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and with secrets encryptions and prefix and defined quota and paas file is valid with partial resources defined
     Given A Space app instance
@@ -488,6 +521,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and defined quota and paas file is valid with full resources defined
     Given A Space app instance
@@ -528,6 +564,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and prefix and defined quota and paas file is valid with full resources defined
     Given A Space app instance
@@ -569,6 +608,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and with secrets encryptions and prefix and defined quota and paas file is valid with full resources defined
     Given A Space app instance
@@ -611,6 +653,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and defined quota and paas file is valid with quota exceeded
     Given A Space app instance
@@ -651,6 +696,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And it has an error about a quota exceeded
     And no Kubernetes manifests must not be created
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and prefix and defined quota and paas file is valid with quota exceeded
     Given A Space app instance
@@ -692,6 +740,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And it has an error about a quota exceeded
     And no Kubernetes manifests must not be created
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with encrypted message and with secrets encryptions and prefix and defined quota and paas file is valid with quota exceeded
     Given A Space app instance
@@ -734,6 +785,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And it has an error about a quota exceeded
     And no Kubernetes manifests must not be created
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job, with server's defaults, from a project, with project's vars with prefix and paas file is valid and has defaults
     Given A Space app instance
@@ -773,6 +827,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job, with server's defaults, from a project, with project's vars with prefix and paas file is valid and has defaults, with encrypted message
     Given A Space app instance
@@ -813,6 +870,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job, with server's defaults, from a project, with project's vars with prefix and paas file is valid and has defaults, with encrypted message and with secrets encryptions
     Given A Space app instance
@@ -854,6 +914,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job, with server's defaults, from a project, with project's vars with prefix and paas file is valid and has defaults for the cluster
     Given A Space app instance
@@ -893,6 +956,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job, with server's defaults, from a project, with project's vars with prefix and paas file is valid and has defaults for the cluster, with encrypted message
     Given A Space app instance
@@ -933,6 +999,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job, with server's defaults, from a project, with project's vars with prefix and paas file is valid and has defaults for the cluster, with encrypted message and with secrets encryptions
     Given A Space app instance
@@ -974,6 +1043,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with prefix and paas file with extends is valid
     Given A Space app instance
@@ -1014,6 +1086,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with hierarchical namespace and paas file is valid
     Given A Space app instance
@@ -1054,6 +1129,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with hierarchical namespace and paas file with extends is valid
     Given A Space app instance
@@ -1095,6 +1173,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with hierarchical namespace and prefix and paas file is valid
     Given A Space app instance
@@ -1135,6 +1216,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with hierarchical namespace and prefix and paas file with extends is valid
     Given A Space app instance
@@ -1176,6 +1260,9 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: Execute a job from a project, with project's vars with hierarchical namespace and prefix and paas file with extends is valid  with secrets encryptions
     Given A Space app instance
@@ -1218,3 +1305,6 @@ Feature: On a space instance, we can start a job from a project, User can define
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |

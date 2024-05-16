@@ -1234,22 +1234,10 @@ class TestsContext implements Context
     }
 
     /**
-     * @Then the account must have these persisted variables
+     * @Then the account keeps these persisted variables
      */
-    public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    public function theAccountKeepsThesePersistedVariables(TableNode $expectedVariables): void
     {
-        $this->checkIfResponseIsAFinal();
-
-        if (!$this->isApiCall) {
-            $crawler = $this->createCrawler();
-            $node = $crawler->filter('.space-form-success');
-            $nodeValue = trim((string)$node->getNode(0)?->textContent);
-            Assert::assertEquals(
-                $this->translator->trans('teknoo.space.alert.data_saved'),
-                $nodeValue,
-            );
-        }
-
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
         $vars = $this->getRepository(AccountPersistedVariable::class)->findBy(['account' => $account]);
@@ -1328,6 +1316,16 @@ class TestsContext implements Context
                 $var->getEnvName(),
             );
         }
+    }
+
+    /**
+     * @Then the account must have these persisted variables
+     */
+    public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    {
+        $this->checkIfResponseIsAFinal();
+
+        $this->theAccountKeepsThesePersistedVariables($expectedVariables);
     }
 
     /**
@@ -2074,20 +2072,33 @@ class TestsContext implements Context
     }
 
     /**
-     * @Then the project must have these persisted variables
+     * @Then there are no project persisted variables
      */
-    public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    public function thereAreNoProjectPersistedVariables(): void
     {
-        $this->checkIfResponseIsAFinal();
+        Assert::assertEmpty($this->listObjects(ProjectPersistedVariable::class));
+    }
 
+    /**
+     * @Then data have been saved
+     */
+    public function dataHaveBeenSaved(): void
+    {
         $crawler = $this->createCrawler();
         $node = $crawler->filter('.space-form-success');
         $nodeValue = trim((string) $node->getNode(0)?->textContent);
+
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
         );
+    }
 
+    /**
+     * @Then the project keeps these persisted variables
+     */
+    public function theProjectKeepsTheseePersistedVariables(TableNode $expectedVariables): void
+    {
         $vars = $this->listObjects(ProjectPersistedVariable::class);
         Assert::assertCount(count($expectedVariables->getLines()) - 1, $vars);
         $project = $this->recall(Project::class);
@@ -2167,6 +2178,16 @@ class TestsContext implements Context
         }
 
         $service->setAgentMode(false);
+    }
+
+    /**
+     * @Then the project must have these persisted variables
+     */
+    public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    {
+        $this->checkIfResponseIsAFinal();
+
+        $this->theProjectKeepsTheseePersistedVariables($expectedVariables);
     }
 
     /**

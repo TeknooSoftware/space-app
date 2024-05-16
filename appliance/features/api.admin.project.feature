@@ -264,6 +264,60 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
 
+  Scenario: Edit an project's variables from the API with secrets encryptions
+    Given A Space app instance
+    And A memory document database
+    And encryption of persisted variables in the database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard website project "my project" and a prefix "a-prefix"
+    And "10" project's variables
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to edit a project's variables:
+      | field                                      | value            |
+      | project_vars.sets.prod.envName             | prod             |
+      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
+      | project_vars.sets.prod.variables.20.value  | space_project_db |
+      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
+      | project_vars.sets.prod.variables.21.secret | 1                |
+      | project_vars.sets.prod.variables.21.value  | fooBar           |
+    Then get a JSON reponse
+    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
+
+  Scenario: Edit an project's variables from the API with a json body with secrets encryptions
+    Given A Space app instance
+    And A memory document database
+    And encryption of persisted variables in the database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard website project "my project" and a prefix "a-prefix"
+    And "10" project's variables
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to edit a project's variables with a json body:
+      | field                        | value            |
+      | sets.prod.envName            | prod             |
+      | sets.prod.variables.0.name   | DB_NAME          |
+      | sets.prod.variables.0.value  | space_project_db |
+      | sets.prod.variables.1.name   | DB_PWD           |
+      | sets.prod.variables.1.secret | 1                |
+      | sets.prod.variables.1.value  | fooBar           |
+    Then get a JSON reponse
+    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
+
   Scenario: Delete an project from the API
     Given A Space app instance
     And A memory document database

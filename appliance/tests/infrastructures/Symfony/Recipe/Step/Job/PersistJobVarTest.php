@@ -27,11 +27,11 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
 /**
@@ -71,8 +71,7 @@ class PersistJobVarTest extends TestCase
             PersistJobVar::class,
             ($this->persistJobVar)(
                 $newJob,
-                $this->createMock(Project::class),
-                $this->createMock(Job::class),
+                new SpaceProject($this->createMock(Project::class)),
             )
         );
     }

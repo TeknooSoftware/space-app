@@ -70,7 +70,8 @@ class LoadPersistedVariablesForJob
                         secret: $var->isSecret(),
                         wasSecret: $var->isSecret(),
                         encryptionAlgorithm: $var->getEncryptionAlgorithm(),
-                        persistedVar: $var
+                        canUpdatePersisted: false,
+                        persistedVar: $var,
                     );
                 }
             }
@@ -112,6 +113,7 @@ class LoadPersistedVariablesForJob
                         secret: $var->isSecret(),
                         wasSecret: $var->isSecret(),
                         encryptionAlgorithm: $var->getEncryptionAlgorithm(),
+                        canUpdatePersisted: true,
                         persistedVar: $var,
                     );
                 }

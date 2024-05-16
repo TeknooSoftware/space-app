@@ -35,6 +35,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.1.variables.0.name      | var3   |
       | project_vars.sets.1.variables.0.wasSecret |        |
       | project_vars.sets.1.variables.0.value     | value3 |
+    Then data have been saved
     Then the project must have these persisted variables
       | id | name | secret | value  | environment |
       | x  | var1 | 0      | value1 | prod        |
@@ -121,6 +122,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.dev.variables.0.id         | <auto>   |
       | project_vars.sets.dev.variables.0.wasSecret  |          |
       | project_vars.sets.dev.variables.0.value      | value3.1 |
+    Then data have been saved
     Then the project must have these persisted variables
       | id  | name | secret | value    | environment |
       | bbb | var2 | 0      | value2   | prod        |
@@ -180,6 +182,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.1.variables.0.name      | var3   |
       | project_vars.sets.1.variables.0.wasSecret |        |
       | project_vars.sets.1.variables.0.value     | value3 |
+    Then data have been saved
     Then the project must have these persisted variables
       | id | name | secret | value  | environment |
       | x  | var1 | 0      | value1 | prod        |
@@ -219,6 +222,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | bbb | var2 | 1      | value2 | prod        |
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
+      | eee | var6 | 1      | value6 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -250,6 +254,11 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.dev.variables.0.secret     |        |
       | project_vars.sets.dev.variables.0.wasSecret  |        |
       | project_vars.sets.dev.variables.0.value      | value4 |
+      | project_vars.sets.dev.variables.1.id         | eee    |
+      | project_vars.sets.dev.variables.1.name       | var6   |
+      | project_vars.sets.dev.variables.1.secret     | 1      |
+      | project_vars.sets.dev.variables.1.wasSecret  | 1      |
+      | project_vars.sets.dev.variables.1.value      |        |
     When it submits the form:
       | field                                        | value    |
       | project_vars._token                          | <auto>   |
@@ -267,10 +276,17 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.dev.variables.0.id         | <auto>   |
       | project_vars.sets.dev.variables.0.wasSecret  |          |
       | project_vars.sets.dev.variables.0.value      | value3.1 |
+      | project_vars.sets.dev.variables.1.name       | var6     |
+      | project_vars.sets.dev.variables.1.id         | <auto>   |
+      | project_vars.sets.dev.variables.1.secret     | 1        |
+      | project_vars.sets.dev.variables.1.wasSecret  | 1        |
+      | project_vars.sets.dev.variables.1.value      | value7   |
+    Then data have been saved
     Then the project must have these persisted variables
       | id  | name | secret | value    | environment |
       | bbb | var2 | 1      | value2   | prod        |
       | ddd | var3 | 0      | value3.1 | dev         |
+      | eee | var6 | 1      | value7   | dev         |
       | x   | var5 | 0      | value5   | prod        |
     And the user obtains the form:
       | field                                        | value    |
@@ -291,3 +307,8 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
       | project_vars.sets.dev.variables.0.secret     |          |
       | project_vars.sets.dev.variables.0.wasSecret  |          |
       | project_vars.sets.dev.variables.0.value      | value3.1 |
+      | project_vars.sets.dev.variables.1.name       | var6     |
+      | project_vars.sets.dev.variables.1.id         | eee      |
+      | project_vars.sets.dev.variables.1.secret     | 1        |
+      | project_vars.sets.dev.variables.1.wasSecret  | 1        |
+      | project_vars.sets.dev.variables.1.value      |          |

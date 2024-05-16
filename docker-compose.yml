@@ -95,11 +95,10 @@ services:
             - SPACE_REDIS_PORT=6379
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
             - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
             - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
+            - SPACE_PERSISTED_VAR_AGENT_MODE=0
     cli_new_job:
         build:
             context: build.dev/php-cli
@@ -128,6 +127,7 @@ services:
             - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
             - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
             - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
+            - SPACE_PERSISTED_VAR_AGENT_MODE=1
     cli_job_done:
         build:
             context: build.dev/php-cli
@@ -151,9 +151,7 @@ services:
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
-            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
-            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
+            - SPACE_PERSISTED_VAR_AGENT_MODE=0
     cli_history_sent:
         build:
             context: build.dev/php-cli
@@ -177,9 +175,7 @@ services:
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
-            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
-            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
+            - SPACE_PERSISTED_VAR_AGENT_MODE=0
     cli_execute:
         build:
             context: build.dev/php-buildah
@@ -205,9 +201,7 @@ services:
             - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
-            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
-            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
+            - SPACE_PERSISTED_VAR_AGENT_MODE=0
     httpd:
         build:
             context: build.dev/httpd
