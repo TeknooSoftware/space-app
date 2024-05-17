@@ -1,11 +1,13 @@
 framework:
     messenger:
         transports:
-            new_job: 'test://'
-            history_sent: 'test://'
-            job_done: 'test://'
+            new_job:
+                dsn: 'test://?support_delay_stamp=true'
+                retry_strategy:
+                    max_retries: 0
+            history_sent: 'test://?support_delay_stamp=true'
+            job_done: 'test://?support_delay_stamp=true'
             execute_job:
-                dsn: 'test://'
-                # default configuration
+                dsn: 'test://?support_delay_stamp=true'
                 retry_strategy:
                     max_retries: 0

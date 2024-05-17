@@ -27,11 +27,13 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Common\Contracts\DBSource\ManagerInterface as DbSourceManager;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
 /**
@@ -47,6 +49,8 @@ class PersistJobVarTest extends TestCase
 {
     private PersistJobVar $persistJobVar;
 
+    private DbSourceManager|MockObject $manager;
+
     private ProjectPersistedVariableWriter|MockObject $writer;
 
     /**
@@ -56,8 +60,12 @@ class PersistJobVarTest extends TestCase
     {
         parent::setUp();
 
+        $this->manager = $this->createMock(DbSourceManager::class);
         $this->writer = $this->createMock(ProjectPersistedVariableWriter::class);
-        $this->persistJobVar = new PersistJobVar($this->writer);
+        $this->persistJobVar = new PersistJobVar(
+            $this->writer,
+            $this->manager,
+        );
     }
 
     public function testInvoke(): void
@@ -70,9 +78,9 @@ class PersistJobVarTest extends TestCase
         self::assertInstanceOf(
             PersistJobVar::class,
             ($this->persistJobVar)(
+                $this->createMock(ManagerInterface::class),
                 $newJob,
-                $this->createMock(Project::class),
-                $this->createMock(Job::class),
+                new SpaceProject($this->createMock(Project::class)),
             )
         );
     }

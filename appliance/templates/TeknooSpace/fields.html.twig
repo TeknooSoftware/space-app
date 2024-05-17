@@ -195,6 +195,7 @@
                 }) }}
             {{ form_row(form.wasSecret) }}
             {{ form_row(form.encryptionAlgorithm) }}
+            {{ form_row(form.canPersist) }}
             {% do form.persisted.setRendered %}
             {{ form_row(form.value, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
@@ -264,6 +265,7 @@
                 }) }}
             {{ form_row(form.wasSecret) }}
             {{ form_row(form.encryptionAlgorithm) }}
+            {{ form_row(form.canPersist) }}
             {% do form.persisted.setRendered %}
             {{ form_row(form.value, {"colClass": "col-11"}) }}
             <div class="col-1 align-self-center">
@@ -294,6 +296,7 @@
                 }) }}
             {{ form_row(form.wasSecret) }}
             {{ form_row(form.encryptionAlgorithm) }}
+            {{ form_row(form.canPersist) }}
             {{ form_row(
                 form.persisted, {
                     "colClass": "col-2 d-flex flex-column  justify-content-end",

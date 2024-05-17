@@ -41,6 +41,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Recipe\Cookbook\JobStart;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
@@ -85,6 +86,8 @@ class JobStartTest extends TestCase
 
     private CallNewJobInterface|MockObject $callNewJob;
 
+    private PersistJobVar|MockObject $persistJobVar;
+
     private RedirectClientInterface|MockObject $redirectClient;
 
     private RenderFormInterface|MockObject $renderForm;
@@ -112,6 +115,7 @@ class JobStartTest extends TestCase
         $this->newJobNotifier = $this->createMock(NewJobNotifierInterface::class);
         $this->jumpIf = $this->createMock(JumpIf::class);
         $this->callNewJob = $this->createMock(CallNewJobInterface::class);
+        $this->persistJobVar = $this->createMock(PersistJobVar::class);
         $this->redirectClient = $this->createMock(RedirectClientInterface::class);
         $this->renderForm = $this->createMock(RenderFormInterface::class);
         $this->renderError = $this->createMock(RenderError::class);
@@ -126,6 +130,7 @@ class JobStartTest extends TestCase
             $this->formHandling,
             $this->formProcessing,
             $this->newJobSetDefaults,
+            $this->persistJobVar,
             $this->newJobNotifier,
             $this->jumpIf,
             $this->callNewJob,

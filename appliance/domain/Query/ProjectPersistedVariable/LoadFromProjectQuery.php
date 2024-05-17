@@ -23,11 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Query\PersistedVariable;
+namespace Teknoo\Space\Query\ProjectPersistedVariable;
 
-use Teknoo\East\Common\Contracts\DBSource\QueryExecutorInterface;
-use Teknoo\East\Common\Contracts\Query\DeletingQueryInterface;
-use Teknoo\East\Common\Query\Expr\NotIn;
+use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Query\Expr\ObjectReference;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Immutable\ImmutableInterface;
@@ -41,40 +41,32 @@ use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements DeletingQueryInterface<ProjectPersistedVariable>
+ * @implements QueryCollectionInterface<ProjectPersistedVariable>
  */
-class DeleteVariablesQuery implements DeletingQueryInterface, ImmutableInterface
+class LoadFromProjectQuery implements QueryCollectionInterface, ImmutableInterface
 {
     use ImmutableTrait;
 
     private Project $project;
 
-    /**
-     * @var string[]
-     */
-    private array $notIds;
-
-    /**
-     * @param string[] $notIds
-     */
-    public function __construct(Project $project, array $notIds)
+    public function __construct(Project $project)
     {
         $this->uniqueConstructorCheck();
 
         $this->project = $project;
-        $this->notIds = $notIds;
     }
 
-    public function delete(QueryExecutorInterface $queryBuilder, PromiseInterface $promise): DeletingQueryInterface
-    {
-        $queryBuilder->filterOn(
-            ProjectPersistedVariable::class,
+    public function execute(
+        LoaderInterface $loader,
+        RepositoryInterface $repository,
+        PromiseInterface $promise
+    ): QueryCollectionInterface {
+        $repository->findBy(
             [
                 'project' => new ObjectReference($this->project),
-                'id' => new NotIn($this->notIds),
             ],
+            $promise
         );
-        $queryBuilder->execute($promise);
 
         return $this;
     }
