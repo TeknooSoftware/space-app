@@ -25,8 +25,9 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 
-use Teknoo\East\Paas\Object\Job;
-use Teknoo\East\Paas\Object\Project;
+use Teknoo\East\Common\Contracts\DBSource\ManagerInterface as DbSourceManager;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
@@ -42,17 +43,31 @@ class PersistJobVar
 {
     public function __construct(
         private ProjectPersistedVariableWriter $writer,
+        private DbSourceManager $manager,
     ) {
     }
 
     public function __invoke(
+        ManagerInterface $manager,
         NewJob $newJob,
         SpaceProject $spaceProject,
     ): PersistJobVar {
+        $this->manager->openBatch();
         $project = $spaceProject->project;
+        $final = [];
+
+        /** @var Promise<ProjectPersistedVariable, mixed, mixed> */
+        $promise = new Promise(
+            onSuccess: static function (ProjectPersistedVariable $var) use (&$final): void {
+                $final[] = $var; //To avoid collision with \spl_object_hash
+            },
+            onFail: $manager->error(...),
+        );
+
         foreach ($newJob->variables as $variable) {
             if ($variable->persisted && $variable->canUpdatePersisted) {
                 $nE = !empty($variable->value) && $variable->secret && empty($variable->encryptionAlgorithm);
+
                 $persistedVariable = new ProjectPersistedVariable(
                     project: $project,
                     id: $variable->getId(),
@@ -64,9 +79,14 @@ class PersistJobVar
                     needEncryption: $nE,
                 );
 
-                $this->writer->save($persistedVariable);
+                $this->writer->save(
+                    $persistedVariable,
+                    $promise,
+                );
             }
         }
+
+        $this->manager->closeBatch();
 
         return $this;
     }

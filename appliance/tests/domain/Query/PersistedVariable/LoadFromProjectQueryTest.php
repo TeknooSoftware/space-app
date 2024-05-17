@@ -31,7 +31,7 @@ use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Query\PersistedVariable\LoadFromProjectQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery;
 
 /**
  * Class LoadFromProjectQueryTest.
@@ -40,7 +40,7 @@ use Teknoo\Space\Query\PersistedVariable\LoadFromProjectQuery;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Query\PersistedVariable\LoadFromProjectQuery
+ * @covers \Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery
  */
 class LoadFromProjectQueryTest extends TestCase
 {

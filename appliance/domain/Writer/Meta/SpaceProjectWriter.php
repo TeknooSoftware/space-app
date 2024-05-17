@@ -36,7 +36,7 @@ use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
-use Teknoo\Space\Query\PersistedVariable\DeleteVariablesQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\DeleteVariablesQuery;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 use Teknoo\Space\Writer\ProjectMetadataWriter;
 use Throwable;

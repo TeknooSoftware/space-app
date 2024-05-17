@@ -183,16 +183,21 @@ class JobVarType extends AbstractType
                         $data['secret'] = true;
                     }
 
+                    $value = $data['value'] ?? '';
+
                     if (
-                        true === $mData->secret
-                        && empty($data['value'])
+                        true === $mData->secret && empty($value)
                     ) {
                         $data['value'] = $mData->value;
                     } elseif (
-                        ($data['value'] ?? '') !== $mData->value
+                        $value !== $mData->value
                     ) {
                         $data['encryptionAlgorithm'] = null;
                         $data['canUpdatePersisted'] = true;
+                    } elseif (
+                        $value === $mData->value
+                    ) {
+                        $data['canUpdatePersisted'] = false;
                     }
 
                     $formEvent->setData($data);

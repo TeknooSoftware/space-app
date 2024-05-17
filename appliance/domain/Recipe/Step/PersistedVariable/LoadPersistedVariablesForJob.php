@@ -36,7 +36,7 @@ use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Query\AccountPersistedVariable\LoadFromAccountQuery;
-use Teknoo\Space\Query\PersistedVariable\LoadFromProjectQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
