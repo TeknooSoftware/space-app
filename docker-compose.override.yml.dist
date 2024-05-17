@@ -35,8 +35,6 @@ services:
             - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
             - SPACE_OCI_REGISTRY_URL=.ToChange!
             - SPACE_SUPPORT_CONTACT=support@teknoo.space
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_new_job:
         environment:
             - APP_ENV=dev
@@ -58,7 +56,6 @@ services:
             - MONGODB_SERVER=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_history_sent:
         environment:
             - APP_ENV=dev
@@ -67,7 +64,6 @@ services:
             - MONGODB_SERVER=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_execute:
         environment:
             - APP_ENV=dev
@@ -77,7 +73,6 @@ services:
             - MESSENGER_JOB_DONE_DSN=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
 #    blackfire:
 #        environment:
 #            - BLACKFIRE_SERVER_ID=ToChange!

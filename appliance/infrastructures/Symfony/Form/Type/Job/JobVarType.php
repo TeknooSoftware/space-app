@@ -124,6 +124,14 @@ class JobVarType extends AbstractType
             ],
         );
 
+        $builder->add(
+            'canPersist',
+            HiddenType::class,
+            [
+                'required' => false,
+            ],
+        );
+
         if (!empty($options['use_password_for_secret'])) {
             $builder->addEventListener(
                 FormEvents::POST_SET_DATA,
@@ -155,6 +163,11 @@ class JobVarType extends AbstractType
                         !$mData instanceof JobVar
                         || !is_array($data)
                     ) {
+                        if (is_array($data)) {
+                            $data['canPersist'] = true;
+                            $formEvent->setData($data);
+                        }
+
                         return;
                     }
 
@@ -164,16 +177,27 @@ class JobVarType extends AbstractType
 
                     $data['wasSecret'] = $mData->wasSecret;
                     $data['encryptionAlgorithm'] = $mData->encryptionAlgorithm;
+                    $data['canPersist'] = $mData->canPersist;
 
                     if (!empty($data['encryptionAlgorithm'])) {
                         $data['secret'] = true;
                     }
 
+                    $value = $data['value'] ?? '';
+
                     if (
-                        true === $mData->secret
-                        && empty($data['value'])
+                        true === $mData->secret && empty($value)
                     ) {
                         $data['value'] = $mData->value;
+                    } elseif (
+                        $value !== $mData->value
+                    ) {
+                        $data['encryptionAlgorithm'] = null;
+                        $data['canPersist'] = true;
+                    } elseif (
+                        $value === $mData->value
+                    ) {
+                        $data['canPersist'] = false;
                     }
 
                     $formEvent->setData($data);
@@ -198,6 +222,7 @@ class JobVarType extends AbstractType
                     value: $form->get('value')->getData(),
                     persisted: $form->get('persisted')->getData(),
                     secret: $form->get('secret')->getData(),
+                    canPersist: true,
                 );
             },
         ]);

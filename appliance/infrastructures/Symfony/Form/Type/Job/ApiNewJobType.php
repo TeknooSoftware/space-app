@@ -34,6 +34,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
+use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
 
 use function array_merge;
@@ -73,6 +74,9 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
+                'prototype_data' => new JobVar(
+                    canPersist: true,
+                ),
                 'entry_options' => [
                     'use_password_for_secret' => true,
                 ]
@@ -85,7 +89,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                 static function (FormEvent $formEvent): void {
                     $form = $formEvent->getForm();
                     $mData = $form->getNormData();
-                    /** @var array<string, array<string, mixed>> $data */
+                    /** @var array<string, array<string, array<string, mixed>>> $data */
                     $data = $formEvent->getData();
 
                     if (!$mData instanceof NewJob) {
@@ -97,9 +101,9 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                         $initialVariables[$key] = [
                             'id' => $var->getId(),
                             'name' => $var->name,
-                            'value' => $var->value,
-                            'persisted' => $var->persisted,
-                            'secret' => $var->isSecret(),
+                            'value' => $data['variables'][$var->name]['value'] ?? $var->value,
+                            'persisted' => $data['variables'][$var->name]['persisted'] ?? $var->persisted,
+                            'secret' => $data['variables'][$var->name]['secret'] ?? $var->isSecret(),
                             'wasSecret' => $var->isSecret(),
                             'encryptionAlgorithm' => $var->getEncryptionAlgorithm(),
                         ];

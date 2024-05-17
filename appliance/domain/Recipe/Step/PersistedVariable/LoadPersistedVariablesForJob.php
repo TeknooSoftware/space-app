@@ -36,7 +36,7 @@ use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Query\AccountPersistedVariable\LoadFromAccountQuery;
-use Teknoo\Space\Query\PersistedVariable\LoadFromProjectQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -70,7 +70,8 @@ class LoadPersistedVariablesForJob
                         secret: $var->isSecret(),
                         wasSecret: $var->isSecret(),
                         encryptionAlgorithm: $var->getEncryptionAlgorithm(),
-                        persistedVar: $var
+                        canPersist: false,
+                        persistedVar: $var,
                     );
                 }
             }
@@ -112,6 +113,7 @@ class LoadPersistedVariablesForJob
                         secret: $var->isSecret(),
                         wasSecret: $var->isSecret(),
                         encryptionAlgorithm: $var->getEncryptionAlgorithm(),
+                        canPersist: true,
                         persistedVar: $var,
                     );
                 }
