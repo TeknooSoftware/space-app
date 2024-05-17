@@ -125,7 +125,7 @@ class JobVarType extends AbstractType
         );
 
         $builder->add(
-            'canUpdatePersisted',
+            'canPersist',
             HiddenType::class,
             [
                 'required' => false,
@@ -164,7 +164,7 @@ class JobVarType extends AbstractType
                         || !is_array($data)
                     ) {
                         if (is_array($data)) {
-                            $data['canUpdatePersisted'] = true;
+                            $data['canPersist'] = true;
                             $formEvent->setData($data);
                         }
 
@@ -177,7 +177,7 @@ class JobVarType extends AbstractType
 
                     $data['wasSecret'] = $mData->wasSecret;
                     $data['encryptionAlgorithm'] = $mData->encryptionAlgorithm;
-                    $data['canUpdatePersisted'] = $mData->canUpdatePersisted;
+                    $data['canPersist'] = $mData->canPersist;
 
                     if (!empty($data['encryptionAlgorithm'])) {
                         $data['secret'] = true;
@@ -193,11 +193,11 @@ class JobVarType extends AbstractType
                         $value !== $mData->value
                     ) {
                         $data['encryptionAlgorithm'] = null;
-                        $data['canUpdatePersisted'] = true;
+                        $data['canPersist'] = true;
                     } elseif (
                         $value === $mData->value
                     ) {
-                        $data['canUpdatePersisted'] = false;
+                        $data['canPersist'] = false;
                     }
 
                     $formEvent->setData($data);
@@ -222,7 +222,7 @@ class JobVarType extends AbstractType
                     value: $form->get('value')->getData(),
                     persisted: $form->get('persisted')->getData(),
                     secret: $form->get('secret')->getData(),
-                    canUpdatePersisted: true,
+                    canPersist: true,
                 );
             },
         ]);

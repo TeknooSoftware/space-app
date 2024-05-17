@@ -65,7 +65,7 @@ class PersistJobVar
         );
 
         foreach ($newJob->variables as $variable) {
-            if ($variable->persisted && $variable->canUpdatePersisted) {
+            if ($variable->persisted && $variable->canPersist) {
                 $nE = !empty($variable->value) && $variable->secret && empty($variable->encryptionAlgorithm);
 
                 $persistedVariable = new ProjectPersistedVariable(

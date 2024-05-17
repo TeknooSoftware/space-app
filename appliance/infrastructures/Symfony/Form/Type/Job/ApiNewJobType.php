@@ -75,7 +75,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                 'allow_delete' => true,
                 'prototype' => true,
                 'prototype_data' => new JobVar(
-                    canUpdatePersisted: true,
+                    canPersist: true,
                 ),
                 'entry_options' => [
                     'use_password_for_secret' => true,

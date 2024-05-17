@@ -48,7 +48,7 @@ class JobVar implements ObjectInterface, JsonSerializable, EncryptableVariableIn
         public bool $secret = false,
         public ?bool $wasSecret = null,
         public ?string $encryptionAlgorithm = null,
-        public ?bool $canUpdatePersisted = false,
+        public ?bool $canPersist = false,
         private ProjectPersistedVariable|AccountPersistedVariable|null $persistedVar = null,
     ) {
         if (null === $this->wasSecret) {
@@ -119,7 +119,7 @@ class JobVar implements ObjectInterface, JsonSerializable, EncryptableVariableIn
             'persisted' => $this->persisted,
             'secret' => $this->secret,
             'encryptionAlgorithm' => $this->encryptionAlgorithm,
-            'canUpdatePersisted' => $this->canUpdatePersisted,
+            'canPersist' => $this->canPersist,
         ];
     }
 }
