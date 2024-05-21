@@ -638,6 +638,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
       | ggg | var6 | 1      | value6 | dev         |
+      | hhh | var8 | 1      | value8 | dev         |
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -668,11 +669,17 @@ Feature: On a space instance, an API is available to manage accounts as admin an
       | account_vars.sets.dev.variables.1.secret     | 1        |
       | account_vars.sets.dev.variables.1.wasSecret  | 1        |
       | account_vars.sets.dev.variables.1.value      | value7   |
+      | account_vars.sets.dev.variables.2.id         | hhh      |
+      | account_vars.sets.dev.variables.2.name       | var8     |
+      | account_vars.sets.dev.variables.2.secret     | 0        |
+      | account_vars.sets.dev.variables.2.wasSecret  | 1        |
+      | account_vars.sets.dev.variables.2.value      | value8   |
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 0      | value2   | prod        |
+      | bbb | var2 | 1      | value2   | prod        |
       | ddd | var3 | 0      | value3.1 | dev         |
       | ggg | var6 | 1      | value7   | dev         |
+      | hhh | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
     And no Kubernetes manifests must not be deleted
 
@@ -694,6 +701,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
       | ggg | var6 | 1      | value6 | dev         |
+      | hhh | var8 | 1      | value8 | dev         |
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -723,11 +731,17 @@ Feature: On a space instance, an API is available to manage accounts as admin an
       | sets.dev.variables.1.secret     | 1        |
       | sets.dev.variables.1.wasSecret  | 1        |
       | sets.dev.variables.1.value      | value7   |
+      | sets.dev.variables.2.id         | hhh      |
+      | sets.dev.variables.2.name       | var8     |
+      | sets.dev.variables.2.secret     | 0        |
+      | sets.dev.variables.2.wasSecret  | 1        |
+      | sets.dev.variables.2.value      | value8   |
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 0      | value2   | prod        |
+      | bbb | var2 | 1      | value2   | prod        |
       | ddd | var3 | 0      | value3.1 | dev         |
       | ggg | var6 | 1      | value7   | dev         |
+      | hhh | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
     And no Kubernetes manifests must not be deleted
 

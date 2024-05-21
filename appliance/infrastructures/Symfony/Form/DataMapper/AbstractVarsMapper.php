@@ -125,7 +125,12 @@ abstract class AbstractVarsMapper implements DataMapperInterface
             $envName = $set->envName;
             foreach ($set->variables as $variable) {
                 $value = $variable->value;
+                $secret = $variable->secret || (!empty($variable->encryptionAlgorithm) && empty($value));
                 $needEncryption = $variable->secret && !empty($value);
+
+                if (!empty($value)) {
+                    $variable->encryptionAlgorithm = '';
+                }
 
                 if (
                     empty($value)
@@ -136,6 +141,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
                     $value = $existentVariables[$variable->getId()]->getValue();
                     $variable->encryptionAlgorithm = $existentVariables[$variable->getId()]->getEncryptionAlgorithm();
                     $needEncryption = false;
+                    $secret = true;
                 }
 
                 $variables[] = $this->buildVariable(
@@ -144,7 +150,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
                     name: $variable->name,
                     value: $value,
                     envName: $envName,
-                    secret: $variable->secret || !empty($variable->encryptionAlgorithm),
+                    secret: $secret,
                     encryptionAlgorithm: $variable->encryptionAlgorithm,
                     needEncryption: $needEncryption,
                 );

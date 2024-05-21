@@ -71,6 +71,8 @@ Feature: On space, users on a same account can define some variables and secrets
       | bbb | var2 | 1      | value2 | prod        |
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
+      | eee | var6 | 1      | value6 | dev         |
+      | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -101,6 +103,16 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.dev.variables.0.secret     |        |
       | account_vars.sets.dev.variables.0.wasSecret  |        |
       | account_vars.sets.dev.variables.0.value      | value4 |
+      | account_vars.sets.dev.variables.1.id         | eee    |
+      | account_vars.sets.dev.variables.1.name       | var6   |
+      | account_vars.sets.dev.variables.1.secret     | 1      |
+      | account_vars.sets.dev.variables.1.wasSecret  | 1      |
+      | account_vars.sets.dev.variables.1.value      |        |
+      | account_vars.sets.dev.variables.2.id         | fff    |
+      | account_vars.sets.dev.variables.2.name       | var8   |
+      | account_vars.sets.dev.variables.2.secret     | 1      |
+      | account_vars.sets.dev.variables.2.wasSecret  | 1      |
+      | account_vars.sets.dev.variables.2.value      |        |
     When it submits the form:
       | field                                        | value    |
       | account_vars._token                          | <auto>   |
@@ -118,20 +130,32 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.dev.variables.0.id         | <auto>   |
       | account_vars.sets.dev.variables.0.wasSecret  |          |
       | account_vars.sets.dev.variables.0.value      | value3.1 |
+      | account_vars.sets.dev.variables.1.id         | eee      |
+      | account_vars.sets.dev.variables.1.name       | var6     |
+      | account_vars.sets.dev.variables.1.secret     | 1        |
+      | account_vars.sets.dev.variables.1.wasSecret  | 1        |
+      | account_vars.sets.dev.variables.1.value      |          |
+      | account_vars.sets.dev.variables.2.name       | var8     |
+      | account_vars.sets.dev.variables.2.id         | <auto>   |
+      | account_vars.sets.dev.variables.2.secret     |          |
+      | account_vars.sets.dev.variables.2.wasSecret  | 1        |
+      | account_vars.sets.dev.variables.2.value      | value8   |
     Then data have been saved
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
-      | bbb | var2 | 0      | value2   | prod        |
+      | bbb | var2 | 1      | value2   | prod        |
       | ddd | var3 | 0      | value3.1 | dev         |
+      | eee | var6 | 1      | value6   | dev         |
+      | fff | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
     And the user obtains the form:
       | field                                        | value    |
       | account_vars.sets.prod.envName               | prod     |
       | account_vars.sets.prod.variables.0.id        | bbb      |
       | account_vars.sets.prod.variables.0.name      | var2     |
-      | account_vars.sets.prod.variables.0.secret    |          |
-      | account_vars.sets.prod.variables.0.wasSecret |          |
-      | account_vars.sets.prod.variables.0.value     | value2   |
+      | account_vars.sets.prod.variables.0.secret    | 1        |
+      | account_vars.sets.prod.variables.0.wasSecret | 1        |
+      | account_vars.sets.prod.variables.0.value     |          |
       | account_vars.sets.prod.variables.1.id        | x        |
       | account_vars.sets.prod.variables.1.name      | var5     |
       | account_vars.sets.prod.variables.1.secret    |          |
@@ -216,6 +240,7 @@ Feature: On space, users on a same account can define some variables and secrets
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
       | eee | var6 | 1      | value6 | dev         |
+      | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -251,6 +276,11 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.dev.variables.1.secret     | 1      |
       | account_vars.sets.dev.variables.1.wasSecret  | 1      |
       | account_vars.sets.dev.variables.1.value      |        |
+      | account_vars.sets.dev.variables.2.id         | fff    |
+      | account_vars.sets.dev.variables.2.name       | var8   |
+      | account_vars.sets.dev.variables.2.secret     | 1      |
+      | account_vars.sets.dev.variables.2.wasSecret  | 1      |
+      | account_vars.sets.dev.variables.2.value      |        |
     When it submits the form:
       | field                                        | value    |
       | account_vars._token                          | <auto>   |
@@ -273,12 +303,18 @@ Feature: On space, users on a same account can define some variables and secrets
       | account_vars.sets.dev.variables.1.secret     | 1        |
       | account_vars.sets.dev.variables.1.wasSecret  | 1        |
       | account_vars.sets.dev.variables.1.value      | value7   |
+      | account_vars.sets.dev.variables.2.name       | var8     |
+      | account_vars.sets.dev.variables.2.id         | <auto>   |
+      | account_vars.sets.dev.variables.2.secret     |          |
+      | account_vars.sets.dev.variables.2.wasSecret  | 1        |
+      | account_vars.sets.dev.variables.2.value      | value8   |
     Then data have been saved
     Then the account must have these persisted variables
       | id  | name | secret | value    | environment |
       | bbb | var2 | 1      | value2   | prod        |
       | ddd | var3 | 0      | value3.1 | dev         |
       | eee | var6 | 1      | value7   | dev         |
+      | fff | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
     And the user obtains the form:
       | field                                        | value    |
