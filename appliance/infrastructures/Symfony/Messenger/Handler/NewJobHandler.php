@@ -124,8 +124,8 @@ class NewJobHandler
                         'envName' => $newJob->envName,
                         'newJobId' => $newJob->newJobId,
                     ],
-                    flags: JSON_THROW_ON_ERROR
-                )
+                    flags: JSON_THROW_ON_ERROR,
+                ),
             );
 
             $message = $this->messageFactory->createMessage('1.1');
