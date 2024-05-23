@@ -46,7 +46,7 @@ images:
 #Hook to build the project before container, Called in this order
 builds:
     composer-build: #Name of the step
-        composer:
+        composer-8.2:
             action: install #Hook to call
             arguments:
                 - 'no-dev'

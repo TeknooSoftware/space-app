@@ -309,6 +309,8 @@ class TestsContext implements Context
             'SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE',
             'SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY',
             'SPACE_PERSISTED_VAR_AGENT_MODE',
+            'SPACE_HOOKS_COLLECTION_JSON',
+            'SPACE_HOOKS_COLLECTION_FILE',
         ];
 
         foreach ($envVarsNames as $name) {
@@ -4931,7 +4933,7 @@ class TestsContext implements Context
     {
         $hook = new HookMock();
 
-        $hooks = ['composer' => clone $hook, 'hook-id' => clone $hook];
+        $hooks = ['composer-8.2' => clone $hook, 'hook-id' => clone $hook];
         $collection = new class ($hooks) implements HooksCollectionInterface {
             private iterable $hooks;
 
@@ -5008,38 +5010,50 @@ class TestsContext implements Context
      */
     public function withoutAnyHooksPathDefined(): void
     {
-        $diCi = $this->sfContainer->get(DiContainer::class);
-        $diCi->set(
-            'teknoo.east.paas.composer.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.symfony_console.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.npm.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.pip.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.make.path',
-            null
-        );
+        $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode([]);
     }
 
     /**
-     * @Given a composer path set in the DI
+     * @Given composer in several version as hook
      */
-    public function aComposerPathSetInTheDi(): void
+    public function composerInSeveralVersionAsHook(): void
     {
-        $diCi = $this->sfContainer->get(DiContainer::class);
-        $diCi->set(
-            'teknoo.east.paas.composer.path',
-            new ArrayObject(['composer'])
+        $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode(
+            [
+                [
+                    'name' => 'composer',
+                    'type' => 'composer',
+                    'command' => [
+                        'php',
+                        '-f',
+                        '/usr/local/bin/composer',
+                        '--',
+                    ],
+                    'timeout' => 240,
+                ],
+                [
+                    'name' => 'composer-8.1',
+                    'type' => 'composer',
+                    'command' => [
+                        'php8.1',
+                        '-f',
+                        '/usr/local/bin/composer',
+                        '--',
+                    ],
+                    'timeout' => 240,
+                ],
+                [
+                    'name' => 'composer-8.2',
+                    'type' => 'composer',
+                    'command' => [
+                        'php8.2',
+                        '-f',
+                        '/usr/local/bin/composer',
+                        '--',
+                    ],
+                    'timeout' => 240,
+                ],
+            ]
         );
     }
 
@@ -5058,6 +5072,8 @@ class TestsContext implements Context
     {
         $hooks = iterator_to_array($this->hookCollection);
         Assert::assertArrayHasKey($name, $hooks);
+        Assert::assertArrayHasKey($name . '-8.1', $hooks);
+        Assert::assertArrayHasKey($name . '-8.2', $hooks);
     }
 
     /**

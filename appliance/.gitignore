@@ -20,7 +20,13 @@
 /.env.build
 /.env.local
 /.phpunit.cache/
+/.env.local.php
+/config/packages/framework.session.backend.yaml
+/global_variables.php
+/hooks_collection.php
 /phpunitgen.php
+/public/build/css/*
+/public/build/js/*
 /public/test.php
 /tests/Behat/jwt/private.pem
 /tests/Behat/jwt/public.pem
@@ -28,9 +34,4 @@
 /tests/var/keys/messages/public.pem
 /tests/var/keys/variables/private.pem
 /tests/var/keys/variables/public.pem
-/.env.local.php
-/public/build/js/*
-/public/build/css/*
-/global_variables.php
 /vendor-bin/
-/config/packages/framework.session.backend.yaml

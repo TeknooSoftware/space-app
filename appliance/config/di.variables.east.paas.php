@@ -52,16 +52,6 @@ return [
 
     'teknoo.east.paas.git.cloning.timeout' => env('SPACE_GIT_TIMEOUT', 240),
 
-    'teknoo.east.paas.composer.timeout' => env('SPACE_COMPOSER_TIMEOUT', 240),
-
-    'teknoo.east.paas.symfony_console.timeout' => env('SPACE_SFCONSOLE_TIMEOUT', 240),
-
-    'teknoo.east.paas.npm.timeout' => env('SPACE_NPM_TIMEOUT', 240),
-
-    'teknoo.east.paas.pip.timeout' => env('SPACE_PIP_TIMEOUT', 240),
-
-    'teknoo.east.paas.make.timeout' => env('SPACE_MAKE_TIMEOUT', 240),
-
     'teknoo.east.paas.img_builder.cmd' => env('SPACE_IMG_BUILDER_CMD', 'buildah'),
     'teknoo.east.paas.img_builder.build.timeout' => env('SPACE_IMG_BUILDER_TIMEOUT', 10 * 60),
     'teknoo.east.paas.img_builder.build.platforms' => env('SPACE_IMG_BUILDER_PLATFORMS', 'linux/amd64'),

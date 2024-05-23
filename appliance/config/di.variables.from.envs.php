@@ -74,77 +74,6 @@ $loadFromEnv = static function (
 };
 
 return [
-    //East PaaS Configuration
-    'teknoo.east.paas.composer.path' => factory($loadFromEnv)
-        ->parameter(
-            'default',
-            ['composer'],
-        )
-        ->parameter(
-            'jsonKey',
-            'SPACE_COMPOSER_PATH_JSON',
-        )
-        ->parameter(
-            'fileKey',
-            'SPACE_COMPOSER_PATH_FILE',
-        ),
-
-    'teknoo.east.paas.symfony_console.path' => factory($loadFromEnv)
-        ->parameter(
-            'default',
-            ['${PWD}/bin/console'],
-        )
-        ->parameter(
-            'jsonKey',
-            'SPACE_SFCONSOLE_PATH_JSON',
-        )
-        ->parameter(
-            'fileKey',
-            'SPACE_SFCONSOLE_PATH_FILE',
-        ),
-
-    'teknoo.east.paas.npm.path' => factory($loadFromEnv)
-        ->parameter(
-            'default',
-            ['npm'],
-        )
-        ->parameter(
-            'jsonKey',
-            'SPACE_NPM_PATH_JSON',
-        )
-        ->parameter(
-            'fileKey',
-            'SPACE_NPM_PATH_FILE',
-        ),
-
-    'teknoo.east.paas.pip.path' => factory($loadFromEnv)
-        ->parameter(
-            'default',
-            ['pip'],
-        )
-        ->parameter(
-            'jsonKey',
-            'SPACE_PIP_PATH_JSON',
-        )
-        ->parameter(
-            'fileKey',
-            'SPACE_PIP_PATH_FILE',
-        ),
-
-    'teknoo.east.paas.make.path' => factory($loadFromEnv)
-        ->parameter(
-            'default',
-            ['make'],
-        )
-        ->parameter(
-            'jsonKey',
-            'SPACE_MAKE_PATH_JSON',
-        )
-        ->parameter(
-            'fileKey',
-            'SPACE_MAKE_PATH_FILE',
-        ),
-
     'teknoo.east.paas.kubernetes.ingress.default_annotations' => factory($loadFromEnv)
         ->parameter(
             'default',
@@ -159,6 +88,20 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE',
+        ),
+
+    'teknoo.space.hooks_collection.definitions' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_HOOKS_COLLECTION_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_HOOKS_COLLECTION_FILE',
         ),
 
     'teknoo.space.clusters_catalog.definitions' => factory($loadFromEnv)
