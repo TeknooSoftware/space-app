@@ -4294,8 +4294,6 @@ class TestsContext implements Context
             return;
         }
 
-        $jobId = substr(string: $id, offset: 0, length: 4) . '-' . substr(string: $id, offset: -4);
-
         $expected = (new ManifestGenerator())->fullDeployment(
             projectPrefix: $this->projectPrefix,
             jobId: strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '', (string) $job->getProject()))),
@@ -4933,7 +4931,7 @@ class TestsContext implements Context
     {
         $hook = new HookMock();
 
-        $hooks = ['composer-8.2' => clone $hook, 'hook-id' => clone $hook];
+        $hooks = ['composer-8.2' => clone $hook, 'hook-id-BAR' => clone $hook];
         $collection = new class ($hooks) implements HooksCollectionInterface {
             private iterable $hooks;
 
