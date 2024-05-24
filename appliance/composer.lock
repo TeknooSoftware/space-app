@@ -11260,12 +11260,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "244430640d5111d05f1b7e3f9c3717ea40cd668d"
+                "reference": "725562fdc6c032307068d22ccf730b3726bd2ae5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/244430640d5111d05f1b7e3f9c3717ea40cd668d",
-                "reference": "244430640d5111d05f1b7e3f9c3717ea40cd668d",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/725562fdc6c032307068d22ccf730b3726bd2ae5",
+                "reference": "725562fdc6c032307068d22ccf730b3726bd2ae5",
                 "shasum": ""
             },
             "require": {
@@ -11393,7 +11393,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-05-24T06:46:46+00:00"
+            "time": "2024-05-24T10:30:55+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
