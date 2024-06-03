@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b12cceffe52d72d0bcad2aada5dc69b",
+    "content-hash": "0b254a65719befdbaa7f08bf46905d45",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -9032,73 +9032,6 @@
             "time": "2024-05-30T12:09:55+00:00"
         },
         {
-            "name": "symfony/proxy-manager-bridge",
-            "version": "v6.4.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/proxy-manager-bridge.git",
-                "reference": "b8119e0b248ef0711c25cd09acc729102122621c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/proxy-manager-bridge/zipball/b8119e0b248ef0711c25cd09acc729102122621c",
-                "reference": "b8119e0b248ef0711c25cd09acc729102122621c",
-                "shasum": ""
-            },
-            "require": {
-                "friendsofphp/proxy-manager-lts": "^1.0.2",
-                "php": ">=8.1",
-                "symfony/dependency-injection": "^6.3|^7.0",
-                "symfony/deprecation-contracts": "^2.5|^3"
-            },
-            "require-dev": {
-                "symfony/config": "^6.1|^7.0"
-            },
-            "type": "symfony-bridge",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Bridge\\ProxyManager\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Provides integration for ProxyManager with various Symfony components",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/proxy-manager-bridge/tree/v6.4.8"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-05-31T14:49:08+00:00"
-        },
-        {
             "name": "symfony/psr-http-message-bridge",
             "version": "v7.1.0",
             "source": {
@@ -9955,72 +9888,6 @@
                 }
             ],
             "time": "2024-05-17T10:55:18+00:00"
-        },
-        {
-            "name": "symfony/templating",
-            "version": "v6.4.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/templating.git",
-                "reference": "e0a572c7dfd8fc2cfb488909e2ab0f5daeb2a8b9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/templating/zipball/e0a572c7dfd8fc2cfb488909e2ab0f5daeb2a8b9",
-                "reference": "e0a572c7dfd8fc2cfb488909e2ab0f5daeb2a8b9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1",
-                "symfony/deprecation-contracts": "^2.5|^3",
-                "symfony/polyfill-ctype": "~1.8"
-            },
-            "require-dev": {
-                "psr/log": "^1|^2|^3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\Templating\\": ""
-                },
-                "exclude-from-classmap": [
-                    "/Tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Provides all the tools needed to build any kind of template system",
-            "homepage": "https://symfony.com",
-            "support": {
-                "source": "https://github.com/symfony/templating/tree/v6.4.8"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-05-31T14:49:08+00:00"
         },
         {
             "name": "symfony/translation",
@@ -10963,16 +10830,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "2.12.1",
+            "version": "2.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "0d7cca09369a08a7d8e3f8f17eb713ee3e3c617f"
+                "reference": "7047483a58151a4c148fd541db00817ee1393c98"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/0d7cca09369a08a7d8e3f8f17eb713ee3e3c617f",
-                "reference": "0d7cca09369a08a7d8e3f8f17eb713ee3e3c617f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/7047483a58151a4c148fd541db00817ee1393c98",
+                "reference": "7047483a58151a4c148fd541db00817ee1393c98",
                 "shasum": ""
             },
             "require": {
@@ -11024,7 +10891,6 @@
                 "symfony/security-bundle": "^6.3||^7",
                 "symfony/security-core": "^6.3||^7",
                 "symfony/security-http": "^6.3||^7",
-                "symfony/templating": "^6.3||^7",
                 "symfony/validator": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.0.4",
                 "twig/cssinliner-extra": "^3.8",
@@ -11084,20 +10950,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-05-31T14:32:06+00:00"
+            "time": "2024-06-03T07:39:13+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "2.12.1",
+            "version": "2.12.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "8d196dfeca5584807c119b9d12787f4eedd8ff08"
+                "reference": "348daa93957418fbf8f0099749e7c269df1c834c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/8d196dfeca5584807c119b9d12787f4eedd8ff08",
-                "reference": "8d196dfeca5584807c119b9d12787f4eedd8ff08",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/348daa93957418fbf8f0099749e7c269df1c834c",
+                "reference": "348daa93957418fbf8f0099749e7c269df1c834c",
                 "shasum": ""
             },
             "require": {
@@ -11117,11 +10983,10 @@
                 "symfony/psr-http-message-bridge": "^2.3.1||^6.4||^7",
                 "symfony/security-bundle": "^6.3||^7",
                 "symfony/security-core": "^6.3||^7",
-                "symfony/templating": "^6.3||^7",
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.0.4",
-                "teknoo/east-common": "^2.12.1",
+                "teknoo/east-common": "^2.12.2",
                 "teknoo/east-foundation-symfony": "^7.7",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/recipe": "^5.1",
@@ -11172,7 +11037,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-05-31T15:00:29+00:00"
+            "time": "2024-06-03T07:40:41+00:00"
         },
         {
             "name": "teknoo/east-foundation",

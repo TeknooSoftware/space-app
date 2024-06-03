@@ -528,9 +528,6 @@
     "symfony/property-info": {
         "version": "v4.1.6"
     },
-    "symfony/proxy-manager-bridge": {
-        "version": "v5.2.4"
-    },
     "symfony/psr-http-message-bridge": {
         "version": "v1.1.0"
     },
@@ -578,9 +575,6 @@
     },
     "symfony/string": {
         "version": "v5.1.2"
-    },
-    "symfony/templating": {
-        "version": "v4.1.6"
     },
     "symfony/translation": {
         "version": "3.3",
