@@ -35,6 +35,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
+use function in_array;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -63,8 +65,15 @@ class CreateQuota
     {
         $hard = [];
         foreach ($quotas as $quota) {
-            $hard["requests.{$quota->type}"] = $quota->requires;
-            $hard["limits.{$quota->type}"] = $quota->capacity;
+            if (in_array($quota->type, ['cpu', 'memory', 'storage', 'ephemeral-storage'])) {
+                $hard["requests.{$quota->type}"] = $quota->requires;
+
+                if (in_array($quota->type, ['cpu', 'memory', 'ephemeral-storage'])) {
+                    $hard["limits.{$quota->type}"] = $quota->capacity;
+                }
+            } else {
+                $hard[$quota->type] = $quota->requires;
+            }
         }
 
         return new ResourceQuota([
