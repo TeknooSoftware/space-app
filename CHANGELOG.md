@@ -1,5 +1,34 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC1] - 2024-06-04
+### Release Candidate
+- Fix mapping in Doctrine ODM
+- Fix and complete some test
+- Fix BC breaks and some bug with persisted variables
+- Fix issue when a secret var is unsecret, and harmonize behavior of secret encrypted and non secret encrypted
+- Use East PaaS 3.4
+- Use Lexik JWT 2
+- Replace Hook collection management and delete env vars:
+    - SPACE_COMPOSER_PATH_JSON
+    - SPACE_COMPOSER_PATH_FILE
+    - SPACE_COMPOSER_TIMEOUT
+    - SPACE_SFCONSOLE_PATH_JSON
+    - SPACE_SFCONSOLE_PATH_FILE
+    - SPACE_SFCONSOLE_TIMEOUT
+    - SPACE_NPM_PATH_JSON
+    - SPACE_NPM_PATH_FILE
+    - SPACE_NPM_TIMEOUT
+    - SPACE_PIP_PATH_JSON
+    - SPACE_PIP_PATH_FILE
+    - SPACE_PIP_TIMEOUT
+    - SPACE_MAKE_PATH_JSON
+    - SPACE_MAKE_PATH_FILE
+    - SPACE_MAKE_TIMEOUT
+  replaced by `SPACE_HOOKS_COLLECTION_JSON` or `SPACE_HOOKS_COLLECTION_FILE` to allow more hooks configuration with
+  several versions of composer, npm, pip, or make.
+  - Fix Quota creation
+  - Update to Symfony 7.1, Symfony 6.4 still supported
+
 ## [1.0.0-beta43] - 2024-05-08
 ### Beta Release
 - Huge and massive update. The last version before the RC1.
