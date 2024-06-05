@@ -51,7 +51,7 @@ class CreateAccountHistoryTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    private bool $prefereRealDate;
+    private bool $preferRealDate;
 
     /**
      * {@inheritdoc}
@@ -62,11 +62,11 @@ class CreateAccountHistoryTest extends TestCase
 
         $this->writer = $this->createMock(AccountHistoryWriter::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDate = true;
+        $this->preferRealDate = true;
         $this->createAccountHistory = new CreateAccountHistory(
             $this->writer,
             $this->datesService,
-            $this->prefereRealDate
+            $this->preferRealDate
         );
     }
 

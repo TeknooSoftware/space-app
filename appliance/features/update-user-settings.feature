@@ -5,7 +5,7 @@ Feature: On a space instance, each user can edit its own settings, like its firs
   Scenario: Update my user settings
     Given A Space app instance
     And A memory document database
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And the platform is booted

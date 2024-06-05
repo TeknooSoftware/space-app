@@ -25,17 +25,22 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
+use BadMethodCallException;
 use Http\Client\Common\HttpMethodsClientInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 use function http_build_query;
+use function in_array;
 use function str_contains;
 
 /**
@@ -47,73 +52,76 @@ use function str_contains;
 class DashboardFrame implements DashboardFrameInterface
 {
     public function __construct(
-        private string $dashboardUrl,
+        private ClusterCatalog $catalog,
         private HttpMethodsClientInterface $httpMethodsClient,
-        private string $clusterToken,
         private ResponseFactoryInterface $responseFactory,
     ) {
     }
 
-    private function getDashboardUrl(?Account $account, string $wildcard): string
+    private function getDashboardUrl(ClusterConfig $cluster, ?AccountEnvironment $env, string $wildcard): string
     {
         if (!str_contains($wildcard, '#')) {
-            return $this->dashboardUrl . $wildcard;
+            return $cluster->dashboardAddress . $wildcard;
         }
 
-        $urlGenerator = new class ($this->dashboardUrl . $wildcard) implements AccountAwareInterface {
-            public function __construct(
-                public string $url,
-            ) {
-            }
+        $url = $cluster->dashboardAddress . $wildcard;
 
-            public function passAccountNamespace(
-                Account $account,
-                ?string $name,
-                ?string $namespace,
-                ?string $prefixNamespace,
-                bool $useHierarchicalNamespaces,
-            ): AccountAwareInterface {
-                $kubeNamespace = $prefixNamespace . $namespace;
-                $this->url .= '?' . http_build_query([
-                        'namespace' => $kubeNamespace
-                    ]);
-
-                return $this;
-            }
-        };
-
-        if (null !== $account) {
-            $account->requireAccountNamespace($urlGenerator);
+        if (null !== $env) {
+            $url .= '?' . http_build_query(['namespace' => $env->getNamespace()]);
         } else {
-            $urlGenerator->url .= '?' . http_build_query([
-                'namespace' => '_all',
-            ]);
+            $url .= '?' . http_build_query(['namespace' => '_all']);
         }
 
-        return $urlGenerator->url;
+        return $url;
     }
 
     public function __invoke(
         ManagerInterface $manager,
         EastClient $client,
         ServerRequestInterface $serverRequest,
+        User $user,
+        string $clusterName,
         string $wildcard = '',
         ?Account $account = null,
-        //todo Use AccountsCredentialsWallet
-        ?AccountCredential $accountCredential = null,
+        ?AccountWallet $accountWallet = null,
+        ?string $envName = null,
     ): DashboardFrameInterface {
         if (empty($wildcard)) {
             $wildcard = '#/workloads';
         }
 
-        $dashboardUrl = $this->getDashboardUrl($account, $wildcard);
+        $clusterConfig = $this->catalog->getCluster($clusterName);
+
+        $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
+        $accountEnvironment = null;
+
+        if (!$isAdmin) {
+            if (null === $accountWallet) {
+                throw new BadMethodCallException(message: "Wallet is mandatory for non admin user", code: 403);
+            }
+
+            if (null === $envName) {
+                throw new BadMethodCallException(message: "Environment name is mandatory", code: 400);
+            }
+
+            if (!$accountWallet->has($clusterConfig->name, $envName)) {
+                throw new BadMethodCallException(message: "Cluster is not allowed for this user", code: 403);
+            }
+
+            $accountEnvironment = $accountWallet->get($clusterConfig->name, $envName);
+
+            if (null === $accountEnvironment) {
+                throw new BadMethodCallException(message: "Account environment missing", code: 403);
+            }
+        }
+
+        $dashboardUrl = $this->getDashboardUrl($clusterConfig, $accountEnvironment, $wildcard);
 
         $responseDashboard = $this->httpMethodsClient->send(
             method: $serverRequest->getMethod(),
             uri: $dashboardUrl,
             headers: [
-                //todo check if user has admin role before use cluster token
-                'Authorization' => 'Bearer ' . trim($accountCredential?->getToken() ?? $this->clusterToken),
+                'Authorization' => 'Bearer ' . trim($accountEnvironment?->getToken() ?? $clusterConfig->token),
             ],
         );
 

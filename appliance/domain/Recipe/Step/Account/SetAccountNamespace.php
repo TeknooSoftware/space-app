@@ -32,6 +32,7 @@ use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\Promise;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -42,8 +43,9 @@ use Teknoo\East\Paas\Object\Account;
 class SetAccountNamespace
 {
     public function __construct(
-        private FindSlugService $findSlugService,
-        private AccountLoader $accountLoader,
+        private readonly FindSlugService $findSlugService,
+        private readonly AccountLoader $accountLoader,
+        private string $rootNamespace,
     ) {
     }
 
@@ -54,10 +56,14 @@ class SetAccountNamespace
         ManagerInterface $manager,
         Account $accountInstance
     ): SluggableInterface {
-        return new class ($accountInstance, $manager) implements SluggableInterface, IdentifiedObjectInterface {
+        return new class ($accountInstance, $manager, $this->rootNamespace) implements
+            SluggableInterface,
+            IdentifiedObjectInterface
+        {
             public function __construct(
                 private Account $account,
                 private ManagerInterface $manager,
+                private string $rootNamespace,
             ) {
             }
 
@@ -77,6 +83,7 @@ class SetAccountNamespace
             public function setSlug(string $slug): SluggableInterface
             {
                 $this->account->setNamespace($slug);
+                $this->account->setPrefixNamespace($this->rootNamespace);
                 $this->manager->updateWorkPlan(['accountNamespace' => $slug]);
 
                 return $this;
@@ -90,12 +97,12 @@ class SetAccountNamespace
     ): self {
         $sluggable = $this->createSluggableObject($manager, $accountInstance);
 
-        $accountNamespace = (string) $accountInstance;
-        $accountInstance->namespaceIsItDefined(
-            function ($ns) use (&$accountNamespace) {
-                $accountNamespace = $ns;
-            }
+        /** @var Promise<string, string, string> $promise */
+        $promise = new Promise(
+            static fn (string $ns) => $ns,
         );
+        $accountInstance->namespaceIsItDefined($promise,);
+        $accountNamespace = $promise->fetchResult((string) $accountInstance);
 
         $this->findSlugService->process(
             $this->accountLoader,

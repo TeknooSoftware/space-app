@@ -28,7 +28,6 @@ namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Kubernetes\Client as KubernetesClient;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -38,20 +37,16 @@ use Teknoo\Kubernetes\Client as KubernetesClient;
  */
 class ReloadNamespace
 {
-    public function __construct(
-        private KubernetesClient $client,
-    ) {
-    }
-
     public function __invoke(
-        Account $account,
         ManagerInterface $manager,
+        Account $account,
     ): self {
         $account->requireAccountNamespace(
-            new class ($manager, $this->client) implements AccountAwareInterface {
+            new class (
+                $manager,
+            ) implements AccountAwareInterface {
                 public function __construct(
                     public ManagerInterface $manager,
-                    private KubernetesClient $client,
                 ) {
                 }
 
@@ -60,17 +55,10 @@ class ReloadNamespace
                     ?string $name,
                     ?string $namespace,
                     ?string $prefixNamespace,
-                    bool $useHierarchicalNamespaces,
                 ): AccountAwareInterface {
-                    $kubeNamespace = $prefixNamespace . $namespace;
-                    $this->client->setNamespace($kubeNamespace);
-
-                    $this->manager->updateWorkPlan(
-                        [
-                            'accountNamespace' => $namespace,
-                            'kubeNamespace' => $kubeNamespace,
-                        ]
-                    );
+                    $this->manager->updateWorkPlan([
+                        'accountNamespace' => $namespace,
+                    ]);
 
                     return $this;
                 }

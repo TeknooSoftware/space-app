@@ -28,10 +28,14 @@ namespace Teknoo\Space\Recipe\Step\Project;
 use Teknoo\East\Paas\Contracts\Object\ImageRegistryInterface;
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
+use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\XRegistryAuth;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -42,25 +46,24 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
 class UpdateProjectCredentialsFromAccount
 {
     public function __construct(
-        private string $defaultClusterName,
-        private string $defaultClusterType,
-        private string $defaultClusterAddress,
+        private ClusterCatalog $catalog,
     ) {
     }
 
     public function __invoke(
-        SpaceProject $project,
-        //todo Use AccountsCredentialsWallet
-        AccountCredential $accountCredential,
+        SpaceProject $spaceProject,
+        AccountWallet $accountWallet,
+        AccountRegistry $accountRegistry,
     ): UpdateProjectCredentialsFromAccount {
-        $eastProject = $project->project;
+        $catalog = $this->catalog;
+        $eastProject = $spaceProject->project;
         $eastProject->visit(
             [
-                'imagesRegistry' => function (
+                'imagesRegistry' => static function (
                     ImageRegistryInterface $imageRegistry,
                 ) use (
                     $eastProject,
-                    $accountCredential,
+                    $accountRegistry,
                 ): void {
                     if (!$imageRegistry instanceof ImageRegistry) {
                         return;
@@ -68,42 +71,51 @@ class UpdateProjectCredentialsFromAccount
 
                     $eastProject->setImagesRegistry(
                         new ImageRegistry(
-                            $accountCredential->getRegistryUrl(),
+                            $accountRegistry->getRegistryUrl(),
                             new XRegistryAuth(
-                                username: $accountCredential->getRegistryAccountName(),
-                                password: $accountCredential->getRegistryPassword(),
-                                auth: $accountCredential->getRegistryConfigName(),
+                                username: $accountRegistry->getRegistryAccountName(),
+                                password: $accountRegistry->getRegistryPassword(),
+                                auth: $accountRegistry->getRegistryConfigName(),
+                                serverAddress: $accountRegistry->getRegistryUrl(),
                             ),
                         ),
                     );
                 },
-                'clusters' => function (iterable $clusters) use ($accountCredential): void {
+                'clusters' => static function (iterable $clusters) use ($accountWallet, $catalog): void {
                     foreach ($clusters as $cluster) {
-                        if (!$cluster instanceof Cluster) {
-                            continue;
-                        }
-
-                        $cluster->visit(
-                            [
-                                'name' => function ($name) use ($cluster, $accountCredential): void {
-                                    if ($this->defaultClusterName !== $name) {
+                        if ($cluster instanceof Cluster) {
+                            $cluster->visit(
+                                'environment',
+                                static function (Environment $environment) use (
+                                    $cluster,
+                                    $accountWallet,
+                                    $catalog,
+                                ): void {
+                                    $clusterName = (string) $cluster;
+                                    if (!$accountWallet->has($clusterName, $environment)) {
                                         return;
                                     }
 
-                                    $cluster->setType($this->defaultClusterType);
-                                    $cluster->setAddress($this->defaultClusterAddress);
+                                    $clusterConfig = $catalog->getCluster($clusterName);
+                                    $cluster->setType($clusterConfig->type);
+                                    $cluster->useHierarchicalNamespaces($clusterConfig->useHnc);
+                                    $cluster->setAddress($clusterConfig->masterAddress);
                                     $cluster->setLocked(true);
+
+                                    /** @var AccountEnvironment $accountEnvironment */
+                                    $accountEnvironment = $accountWallet->get($clusterName, $environment);
+                                    $cluster->setNamespace($accountEnvironment->getNamespace());
                                     $cluster->setIdentity(
                                         new ClusterCredentials(
-                                            caCertificate: $accountCredential->getCaCertificate(),
-                                            clientCertificate: $accountCredential->getClientCertificate(),
-                                            clientKey: $accountCredential->getClientKey(),
-                                            token: $accountCredential->getToken(),
+                                            caCertificate: $accountEnvironment->getCaCertificate(),
+                                            clientCertificate: $accountEnvironment->getClientCertificate(),
+                                            clientKey: $accountEnvironment->getClientKey(),
+                                            token: $accountEnvironment->getToken(),
                                         ),
                                     );
-                                }
-                            ]
-                        );
+                                },
+                            );
+                        }
                     }
                 }
             ]

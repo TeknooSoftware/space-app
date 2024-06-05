@@ -1,9 +1,0 @@
-space_healthy:
-    path: '/healthy'
-    methods: [ 'GET' ]
-    schemes: [ http, https ]
-    defaults:
-        _controller: 'teknoo.east.common.endpoint.static'
-        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
-        template: '@@TeknooEastPaas/healthy.html.twig'
-        cleanHtml: false

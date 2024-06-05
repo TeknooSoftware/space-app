@@ -1,0 +1,8 @@
+{# templates/TeknooSpace/api/Account/settings.json.twig  #}
+{% apply spaceless %}
+{% if formView.vars.errors | length == 0 %}
+{{ objectInstance|space_object_serialization({'groups': ['api', 'crud']}) }}
+{% else %}
+{{ field_errors(formView)|space_object_serialization({}, 'json', {"error": true}) }}
+{% endif %}
+{% endapply %}

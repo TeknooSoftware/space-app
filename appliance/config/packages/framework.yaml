@@ -23,5 +23,3 @@ framework:
         enabled: false
     php_errors:
         log: true
-    router:
-        default_uri: 'https://%env(SPACE_HOSTNAME)%/'

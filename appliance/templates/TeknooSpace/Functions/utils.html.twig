@@ -1,0 +1,13 @@
+{# templates/TeknooSpace/Functions/utils.html.twig #}
+
+{%- macro orderUrl(queryParams, column) -%}{% apply spaceless %}
+    {% set currentDirection = 'ASC' %}
+    {% if queryParams.order is defined
+        and column == queryParams.order %}
+        {% if queryParams.direction is defined
+            and 'ASC' == queryParams.direction %}
+            {% set currentDirection = 'DESC' %}
+        {% endif %}
+    {% endif %}
+    ?order={{ column }}&direction={{ currentDirection }}
+{% endapply %}{%- endmacro -%}

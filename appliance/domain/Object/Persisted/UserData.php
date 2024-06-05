@@ -31,6 +31,10 @@ use Teknoo\East\Common\Contracts\Object\VisitableInterface;
 use Teknoo\East\Common\Object\Media;
 use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\User;
+use Teknoo\East\Common\Object\VisitableTrait;
+
+use function array_flip;
+use function array_intersect_key;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -41,6 +45,9 @@ use Teknoo\East\Common\Object\User;
 class UserData implements IdentifiedObjectInterface, TimestampableInterface, VisitableInterface
 {
     use ObjectTrait;
+    use VisitableTrait {
+        VisitableTrait::runVisit as realRunVisit;
+    }
 
     private ?Media $picture = null;
 
@@ -70,12 +77,18 @@ class UserData implements IdentifiedObjectInterface, TimestampableInterface, Vis
         return $this->picture;
     }
 
-    public function visit($visitors): VisitableInterface
+    /**
+     * @param array<string, callable> $visitors
+     */
+    private function runVisit(array &$visitors): void
     {
-        if (isset($visitors['picture'])) {
-            $visitors['picture']($this->picture);
-        }
+        $visitors = array_intersect_key(
+            $visitors,
+            array_flip(
+                ['picture'],
+            ),
+        );
 
-        return $this;
+        $this->realRunVisit($visitors);
     }
 }

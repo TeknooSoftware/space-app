@@ -73,15 +73,22 @@ class ObjectSerializing extends AbstractExtension
         array $context = [],
         string $format = 'json',
         array $meta = [],
+        ?IdentifiedObjectInterface $parentObject = null
     ): string {
         $computedMeta = [];
-        if ($object instanceof IdentifiedObjectInterface) {
-            $parentClass = $object::class;
+
+        $metaObject = $object;
+        if (!$metaObject instanceof IdentifiedObjectInterface && $parentObject !== null) {
+            $metaObject = $parentObject;
+        }
+
+        if ($metaObject instanceof IdentifiedObjectInterface) {
+            $parentClass = $metaObject::class;
             while (false !== ($tmp = get_parent_class($parentClass))) {
                 $parentClass = $tmp;
             }
 
-            $computedMeta['id'] = $object->getId();
+            $computedMeta['id'] = $metaObject->getId();
             $computedMeta['@class'] = $parentClass;
         }
 

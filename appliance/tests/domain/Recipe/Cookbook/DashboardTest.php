@@ -35,6 +35,7 @@ use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Cookbook\Dashboard;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
  * Class DashboardTest.
@@ -54,6 +55,8 @@ class DashboardTest extends TestCase
 
     private HealthInterface|MockObject $health;
 
+    private LoadEnvironments|MockObject $loadCredentials;
+
     private DashboardInfoInterface|MockObject $dashboardInfo;
 
     private Render|MockObject $render;
@@ -71,6 +74,7 @@ class DashboardTest extends TestCase
 
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->health = $this->createMock(HealthInterface::class);
+        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
         $this->dashboardInfo = $this->createMock(DashboardInfoInterface::class);
         $this->render = $this->createMock(Render::class);
         $this->renderError = $this->createMock(RenderError::class);
@@ -78,6 +82,7 @@ class DashboardTest extends TestCase
         $this->dashboard = new Dashboard(
             $this->recipe,
             $this->health,
+            $this->loadCredentials,
             $this->dashboardInfo,
             $this->render,
             $this->renderError,

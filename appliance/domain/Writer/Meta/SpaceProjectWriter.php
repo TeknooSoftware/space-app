@@ -34,10 +34,10 @@ use Teknoo\East\Paas\Writer\ProjectWriter;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
-use Teknoo\Space\Query\PersistedVariable\DeleteVariablesQuery;
-use Teknoo\Space\Writer\PersistedVariableWriter;
+use Teknoo\Space\Query\ProjectPersistedVariable\DeleteVariablesQuery;
+use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 use Teknoo\Space\Writer\ProjectMetadataWriter;
 use Throwable;
 
@@ -54,7 +54,7 @@ class SpaceProjectWriter implements WriterInterface
     public function __construct(
         private ProjectWriter $projectWriter,
         private ProjectMetadataWriter $metadataWriter,
-        private PersistedVariableWriter $persistedVariableWriter,
+        private ProjectPersistedVariableWriter $persistedVariableWriter,
         private BatchManipulationManagerInterface $batchManipulationManager,
     ) {
     }
@@ -62,7 +62,7 @@ class SpaceProjectWriter implements WriterInterface
     public function save(
         ObjectInterface $object,
         PromiseInterface $promise = null,
-        ?bool $prefereRealDateOnUpdate = null,
+        ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceProject) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));
@@ -81,24 +81,24 @@ class SpaceProjectWriter implements WriterInterface
 
         /** @var Promise<Project, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (Project $project, PromiseInterface $next) use ($object, $prefereRealDateOnUpdate) {
+            function (Project $project, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
                 if ($object->projectMetadata instanceof ProjectMetadata) {
                     $metadata = $object->projectMetadata;
                     $metadata->setProject($object->project);
 
-                    $this->metadataWriter->save($metadata, $next, $prefereRealDateOnUpdate);
+                    $this->metadataWriter->save($metadata, $next, $preferRealDateOnUpdate);
                 }
 
                 $ids = [];
                 foreach ($object->variables as $var) {
                     $this->persistedVariableWriter->save(
                         object: $var,
-                        prefereRealDateOnUpdate: $prefereRealDateOnUpdate
+                        preferRealDateOnUpdate: $preferRealDateOnUpdate
                     );
                     $ids[] = $var->getId();
                 }
 
-                /** @var Promise<PersistedVariable, mixed, mixed> $deletedPromise */
+                /** @var Promise<ProjectPersistedVariable, mixed, mixed> $deletedPromise */
                 $deletedPromise = new Promise(
                     null,
                     fn (Throwable $error) => throw $error,
@@ -121,7 +121,7 @@ class SpaceProjectWriter implements WriterInterface
         $this->projectWriter->save(
             $object->project,
             $persistedPromise->next($promise),
-            $prefereRealDateOnUpdate
+            $preferRealDateOnUpdate
         );
 
         return $this;

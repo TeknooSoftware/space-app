@@ -30,7 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\QueryExecutorInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Query\PersistedVariable\DeleteVariablesQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\DeleteVariablesQuery;
 
 /**
  * Class DeleteVariablesQueryTest.
@@ -39,7 +39,7 @@ use Teknoo\Space\Query\PersistedVariable\DeleteVariablesQuery;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Query\PersistedVariable\DeleteVariablesQuery
+ * @covers \Teknoo\Space\Query\ProjectPersistedVariable\DeleteVariablesQuery
  */
 class DeleteVariablesQueryTest extends TestCase
 {

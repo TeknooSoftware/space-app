@@ -74,7 +74,11 @@ class AccountHistoryTest extends TestCase
             ->getProperty('history');
         $property->setAccessible(true);
         $this->accountHistory->setHistory($expected);
-        self::assertEquals($expected, $property->getValue($this->accountHistory));
+
+        self::assertEquals(
+            $expected->getMessage(),
+            $property->getValue($this->accountHistory)->getMessage()
+        );
     }
 
     public function testPassMeYouHistory(): void

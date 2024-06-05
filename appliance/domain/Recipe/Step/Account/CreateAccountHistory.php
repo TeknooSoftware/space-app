@@ -43,7 +43,7 @@ class CreateAccountHistory
     public function __construct(
         private AccountHistoryWriter $writer,
         private DatesService $datesService,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -69,7 +69,7 @@ class CreateAccountHistory
                     ]
                 );
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $this->writer->save($accountHistory);

@@ -5,11 +5,11 @@ Feature: On a space instance, we can define some hooks to build a project before
   Scenario: Get the Hook library with composer
     Given A Space app instance
     And without any hooks path defined
-    And a composer path set in the DI
+    And composer in several version as hook
     When the hook library is generated
     Then it obtains non empty hooks library with "composer" key.
 
-  Scenario: Get the Hook library with composer
+  Scenario: Get the Hook library without composer
     Given A Space app instance
     And without any hooks path defined
     When the hook library is generated

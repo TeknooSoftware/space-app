@@ -116,6 +116,22 @@ class JobVarType extends AbstractType
             ],
         );
 
+        $builder->add(
+            'encryptionAlgorithm',
+            HiddenType::class,
+            [
+                'required' => false,
+            ],
+        );
+
+        $builder->add(
+            'canPersist',
+            HiddenType::class,
+            [
+                'required' => false,
+            ],
+        );
+
         if (!empty($options['use_password_for_secret'])) {
             $builder->addEventListener(
                 FormEvents::POST_SET_DATA,
@@ -144,14 +160,47 @@ class JobVarType extends AbstractType
                     $data = $formEvent->getData();
 
                     if (
-                        $mData instanceof JobVar
-                        && true === $mData->secret
-                        && is_array($data)
-                        && empty($data['value'])
+                        !$mData instanceof JobVar
+                        || !is_array($data)
+                    ) {
+                        if (is_array($data)) {
+                            $data['canPersist'] = true;
+                            $formEvent->setData($data);
+                        }
+
+                        return;
+                    }
+
+                    if (!empty($mData->getId())) {
+                        $data['id'] = $mData->getId();
+                    }
+
+                    $data['wasSecret'] = $mData->wasSecret;
+                    $data['encryptionAlgorithm'] = $mData->encryptionAlgorithm;
+                    $data['canPersist'] = $mData->canPersist;
+
+                    if (!empty($data['encryptionAlgorithm'])) {
+                        $data['secret'] = true;
+                    }
+
+                    $value = $data['value'] ?? '';
+
+                    if (
+                        true === $mData->secret && empty($value)
                     ) {
                         $data['value'] = $mData->value;
-                        $formEvent->setData($data);
+                    } elseif (
+                        $value !== $mData->value
+                    ) {
+                        $data['encryptionAlgorithm'] = null;
+                        $data['canPersist'] = true;
+                    } elseif (
+                        $value === $mData->value
+                    ) {
+                        $data['canPersist'] = false;
                     }
+
+                    $formEvent->setData($data);
                 }
             );
         }
@@ -173,6 +222,7 @@ class JobVarType extends AbstractType
                     value: $form->get('value')->getData(),
                     persisted: $form->get('persisted')->getData(),
                     secret: $form->get('secret')->getData(),
+                    canPersist: true,
                 );
             },
         ]);

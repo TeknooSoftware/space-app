@@ -32,11 +32,16 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
  * Class DashboardFrameTest.
@@ -51,11 +56,9 @@ class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;
 
-    private string $dashboardUrl;
-
     private HttpMethodsClientInterface|MockObject $httpMethodsClient;
 
-    private string $clusterToken;
+    private ClusterCatalog $catalog;
 
     private ResponseFactoryInterface|MockObject $responseFactory;
 
@@ -66,15 +69,29 @@ class DashboardFrameTest extends TestCase
     {
         parent::setUp();
 
-        $this->dashboardUrl = 'foo';
         $this->httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
-        $this->clusterToken = 'bar';
         $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: false,
+        );
+
+        $this->catalog = new ClusterCatalog(
+            ['clusterName' => $clusterConfig],
+            ['cluster-name' => 'clusterName'],
+        );
 
         $this->dashboardFrame = new DashboardFrame(
-            $this->dashboardUrl,
+            $this->catalog,
             $this->httpMethodsClient,
-            $this->clusterToken,
             $this->responseFactory,
         );
     }
@@ -103,15 +120,26 @@ class DashboardFrameTest extends TestCase
             ->method('send')
             ->willReturn($response);
 
+        $wallet = $this->createMock(AccountWallet::class);
+        $wallet->expects(self::any())
+            ->method('has')
+            ->willReturn(true);
+        $wallet->expects(self::any())
+            ->method('get')
+            ->willReturn($this->createMock(AccountEnvironment::class));
+
         self::assertInstanceOf(
             DashboardFrame::class,
             ($this->dashboardFrame)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(EastClient::class),
-                $sRequest,
-                '*',
-                $this->createMock(Account::class),
-                $this->createMock(AccountCredential::class),
+                manager: $this->createMock(ManagerInterface::class),
+                client: $this->createMock(EastClient::class),
+                serverRequest: $sRequest,
+                user: $this->createMock(User::class),
+                clusterName: 'clusterName',
+                wildcard: '*',
+                account: $this->createMock(Account::class),
+                accountWallet: $wallet,
+                envName: 'prod',
             )
         );
     }

@@ -34,7 +34,10 @@ use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -44,30 +47,11 @@ use Teknoo\Space\Object\Persisted\AccountCredential;
  */
 class PrepareProject
 {
-    public function __construct(
-        private string $defaultClusterName,
-        private string $defaultClusterType,
-        private string $defaultClusterAddress,
-        private string $defaultClusterEnv,
-    ) {
-    }
-
-    //todo Use AccountsCredentialsWallet
-    public function __invoke(ManagerInterface $manager, Project $projectInstance, AccountCredential $credential): self
-    {
-        $projectInstance->setImagesRegistry(
-            new ImageRegistry(
-                $credential->getRegistryUrl(),
-                new XRegistryAuth(
-                    $credential->getRegistryAccountName(),
-                    $credential->getRegistryPassword(),
-                    '',
-                    '',
-                    $credential->getRegistryUrl()
-                )
-            )
-        );
-
+    public function __invoke(
+        ManagerInterface $manager,
+        Project $projectInstance,
+        AccountRegistry $accountRegistry,
+    ): self {
         $projectInstance->setSourceRepository(
             new GitRepository(
                 '',
@@ -76,22 +60,17 @@ class PrepareProject
             )
         );
 
-        $cluster = new Cluster();
-        $cluster->setName($this->defaultClusterName);
-        $cluster->setType($this->defaultClusterType);
-        $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
-        $cluster->setLocked(true);
-        $cluster->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
+        $projectInstance->setImagesRegistry(
+            new ImageRegistry(
+                $accountRegistry->getRegistryUrl(),
+                new XRegistryAuth(
+                    username: $accountRegistry->getRegistryAccountName(),
+                    password: $accountRegistry->getRegistryPassword(),
+                    auth: $accountRegistry->getRegistryConfigName(),
+                    serverAddress: $accountRegistry->getRegistryUrl(),
+                )
             )
         );
-
-        $projectInstance->setClusters([$cluster]);
 
         return $this;
     }

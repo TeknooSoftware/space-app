@@ -1,12 +1,12 @@
 let conn = new Mongo();
-db = conn.getDB("space");
+db = conn.getDB("teknoo_space");
 
 db.createUser(
   {
     user: "space_user",
     pwd: "space_pwd",
     roles: [
-      { role: "readWrite", db: "space" }
+      { role: "readWrite", db: "teknoo_space" }
     ],
     "mechanisms" : ["SCRAM-SHA-256"],
     "passwordDigestor": "server"
