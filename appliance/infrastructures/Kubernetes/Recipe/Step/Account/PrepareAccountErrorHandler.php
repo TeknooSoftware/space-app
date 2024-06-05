@@ -43,7 +43,7 @@ class PrepareAccountErrorHandler
     public function __construct(
         private DatesService $datesService,
         private AccountHistoryWriter $writer,
-        private bool $prefereRealDate,
+        private bool $preferRealDate,
     ) {
     }
 
@@ -62,7 +62,7 @@ class PrepareAccountErrorHandler
 
                 $this->writer->save($accountHistory);
             },
-            $this->prefereRealDate,
+            $this->preferRealDate,
         );
 
         $manager->stopErrorReporting();

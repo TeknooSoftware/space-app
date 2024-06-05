@@ -34,11 +34,11 @@ use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Loader\PersistedVariableLoader;
+use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
-use Teknoo\Space\Query\PersistedVariable\LoadFromProjectQuery as LoadVariablesFromProjectQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery as LoadVariablesFromProjectQuery;
 use Teknoo\Space\Query\ProjectMetadata\LoadFromProjectQuery as LoadMetaDataFromProjectQuery;
 use Throwable;
 
@@ -55,7 +55,7 @@ class SpaceProjectLoader implements LoaderInterface
     public function __construct(
         private ProjectLoader $projectLoader,
         private ProjectMetadataLoader $metadataLoader,
-        private PersistedVariableLoader $persistedVariableLoader,
+        private ProjectPersistedVariableLoader $persistedVariableLoader,
     ) {
     }
 

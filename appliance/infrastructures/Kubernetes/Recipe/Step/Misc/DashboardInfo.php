@@ -26,11 +26,9 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Contracts\Object\Account\AccountAwareInterface;
-use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
-use Throwable;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -40,48 +38,17 @@ use Throwable;
  */
 class DashboardInfo implements DashboardInfoInterface
 {
-    private function getKubernetesNamespace(?Account $account): string
-    {
-        $urlGenerator = new class () implements AccountAwareInterface {
-            public function __construct(
-                public string $namespace = '_all',
-            ) {
-            }
-
-            public function passAccountNamespace(
-                Account $account,
-                ?string $name,
-                ?string $namespace,
-                ?string $prefixNamespace,
-                bool $useHierarchicalNamespaces,
-            ): AccountAwareInterface {
-                $this->namespace = $prefixNamespace . $namespace;
-
-                return $this;
-            }
-        };
-
-        $account?->requireAccountNamespace($urlGenerator);
-
-        return $urlGenerator->namespace;
+    public function __construct(
+        private ClusterCatalog $catalog,
+    ) {
     }
 
     public function __invoke(
-        ManagerInterface $manager,
         ParametersBag $parametersBag,
-        ?Account $account = null,
+        ?AccountWallet $accountWallet = null,
     ): DashboardInfoInterface {
-        $values = [];
-
-        try {
-            $values = [
-                'namespace' => $this->getKubernetesNamespace($account),
-            ];
-        } catch (Throwable $error) {
-            $values['error'] = $error;
-        }
-
-        $parametersBag->set('dashboard', $values);
+        $parametersBag->set('accountWallet', $accountWallet);
+        $parametersBag->set('clustersCatalog', $this->catalog);
 
         return $this;
     }

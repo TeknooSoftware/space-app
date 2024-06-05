@@ -29,10 +29,15 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
+use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
+
+use function array_merge;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -69,11 +74,47 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype' => true,
+                'prototype_data' => new JobVar(
+                    canPersist: true,
+                ),
                 'entry_options' => [
                     'use_password_for_secret' => true,
                 ]
             ],
         );
+
+        if (!empty($options['api'])) {
+            $builder->addEventListener(
+                FormEvents::PRE_SUBMIT,
+                static function (FormEvent $formEvent): void {
+                    $form = $formEvent->getForm();
+                    $mData = $form->getNormData();
+                    /** @var array<string, array<string, array<string, mixed>>> $data */
+                    $data = $formEvent->getData();
+
+                    if (!$mData instanceof NewJob) {
+                        return;
+                    }
+
+                    $initialVariables = [];
+                    foreach ($mData->variables as $key => $var) {
+                        $initialVariables[$key] = [
+                            'id' => $var->getId(),
+                            'name' => $var->name,
+                            'value' => $data['variables'][$var->name]['value'] ?? $var->value,
+                            'persisted' => $data['variables'][$var->name]['persisted'] ?? $var->persisted,
+                            'secret' => $data['variables'][$var->name]['secret'] ?? $var->isSecret(),
+                            'wasSecret' => $var->isSecret(),
+                            'encryptionAlgorithm' => $var->getEncryptionAlgorithm(),
+                        ];
+                    }
+
+                    $data['variables'] = array_merge($data['variables'] ?? [], $initialVariables);
+
+                    $formEvent->setData($data);
+                }
+            );
+        }
 
         return $this;
     }

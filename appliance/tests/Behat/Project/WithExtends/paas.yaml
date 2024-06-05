@@ -38,14 +38,14 @@ images:
 #Hook to build the project before container, Called in this order
 builds:
     composer-build: #Name of the step
-        composer:
+        composer-8.2:
             action: install #Hook to call
             arguments:
                 - 'no-dev'
                 - 'optimize-autoloader'
                 - 'classmap-authoritative'
     custom-hook:
-        hook-id: foo bar
+        hook-id-${FOO}: foo bar
 
 #Volume to build to use with container
 volumes:
@@ -139,7 +139,7 @@ pods:
                             port: 8181
             blackfire:
                 image: 'blackfire/blackfire'
-                version: '2'
+                version: '2-${JOB_ENV_TAG}'
                 listen:
                     - 8307
                 variables:
@@ -168,6 +168,11 @@ ingresses:
             letsencrypt: true
             annotations:
                 foo2: bar
+        aliases:
+            - demo-paas.teknoo.software
+            - alias1.demo-paas.teknoo.software
+            - alias1.demo-paas.teknoo.software
+            - alias2.demo-paas.teknoo.software
         paths:
             - path: /php
               service:

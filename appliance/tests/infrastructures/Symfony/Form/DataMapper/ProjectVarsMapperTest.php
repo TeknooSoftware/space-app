@@ -33,7 +33,7 @@ use Teknoo\Space\Infrastructures\Symfony\Form\DataMapper\ProjectVarsMapper;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\JobVarsSet;
 use Teknoo\Space\Object\DTO\SpaceProject;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * Class ProjectVarsMapperTest.
@@ -63,8 +63,8 @@ class ProjectVarsMapperTest extends TestCase
     {
         $project = new SpaceProject($this->createMock(Project::class));
         $project->variables = [
-            $this->createMock(PersistedVariable::class),
-            $this->createMock(PersistedVariable::class),
+            $this->createMock(ProjectPersistedVariable::class),
+            $this->createMock(ProjectPersistedVariable::class),
         ];
 
         $this->projectVarsType->mapDataToForms(
@@ -83,8 +83,8 @@ class ProjectVarsMapperTest extends TestCase
     {
         $project = new SpaceProject($this->createMock(Project::class));
         $project->variables = [
-            $this->createMock(PersistedVariable::class),
-            $this->createMock(PersistedVariable::class),
+            $this->createMock(ProjectPersistedVariable::class),
+            $this->createMock(ProjectPersistedVariable::class),
         ];
 
         $form = $this->createMock(FormInterface::class);
@@ -93,25 +93,26 @@ class ProjectVarsMapperTest extends TestCase
             ->willReturn(
                 [
                     new JobVarsSet(
-                        'foo',
-                        [
+                        envName: 'foo',
+                        variables: [
                             new JobVar(
-                                'foo',
-                                'bar',
-                                'foo',
-                                false,
-                                true,
-                                true,
-                                $this->createMock(PersistedVariable::class),
+                                id: 'foo',
+                                name: 'bar',
+                                value: 'foo',
+                                persisted: false,
+                                secret: true,
+                                wasSecret: true,
+                                encryptionAlgorithm: 'rsa',
+                                persistedVar: $this->createMock(ProjectPersistedVariable::class),
                             ),
                             new JobVar(
-                                null,
-                                'bar',
-                                'foo',
-                                true,
-                                true,
-                                false,
-                                $this->createMock(PersistedVariable::class),
+                                id: null,
+                                name: 'bar',
+                                value: 'foo',
+                                persisted: true,
+                                secret: true,
+                                wasSecret: false,
+                                persistedVar: $this->createMock(ProjectPersistedVariable::class),
                             ),
                         ]
                     )

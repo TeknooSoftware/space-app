@@ -25,9 +25,12 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
-use Teknoo\East\Paas\Infrastructures\Kubernetes\Transcriber\IngressTranscriber as BaseIngressTranscriber;
-use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
+use ArrayObject;
+use Psr\Container\ContainerInterface;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 
+use function array_map;
 use function DI\env;
 use function sys_get_temp_dir;
 
@@ -36,5 +39,29 @@ return [
     'teknoo.space.hostname' => env('SPACE_HOSTNAME', 'localhost'),
     'teknoo.space.job_root' => env('SPACE_JOB_ROOT', sys_get_temp_dir()),
 
-    BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
+    'teknoo.space.subscription_plan_catalog' => static function (
+        ContainerInterface $container
+    ): SubscriptionPlanCatalog {
+        static $catalog = null;
+        if (null !== $catalog) {
+            return $catalog;
+        }
+
+        $definitions = [];
+        if ($container->has('teknoo.space.subscription_plan_catalog.definitions')) {
+            $definitions = $container->get('teknoo.space.subscription_plan_catalog.definitions');
+
+            if ($definitions instanceof ArrayObject) {
+                $definitions = $definitions->getArrayCopy();
+            }
+        }
+
+        $list = [];
+        foreach ($definitions as $definition) {
+            $plan = new SubscriptionPlan(...$definition);
+            $list[$plan->id] = $plan;
+        }
+
+        return new SubscriptionPlanCatalog($list);
+    },
 ];

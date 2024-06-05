@@ -45,8 +45,9 @@ class AccountPersistedVariableLoader implements LoaderInterface
      */
     use LoaderTrait;
 
-    public function __construct(AccountPersistedVariableRepositoryInterface $repository)
-    {
+    public function __construct(
+        AccountPersistedVariableRepositoryInterface $repository,
+    ) {
         $this->repository = $repository;
     }
 }

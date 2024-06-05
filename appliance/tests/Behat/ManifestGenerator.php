@@ -25,45 +25,330 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat;
 
+use Teknoo\East\Paas\Object\AccountQuota;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
+
+use function json_decode;
+use function json_encode;
+
+use const JSON_PRETTY_PRINT;
+use const JSON_THROW_ON_ERROR;
+
 class ManifestGenerator
 {
-    public function namespaceCreation(string $name): string
+    /**
+     * @param AccountQuota[] $quotas
+     */
+    public function registryCreation(string $name): string
     {
-        return <<<"EOF"
+        $json = <<<"EOF"
 {
     "namespaces": [
         {
             "kind": "Namespace",
             "apiVersion": "v1",
             "metadata": {
-                "name": "space-client-$name",
+                "name": "space-registry-$name",
                 "labels": {
-                    "name": "space-client-$name",
+                    "name": "space-registry-$name",
                     "id": "#ID#"
                 }
             }
         }
     ],
-    "namespaces\/space-client-$name\/serviceaccounts": [
+    "namespaces\/space-registry-$name\/persistentvolumeclaims": [
+        {
+            "kind": "PersistentVolumeClaim",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-pvc",
+                "namespace": "space-registry-$name",
+                "labels": {
+                    "name": "$name-pvc"
+                }
+            },
+            "spec": {
+                "accessModes": [
+                    "ReadWriteOnce"
+                ],
+                "storageClassName": "nfs.csi.k8s.io",
+                "resources": {
+                    "requests": {
+                        "storage": "3Gi"
+                    }
+                }
+            }
+        }
+    ],
+    "namespaces\/space-registry-$name\/secrets": [
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-registry-auth-secret",
+                "namespace": "space-registry-$name",
+                "labels": {
+                    "name": "$name-registry-auth-secret",
+                    "group": "private-registry"
+                }
+            },
+            "data": {
+                "htpasswd": "==="
+            },
+            "type": "Opaque"
+        }
+    ],
+    "namespaces\/space-registry-$name\/deployments": [
+        {
+            "kind": "Deployment",
+            "apiVersion": "apps\/v1",
+            "metadata": {
+                "name": "$name-registry-pod-replication-dplmt",
+                "namespace": "space-registry-$name",
+                "labels": {
+                    "name": "$name-registry-pod-replication-dplmt",
+                    "group": "private-registry"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "name": "$name-registry-pod"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "name": "$name-registry-pod",
+                            "group": "private-registry"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "registry",
+                                "image": "registry:latest",
+                                "ports": [
+                                    {
+                                        "containerPort": 5000
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "name": "auth-credentials",
+                                        "mountPath": "\/auth",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "name": "images-storage",
+                                        "mountPath": "\/var\/lib\/registry",
+                                        "readOnly": false
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "REGISTRY_AUTH",
+                                        "value": "htpasswd"
+                                    },
+                                    {
+                                        "name": "REGISTRY_AUTH_HTPASSWD_PATH",
+                                        "value": "\/auth\/htpasswd"
+                                    },
+                                    {
+                                        "name": "REGISTRY_AUTH_HTPASSWD_REALM",
+                                        "value": "Space-registry-$name Private Registry"
+                                    }
+                                ],
+                                "resources": {
+                                    "requests": {
+                                        "cpu": "100m",
+                                        "memory": "32Mi"
+                                    },
+                                    "limits": {
+                                        "cpu": "300m",
+                                        "memory": "512Mi"
+                                    }
+                                }
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "auth-credentials",
+                                "secret": {
+                                    "secretName": "$name-registry-auth-secret"
+                                }
+                            },
+                            {
+                                "name": "images-storage",
+                                "persistentVolumeClaim": {
+                                    "claimName": "$name-pvc"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "namespaces\/space-registry-$name\/services": [
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "$name-registry-service",
+                "namespace": "space-registry-$name",
+                "labels": {
+                    "name": "$name-registry-service",
+                    "group": "private-registry"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "name": "$name-registry-pod"
+                },
+                "type": "ClusterIP",
+                "ports": [
+                    {
+                        "name": "docker-registry",
+                        "protocol": "TCP",
+                        "port": 5000,
+                        "targetPort": 5000
+                    }
+                ]
+            }
+        }
+    ],
+    "namespaces\/space-registry-$name\/ingresses": [
+        {
+            "kind": "Ingress",
+            "apiVersion": "networking.k8s.io\/v1",
+            "metadata": {
+                "name": "$name-registry-ingress",
+                "namespace": "space-registry-$name",
+                "labels": {
+                    "name": "$name-registry-ingress",
+                    "group": "private-registry"
+                },
+                "annotations": {
+                    "kubernetes.io\/ingress.class": "public",
+                    "cert-manager.io\/cluster-issuer": "lets-encrypt",
+                    "nginx.ingress.kubernetes.io\/proxy-body-size": "0"
+                }
+            },
+            "spec": {
+                "tls": [
+                    {
+                        "hosts": [
+                            "$name.registry.kubernetes.localhost"
+                        ],
+                        "secretName": "$name-registry-certs"
+                    }
+                ],
+                "rules": [
+                    {
+                        "host": "$name.registry.kubernetes.localhost",
+                        "http": {
+                            "paths": [
+                                {
+                                    "path": "\/",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "$name-registry-service",
+                                            "port": {
+                                                "number": 5000
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+EOF;
+
+        return json_encode(
+            value: json_decode(
+                json: $json,
+                associative: true
+            ),
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
+    }
+
+    /**
+     * @param AccountQuota[] $accountQuotas
+     */
+    public function namespaceCreation(
+        string $name,
+        string $namespace,
+        array $accountQuotas,
+        AccountRegistry $registry,
+    ): string {
+        $quotas = '';
+        if (!empty($accountQuotas)) {
+            $quotasHards = [];
+            foreach ($accountQuotas as $accountQuota) {
+                $quotasHards["requests.{$accountQuota->type}"] = $accountQuota->requires;
+                $quotasHards["limits.{$accountQuota->type}"] = $accountQuota->capacity;
+            }
+
+            $quotas = ', "namespaces\/space-client-' . $namespace . '\/resourcequotas":' . json_encode([[
+                'kind' => 'ResourceQuota',
+                'apiVersion' => 'v1',
+                'metadata' => [
+                    'name' => $name . '-quota',
+                    'namespace' => 'space-client-' . $namespace,
+                    'labels' => [
+                        'name' => $name . '-quota',
+                    ],
+                ],
+                'spec' => [
+                    'hard' => $quotasHards,
+                ],
+            ]]);
+        }
+
+        $json = <<<"EOF"
+{
+    "namespaces": [
+        {
+            "kind": "Namespace",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "space-client-$namespace",
+                "labels": {
+                    "name": "space-client-$namespace",
+                    "id": "#ID#"
+                }
+            }
+        }
+    ],
+    "namespaces\/space-client-$namespace\/serviceaccounts": [
         {
             "kind": "ServiceAccount",
             "apiVersion": "v1",
             "metadata": {
                 "name": "$name-account",
-                "namespace": "space-client-$name",
+                "namespace": "space-client-$namespace",
                 "labels": {
                     "name": "$name-account"
                 }
             }
         }
-    ],
-    "namespaces\/space-client-$name\/roles": [
+    ]$quotas,
+    "namespaces\/space-client-$namespace\/roles": [
         {
             "kind": "Role",
             "apiVersion": "rbac.authorization.k8s.io\/v1",
             "metadata": {
                 "name": "$name-role",
-                "namespace": "space-client-$name",
+                "namespace": "space-client-$namespace",
                 "labels": {
                     "name": "$name-role"
                 }
@@ -175,7 +460,7 @@ class ManifestGenerator
                 {
                     "kind": "ServiceAccount",
                     "name": "$name-account",
-                    "namespace": "space-client-$name",
+                    "namespace": "space-client-$namespace",
                     "apiGroup": ""
                 }
             ],
@@ -186,13 +471,13 @@ class ManifestGenerator
             }
         }
     ],
-    "namespaces\/space-client-$name\/rolebindings": [
+    "namespaces\/space-client-$namespace\/rolebindings": [
         {
             "kind": "RoleBinding",
             "apiVersion": "rbac.authorization.k8s.io\/v1",
             "metadata": {
                 "name": "$name-role-binding",
-                "namespace": "space-client-$name",
+                "namespace": "space-client-$namespace",
                 "labels": {
                     "name": "$name-role-binding"
                 }
@@ -201,25 +486,41 @@ class ManifestGenerator
                 {
                     "kind": "ServiceAccount",
                     "name": "$name-account",
-                    "namespace": "space-client-$name",
+                    "namespace": "space-client-$namespace",
                     "apiGroup": ""
                 }
             ],
             "roleRef": {
                 "kind": "Role",
                 "name": "$name-role",
-                "namespace": "space-client-$name",
+                "namespace": "space-client-$namespace",
                 "apiGroup": "rbac.authorization.k8s.io"
             }
         }
     ],
-    "namespaces\/space-client-$name\/secrets": [
+    "namespaces\/space-client-$namespace\/secrets": [
+        {
+            "kind": "Secret",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "{$registry->getRegistryConfigName()}",
+                "namespace": "space-client-$namespace",
+                "labels": {
+                    "name": "{$registry->getRegistryConfigName()}",
+                    "group": "private-registry"
+                }
+            },
+            "data": {
+                ".dockerconfigjson": "==="
+            },
+            "type": "kubernetes.io\/dockerconfigjson"
+        },
         {
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
                 "name": "$name-secret",
-                "namespace": "space-client-$name",
+                "namespace": "space-client-$namespace",
                 "labels": {
                     "name": "$name-secret"
                 },
@@ -232,7 +533,56 @@ class ManifestGenerator
     ]
 }
 EOF;
-        ;
+
+        return json_encode(
+            value: json_decode(
+                json: $json,
+                associative: true
+            ),
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
+    }
+
+    /**
+     * @param array<string, <string> $namespaces
+     * @param AccountQuota[] $accountQuotas
+     */
+    public function quotaRefresh(
+        string $accountNs,
+        array $namespaces,
+        array $accountQuotas,
+    ): string {
+        $quotas = [];
+
+        $quotasHards = [];
+        foreach ($accountQuotas as $accountQuota) {
+            $quotasHards["requests.{$accountQuota->type}"] = $accountQuota->requires;
+            $quotasHards["limits.{$accountQuota->type}"] = $accountQuota->capacity;
+        }
+
+        foreach ($namespaces as $namespace) {
+            $quotas['namespaces/' . $namespace . '/resourcequotas'] = [
+                [
+                    'kind' => 'ResourceQuota',
+                    'apiVersion' => 'v1',
+                    'metadata' => [
+                        'name' => $accountNs . '-quota',
+                        'namespace' => $namespace,
+                        'labels' => [
+                            'name' => $accountNs . '-quota',
+                        ],
+                    ],
+                    'spec' => [
+                        'hard' => $quotasHards,
+                    ],
+                ]
+            ];
+        }
+
+        return json_encode(
+            value: $quotas,
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
     }
 
     public function fullDeployment(
@@ -240,6 +590,8 @@ EOF;
         string $jobId,
         string $hncSuffix,
         bool $useHnc,
+        string $quotaMode,
+        string $defaultsMods,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -249,15 +601,15 @@ EOF;
         $hncManifest = '';
         if ($useHnc) {
             $hncManifest = <<<"EOF"
-"namespaces/default/subnamespacesanchors": [
+"namespaces/space-behat-my-company-prod/subnamespacesanchors": [
         {
             "kind": "SubnamespaceAnchor",
             "apiVersion": "hnc.x-k8s.io/v1",
             "metadata": {
                 "name": "{$nameHnc}",
-                "namespace": "space-behat-my-comany",
+                "namespace": "space-behat-my-company-prod",
                 "labels": {
-                    "name": "space-behat-my-comany{$hncSuffix}"
+                    "name": "space-behat-my-company-prod{$hncSuffix}"
                 }
             }
         }
@@ -266,17 +618,162 @@ EOF;
 EOF;
         }
 
+        $storageClass = match ($defaultsMods) {
+            'cluster' => 'cluster-default-behat-provider',
+            default => 'nfs.csi.k8s.io',
+        };
+
+        $imagePullSecrets = match ($defaultsMods) {
+            'generic', 'cluster' => 'oci-registry-behat',
+            default => 'my-company-docker-config',
+        };
+
         $secret = base64_encode($projectPrefix . 'world');
 
-        return <<<"EOF"
+        $prefixResource = ', "resources": ';
+        $automaticResources = $prefixResource . json_encode(
+            [
+                'requests' => [
+                    'cpu' => '200m',
+                    'memory' => '20.480Mi',
+                ],
+                'limits' => [
+                    'cpu' => '1.600',
+                    'memory' => '163.840Mi',
+                ],
+            ],
+        );
+
+        $phpRunResources = match ($quotaMode) {
+            'automatic' => $automaticResources,
+            'partial' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '68m',
+                        'memory' => '9.600Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '561m',
+                        'memory' => '80Mi',
+                    ],
+                ],
+            ),
+            'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '200m',
+                        'memory' => '64Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '500m',
+                        'memory' => '96Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $shellResources = match ($quotaMode) {
+            'automatic' => $automaticResources,
+            'partial' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '9.600Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '80Mi',
+                    ],
+                ],
+            ),
+            'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '32Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '32Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $nginxResources = match ($quotaMode) {
+            'automatic' => $automaticResources,
+            'partial' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '68m',
+                        'memory' => '9.600Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '561m',
+                        'memory' => '80Mi',
+                    ],
+                ],
+            ),
+            'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '200m',
+                        'memory' => '64Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '200m',
+                        'memory' => '64Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $wafResources = match ($quotaMode) {
+            'automatic' => $automaticResources,
+            'partial', 'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '64Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '64Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $blackfireResources = match ($quotaMode) {
+            'automatic' => $automaticResources,
+            'partial', 'full' => $prefixResource . json_encode(
+                [
+                    'requests' => [
+                        'cpu' => '100m',
+                        'memory' => '128Mi',
+                    ],
+                    'limits' => [
+                        'cpu' => '100m',
+                        'memory' => '128Mi',
+                    ],
+                ],
+            ),
+            default => ''
+        };
+
+        $json = <<<"EOF"
 {
-    $hncManifest"namespaces/space-behat-my-comany{$hncSuffix}/secrets": [
+    $hncManifest"namespaces/space-behat-my-company-prod{$hncSuffix}/secrets": [
         {
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map-vault-secret",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map-vault"
                 }
@@ -292,7 +789,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map-vault2-secret",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map-vault2"
                 }
@@ -307,7 +804,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}volume-vault-secret",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}volume-vault"
                 }
@@ -319,13 +816,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/configmaps": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/configmaps": [
         {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map1-map",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map1"
                 }
@@ -340,7 +837,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map2-map",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map2"
                 }
@@ -351,13 +848,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/persistentvolumeclaims": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/persistentvolumeclaims": [
         {
             "kind": "PersistentVolumeClaim",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}data",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}data"
                 }
@@ -366,7 +863,7 @@ EOF;
                 "accessModes": [
                     "ReadWriteOnce"
                 ],
-                "storageClassName": "nfs.csi.k8s.io",
+                "storageClassName": "$storageClass",
                 "resources": {
                     "requests": {
                         "storage": "3Gi"
@@ -379,7 +876,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}data-replicated",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}data-replicated"
                 }
@@ -397,13 +894,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/deployments": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/deployments": [
         {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}shell-dplmt",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}shell"
                 },
@@ -428,7 +925,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}shell-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}shell",
                             "vname": "{$projectPrefix}shell-v1"
@@ -448,12 +945,12 @@ EOF;
                                 "name": "sleep",
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always",
-                                "ports": []
+                                "ports": []$shellResources
                             }
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ]
                     }
@@ -465,7 +962,7 @@ EOF;
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-dplmt",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 },
@@ -486,7 +983,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}demo-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}demo",
                             "vname": "{$projectPrefix}demo-v1"
@@ -506,7 +1003,7 @@ EOF;
                         "containers": [
                             {
                                 "name": "nginx",
-                                "image": "my-company.registry.demo.teknoo.space/nginx-{$jobId}:alpine",
+                                "image": "my-company.registry.demo.teknoo.space/nginx:alpine-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -526,7 +1023,7 @@ EOF;
                                     },
                                     "successThreshold": 3,
                                     "failureThreshold": 2
-                                }
+                                }$nginxResources
                             },
                             {
                                 "name": "waf",
@@ -545,11 +1042,11 @@ EOF;
                                     },
                                     "successThreshold": 1,
                                     "failureThreshold": 1
-                                }
+                                }$wafResources
                             },
                             {
                                 "name": "blackfire",
-                                "image": "blackfire/blackfire:2",
+                                "image": "blackfire/blackfire:2-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -565,12 +1062,12 @@ EOF;
                                         "name": "BLACKFIRE_SERVER_TOKEN",
                                         "value": "bar"
                                     }
-                                ]
+                                ]$blackfireResources
                             }
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ],
                         "securityContext": {
@@ -581,13 +1078,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/statefulsets": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/statefulsets": [
         {
             "kind": "StatefulSet",
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}php-pods-sfset",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-pods"
                 },
@@ -613,7 +1110,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}php-pods-pod",
-                        "namespace": "space-behat-my-comany{$hncSuffix}",
+                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}php-pods",
                             "vname": "{$projectPrefix}php-pods-v1"
@@ -631,7 +1128,7 @@ EOF;
                         "containers": [
                             {
                                 "name": "php-run",
-                                "image": "my-company.registry.demo.teknoo.space/php-run-{$jobId}:7.4",
+                                "image": "my-company.registry.demo.teknoo.space/php-run:7.4-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -722,12 +1219,12 @@ EOF;
                                     },
                                     "successThreshold": 1,
                                     "failureThreshold": 1
-                                }
+                                }$phpRunResources
                             }
                         ],
                         "imagePullSecrets": [
                             {
-                                "name": "my-companydocker-config"
+                                "name": "$imagePullSecrets"
                             }
                         ],
                         "affinity": {
@@ -761,7 +1258,13 @@ EOF;
                                         "mountPath": "/opt/extra",
                                         "readOnly": false
                                     }
-                                ]
+                                ],
+                                "env": [
+                                    {
+                                        "name": "MOUNT_PATH",
+                                        "value": "/opt/extra"
+                                    }
+                                ]$phpRunResources
                             }
                         ],
                         "volumes": [
@@ -799,13 +1302,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/services": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/services": [
         {
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}php-service",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-service"
                 }
@@ -830,7 +1333,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}demo",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 }
@@ -857,13 +1360,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-comany{$hncSuffix}/ingresses": [
+    "namespaces/space-behat-my-company-prod{$hncSuffix}/ingresses": [
         {
             "kind": "Ingress",
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-ingress",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 },
@@ -905,12 +1408,74 @@ EOF;
                                 }
                             ]
                         }
+                    },{
+                        "host": "alias1.demo-paas.teknoo.software",
+                        "http": {
+                            "paths": [
+                                {
+                                    "path": "/",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}demo",
+                                            "port": {
+                                                "number": 8080
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "path": "/php",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}php-service",
+                                            "port": {
+                                                "number": 9876
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },{
+                        "host": "alias2.demo-paas.teknoo.software",
+                        "http": {
+                            "paths": [
+                                {
+                                    "path": "/",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}demo",
+                                            "port": {
+                                                "number": 8080
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "path": "/php",
+                                    "pathType": "Prefix",
+                                    "backend": {
+                                        "service": {
+                                            "name": "{$projectPrefix}php-service",
+                                            "port": {
+                                                "number": 9876
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     }
                 ],
                 "tls": [
                     {
                         "hosts": [
-                            "demo-paas.teknoo.software"
+                            "demo-paas.teknoo.software",
+                            "alias1.demo-paas.teknoo.software",
+                            "alias2.demo-paas.teknoo.software"
                         ],
                         "secretName": "{$projectPrefix}demo-vault-secret"
                     }
@@ -922,7 +1487,7 @@ EOF;
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-secure-ingress",
-                "namespace": "space-behat-my-comany{$hncSuffix}",
+                "namespace": "space-behat-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo-secure"
                 },
@@ -966,5 +1531,13 @@ EOF;
     ]
 }
 EOF;
+
+        return json_encode(
+            value: json_decode(
+                json: $json,
+                associative: true
+            ),
+            flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
+        );
     }
 }

@@ -31,6 +31,7 @@ use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 
 /**
  * Class HealthTest.
@@ -55,7 +56,7 @@ class HealthTest extends TestCase
         parent::setUp();
 
         $this->client = $this->createMock(Client::class);
-        $this->health = new Health($this->client);
+        $this->health = new Health($this->createMock(ClusterCatalog::class));
     }
 
     public function testInvoke(): void

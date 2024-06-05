@@ -10,16 +10,6 @@
   {{ ('teknoo.space.error.' ~ errorCode ~ '.title')|trans }} -&nbsp;
 {%- endblock -%}
 
-{% block navbar %}{% endblock %}
-
-{% block back_to %}
-  <div class="back-to-home rounded d-none d-sm-block">
-    <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-icon btn-soft-primary">
-      <i data-feather="home" class="icons"></i>
-    </a>
-  </div>
-{% endblock %}{# back_to #}
-
 {% block main %}
   <section class="bg-home d-flex align-items-center">
     <div class="container">
@@ -43,8 +33,18 @@
 
       <div class="row">
         <div class="col-12 text-center">
-          <a hreflang="{{ locale }}" rel="noopener" href="javascript:window.history.back()" class="btn btn-outline-primary mt-4">{{ 'teknoo.space.action.go_back'|trans }}</a>
-          <a hreflang="{{ locale }}" rel="noopener" href="{{ path('space_dashboard') }}" class="btn btn-primary mt-4 ml-2">{{ 'teknoo.space.action.go_to_dashboard'|trans }}</a>
+          <a hreflang="{{ locale }}"
+             rel="noopener"
+             href="javascript:window.history.back()"
+             class="btn btn-outline-primary mt-4">
+              {{ 'teknoo.space.action.go_back'|trans }}
+          </a>
+          <a hreflang="{{ locale }}"
+             rel="noopener"
+             href="{{ path('space_dashboard') }}"
+             class="btn btn-primary mt-4 ml-2">
+              {{ 'teknoo.space.action.go_to_dashboard'|trans }}
+          </a>
         </div>{# end col #}
       </div>{# end row #}
     </div>{# end container #}

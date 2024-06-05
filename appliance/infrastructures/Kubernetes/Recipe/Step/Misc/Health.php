@@ -29,6 +29,7 @@ use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Throwable;
 
 /**
@@ -40,7 +41,7 @@ use Throwable;
 class Health implements HealthInterface
 {
     public function __construct(
-        private KubernetesClient $client,
+        private readonly ClusterCatalog $catalog,
     ) {
     }
 
@@ -50,13 +51,18 @@ class Health implements HealthInterface
     ): HealthInterface {
         $values = [];
 
-        try {
-            $values = [
-                'health' => $this->client->health(),
-                'version' => $this->client->version(),
-            ];
-        } catch (Throwable $error) {
-            $values['error'] = $error;
+        foreach ($this->catalog as $cluster) {
+            $client = $cluster->getKubernetesClient();
+            try {
+                $values = [
+                    $cluster->sluggyName => [
+                        'health' => $client->health(),
+                        'version' => $client->version(),
+                    ],
+                ];
+            } catch (Throwable $error) {
+                $values[$cluster->sluggyName]['error'] = $error;
+            }
         }
 
         $parametersBag->set('k8s', $values);

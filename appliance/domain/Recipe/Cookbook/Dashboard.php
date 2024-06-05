@@ -33,6 +33,7 @@ use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -47,6 +48,7 @@ class Dashboard implements CookbookInterface
     public function __construct(
         RecipeInterface $recipe,
         private readonly HealthInterface $health,
+        private readonly LoadEnvironments $loadEnvironments,
         private readonly DashboardInfoInterface $dashboardInfo,
         private readonly Render $render,
         private readonly RenderError $renderError,
@@ -58,6 +60,8 @@ class Dashboard implements CookbookInterface
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
         $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);
+
+        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
 
         $recipe = $recipe->cook($this->dashboardInfo, DashboardInfoInterface::class, [], 20);
 

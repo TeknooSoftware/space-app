@@ -42,8 +42,8 @@ use Teknoo\East\CommonBundle\Object\UserWithRecoveryAccess;
 class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterface
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator,
-        private readonly string $spaceDashbordRoute,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly string $spaceDashboardRoute,
         private readonly string $spaceUpdatePasswordRoute,
     ) {
     }
@@ -54,7 +54,7 @@ class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterf
         if (!$user instanceof UserWithRecoveryAccess) {
             return new RedirectResponse(
                 url: $this->urlGenerator->generate(
-                    name: $this->spaceDashbordRoute,
+                    name: $this->spaceDashboardRoute,
                 ),
             );
         }

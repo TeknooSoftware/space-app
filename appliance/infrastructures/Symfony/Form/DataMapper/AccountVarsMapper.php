@@ -27,7 +27,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\DataMapper;
 
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -45,16 +45,20 @@ class AccountVarsMapper extends AbstractVarsMapper
         ?string $id,
         string $name,
         ?string $value,
-        string $environmentName,
+        string $envName,
         bool $secret,
-    ): AccountPersistedVariable|PersistedVariable {
+        ?string $encryptionAlgorithm,
+        bool $needEncryption,
+    ): AccountPersistedVariable|ProjectPersistedVariable {
         return new AccountPersistedVariable(
             account: $parent->account,
             id: $id,
             name: $name,
             value: $value,
-            environmentName: $environmentName,
+            envName: $envName,
             secret: $secret,
+            encryptionAlgorithm: $encryptionAlgorithm,
+            needEncryption: $needEncryption,
         );
     }
 }

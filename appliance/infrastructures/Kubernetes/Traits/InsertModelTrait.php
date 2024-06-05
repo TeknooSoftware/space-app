@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Traits;
 
-use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Repository\Repository;
 use Teknoo\Space\Infrastructures\Kubernetes\Exception\KubernetesErrorException;
@@ -40,8 +39,6 @@ use Teknoo\Space\Infrastructures\Kubernetes\Exception\KubernetesErrorException;
  */
 trait InsertModelTrait
 {
-    private KubernetesClient $client;
-
     /**
      * @param Repository<T> $repository
      */

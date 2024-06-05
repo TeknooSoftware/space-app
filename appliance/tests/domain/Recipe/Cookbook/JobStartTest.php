@@ -41,8 +41,10 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Recipe\Cookbook\JobStart;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
+use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 
 /**
@@ -75,12 +77,16 @@ class JobStartTest extends TestCase
 
     private FormProcessingInterface|MockObject $formProcessing;
 
+    private NewJobSetDefaults|MockObject $newJobSetDefaults;
+
     private NewJobNotifierInterface|MockObject $newJobNotifier;
 
 
     private JumpIf|MockObject $jumpIf;
 
     private CallNewJobInterface|MockObject $callNewJob;
+
+    private PersistJobVar|MockObject $persistJobVar;
 
     private RedirectClientInterface|MockObject $redirectClient;
 
@@ -105,9 +111,11 @@ class JobStartTest extends TestCase
         $this->loadPersistedVariablesForJob = $this->createMock(LoadPersistedVariablesForJob::class);
         $this->formHandling = $this->createMock(FormHandlingInterface::class);
         $this->formProcessing = $this->createMock(FormProcessingInterface::class);
+        $this->newJobSetDefaults = $this->createMock(NewJobSetDefaults::class);
         $this->newJobNotifier = $this->createMock(NewJobNotifierInterface::class);
         $this->jumpIf = $this->createMock(JumpIf::class);
         $this->callNewJob = $this->createMock(CallNewJobInterface::class);
+        $this->persistJobVar = $this->createMock(PersistJobVar::class);
         $this->redirectClient = $this->createMock(RedirectClientInterface::class);
         $this->renderForm = $this->createMock(RenderFormInterface::class);
         $this->renderError = $this->createMock(RenderError::class);
@@ -121,6 +129,8 @@ class JobStartTest extends TestCase
             $this->loadPersistedVariablesForJob,
             $this->formHandling,
             $this->formProcessing,
+            $this->newJobSetDefaults,
+            $this->persistJobVar,
             $this->newJobNotifier,
             $this->jumpIf,
             $this->callNewJob,

@@ -27,9 +27,11 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Account;
+use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * Class DashboardInfoTest.
@@ -44,14 +46,33 @@ class DashboardInfoTest extends TestCase
 {
     private DashboardInfo $dashboardInfo;
 
+    private ClusterCatalog $catalog;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp(): void
     {
         parent::setUp();
+        $clusterConfig = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'foo',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: false,
+        );
 
-        $this->dashboardInfo = new DashboardInfo();
+        $this->catalog = new ClusterCatalog(
+            ['clusterName' => $clusterConfig],
+            ['cluster-name' => 'clusterName'],
+        );
+
+        $this->dashboardInfo = new DashboardInfo($this->catalog);
     }
 
     public function testInvoke(): void
@@ -59,9 +80,8 @@ class DashboardInfoTest extends TestCase
         self::assertInstanceOf(
             DashboardInfo::class,
             ($this->dashboardInfo)(
-                $this->createMock(ManagerInterface::class),
                 $this->createMock(ParametersBag::class),
-                $this->createMock(Account::class),
+                $this->createMock(AccountWallet::class),
             )
         );
     }

@@ -65,7 +65,7 @@ class AccountHistory implements IdentifiedObjectInterface, TimestampableInterfac
 
     public function setHistory(?History $history): self
     {
-        $this->history = $history;
+        $this->history = $history?->limit(150);
 
         return $this;
     }

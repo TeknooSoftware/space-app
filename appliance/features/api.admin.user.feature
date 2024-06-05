@@ -6,9 +6,9 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My First Company" with the account namespace "my-first-comany"
+    And an account for "My First Company" with the account namespace "my-first-company"
     And 10 basics users for this account
-    And an account for "My Other Company" with the account namespace "my-other-comany"
+    And an account for "My Other Company" with the account namespace "my-other-company"
     And 5 basics users for this account
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -70,7 +70,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -87,7 +87,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -110,7 +110,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -133,7 +133,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -151,7 +151,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-comany"
+    And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"

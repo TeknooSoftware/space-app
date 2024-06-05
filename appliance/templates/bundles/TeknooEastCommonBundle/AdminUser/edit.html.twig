@@ -1,10 +1,12 @@
-{# templates/bundles/TeknooEastPaasBundle/views/AdminUser/edit.html.twig #}
+{# templates/bundles/TeknooEastPaasBundle/AdminUser/edit.html.twig #}
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
 {% block title %}{{ 'teknoo.space.title.admin_user.edit'|trans }} : {{ objectInstance }} - {% endblock %}
 
-{% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user.edit'|trans }} : {{ objectInstance }}{% endblock %}
+{%- block instanceMainTitle -%}
+    <i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user.edit'|trans }} : {{ objectInstance }}
+{%- endblock -%}
 
 {% block breadcrumbListLink path('_teknoo_common_admin_user_list') %}
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_user.edit'|trans }}{% endblock %}
@@ -20,7 +22,13 @@
             formView.userData.picture.image,
             {"colClass":"col-10", "pictureInstance": objectInstance.userData.picture}
         ) }}
-        {{ form_row(formView.userData.removePicture, {"colClass":"col-2 d-flex flex-column justify-content-end", 'label_attr':{'class': 'switch-custom'}}) }}
+        {{ form_row(
+            formView.userData.removePicture, {
+                "colClass":"col-2 d-flex flex-column justify-content-end",
+                'label_attr': {
+                    'class': 'switch-custom'
+                }
+            }) }}
         {% do formView.userData.picture.name.setRendered() %}
         {% do formView.userData.picture.alternative.setRendered() %}
     </div>

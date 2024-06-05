@@ -29,6 +29,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 
 /**
  * Class AccountDataTypeTest.
@@ -50,7 +51,7 @@ class AccountDataTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountDataType = new AccountDataType();
+        $this->accountDataType = new AccountDataType($this->createMock(SubscriptionPlanCatalog::class));
     }
 
     public function testBuildForm(): void

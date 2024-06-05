@@ -1,4 +1,4 @@
-space_api_admin_account_new:
+space_api_v1_admin_account_new:
     path: '/account/new'
     methods: ['POST', 'PUT']
     schemes: ['https']
@@ -8,14 +8,15 @@ space_api_admin_account_new:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
-            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
-        route: 'space_api_admin_account_edit'
-        template: '@@TeknooEastPaas/api/AdminAccount/item.json.twig'
+        route: 'space_api_v1_admin_account_edit'
+        template: '@@TeknooSpace/api/AdminAccount/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
-space_api_admin_account_edit:
+space_api_v1_admin_account_edit:
     path: '/account/{id}'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
@@ -23,29 +24,30 @@ space_api_admin_account_edit:
         _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
-            "doctrine_type": "%teknoo.east.common.form_type.doctrine.class%"
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
             namespace_in_readonly: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
-        template: '@@TeknooEastPaas/api/AdminAccount/item.json.twig'
+        template: '@@TeknooSpace/api/AdminAccount/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
-space_api_admin_account_edit_variables:
+space_api_v1_admin_account_edit_variables:
     path: '/account/{id}/variables'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
     defaults:
-        _controller: 'teknoo.east.paas.endpoint.admin.edit.account'
+        _controller: 'teknoo.space.endpoint.admin.account.edit_without_steps'
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         populateFormOptions: true
-        template: '@@TeknooEastPaas/api/AdminAccount/variables.json.twig'
+        template: '@@TeknooSpace/api/AdminAccount/variables.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
-space_api_admin_account_list:
+space_api_v1_admin_account_list:
     path: '/accounts'
     methods: ['GET', 'POST']
     schemes: ['https']
@@ -56,11 +58,11 @@ space_api_admin_account_list:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         itemsPerPage: 20
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
-        template: '@@TeknooEastPaas/api/AdminAccount/list.json.twig'
+        template: '@@TeknooSpace/api/AdminAccount/list.json.twig'
 
-space_api_admin_account_delete:
+space_api_v1_admin_account_delete:
     path: '/account/{id}/delete'
-    methods: ['GET', 'DELETE']
+    methods: ['POST', 'DELETE']
     schemes: ['https']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
@@ -69,4 +71,42 @@ space_api_admin_account_delete:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectViewKey: 'accountInstance'
-        template: '@@TeknooEastPaas/api/AdminAccount/deleted.json.twig'
+        template: '@@TeknooSpace/api/AdminAccount/deleted.json.twig'
+
+space_api_v1_admin_account_reinstall_registry:
+    path: '/account/{id}/registry/reinstall'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.registry.reinstall'
+        allowEmptyCredentials: true
+        api: 'json'
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        template: '@@TeknooSpace/AdminAccount/done.json.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_admin_account_refresh_quota:
+    path: '/account/{id}/quota/refresh'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.quota.refresh'
+        api: 'json'
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        template: '@@TeknooSpace/AdminAccount/done.json.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_admin_account_environment_reinstall:
+    path: '/account/{id}/environment/{envName}/{clusterName}/reinstall'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.environment.reinstall'
+        allowEmptyCredentials: true
+        api: 'json'
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        template: '@@TeknooSpace/AdminAccount/done.json.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'

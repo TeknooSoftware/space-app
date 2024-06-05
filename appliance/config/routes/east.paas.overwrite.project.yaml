@@ -1,0 +1,54 @@
+_teknoo_paas_admin_project_list:
+    path: '/admin/projects'
+    methods: ['GET', 'POST']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.list'
+        defaultOrderDirection: 'ASC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooEastPaas/AdminProject/list.html.twig'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+
+_teknoo_paas_admin_project_edit:
+    path: '/admin/project/{id}/edit'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.edit.project'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        formOptions:
+            allowEditingOfLocked: true
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooEastPaas/AdminProject/edit.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+
+_teknoo_paas_admin_project_new:
+    path: '/admin/account/{accountId}/project/new'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.paas.endpoint.admin.new.project'
+        accountKey: 'constructorArguments'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\SpaceProjectType'
+        formOptions:
+            allowEditingOfLocked: true
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceProject'
+        route: '_teknoo_paas_admin_project_edit'
+        template: '@@TeknooEastPaas/AdminProject/new.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+
+_teknoo_paas_admin_project_delete:
+    path: '/admin/project/{id}/delete'
+    methods: ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        deleter: '@teknoo.space.deleting.space_project'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        route: '_teknoo_paas_admin_project_list'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

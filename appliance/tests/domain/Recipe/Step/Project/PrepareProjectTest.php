@@ -28,7 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 
 /**
@@ -44,14 +44,6 @@ class PrepareProjectTest extends TestCase
 {
     private PrepareProject $prepareProject;
 
-    private string $defaultClusterName;
-
-    private string $defaultClusterType;
-
-    private string $defaultClusterAddress;
-
-    private string $defaultClusterEnv;
-
     /**
      * {@inheritdoc}
      */
@@ -59,16 +51,7 @@ class PrepareProjectTest extends TestCase
     {
         parent::setUp();
 
-        $this->defaultClusterName = '42';
-        $this->defaultClusterType = '42';
-        $this->defaultClusterAddress = '42';
-        $this->defaultClusterEnv = '42';
-        $this->prepareProject = new PrepareProject(
-            $this->defaultClusterName,
-            $this->defaultClusterType,
-            $this->defaultClusterAddress,
-            $this->defaultClusterEnv
-        );
+        $this->prepareProject = new PrepareProject();
     }
 
     public function testInvoke(): void
@@ -76,9 +59,9 @@ class PrepareProjectTest extends TestCase
         self::assertInstanceOf(
             PrepareProject::class,
             ($this->prepareProject)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Project::class),
-                $this->createMock(AccountCredential::class),
+                manager: $this->createMock(ManagerInterface::class),
+                projectInstance: $this->createMock(Project::class),
+                accountRegistry: $this->createMock(AccountRegistry::class),
             ),
         );
     }

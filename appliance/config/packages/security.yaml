@@ -48,17 +48,17 @@ security:
                 - '%teknoo.east.common.bundle.security.authenticator.oauth2.class%'
             provider: normals_providers
             login_link:
-                check_route: 'account_autologin'
+                check_route: 'space_account_autologin'
                 lifetime: 300
-                login_path: 'account_login'
+                login_path: 'space_account_login'
                 max_uses: 1
                 provider: 'loginlinks_providers'
                 signature_properties: ['userIdentifier', 'hash']
                 success_handler: 'Teknoo\Space\Infrastructures\Symfony\Security\Authentication\AuthenticationSuccessHandler'
             form_login:
                 provider: 'with_password'
-                check_path: 'account_check'
-                login_path: 'account_login'
+                check_path: 'space_account_check'
+                login_path: 'space_account_login'
                 default_target_path: 'space_dashboard'
                 always_use_default_target_path: false
                 use_referer: true
@@ -68,7 +68,7 @@ security:
                 secure: true
                 httponly: true
             logout:
-                path: 'account_logout'
+                path: 'space_account_logout'
                 target: 'space_dashboard'
             two_factor:
                 auth_form_path: 2fa_login    # The route name you have used in the routes.yaml

@@ -1,5 +1,173 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC1] - 2024-06-04
+### Release Candidate
+- Fix mapping in Doctrine ODM
+- Fix and complete some test
+- Fix BC breaks and some bug with persisted variables
+- Fix issue when a secret var is unsecret, and harmonize behavior of secret encrypted and non secret encrypted
+- Use East PaaS 3.4
+- Use Lexik JWT 2
+- Replace Hook collection management and delete env vars:
+    - SPACE_COMPOSER_PATH_JSON
+    - SPACE_COMPOSER_PATH_FILE
+    - SPACE_COMPOSER_TIMEOUT
+    - SPACE_SFCONSOLE_PATH_JSON
+    - SPACE_SFCONSOLE_PATH_FILE
+    - SPACE_SFCONSOLE_TIMEOUT
+    - SPACE_NPM_PATH_JSON
+    - SPACE_NPM_PATH_FILE
+    - SPACE_NPM_TIMEOUT
+    - SPACE_PIP_PATH_JSON
+    - SPACE_PIP_PATH_FILE
+    - SPACE_PIP_TIMEOUT
+    - SPACE_MAKE_PATH_JSON
+    - SPACE_MAKE_PATH_FILE
+    - SPACE_MAKE_TIMEOUT
+  replaced by `SPACE_HOOKS_COLLECTION_JSON` or `SPACE_HOOKS_COLLECTION_FILE` to allow more hooks configuration with
+  several versions of composer, npm, pip, or make.
+  - Fix Quota creation
+  - Update to Symfony 7.1, Symfony 6.4 still supported
+
+## [1.0.0-beta43] - 2024-05-08
+### Beta Release
+- Huge and massive update. The last version before the RC1.
+- Use last available libraries
+  - Use `States` v6.2+ 
+  - Use `East Common` v2.10+ 
+  - Use `East PaaS` v3.3.1+
+    - Use `DefaultsCompiler`, `DefaultsBag` instead `$storageIdentifier`, `$defaultStorageSize`, `$ociRegistryConfig`.
+      - Update `JobSetDefaults` and `NewJobSetDefaults`.
+    - Allow configuration of heterogeneous clusters, Job's namespace and hierarchical namespaces are now managed from
+      the cluster's definition and not from the account and the job.
+    - Remove namespaces information from `Job` and `JobUnit`.
+    - Remove namespaces information from `CompiledDeploymentInterface` (and remove `foreachNamespace`).
+    - See the `East PaaS` changelog to get other update information
+  - Use `scheb/2fa` v7.3+
+- Allow an account to have several managed environment.
+  - Rename cookbook `AccountCredential` to `AccountEnvironment`.
+  - Rename cookbook `AccountInstall` to `AccountEnvironmentInstall`.
+  - Rename cookbook `AccountReinstall` to `AccountEnvironmentReinstall`.
+  - The 'first' environment is not longer created automatically at accounts' creations.
+  - Management of environment in account's setting.
+  - `SubscriptionPlan` requires the count of allowed managed environments (minimum is 1)
+  - Add steps to load `SubscriptionPlan` of an account.
+  - Add `AccountEnvironmentResume` as DTO to manage Accounts' environments.
+  - When an environment is created, the kubernetes's namespace is computed from the account name and the environment 
+    name.
+    - If the namespace already exist and the namespace is not owned by the account, an error is thrown, Space will no 
+      longer increment until an available namespace. (Change in `CreateNamespace` steps and simplify the code).
+  - If the count of environments exceed the count of allowed environments, an error is also thrown.
+  - Fix issue with docker secret not created into the environment namespace introduced in last Space version.
+- Improve `additional steps` of `East PaaS` cookbook to be more readable.
+- Rename all property and variables `environmentName` to `envName` to have consistency with the library `East PaaS`.
+- Rename `PersistedVariable` to `ProjectPersistedVariable`, to clarify difference with `AccountPersistedVariable`.
+- Improve API endpoints to be consistency.
+  - Add admin endpoints to install/reinstall and refresh quotas, registries or environments.
+  - Add user endpoints to install/reinstall environments.
+- Improve HTTP endpoints to be consistency.
+- Support encryption of secrets in persisted variables (`AccountPersistedVariable` and `ProjectPersistedVariable`)
+  - Build on `Teknoo\East\Paas\Contracts\Security\EncryptionInterface`, but with differents keys to those used for
+    messages between workers.
+  - Add `encryptionAlgorithm` property to `AccountPersistedVariable` and `ProjectPersistedVariable`.
+  - Add `Teknoo\Space\Contracts\Object\EncryptableVariableInterface`
+  - Non encrypted secret are automatically encrypted at next save.
+  - The Web interface / API cannot decrypt secret, only the `new_job` worker.
+  - Encryption is optional, but if the secret encryption is disable, encrypted secret are unusable.
+- Improve functionals tests (with Behat) to support all API operations in all availables configurations. 
+- Some other templates and translations fixes.
+- Update documentation.
+- Fix issues with big histories in account or project.
+
+## [1.0.0-beta42] - 2024-03-12
+### Beta Release
+- Split `AccountCredential` (and loader, writers, steps and cookbook) to `AccountCredential` and `AccountRegistry`
+  - `AccountCredential` keeps only credentials about a cluster
+  - `AccountRegistry` keeps only credentials about registry OCI
+  - Fix `JobSetDefaults` with this new architecture
+- Private OCI registry are into dedicated namespace, not included into the client namespace
+  - Add `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` env to set the prefix namespace for this new namespace
+- Fix `CreateNamespace` to find an available namespaces available on each clusters. Warning, the namespace must be
+  the same on each clusters, if a previous namespace already exist on a cluster, it will be not deleted.
+- Complete `Config\Cluster` to define the cluster able to host private registry
+  - Add `getKubernetesRegistryClient` method to get a clone of kubernetes client dedicated to registry operations, 
+    in the dedicated namespace.
+
+## [1.0.0-beta41] - 2024-03-08
+### Beta Release
+- Add requests and limits on cpu and memory to accounts'registries deployments. 
+  This customized with following envs vars:
+  - `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
+  - `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
+
+## [1.0.0-beta40] - 2024-03-07
+### Beta Release
+- Fix issue with relative resources requires :
+  - % of initial quota capacity and not remaining capacity
+- Fix issue when a soft quota is relative to the hard limit
+- Fix template url to got to a project when the user is an admin 
+
+## [1.0.0-beta39] - 2024-03-07
+### Beta Release
+- Fix issue with `JobStart` cookbook requires the cluster catalog (not available here)
+  - Complete NewJob to pass from the webserver required value of the cluster catalog, needed by `JobStart` cookbook.
+
+## [1.0.0-beta38] - 2024-03-06
+### Beta Release
+- Update to Teknoo East PaaS 2.8+ :
+  - Add support of quotas into an Account
+  - Quota are defined for each account, quotas are categorized
+    - `compute`, like `cpu` or `gpu`
+    - `memory`, like `memory`, `storage`, `huge-page`
+  - Add `quotas` section under `paas` section in the deployment file (`.paas.yaml`)
+  - Add `resource` section for each container, with `require` and `limit`
+    - `require`: minimum fraction of resources types required to be started
+    - `limit`: maximum fraction of resources types for the container. (For a container, not a replicas)
+    - If containers have no resources defined (or not fully defined), East PaaS, thanks to its `ResourceManager` will
+      share remaining resources to containers.
+    - requirements and limits can be relative (a % of the quota's capacity)
+  - If the sum of requirements exceed the quota, the deployment compilation will be failed and will never be executed.
+- Support administration of quotas in account. (Not available from user's interface, only from the admin interface)
+- Support `ResourceQuota` in the kubernetes cluster, and update them from Space admin interface for an account
+  - Quota are automatically during the account creation (from the Space admin interface, or during a subscription)
+  - Admin can refresh Quota in the Kubernetes cluster from the Space admin interface
+- Add `subscriptionPlan` into `AccountData` and `SubscriptionPlan` and its catalog as config objetcts 
+  (like `ClusterConfig` and `ClusterCatalog`).
+  - A SubscriptionPlan is only a string id, an human readable name and the set of quota to apply to account.
+- Add `SetQuota` step into Account creation and editing, to update account's quota from the Subscription plan catalog.
+  - Admin can update account's plan, not users cannot do it.
+- Rework PHP DI definitions and migrate dynamics var env's value from a json or a file into a 
+  dedicated file `di.variables.from.envs.php`.
+- Add env vars `SPACE_CLUSTER_CATALOG_JSON` or `SPACE_CLUSTER_CATALOG_FILE` to define clusters 
+  catalog introduced into the version `1.0.0-beta37`.
+- Add env var `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` or `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` to define subscription 
+  plan with quota.
+- Update README 
+- Complete and clean tests
+
+## [1.0.0-beta37] - 2024-02-26
+### Beta Release
+- Use East PaaS 2.7 with defaults instead extra
+- Use East Common 2.9 and `VisitableTrait` and Recipe's loop feature
+- Prepare Space to manage several cluster :
+  - a Space's Project can use external Kubernetes Cluster, but Space app could manage 
+    (create namespace and service account, install OCI registry, display dashboard, ...) only one cluster.
+- Centralize cluster's configuration into a new object, generated at bootstrap `Teknoo\Space\Object\Config\Cluster`, 
+  grouped into a `Teknoo\Space\Object\Config\ClusterCatalog`.
+  - Several clusters will can defined via the DI key `teknoo.space.cluster_catalog.definitions`. (In a future version)
+  - Cookbooks has been updated to use now this catalog.
+  - The source repository and the image registry **MUST** be shared between all clusters
+  - **This work will still take several versions of Space**, We will work on :
+    - Account installation to support clusters with an external OCI registry. 
+      - Not install an oci/docker registry in the client's namespace, just put the dockerconfig secret)
+    - the rework of `AccountCredentials` :
+      - split clusters's config and registry's config.
+      - Encrypt token and password
+    - on the encryption of secret persisted variables
+
 ## [1.0.0-beta36] - 2024-02-22
 ### Beta Release
 - Support of locked cluster

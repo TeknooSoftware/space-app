@@ -25,53 +25,99 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
-use ArrayObject;
+use DomainException;
 use Psr\Container\ContainerInterface;
+use Teknoo\East\Paas\Contracts\Hook\HookInterface;
 use Teknoo\East\Paas\Contracts\Hook\HooksCollectionInterface;
+use Teknoo\East\Paas\Hook\HooksCollection;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\ComposerHook;
+use Teknoo\East\Paas\Infrastructures\ProjectBuilding\Contracts\ProcessFactoryInterface;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\MakeHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\NpmHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\PipHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\SfConsoleHook;
 use Traversable;
 
+use function class_exists;
+use function is_a;
+use function is_string;
+
 return [
-    'teknoo.space.hook.collection' => static function (): ArrayObject {
-        return new ArrayObject([
-            'composer' => ComposerHook::class,
-            'npm' => NpmHook::class,
-            'pip' => PipHook::class,
-            'make' => MakeHook::class,
-            'symfony_console' => SfConsoleHook::class,
-        ]);
-    },
-
     HooksCollectionInterface::class => static function (ContainerInterface $container): HooksCollectionInterface {
-        return new class (
-            $container,
-            $container->get('teknoo.space.hook.collection'),
-        ) implements HooksCollectionInterface {
-            /**
-             * @param iterable<string> $hooksNames
-             */
-            public function __construct(
-                private ContainerInterface $container,
-                private iterable $hooksNames,
-            ) {
+        $definitions = [];
+        if ($container->has('teknoo.space.hooks_collection.definitions')) {
+            $definitions = $container->get('teknoo.space.hooks_collection.definitions');
+        }
+
+        $factory = $container->get(ProcessFactoryInterface::class);
+        $defaultTimeout = 240.0;
+
+        $collections = [];
+        foreach ($definitions as $definition) {
+            if (empty($definition['name']) || !is_string($definition['name'])) {
+                throw new DomainException(
+                    'Wrong hooks collection definition : at least one of hook is missing the name',
+                );
+            }
+            $name = $definition['name'];
+
+            if (empty($definition['type']) || !is_string($definition['type'])) {
+                throw new DomainException(
+                    "Wrong hooks collection definition : `$name` hook is missing the type",
+                );
+            }
+            $type = $definition['type'];
+
+            if (empty($definition['command'])) {
+                throw new DomainException(
+                    "Wrong hooks collection definition : `$name` hook is missing the command",
+                );
+            }
+            $command = $definition['command'];
+
+            $timeout = $definition['timeout'] ?? $defaultTimeout;
+
+            if (class_exists($type) && is_a($type, HookInterface::class, true)) {
+                $className = $type;
+                $collections[$name] = new $className(
+                    $command,
+                    $timeout,
+                    $factory,
+                );
+
+                continue;
             }
 
-            public function getIterator(): Traversable
-            {
-                foreach ($this->hooksNames as $name => $class) {
-                    $key = "teknoo.east.paas.{$name}.path";
-                    if (
-                        $this->container->has($key)
-                        && !empty($this->container->get($key))
-                    ) {
-                        yield $name => $this->container->get($class);
-                    }
-                }
-            }
-        };
+            $collections[$definition['name']] = match ($type) {
+                'composer' => new ComposerHook(
+                    command: $command,
+                    timeout: $timeout,
+                    factory: $factory,
+                ),
+                'npm' => new NpmHook(
+                    command: $command,
+                    timeout: $timeout,
+                    factory: $factory,
+                ),
+                'pip' => new PipHook(
+                    command: $command,
+                    timeout: $timeout,
+                    factory: $factory,
+                ),
+                'make' => new MakeHook(
+                    command: $command,
+                    timeout: $timeout,
+                    factory: $factory,
+                ),
+                'symfony_console' => new SfConsoleHook(
+                    command: $command,
+                    timeout: $timeout,
+                    factory: $factory,
+                ),
+                default => throw new DomainException("Error, hook of type {$type} is invalid"),
+            };
+        }
+
+        return new HooksCollection($collections);
     },
 ];

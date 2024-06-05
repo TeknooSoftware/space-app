@@ -1,8 +1,0 @@
-{# templates/bundles/TeknooEastPaasBundle/api/AdminUser/item.json.twig  #}
-{% apply spaceless %}
-{% if formView.vars.errors | length == 0 %}
-{{ objectInstance|space_object_serialization({'groups': ['crud']}) }}
-{% else %}
-{{ field_errors(formView)|space_object_serialization({}, 'json', {"error": true}) }}
-{% endif %}
-{% endapply %}

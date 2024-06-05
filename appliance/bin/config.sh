@@ -163,17 +163,19 @@ else
   APP_SECRET=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
   SPACE_CODE_GENERATOR_SALT=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
   TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
+  SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
   SPACE_JWT_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
 
   if [ "$useSfSeret" = "y" ]; then
       cp .env.local.dist "$ENV_LOCAL_FILE"
 
-      echo "Set random secrets: APP_REMEMBER_SECRET, APP_SECRET and SPACE_CODE_GENERATOR_SALT, TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE, SPACE_JWT_PASSPHRASE"
+      echo "Set random secrets: APP_REMEMBER_SECRET, APP_SECRET and SPACE_CODE_GENERATOR_SALT, TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE, SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE, SPACE_JWT_PASSPHRASE"
       updateSecret "APP_REMEMBER_SECRET" "$APP_REMEMBER_SECRET"
       updateSecret "APP_SECRET" "$APP_SECRET"
       updateSecret "SPACE_CODE_GENERATOR_SALT" "$SPACE_CODE_GENERATOR_SALT"
       updateSecret "SPACE_JWT_PASSPHRASE" "$SPACE_JWT_PASSPHRASE"
       updateSecret "TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" "$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      updateSecret "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE" "$SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE"
   else
       cp .env.local.unsecure.dist "$ENV_LOCAL_FILE"
 
@@ -183,6 +185,7 @@ else
       updateFile "$ENV_LOCAL_FILE" "SPACE_CODE_GENERATOR_SALT" "$SPACE_CODE_GENERATOR_SALT"
       updateFile "$ENV_LOCAL_FILE" "SPACE_JWT_PASSPHRASE" "$SPACE_JWT_PASSPHRASE"
       updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" "$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE" "$SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE"
   fi
 
   if [ "$useDockerCompose" = "y" ]; then
@@ -191,6 +194,7 @@ else
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CODE_GENERATOR_SALT" "$SPACE_CODE_GENERATOR_SALT"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_JWT_PASSPHRASE" "$SPACE_JWT_PASSPHRASE"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" "$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE" "$SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE"
   fi
 fi
 
@@ -258,8 +262,11 @@ updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_REGISTRY_URL" "$dockerPrivateRegistryUrl
 updateFile "$ENV_LOCAL_FILE" "SPACE_REDIS_HOST" "$redisHost"
 updateFile "$ENV_LOCAL_FILE" "SPACE_REDIS_PORT" "$redisPort"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
-updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/private.pem"
-updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/public.pem"
+updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/messages/private.pem"
+updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/messages/public.pem"
+updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_ALGORITHM" "rsa"
+updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY" "var/keys/variables/private.pem"
+updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys/variables/public.pem"
 
 if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "APP_ENV" "$APP_ENV"
@@ -279,8 +286,11 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_REDIS_HOST" "$redisHost"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_REDIS_PORT" "$redisPort"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/private.pem"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/public.pem"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/messages/private.pem"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/messages/public.pem"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_ALGORITHM" "rsa"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY" "var/keys/variables/private.pem"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys/variables/public.pem"
 
   echo ""
   echo ">> $RED To use blackfire with Space, please update blackfire section under $DOCKER_COMPOSE_OVERRIDE_FILE $NC"

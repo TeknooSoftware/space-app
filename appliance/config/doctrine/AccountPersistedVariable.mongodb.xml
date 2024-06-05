@@ -9,8 +9,9 @@
         <id type="string" strategy="UUID"/>
         <field field-name="name" name="name" type="string" nullable="false" index="true"/>
         <field field-name="value" name="value" type="string" nullable="true"/>
-        <field field-name="environmentName" name="environment_name" type="string" nullable="false" index="true"/>
+        <field field-name="envName" name="environment_name" type="string" nullable="false" index="true"/>
         <field field-name="secret" name="secret" type="string" nullable="false"/>
+        <field field-name="encryptionAlgorithm" name="encryption_algorithm" type="string" nullable="true"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date" />
         <reference-one field="account" target-document="Teknoo\East\Paas\Object\Account">

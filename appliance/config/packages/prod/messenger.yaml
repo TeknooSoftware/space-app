@@ -1,7 +1,10 @@
 framework:
     messenger:
         transports:
-            new_job: '%teknoo.space.messenger.dsn.new_job%'
+            new_job:
+                dsn: '%teknoo.space.messenger.dsn.new_job%'
+                retry_strategy:
+                    max_retries: 0
             history_sent: '%teknoo.space.messenger.dsn.history_sent%'
             job_done: '%teknoo.space.messenger.dsn.job_done%'
             execute_job:

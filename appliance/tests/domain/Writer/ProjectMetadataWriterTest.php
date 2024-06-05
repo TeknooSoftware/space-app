@@ -50,7 +50,7 @@ class ProjectMetadataWriterTest extends TestCase
 
     private DatesService|MockObject $datesService;
 
-    protected bool $prefereRealDateOnUpdate = false;
+    protected bool $preferRealDateOnUpdate = false;
 
     /**
      * {@inheritdoc}
@@ -61,12 +61,12 @@ class ProjectMetadataWriterTest extends TestCase
 
         $this->manager = $this->createMock(ManagerInterface::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDateOnUpdate = true;
+        $this->preferRealDateOnUpdate = true;
 
         $this->projectMetadataWriter = new ProjectMetadataWriter(
             $this->manager,
             $this->datesService,
-            $this->prefereRealDateOnUpdate,
+            $this->preferRealDateOnUpdate,
         );
     }
 

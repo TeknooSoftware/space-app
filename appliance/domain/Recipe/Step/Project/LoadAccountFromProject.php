@@ -39,16 +39,16 @@ use Teknoo\Space\Object\DTO\SpaceProject;
 class LoadAccountFromProject
 {
     public function __invoke(
-        SpaceProject|Project $project,
+        SpaceProject|Project $spaceProject,
         ManagerInterface $manager,
         ?Account $account = null
     ): LoadAccountFromProject {
-        if ($project instanceof SpaceProject) {
-            $project = $project->project;
+        if ($spaceProject instanceof SpaceProject) {
+            $spaceProject = $spaceProject->project;
         }
 
         $manager->updateWorkPlan([
-            Account::class => $account ?? $project->getAccount(),
+            Account::class => $account ?? $spaceProject->getAccount(),
         ]);
 
         return $this;

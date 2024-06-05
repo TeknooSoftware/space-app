@@ -33,17 +33,17 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Writer\AccountWriter;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Loader\AccountCredentialLoader;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Query\AccountCredential\LoadFromAccountQuery as LoadCredentialsFromAccountQuery;
+use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery as LoadCredentialsFromAccountQuery;
 use Teknoo\Space\Query\AccountHistory\LoadFromAccountQuery as LoadHistoryFromAccountQuery;
 use Teknoo\Space\Query\AccountPersistedVariable\DeleteVariablesQuery;
-use Teknoo\Space\Writer\AccountCredentialWriter;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountDataWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountPersistedVariableWriter;
@@ -62,9 +62,9 @@ class SpaceAccountWriter implements WriterInterface
     public function __construct(
         private AccountWriter $accountWriter,
         private AccountDataWriter $dataWriter,
-        private AccountCredentialLoader $credentialLoader,
+        private AccountEnvironmentLoader $credentialLoader,
         private AccountHistoryLoader $historyLoader,
-        private AccountCredentialWriter $credentialWriter,
+        private AccountEnvironmentWriter $credentialWriter,
         private AccountHistoryWriter $historyWriter,
         private AccountPersistedVariableWriter $accountPersistedVariableWriter,
         private BatchManipulationManagerInterface $batchManipulationManager,
@@ -74,7 +74,7 @@ class SpaceAccountWriter implements WriterInterface
     public function save(
         ObjectInterface $object,
         PromiseInterface $promise = null,
-        ?bool $prefereRealDateOnUpdate = null,
+        ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceAccount) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));
@@ -95,12 +95,12 @@ class SpaceAccountWriter implements WriterInterface
 
         /** @var Promise<Account, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (Account $account, PromiseInterface $next) use ($object, $prefereRealDateOnUpdate) {
+            function (Account $account, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
                 if ($object->accountData instanceof AccountData) {
                     $data = $object->accountData;
                     $data->setAccount($object->account);
 
-                    $this->dataWriter->save(object: $data, prefereRealDateOnUpdate: $prefereRealDateOnUpdate);
+                    $this->dataWriter->save(object: $data, preferRealDateOnUpdate: $preferRealDateOnUpdate);
                     $next->success($account);
                 }
 
@@ -108,7 +108,7 @@ class SpaceAccountWriter implements WriterInterface
                 foreach ($object->variables as $var) {
                     $this->accountPersistedVariableWriter->save(
                         object: $var,
-                        prefereRealDateOnUpdate: $prefereRealDateOnUpdate
+                        preferRealDateOnUpdate: $preferRealDateOnUpdate
                     );
                     $ids[] = $var->getId();
                 }
@@ -136,7 +136,7 @@ class SpaceAccountWriter implements WriterInterface
         $this->accountWriter->save(
             $object->account,
             $persistedPromise->next($promise),
-            $prefereRealDateOnUpdate
+            $preferRealDateOnUpdate
         );
 
         return $this;
@@ -158,9 +158,9 @@ class SpaceAccountWriter implements WriterInterface
                         return;
                     }
 
-                    /** @var Promise<AccountCredential, mixed, mixed> $credentialsPromise */
+                    /** @var Promise<AccountEnvironment, mixed, mixed> $credentialsPromise */
                     $credentialsPromise = new Promise(
-                        fn (AccountCredential $credential) => $this->credentialWriter->remove($credential),
+                        fn (AccountEnvironment $credential) => $this->credentialWriter->remove($credential),
                     );
                     $this->credentialLoader->fetch(
                         new LoadCredentialsFromAccountQuery($account),

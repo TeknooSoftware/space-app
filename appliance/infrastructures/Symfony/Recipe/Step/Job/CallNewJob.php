@@ -29,7 +29,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Contracts\Message\MessageInterface;
+use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
@@ -68,7 +68,7 @@ class CallNewJob implements CallNewJobInterface
         if (null === $this->encryption) {
             $dispatching($newJob);
         } else {
-            /** @var Promise<MessageInterface, mixed, mixed> $promise */
+            /** @var Promise<SensitiveContentInterface, mixed, mixed> $promise */
             $promise = new Promise(
                 onSuccess: $dispatching,
                 onFail: fn (Throwable $error) => throw $error,

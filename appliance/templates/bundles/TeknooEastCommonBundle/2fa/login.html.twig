@@ -1,3 +1,5 @@
+{# templates/bundles/TeknooEastCommonBundle/2fa/login.html.twig #}
+
 {% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
 {% block title %}{{ 'teknoo.space.title.login.2fa'|trans }} - {% endblock %}
@@ -7,55 +9,72 @@
 {% block pageWrapper %}
     <section class="bg-home bg-circle-gradiant d-flex align-items-center">
     <div class="bg-overlay bg-overlay-white"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="form-signin p-4 bg-white rounded shadow">
-                        {# Authentication errors #}
-                        {% if authenticationError %}
-                            <p id="2fa-error" class="text-center">{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</p>
-                        {% endif %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-signin p-4 bg-white rounded shadow">
+                    {# Authentication errors #}
+                    {% if authenticationError %}
+                        <p id="2fa-error" class="text-center">
+                            {{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}
+                        </p>
+                    {% endif %}
 
-                        {# Let the user select the authentication method #}
-                        {% if availableTwoFactorProviders|length > 1 %}
-                            <p>{{ 'choose_provider'|trans({}, 'SchebTwoFactorBundle') }}:
-                                {% for provider in availableTwoFactorProviders %}
-                                    <a href="{{ path("2fa_login", {"preferProvider": provider}) }}">{{ provider }}</a>
-                                {% endfor %}
+                    {# Let the user select the authentication method #}
+                    {% if availableTwoFactorProviders|length > 1 %}
+                        <p>{{ 'choose_provider'|trans({}, 'SchebTwoFactorBundle') }}:
+                            {% for provider in availableTwoFactorProviders %}
+                                <a href="{{ path("2fa_login", {"preferProvider": provider}) }}">{{ provider }}</a>
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    {# Display current two-factor provider #}
+                    <form class="form"
+                          action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
+                        <h5 class="mb-3 text-center">{{ 'teknoo.space.text.2fa'|trans }}</h5>
+                        <div class="form-floating mb-2">
+                            <input
+                                    id="_auth_code"
+                                    class="form-control"
+                                    type="text"
+                                    name="{{ authCodeParameterName }}"
+                                    autocomplete="one-time-code"
+                                    autofocus
+                            >
+                            <label for="_auth_code">
+                                {{ 'auth_code'|trans({}, 'SchebTwoFactorBundle') }} {{ twoFactorProvider }}:
+                            </label>
+                        </div>
+
+                        {% if displayTrustedOption %}
+                            <p class="widget">
+                                <label for="_trusted">
+                                    <input id="_trusted"
+                                           type="checkbox"
+                                           name="{{ trustedParameterName }}">
+                                    {{ 'trusted'|trans({}, 'SchebTwoFactorBundle') }}
+                                </label>
                             </p>
                         {% endif %}
-
-                        {# Display current two-factor provider #}
-                        <form class="form"
-                              action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
-                            <h5 class="mb-3 text-center">{{ 'teknoo.space.text.2fa'|trans }}</h5>
-                            <div class="form-floating mb-2">
-                                <input
-                                        id="_auth_code"
-                                        class="form-control"
-                                        type="text"
-                                        name="{{ authCodeParameterName }}"
-                                        autocomplete="one-time-code"
-                                        autofocus
-                                />
-                                <label for="_auth_code">{{ 'auth_code'|trans({}, 'SchebTwoFactorBundle') }} {{ twoFactorProvider }}:</label>
-                            </div>
-
-                            {% if displayTrustedOption %}
-                                <p class="widget"><label for="_trusted"><input id="_trusted" type="checkbox" name="{{ trustedParameterName }}" /> {{ 'trusted'|trans({}, 'SchebTwoFactorBundle') }}</label></p>
-                            {% endif %}
-                            {% if isCsrfProtectionEnabled %}
-                                <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
-                            {% endif %}
-                            <p class="submit text-center">
-                                <input class="btn btn-primary" type="submit" value="{{ 'teknoo.space.action.confirm'|trans() }}" />
-                                <a class="btn btn-secondary" href="{{ logoutPath }}">{{ 'teknoo.space.action.cancel'|trans() }}</a>
-                            </p>
-                        </form>
-                    </div>{# end form #}
-                </div> {# end col #}
-            </div>{# end row #}
-        </div> {# end container #}
+                        {% if isCsrfProtectionEnabled %}
+                            <input type="hidden"
+                                   name="{{ csrfParameterName }}"
+                                   value="{{ csrf_token(csrfTokenId) }}">
+                        {% endif %}
+                        <p class="submit text-center">
+                            <input class="btn btn-primary"
+                                   type="submit"
+                                   value="{{ 'teknoo.space.action.confirm'|trans() }}">
+                            <a class="btn btn-secondary" href="{{ logoutPath }}">
+                                {{ 'teknoo.space.action.cancel'|trans() }}
+                            </a>
+                        </p>
+                    </form>
+                </div>{# end form #}
+            </div> {# end col #}
+        </div>{# end row #}
+    </div> {# end container #}
     </section>{# end section #}
     {#  Hero End  #}
 {% endblock %}

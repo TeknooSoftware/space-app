@@ -143,6 +143,14 @@ Environnements variables configuration
         * Default kubernetes annotations for ingresses **(Only one of these options)** *Optional* :
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON` : (json string).
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (php file returning an array).
+  * Persited variable Encryption :
+      * Encryptions of persisted variables between servers and agents or workers :
+      * `SPACE_PERSISTED_VAR_AGENT_MODE`: *optional* To force the agent mode.
+         (by default it is enable only with cli sapi)
+      * `SPACE_PERSISTED_VAR_SECURITY_ALGORITHM` (with `rsa` ou `dsa`).
+      * `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
+      * (optional) `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the private key.
+      * `SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
 * Web configuration
     * Doctrine ODM
         * `MONGODB_SERVER` : (string) mongodb DSN.
@@ -164,7 +172,11 @@ Environnements variables configuration
         * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
     * OCI images building :
-        * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default.
+        * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
+        * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
+        * `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default. *Optional*
+        * `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
+        * `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
         * `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
           This url will be prefixed by the account slug.
         * `SPACE_OCI_REGISTRY_TLS_SECRET` : (string) name of the secret storing TLS certificate in the kubernetes
@@ -183,14 +195,10 @@ Environnements variables configuration
           `3` by default. *Optional*
         * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
           `1` by default. *Optional*
-        * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
-          account
-          `space-client-` by default. *Optional*
-        * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
-        * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
-          (namespace, role, etc..).
-        * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
-          *Optional*
+        * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client 
+           account. `space-client-` by default. *Optional*
+        * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace dedicated 
+          to registry for each client account. `space-registry-` by default. *Optional*
         * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
           `nfs.csi.k8s.io` by default. *Optional*
         * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
@@ -201,24 +209,57 @@ Environnements variables configuration
           `lets-encrypt` by default. *Optional*
         * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
           account token creation. `5` by default. *Optional*
+      * Managed kubernetes cluster :
+        * One cluster (legacy):
+          * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
+          * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
+              Space dashboard. *Optional*
+          * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
+            (namespace, role, etc..).
+          * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
+            *Optional*
+          * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
+          * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
+                `kubernetes` by default. *Optional*
+        * Several clusters : 
+          * `SPACE_CLUSTER_CATALOG_JSON` : (json string).
+          * `SPACE_CLUSTER_CATALOG_FILE` : (php file returning an array).
+          * Dictionary's structure (`.` represent a subarray) :
+            * `master` : (string) Default URL of Kubernetes API server.
+            * `dashboard` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
+               Space dashboard. *Optional*
+            * `create_account.token`: (string) Service account's token dedicated to creation of new client account
+               (namespace, role, etc..).
+            * `create_account.ca_cert` : (string) Default CA for custom TLS certificate of the K8S API Service.
+                 *Optional*
+            * `name` : (string) name of the default Kubernetes cluster in the project's form.
+            * `type` : (string) type of cluster in the project's form.
+                  `kubernetes` by default. *Optional*
+            * `storage_provisioner` : (string) Default storage provisioner *Optional*
+            * `support_registry` : (bool) If the cluster can host private OCI registries *Optional*
+            * `use_hnc` : (bool) If the cluster use hierarchical namespace *Optional*
 
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a
           valid code. *Optional*
         * `SPACE_CODE_GENERATOR_SALT` : (string) salt used to compute the code with the account's name. *Optional*
+        * `SPACE_SUBSCRIPTION_DEFAULT_PLAN` : (string) *Optional* Defaut plan to apply when a new account is created
+        * Plan (to apply quota) *Optional*
+          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` : (json string).
+          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` : (php file returning an array).
+          * Dictionary's structure (`[].` represent a collection of subarray) :
+              * `id` : (string) Plan identifier.
+              * `name` : (string) Humain readable plan name
+              * `envsCountAllowed` : (int) count of managed clusters's namespace/env allowed for this plan
+              * `quotas[].category` : (string) `compute` or `memory` - Category of the quota 
+              * `quotas[].type` : (string) name of the quota
+              * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's `limit`)
+              * `quotas[].require` : (string) *Optional* Total of requires / requests allowed for an account
+              * `clusters`: (string[]) *Optional* List of clusters allowed with this plan (available later)
 
-    * Project creation
-        * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
-        * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
-          `kubernetes` by default. *Optional*
-        * `SPACE_KUBERNETES_CLUSTER_ENV` : (string) name of the default environment created with the project.
-          `prod` by default. *Optional*
     * Job create
         * `SPACE_NEW_JOB_WAITING_TIME` : (int) time in seconds to wait before redirect user to the job page. *Optional*
-
-    * Kubernetes
-        * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
-          Space dashboard. *Optional*
+        
 * Workers configuration :
     * Workers only (not builder) :
         * Doctrine ODM :
@@ -274,34 +315,16 @@ Environnements variables configuration
                     * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON` : (json string).
                     * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
 
-        * Hook :
-            * Composer :
-                * `SPACE_COMPOSER_PATH_JSON` : (json string) path to the composer executable. `$PATH/composer` by
-                  default
-                    * `SPACE_COMPOSER_PATH_FILE` : file alternative
-                * `SPACE_COMPOSER_TIMEOUT` : (int) max time allowed to install dependencies via Composer.
-                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
-            * Symfony Console :
-                * `SPACE_SFCONSOLE_PATH_JSON` : (json string) path to the symfony console executable. `bin/console` by
-                  default
-                    * `SPACE_SFCONSOLE_PATH_FILE` : file alternative
-                * `SPACE_SFCONSOLE_TIMEOUT` : (int) max time allowed to install dependencies via symfony console.
-                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
-            * Npm :
-                * `SPACE_NPM_PATH_JSON` : (json string) path to the npm executable. `$PATH/npm` by default
-                    * `SPACE_NPM_PATH_FILE` : file alternative
-                * `SPACE_NPM_TIMEOUT` : (int) max time allowed to install dependencies via Npm.
-                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
-            * Pip :
-                * `SPACE_PIP_PATH_JSON` : (json string) path to the pip executable. `$PATH/pip` by default
-                    * `SPACE_PIP_PATH_FILE` : file alternative
-                * `SPACE_PIP_TIMEOUT` : (int) max time allowed to install dependencies via Pip.
-                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
-            * Make :
-                * `SPACE_MAKE_PATH_JSON` : (json string) path to the make executable. `$PATH/make` by default
-                    * `SPACE_MAKE_PATH_FILE` : file alternative
-                * `SPACE_MAKE_TIMEOUT` : (int) max time allowed to install dependencies via Make.
-                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
+        * Hooks : To define hooks usable in Space (Composer, NPM, PIP, Make, etc..)
+          * `SPACE_HOOKS_COLLECTION_JSON` : (json string).
+          * `SPACE_HOOKS_COLLECTION_FILE` : (php file returning an array).
+          * Dictionary's structure (`.` represent a subarray) :
+            * `name` : (string) Default URL of Kubernetes API server.
+            * `type` : (string) "composer", "npm", "pip", "make", "symfony_console", or a class name implementing the
+                       `HookInterface`.
+            * `command` : (array of string or string) path to the composer executable. `$PATH` joker is usable.
+            * `timeout`: (int) max time allowed to install dependencies via Composer.
+                         Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*, 240s by default
 
         * OCI Image building :
             * `SPACE_IMG_BUILDER_CMD` : (string) name of the tool to use to create OCI/Docker image.

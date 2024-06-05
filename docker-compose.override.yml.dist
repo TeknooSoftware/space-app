@@ -1,4 +1,3 @@
-version: "3.7"
 services:
     mercure:
         environment:
@@ -27,7 +26,6 @@ services:
             - SPACE_JWT_ENABLE_IN_QUERY=0
             - SPACE_JWT_PASSPHRASE=ToChange!
             - SPACE_KUBERNETES_CA_VALUE=
-            - SPACE_KUBERNETES_CLUSTER_ENV=ToChange!
             - SPACE_KUBERNETES_CLUSTER_NAME=ToChange!
             - SPACE_KUBERNETES_CLUSTER_TYPE=ToChange!
             - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
@@ -37,7 +35,6 @@ services:
             - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
             - SPACE_OCI_REGISTRY_URL=.ToChange!
             - SPACE_SUPPORT_CONTACT=support@teknoo.space
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_new_job:
         environment:
             - APP_ENV=dev
@@ -50,6 +47,7 @@ services:
             - MONGODB_SERVER=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_job_done:
         environment:
             - APP_ENV=dev

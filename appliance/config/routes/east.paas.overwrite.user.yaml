@@ -1,0 +1,49 @@
+_teknoo_common_admin_user_list:
+    path: '/admin/users'
+    methods: ['GET', 'POST']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.list'
+        defaultOrderDirection: 'ASC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        template: '@@TeknooEastCommon/AdminUser/list.html.twig'
+        cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
+
+_teknoo_common_admin_user_edit:
+    path: '/admin/user/{id}/edit'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.edit'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        template: '@@TeknooEastCommon/AdminUser/edit.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
+
+_teknoo_common_admin_user_new:
+    path: '/admin/user/new'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.new'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\AdminSpaceUserType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
+        route: '_teknoo_common_admin_user_edit'
+        template: '@@TeknooEastCommon/AdminUser/new.html.twig'
+        userKey: 'constructorArguments'
+        userLoader: '@Teknoo\East\Common\Loader\UserLoader'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.east.common.admin.rendering.clean_html%"
+
+_teknoo_common_admin_user_delete:
+    path: '/admin/user/{id}/delete'
+    methods: ['GET']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        deleter: '@teknoo.space.deleting.space_user'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        route: '_teknoo_common_admin_user_list'

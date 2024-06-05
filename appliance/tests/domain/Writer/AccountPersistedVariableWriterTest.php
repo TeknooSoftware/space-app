@@ -31,6 +31,7 @@ use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Service\PersistedVariableEncryption;
 use Teknoo\Space\Writer\AccountPersistedVariableWriter;
 
 /**
@@ -40,6 +41,7 @@ use Teknoo\Space\Writer\AccountPersistedVariableWriter;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
+ * @covers \Teknoo\Space\Writer\PersistedVariableWriterTrait
  * @covers \Teknoo\Space\Writer\AccountPersistedVariableWriter
  */
 class AccountPersistedVariableWriterTest extends TestCase
@@ -48,9 +50,11 @@ class AccountPersistedVariableWriterTest extends TestCase
 
     private ManagerInterface|MockObject $manager;
 
+    private PersistedVariableEncryption|MockObject $persistedVariableEncryption;
+
     private DatesService|MockObject $datesService;
 
-    protected bool $prefereRealDateOnUpdate = false;
+    protected bool $preferRealDateOnUpdate = false;
 
     /**
      * {@inheritdoc}
@@ -60,13 +64,15 @@ class AccountPersistedVariableWriterTest extends TestCase
         parent::setUp();
 
         $this->manager = $this->createMock(ManagerInterface::class);
+        $this->persistedVariableEncryption = $this->createMock(PersistedVariableEncryption::class);
         $this->datesService = $this->createMock(DatesService::class);
-        $this->prefereRealDateOnUpdate = true;
+        $this->preferRealDateOnUpdate = true;
 
         $this->accountPersistedVariableWriter = new AccountPersistedVariableWriter(
             $this->manager,
+            $this->persistedVariableEncryption,
             $this->datesService,
-            $this->prefereRealDateOnUpdate,
+            $this->preferRealDateOnUpdate,
         );
     }
 

@@ -59,6 +59,7 @@ use Symfony\Component\Mailer\Test\Constraint\EmailCount;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
@@ -86,6 +87,7 @@ use Teknoo\East\Paas\Infrastructures\Image\Contracts\ProcessFactoryInterface;
 use Teknoo\East\Paas\Infrastructures\PhpSecLib\Configuration\Algorithm;
 use Teknoo\East\Paas\Job\History\SerialGenerator;
 use Teknoo\East\Paas\Object\Account as AccountOrigin;
+use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Environment;
@@ -96,23 +98,26 @@ use Teknoo\East\Paas\Object\Project as ProjectOrigin;
 use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Immutable\ImmutableTrait;
-use Teknoo\Kubernetes\HttpClient\Instantiator\Symfony;
 use Teknoo\Kubernetes\HttpClientDiscovery;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
-use Teknoo\Space\Object\Persisted\AccountCredential;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Object\Persisted\PersistedVariable;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
+use Teknoo\Space\Service\PersistedVariableEncryption;
 use Teknoo\Space\Tests\Behat\ODM\GridFSMemoryRepository;
 use Teknoo\Space\Tests\Behat\ODM\MemoryObjectManager;
 use Teknoo\Space\Tests\Behat\ODM\MemoryRepository;
+use Throwable;
 use Traversable;
 use Zenstruck\Messenger\Test\Transport\TestTransportRegistry;
 
@@ -126,6 +131,7 @@ use function current;
 use function end;
 use function explode;
 use function file_exists;
+use function gc_collect_cycles;
 use function get_parent_class;
 use function hash;
 use function in_array;
@@ -138,10 +144,14 @@ use function json_encode;
 use function key;
 use function mb_strtolower;
 use function method_exists;
+use function pcntl_alarm;
+use function preg_replace;
 use function random_int;
 use function spl_object_hash;
 use function str_contains;
 use function str_replace;
+use function str_starts_with;
+use function strtolower;
 use function substr;
 use function trim;
 use function uniqid;
@@ -170,12 +180,23 @@ class TestsContext implements Context
      */
     private array $objects = [];
 
+    /**
+     * @var array<string, ObjectInterface>
+     */
+    private array $removedObjects = [];
+
     private ?string $currentUrl = null;
 
     /**
      * @var array<string, mixed>
      */
     private array $workMemory = [];
+
+    private array $quotasAllowed = [];
+
+    private string $quotasMode = '';
+
+    private string $defaultsMode = '';
 
     private bool $hasBeenRedirected = false;
 
@@ -197,6 +218,8 @@ class TestsContext implements Context
 
     private array $manifests = [];
 
+    private array $deletedManifests = [];
+
     private ?string $jwtToken = null;
 
     private ?int $itemsPerPages = null;
@@ -205,9 +228,19 @@ class TestsContext implements Context
 
     private ?string $apiPendingJobUrl = null;
 
-    private string $privateKey = __DIR__ . '/../var/keys/private.pem';
+    private bool $clearJobMemory = false;
 
-    private string $publicKey = __DIR__ . '/../var/keys/public.pem';
+    private string $messagePrivateKey = __DIR__ . '/../var/keys/messages/private.pem';
+
+    private string $messagePublicKey = __DIR__ . '/../var/keys/messages/public.pem';
+
+    private string $varPrivateKey = __DIR__ . '/../var/keys/variables/private.pem';
+
+    private string $varPublicKey = __DIR__ . '/../var/keys/variables/public.pem';
+
+    private readonly string $defaultClusterName;
+
+    private readonly string $defaultClusterAddress;
 
     public function __construct(
         private readonly KernelInterface $kernel,
@@ -222,17 +255,15 @@ class TestsContext implements Context
         private readonly NormalizerInterface $normalizer,
         private readonly ?MessageLoggerListener $messageLoggerListener,
         private readonly string $appHostname,
-        private readonly string $defaultClusterName,
+        string $defaultClusterName,
         private readonly string $defaultClusterType,
-        private readonly string $defaultClusterAddress,
-        private readonly string $defaultClusterEnv,
+        string $defaultClusterAddress,
     ) {
+        $this->defaultClusterName = str_replace('Legacy ', '', $defaultClusterName);
+        $this->defaultClusterAddress = str_replace('legacy-', '', $defaultClusterAddress);
     }
 
-    /**
-     * @BeforeScenario
-     */
-    public function prepareScenario(): void
+    private function clear(): void
     {
         $this->request = null;
         $this->response = null;
@@ -240,10 +271,14 @@ class TestsContext implements Context
         $this->objectManager = null;
         $this->repositories = [];
         $this->objects = [];
+        $this->removedObjects = [];
         $this->cookies = [];
         $this->clientIp = '127.0.0.1';
         $this->currentUrl = null;
         $this->workMemory = [];
+        $this->quotasAllowed = [];
+        $this->quotasMode = '';
+        $this->defaultsMode = '';
         $this->hasBeenRedirected = false;
         $this->formName = null;
         $this->originalProjectName = null;
@@ -252,6 +287,7 @@ class TestsContext implements Context
         $this->useHnc = false;
         $this->hncSuffix = '';
         $this->manifests = [];
+        $this->deletedManifests = [];
         $this->projectPrefix = null;
         Query::$testsContext = $this;
         Query::$testsObjecttManager = null;
@@ -260,23 +296,60 @@ class TestsContext implements Context
         $this->itemsPerPages = null;
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->apiPendingJobUrl = null;
+        $this->clearJobMemory = false;
         $this->timeoutService->disable();
 
-        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM'])) {
-            unset($_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM']);
+        $envVarsNames = [
+            'TEKNOO_PAAS_SECURITY_ALGORITHM',
+            'TEKNOO_PAAS_SECURITY_PRIVATE_KEY',
+            'TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE',
+            'TEKNOO_PAAS_SECURITY_PUBLIC_KEY',
+            'SPACE_PERSISTED_VAR_SECURITY_ALGORITHM',
+            'SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY',
+            'SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE',
+            'SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY',
+            'SPACE_PERSISTED_VAR_AGENT_MODE',
+            'SPACE_HOOKS_COLLECTION_JSON',
+            'SPACE_HOOKS_COLLECTION_FILE',
+        ];
+
+        foreach ($envVarsNames as $name) {
+            if (!empty($_ENV[$name])) {
+                unset($_ENV[$name]);
+            }
         }
 
-        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY'])) {
-            unset($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY']);
+        if (!empty($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'])) {
+            $this->clearRouterCache();
+            unset($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN']);
         }
 
-        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE'])) {
-            unset($_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE']);
-        }
+        gc_collect_cycles();
+        pcntl_alarm(0);
+    }
 
-        if (!empty($_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'])) {
-            unset($_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY']);
-        }
+    /**
+     * @BeforeScenario
+     */
+    public function prepareScenario(): void
+    {
+        $this->clear();
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function cleanAfterScenario(): void
+    {
+        $this->clear();
+    }
+
+    private function clearRouterCache(): void
+    {
+        //Hack to reset router cache to update attribute from env value
+        // (not needed on dev or prod env, only in behat)
+        $rc = new \ReflectionClass(Router::class);
+        $rc->setStaticPropertyValue('cache', []);
     }
 
     /**
@@ -289,6 +362,11 @@ class TestsContext implements Context
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->timeoutService->disable();
         $this->cacheExpiredLinks->clear();
+
+        if (!empty($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'])) {
+            $this->clearRouterCache();
+            unset($_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN']);
+        }
     }
 
     private function setDateTime(DateTimeInterface $dateTime): void
@@ -318,8 +396,6 @@ class TestsContext implements Context
                 return ++$counter;
             }
         );
-
-        HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, Symfony::class);
     }
 
     /**
@@ -327,16 +403,39 @@ class TestsContext implements Context
      */
     public function encryptionCapacitiesBetweenServersAndAgents(): void
     {
-        if (!file_exists($this->privateKey) || !is_readable($this->privateKey)) {
-            $pk = RSA::createKey(1024);
+        if (!file_exists($this->messagePrivateKey) || !is_readable($this->messagePrivateKey)) {
+            $pk = RSA::createKey(2048);
 
-            file_put_contents($this->privateKey, $pk->toString('PKCS8'));
-            file_put_contents($this->publicKey, $pk->getPublicKey()->toString('PKCS8'));
+            file_put_contents($this->messagePrivateKey, $pk->toString('PKCS8'));
+            file_put_contents($this->messagePublicKey, $pk->getPublicKey()->toString('PKCS8'));
         }
 
         $_ENV['TEKNOO_PAAS_SECURITY_ALGORITHM'] = Algorithm::RSA->value;
-        $_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY'] = $this->privateKey;
-        $_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'] = $this->publicKey;
+        $_ENV['TEKNOO_PAAS_SECURITY_PRIVATE_KEY'] = $this->messagePrivateKey;
+        $_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'] = $this->messagePublicKey;
+    }
+
+    /**
+     * @Given encryption of persisted variables in the database
+     */
+    public function encryptionOfPersistedVariablesInTheDatabase(): void
+    {
+        if (!file_exists($this->varPrivateKey) || !is_readable($this->varPrivateKey)) {
+            $pk = RSA::createKey(2048);
+
+            file_put_contents($this->varPrivateKey, $pk->toString('PKCS8'));
+            file_put_contents($this->varPublicKey, $pk->getPublicKey()->toString('PKCS8'));
+        }
+
+        $_ENV['SPACE_PERSISTED_VAR_SECURITY_ALGORITHM'] = Algorithm::RSA->value;
+        $_ENV['SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY'] = $this->varPrivateKey;
+        $_ENV['SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY'] = $this->varPublicKey;
+        $_ENV['SPACE_PERSISTED_VAR_AGENT_MODE'] = false;
+    }
+
+    private function getEncryptAlgoForVar(): ?string
+    {
+        return $_ENV['SPACE_PERSISTED_VAR_SECURITY_ALGORITHM'] ?? null;
     }
 
     /**
@@ -362,6 +461,11 @@ class TestsContext implements Context
         }
 
         $this->manifests[$uri][] = $manifests;
+    }
+
+    public function setDeletedManifests(string $uri): void
+    {
+        $this->deletedManifests[$uri] = true;
     }
 
     public function findObjectById(string $className, mixed $id): ?object
@@ -514,7 +618,7 @@ class TestsContext implements Context
         return $final;
     }
 
-    public function listObjects(string $className): iterable
+    public function listObjects(string $className): array
     {
         return $this->objects[$className] ?? [];
     }
@@ -549,14 +653,11 @@ class TestsContext implements Context
 
     public function removeObject(object $object): void
     {
-        if (isset($this->objects[$object::class][$this->getObjectUniqueId($object)])) {
-            unset($this->objects[$object::class][$this->getObjectUniqueId($object)]);
+        $uniqId = $this->getObjectUniqueId($object);
+        if (isset($this->objects[$object::class][$uniqId])) {
+            $this->removedObjects[$object::class][$uniqId] = $this->objects[$object::class][$uniqId];
+            unset($this->objects[$object::class][$uniqId]);
         }
-    }
-
-    public function clearObjects(): void
-    {
-        $this->objects = [];
     }
 
     public function buildObjectManager(): ObjectManager
@@ -609,13 +710,25 @@ class TestsContext implements Context
         $this->buildRepository(Job::class);
         $this->buildRepository(Project::class);
 
-        $this->buildRepository(AccountCredential::class);
+        $this->buildRepository(AccountEnvironment::class);
+        $this->buildRepository(AccountRegistry::class);
         $this->buildRepository(AccountData::class);
         $this->buildRepository(AccountHistory::class);
         $this->buildRepository(AccountPersistedVariable::class);
-        $this->buildRepository(PersistedVariable::class);
+        $this->buildRepository(ProjectPersistedVariable::class);
         $this->buildRepository(ProjectMetadata::class);
         $this->buildRepository(UserData::class);
+    }
+
+    /**
+     * @Given a subscription plan :id is selected
+     */
+    public function aSubscriptionPlanIsSelected(string $id): void
+    {
+        $_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'] = $id;
+        $this->quotasMode = $id;
+
+        $this->clearRouterCache();
     }
 
     /**
@@ -794,7 +907,6 @@ class TestsContext implements Context
         $account->setId($this->generateId());
         $account->setName($accountName);
         $account->setNamespace($accountNamespace);
-        $account->setUseHierarchicalNamespaces($this->useHnc);
         $account->setPrefixNamespace('space-behat-');
 
         $this->persistAndRegister($account);
@@ -807,31 +919,71 @@ class TestsContext implements Context
             cityName: 'Caen',
             countryName: 'France',
             vatNumber: 'FR0102030405',
+            subscriptionPlan: 'test-1',
         );
         $accountData->setId($this->generateId());
 
         $this->persistAndRegister($accountData);
 
         $sac = mb_strtolower(str_replace(' ', '-', $accountName));
-        $accountCredentials = new AccountCredential(
+        $accountEnvironments = new AccountEnvironment(
             account: $account,
-            clusterName: 'Behat Test Cluster',
-            registryUrl: $sac . '.registry.demo.teknoo.space',
-            registryAccountName: $sac . '-registry',
-            registryConfigName: $sac . 'docker-config',
-            registryPassword: $sac . '-foobar',
-            serviceAccountName:  $sac . '-account',
-            roleName: $sac . '-role',
-            roleBindingName: $sac . '-role-binding',
+            clusterName: 'Demo Kube Cluster',
+            envName: 'dev',
+            namespace: 'space-client-' . $accountNamespace . '-dev',
+            serviceAccountName:  $sac . '-dev-account',
+            roleName: $sac . '-dev-role',
+            roleBindingName: $sac . '-dev-role-binding',
             caCertificate: "-----BEGIN CERTIFICATE-----FooBar",
             clientCertificate: "",
             clientKey: "",
             token: "aFakeToken",
+        );
+        $accountEnvironments->setId($this->generateId());
+
+        $this->persistAndRegister($accountEnvironments);
+        $accountEnvironments = new AccountEnvironment(
+            account: $account,
+            clusterName: 'Demo Kube Cluster',
+            envName: 'prod',
+            namespace: 'space-client-' . $accountNamespace . '-prod',
+            serviceAccountName:  $sac . '-prod-account',
+            roleName: $sac . '-prod-role',
+            roleBindingName: $sac . '-prod-role-binding',
+            caCertificate: "-----BEGIN CERTIFICATE-----FooBar",
+            clientCertificate: "",
+            clientKey: "",
+            token: "aFakeToken",
+        );
+        $accountEnvironments->setId($this->generateId());
+
+        $this->persistAndRegister($accountEnvironments);
+
+        $accountRegistry = new AccountRegistry(
+            account: $account,
+            registryNamespace: 'space-registry-' . $sac,
+            registryUrl: $sac . '.registry.demo.teknoo.space',
+            registryAccountName: $sac . '-registry',
+            registryConfigName: $sac . '-docker-config',
+            registryPassword: $sac . '-foobar',
             persistentVolumeClaimName: $sac . '-pvc',
         );
-        $accountCredentials->setId($this->generateId());
+        $accountRegistry->setId($this->generateId());
 
-        $this->persistAndRegister($accountCredentials);
+        $this->persistAndRegister($accountRegistry);
+    }
+
+    /**
+     * @Given quotas defined for this account
+     */
+    public function quotasDefinedForThisAccount()
+    {
+        $this->recall(Account::class)?->setQuotas(
+            $this->quotasAllowed = [
+                new AccountQuota('compute', 'cpu', '10'),
+                new AccountQuota('memory', 'memory', '1 Gi'),
+            ]
+        );
     }
 
     /**
@@ -990,19 +1142,19 @@ class TestsContext implements Context
         if (empty($fieldsList)) {
             if ('id' === $fieldName && 'x' === $value) {
                 Assert::assertNotEmpty(
-                    $value,
+                    $formValues[$fieldName] ?? null,
                     "Invalid value for key {$prefix}{$fieldName}"
                 );
             } elseif ('id' === $fieldName && 'x' !== $value) {
                 Assert::assertEquals(
-                    substr($formValues[$fieldName] ?? '', 0, 3),
                     $value,
+                    substr($formValues[$fieldName] ?? '', 0, 3),
                     "Invalid value for key {$prefix}{$fieldName}",
                 );
             } else {
                 Assert::assertEquals(
-                    $formValues[$fieldName] ?? null,
                     $value,
+                    $formValues[$fieldName] ?? null,
                     "Invalid value for key {$prefix}{$fieldName}",
                 );
             }
@@ -1084,26 +1236,18 @@ class TestsContext implements Context
     }
 
     /**
-     * @Then the account must have these persisted variables
+     * @Then the account keeps these persisted variables
      */
-    public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    public function theAccountKeepsThesePersistedVariables(TableNode $expectedVariables): void
     {
-        $this->checkIfResponseIsAFinal();
-
-        if (!$this->isApiCall) {
-            $crawler = $this->createCrawler();
-            $node = $crawler->filter('.space-form-success');
-            $nodeValue = trim((string)$node?->getNode(0)?->textContent);
-            Assert::assertEquals(
-                $this->translator->trans('teknoo.space.alert.data_saved'),
-                $nodeValue,
-            );
-        }
-
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
         $vars = $this->getRepository(AccountPersistedVariable::class)->findBy(['account' => $account]);
         Assert::assertCount(count($expectedVariables->getLines()) - 1, $vars);
+
+        $algo = $this->getEncryptAlgoForVar();
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
+        $service->setAgentMode(true);
 
         foreach ($expectedVariables as $expVar) {
             $var = array_shift($vars);
@@ -1134,16 +1278,56 @@ class TestsContext implements Context
                 (int) $var->isSecret(),
             );
 
-            Assert::assertEquals(
-                $expVar['value'],
-                $var->getValue(),
-            );
+            if (!empty($var->isSecret())) {
+                Assert::assertEquals(
+                    $algo,
+                    $var->getEncryptionAlgorithm()
+                );
+            } else {
+                Assert::assertEmpty(
+                    $var->getEncryptionAlgorithm()
+                );
+            }
+
+            if ($var->isSecret() && null !== $algo) {
+                $promise = new Promise(
+                    fn (AccountPersistedVariable $apv) => $apv,
+                    fn (Throwable $error) => throw $error,
+                );
+
+                $service->decrypt($var, $promise);
+
+                Assert::assertEquals(
+                    $expVar['value'],
+                    $res = $promise->fetchResult()?->getValue(),
+                );
+
+                Assert::assertNotEquals(
+                    $res,
+                    $var->getValue(),
+                );
+            } else {
+                Assert::assertEquals(
+                    $expVar['value'],
+                    $var->getValue(),
+                );
+            }
 
             Assert::assertEquals(
                 $expVar['environment'],
-                $var->getEnvironmentName(),
+                $var->getEnvName(),
             );
         }
+    }
+
+    /**
+     * @Then the account must have these persisted variables
+     */
+    public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    {
+        $this->checkIfResponseIsAFinal();
+
+        $this->theAccountKeepsThesePersistedVariables($expectedVariables);
     }
 
     /**
@@ -1162,22 +1346,54 @@ class TestsContext implements Context
     }
 
     /**
-     * @Given the account have these persisted variables:
+     * @Given the account has these persisted variables:
      */
-    public function theAccountHaveThesePersistedVariables(TableNode $variables): void
+    public function theAccountHasThesePersistedVariables(TableNode $variables): void
     {
         $account = $this->recall(Account::class);
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
+
         foreach ($variables as $var) {
+            $algo = null;
+            if (!empty($var['secret'])) {
+                $algo = $this->getEncryptAlgoForVar();
+            }
+
             $apv = new AccountPersistedVariable(
                 account: $account,
                 id: $var['id'],
                 name: $var['name'],
                 value: $var['value'],
-                environmentName: $var['environment'],
+                envName: $var['environment'],
                 secret: !empty($var['secret']),
+                encryptionAlgorithm: null,
+                needEncryption: !empty($algo),
             );
 
-            $this->persistObject($apv);
+            $promise = new Promise(
+                function (AccountPersistedVariable $eapv) use ($apv, $algo): void {
+                    if (!empty($algo)) {
+                        Assert::assertNotEquals(
+                            $apv->getValue(),
+                            $eapv->getValue(),
+                        );
+
+                        Assert::assertEquals(
+                            $algo,
+                            $eapv->getEncryptionAlgorithm(),
+                        );
+                    }
+
+                    $this->persistObject($eapv);
+                },
+                fn (Throwable $error) => throw $error,
+            );
+
+            if (empty($algo)) {
+                $promise->success($apv);
+            } else {
+                $service->encrypt(clone $apv, $promise);
+            }
         }
     }
 
@@ -1189,7 +1405,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'account_login',
+                route: 'space_account_login',
             ),
         );
 
@@ -1199,7 +1415,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'post',
             url: $this->getPathFromRoute(
-                route: 'account_check',
+                route: 'space_account_check',
             ),
             params: [
                 '_username' => $email,
@@ -1231,7 +1447,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('h6#welcome-message');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.text.welcome_back', ['user' => $fullName,]),
@@ -1259,7 +1475,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('p#2fa-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertNotEmpty($nodeValue);
     }
@@ -1296,13 +1512,13 @@ class TestsContext implements Context
     {
         $this->checkIfUserHasBeenRedirected();
         Assert::assertEquals(
-            $this->getPathFromRoute('account_login'),
+            $this->getPathFromRoute('space_account_login'),
             $this->currentUrl,
         );
 
         $crawler = $this->createCrawler();
         $node = $crawler->filter('#login-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertNotEmpty($nodeValue);
     }
@@ -1322,8 +1538,10 @@ class TestsContext implements Context
      */
     public function aStandardWebsiteProject(string $projectName): void
     {
-        /** @var AccountCredential $credential */
-        $credential = $this->recall(AccountCredential::class);
+        /** @var AccountEnvironment $credential */
+        $credential = $this->recall(AccountEnvironment::class);
+        /** @var AccountRegistry $registry */
+        $registry = $this->recall(AccountRegistry::class);
 
         $account = $this->recall(Account::class);
         $project = new Project($account);
@@ -1333,14 +1551,13 @@ class TestsContext implements Context
         $project->setPrefix($this->projectPrefix = '');
 
         $project->setImagesRegistry(
-            new ImageRegistry(
-                $credential->getRegistryUrl(),
-                new XRegistryAuth(
-                    $credential->getRegistryAccountName(),
-                    $credential->getRegistryPassword(),
-                    '',
-                    '',
-                    $credential->getRegistryUrl()
+            repository: new ImageRegistry(
+                apiUrl: $registry->getRegistryUrl(),
+                identity: new XRegistryAuth(
+                    username: $registry->getRegistryAccountName(),
+                    password: $registry->getRegistryPassword(),
+                    auth: $registry->getRegistryConfigName(),
+                    serverAddress: $registry->getRegistryUrl(),
                 )
             )
         );
@@ -1357,7 +1574,10 @@ class TestsContext implements Context
         $cluster->setName($this->defaultClusterName);
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->setEnvironment(new Environment($this->defaultClusterEnv));
+        $cluster->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $cluster->setEnvironment(new Environment('prod'));
+        $cluster->setLocked(true);
         $cluster->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),
@@ -1371,7 +1591,10 @@ class TestsContext implements Context
         $clusterDev->setName($this->defaultClusterName);
         $clusterDev->setType($this->defaultClusterType);
         $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
+        $clusterDev->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
         $clusterDev->setEnvironment(new Environment('dev'));
+        $clusterDev->setLocked(true);
         $clusterDev->setIdentity(
             new ClusterCredentials(
                 caCertificate: $credential->getCaCertificate(),
@@ -1480,8 +1703,10 @@ class TestsContext implements Context
      */
     public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix): void
     {
-        /** @var AccountCredential $credential */
-        $credential = $this->recall(AccountCredential::class);
+        /** @var AccountEnvironment $credential */
+        $credential = $this->recall(AccountEnvironment::class);
+        /** @var AccountRegistry $registry */
+        $registry = $this->recall(AccountRegistry::class);
 
         $account = $this->recall(Account::class);
         $project = new Project($account);
@@ -1491,14 +1716,13 @@ class TestsContext implements Context
         $project->setPrefix($this->projectPrefix = $prefix);
 
         $project->setImagesRegistry(
-            $imageRegistry = new ImageRegistry(
-                $credential->getRegistryUrl(),
-                new XRegistryAuth(
-                    $credential->getRegistryAccountName(),
-                    $credential->getRegistryPassword(),
-                    '',
-                    '',
-                    $credential->getRegistryUrl()
+            repository: $imageRegistry = new ImageRegistry(
+                apiUrl: $registry->getRegistryUrl(),
+                identity: new XRegistryAuth(
+                    username: $registry->getRegistryAccountName(),
+                    password: $registry->getRegistryPassword(),
+                    auth: $registry->getRegistryConfigName(),
+                    serverAddress: $registry->getRegistryUrl(),
                 )
             )
         );
@@ -1519,7 +1743,10 @@ class TestsContext implements Context
         $cluster->setName($this->defaultClusterName);
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->setEnvironment($env = new Environment($this->defaultClusterEnv));
+        $cluster->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $cluster->setEnvironment($env = new Environment('prod'));
+        $cluster->setLocked(true);
         $this->register($env);
         $cluster->setIdentity(
             new ClusterCredentials(
@@ -1534,6 +1761,8 @@ class TestsContext implements Context
         $clusterDev->setName($this->defaultClusterName);
         $clusterDev->setType($this->defaultClusterType);
         $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
+        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
+        $clusterDev->useHierarchicalNamespaces($this->useHnc);
         $clusterDev->setEnvironment(new Environment('dev'));
         $clusterDev->setIdentity(
             new ClusterCredentials(
@@ -1573,18 +1802,50 @@ class TestsContext implements Context
     public function andSomeProjectVariables(int $count): void
     {
         $project = $this->recall(Project::class);
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
 
         for ($i = 1; $i <= $count; $i++) {
-            $pVar = new PersistedVariable(
+            $isSecret = ($i % 3) === 0;
+            $algo = null;
+            if ($isSecret) {
+                $algo = $this->getEncryptAlgoForVar();
+            }
+
+            $pVar = new ProjectPersistedVariable(
                 project: $project,
                 id: null,
                 name: 'var ' . $i,
                 value: 'value ' . $i,
-                environmentName: 'prod',
-                secret: ($i % 3) === 0
+                envName: 'prod',
+                secret: $isSecret,
+                encryptionAlgorithm: null,
+                needEncryption: !empty($algo),
             );
 
-            $this->persistAndRegister($pVar);
+            $promise = new Promise(
+                function (ProjectPersistedVariable $epVar) use ($pVar, $algo): void {
+                    if (!empty($algo)) {
+                        Assert::assertNotEquals(
+                            $pVar->getValue(),
+                            $epVar->getValue(),
+                        );
+
+                        Assert::assertEquals(
+                            $algo,
+                            $epVar->getEncryptionAlgorithm(),
+                        );
+                    }
+
+                    $this->persistAndRegister($epVar);
+                },
+                fn (Throwable $error) => throw $error,
+            );
+
+            if (empty($algo)) {
+                $promise->success($pVar);
+            } else {
+                $service->encrypt(clone $pVar, $promise);
+            }
         }
     }
 
@@ -1662,7 +1923,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
@@ -1702,7 +1963,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
@@ -1759,7 +2020,7 @@ class TestsContext implements Context
     /**
      * @When It goes to delete the project :projectName of :accountName
      */
-    public function itGoesToDeleteTheProjectOf(string $projectName, string $accountName)
+    public function itGoesToDeleteTheProjectOf(string $projectName, string $accountName): void
     {
         $this->checkIfResponseIsAFinal();
 
@@ -1813,28 +2074,45 @@ class TestsContext implements Context
     }
 
     /**
-     * @Then the project must have these persisted variables
+     * @Then there are no project persisted variables
      */
-    public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    public function thereAreNoProjectPersistedVariables(): void
     {
-        $this->checkIfResponseIsAFinal();
+        Assert::assertEmpty($this->listObjects(ProjectPersistedVariable::class));
+    }
 
+    /**
+     * @Then data have been saved
+     */
+    public function dataHaveBeenSaved(): void
+    {
         $crawler = $this->createCrawler();
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
+
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
         );
+    }
 
-        $vars = $this->listObjects(PersistedVariable::class);
+    /**
+     * @Then the project keeps these persisted variables
+     */
+    public function theProjectKeepsTheseePersistedVariables(TableNode $expectedVariables): void
+    {
+        $vars = $this->listObjects(ProjectPersistedVariable::class);
         Assert::assertCount(count($expectedVariables->getLines()) - 1, $vars);
         $project = $this->recall(Project::class);
 
+        $algo = $this->getEncryptAlgoForVar();
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
+        $service->setAgentMode(true);
+
         foreach ($expectedVariables as $expVar) {
             $var = array_shift($vars);
-            /** @var PersistedVariable $var */
-            Assert::assertInstanceOf(PersistedVariable::class, $var);
+            /** @var ProjectPersistedVariable $var */
+            Assert::assertInstanceOf(ProjectPersistedVariable::class, $var);
 
             if ('x' === $expVar['id']) {
                 Assert::assertNotEmpty($var->getId());
@@ -1860,35 +2138,109 @@ class TestsContext implements Context
                 (int) $var->isSecret(),
             );
 
-            Assert::assertEquals(
-                $expVar['value'],
-                $var->getValue(),
-            );
+            if (!empty($var->isSecret())) {
+                Assert::assertEquals(
+                    $algo,
+                    $var->getEncryptionAlgorithm()
+                );
+            } else {
+                Assert::assertEmpty(
+                    $var->getEncryptionAlgorithm()
+                );
+            }
+
+            if ($var->isSecret() && null !== $algo) {
+                $promise = new Promise(
+                    fn (ProjectPersistedVariable $ppv) => $ppv,
+                    fn (Throwable $error) => throw $error,
+                );
+
+                $service->decrypt($var, $promise);
+
+                Assert::assertEquals(
+                    $expVar['value'],
+                    $res = $promise->fetchResult()?->getValue(),
+                );
+
+                Assert::assertNotEquals(
+                    $res,
+                    $var->getValue(),
+                );
+            } else {
+                Assert::assertEquals(
+                    $expVar['value'],
+                    $var->getValue(),
+                );
+            }
 
             Assert::assertEquals(
                 $expVar['environment'],
-                $var->getEnvironmentName(),
+                $var->getEnvName(),
             );
         }
+
+        $service->setAgentMode(false);
     }
 
     /**
-     * @Given the project have these persisted variables:
+     * @Then the project must have these persisted variables
      */
-    public function theProjectHaveThesePersistedVariables(TableNode $variables): void
+    public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
+    {
+        $this->checkIfResponseIsAFinal();
+
+        $this->theProjectKeepsTheseePersistedVariables($expectedVariables);
+    }
+
+    /**
+     * @Given the project has these persisted variables:
+     */
+    public function theProjectHasThesePersistedVariables(TableNode $variables): void
     {
         $project = $this->recall(Project::class);
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
+
         foreach ($variables as $var) {
-            $apv = new PersistedVariable(
+            $algo = null;
+            if (!empty($var['secret'])) {
+                $algo = $this->getEncryptAlgoForVar();
+            }
+
+            $apv = new ProjectPersistedVariable(
                 project: $project,
                 id: $var['id'],
                 name: $var['name'],
                 value: $var['value'],
-                environmentName: $var['environment'],
+                envName: $var['environment'],
                 secret: !empty($var['secret']),
+                encryptionAlgorithm: null,
+                needEncryption: !empty($algo),
             );
 
-            $this->persistObject($apv);
+            $promise = new Promise(
+                function (ProjectPersistedVariable $eapv) use ($apv, $algo): void {
+                    if (!empty($algo)) {
+                        Assert::assertNotEquals(
+                            $apv->getValue(),
+                            $eapv->getValue(),
+                        );
+
+                        Assert::assertEquals(
+                            $algo,
+                            $eapv->getEncryptionAlgorithm(),
+                        );
+                    }
+
+                    $this->persistObject($eapv);
+                },
+                fn (Throwable $error) => throw $error,
+            );
+
+            if (empty($algo)) {
+                $promise->success($apv);
+            } else {
+                $service->encrypt(clone $apv, $promise);
+            }
         }
     }
 
@@ -1897,7 +2249,74 @@ class TestsContext implements Context
      */
     public function theProjectHasACompletePaasFile(): void
     {
-        $this->paasFile = __DIR__ . '/Project/Default/paas.yaml';
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.yaml';
+        $this->quotasMode = '';
+        $this->defaultsMode = '';
+    }
+
+    /**
+     * @Given the project has a complete paas file with defaults
+     */
+    public function theProjectHasACompletePaasFileWithDefaults(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.yaml';
+        $this->quotasMode = '';
+        $this->defaultsMode = 'generic';
+    }
+
+    /**
+     * @Given the project has a complete paas file with defaults for the cluster
+     */
+    public function theProjectHasACompletePaasFileWithDefaultsForCluster(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.with-clusters.yaml';
+        $this->quotasMode = '';
+        $this->defaultsMode = 'cluster';
+    }
+
+    /**
+     * @Given a project with a paas file using extends
+     */
+    public function aProjectWithAPaasFileUsingExtends(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
+        $this->quotasMode = '';
+    }
+
+    /**
+     * @Given the project has a complete paas file without resources
+     */
+    public function aProjectWithAPaasFileWithoutResource()
+    {
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.yaml';
+        $this->quotasMode = 'automatic';
+    }
+
+    /**
+     * @Given the project has a complete paas file with partial resources
+     */
+    public function aProjectWithAPaasFileWithPartialResources()
+    {
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.with-partial-resources.yaml';
+        $this->quotasMode = 'partial';
+    }
+
+    /**
+     * @Given the project has a complete paas file with resources
+     */
+    public function aProjectWithAPaasFileWithResources()
+    {
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.with-resources.yaml';
+        $this->quotasMode = 'full';
+    }
+
+    /**
+     * @Given the project has a complete paas file with limited quota
+     */
+    public function aProjectWithAPaasFileWithLimitedQuota()
+    {
+        $this->paasFile = __DIR__ . '/Project/Basic/paas.with-quotas-exceeded.yaml';
+        $this->quotasMode = 'limited';
     }
 
     /**
@@ -1946,7 +2365,7 @@ class TestsContext implements Context
         );
 
         $node = $this->createCrawler()->filter('.jwt-token-value');
-        $this->jwtToken = trim((string) $node?->getNode(0)?->textContent);
+        $this->jwtToken = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertNotEmpty($this->jwtToken);
     }
@@ -1961,7 +2380,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_job_list',
+                route: 'space_api_v1_job_list',
                 parameters: [
                     'projectId' => $project->getId(),
                 ],
@@ -1983,8 +2402,8 @@ class TestsContext implements Context
             method: 'GET',
             url: $this->getPathFromRoute(
                 route: match ($role) {
-                    'admin' => 'space_api_admin_project_list',
-                    default => 'space_api_project_list',
+                    'admin' => 'space_api_v1_admin_project_list',
+                    default => 'space_api_v1_project_list',
                 }
             ),
             headers: [
@@ -2002,7 +2421,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_list',
+                route: 'space_api_v1_admin_user_list',
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -2019,7 +2438,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_list',
+                route: 'space_api_v1_admin_account_list',
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -2039,7 +2458,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_job_get',
+                route: 'space_api_v1_job_get',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
@@ -2057,13 +2476,13 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToGetTheLastProjectAsAdmin(): void
     {
-        $this->theApiIsCalledToGetTheLastProject('space_api_admin_project_edit');
+        $this->theApiIsCalledToGetTheLastProject('space_api_v1_admin_project_edit');
     }
 
     /**
      * @When the API is called to get the last project
      */
-    public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_project_edit'): void
+    public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_v1_project_edit'): void
     {
         $project = $this->recall(Project::class);
 
@@ -2092,7 +2511,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_edit',
+                route: 'space_api_v1_admin_user_edit',
                 parameters: [
                     'id' => $user->getId(),
                 ],
@@ -2114,7 +2533,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit',
+                route: 'space_api_v1_admin_account_edit',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2131,7 +2550,7 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToGetTheLastProjectsVariables(): void
     {
-        $this->theApiIsCalledToGetTheLastProject('space_api_project_edit_variables');
+        $this->theApiIsCalledToGetTheLastProject('space_api_v1_project_edit_variables');
     }
 
     /**
@@ -2152,7 +2571,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'space_api_job_get',
+                route: 'space_api_v1_job_get',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
@@ -2168,15 +2587,22 @@ class TestsContext implements Context
     /**
      * @When the API is called to delete the last project
      * @When the API is called to delete the last project with :method method
+     * @When the API is called to delete the last project as :role
+     * @When the API is called to delete the last project with :method method as :role
      */
-    public function theApiIsCalledToDeleteTheLastProject(string $method = 'GET'): void
+    public function theApiIsCalledToDeleteTheLastProject(string $method = 'POST', ?string $role = null): void
     {
+        $route = match ($role) {
+            'admin' => 'space_api_v1_admin_project_delete',
+            default => 'space_api_v1_project_delete',
+        };
+
         $project = $this->recall(Project::class);
 
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_project_delete',
+                route: $route,
                 parameters: [
                     'id' => $project->getId(),
                 ],
@@ -2192,14 +2618,14 @@ class TestsContext implements Context
      * @When the API is called to delete the last user
      * @When the API is called to delete the last user with :method method
      */
-    public function theApiIsCalledToDeleteTheLastUser(string $method = 'GET'): void
+    public function theApiIsCalledToDeleteTheLastUser(string $method = 'POST'): void
     {
         $user = $this->recall(User::class);
 
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_delete',
+                route: 'space_api_v1_admin_user_delete',
                 parameters: [
                     'id' => $user->getId(),
                 ],
@@ -2215,14 +2641,14 @@ class TestsContext implements Context
      * @When the API is called to delete the last account
      * @When the API is called to delete the last account with :method method
      */
-    public function theApiIsCalledToDeleteTheLastAccount(string $method = 'GET'): void
+    public function theApiIsCalledToDeleteTheLastAccount(string $method = 'POST'): void
     {
         $account = $this->recall(Account::class);
 
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_delete',
+                route: 'space_api_v1_admin_account_delete',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2238,7 +2664,7 @@ class TestsContext implements Context
      * @When the API is called to delete the last job
      * @When the API is called to delete the last job with :method method
      */
-    public function theApiIsCalledToDeleteTheLastJob(string $method = 'GET'): void
+    public function theApiIsCalledToDeleteTheLastJob(string $method = 'POST'): void
     {
         $project = $this->recall(Project::class);
         $job = $this->recall(Job::class);
@@ -2246,7 +2672,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: 'space_api_job_delete',
+                route: 'space_api_v1_job_delete',
                 parameters: [
                     'projectId' => $project->getId(),
                     'id' => $job->getId(),
@@ -2267,11 +2693,37 @@ class TestsContext implements Context
         $this->theApiIsCalledToCreateANewJob($bodyFields, 'json');
     }
 
-    private function encodeAPIBody(TableNode $bodyFields, string $format = 'default'): string|array
+    private function autoGetId(string $field, string $value): string
+    {
+        if (str_contains($field, 'environmentResumes')) {
+            $parts = explode(':', trim($value, '<>'));
+            $account = $this->recall(Account::class);
+
+            foreach ($this->listObjects(AccountEnvironment::class) as $object) {
+                if (
+                    $object->getAccount() === $account
+                    && strtolower($object->getEnvName()) === strtolower($parts[1] ?? '')
+                ) {
+                    return $object->getId();
+                }
+            }
+        }
+
+        throw new RuntimeException('Auto unsupported');
+    }
+
+    private function encodeAPIBody(?TableNode $bodyFields, string $format = 'default'): string|array
     {
         $final = [];
-        foreach ($bodyFields as $field) {
-            $this->setRequestParameters($final, $field['field'], $field['value']);
+        if (null !== $bodyFields) {
+            foreach ($bodyFields as $field) {
+                $value = match (true) {
+                    str_starts_with($field['value'], '<auto') => $this->autoGetId($field['field'], $field['value']),
+                    default => $field['value'],
+                };
+
+                $this->setRequestParameters($final, $field['field'], $value);
+            }
         }
 
         return match ($format) {
@@ -2280,7 +2732,7 @@ class TestsContext implements Context
         };
     }
 
-    private function submitValuesThroughAPI(string $url, TableNode $bodyFields, string $format = 'default'): void
+    private function submitValuesThroughAPI(string $url, ?TableNode $bodyFields, string $format = 'default'): void
     {
         $final = $this->encodeAPIBody($bodyFields, $format);
 
@@ -2311,7 +2763,7 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToEditAProjectsVariablesWithAJsonBody(TableNode $bodyFields): void
     {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_project_edit_variables');
+        $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_v1_project_edit_variables');
     }
 
     /**
@@ -2319,7 +2771,7 @@ class TestsContext implements Context
      */
     public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields): void
     {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_project_edit_variables');
+        $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_v1_project_edit_variables');
     }
 
     /**
@@ -2341,7 +2793,7 @@ class TestsContext implements Context
         $this->theApiIsCalledToEditAProject(
             bodyFields: $bodyFields,
             format: $format,
-            routeName: 'space_api_admin_project_edit',
+            routeName: 'space_api_v1_admin_project_edit',
         );
     }
 
@@ -2351,7 +2803,7 @@ class TestsContext implements Context
     public function theApiIsCalledToEditAProject(
         TableNode $bodyFields,
         string $format = 'default',
-        string $routeName = 'space_api_project_edit',
+        string $routeName = 'space_api_v1_project_edit',
     ): void {
         $project = $this->recall(Project::class);
 
@@ -2380,14 +2832,14 @@ class TestsContext implements Context
     ): void {
         if ('admin' === $role) {
             $url = $this->getPathFromRoute(
-                route: 'space_api_admin_project_new',
+                route: 'space_api_v1_admin_project_new',
                 parameters: [
                     'accountId' => $this->recall(Account::class)->getId(),
                 ]
             );
         } else {
             $url = $this->getPathFromRoute(
-                route: 'space_api_project_new',
+                route: 'space_api_v1_project_new',
             );
         }
 
@@ -2408,7 +2860,7 @@ class TestsContext implements Context
     ): void {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_new',
+                route: 'space_api_v1_admin_user_new',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2425,7 +2877,7 @@ class TestsContext implements Context
     ): void {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_new',
+                route: 'space_api_v1_admin_account_new',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2445,7 +2897,7 @@ class TestsContext implements Context
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_user_edit',
+                route: 'space_api_v1_admin_user_edit',
                 parameters: [
                     'id' => $user->getId(),
                 ]
@@ -2468,7 +2920,7 @@ class TestsContext implements Context
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit',
+                route: 'space_api_v1_admin_account_edit',
                 parameters: [
                     'id' => $account->getId(),
                 ]
@@ -2479,13 +2931,75 @@ class TestsContext implements Context
     }
 
     /**
+     * @When the API is called to reinstall the account registry
+     */
+    public function theApiIsCalledToReinstallTheAccountRegistry(): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_admin_account_reinstall_registry',
+                parameters: [
+                    'id' => $account->getId(),
+                ]
+            ),
+            bodyFields: null,
+            format: 'json',
+        );
+    }
+
+    /**
+     * @When the API is called to refresh quota of account's environment
+     */
+    public function theApiIsCalledToRefreshQuotaOfAccountsEnvironment(): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_admin_account_refresh_quota',
+                parameters: [
+                    'id' => $account->getId(),
+                ]
+            ),
+            bodyFields: null,
+            format: 'json',
+        );
+    }
+
+    /**
+     * @When the API is called to reinstall the account's environment :envName on :clusterName
+     */
+    public function theApiIsCalledToReinstallTheAccountsEnvironmentOn(string $envName, string $clusterName): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_admin_account_environment_reinstall',
+                parameters: [
+                    'id' => $account->getId(),
+                    'envName' => $envName,
+                    'clusterName' => $clusterName,
+                ]
+            ),
+            bodyFields: null,
+            format: 'json',
+        );
+    }
+
+    /**
      * @When the API is called to get user's settings
      */
     public function theApiIsCalledToGetUsersSettings(): void
     {
         $this->executeRequest(
             method: 'get',
-            url: $this->getPathFromRoute('space_api_my_settings'),
+            url: $this->getPathFromRoute('space_api_v1_my_settings'),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -2500,7 +3014,7 @@ class TestsContext implements Context
     {
         $this->executeRequest(
             method: 'get',
-            url: $this->getPathFromRoute('space_api_account_settings'),
+            url: $this->getPathFromRoute('space_api_v1_account_settings'),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -2516,7 +3030,7 @@ class TestsContext implements Context
     {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_my_settings',
+                route: 'space_api_v1_my_settings',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2531,7 +3045,7 @@ class TestsContext implements Context
     {
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_account_settings',
+                route: 'space_api_v1_account_settings',
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -2551,14 +3065,14 @@ class TestsContext implements Context
     ): void {
         if (null === $role) {
             $url = $this->getPathFromRoute(
-                route: 'space_api_account_edit_variables',
+                route: 'space_api_v1_account_edit_variables',
             );
         } else {
             $account = $this->recall(Account::class);
             Assert::assertNotEmpty($account);
 
             $url = $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit_variables',
+                route: 'space_api_v1_admin_account_edit_variables',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2580,14 +3094,14 @@ class TestsContext implements Context
     {
         if (null === $role) {
             $url = $this->getPathFromRoute(
-                route: 'space_api_account_edit_variables',
+                route: 'space_api_v1_account_edit_variables',
             );
         } else {
             $account = $this->recall(Account::class);
             Assert::assertNotEmpty($account);
 
             $url = $this->getPathFromRoute(
-                route: 'space_api_admin_account_edit_variables',
+                route: 'space_api_v1_admin_account_edit_variables',
                 parameters: [
                     'id' => $account->getId(),
                 ],
@@ -2665,7 +3179,7 @@ class TestsContext implements Context
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_job_new',
+                route: 'space_api_v1_job_new',
                 parameters: [
                     'projectId' => $project->getId(),
                 ]
@@ -2673,6 +3187,27 @@ class TestsContext implements Context
             bodyFields: $bodyFields,
             format: $format,
         );
+    }
+
+    /**
+     * @When the API is called to restart a the job:
+     */
+    public function theApiIsCalledToRestartATheJob(TableNode $bodyFields, string $format = 'default'): void
+    {
+        $project = $this->recall(Project::class);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_job_new',
+                parameters: [
+                    'projectId' => $project->getId(),
+                ]
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+
+        $this->clearJobMemory = true;
     }
 
     /**
@@ -2735,6 +3270,104 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then no object has been deleted
+     */
+    public function noObjectHasBeenDeleted()
+    {
+        Assert::assertEmpty($this->removedObjects);
+    }
+
+    /**
+     * @Then the old account environment account :namespace must be deleted
+     */
+    public function theOldAccountEnvironmentAccountMustBeDeleted(string $namespace): void
+    {
+        Assert::assertNotEmpty($this->removedObjects[AccountEnvironment::class]);
+        Assert::assertCount(1, $this->removedObjects[AccountEnvironment::class]);
+
+        /** @var AccountEnvironment $accountEnv */
+        foreach ($this->removedObjects[AccountEnvironment::class] as $accountEnv) {
+            Assert::assertEquals(
+                $namespace,
+                $accountEnv->getNamespace(),
+            );
+        }
+    }
+
+    /**
+     * @Then the old account registry object has been deleted and remplaced
+     */
+    public function theOldAccountRegistryObjectHasBeenDeletedAndRemplaced(): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        Assert::assertNotEmpty($this->removedObjects[AccountRegistry::class]);
+        Assert::assertCount(1, $this->removedObjects[AccountRegistry::class]);
+
+        foreach ($this->removedObjects[AccountRegistry::class] as $oldAR) {
+            break;
+        }
+
+        /** @var AccountRegistry $ar */
+        foreach ($this->listObjects(AccountRegistry::class) as $ar) {
+            if ($ar->getAccount() === $account) {
+                Assert::assertEquals(
+                    $oldAR->getRegistryNamespace(),
+                    $ar->getRegistryNamespace(),
+                );
+
+                return;
+            }
+        }
+
+        Assert::fail('Missing AccountRegistry');
+    }
+
+    /**
+     * @Then the old account environment :namespace object has been deleted and remplaced
+     */
+    public function theOldAccountEnvironmentObjectHasBeenDeletedAndRemplaced(string $namespace): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        Assert::assertNotEmpty($this->removedObjects[AccountEnvironment::class]);
+        Assert::assertCount(1, $this->removedObjects[AccountEnvironment::class]);
+
+        foreach ($this->removedObjects[AccountEnvironment::class] as $oldAE) {
+            break;
+        }
+
+        Assert::assertEquals(
+            $namespace,
+            $oldAE->getNamespace(),
+        );
+
+        /** @var AccountEnvironment $ae */
+        foreach ($this->listObjects(AccountEnvironment::class) as $ae) {
+            if ($ae->getAccount() === $account && $oldAE->getEnvName() === $ae->getEnvName()) {
+                Assert::assertEquals(
+                    $oldAE->getNamespace(),
+                    $ae->getNamespace(),
+                );
+
+                return;
+            }
+        }
+
+        Assert::fail('Missing AccountEnvironment');
+    }
+
+    /**
+     * @Then with the subscription plan :id
+     */
+    public function withTheSubscriptionPlan(string $id): void
+    {
+        $this->quotasMode = $id;
+    }
+
+    /**
      * @Then the project is deleted
      */
     public function theProjectIsDeleted(): void
@@ -2787,6 +3420,31 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then the serialized success result
+     */
+    public function theSerializedSuccessResult()
+    {
+        Assert::assertEquals(200, $this->response?->getStatusCode());
+
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertEquals(
+            [
+                'meta' => [
+                   'id' => $account->getId(),
+                   '@class' => SpaceAccount::class,
+                ],
+                'success' => true
+            ],
+            $unserialized,
+        );
+    }
+
+    /**
      * @When an :arg1 error
      */
     public function anError(int $code): void
@@ -2817,6 +3475,17 @@ class TestsContext implements Context
         Assert::assertNotEmpty($unserialized['data']['job_queue_id']);
 
         $this->apiPendingJobUrl = $unserialized['meta']['url'];
+
+        Assert::assertEquals(
+            $this->urlGenerator->generate(
+                'space_api_v1_job_new_pending',
+                [
+                    'projectId' => $this->recall(Project::class)?->getId(),
+                    'newJobId' => $unserialized['data']['job_queue_id'],
+                ]
+            ),
+            $unserialized['meta']['url'],
+        );
     }
 
     /**
@@ -3071,7 +3740,7 @@ class TestsContext implements Context
 
         $project = $this->recall(Project::class);
         $project ??= $this->recall(ProjectOrigin::class);
-        $projectsVars = $this->getRepository(PersistedVariable::class)->findBy(['project' => $project]);
+        $projectsVars = $this->getRepository(ProjectPersistedVariable::class)->findBy(['project' => $project]);
 
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -3099,20 +3768,46 @@ class TestsContext implements Context
             $unserialized,
         );
 
+        $algo = $this->getEncryptAlgoForVar();
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
+        $service->setAgentMode(true);
+
         if (null !== $name) {
             $found = false;
             foreach ($projectsVars as $var) {
                 if ($name === $var->getName()) {
                     $found = true;
-                    Assert::assertEquals(
-                        $value,
-                        $var->getValue()
-                    );
+
+                    if ($var->isSecret() && null !== $algo) {
+                        $promise = new Promise(
+                            fn (ProjectPersistedVariable $ppv) => $ppv,
+                            fn (Throwable $error) => throw $error,
+                        );
+
+                        $service->decrypt($var, $promise);
+
+                        Assert::assertEquals(
+                            $value,
+                            $res = $promise->fetchResult()?->getValue(),
+                        );
+
+                        Assert::assertNotEquals(
+                            $res,
+                            $var->getValue(),
+                        );
+                    } else {
+                        Assert::assertEquals(
+                            $value,
+                            $var->getValue(),
+                        );
+                    }
                 }
             }
 
             Assert::assertTrue($found);
         }
+
+        $service->setAgentMode(false);
     }
 
     /**
@@ -3460,14 +4155,6 @@ class TestsContext implements Context
     }
 
     /**
-     * @Given a project with a paas file using extends
-     */
-    public function aProjectWithAPaasFileUsingExtends(): void
-    {
-        $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
-    }
-
-    /**
      * @Given simulate a too long image building
      */
     public function simulateATooLongImageBuilding(): void
@@ -3551,6 +4238,25 @@ class TestsContext implements Context
     }
 
     /**
+     * @Then it has an error about a quota exceeded
+     */
+    public function itHasAnErrorAboutQuotaExceeded(): void
+    {
+        $jobs = $this->listObjects(JobOrigin::class);
+        Assert::assertNotEmpty($jobs);
+
+        /** @var JobOrigin $job */
+        $job = current($jobs);
+        Assert::assertInstanceOf(JobOrigin::class, $job);
+
+        Assert::assertTrue($job->getHistory()->isFinal());
+        Assert::assertStringContainsString(
+            'Error, remaining available capacity for',
+            $job->getHistory()->getExtra()['result'][1] ?? []
+        );
+    }
+
+    /**
      * @Then job must be successful finished
      */
     public function jobMustBeSuccessfulFinished(): void
@@ -3569,7 +4275,6 @@ class TestsContext implements Context
         );
     }
 
-
     /**
      * @Then some Kubernetes manifests have been created and executed
      */
@@ -3582,26 +4287,42 @@ class TestsContext implements Context
         $job = current($jobs);
         Assert::assertInstanceOf(JobOrigin::class, $job);
 
-        $json = stripslashes(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        $json = json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
         $id = $job->getId();
         if (strlen($id) < 9) {
             return;
         }
 
-        $jobId = substr(string: $id, offset: 0, length: 4) . '-' . substr(string: $id, offset: -4);
-
         $expected = (new ManifestGenerator())->fullDeployment(
             projectPrefix: $this->projectPrefix,
-            jobId: $jobId,
+            jobId: strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '', (string) $job->getProject()))),
             hncSuffix: $this->hncSuffix,
             useHnc: $this->useHnc,
+            quotaMode: $this->quotasMode,
+            defaultsMods: $this->defaultsMode,
         );
 
         Assert::assertEquals(
             $expected,
             $json,
         );
+    }
+
+    /**
+     * @Then no Kubernetes manifests must not be created
+     */
+    public function noKubernetesManifestsMustNotBeCreated(): void
+    {
+        Assert::assertEmpty($this->manifests);
+    }
+
+    /**
+     * @Then no Kubernetes manifests must not be deleted
+     */
+    public function noKubernetesManifestsMustNotBeDeleted(): void
+    {
+        Assert::assertEmpty($this->deletedManifests);
     }
 
     /**
@@ -3654,7 +4375,7 @@ class TestsContext implements Context
         $node = $crawler->filter('.space-form-error');
 
         Assert::assertNotEmpty(
-            trim((string) $node?->getNode(0)?->textContent),
+            trim((string) $node->getNode(0)?->textContent),
         );
     }
 
@@ -3666,7 +4387,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $this->translator->trans('The password fields must match.'),
@@ -3682,7 +4403,7 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-error');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.error.code_not_accepted'),
@@ -3719,11 +4440,122 @@ class TestsContext implements Context
     }
 
     /**
-     * @Then a Kubernetes namespace :namespace is created and populated
+     * @Then a Kubernetes namespace dedicated to registry for :namespace is applied and populated
      */
-    public function aKubernetesNamespaceIsCreatedAndPopulated(string $namespace): void
+    public function aKubernetesNamespaceDedicatedToRegistryIsAppliedAndPopulated(string $namespace): void
     {
-        $expected = trim((new ManifestGenerator())->namespaceCreation($namespace));
+        $expected = trim(
+            (new ManifestGenerator())->registryCreation(
+                $namespace,
+            )
+        );
+
+        Assert::assertNotEmpty(
+            $this->manifests["namespaces/space-registry-$namespace/secrets"],
+        );
+
+        foreach ($this->manifests["namespaces/space-registry-$namespace/secrets"] as &$secret) {
+            if (!empty($secret['data']['htpasswd'])) {
+                $secret['data']['htpasswd'] = '===';
+            }
+        }
+
+        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        Assert::assertEquals(
+            $expected,
+            $json,
+        );
+    }
+
+    /**
+     * @Then a Kubernetes manifests dedicated to quota for the last account has been applied
+     */
+    public function aKubernetesManifestsDedicatedToQuotaForTheLastAccountHasBeenApplied(): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $prNr = new Promise(fn ($s): string => $s);
+        $prQt = new Promise(fn ($q): array => $q);
+        $account->visit(
+            [
+                'namespace' => $prNr,
+                'quotas' => $prQt,
+            ]
+        );
+
+        $namespaces = [];
+
+        /** @var AccountEnvironment $ae */
+        foreach ($this->listObjects(AccountEnvironment::class) as $ae) {
+            if ($ae->getAccount() === $account) {
+                $namespaces[] = $ae->getNamespace();
+            }
+        }
+
+        $expected = trim(
+            (new ManifestGenerator())->quotaRefresh(
+                $prNr->fetchResult(''),
+                $namespaces,
+                $prQt->fetchResult([]),
+            )
+        );
+
+        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        Assert::assertEquals(
+            $expected,
+            $json,
+        );
+    }
+
+    /**
+     * @Then a Kubernetes namespaces :namespaces must be deleted
+     */
+    public function aKubernetesNamespacesMustBeDeleted(string $namespaces): void
+    {
+        $nsList = explode(',', $namespaces);
+        Assert::assertEquals(
+            $nsList,
+            array_keys($this->deletedManifests),
+        );
+    }
+
+    /**
+     * @Then a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated
+     */
+    public function aKubernetesNamespaceDedicatedToClusterIsAppliedAndPopulated(string $namespace): void
+    {
+        $account = $this->recall(Account::class);
+        $prNr = new Promise(fn ($s): string => $s);
+        $prQt = new Promise(fn ($q): array => $q);
+        $account->visit(
+            [
+                'namespace' => $prNr,
+                'quotas' => $prQt,
+            ]
+        );
+
+        $registry = $this->recall(AccountRegistry::class);
+
+        $expected = trim(
+            (new ManifestGenerator())->namespaceCreation(
+                $prNr->fetchResult(),
+                $namespace,
+                $prQt->fetchResult([]),
+                $registry,
+            )
+        );
+
+        Assert::assertNotEmpty(
+            $this->manifests["namespaces/space-client-$namespace/secrets"],
+        );
+
+        foreach ($this->manifests["namespaces/space-client-$namespace/secrets"] as &$secret) {
+            if (!empty($secret['data']['.dockerconfigjson'])) {
+                $secret['data']['.dockerconfigjson'] = '===';
+            }
+        }
+
         $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         Assert::assertEquals(
             $expected,
@@ -3763,14 +4595,14 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
         );
 
         $node = $crawler->filter('small#space-account-name');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $accountName,
@@ -3812,14 +4644,14 @@ class TestsContext implements Context
         $crawler = $this->createCrawler();
 
         $node = $crawler->filter('.space-form-success');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
         Assert::assertEquals(
             $this->translator->trans('teknoo.space.alert.data_saved'),
             $nodeValue,
         );
 
         $node = $crawler->filter('span#space-user-name');
-        $nodeValue = trim((string) $node?->getNode(0)?->textContent);
+        $nodeValue = trim((string) $node->getNode(0)?->textContent);
 
         Assert::assertEquals(
             $fullName,
@@ -3835,7 +4667,7 @@ class TestsContext implements Context
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: 'account_logout',
+                route: 'space_account_logout',
             ),
             clearCookies: true,
         );
@@ -3875,6 +4707,14 @@ class TestsContext implements Context
      */
     public function spaceExecutesTheJob(): void
     {
+        if ($this->clearJobMemory) {
+            unset($this->workMemory[JobOrigin::class]);
+            unset($this->workMemory[Job::class]);
+        }
+
+        $service = $this->sfContainer->get(PersistedVariableEncryption::class);
+        $service->setAgentMode(true);
+
         $newJobTransport = $this->testTransport->get('new_job');
         $executeJobTransport = $this->testTransport->get('execute_job');
         $historySentTransport = $this->testTransport->get('history_sent');
@@ -3884,6 +4724,8 @@ class TestsContext implements Context
         $executeJobTransport->process();
         $historySentTransport->process();
         $jobDoneTransport->process();
+
+        $service->setAgentMode(false);
     }
 
     /**
@@ -3913,7 +4755,7 @@ class TestsContext implements Context
             'containers' => [
                 'php-run' => [
                     'image' => 'registry.teknoo.software/php-run',
-                    'version' => 7.4,
+                    'version' => '7.4',
                     'listen' => [8080],
                     'volumes' => [
                         'extra' => [
@@ -4089,7 +4931,7 @@ class TestsContext implements Context
     {
         $hook = new HookMock();
 
-        $hooks = ['composer' => clone $hook, 'hook-id' => clone $hook];
+        $hooks = ['composer-8.2' => clone $hook, 'hook-id-BAR' => clone $hook];
         $collection = new class ($hooks) implements HooksCollectionInterface {
             private iterable $hooks;
 
@@ -4154,6 +4996,7 @@ class TestsContext implements Context
             }
         );
 
+        /** @noinspection PhpParamsInspection */
         $this->sfContainer->get(DiContainer::class)->set(
             'teknoo.east.paas.img_builder.build.platforms',
             'space',
@@ -4165,38 +5008,50 @@ class TestsContext implements Context
      */
     public function withoutAnyHooksPathDefined(): void
     {
-        $diCi = $this->sfContainer->get(DiContainer::class);
-        $diCi->set(
-            'teknoo.east.paas.composer.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.symfony_console.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.npm.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.pip.path',
-            null
-        );
-        $diCi->set(
-            'teknoo.east.paas.make.path',
-            null
-        );
+        $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode([]);
     }
 
     /**
-     * @Given a composer path set in the DI
+     * @Given composer in several version as hook
      */
-    public function aComposerPathSetInTheDi(): void
+    public function composerInSeveralVersionAsHook(): void
     {
-        $diCi = $this->sfContainer->get(DiContainer::class);
-        $diCi->set(
-            'teknoo.east.paas.composer.path',
-            new ArrayObject(['composer'])
+        $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode(
+            [
+                [
+                    'name' => 'composer',
+                    'type' => 'composer',
+                    'command' => [
+                        'php',
+                        '-f',
+                        '/usr/local/bin/composer',
+                        '--',
+                    ],
+                    'timeout' => 240,
+                ],
+                [
+                    'name' => 'composer-8.1',
+                    'type' => 'composer',
+                    'command' => [
+                        'php8.1',
+                        '-f',
+                        '/usr/local/bin/composer',
+                        '--',
+                    ],
+                    'timeout' => 240,
+                ],
+                [
+                    'name' => 'composer-8.2',
+                    'type' => 'composer',
+                    'command' => [
+                        'php8.2',
+                        '-f',
+                        '/usr/local/bin/composer',
+                        '--',
+                    ],
+                    'timeout' => 240,
+                ],
+            ]
         );
     }
 
@@ -4215,6 +5070,8 @@ class TestsContext implements Context
     {
         $hooks = iterator_to_array($this->hookCollection);
         Assert::assertArrayHasKey($name, $hooks);
+        Assert::assertArrayHasKey($name . '-8.1', $hooks);
+        Assert::assertArrayHasKey($name . '-8.2', $hooks);
     }
 
     /**
