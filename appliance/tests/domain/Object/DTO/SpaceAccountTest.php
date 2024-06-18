@@ -70,7 +70,7 @@ class SpaceAccountTest extends TestCase
     public function testGetId(): void
     {
         $this->account
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getId')
             ->willReturn('foo');
 
@@ -83,7 +83,7 @@ class SpaceAccountTest extends TestCase
     public function testToString(): void
     {
         $this->account
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('__toString')
             ->willReturn('foo');
 

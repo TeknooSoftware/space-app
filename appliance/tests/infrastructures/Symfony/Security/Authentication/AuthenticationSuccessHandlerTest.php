@@ -55,7 +55,7 @@ class AuthenticationSuccessHandlerTest extends TestCase
         parent::setUp();
 
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->urlGenerator->expects(self::any())
+        $this->urlGenerator->expects($this->any())
             ->method('generate')
             ->willReturn('/foo');
 

@@ -73,7 +73,7 @@ class SendEmailTest extends TestCase
     public function testInvoke(): void
     {
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())
+        $response->expects($this->any())
             ->method('withHeader')
             ->willReturnSelf();
 

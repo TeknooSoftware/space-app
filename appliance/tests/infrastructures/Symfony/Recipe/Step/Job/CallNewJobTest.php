@@ -80,7 +80,7 @@ class CallNewJobTest extends TestCase
         );
 
         $this->messageBus
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('dispatch')
             ->willReturn(new Envelope($newJob));
 

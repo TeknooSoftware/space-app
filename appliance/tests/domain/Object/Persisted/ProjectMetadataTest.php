@@ -102,7 +102,7 @@ class ProjectMetadataTest extends TestCase
     public function testExport(): void
     {
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects(self::once())
+        $bag->expects($this->once())
             ->method('set')
             ->with('projectUrl', 42);
 

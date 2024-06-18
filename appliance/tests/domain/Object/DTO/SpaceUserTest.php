@@ -63,7 +63,7 @@ class SpaceUserTest extends TestCase
     public function testGetId(): void
     {
         $this->user
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getId')
             ->willReturn('foo');
 
@@ -76,7 +76,7 @@ class SpaceUserTest extends TestCase
     public function testToString(): void
     {
         $this->user
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('__toString')
             ->willReturn('foo');
 

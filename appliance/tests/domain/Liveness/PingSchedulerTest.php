@@ -75,12 +75,12 @@ class PingSchedulerTest extends TestCase
     public function testTimerAction(): void
     {
         $this->pingService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('ping')
             ->willReturnSelf();
 
         $this->timerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('register')
             ->willReturnSelf();
 
@@ -93,12 +93,12 @@ class PingSchedulerTest extends TestCase
     public function testEnable(): void
     {
         $this->pingService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('register')
             ->willReturnSelf();
 
         $this->timerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('register')
             ->willReturnSelf();
 
@@ -111,12 +111,12 @@ class PingSchedulerTest extends TestCase
     public function testDisable(): void
     {
         $this->pingService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('unregister')
             ->willReturnSelf();
 
         $this->timerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('unregister')
             ->willReturnSelf();
 

@@ -58,7 +58,7 @@ class UserConverterTest extends TestCase
         $this->userConverter = new UserConverter();
 
         $this->owner = $this->createMock(GenericResourceOwner::class);
-        $this->owner->expects(self::any())->method('toArray')->willReturn([
+        $this->owner->expects($this->any())->method('toArray')->willReturn([
             'email' => 'foo@bar',
             'lastname' => 'foo',
             'firstname' => 'bar',

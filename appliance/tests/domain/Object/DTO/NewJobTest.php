@@ -78,10 +78,10 @@ class NewJobTest extends TestCase
 
     public function testExport(): void
     {
-        $this->variables[0]->expects(self::once())
+        $this->variables[0]->expects($this->once())
             ->method('export')
             ->willReturnSelf();
-        $this->variables[1]->expects(self::once())
+        $this->variables[1]->expects($this->once())
             ->method('export')
             ->willReturnSelf();
 

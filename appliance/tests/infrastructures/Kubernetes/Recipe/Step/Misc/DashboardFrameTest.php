@@ -99,32 +99,32 @@ class DashboardFrameTest extends TestCase
     public function testInvoke(): void
     {
         $sRequest = $this->createMock(ServerRequestInterface::class);
-        $sRequest->expects(self::any())->method('getMethod')->willReturn('GET');
+        $sRequest->expects($this->any())->method('getMethod')->willReturn('GET');
 
         $finalResponse = $this->createMock(ResponseInterface::class);
-        $finalResponse->expects(self::any())->method('withBody')->willReturnSelf();
+        $finalResponse->expects($this->any())->method('withBody')->willReturnSelf();
         $this->responseFactory
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('createResponse')
             ->willReturn($finalResponse);
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())->method('getStatusCode')->willReturn(200);
-        $response->expects(self::any())->method('getReasonPhrase')->willReturn('foo');
-        $response->expects(self::any())->method('getBody')->willReturn(
+        $response->expects($this->any())->method('getStatusCode')->willReturn(200);
+        $response->expects($this->any())->method('getReasonPhrase')->willReturn('foo');
+        $response->expects($this->any())->method('getBody')->willReturn(
             $this->createMock(StreamInterface::class)
         );
 
         $this->httpMethodsClient
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('send')
             ->willReturn($response);
 
         $wallet = $this->createMock(AccountWallet::class);
-        $wallet->expects(self::any())
+        $wallet->expects($this->any())
             ->method('has')
             ->willReturn(true);
-        $wallet->expects(self::any())
+        $wallet->expects($this->any())
             ->method('get')
             ->willReturn($this->createMock(AccountEnvironment::class));
 

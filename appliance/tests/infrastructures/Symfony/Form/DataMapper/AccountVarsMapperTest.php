@@ -87,7 +87,7 @@ class AccountVarsMapperTest extends TestCase
         ];
 
         $form = $this->createMock(FormInterface::class);
-        $form->expects(self::any())
+        $form->expects($this->any())
             ->method('getData')
             ->willReturn(
                 [

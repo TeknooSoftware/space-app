@@ -67,7 +67,7 @@ class SpaceProjectTest extends TestCase
     public function testGetId(): void
     {
         $this->project
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getId')
             ->willReturn('foo');
 
@@ -80,7 +80,7 @@ class SpaceProjectTest extends TestCase
     public function testGetAccount(): void
     {
         $this->project
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getAccount')
             ->willReturn($this->createMock(Account::class));
 
@@ -93,7 +93,7 @@ class SpaceProjectTest extends TestCase
     public function testToString(): void
     {
         $this->project
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('__toString')
             ->willReturn('foo');
 

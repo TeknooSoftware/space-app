@@ -65,11 +65,11 @@ class SetRedirectClientAtEndTest extends TestCase
     public function testInvoke(): void
     {
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())
+        $response->expects($this->any())
             ->method('withHeader')
             ->willReturnSelf();
 
-        $this->responseFactory->expects(self::any())
+        $this->responseFactory->expects($this->any())
             ->method('createResponse')
             ->willReturn($response);
 

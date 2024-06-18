@@ -53,9 +53,9 @@ class ContactTest extends TestCase
         parent::setUp();
 
         $user = $this->createMock(User::class);
-        $user->expects(self::any())->method('getFirstName')->willReturn('foo1');
-        $user->expects(self::any())->method('getLastName')->willReturn('bar1');
-        $user->expects(self::any())->method('getEmail')->willReturn('foo1@bar');
+        $user->expects($this->any())->method('getFirstName')->willReturn('foo1');
+        $user->expects($this->any())->method('getLastName')->willReturn('bar1');
+        $user->expects($this->any())->method('getEmail')->willReturn('foo1@bar');
 
         $this->contact1 = new Contact(null, 'foo', 'foo@bar', 'sfoo', 'mbar');
         $this->contact2 = new Contact(new SpaceUser($user), 'foo', 'foo@bar', 'sfoo', 'mbar');

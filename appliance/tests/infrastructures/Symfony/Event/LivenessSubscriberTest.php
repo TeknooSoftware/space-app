@@ -67,7 +67,7 @@ class LivenessSubscriberTest extends TestCase
     public function testConfigurePing(): void
     {
         $this->pingScheduler
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('enable')
             ->willReturnSelf();
 

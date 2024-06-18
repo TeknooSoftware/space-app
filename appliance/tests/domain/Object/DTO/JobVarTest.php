@@ -113,7 +113,7 @@ class JobVarTest extends TestCase
         );
 
         $this->persistedVar
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getId')
             ->willReturn('24');
         self::assertEquals('24', $this->jobVar->getId());

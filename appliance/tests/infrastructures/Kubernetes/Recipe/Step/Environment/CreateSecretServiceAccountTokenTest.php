@@ -68,7 +68,7 @@ class CreateSecretServiceAccountTokenTest extends TestCase
 
         $this->client = $this->createMock(Client::class);
         $this->client
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('__call')
             ->willReturnCallback(
                 fn ($name) => match ($name) {

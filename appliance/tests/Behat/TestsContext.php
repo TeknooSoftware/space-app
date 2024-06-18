@@ -4961,6 +4961,7 @@ class TestsContext implements Context
         $mock = $generator->testDouble(
             type: Process::class,
             mockObject: true,
+            markAsMockObject: false,
             callOriginalConstructor: false,
             callOriginalClone: false,
             callOriginalMethods: false,

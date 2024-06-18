@@ -72,16 +72,16 @@ class LoginUserTest extends TestCase
     public function testInvoke(): void
     {
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())
+        $response->expects($this->any())
             ->method('withHeader')
             ->willReturnSelf();
 
-        $this->responseFactory->expects(self::any())
+        $this->responseFactory->expects($this->any())
             ->method('createResponse')
             ->willReturn($response);
 
         $user = $this->createMock(User::class);
-        $user->expects(self::any())
+        $user->expects($this->any())
             ->method('getAuthData')
             ->willReturn([
                 $this->createMock(StoredPassword::class),

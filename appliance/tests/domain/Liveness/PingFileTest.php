@@ -65,7 +65,7 @@ class PingFileTest extends TestCase
 
     public function testInvoke(): void
     {
-        $this->datesService->expects(self::any())
+        $this->datesService->expects($this->any())
             ->method('passMeTheDate')
             ->willReturnCallback(
                 function (callable $callback) {

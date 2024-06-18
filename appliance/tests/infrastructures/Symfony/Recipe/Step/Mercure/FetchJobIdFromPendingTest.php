@@ -78,7 +78,7 @@ class FetchJobIdFromPendingTest extends TestCase
         );
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())
+        $response->expects($this->any())
             ->method('getInfo')
             ->willReturnCallback(
                 fn ($key) => match ($key) {
@@ -90,11 +90,11 @@ class FetchJobIdFromPendingTest extends TestCase
                 }
             );
 
-        $httpClient->expects(self::any())
+        $httpClient->expects($this->any())
             ->method('request')
             ->willReturn($response);
 
-        $httpClient->expects(self::any())
+        $httpClient->expects($this->any())
             ->method('stream')
             ->willReturnCallback(
                 function () use ($response) {

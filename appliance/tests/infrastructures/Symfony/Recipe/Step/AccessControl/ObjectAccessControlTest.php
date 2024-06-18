@@ -73,7 +73,7 @@ class ObjectAccessControlTest extends TestCase
     public function testInvoke(): void
     {
         $this->authorizationChecker
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('isGranted')
             ->willReturn(true);
 
