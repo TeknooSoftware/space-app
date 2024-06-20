@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Cookbook;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -39,6 +40,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccount
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
+use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
@@ -55,9 +57,9 @@ use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRefreshQuota
- * @covers \Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait
  */
+#[CoversClass(PrepareAccountTrait::class)]
+#[CoversClass(AccountRefreshQuota::class)]
 class AccountRefreshQuotaTest extends TestCase
 {
     private AccountRefreshQuota $accountRefreshQuota;

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
@@ -37,8 +38,8 @@ use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall
  */
+#[CoversClass(PrepareInstall::class)]
 class PrepareInstallTest extends TestCase
 {
     private PrepareInstall $prepareInstall;

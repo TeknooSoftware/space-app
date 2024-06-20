@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Doctrine\Form\UserData;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,8 +40,8 @@ use Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType
  */
+#[CoversClass(UserDataType::class)]
 class UserDataTypeTest extends TestCase
 {
     private UserDataType $userDataType;

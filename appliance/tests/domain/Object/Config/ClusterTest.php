@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\Config;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
@@ -36,8 +37,8 @@ use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\Config\Cluster
  */
+#[CoversClass(ClusterConfig::class)]
 class ClusterTest extends TestCase
 {
     private ClusterConfig $cluster;

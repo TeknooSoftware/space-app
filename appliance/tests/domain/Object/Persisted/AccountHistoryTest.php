@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -40,8 +41,8 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\Persisted\AccountHistory
  */
+#[CoversClass(AccountHistory::class)]
 class AccountHistoryTest extends TestCase
 {
     private AccountHistory $accountHistory;

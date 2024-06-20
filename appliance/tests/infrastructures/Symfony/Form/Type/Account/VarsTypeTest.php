@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Account;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -38,8 +39,8 @@ use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType
  */
+#[CoversClass(VarsType::class)]
 class VarsTypeTest extends TestCase
 {
     private VarsType $varsType;

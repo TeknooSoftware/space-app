@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Loader;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountHistoryRepositoryInterface;
@@ -38,8 +39,8 @@ use Teknoo\Space\Loader\AccountHistoryLoader;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Loader\AccountHistoryLoader
  */
+#[CoversClass(AccountHistoryLoader::class)]
 class AccountHistoryLoaderTest extends TestCase
 {
     private AccountHistoryLoader $accountHistoryLoader;

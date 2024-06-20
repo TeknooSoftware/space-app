@@ -25,7 +25,9 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension\MFARoutesFinder;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Exception\MissingRouteException;
 use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Operation;
 
 /**
@@ -35,8 +37,8 @@ use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Operation;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Exception\MissingRouteException
  */
+#[CoversClass(MissingRouteException::class)]
 class OperationTest extends TestCase
 {
     public function testConstructor(): void

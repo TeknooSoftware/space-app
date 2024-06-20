@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\Search;
 
@@ -35,8 +36,8 @@ use Teknoo\Space\Object\DTO\Search;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\Search
  */
+#[CoversClass(Search::class)]
 class SearchTest extends TestCase
 {
     private Search $search;

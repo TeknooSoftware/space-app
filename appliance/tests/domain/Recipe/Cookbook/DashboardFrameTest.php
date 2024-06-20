@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Cookbook;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Recipe\Step\RenderError;
@@ -43,8 +44,8 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Cookbook\DashboardFrame
  */
+#[CoversClass(DashboardFrame::class)]
 class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Query\User;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
@@ -38,8 +39,8 @@ use Teknoo\Space\Query\User\SearchQuery;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Query\User\SearchQuery
  */
+#[CoversClass(SearchQuery::class)]
 class SearchQueryTest extends TestCase
 {
     private SearchQuery $searchQuery;

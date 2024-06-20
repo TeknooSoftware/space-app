@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Cookbook;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -37,6 +38,7 @@ use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Cookbook\AccountEditSettings;
+use Teknoo\Space\Recipe\Cookbook\Traits\EditOwnsSettingsTrait;
 
 /**
  * Class AccountEditSettingsTest.
@@ -46,9 +48,9 @@ use Teknoo\Space\Recipe\Cookbook\AccountEditSettings;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Cookbook\AccountEditSettings
- * @covers \Teknoo\Space\Recipe\Cookbook\Traits\EditOwnsSettingsTrait
  */
+#[CoversClass(AccountEditSettings::class)]
+#[CoversClass(EditOwnsSettingsTrait::class)]
 class AccountEditSettingsTest extends TestCase
 {
     private AccountEditSettings $accountEditSettings;

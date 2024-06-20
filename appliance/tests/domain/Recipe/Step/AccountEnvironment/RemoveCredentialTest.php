@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -38,8 +39,8 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment
  */
+#[CoversClass(RemoveEnvironment::class)]
 class RemoveCredentialTest extends TestCase
 {
     private RemoveEnvironment $removeCredentials;

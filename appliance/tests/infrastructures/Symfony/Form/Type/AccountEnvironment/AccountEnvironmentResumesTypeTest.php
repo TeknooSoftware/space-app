@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\AccountEnvironment;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -39,8 +40,8 @@ use Teknoo\Space\Object\Config\SubscriptionPlan;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnvironmentResumesType
  */
+#[CoversClass(AccountEnvironmentResumesType::class)]
 class AccountEnvironmentResumesTypeTest extends TestCase
 {
     private AccountEnvironmentResumesType $accountEnvironmentResumesType;

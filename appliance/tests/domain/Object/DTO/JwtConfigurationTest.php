@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use DateTime;
 use DateTimeInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\JWTConfiguration;
 
@@ -37,8 +38,8 @@ use Teknoo\Space\Object\DTO\JWTConfiguration;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\JWTConfiguration
  */
+#[CoversClass(JWTConfiguration::class)]
 class JwtConfigurationTest extends TestCase
 {
     private JWTConfiguration $jWTConfiguration;

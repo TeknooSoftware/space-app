@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Cookbook;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -51,8 +52,8 @@ use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountEnvironmentInstall
  */
+#[CoversClass(AccountEnvironmentInstall::class)]
 class AccountEnvironmentInstallTest extends TestCase
 {
     private AccountEnvironmentInstall $accountInstall;

@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Liveness;
 
 use DateTime;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -41,8 +42,8 @@ use function tempnam;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Liveness\PingFile
  */
+#[CoversClass(PingFile::class)]
 class PingFileTest extends TestCase
 {
     private PingFile $pingFile;

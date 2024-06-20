@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Client;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -40,8 +41,8 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtE
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd
  */
+#[CoversClass(SetRedirectClientAtEnd::class)]
 class SetRedirectClientAtEndTest extends TestCase
 {
     private SetRedirectClientAtEnd $setRedirectClientAtEnd;

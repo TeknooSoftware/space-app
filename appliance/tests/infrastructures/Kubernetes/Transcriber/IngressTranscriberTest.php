@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Transcriber;
 
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\Ingress;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\IngressPath;
@@ -43,8 +44,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber
  */
+#[CoversClass(IngressTranscriber::class)]
 class IngressTranscriberTest extends TestCase
 {
     public function buildTranscriber(): IngressTranscriber
