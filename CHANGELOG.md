@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC2] - 2024-06-24
+- Use East PaaS 3.4.2
+- Update to PHPUnit 11
+- Update to last laravel collections library
+- Update to phpseclib/phpseclib 3.0.39
+- Fixing deprecations
+
 ## [1.0.0-RC1] - 2024-06-04
 ### Release Candidate
 - Fix mapping in Doctrine ODM
