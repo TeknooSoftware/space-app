@@ -102,7 +102,10 @@ class FetchJobIdFromPendingTest extends TestCase
                     $generator = function () use ($response): \Generator {
                         yield $response => new FirstChunk();
                         yield $response => new ServerSentEvent(
-                            ':' . PHP_EOL . 'id: urn:uuid:3212d4b5-f4b8-4322-b5a4-5c49160c3283' . PHP_EOL . 'data: {"foo":"bar"}' . PHP_EOL . PHP_EOL
+                            ':' . PHP_EOL
+                                . 'id: urn:uuid:3212d4b5-f4b8-4322-b5a4-5c49160c3283' . PHP_EOL
+                                . 'data: {"foo":"bar"}' . PHP_EOL
+                                . PHP_EOL
                         );
                         yield $response => new LastChunk();
                     };
