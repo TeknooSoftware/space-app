@@ -4741,7 +4741,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.4.0",
+            "version": "v7.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -4784,22 +4784,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.4.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.5.0"
             },
             "time": "2023-12-03T16:24:13+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.4.0",
+            "version": "v7.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "12f876afc43a8f98fe52453a4ffa6eff795c3440"
+                "reference": "930ce60a39a1d7634ecc580188620e263808f92e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/12f876afc43a8f98fe52453a4ffa6eff795c3440",
-                "reference": "12f876afc43a8f98fe52453a4ffa6eff795c3440",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/930ce60a39a1d7634ecc580188620e263808f92e",
+                "reference": "930ce60a39a1d7634ecc580188620e263808f92e",
                 "shasum": ""
             },
             "require": {
@@ -4851,13 +4851,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.4.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.5.0"
             },
-            "time": "2024-06-18T17:25:30+00:00"
+            "time": "2024-07-03T17:22:36+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v7.4.0",
+            "version": "v7.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
@@ -4901,13 +4901,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.4.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.5.0"
             },
             "time": "2024-06-18T17:29:00+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.4.0",
+            "version": "v7.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
@@ -4951,7 +4951,7 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.4.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.5.0"
             },
             "time": "2024-06-18T17:29:00+00:00"
         },
