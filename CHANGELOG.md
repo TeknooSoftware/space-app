@@ -1,6 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC3] - 2024-07-22
+### Release Candidate
+- Require last version of Symfony 6.4 or 7.1
+- Require scheb/2fa libraries 7.5
+
 ## [1.0.0-RC2] - 2024-06-24
+### Release Candidate
 - Use East PaaS 3.4.2
 - Update to PHPUnit 11
 - Update to last laravel collections library
