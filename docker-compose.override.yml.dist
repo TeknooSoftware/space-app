@@ -1,4 +1,8 @@
 services:
+    db:
+        build:
+            args:
+                MONGO_VERSION: 7
     mercure:
         environment:
             - MERCURE_PUBLISHER_JWT_KEY=ToChange!
