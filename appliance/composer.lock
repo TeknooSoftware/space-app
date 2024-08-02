@@ -6396,16 +6396,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v2.4.5",
+            "version": "v2.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "b0a405f40614c9f584b489d54f91091817b0e26e"
+                "reference": "4dc11919791f81d087a12db2ab4c7e044431ef6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/b0a405f40614c9f584b489d54f91091817b0e26e",
-                "reference": "b0a405f40614c9f584b489d54f91091817b0e26e",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/4dc11919791f81d087a12db2ab4c7e044431ef6b",
+                "reference": "4dc11919791f81d087a12db2ab4c7e044431ef6b",
                 "shasum": ""
             },
             "require": {
@@ -6441,7 +6441,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v2.4.5"
+                "source": "https://github.com/symfony/flex/tree/v2.4.6"
             },
             "funding": [
                 {
@@ -6457,7 +6457,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-02T08:16:47+00:00"
+            "time": "2024-04-27T10:22:22+00:00"
         },
         {
             "name": "symfony/form",
@@ -13376,12 +13376,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ee27abe60d541524cca97592ac68119cab33afce"
+                "reference": "8be1d90cfd51bfaf8a119e8d02fd699e7e20833e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ee27abe60d541524cca97592ac68119cab33afce",
-                "reference": "ee27abe60d541524cca97592ac68119cab33afce",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/8be1d90cfd51bfaf8a119e8d02fd699e7e20833e",
+                "reference": "8be1d90cfd51bfaf8a119e8d02fd699e7e20833e",
                 "shasum": ""
             },
             "conflict": {
@@ -13478,7 +13478,7 @@
                 "codeigniter4/shield": "<1.0.0.0-beta8",
                 "codiad/codiad": "<=2.8.4",
                 "composer/composer": "<1.10.27|>=2,<2.2.24|>=2.3,<2.7.7",
-                "concrete5/concrete5": "<9.2.8",
+                "concrete5/concrete5": "<=9.3.2",
                 "concrete5/core": "<8.5.8|>=9,<9.1",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
                 "contao/comments-bundle": ">=2,<4.13.40|>=5.0.0.0-RC1-dev,<5.3.4",
@@ -14181,7 +14181,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-01T22:04:46+00:00"
+            "time": "2024-08-02T14:04:50+00:00"
         },
         {
             "name": "sebastian/cli-parser",
