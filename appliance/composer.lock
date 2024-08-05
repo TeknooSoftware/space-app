@@ -13376,12 +13376,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "8be1d90cfd51bfaf8a119e8d02fd699e7e20833e"
+                "reference": "25b3df97450d4b8ae46ab6c6a2441db776b3e00d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/8be1d90cfd51bfaf8a119e8d02fd699e7e20833e",
-                "reference": "8be1d90cfd51bfaf8a119e8d02fd699e7e20833e",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/25b3df97450d4b8ae46ab6c6a2441db776b3e00d",
+                "reference": "25b3df97450d4b8ae46ab6c6a2441db776b3e00d",
                 "shasum": ""
             },
             "conflict": {
@@ -13565,6 +13565,7 @@
                 "filp/whoops": "<2.1.13",
                 "fineuploader/php-traditional-server": "<=1.2.2",
                 "firebase/php-jwt": "<6",
+                "fisharebest/webtrees": "<=2.1.18",
                 "fixpunkt/fp-masterquiz": "<2.2.1|>=3,<3.5.2",
                 "fixpunkt/fp-newsletter": "<1.1.1|>=2,<2.1.2|>=2.2,<3.2.6",
                 "flarum/core": "<1.8.5",
@@ -14181,7 +14182,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-08-02T14:04:50+00:00"
+            "time": "2024-08-02T16:05:08+00:00"
         },
         {
             "name": "sebastian/cli-parser",
