@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC4] - 2024-08-14
+### Release Candidate
+- Update to last guzzle
+- Update to last laravel collections libraries
+- Update to last dev libraries
+- Require last version of Symfony 6.4 or 7.1
+- Update mongo docker dev image to allow choose another mongo version thanks to the build argument `MONGO_VERSION`
+- Fix Symfony configuration
+- Fix docker compose file
+
 ## [1.0.0-RC3] - 2024-07-22
 ### Release Candidate
 - Require last version of Symfony 6.4 or 7.1
@@ -9,7 +19,7 @@
 ### Release Candidate
 - Use East PaaS 3.4.2
 - Update to PHPUnit 11
-- Update to last laravel collections library
+- Update to last laravel collections libraries
 - Update to phpseclib/phpseclib 3.0.39
 - Fixing deprecations
 

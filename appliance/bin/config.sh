@@ -16,7 +16,7 @@ else
 fi
 
 ENV_LOCAL_FILE='.env.local'
-DOCKER_COMPOSE_OVERRIDE_FILE='../docker-compose.override.yml'
+DOCKER_COMPOSE_OVERRIDE_FILE='../compose.override.yml'
 SESSION_FILE='config/packages/framework.session.backend.yaml'
 FILE_SESSION_FILE='config/packages/framework.session.backend.file.yaml.dist'
 REDIS_SESSION_FILE='config/packages/framework.session.backend.redis.yaml.dist'

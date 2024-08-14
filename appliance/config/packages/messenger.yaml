@@ -1,7 +1,34 @@
 framework:
     messenger:
+        transports:
+            new_job:
+                dsn: '%teknoo.space.messenger.dsn.new_job%'
+                retry_strategy:
+                    max_retries: 0
+            history_sent: '%teknoo.space.messenger.dsn.history_sent%'
+            job_done: '%teknoo.space.messenger.dsn.job_done%'
+            execute_job:
+                dsn: '%teknoo.space.messenger.dsn.execute_job%'
+                # default configuration
+                retry_strategy:
+                    max_retries: 0
         routing:
             Teknoo\Space\Object\DTO\NewJob: 'new_job'
             Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\MessageJob: 'execute_job'
             Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\HistorySent: 'history_sent'
             Teknoo\East\Paas\Infrastructures\Symfony\Messenger\Message\JobDone: 'job_done'
+
+when@test:
+    framework:
+        messenger:
+            transports:
+                new_job:
+                    dsn: 'test://?support_delay_stamp=true'
+                    retry_strategy:
+                        max_retries: 0
+                history_sent: 'test://?support_delay_stamp=true'
+                job_done: 'test://?support_delay_stamp=true'
+                execute_job:
+                    dsn: 'test://?support_delay_stamp=true'
+                    retry_strategy:
+                        max_retries: 0

@@ -1,4 +1,4 @@
-/docker-compose.override.yml
+/compose.override.yml
 /var/
 !/var/.gitkeep
 /var/mongo/
