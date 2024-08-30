@@ -4,8 +4,6 @@
 
 {% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\JobSearchType' %}
 
-{% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
-
 {% block title %}{{ 'teknoo.space.title.job'|trans }} : {{ project }} - {% endblock %}
 
 {% block listTitle %}<i class="uil uil-drill"></i> {{ 'teknoo.space.title.job'|trans }} : {{ project }}{% endblock %}
@@ -40,14 +38,14 @@
         <th scope="col"
             class="border-bottom">
             <a class="text-primary"
-               href="{{ path('space_job_list', {'projectId': projectId}) }}{{ utils.orderUrl(queryParams, 'project') }}">
+               href="{{ path('space_job_list', {'projectId': projectId}) }}{{ app_order_in_url(queryParams, 'project') }}">
                 {{ 'teknoo.space.text.cols_job_project'|trans }}
             </a>
         </th>
         <th scope="col"
             class="border-bottom">
             <a class="text-primary"
-               href="{{ path('space_job_list', {'projectId': projectId}) }}{{ utils.orderUrl(queryParams, 'updatedAt') }}">
+               href="{{ path('space_job_list', {'projectId': projectId}) }}{{ app_order_in_url(queryParams, 'updatedAt') }}">
                 {{ 'teknoo.space.text.cols_job_updated_at'|trans }}
             </a>
         </th>

@@ -4,8 +4,6 @@
 
 {% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\AccountSearchType' %}
 
-{% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
-
 {% block title %}{{ 'teknoo.space.title.admin_account'|trans }} - {% endblock %}
 
 {% block listTitle %}<i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account'|trans }}{% endblock %}
@@ -29,19 +27,19 @@
         <th id="item-id" class="border-bottom text-start">#</th>
         <th id="account-name" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'name') }}">
+               href="{{ path('_teknoo_paas_admin_account_list') }}{{ app_order_in_url(queryParams, 'name') }}">
                 {{ 'teknoo.space.text.admin_cols_account_name'|trans }}
             </a>
         </th>
         <th id="account-created" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'createdAt') }}">
+               href="{{ path('_teknoo_paas_admin_account_list') }}{{ app_order_in_url(queryParams, 'createdAt') }}">
                 {{ 'teknoo.space.text.admin_cols_account_created_at'|trans }}
             </a>
         </th>
         <th id="account-updated" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('_teknoo_paas_admin_account_list') }}{{ utils.orderUrl(queryParams, 'updatedAt') }}">
+               href="{{ path('_teknoo_paas_admin_account_list') }}{{ app_order_in_url(queryParams, 'updatedAt') }}">
                 {{ 'teknoo.space.text.admin_cols_account_updated_at'|trans }}
             </a>
         </th>

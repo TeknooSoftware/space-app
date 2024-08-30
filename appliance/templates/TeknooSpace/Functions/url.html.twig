@@ -1,8 +1,0 @@
-{# templates/TeknooSpace/Functions/navigations.html.twig #}
-
-{%- macro updateQueryField(field, value) -%}{{ path(
-    app.request.attributes.get('_route'),
-    app.request.query.all
-        |merge(app.request.attributes.get('_route_params'))
-        |merge({ (field) : value})
-) }}{%- endmacro -%}

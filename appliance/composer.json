@@ -95,7 +95,7 @@
         "symfony/yaml": "*",
         "tijsverkoyen/css-to-inline-styles": "^v2.2.7",
         "teknoo/bridge-phpdi-symfony": "^6.0.6",
-        "teknoo/east-common-symfony": "^2.12.3",
+        "teknoo/east-common-symfony": "^2.12.4",
         "teknoo/east-foundation-symfony": "^7.7.1",
         "teknoo/east-paas-symfony": "^3.4.2",
         "teknoo/immutable": "^3.0.17",

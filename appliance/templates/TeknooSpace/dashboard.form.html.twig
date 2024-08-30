@@ -2,8 +2,6 @@
 
 {% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
-{% import '@TeknooSpace/Functions/url.html.twig' as functions %}
-
 {% block containerFluidInner %}
     <div class="layout-specing">
         <div class="d-md-flex justify-content-between align-items-center mb-3">
@@ -49,7 +47,7 @@
                                         <li>
                                             <a class="btn {% if locale == iLocale %}btn-secondary{% else %}btn-soft-secondary{% endif %} btn-full-large mt-2"
                                                rel="noopener"
-                                               href="{{ functions.updateQueryField('locale', iLocale) }}"
+                                               href="{{ app_update_query_field(app.request, 'locale', iLocale) }}"
                                                title="{{ iLocale|capitalize }}">
                                                 <i class="uil uil-book-medical"></i>
                                                 {{ iLocale|capitalize }}

@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC5] - 2024-08-30
+### Release Candidate
+- Update to Twig 3.12
+- Remove deprecation in twig templates
+- Use trim in rendering service instead of spaceless filter for api "views"
+
 ## [1.0.0-RC4] - 2024-08-14
 ### Release Candidate
 - Update to last guzzle

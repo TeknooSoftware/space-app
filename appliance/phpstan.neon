@@ -51,3 +51,6 @@ parameters:
         -
             message: '#on mixed#'
             path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
+        -
+            message: '#mixed#'
+            path:   infrastructures/Twig/Extension/UpdateQueryField.php
