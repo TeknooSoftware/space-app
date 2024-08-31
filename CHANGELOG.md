@@ -1,7 +1,8 @@
 # Teknoo Software - Space - Change Log
 
-## [1.0.0-RC5] - 2024-08-30
+## [1.0.0-RC5] - 2024-08-31
 ### Release Candidate
+- Update to last Symfony
 - Update to Twig 3.12
 - Remove deprecation in twig templates
 - Use trim in rendering service instead of spaceless filter for api "views"
