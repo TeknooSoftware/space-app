@@ -77,9 +77,9 @@ services:
             - MESSENGER_JOB_DONE_DSN=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
-#    blackfire:
-#        environment:
-#            - BLACKFIRE_SERVER_ID=ToChange!
-#            - BLACKFIRE_SERVER_TOKEN=ToChange!
-#            - BLACKFIRE_CLIENT_ID=ToChange!
-#            - BLACKFIRE_CLIENT_TOKEN=ToChange!
+    blackfire:
+        environment:
+            - BLACKFIRE_SERVER_ID=ToChange!
+            - BLACKFIRE_SERVER_TOKEN=ToChange!
+            - BLACKFIRE_CLIENT_ID=ToChange!
+            - BLACKFIRE_CLIENT_TOKEN=ToChange!

@@ -84,7 +84,7 @@ RUN set -eux ; \
     ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
-    printf "blackfire.agent_socket=tcp://\${PHP_BLACKFIRE_SERVER}:8307\n" > /usr/local/etc/php/conf.d/90-blackfire.ini ; \
+    sed -i 's|blackfire.agent_socket = unix:///var/run/blackfire/agent.sock|blackfire.agent_socket = tcp://${PHP_BLACKFIRE_SERVER}:8307|' /usr/local/etc/php/conf.d/zz-blackfire.ini ; \
     mkdir -p /run/php/ ; \
     mkdir -p /var/log/blackfire/ ; \
     cd /usr/local/bin ; \
