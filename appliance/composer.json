@@ -102,10 +102,10 @@
         "teknoo/kubernetes-client": "^1.5.2",
         "teknoo/recipe": "^5.1",
         "teknoo/states": "^6.3.1",
-        "twig/cssinliner-extra": "^3.10",
-        "twig/extra-bundle": "^3.10",
-        "twig/inky-extra": "^3.10",
-        "twig/twig": "^3.10.3"
+        "twig/cssinliner-extra": "^3.13",
+        "twig/extra-bundle": "^3.13",
+        "twig/inky-extra": "^3.13",
+        "twig/twig": "^3.14"
     },
     "require-dev": {
         "behat/behat": "^3.14",
