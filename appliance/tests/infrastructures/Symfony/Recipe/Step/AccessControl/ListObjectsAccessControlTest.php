@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\AccessControl;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
@@ -46,8 +47,8 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\UserTrait;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(UserTrait::class)]
-#[CoversClass(GrantTrait::class)]
+#[CoversTrait(UserTrait::class)]
+#[CoversTrait(GrantTrait::class)]
 #[CoversClass(AbstractAccessControl::class)]
 #[CoversClass(ListObjectsAccessControl::class)]
 class ListObjectsAccessControlTest extends TestCase

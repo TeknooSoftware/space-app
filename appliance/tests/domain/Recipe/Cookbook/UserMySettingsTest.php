@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Cookbook;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -49,7 +50,7 @@ use Teknoo\Space\Recipe\Cookbook\UserMySettings;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(EditOwnsSettingsTrait::class)]
+#[CoversTrait(EditOwnsSettingsTrait::class)]
 #[CoversClass(UserMySettings::class)]
 class UserMySettingsTest extends TestCase
 {

@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -41,7 +42,7 @@ use Teknoo\Space\Object\Persisted\PersistedVariableTrait;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(PersistedVariableTrait::class)]
+#[CoversTrait(PersistedVariableTrait::class)]
 #[CoversClass(AccountPersistedVariable::class)]
 class AccountPersistedVariableTest extends TestCase
 {

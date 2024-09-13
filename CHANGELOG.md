@@ -1,5 +1,18 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC6] - 2024-09-13
+### Release Candidate
+- Update Illuminate libraries
+- Update MongoDB ODM Bundle
+- Update endroid/qr-code libs
+- Update East PaaS library
+- Update Twg 3.14
+- Update Laminas Diactoros library
+- Switch to PHPUnit 11
+- Update PHPUnit Configuration
+- Update devs libraries
+- Fix and restore blackfire in docker dev images
+
 ## [1.0.0-RC5] - 2024-08-31
 ### Release Candidate
 - Update to last Symfony

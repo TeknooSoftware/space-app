@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Cookbook;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -58,7 +59,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(PrepareAccountTrait::class)]
+#[CoversTrait(PrepareAccountTrait::class)]
 #[CoversClass(AccountEnvironmentReinstall::class)]
 class AccountEnvironmentReinstallTest extends TestCase
 {

@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Search;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -40,7 +41,7 @@ use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\ProjectSearchType;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(DefaultSearchTrait::class)]
+#[CoversTrait(DefaultSearchTrait::class)]
 #[CoversClass(ProjectSearchType::class)]
 class ProjectSearchTypeTest extends TestCase
 {

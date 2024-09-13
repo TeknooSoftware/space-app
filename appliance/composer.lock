@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b47097e6c79932e9ff75ab05c54ccc3a",
+    "content-hash": "37ecd67280c54b19a56064523fa12681",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1632,7 +1632,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v11.23.2",
+            "version": "v11.23.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1687,7 +1687,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v11.23.2",
+            "version": "v11.23.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1733,7 +1733,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.23.2",
+            "version": "v11.23.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1781,7 +1781,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v11.23.2",
+            "version": "v11.23.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -11147,16 +11147,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "3.4.2",
+            "version": "3.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "4eb9a2540bf1514c3347faa702f60cf225e11746"
+                "reference": "1bc457768fc194841d70d9cb2cf29781145cdd92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/4eb9a2540bf1514c3347faa702f60cf225e11746",
-                "reference": "4eb9a2540bf1514c3347faa702f60cf225e11746",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/1bc457768fc194841d70d9cb2cf29781145cdd92",
+                "reference": "1bc457768fc194841d70d9cb2cf29781145cdd92",
                 "shasum": ""
             },
             "require": {
@@ -11185,11 +11185,11 @@
                 "php-http/discovery": "^1.19.2",
                 "php-http/mock-client": "^1.6",
                 "phpseclib/phpseclib": "^3.0.35",
-                "phpstan/extension-installer": "^1.3.1",
-                "phpstan/phpstan": "^1.10.63",
-                "phpunit/phpunit": "^11,<11.2",
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^1.12.3",
+                "phpunit/phpunit": "^11.3.5",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.8",
+                "squizlabs/php_codesniffer": "^3.10.2",
                 "symfony/config": "^6.3||^7",
                 "symfony/console": "^6.3||^7",
                 "symfony/dependency-injection": "^v6.3||^7",
@@ -11283,20 +11283,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-06-18T09:45:41+00:00"
+            "time": "2024-09-13T10:47:18+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "3.4.2",
+            "version": "3.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "534474b6dbb626e897b1cd91387dc78791be288b"
+                "reference": "13233cbe58f897e53c96b76f16dbed18485fcc7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/534474b6dbb626e897b1cd91387dc78791be288b",
-                "reference": "534474b6dbb626e897b1cd91387dc78791be288b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/13233cbe58f897e53c96b76f16dbed18485fcc7f",
+                "reference": "13233cbe58f897e53c96b76f16dbed18485fcc7f",
                 "shasum": ""
             },
             "require": {
@@ -11335,7 +11335,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
                 "teknoo/east-common-symfony": "^2.11",
                 "teknoo/east-foundation-symfony": "^7.7",
-                "teknoo/east-paas": "^3.4.2",
+                "teknoo/east-paas": "^3.4.3",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.5.2",
                 "teknoo/recipe": "^5.1",
@@ -11397,7 +11397,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-06-18T09:46:47+00:00"
+            "time": "2024-09-13T10:25:58+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13201,16 +13201,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.1.3",
+            "version": "11.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d475be032238173ca3b0a516f5cc291d174708ae"
+                "reference": "4dc07a589a68f8f2d5132ac0849146d122e08347"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d475be032238173ca3b0a516f5cc291d174708ae",
-                "reference": "d475be032238173ca3b0a516f5cc291d174708ae",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4dc07a589a68f8f2d5132ac0849146d122e08347",
+                "reference": "4dc07a589a68f8f2d5132ac0849146d122e08347",
                 "shasum": ""
             },
             "require": {
@@ -13220,25 +13220,25 @@
                 "ext-mbstring": "*",
                 "ext-xml": "*",
                 "ext-xmlwriter": "*",
-                "myclabs/deep-copy": "^1.10.1",
-                "phar-io/manifest": "^2.0.3",
-                "phar-io/version": "^3.0.2",
+                "myclabs/deep-copy": "^1.12.0",
+                "phar-io/manifest": "^2.0.4",
+                "phar-io/version": "^3.2.1",
                 "php": ">=8.2",
-                "phpunit/php-code-coverage": "^11.0",
-                "phpunit/php-file-iterator": "^5.0",
-                "phpunit/php-invoker": "^5.0",
-                "phpunit/php-text-template": "^4.0",
-                "phpunit/php-timer": "^7.0",
-                "sebastian/cli-parser": "^3.0",
-                "sebastian/code-unit": "^3.0",
-                "sebastian/comparator": "^6.0",
-                "sebastian/diff": "^6.0",
-                "sebastian/environment": "^7.0",
-                "sebastian/exporter": "^6.0",
-                "sebastian/global-state": "^7.0",
-                "sebastian/object-enumerator": "^6.0",
-                "sebastian/type": "^5.0",
-                "sebastian/version": "^5.0"
+                "phpunit/php-code-coverage": "^11.0.6",
+                "phpunit/php-file-iterator": "^5.1.0",
+                "phpunit/php-invoker": "^5.0.1",
+                "phpunit/php-text-template": "^4.0.1",
+                "phpunit/php-timer": "^7.0.1",
+                "sebastian/cli-parser": "^3.0.2",
+                "sebastian/code-unit": "^3.0.1",
+                "sebastian/comparator": "^6.1.0",
+                "sebastian/diff": "^6.0.2",
+                "sebastian/environment": "^7.2.0",
+                "sebastian/exporter": "^6.1.3",
+                "sebastian/global-state": "^7.0.2",
+                "sebastian/object-enumerator": "^6.0.1",
+                "sebastian/type": "^5.0.1",
+                "sebastian/version": "^5.0.1"
             },
             "suggest": {
                 "ext-soap": "To be able to generate mocks based on WSDL files"
@@ -13249,7 +13249,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "11.1-dev"
+                    "dev-main": "11.3-dev"
                 }
             },
             "autoload": {
@@ -13281,7 +13281,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.1.3"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.3.5"
             },
             "funding": [
                 {
@@ -13297,7 +13297,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-24T06:34:25+00:00"
+            "time": "2024-09-13T05:22:17+00:00"
         },
         {
             "name": "roave/security-advisories",

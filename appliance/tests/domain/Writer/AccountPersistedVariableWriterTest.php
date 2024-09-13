@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Writer;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
@@ -45,7 +46,7 @@ use Teknoo\Space\Writer\PersistedVariableWriterTrait;
  *
  */
 #[CoversClass(AccountPersistedVariableWriter::class)]
-#[CoversClass(PersistedVariableWriterTrait::class)]
+#[CoversTrait(PersistedVariableWriterTrait::class)]
 class AccountPersistedVariableWriterTest extends TestCase
 {
     private AccountPersistedVariableWriter $accountPersistedVariableWriter;
