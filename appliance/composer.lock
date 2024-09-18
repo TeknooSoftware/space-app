@@ -13305,12 +13305,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "d8c7c89db9e2431744810468aabdf9a16b89c2f7"
+                "reference": "cc2d3a57b378c3fcdfbe06d7b4b68e31eeac214a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d8c7c89db9e2431744810468aabdf9a16b89c2f7",
-                "reference": "d8c7c89db9e2431744810468aabdf9a16b89c2f7",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/cc2d3a57b378c3fcdfbe06d7b4b68e31eeac214a",
+                "reference": "cc2d3a57b378c3fcdfbe06d7b4b68e31eeac214a",
                 "shasum": ""
             },
             "conflict": {
@@ -13421,6 +13421,7 @@
                 "craftcms/cms": "<4.6.2|>=5,<=5.2.2",
                 "croogo/croogo": "<4",
                 "cuyz/valinor": "<0.12",
+                "czim/file-handling": "<1.5|>=2,<2.3",
                 "czproject/git-php": "<4.0.3",
                 "damienharper/auditor-bundle": "<6",
                 "dapphp/securimage": "<3.6.6",
@@ -13578,7 +13579,7 @@
                 "in2code/femanager": "<5.5.3|>=6,<6.3.4|>=7,<7.2.3",
                 "in2code/ipandlanguageredirect": "<5.1.2",
                 "in2code/lux": "<17.6.1|>=18,<24.0.2",
-                "in2code/powermail": "<7.5|>=8,<8.5|>=9,<10.9|>=11,<12.4",
+                "in2code/powermail": "<7.5.1|>=8,<8.5.1|>=9,<10.9.1|>=11,<12.4.1",
                 "innologi/typo3-appointments": "<2.0.6",
                 "intelliants/subrion": "<4.2.2",
                 "inter-mediator/inter-mediator": "==5.5",
@@ -14120,7 +14121,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-17T19:04:49+00:00"
+            "time": "2024-09-17T22:04:37+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -15047,16 +15048,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.10.2",
+            "version": "3.10.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "86e5f5dd9a840c46810ebe5ff1885581c42a3017"
+                "reference": "62d32998e820bddc40f99f8251958aed187a5c9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/86e5f5dd9a840c46810ebe5ff1885581c42a3017",
-                "reference": "86e5f5dd9a840c46810ebe5ff1885581c42a3017",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/62d32998e820bddc40f99f8251958aed187a5c9c",
+                "reference": "62d32998e820bddc40f99f8251958aed187a5c9c",
                 "shasum": ""
             },
             "require": {
@@ -15123,7 +15124,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2024-07-21T23:26:44+00:00"
+            "time": "2024-09-18T10:38:58+00:00"
         },
         {
             "name": "symfony/debug-bundle",
