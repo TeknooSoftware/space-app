@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\JobVarsSet;
 
@@ -36,8 +37,8 @@ use Teknoo\Space\Object\DTO\JobVarsSet;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\JobVarsSet
  */
+#[CoversClass(JobVarsSet::class)]
 class JobVarsSetTest extends TestCase
 {
     private JobVarsSet $jobVarsSet;

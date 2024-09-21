@@ -4,7 +4,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:fr
 ENV LC_ALL en_US.UTF-8
 ENV DEBIAN_FRONTEND noninteractive
-ENV NERDCTL_VERSION=1.7.2
+ENV NERDCTL_VERSION 1.7.2
 
 RUN set -eux ; \
     apt-get clean ; \

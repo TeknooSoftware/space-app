@@ -4,8 +4,6 @@
 
 {% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\UserSearchType' %}
 
-{% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
-
 {% block title %}{{ 'teknoo.space.title.admin_user'|trans }} - {% endblock %}
 
 {% block listTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.admin_user'|trans }}{% endblock %}
@@ -31,14 +29,14 @@
         <th scope="col" class="border-bottom text-start">#</th>
         <th scope="col" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('_teknoo_common_admin_user_list') }}{{ utils.orderUrl(queryParams, 'email') }}">
+               href="{{ path('_teknoo_common_admin_user_list') }}{{ app_order_in_url(queryParams, 'email') }}">
                 {{ 'teknoo.space.text.admin_cols_user_email'|trans }}
             </a>
         </th>
         <th scope="col" class="border-bottom">{{ 'teknoo.space.text.admin_cols_user_firstname'|trans }}</th>
         <th scope="col" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('_teknoo_common_admin_user_list') }}{{ utils.orderUrl(queryParams, 'lastName') }}">
+               href="{{ path('_teknoo_common_admin_user_list') }}{{ app_order_in_url(queryParams, 'lastName') }}">
                 {{ 'teknoo.space.text.admin_cols_user_lastname'|trans }}
             </a>
         </th>

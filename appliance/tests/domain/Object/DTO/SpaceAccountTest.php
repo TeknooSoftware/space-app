@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
@@ -38,8 +39,8 @@ use Teknoo\Space\Object\Persisted\AccountData;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\SpaceAccount
  */
+#[CoversClass(SpaceAccount::class)]
 class SpaceAccountTest extends TestCase
 {
     private SpaceAccount $spaceAccount;
@@ -70,7 +71,7 @@ class SpaceAccountTest extends TestCase
     public function testGetId(): void
     {
         $this->account
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('getId')
             ->willReturn('foo');
 
@@ -83,7 +84,7 @@ class SpaceAccountTest extends TestCase
     public function testToString(): void
     {
         $this->account
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('__toString')
             ->willReturn('foo');
 

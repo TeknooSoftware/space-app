@@ -4,8 +4,6 @@
 
 {% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\MediaSearchType' %}
 
-{% import '@TeknooSpace/Functions/utils.html.twig' as utils %}
-
 {% block title %}{{ 'teknoo.space.title.admin_media'|trans }} - {% endblock %}
 
 {% block listTitle %}<i class="uil uil-image-download"></i> {{ 'teknoo.space.title.admin_media'|trans }}{% endblock %}
@@ -31,7 +29,7 @@
         <th scope="col" class="border-bottom text-start">#</th>
         <th scope="col" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('_teknoo_common_admin_media_list') }}{{ utils.orderUrl(queryParams, 'name') }}">
+               href="{{ path('_teknoo_common_admin_media_list') }}{{ app_order_in_url(queryParams, 'name') }}">
                 {{ 'teknoo.space.text.admin_cols_media_name'|trans }}
             </a>
         </th>

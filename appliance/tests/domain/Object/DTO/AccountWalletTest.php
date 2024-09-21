@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -37,8 +38,8 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\AccountWallet
  */
+#[CoversClass(AccountWallet::class)]
 class AccountWalletTest extends TestCase
 {
     private AccountWallet $accountWallet;

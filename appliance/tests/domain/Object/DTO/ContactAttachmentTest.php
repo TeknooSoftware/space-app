@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\ContactAttachment;
 
@@ -35,8 +36,8 @@ use Teknoo\Space\Object\DTO\ContactAttachment;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contactAttachment@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\ContactAttachment
  */
+#[CoversClass(ContactAttachment::class)]
 class ContactAttachmentTest extends TestCase
 {
     private ContactAttachment $contactAttachment;

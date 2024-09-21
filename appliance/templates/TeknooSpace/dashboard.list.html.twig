@@ -2,8 +2,6 @@
 
 {% extends '@TeknooSpace/dashboard.layout.html.twig' %}
 
-{% import '@TeknooSpace/Functions/url.html.twig' as functions %}
-
 {% block topHeaderSearchBar %}
     {% if searchForm is defined and searchForm is not empty or formClass is defined and formClass is not empty %}
         {#  SEARCH  #}
@@ -79,21 +77,21 @@
                 <ul class="pagination">
                     {% if page > 1 %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ functions.updateQueryField('page', (page-1)) }}">
+                            <a class="page-link" href="{{ app_update_query_field(app.request, 'page', (page-1)) }}">
                                 {{ 'teknoo.space.text.previous'|trans }}
                             </a>
                         </li>
                     {% endif %}
                     {% for pageNumber in 1..pageCount %}
                         <li class="page-item{% if page == pageNumber %} active{% endif %}">
-                            <a class="page-link" href="{{ functions.updateQueryField('page', pageNumber) }}">
+                            <a class="page-link" href="{{ app_update_query_field(app.request, 'page', pageNumber) }}">
                                 {{ pageNumber }}
                             </a>
                         </li>
                     {% endfor %}
                     {% if page < pageCount %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ functions.updateQueryField('page', (page+1)) }}">
+                            <a class="page-link" href="{{ app_update_query_field(app.request, 'page', (page+1)) }}">
                                 {{ 'teknoo.space.text.next'|trans }}
                             </a>
                         </li>

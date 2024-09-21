@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Mercure;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\Chunk\FirstChunk;
@@ -50,8 +51,8 @@ use const PHP_EOL;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending
  */
+#[CoversClass(FetchJobIdFromPending::class)]
 class FetchJobIdFromPendingTest extends TestCase
 {
     private FetchJobIdFromPending $fetchJobIdFromPending;
@@ -78,7 +79,7 @@ class FetchJobIdFromPendingTest extends TestCase
         );
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())
+        $response->expects($this->any())
             ->method('getInfo')
             ->willReturnCallback(
                 fn ($key) => match ($key) {
@@ -90,18 +91,21 @@ class FetchJobIdFromPendingTest extends TestCase
                 }
             );
 
-        $httpClient->expects(self::any())
+        $httpClient->expects($this->any())
             ->method('request')
             ->willReturn($response);
 
-        $httpClient->expects(self::any())
+        $httpClient->expects($this->any())
             ->method('stream')
             ->willReturnCallback(
                 function () use ($response) {
                     $generator = function () use ($response): \Generator {
                         yield $response => new FirstChunk();
                         yield $response => new ServerSentEvent(
-                            'id: urn:uuid:313a4bdc-bad0-4ead-8513-72f36c19e9b3' . PHP_EOL . 'data: {"foo": "bar"}'
+                            ':' . PHP_EOL
+                                . 'id: urn:uuid:3212d4b5-f4b8-4322-b5a4-5c49160c3283' . PHP_EOL
+                                . 'data: {"foo":"bar"}' . PHP_EOL
+                                . PHP_EOL
                         );
                         yield $response => new LastChunk();
                     };

@@ -16,3 +16,11 @@ twig:
             type: '%teknoo.space.oauth.server.type%'
     paths:
         '%kernel.project_dir%/templates/TeknooSpace': TeknooSpace
+
+when@dev:
+    twig:
+        strict_variables: true
+
+when@test:
+    twig:
+        strict_variables: true

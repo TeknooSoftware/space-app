@@ -1,4 +1,0 @@
-framework:
-    test: true
-    session:
-        storage_factory_id: 'Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory'

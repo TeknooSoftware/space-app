@@ -25,12 +25,11 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\App;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use Teknoo\Space\App\Kernel;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @covers \Teknoo\Space\App\Kernel
- */
+#[CoversClass(Kernel::class)]
 class KernelTest extends TestCase
 {
     public function buildKernel(): Kernel

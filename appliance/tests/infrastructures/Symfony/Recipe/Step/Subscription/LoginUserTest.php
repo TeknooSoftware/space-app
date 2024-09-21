@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Subscription;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -44,8 +45,8 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\LoginUser;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\LoginUser
  */
+#[CoversClass(LoginUser::class)]
 class LoginUserTest extends TestCase
 {
     private LoginUser $loginUser;
@@ -72,16 +73,16 @@ class LoginUserTest extends TestCase
     public function testInvoke(): void
     {
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())
+        $response->expects($this->any())
             ->method('withHeader')
             ->willReturnSelf();
 
-        $this->responseFactory->expects(self::any())
+        $this->responseFactory->expects($this->any())
             ->method('createResponse')
             ->willReturn($response);
 
         $user = $this->createMock(User::class);
-        $user->expects(self::any())
+        $user->expects($this->any())
             ->method('getAuthData')
             ->willReturn([
                 $this->createMock(StoredPassword::class),

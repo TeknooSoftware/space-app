@@ -25,9 +25,12 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Search;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\DefaultSearchTrait;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\UserSearchType;
 
 /**
@@ -37,9 +40,9 @@ use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\UserSearchType;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\UserSearchType
- * @covers \Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\DefaultSearchTrait
  */
+#[CoversTrait(DefaultSearchTrait::class)]
+#[CoversClass(UserSearchType::class)]
 class UserSearchTypeTest extends TestCase
 {
     private UserSearchType $userSearchType;

@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use Http\Client\Common\HttpMethodsClientInterface;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -50,8 +51,8 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame
  */
+#[CoversClass(DashboardFrame::class)]
 class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;
@@ -99,32 +100,32 @@ class DashboardFrameTest extends TestCase
     public function testInvoke(): void
     {
         $sRequest = $this->createMock(ServerRequestInterface::class);
-        $sRequest->expects(self::any())->method('getMethod')->willReturn('GET');
+        $sRequest->expects($this->any())->method('getMethod')->willReturn('GET');
 
         $finalResponse = $this->createMock(ResponseInterface::class);
-        $finalResponse->expects(self::any())->method('withBody')->willReturnSelf();
+        $finalResponse->expects($this->any())->method('withBody')->willReturnSelf();
         $this->responseFactory
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('createResponse')
             ->willReturn($finalResponse);
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects(self::any())->method('getStatusCode')->willReturn(200);
-        $response->expects(self::any())->method('getReasonPhrase')->willReturn('foo');
-        $response->expects(self::any())->method('getBody')->willReturn(
+        $response->expects($this->any())->method('getStatusCode')->willReturn(200);
+        $response->expects($this->any())->method('getReasonPhrase')->willReturn('foo');
+        $response->expects($this->any())->method('getBody')->willReturn(
             $this->createMock(StreamInterface::class)
         );
 
         $this->httpMethodsClient
-            ->expects(self::any())
+            ->expects($this->any())
             ->method('send')
             ->willReturn($response);
 
         $wallet = $this->createMock(AccountWallet::class);
-        $wallet->expects(self::any())
+        $wallet->expects($this->any())
             ->method('has')
             ->willReturn(true);
-        $wallet->expects(self::any())
+        $wallet->expects($this->any())
             ->method('get')
             ->willReturn($this->createMock(AccountEnvironment::class));
 

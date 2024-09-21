@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Loader;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountPersistedVariableRepositoryInterface;
@@ -39,8 +40,8 @@ use Teknoo\Space\Service\PersistedVariableEncryption;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Loader\AccountPersistedVariableLoader
  */
+#[CoversClass(AccountPersistedVariableLoader::class)]
 class AccountPersistedVariableLoaderTest extends TestCase
 {
     private AccountPersistedVariableLoader $accountPersistedVariableLoader;

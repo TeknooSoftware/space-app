@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\Kubernetes\Client;
@@ -40,8 +41,8 @@ use Teknoo\Space\Object\DTO\AccountWallet;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo
  */
+#[CoversClass(DashboardInfo::class)]
 class DashboardInfoTest extends TestCase
 {
     private DashboardInfo $dashboardInfo;

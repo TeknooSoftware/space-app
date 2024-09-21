@@ -1,2 +1,0 @@
-di_bridge:
-    compilation_path: '%kernel.project_dir%/var/cache/test/phpdi'

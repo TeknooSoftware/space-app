@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Loader\Meta;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
@@ -41,8 +42,8 @@ use Teknoo\Space\Loader\UserDataLoader;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Loader\Meta\SpaceUserLoader
  */
+#[CoversClass(SpaceUserLoader::class)]
 class SpaceUserLoaderTest extends TestCase
 {
     private SpaceUserLoader $spaceUserLoader;

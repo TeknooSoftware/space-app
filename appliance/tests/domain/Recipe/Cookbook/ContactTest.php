@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Cookbook;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -47,8 +48,8 @@ use Teknoo\Space\Recipe\Cookbook\Contact;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Cookbook\Contact
  */
+#[CoversClass(Contact::class)]
 class ContactTest extends TestCase
 {
     private Contact $contact;

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\Space\Object\DTO\Contact;
@@ -37,8 +38,8 @@ use Teknoo\Space\Object\DTO\SpaceUser;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\Contact
  */
+#[CoversClass(Contact::class)]
 class ContactTest extends TestCase
 {
     private Contact $contact1;
@@ -53,9 +54,9 @@ class ContactTest extends TestCase
         parent::setUp();
 
         $user = $this->createMock(User::class);
-        $user->expects(self::any())->method('getFirstName')->willReturn('foo1');
-        $user->expects(self::any())->method('getLastName')->willReturn('bar1');
-        $user->expects(self::any())->method('getEmail')->willReturn('foo1@bar');
+        $user->expects($this->any())->method('getFirstName')->willReturn('foo1');
+        $user->expects($this->any())->method('getLastName')->willReturn('bar1');
+        $user->expects($this->any())->method('getEmail')->willReturn('foo1@bar');
 
         $this->contact1 = new Contact(null, 'foo', 'foo@bar', 'sfoo', 'mbar');
         $this->contact2 = new Contact(new SpaceUser($user), 'foo', 'foo@bar', 'sfoo', 'mbar');

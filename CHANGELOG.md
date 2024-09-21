@@ -1,5 +1,48 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC6] - 2024-09-13
+### Release Candidate
+- Update Illuminate libraries
+- Update MongoDB ODM Bundle
+- Update endroid/qr-code libs
+- Update East PaaS library
+- Update Twg 3.14
+- Update Laminas Diactoros library
+- Switch to PHPUnit 11
+- Update PHPUnit Configuration
+- Update devs libraries
+- Fix and restore blackfire in docker dev images
+
+## [1.0.0-RC5] - 2024-08-31
+### Release Candidate
+- Update to last Symfony
+- Update to Twig 3.12
+- Remove deprecation in twig templates
+- Use trim in rendering service instead of spaceless filter for api "views"
+
+## [1.0.0-RC4] - 2024-08-14
+### Release Candidate
+- Update to last guzzle
+- Update to last laravel collections libraries
+- Update to last dev libraries
+- Require last version of Symfony 6.4 or 7.1
+- Update mongo docker dev image to allow choose another mongo version thanks to the build argument `MONGO_VERSION`
+- Fix Symfony configuration
+- Fix docker compose file
+
+## [1.0.0-RC3] - 2024-07-22
+### Release Candidate
+- Require last version of Symfony 6.4 or 7.1
+- Require scheb/2fa libraries 7.5
+
+## [1.0.0-RC2] - 2024-06-24
+### Release Candidate
+- Use East PaaS 3.4.2
+- Update to PHPUnit 11
+- Update to last laravel collections libraries
+- Update to phpseclib/phpseclib 3.0.39
+- Fixing deprecations
+
 ## [1.0.0-RC1] - 2024-06-04
 ### Release Candidate
 - Fix mapping in Doctrine ODM

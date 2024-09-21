@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Liveness;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Liveness\PingService;
@@ -39,8 +40,8 @@ use Teknoo\Space\Liveness\PingScheduler;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Liveness\PingScheduler
  */
+#[CoversClass(PingScheduler::class)]
 class PingSchedulerTest extends TestCase
 {
     private PingScheduler $pingScheduler;
@@ -75,12 +76,12 @@ class PingSchedulerTest extends TestCase
     public function testTimerAction(): void
     {
         $this->pingService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('ping')
             ->willReturnSelf();
 
         $this->timerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('register')
             ->willReturnSelf();
 
@@ -93,12 +94,12 @@ class PingSchedulerTest extends TestCase
     public function testEnable(): void
     {
         $this->pingService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('register')
             ->willReturnSelf();
 
         $this->timerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('register')
             ->willReturnSelf();
 
@@ -111,12 +112,12 @@ class PingSchedulerTest extends TestCase
     public function testDisable(): void
     {
         $this->pingService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('unregister')
             ->willReturnSelf();
 
         $this->timerService
-            ->expects(self::once())
+            ->expects($this->once())
             ->method('unregister')
             ->willReturnSelf();
 

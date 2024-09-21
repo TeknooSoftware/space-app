@@ -11,3 +11,11 @@ di_bridge:
         - { priority: 0, file: '%kernel.project_dir%/config/di.persistent_data.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.recipe.steps.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.recipe.cookbooks.php' }
+
+when@prod:
+    di_bridge:
+        compilation_path: '%kernel.project_dir%/var/cache/prod/phpdi'
+
+when@test:
+    di_bridge:
+        compilation_path: '%kernel.project_dir%/var/cache/test/phpdi'
