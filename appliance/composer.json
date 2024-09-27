@@ -125,7 +125,7 @@
         "symfony/web-profiler-bundle": "*",
         "symfony/var-dumper": "^6.4||^7.1",
         "webmozart/assert": "^1.11",
-        "zenstruck/messenger-test": "^1.10"
+        "zenstruck/messenger-test": "^1.11"
     },
     "config": {
         "audit": {

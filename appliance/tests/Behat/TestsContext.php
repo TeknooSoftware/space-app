@@ -119,6 +119,7 @@ use Teknoo\Space\Tests\Behat\ODM\MemoryObjectManager;
 use Teknoo\Space\Tests\Behat\ODM\MemoryRepository;
 use Throwable;
 use Traversable;
+use Zenstruck\Messenger\Test\Transport\TestTransport;
 use Zenstruck\Messenger\Test\Transport\TestTransportRegistry;
 
 use function array_merge;
@@ -326,6 +327,8 @@ class TestsContext implements Context
 
         gc_collect_cycles();
         pcntl_alarm(0);
+
+        TestTransport::disableResetOnKernelShutdown();
     }
 
     /**
