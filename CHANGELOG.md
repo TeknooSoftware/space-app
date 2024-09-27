@@ -1,5 +1,17 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC7] - 2024-09-27
+### Release Candidate
+- Update PHPSecLib and Nikic Php Parser
+- Update sebastien's libs
+- Update CS libs
+- Update PHPUnit and PHPStan libs and doctrine/mongodb-odm
+- Update Symfony libs
+- Enable PHP8.4 in tests
+- Update illuminate libraries and laravel/serializable-closure
+- Update lcobucci/clock
+- Update zenstruck/messenger-test and phpstan
+
 ## [1.0.0-RC6] - 2024-09-13
 ### Release Candidate
 - Update Illuminate libraries
