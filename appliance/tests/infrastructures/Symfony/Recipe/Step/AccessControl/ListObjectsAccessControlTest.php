@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\AccessControl;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
@@ -35,9 +34,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\AbstractAccessControl;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\GrantTrait;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ListObjectsAccessControl;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\UserTrait;
 
 /**
  * Class ListObjectsAccessControlTest.
@@ -47,8 +44,6 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\UserTrait;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversTrait(UserTrait::class)]
-#[CoversTrait(GrantTrait::class)]
 #[CoversClass(AbstractAccessControl::class)]
 #[CoversClass(ListObjectsAccessControl::class)]
 class ListObjectsAccessControlTest extends TestCase

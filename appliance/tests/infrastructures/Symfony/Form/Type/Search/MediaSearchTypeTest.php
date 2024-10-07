@@ -26,11 +26,9 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Search;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\DefaultSearchTrait;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\MediaSearchType;
 
 /**
@@ -41,7 +39,6 @@ use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\MediaSearchType;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversTrait(DefaultSearchTrait::class)]
 #[CoversClass(MediaSearchType::class)]
 class MediaSearchTypeTest extends TestCase
 {

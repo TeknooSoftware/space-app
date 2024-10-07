@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Cookbook;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -41,7 +40,6 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Cookbook\AccountRegistryReins
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Cookbook\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -57,7 +55,6 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversTrait(PrepareAccountTrait::class)]
 #[CoversClass(AccountRegistryReinstall::class)]
 class AccountRegistryReinstallTest extends TestCase
 {

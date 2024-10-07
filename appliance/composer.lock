@@ -10760,16 +10760,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "2.12.4",
+            "version": "2.12.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "9b6dc7945202402c389d63e5d9b4fd9f2673fb7b"
+                "reference": "578b9a5ccc869ca79b18d1d00a79830a82acc93e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/9b6dc7945202402c389d63e5d9b4fd9f2673fb7b",
-                "reference": "9b6dc7945202402c389d63e5d9b4fd9f2673fb7b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/578b9a5ccc869ca79b18d1d00a79830a82acc93e",
+                "reference": "578b9a5ccc869ca79b18d1d00a79830a82acc93e",
                 "shasum": ""
             },
             "require": {
@@ -10781,7 +10781,7 @@
                 "teknoo/states": "^6.3"
             },
             "require-dev": {
-                "behat/behat": "^3.13",
+                "behat/behat": "^3.14",
                 "doctrine/common": "^3.4.3",
                 "doctrine/mongodb-odm": "^2.6.2",
                 "doctrine/mongodb-odm-bundle": "^4.7||^5",
@@ -10793,16 +10793,16 @@
                 "league/flysystem": "^3.23",
                 "league/oauth2-client": "^2.7",
                 "matthiasmullie/minify": "^1.3.71",
-                "phpstan/extension-installer": "^1.3.1",
-                "phpstan/phpstan": "^1.10.63",
-                "phpunit/phpunit": "^11.2.1",
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^1.12.6",
+                "phpunit/phpunit": "^11.4",
                 "roave/security-advisories": "dev-latest",
                 "scheb/2fa-backup-code": "^6.12||^7",
                 "scheb/2fa-bundle": "^6.12||^7",
                 "scheb/2fa-google-authenticator": "^6.12||^7",
                 "scheb/2fa-totp": "^6.12||^7",
                 "spomky-labs/otphp": "^11.2",
-                "squizlabs/php_codesniffer": "^3.8",
+                "squizlabs/php_codesniffer": "^3.10.23",
                 "symfony/config": "^6.3||^7",
                 "symfony/console": "^6.3||^7",
                 "symfony/dependency-injection": "^6.3||^7",
@@ -10878,20 +10878,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-08-30T10:36:24+00:00"
+            "time": "2024-10-07T07:47:18+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "2.12.4",
+            "version": "2.12.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "8459a584822213b74f2ee390343702ea3aea576c"
+                "reference": "5713a63113538713648a4f61315af492a2a6583f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/8459a584822213b74f2ee390343702ea3aea576c",
-                "reference": "8459a584822213b74f2ee390343702ea3aea576c",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/5713a63113538713648a4f61315af492a2a6583f",
+                "reference": "5713a63113538713648a4f61315af492a2a6583f",
                 "shasum": ""
             },
             "require": {
@@ -10914,7 +10914,7 @@
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.0.4",
-                "teknoo/east-common": "^2.12.4",
+                "teknoo/east-common": "^2.12.5",
                 "teknoo/east-foundation-symfony": "^7.7",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/recipe": "^5.1",
@@ -10965,7 +10965,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-08-30T10:37:49+00:00"
+            "time": "2024-10-07T07:48:13+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -11150,16 +11150,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "3.4.3",
+            "version": "3.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "1bc457768fc194841d70d9cb2cf29781145cdd92"
+                "reference": "95720d8d359137b61779595f480445c9d7500d68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/1bc457768fc194841d70d9cb2cf29781145cdd92",
-                "reference": "1bc457768fc194841d70d9cb2cf29781145cdd92",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/95720d8d359137b61779595f480445c9d7500d68",
+                "reference": "95720d8d359137b61779595f480445c9d7500d68",
                 "shasum": ""
             },
             "require": {
@@ -11189,10 +11189,10 @@
                 "php-http/mock-client": "^1.6",
                 "phpseclib/phpseclib": "^3.0.35",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^1.12.3",
-                "phpunit/phpunit": "^11.3.5",
+                "phpstan/phpstan": "^1.12.6",
+                "phpunit/phpunit": "^11.4",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.10.2",
+                "squizlabs/php_codesniffer": "^3.10.3",
                 "symfony/config": "^6.3||^7",
                 "symfony/console": "^6.3||^7",
                 "symfony/dependency-injection": "^v6.3||^7",
@@ -11286,20 +11286,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-09-13T10:47:18+00:00"
+            "time": "2024-10-07T07:40:24+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "3.4.3",
+            "version": "3.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "13233cbe58f897e53c96b76f16dbed18485fcc7f"
+                "reference": "8481abbfd8045a7059b3a58207499997f045862e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/13233cbe58f897e53c96b76f16dbed18485fcc7f",
-                "reference": "13233cbe58f897e53c96b76f16dbed18485fcc7f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/8481abbfd8045a7059b3a58207499997f045862e",
+                "reference": "8481abbfd8045a7059b3a58207499997f045862e",
                 "shasum": ""
             },
             "require": {
@@ -11338,7 +11338,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.0.5",
                 "teknoo/east-common-symfony": "^2.11",
                 "teknoo/east-foundation-symfony": "^7.7",
-                "teknoo/east-paas": "^3.4.3",
+                "teknoo/east-paas": "^3.4.4",
                 "teknoo/immutable": "^3.0.17",
                 "teknoo/kubernetes-client": "^1.5.2",
                 "teknoo/recipe": "^5.1",
@@ -11400,32 +11400,31 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-09-13T10:25:58+00:00"
+            "time": "2024-10-07T07:41:41+00:00"
         },
         {
             "name": "teknoo/immutable",
-            "version": "3.0.17",
+            "version": "3.0.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/immutable.git",
-                "reference": "eb0449f88f051e7b367e53f8739d63abc6e8f615"
+                "reference": "a071933d29ba1597859c4efd971dce311b1abffa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/immutable/zipball/eb0449f88f051e7b367e53f8739d63abc6e8f615",
-                "reference": "eb0449f88f051e7b367e53f8739d63abc6e8f615",
+                "url": "https://api.github.com/repos/TeknooSoftware/immutable/zipball/a071933d29ba1597859c4efd971dce311b1abffa",
+                "reference": "a071933d29ba1597859c4efd971dce311b1abffa",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
-                "icanhazstring/composer-unused": "^0.8.10",
-                "phpstan/phpstan": "^1.10.46",
-                "phpunit/phpunit": "^10.4.2",
+                "phpstan/phpstan": "^1.12.6",
+                "phpunit/phpunit": "^11.4",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.7.2",
-                "symfony/property-access": "^6.3||^7.0"
+                "squizlabs/php_codesniffer": "^3.10.3",
+                "symfony/property-access": "^6.3||^7"
             },
             "type": "library",
             "autoload": {
@@ -11469,20 +11468,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-11-29T18:04:45+00:00"
+            "time": "2024-10-06T19:06:02+00:00"
         },
         {
             "name": "teknoo/kubernetes-client",
-            "version": "1.5.3",
+            "version": "1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "c23ec37746f3d4ff203a6a4ce8402ec3480e7440"
+                "reference": "7062327e38032b62792b3919430167e0a9ad13de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/c23ec37746f3d4ff203a6a4ce8402ec3480e7440",
-                "reference": "c23ec37746f3d4ff203a6a4ce8402ec3480e7440",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/7062327e38032b62792b3919430167e0a9ad13de",
+                "reference": "7062327e38032b62792b3919430167e0a9ad13de",
                 "shasum": ""
             },
             "require": {
@@ -11501,10 +11500,10 @@
                 "php-http/curl-client": "^2.3.1",
                 "php-http/guzzle7-adapter": "^1",
                 "php-http/socket-client": "^2.1.1",
-                "phpstan/phpstan": "^1.12.3",
-                "phpunit/phpunit": "^11.3.5",
+                "phpstan/phpstan": "^1.12.6",
+                "phpunit/phpunit": "^11.4",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.10.2",
+                "squizlabs/php_codesniffer": "^3.10.3",
                 "symfony/console": "^6.4||^7",
                 "symfony/http-client": "^6.4||^7.0",
                 "symfony/options-resolver": "^6.4||^7",
@@ -11553,20 +11552,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-09-24T06:43:06+00:00"
+            "time": "2024-10-06T20:08:10+00:00"
         },
         {
             "name": "teknoo/recipe",
-            "version": "5.1.1",
+            "version": "5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/recipe.git",
-                "reference": "939b95d8e9016146d8b32fb4893bdbe6125dabcd"
+                "reference": "409441dfe467ce79c8c7bcea806d95178ab03aa1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/939b95d8e9016146d8b32fb4893bdbe6125dabcd",
-                "reference": "939b95d8e9016146d8b32fb4893bdbe6125dabcd",
+                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/409441dfe467ce79c8c7bcea806d95178ab03aa1",
+                "reference": "409441dfe467ce79c8c7bcea806d95178ab03aa1",
                 "shasum": ""
             },
             "require": {
@@ -11578,10 +11577,10 @@
                 "behat/behat": "^3.14",
                 "nikic/php-parser": "^4.18||^5",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^1.12.3",
-                "phpunit/phpunit": "^11.3.5",
+                "phpstan/phpstan": "^1.12.6",
+                "phpunit/phpunit": "^11.4",
                 "roave/security-advisories": "dev-latest",
-                "squizlabs/php_codesniffer": "^3.10.2",
+                "squizlabs/php_codesniffer": "^3.10.3",
                 "symfony/console": "^6.3||^7",
                 "symfony/property-access": "^6.3||^7.0"
             },
@@ -11636,7 +11635,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-09-24T06:48:41+00:00"
+            "time": "2024-10-06T19:22:57+00:00"
         },
         {
             "name": "teknoo/states",
@@ -12749,16 +12748,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.5",
+            "version": "1.12.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17"
+                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17",
-                "reference": "7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc4d2f145a88ea7141ae698effd64d9df46527ae",
+                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae",
                 "shasum": ""
             },
             "require": {
@@ -12803,7 +12802,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-26T12:45:22+00:00"
+            "time": "2024-10-06T15:03:59+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13202,16 +13201,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.3.6",
+            "version": "11.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d62c45a19c665bb872c2a47023a0baf41a98bb2b"
+                "reference": "89fe0c530133c08f7fff89d3d727154e4e504925"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d62c45a19c665bb872c2a47023a0baf41a98bb2b",
-                "reference": "d62c45a19c665bb872c2a47023a0baf41a98bb2b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/89fe0c530133c08f7fff89d3d727154e4e504925",
+                "reference": "89fe0c530133c08f7fff89d3d727154e4e504925",
                 "shasum": ""
             },
             "require": {
@@ -13250,7 +13249,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "11.3-dev"
+                    "dev-main": "11.4-dev"
                 }
             },
             "autoload": {
@@ -13282,7 +13281,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.3.6"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.4.0"
             },
             "funding": [
                 {
@@ -13298,7 +13297,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-19T10:54:28+00:00"
+            "time": "2024-10-05T08:39:03+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13306,12 +13305,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "0abc1abb96987c7110ea5ee01f279e8f51718cf6"
+                "reference": "c90faeb954dbf0e3bb0657496199afeb99e2d4dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0abc1abb96987c7110ea5ee01f279e8f51718cf6",
-                "reference": "0abc1abb96987c7110ea5ee01f279e8f51718cf6",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c90faeb954dbf0e3bb0657496199afeb99e2d4dd",
+                "reference": "c90faeb954dbf0e3bb0657496199afeb99e2d4dd",
                 "shasum": ""
             },
             "conflict": {
@@ -13435,6 +13434,7 @@
                 "derhansen/fe_change_pwd": "<2.0.5|>=3,<3.0.3",
                 "derhansen/sf_event_mgt": "<4.3.1|>=5,<5.1.1|>=7,<7.4",
                 "desperado/xml-bundle": "<=0.1.7",
+                "dev-lancer/minecraft-motd-parser": "<=1.0.5",
                 "devgroup/dotplant": "<2020.09.14-dev",
                 "directmailteam/direct-mail": "<6.0.3|>=7,<7.0.3|>=8,<9.5.2",
                 "doctrine/annotations": "<1.2.7",
@@ -13449,9 +13449,9 @@
                 "dolibarr/dolibarr": "<19.0.2",
                 "dompdf/dompdf": "<2.0.4",
                 "doublethreedigital/guest-entries": "<3.1.2",
-                "drupal/core": ">=6,<6.38|>=7,<7.96|>=8,<=11.0.4",
-                "drupal/core-recommended": ">=8,<=11.0.4",
-                "drupal/drupal": ">=5,<5.11|>=6,<6.38|>=7,<7.80|>=8,<=11.0.4",
+                "drupal/core": ">=6,<6.38|>=7,<7.96|>=8,<10.3.6|>=11,<11.0.5",
+                "drupal/core-recommended": ">=8,<10.3.6|>=11,<11.0.5",
+                "drupal/drupal": ">=5,<5.11|>=6,<6.38|>=7,<7.80|>=8,<10.3.6|>=11,<11.0.5",
                 "duncanmcclean/guest-entries": "<3.1.2",
                 "dweeves/magmi": "<=0.7.24",
                 "ec-cube/ec-cube": "<2.4.4|>=2.11,<=2.17.1|>=3,<=3.0.18.0-patch4|>=4,<=4.1.2",
@@ -13895,7 +13895,7 @@
                 "subhh/libconnect": "<7.0.8|>=8,<8.1",
                 "sukohi/surpass": "<1",
                 "sulu/form-bundle": ">=2,<2.5.3",
-                "sulu/sulu": "<1.6.44|>=2,<2.4.17|>=2.5,<2.5.13",
+                "sulu/sulu": "<1.6.44|>=2,<2.6.5",
                 "sumocoders/framework-user-bundle": "<1.4",
                 "superbig/craft-audit": "<3.0.2",
                 "swag/paypal": "<5.4.4",
@@ -14126,7 +14126,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-02T23:04:46+00:00"
+            "time": "2024-10-04T19:04:42+00:00"
         },
         {
             "name": "sebastian/cli-parser",

@@ -26,12 +26,10 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Object\Persisted\PersistedVariableTrait;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
@@ -42,7 +40,6 @@ use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversTrait(PersistedVariableTrait::class)]
 #[CoversClass(ProjectPersistedVariable::class)]
 class ProjectPersistedVariableTest extends TestCase
 {
