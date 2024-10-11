@@ -54,3 +54,6 @@ parameters:
         -
             message: '#mixed#'
             path:   infrastructures/Twig/Extension/UpdateQueryField.php
+        -
+            message: '#Kernel::configureRoutes#'
+            path:   src/Kernel.php

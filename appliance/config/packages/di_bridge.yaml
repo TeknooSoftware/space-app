@@ -1,4 +1,7 @@
 di_bridge:
+    enable_cache: false
+    extensions:
+        - { name: 'Teknoo\East\FoundationBundle\Extension\PHPDI', priority: 0 }
     definitions:
         - { priority: 0, file: '%kernel.project_dir%/config/di.hook.php' }
         - { priority: 0, file: '%kernel.project_dir%/config/di.variables.east.common.php' }
@@ -14,8 +17,10 @@ di_bridge:
 
 when@prod:
     di_bridge:
+        enable_cache: true
         compilation_path: '%kernel.project_dir%/var/cache/prod/phpdi'
 
 when@test:
     di_bridge:
+        enable_cache: false
         compilation_path: '%kernel.project_dir%/var/cache/test/phpdi'

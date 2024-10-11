@@ -26,12 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\App\Config;
 
 use ArrayObject;
+use Psr\Container\ContainerInterface;
 use Teknoo\Space\Configuration\Exception\UnsupportedConfigurationException;
 
-use function DI\env;
-use function DI\get;
 use function DI\factory;
-use function dirname;
+use function array_merge;
 use function is_array;
 use function is_file;
 use function json_decode;
@@ -39,9 +38,12 @@ use function json_decode;
 use const JSON_THROW_ON_ERROR;
 
 $loadFromEnv = static function (
+    ContainerInterface $container,
     mixed $default,
     string $jsonKey,
     string $fileKey,
+    ?string $parameterName = null,
+    bool $prependFromContainer = false,
 ): ArrayObject {
     $value = null;
 
@@ -49,6 +51,14 @@ $loadFromEnv = static function (
         throw new UnsupportedConfigurationException(
             "{$jsonKey} and {$fileKey} can not be filled in same time",
         );
+    }
+
+    $valuesFromContainer = [];
+    if (
+        !empty($parameterName)
+        && $container->has($parameterName)
+    ) {
+        $valuesFromContainer = $container->get($parameterName);
     }
 
     if (!empty($_ENV[$jsonKey])) {
@@ -62,6 +72,14 @@ $loadFromEnv = static function (
         && is_file($file = $_ENV[$fileKey])
     ) {
         $value = require $file;
+    }
+
+    if (!empty($valuesFromContainer)) {
+        if ($prependFromContainer && is_array($value)) {
+            $value = array_merge($valuesFromContainer, $value);
+        } elseif (empty($value)) {
+            $value = $valuesFromContainer;
+        }
     }
 
     $value ??= $default;
@@ -88,6 +106,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.kubernetes.ingress.default_annotations.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.space.hooks_collection.definitions' => factory($loadFromEnv)
@@ -102,6 +128,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_HOOKS_COLLECTION_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.space.hooks_collection.definitions.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.space.clusters_catalog.definitions' => factory($loadFromEnv)
@@ -116,6 +150,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_CLUSTER_CATALOG_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.space.clusters_catalog.definitions.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.east.paas.compilation.containers_images_library' => factory($loadFromEnv)
@@ -130,6 +172,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_PAAS_IMAGE_LIBRARY_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.compilation.containers_images_library.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.east.paas.compilation.global_variables' => factory($loadFromEnv)
@@ -144,6 +194,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_PAAS_GLOBAL_VARIABLES_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.compilation.global_variables.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.east.paas.compilation.pods_extends.library' => factory($loadFromEnv)
@@ -158,6 +216,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.compilation.pods_extends.library.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.east.paas.compilation.containers_extends.library' => factory($loadFromEnv)
@@ -172,6 +238,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.compilation.containers_extends.library.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.east.paas.compilation.services_extends.library' => factory($loadFromEnv)
@@ -186,6 +260,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.compilation.services_extends.library.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.east.paas.compilation.ingresses_extends.library' => factory($loadFromEnv)
@@ -200,6 +282,14 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.east.paas.compilation.ingresses_extends.library.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 
     'teknoo.space.subscription_plan_catalog.definitions' => factory($loadFromEnv)
@@ -214,5 +304,13 @@ return [
         ->parameter(
             'fileKey',
             'SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE',
+        )
+        ->parameter(
+            'parameterName',
+            'teknoo.space.subscription_plan_catalog.definitions.value',
+        )
+        ->parameter(
+            'prependFromContainer',
+            true,
         ),
 ];

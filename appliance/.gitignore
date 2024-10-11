@@ -35,3 +35,4 @@
 /tests/var/keys/variables/private.pem
 /tests/var/keys/variables/public.pem
 /vendor-bin/
+/extensions/*

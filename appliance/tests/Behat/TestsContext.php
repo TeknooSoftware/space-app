@@ -40,6 +40,7 @@ use phpseclib3\Crypt\RSA;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
+use PHPUnit\TextUI\Configuration\Registry;
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionObject;
 use RuntimeException;
@@ -4271,7 +4272,7 @@ class TestsContext implements Context
         $job = current($jobs);
         Assert::assertInstanceOf(JobOrigin::class, $job);
 
-        Assert::assertTrue($job->getHistory()->isFinal());
+        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
         Assert::assertEquals(
             'Teknoo\East\Paas\Contracts\Recipe\Step\Job\DispatchResultInterface',
             $job->getHistory()->getMessage(),
