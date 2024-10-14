@@ -17,7 +17,7 @@ di_bridge:
 
 when@prod:
     di_bridge:
-        enable_cache: '%env(bool:default:teknoo.space.default.di.cache:SPACE_DI_CACHE)%'
+        enable_cache: false
         compilation_path: '%kernel.project_dir%/var/cache/prod/phpdi'
 
 when@test:
