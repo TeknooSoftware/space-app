@@ -28,12 +28,10 @@ namespace Teknoo\Space\Object\DTO;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
 
-use function hash;
+use function bin2hex;
 use function json_decode;
 use function json_encode;
-use function random_int;
-use function substr;
-use function uniqid;
+use function random_bytes;
 
 use const JSON_THROW_ON_ERROR;
 
@@ -61,20 +59,7 @@ class NewJob implements ObjectInterface, SensitiveContentInterface
         public array $storageProvisionerPerCluster = [],
     ) {
         if (empty($this->newJobId)) {
-            $this->newJobId = substr(
-                string: uniqid(
-                    prefix: hash(
-                        'sha256',
-                        (string) random_int(
-                            min: 10000,
-                            max: 99999,
-                        ),
-                    ),
-                    more_entropy: true,
-                ),
-                offset: 0,
-                length: 24
-            );
+            $this->newJobId = bin2hex(random_bytes(24));
         }
     }
 

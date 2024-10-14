@@ -127,6 +127,7 @@ use function array_merge;
 use function array_shift;
 use function array_slice;
 use function array_values;
+use function bin2hex;
 use function class_exists;
 use function count;
 use function current;
@@ -156,7 +157,7 @@ use function str_starts_with;
 use function strtolower;
 use function substr;
 use function trim;
-use function uniqid;
+use function random_bytes;
 
 class TestsContext implements Context
 {
@@ -657,10 +658,10 @@ class TestsContext implements Context
 
     public function removeObject(object $object): void
     {
-        $uniqId = $this->getObjectUniqueId($object);
-        if (isset($this->objects[$object::class][$uniqId])) {
-            $this->removedObjects[$object::class][$uniqId] = $this->objects[$object::class][$uniqId];
-            unset($this->objects[$object::class][$uniqId]);
+        $oId = $this->getObjectUniqueId($object);
+        if (isset($this->objects[$object::class][$oId])) {
+            $this->removedObjects[$object::class][$oId] = $this->objects[$object::class][$oId];
+            unset($this->objects[$object::class][$oId]);
         }
     }
 
@@ -887,7 +888,7 @@ class TestsContext implements Context
     {
         return hash(
             algo: 'sha256',
-            data: uniqid('space', true)
+            data: bin2hex(random_bytes(23))
         );
     }
 
