@@ -44,7 +44,10 @@ class Nonce extends AbstractExtension
     public function getFunctions(): array
     {
         return array(
-            new TwigFunction('space_nonce', $this->getNonce(...))
+            new TwigFunction(
+                name: 'space_nonce',
+                callable: $this->getNonce(...)
+            )
         );
     }
 

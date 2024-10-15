@@ -29,6 +29,11 @@ services:
     Teknoo\Space\Infrastructures\Symfony\:
         resource: '../infrastructures/Symfony/*'
 
+    Teknoo\Space\Infrastructures\Extension\Twig:
+        class: 'Teknoo\Space\Infrastructures\Extension\Twig'
+        arguments:
+            - '@Teknoo\East\Foundation\Extension\ManagerInterface'
+
     Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing:
         class: 'Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing'
         arguments:

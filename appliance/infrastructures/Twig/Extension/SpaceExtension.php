@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
+use Teknoo\Space\Infrastructures\Extension\Twig as TwigExtension;
+use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -34,37 +36,34 @@ use Twig\TwigFunction;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class OrderInUrl extends AbstractExtension
+class SpaceExtension extends AbstractExtension
 {
+    public function __construct(
+        private TwigExtension $twig,
+    ) {
+    }
+
     public function getFunctions(): array
     {
         return [
             new TwigFunction(
-                name: 'app_order_in_url',
-                callable: $this->orderInUrl(...)
+                name: 'space_extension',
+                callable: $this->runExtension(...),
+                options: [
+                    'needs_environment' => true,
+                    'is_safe' => ['html', 'json'],
+                ],
             )
         ];
     }
 
     public function getName(): string
     {
-        return 'app_order_in_url';
+        return 'space_extension';
     }
 
-    /**
-     * @param array<string, string> $queryParams
-     */
-    public function orderInUrl(
-        array $queryParams,
-        string $column,
-    ): string {
-        $currentDirection = 'ASC';
-        if (!empty($queryParams['order']) && $column === $queryParams['order']) {
-            if (!empty($queryParams['direction']) && 'ASC' === $queryParams['direction']) {
-                $currentDirection = 'DESC';
-            }
-        }
-
-        return '?order=' . $column . '&direction=' . $currentDirection;
+    public function runExtension(Environment $env, string $block): string
+    {
+        return $this->twig->run($env, $block)->render();
     }
 }
