@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
-use Teknoo\Space\Infrastructures\Extension\Twig as TwigExtension;
+use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig as TwigExtension;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

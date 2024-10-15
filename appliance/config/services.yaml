@@ -29,8 +29,8 @@ services:
     Teknoo\Space\Infrastructures\Symfony\:
         resource: '../infrastructures/Symfony/*'
 
-    Teknoo\Space\Infrastructures\Extension\Twig:
-        class: 'Teknoo\Space\Infrastructures\Extension\Twig'
+    Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig:
+        class: 'Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig'
         arguments:
             - '@Teknoo\East\Foundation\Extension\ManagerInterface'
 

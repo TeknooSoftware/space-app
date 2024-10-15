@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Extension;
+namespace Teknoo\Space\Infrastructures\Twig\SpaceExtension;
 
 use Teknoo\East\Foundation\Extension\ManagerInterface;
 use Teknoo\East\Foundation\Extension\ModuleInterface;
