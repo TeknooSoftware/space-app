@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "454a8343c977980cdd294b631b223c81",
+    "content-hash": "de5e83887ff933f1dde7b12afd09e411",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1633,16 +1633,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v11.27.2",
+            "version": "v11.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "4d333ea19a27230b424b9af56f34cd658b5bbce2"
+                "reference": "2d99ccbb19e34450508ff3ab2f62ba90aa2e9793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/4d333ea19a27230b424b9af56f34cd658b5bbce2",
-                "reference": "4d333ea19a27230b424b9af56f34cd658b5bbce2",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/2d99ccbb19e34450508ff3ab2f62ba90aa2e9793",
+                "reference": "2d99ccbb19e34450508ff3ab2f62ba90aa2e9793",
                 "shasum": ""
             },
             "require": {
@@ -1684,11 +1684,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2024-09-27T14:54:48+00:00"
+            "time": "2024-10-10T19:23:07+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v11.27.2",
+            "version": "v11.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1734,7 +1734,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.27.2",
+            "version": "v11.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1782,7 +1782,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v11.27.2",
+            "version": "v11.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -10974,16 +10974,16 @@
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "7.8.2",
+            "version": "7.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "74cf2e84aa104ad0e29ace526c0ee3985587284b"
+                "reference": "11d2098b6556035b1c668ba3b77b80049d151c75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/74cf2e84aa104ad0e29ace526c0ee3985587284b",
-                "reference": "74cf2e84aa104ad0e29ace526c0ee3985587284b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/11d2098b6556035b1c668ba3b77b80049d151c75",
+                "reference": "11d2098b6556035b1c668ba3b77b80049d151c75",
                 "shasum": ""
             },
             "require": {
@@ -11073,20 +11073,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-10-15T08:01:12+00:00"
+            "time": "2024-10-15T14:54:13+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "7.8.2",
+            "version": "7.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "3b878c786781981ea2132301f86986f5356b77c4"
+                "reference": "c737a47e492205027ade355871abe69b67c25cb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/3b878c786781981ea2132301f86986f5356b77c4",
-                "reference": "3b878c786781981ea2132301f86986f5356b77c4",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/c737a47e492205027ade355871abe69b67c25cb3",
+                "reference": "c737a47e492205027ade355871abe69b67c25cb3",
                 "shasum": ""
             },
             "require": {
@@ -11102,7 +11102,7 @@
                 "symfony/serializer": "^6.3||^7.0",
                 "symfony/yaml": "^6.3||^7.0",
                 "teknoo/bridge-phpdi-symfony": "^6.1",
-                "teknoo/east-foundation": "^7.8.2",
+                "teknoo/east-foundation": "^7.8.3",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/recipe": "^5.1.2",
                 "teknoo/states": "^6.4.1"
@@ -11151,7 +11151,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-10-15T08:01:43+00:00"
+            "time": "2024-10-15T14:55:01+00:00"
         },
         {
             "name": "teknoo/east-paas",

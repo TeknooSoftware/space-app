@@ -96,7 +96,7 @@
         "tijsverkoyen/css-to-inline-styles": "^v2.2.7",
         "teknoo/bridge-phpdi-symfony": "^6.1",
         "teknoo/east-common-symfony": "^2.12.6",
-        "teknoo/east-foundation-symfony": "^7.8.2",
+        "teknoo/east-foundation-symfony": "^7.8.3",
         "teknoo/east-paas-symfony": "^3.4.5",
         "teknoo/immutable": "^3.0.18",
         "teknoo/kubernetes-client": "^1.5.4",

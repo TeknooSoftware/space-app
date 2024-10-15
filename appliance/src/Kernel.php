@@ -46,6 +46,6 @@ class Kernel extends BaseKernel
     {
         $this->configureRoutesTrait($routes);
 
-        RoutesExtension::extendsRoutes($routes);
+        RoutesExtension::extendsRoutes($routes, $this->getEnvironment());
     }
 }
