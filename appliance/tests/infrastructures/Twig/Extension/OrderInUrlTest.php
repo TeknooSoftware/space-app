@@ -23,33 +23,22 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Endroid\QrCode\Recipe\Step;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
-use Endroid\QrCode\Writer\PngWriter;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\StreamFactoryInterface;
-use Teknoo\East\Foundation\Client\ClientInterface;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
+use Teknoo\Space\Infrastructures\Twig\Extension\OrderInUrl;
 
 /**
- * Class BuildQrCodeTest.
- *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(BuildQrCode::class)]
-class BuildQrCodeTest extends TestCase
+#[CoversClass(OrderInUrl::class)]
+class OrderInUrlTest extends TestCase
 {
-    private BuildQrCode $buildQrCode;
-
-    private PngWriter|MockObject $pngWriter;
-
-    private StreamFactoryInterface|MockObject $streamFactory;
+    private OrderInUrl $orderInUrl;
 
     /**
      * {@inheritdoc}
@@ -58,20 +47,26 @@ class BuildQrCodeTest extends TestCase
     {
         parent::setUp();
 
-        $this->pngWriter = new PngWriter();
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->buildQrCode = new BuildQrCode($this->pngWriter, $this->streamFactory);
+        $this->orderInUrl = new OrderInUrl();
     }
 
-    public function testInvoke(): void
+    public function testGetFunctions()
     {
-        self::assertInstanceOf(
-            BuildQrCode::class,
-            ($this->buildQrCode)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClientInterface::class),
-                'foo',
-            ),
+        self::assertIsArray($this->orderInUrl->getFunctions());
+    }
+
+    public function testGetName()
+    {
+        self::assertEquals('app_order_in_url', $this->orderInUrl->getName());
+    }
+
+    public function testOrderInUrl()
+    {
+        self::assertIsString(
+            $this->orderInUrl->orderInUrl(
+                ['order' => 'bar', 'direction' => 'DESC'],
+                'foo'
+            )
         );
     }
 }

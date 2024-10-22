@@ -23,33 +23,28 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Endroid\QrCode\Recipe\Step;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
-use Endroid\QrCode\Writer\PngWriter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\StreamFactoryInterface;
-use Teknoo\East\Foundation\Client\ClientInterface;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
+use Symfony\Bundle\TwigBundle\DependencyInjection\TwigExtension;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Teknoo\Space\Infrastructures\Twig\Extension\UpdateQueryField;
 
 /**
- * Class BuildQrCodeTest.
- *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(BuildQrCode::class)]
-class BuildQrCodeTest extends TestCase
+#[CoversClass(UpdateQueryField::class)]
+class UpdateQueryFieldTest extends TestCase
 {
-    private BuildQrCode $buildQrCode;
+    private UpdateQueryField $updateQueryField;
 
-    private PngWriter|MockObject $pngWriter;
-
-    private StreamFactoryInterface|MockObject $streamFactory;
+    private UrlGeneratorInterface|MockObject $generator;
 
     /**
      * {@inheritdoc}
@@ -58,20 +53,35 @@ class BuildQrCodeTest extends TestCase
     {
         parent::setUp();
 
-        $this->pngWriter = new PngWriter();
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->buildQrCode = new BuildQrCode($this->pngWriter, $this->streamFactory);
+        $this->generator = $this->createMock(UrlGeneratorInterface::class);
+
+        $this->updateQueryField = new UpdateQueryField(
+            $this->generator
+        );
     }
 
-    public function testInvoke(): void
+    public function testGetFunctions()
     {
-        self::assertInstanceOf(
-            BuildQrCode::class,
-            ($this->buildQrCode)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClientInterface::class),
+        self::assertIsArray($this->updateQueryField->getFunctions());
+    }
+
+    public function testGetName()
+    {
+        self::assertEquals('app_update_query_field', $this->updateQueryField->getName());
+    }
+
+    public function testUpdateQueryField()
+    {
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->willReturn('http://localhost/foo/bar?foo=bar');
+
+        self::assertIsString(
+            $this->updateQueryField->updateQueryField(
+                new Request(),
                 'foo',
-            ),
+                'bar'
+            )
         );
     }
 }

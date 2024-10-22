@@ -23,33 +23,27 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Endroid\QrCode\Recipe\Step;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\SpaceExtension;
 
-use Endroid\QrCode\Writer\PngWriter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\StreamFactoryInterface;
-use Teknoo\East\Foundation\Client\ClientInterface;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
+use Teknoo\East\Foundation\Extension\ManagerInterface;
+use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig;
+use Twig\Environment;
 
 /**
- * Class BuildQrCodeTest.
- *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(BuildQrCode::class)]
-class BuildQrCodeTest extends TestCase
+#[CoversClass(Twig::class)]
+class TwigTest extends TestCase
 {
-    private BuildQrCode $buildQrCode;
+    private Twig $twig;
 
-    private PngWriter|MockObject $pngWriter;
-
-    private StreamFactoryInterface|MockObject $streamFactory;
+    private ManagerInterface|MockObject $manager;
 
     /**
      * {@inheritdoc}
@@ -58,20 +52,36 @@ class BuildQrCodeTest extends TestCase
     {
         parent::setUp();
 
-        $this->pngWriter = new PngWriter();
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->buildQrCode = new BuildQrCode($this->pngWriter, $this->streamFactory);
+        $this->manager = $this->createMock(ManagerInterface::class);
+
+        $this->twig = new Twig(
+            $this->manager
+        );
     }
 
-    public function testInvoke(): void
+    public function testRun()
     {
-        self::assertInstanceOf(
-            BuildQrCode::class,
-            ($this->buildQrCode)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClientInterface::class),
-                'foo',
-            ),
+        $this->manager
+            ->expects($this->once())
+            ->method('execute')
+            ->willReturnSelf();
+
+        $ext = $this->twig->run(
+            $this->createMock(Environment::class),
+            'boo'
         );
+
+        self::assertInstanceOf(Twig::class, $ext);
+        self::assertnotSame($ext, $this->twig);
+    }
+
+    public function testLoad()
+    {
+        self::assertInstanceOf(Twig::class, $this->twig->load(fn () => null));
+    }
+
+    public function testRender()
+    {
+        self::assertIsString($this->twig->render());
     }
 }
