@@ -37,7 +37,7 @@
         "doctrine/mongodb-odm": "^2.8.2",
         "doctrine/mongodb-odm-bundle": "^4.7||^5.0.1",
         "doctrine/persistence": "^3.3.3",
-        "endroid/qr-code": "^5.1",
+        "endroid/qr-code": "^6",
         "guzzlehttp/guzzle": "^7.9.2",
         "knpuniversity/oauth2-client-bundle": "^2.18.2",
         "laminas/laminas-diactoros": "^3.4",

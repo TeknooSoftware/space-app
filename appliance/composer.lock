@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "de5e83887ff933f1dde7b12afd09e411",
+    "content-hash": "b8d0942e05d70aef216915618aca5ee2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1154,21 +1154,21 @@
         },
         {
             "name": "endroid/qr-code",
-            "version": "5.1.0",
+            "version": "6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/endroid/qr-code.git",
-                "reference": "393fec6c4cbdc1bd65570ac9d245704428010122"
+                "reference": "86f264ac7f88e06352d046e5b72b441f28bfa5d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/endroid/qr-code/zipball/393fec6c4cbdc1bd65570ac9d245704428010122",
-                "reference": "393fec6c4cbdc1bd65570ac9d245704428010122",
+                "url": "https://api.github.com/repos/endroid/qr-code/zipball/86f264ac7f88e06352d046e5b72b441f28bfa5d0",
+                "reference": "86f264ac7f88e06352d046e5b72b441f28bfa5d0",
                 "shasum": ""
             },
             "require": {
                 "bacon/bacon-qr-code": "^3.0",
-                "php": "^8.1"
+                "php": "^8.2"
             },
             "require-dev": {
                 "endroid/quality": "dev-main",
@@ -1185,7 +1185,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "5.x-dev"
+                    "dev-main": "6.x-dev"
                 }
             },
             "autoload": {
@@ -1214,7 +1214,7 @@
             ],
             "support": {
                 "issues": "https://github.com/endroid/qr-code/issues",
-                "source": "https://github.com/endroid/qr-code/tree/5.1.0"
+                "source": "https://github.com/endroid/qr-code/tree/6.0.2"
             },
             "funding": [
                 {
@@ -1222,7 +1222,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-08T08:52:55+00:00"
+            "time": "2024-10-21T23:03:19+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -1434,16 +1434,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8"
+                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8",
-                "reference": "6ea8dd08867a2a42619d65c3deb2c0fcbf81c8f8",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
+                "reference": "f9c436286ab2892c7db7be8c8da4ef61ccf7b455",
                 "shasum": ""
             },
             "require": {
@@ -1497,7 +1497,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.0.3"
+                "source": "https://github.com/guzzle/promises/tree/2.0.4"
             },
             "funding": [
                 {
@@ -1513,7 +1513,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-07-18T10:29:17+00:00"
+            "time": "2024-10-17T10:06:22+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -4745,20 +4745,20 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.5.0",
+            "version": "v7.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
-                "reference": "f8a936409d53cf51dac8488a936417198e1ef060"
+                "reference": "7bb1ff62bfc8623676576328fa57143f76f78c72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/f8a936409d53cf51dac8488a936417198e1ef060",
-                "reference": "f8a936409d53cf51dac8488a936417198e1ef060",
+                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/7bb1ff62bfc8623676576328fa57143f76f78c72",
+                "reference": "7bb1ff62bfc8623676576328fa57143f76f78c72",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
                 "scheb/2fa-bundle": "self.version"
             },
             "type": "library",
@@ -4788,27 +4788,27 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.5.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.6.0"
             },
-            "time": "2023-12-03T16:24:13+00:00"
+            "time": "2024-10-20T10:14:58+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.5.0",
+            "version": "v7.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "930ce60a39a1d7634ecc580188620e263808f92e"
+                "reference": "3011e0b8242e12cdcd64ed12a95ddb2e5899ba37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/930ce60a39a1d7634ecc580188620e263808f92e",
-                "reference": "930ce60a39a1d7634ecc580188620e263808f92e",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/3011e0b8242e12cdcd64ed12a95ddb2e5899ba37",
+                "reference": "3011e0b8242e12cdcd64ed12a95ddb2e5899ba37",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "~8.2.0 || ~8.3.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
                 "symfony/config": "^6.4 || ^7.0",
                 "symfony/dependency-injection": "^6.4 || ^7.0",
                 "symfony/event-dispatcher": "^6.4 || ^7.0",
@@ -4855,26 +4855,26 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.5.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.6.0"
             },
-            "time": "2024-07-03T17:22:36+00:00"
+            "time": "2024-10-20T10:14:58+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v7.5.0",
+            "version": "v7.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
-                "reference": "d5ee170abc3843434495065b1d53914ed04a6f6a"
+                "reference": "c9a06ea7c4450b695a2ccfa43d2e344ce6d6ba0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/d5ee170abc3843434495065b1d53914ed04a6f6a",
-                "reference": "d5ee170abc3843434495065b1d53914ed04a6f6a",
+                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/c9a06ea7c4450b695a2ccfa43d2e344ce6d6ba0a",
+                "reference": "c9a06ea7c4450b695a2ccfa43d2e344ce6d6ba0a",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
                 "scheb/2fa-bundle": "self.version",
                 "spomky-labs/otphp": "^11.0"
             },
@@ -4905,26 +4905,26 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.5.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.6.0"
             },
-            "time": "2024-06-18T17:29:00+00:00"
+            "time": "2024-10-20T10:14:58+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.5.0",
+            "version": "v7.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
-                "reference": "dd1441933646d507553d2a99f44bcc5792bc37e4"
+                "reference": "be68996ec98f310716195bb5d50fcb0678a412b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/dd1441933646d507553d2a99f44bcc5792bc37e4",
-                "reference": "dd1441933646d507553d2a99f44bcc5792bc37e4",
+                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/be68996ec98f310716195bb5d50fcb0678a412b3",
+                "reference": "be68996ec98f310716195bb5d50fcb0678a412b3",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
                 "scheb/2fa-bundle": "self.version",
                 "spomky-labs/otphp": "^11.0"
             },
@@ -4955,9 +4955,9 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.5.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.6.0"
             },
-            "time": "2024-06-18T17:29:00+00:00"
+            "time": "2024-10-20T10:14:58+00:00"
         },
         {
             "name": "spomky-labs/otphp",
@@ -12222,25 +12222,25 @@
         },
         {
             "name": "behat/gherkin",
-            "version": "v4.9.0",
+            "version": "v4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Gherkin.git",
-                "reference": "0bc8d1e30e96183e4f36db9dc79caead300beff4"
+                "reference": "cbb83c4c435dd8d05a161f2a5ae322e61b2f4db6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/0bc8d1e30e96183e4f36db9dc79caead300beff4",
-                "reference": "0bc8d1e30e96183e4f36db9dc79caead300beff4",
+                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/cbb83c4c435dd8d05a161f2a5ae322e61b2f4db6",
+                "reference": "cbb83c4c435dd8d05a161f2a5ae322e61b2f4db6",
                 "shasum": ""
             },
             "require": {
                 "php": "~7.2|~8.0"
             },
             "require-dev": {
-                "cucumber/cucumber": "dev-gherkin-22.0.0",
+                "cucumber/cucumber": "dev-gherkin-24.1.0",
                 "phpunit/phpunit": "~8|~9",
-                "symfony/yaml": "~3|~4|~5"
+                "symfony/yaml": "~3|~4|~5|~6|~7"
             },
             "suggest": {
                 "symfony/yaml": "If you want to parse features, represented in YAML files"
@@ -12279,9 +12279,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Gherkin/issues",
-                "source": "https://github.com/Behat/Gherkin/tree/v4.9.0"
+                "source": "https://github.com/Behat/Gherkin/tree/v4.10.0"
             },
-            "time": "2021-10-12T13:05:09+00:00"
+            "time": "2024-10-19T14:46:06+00:00"
         },
         {
             "name": "behat/transliterator",
@@ -12753,16 +12753,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.6",
+            "version": "1.12.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae"
+                "reference": "dc2b9976bd8b0f84ec9b0e50cc35378551de7af0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc4d2f145a88ea7141ae698effd64d9df46527ae",
-                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc2b9976bd8b0f84ec9b0e50cc35378551de7af0",
+                "reference": "dc2b9976bd8b0f84ec9b0e50cc35378551de7af0",
                 "shasum": ""
             },
             "require": {
@@ -12807,7 +12807,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-06T15:03:59+00:00"
+            "time": "2024-10-18T11:12:07+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13206,16 +13206,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.4.1",
+            "version": "11.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "7875627f15f4da7e7f0823d1f323f7295a77334e"
+                "reference": "1863643c3f04ad03dcb9c6996c294784cdda4805"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/7875627f15f4da7e7f0823d1f323f7295a77334e",
-                "reference": "7875627f15f4da7e7f0823d1f323f7295a77334e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/1863643c3f04ad03dcb9c6996c294784cdda4805",
+                "reference": "1863643c3f04ad03dcb9c6996c294784cdda4805",
                 "shasum": ""
             },
             "require": {
@@ -13229,21 +13229,21 @@
                 "phar-io/manifest": "^2.0.4",
                 "phar-io/version": "^3.2.1",
                 "php": ">=8.2",
-                "phpunit/php-code-coverage": "^11.0.6",
+                "phpunit/php-code-coverage": "^11.0.7",
                 "phpunit/php-file-iterator": "^5.1.0",
                 "phpunit/php-invoker": "^5.0.1",
                 "phpunit/php-text-template": "^4.0.1",
                 "phpunit/php-timer": "^7.0.1",
                 "sebastian/cli-parser": "^3.0.2",
                 "sebastian/code-unit": "^3.0.1",
-                "sebastian/comparator": "^6.1.0",
+                "sebastian/comparator": "^6.1.1",
                 "sebastian/diff": "^6.0.2",
                 "sebastian/environment": "^7.2.0",
                 "sebastian/exporter": "^6.1.3",
                 "sebastian/global-state": "^7.0.2",
                 "sebastian/object-enumerator": "^6.0.1",
                 "sebastian/type": "^5.1.0",
-                "sebastian/version": "^5.0.1"
+                "sebastian/version": "^5.0.2"
             },
             "suggest": {
                 "ext-soap": "To be able to generate mocks based on WSDL files"
@@ -13286,7 +13286,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.4.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.4.2"
             },
             "funding": [
                 {
@@ -13302,7 +13302,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-08T15:38:37+00:00"
+            "time": "2024-10-19T13:05:19+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13310,17 +13310,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "c3c55a0f6643119fa8699577cc83ca6256d98ab5"
+                "reference": "51e3fa290bca57eca7ba6c261b8a1278eb13a98a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c3c55a0f6643119fa8699577cc83ca6256d98ab5",
-                "reference": "c3c55a0f6643119fa8699577cc83ca6256d98ab5",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/51e3fa290bca57eca7ba6c261b8a1278eb13a98a",
+                "reference": "51e3fa290bca57eca7ba6c261b8a1278eb13a98a",
                 "shasum": ""
             },
             "conflict": {
                 "3f/pygmentize": "<1.2",
-                "admidio/admidio": "<4.3.10",
+                "admidio/admidio": "<4.3.12",
                 "adodb/adodb-php": "<=5.20.20|>=5.21,<=5.21.3",
                 "aheinze/cockpit": "<2.2",
                 "aimeos/ai-admin-graphql": ">=2022.04.1,<2022.10.10|>=2023.04.1,<2023.10.6|>=2024.04.1,<2024.04.6",
@@ -13535,7 +13535,7 @@
                 "froxlor/froxlor": "<=2.2.0.0-RC3",
                 "frozennode/administrator": "<=5.0.12",
                 "fuel/core": "<1.8.1",
-                "funadmin/funadmin": "<=3.2|>=3.3.2,<=3.3.3",
+                "funadmin/funadmin": "<=5.0.2",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
                 "genix/cms": "<=1.1.11",
                 "getformwork/formwork": "<1.13.1|==2.0.0.0-beta1",
@@ -13829,7 +13829,7 @@
                 "rap2hpoutre/laravel-log-viewer": "<0.13",
                 "react/http": ">=0.7,<1.9",
                 "really-simple-plugins/complianz-gdpr": "<6.4.2",
-                "redaxo/source": "<=5.15.1",
+                "redaxo/source": "<=5.17.1",
                 "remdex/livehelperchat": "<4.29",
                 "reportico-web/reportico": "<=8.1",
                 "rhukster/dom-sanitizer": "<1.0.7",
@@ -13903,7 +13903,7 @@
                 "subhh/libconnect": "<7.0.8|>=8,<8.1",
                 "sukohi/surpass": "<1",
                 "sulu/form-bundle": ">=2,<2.5.3",
-                "sulu/sulu": "<1.6.44|>=2,<2.6.5",
+                "sulu/sulu": "<1.6.44|>=2,<2.5.21|>=2.6,<2.6.5",
                 "sumocoders/framework-user-bundle": "<1.4",
                 "superbig/craft-audit": "<3.0.2",
                 "swag/paypal": "<5.4.4",
@@ -14134,7 +14134,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-11T18:06:00+00:00"
+            "time": "2024-10-21T20:05:20+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -14308,16 +14308,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "6.1.0",
+            "version": "6.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "fa37b9e2ca618cb051d71b60120952ee8ca8b03d"
+                "reference": "5ef523a49ae7a302b87b2102b72b1eda8918d686"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/fa37b9e2ca618cb051d71b60120952ee8ca8b03d",
-                "reference": "fa37b9e2ca618cb051d71b60120952ee8ca8b03d",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/5ef523a49ae7a302b87b2102b72b1eda8918d686",
+                "reference": "5ef523a49ae7a302b87b2102b72b1eda8918d686",
                 "shasum": ""
             },
             "require": {
@@ -14373,7 +14373,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/6.1.0"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/6.1.1"
             },
             "funding": [
                 {
@@ -14381,7 +14381,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-11T15:42:56+00:00"
+            "time": "2024-10-18T15:00:48+00:00"
         },
         {
             "name": "sebastian/complexity",
