@@ -69,7 +69,7 @@
             </div>{# end col #}
         </div>{# end row #}
 
-        {% if pageCount > 1 %}
+        {% if pageCount is defined and pageCount > 1 %}
             <div class="row text-center">
             {# PAGINATION START #}
             <div class="col-12 mt-4">
