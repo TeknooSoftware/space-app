@@ -11481,12 +11481,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "907f9e609a2d65d8a5cb6a5cc070b106e958ee40"
+                "reference": "875769e138331ffcf9c61181be7f8c729bc07a22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/907f9e609a2d65d8a5cb6a5cc070b106e958ee40",
-                "reference": "907f9e609a2d65d8a5cb6a5cc070b106e958ee40",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/875769e138331ffcf9c61181be7f8c729bc07a22",
+                "reference": "875769e138331ffcf9c61181be7f8c729bc07a22",
                 "shasum": ""
             },
             "require": {
@@ -11557,7 +11557,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-10-24T08:40:04+00:00"
+            "time": "2024-10-24T09:19:04+00:00"
         },
         {
             "name": "teknoo/recipe",
