@@ -67,7 +67,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -680,7 +680,7 @@ return array(
             diGet(OriginalRecipeInterface::class),
             diGet(HealthInterface::class),
             diGet(LoadEnvironments::class),
-            diGet(DashboardInfoInterface::class),
+            diGet(ClustersInfoInterface::class),
             diGet(Render::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.cookbook.default_error_template'),

@@ -29,23 +29,23 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
- * Class DashboardInfoTest.
+ * Class ClustersInfoTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(DashboardInfo::class)]
-class DashboardInfoTest extends TestCase
+#[CoversClass(ClustersInfo::class)]
+class ClustersInfoTest extends TestCase
 {
-    private DashboardInfo $dashboardInfo;
+    private ClustersInfo $dashboardInfo;
 
     private ClusterCatalog $catalog;
 
@@ -73,13 +73,13 @@ class DashboardInfoTest extends TestCase
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->dashboardInfo = new DashboardInfo($this->catalog);
+        $this->dashboardInfo = new ClustersInfo($this->catalog);
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            DashboardInfo::class,
+            ClustersInfo::class,
             ($this->dashboardInfo)(
                 $this->createMock(ParametersBag::class),
                 $this->createMock(AccountWallet::class),

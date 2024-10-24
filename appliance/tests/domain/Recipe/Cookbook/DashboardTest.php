@@ -33,7 +33,7 @@ use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\CookbookInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Cookbook\Dashboard;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
@@ -58,7 +58,7 @@ class DashboardTest extends TestCase
 
     private LoadEnvironments|MockObject $loadCredentials;
 
-    private DashboardInfoInterface|MockObject $dashboardInfo;
+    private ClustersInfoInterface|MockObject $dashboardInfo;
 
     private Render|MockObject $render;
 
@@ -76,7 +76,7 @@ class DashboardTest extends TestCase
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->health = $this->createMock(HealthInterface::class);
         $this->loadCredentials = $this->createMock(LoadEnvironments::class);
-        $this->dashboardInfo = $this->createMock(DashboardInfoInterface::class);
+        $this->dashboardInfo = $this->createMock(ClustersInfoInterface::class);
         $this->render = $this->createMock(Render::class);
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';

@@ -34,10 +34,10 @@ use Teknoo\Space\Object\DTO\AccountWallet;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-interface DashboardInfoInterface
+interface ClustersInfoInterface
 {
     public function __invoke(
         ParametersBag $parametersBag,
         ?AccountWallet $accountWallet = null,
-    ): DashboardInfoInterface;
+    ): ClustersInfoInterface;
 }

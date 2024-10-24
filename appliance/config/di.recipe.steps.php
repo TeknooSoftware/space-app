@@ -40,7 +40,7 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -58,7 +58,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServic
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
@@ -380,8 +380,8 @@ return [
             get('teknoo.space.clusters_catalog'),
         ),
 
-    DashboardInfoInterface::class => get(DashboardInfo::class),
-    DashboardInfo::class => create()
+    ClustersInfoInterface::class => get(ClustersInfo::class),
+    ClustersInfo::class => create()
         ->constructor(
             get('teknoo.space.clusters_catalog'),
         ),

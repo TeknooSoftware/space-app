@@ -31,7 +31,7 @@ use Teknoo\East\Foundation\Recipe\CookbookInterface;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Cookbook\BaseCookbookTrait;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
@@ -49,7 +49,7 @@ class Dashboard implements CookbookInterface
         RecipeInterface $recipe,
         private readonly HealthInterface $health,
         private readonly LoadEnvironments $loadEnvironments,
-        private readonly DashboardInfoInterface $dashboardInfo,
+        private readonly ClustersInfoInterface $dashboardInfo,
         private readonly Render $render,
         private readonly RenderError $renderError,
         private readonly string $defaultErrorTemplate,
@@ -63,7 +63,7 @@ class Dashboard implements CookbookInterface
 
         $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
 
-        $recipe = $recipe->cook($this->dashboardInfo, DashboardInfoInterface::class, [], 20);
+        $recipe = $recipe->cook($this->dashboardInfo, ClustersInfoInterface::class, [], 20);
 
         $recipe = $recipe->cook($this->render, Render::class, [], 50);
 

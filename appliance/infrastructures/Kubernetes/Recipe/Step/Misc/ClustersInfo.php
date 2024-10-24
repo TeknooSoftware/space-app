@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 
@@ -36,7 +36,7 @@ use Teknoo\Space\Object\DTO\AccountWallet;
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class DashboardInfo implements DashboardInfoInterface
+class ClustersInfo implements ClustersInfoInterface
 {
     public function __construct(
         private ClusterCatalog $catalog,
@@ -46,7 +46,7 @@ class DashboardInfo implements DashboardInfoInterface
     public function __invoke(
         ParametersBag $parametersBag,
         ?AccountWallet $accountWallet = null,
-    ): DashboardInfoInterface {
+    ): ClustersInfoInterface {
         $parametersBag->set('accountWallet', $accountWallet);
         $parametersBag->set('clustersCatalog', $this->catalog);
 
