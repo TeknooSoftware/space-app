@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b8d0942e05d70aef216915618aca5ee2",
+    "content-hash": "79cf439fb9c5f1a559304aaf66e69496",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11477,16 +11477,16 @@
         },
         {
             "name": "teknoo/kubernetes-client",
-            "version": "1.5.4",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "7062327e38032b62792b3919430167e0a9ad13de"
+                "reference": "907f9e609a2d65d8a5cb6a5cc070b106e958ee40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/7062327e38032b62792b3919430167e0a9ad13de",
-                "reference": "7062327e38032b62792b3919430167e0a9ad13de",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/907f9e609a2d65d8a5cb6a5cc070b106e958ee40",
+                "reference": "907f9e609a2d65d8a5cb6a5cc070b106e958ee40",
                 "shasum": ""
             },
             "require": {
@@ -11557,7 +11557,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-10-06T20:08:10+00:00"
+            "time": "2024-10-24T08:40:04+00:00"
         },
         {
             "name": "teknoo/recipe",
