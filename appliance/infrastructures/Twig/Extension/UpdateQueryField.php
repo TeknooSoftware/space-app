@@ -49,7 +49,10 @@ class UpdateQueryField extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('app_update_query_field', $this->updateQueryField(...))
+            new TwigFunction(
+                name: 'app_update_query_field',
+                callable: $this->updateQueryField(...)
+            )
         ];
     }
 

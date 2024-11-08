@@ -54,6 +54,9 @@ class PersistEnvironment
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $envMetadata
+     */
     public function __invoke(
         ManagerInterface $manager,
         SpaceAccount|Account $spaceAccount,
@@ -68,6 +71,7 @@ class PersistEnvironment
         AccountHistory $accountHistory,
         ClusterConfig $clusterConfig,
         ?AccountEnvironmentResume $resume = null,
+        array $envMetadata = [],
     ): self {
         if ($spaceAccount instanceof SpaceAccount) {
             $account = $spaceAccount->account;
@@ -87,6 +91,7 @@ class PersistEnvironment
             clientCertificate: '',
             clientKey: '',
             token: $token,
+            metadata: $envMetadata,
         );
 
         $promise = null;

@@ -112,6 +112,7 @@ return [
                 $credentials,
                 $container->get(RepositoryRegistry::class)
             );
+
             $sluggyName = $sluggyfier($definition['name']);
             $aliases[$sluggyName] = $name;
             $clustersList[$name] = new Cluster(

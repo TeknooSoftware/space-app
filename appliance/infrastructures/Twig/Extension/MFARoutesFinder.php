@@ -57,8 +57,8 @@ class MFARoutesFinder extends AbstractExtension
     {
         return array(
             new TwigFunction(
-                'space_2fa_route_finder',
-                $this->find(...),
+                name: 'space_2fa_route_finder',
+                callable: $this->find(...),
             )
         );
     }

@@ -29,6 +29,11 @@ services:
     Teknoo\Space\Infrastructures\Symfony\:
         resource: '../infrastructures/Symfony/*'
 
+    Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig:
+        class: 'Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig'
+        arguments:
+            - '@Teknoo\East\Foundation\Extension\ManagerInterface'
+
     Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing:
         class: 'Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing'
         arguments:
@@ -133,7 +138,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\HistorySentHandler'
         arguments:
             - '@Teknoo\East\FoundationBundle\Messenger\Executor'
-            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\AddHistoryInterface'
+            - '@Teknoo\East\Paas\Contracts\Recipe\Plan\AddHistoryInterface'
             - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
@@ -146,7 +151,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler'
         arguments:
             - '@Teknoo\East\FoundationBundle\Messenger\Executor'
-            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface'
+            - '@Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface'
             - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
@@ -163,7 +168,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\RunJobHandler'
         arguments:
             - '@Teknoo\East\FoundationBundle\Messenger\Executor'
-            - '@Teknoo\East\Paas\Contracts\Recipe\Cookbook\RunJobInterface'
+            - '@Teknoo\East\Paas\Contracts\Recipe\Plan\RunJobInterface'
             - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'

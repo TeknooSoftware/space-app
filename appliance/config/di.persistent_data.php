@@ -102,7 +102,7 @@ return [
         }
 
         throw new NonManagedRepositoryException(sprintf(
-            "Error, repository of class %s are not currently managed",
+            'Error, repository of class %s are not currently managed',
             $repository::class
         ));
     },

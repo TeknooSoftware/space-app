@@ -1,5 +1,55 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC8] - 2024-11-08
+### Release Candidate
+- Huge realase for an RC (To improve the future of Space and migrate some behavior from internals projects to Space 
+  or others publics components of Teknoo to reduce the maintenance).
+  - The final release come soon.
+- Update to `Teknoo Recipe 6`, `Teknoo East Foundation 8`, `Teknoo East Common 3` and `Teknoo East PaaS 4`.
+- Rename `Cookbook` to `Plan`, use `EditablePlan` instead of additionals steps and remove `AdditionalsSteps`
+- Update libraries `league/flysystem` and `mongodb/mongodb`.
+- Update `bacon/bacon-qr-code` and `illuminate` libraries.
+- Update `knpuniversity/oauth2-client-bundle` and `php-http` libraries.
+- Update `Doctrine` libraries
+- Update `Symfony` and `Twig libraries` to fix CVE.
+- Update `endroid/qr-code` to 6.
+- Require PHP 8.3 or newer.
+- Add and enable from `Teknoo East Foundation` a new extension system, to store into the extensions folder to add 
+  easily extensions. Environments variables about projects' buildings (OCI libraries, pods and services extensions, 
+  etc) still availables. But for complexes features, this extension behavior is provided. With extensions, you can :
+  - Update the Definition of Containers
+  - Update the list of Symfony Bundle
+  - Add some routes to Symfony
+  - Add some twig templates
+  - Add new endpoints and features
+  - Complete the definitions of clusters, OCI libraries, extensions.
+  - Add some assets
+  Without change a file into the `config` folder. `Space Entreprise edition` will use this feature, it will a set of 
+  extensions.
+  - Available extensions modules in `Space` are :
+    - `Teknoo\East\FoundationBundle\Extension\Bundles` : to add bundles to load.
+      - Bundles can load their own Symfony's container definition (`services.yaml`), translation, template and code
+    - `Teknoo\East\FoundationBundle\Extension\PHPDI`: to alter the Definition of Containers. 
+    - `Teknoo\East\FoundationBundle\Extension\Routes`: to add some routes
+    - `Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig`: to complete some templates (in `Space App`) :
+      - `space_top_header_menu` to complete the top right menu
+      - `space_left_brand` to complete the top left logo
+      - `space_left_menu` to complete the left menu
+      - `space_container` to prepend contents in front of the main content
+      It's not possible to add blocks from this calls.
+    - `Teknoo\East\Common\FrontAsset\Extensions\SourceLoader`
+- Add `ClusterCatalog` to get Default Cluster.
+- Replace call of `uniqid` by `random_bytes`.
+- Complete tests
+- Prevent issue in `dashboard.list.html.twig` when the variable `pageCount` is not present
+- `DashboardInfoInterface` contracts and components to `ClustersInfo`.
+- Rework how cluster and environment are selected in the dashboard, to migrate them into in a step and be reused.
+- Add variables into `dashboard.list.html.twig` to allow one direction collection, without pagination.
+- `AccountEnvironment` support metadata to complete env data from extension.
+- Cleaning `Behat` Test, split context in traits, to avoid multiple contexts (to simplify tests writing) and 
+  avoid huge PHP file, to be more understandable. Convert to public some privates methods to allow using the context 
+  into extensions.
+
 ## [1.0.0-RC7] - 2024-09-27
 ### Release Candidate
 - Update PHPSecLib and Nikic Php Parser
@@ -434,7 +484,7 @@
 ### Beta Release
 - Add JWT firewall thanks to `LexikJWTAuthenticationBundle`
   - To get a JWT token from the interface (not allowed directly from the bundle to keep 2FA).
-  - Add Cookbook `UserGetJwtToken` to allow user to get a token
+  - Add Plan `UserGetJwtToken` to allow user to get a token
   - JWT token can be passed to the api in HTTP Header or, if the env `SPACE_JWT_ENABLE_IN_QUERY` is at true, 
     in the query, with the `bearer` parameter
 - Add API v1 to execute new job on a project, list, get and delete jobs

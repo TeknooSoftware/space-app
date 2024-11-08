@@ -49,9 +49,9 @@ class ObjectSerializing extends AbstractExtension
     {
         return array(
             new TwigFilter(
-                'space_object_serialization',
-                $this->serialize(...),
-                [
+                name: 'space_object_serialization',
+                callable: $this->serialize(...),
+                options: [
                     'is_safe' => ['html', 'json'],
                 ],
             )

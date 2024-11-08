@@ -48,6 +48,8 @@
             </nav>
         </div>
 
+        {% block additionalListHeader '' %}
+
         <div class="row mt-4">
             <div class="col-12">
                 <div class="table-responsive shadow rounded">
@@ -69,7 +71,7 @@
             </div>{# end col #}
         </div>{# end row #}
 
-        {% if pageCount > 1 %}
+        {% if pageCount is defined and pageCount > 1 %}
             <div class="row text-center">
             {# PAGINATION START #}
             <div class="col-12 mt-4">
@@ -96,6 +98,28 @@
                             </a>
                         </li>
                     {% endif %}
+                </ul>
+            </div>
+            </div>{# end col #}
+            {# PAGINATION END #}
+            </div>{# end row #}
+        {% endif %}
+
+        {% if collectionResumeError is not defined
+              and oneDirectionPagination is defined
+              and oneDirectionPagination is not empty
+              and sessionSearch is defined
+              and sessionSearch is not empty %}
+            <div class="row text-center">
+            {# PAGINATION START #}
+            <div class="col-12 mt-4">
+            <div class="d-md-flex align-items-center text-center justify-content-between">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="{{ app_update_query_field(app.request, 'search', sessionSearch) }}">
+                            {{ 'teknoo.space.text.next'|trans }}
+                        </a>
+                    </li>
                 </ul>
             </div>
             </div>{# end col #}

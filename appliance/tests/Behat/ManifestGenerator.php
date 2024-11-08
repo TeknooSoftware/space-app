@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat;
 
+use Teknoo\East\Foundation\Extension\Manager;
 use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
@@ -34,8 +35,49 @@ use function json_encode;
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ */
 class ManifestGenerator
 {
+    private function callExtensions(
+        string $action,
+        array $json,
+        ?string $name = null,
+        ?string $namespace = null,
+        ?array $namespaces = null,
+        ?array $accountQuotas = null,
+        ?AccountRegistry $registry = null,
+        ?string $projectPrefix = null,
+        ?string $jobId = null,
+        ?string $hncSuffix = null,
+        ?bool $useHnc = null,
+        ?string $quotaMode = null,
+        ?string $defaultsMods = null,
+    ): array {
+        $module = new ExpectedManifestTestExtension(
+            action: $action,
+            json: $json,
+            name: $name,
+            namespace: $namespace,
+            namespaces: $namespaces,
+            accountQuotas: $accountQuotas,
+            registry: $registry,
+            projectPrefix: $projectPrefix,
+            jobId: $jobId,
+            hncSuffix: $hncSuffix,
+            useHnc: $useHnc,
+            quotaMode: $quotaMode,
+            defaultsMods: $defaultsMods,
+        );
+
+        Manager::run()->execute($module);
+
+        return $module->json;
+    }
+
     /**
      * @param AccountQuota[] $quotas
      */
@@ -272,11 +314,19 @@ class ManifestGenerator
 }
 EOF;
 
+        $array = json_decode(
+            json: $json,
+            associative: true,
+        );
+
+        $array = $this->callExtensions(
+            action: 'registryCreation',
+            json: $array,
+            name: $name,
+        );
+
         return json_encode(
-            value: json_decode(
-                json: $json,
-                associative: true
-            ),
+            value: $array,
             flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
         );
     }
@@ -534,11 +584,22 @@ EOF;
 }
 EOF;
 
+        $array = json_decode(
+            json: $json,
+            associative: true
+        );
+
+        $array = $this->callExtensions(
+            action: 'namespaceCreation',
+            json: $array,
+            name: $name,
+            namespace: $namespace,
+            accountQuotas: $accountQuotas,
+            registry: $registry,
+        );
+
         return json_encode(
-            value: json_decode(
-                json: $json,
-                associative: true
-            ),
+            value: $array,
             flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
         );
     }
@@ -578,6 +639,14 @@ EOF;
                 ]
             ];
         }
+
+        $quotas = $this->callExtensions(
+            action: 'quotaRefresh',
+            json: $quotas,
+            namespace: $accountNs,
+            namespaces: $namespaces,
+            accountQuotas: $accountQuotas,
+        );
 
         return json_encode(
             value: $quotas,
@@ -1532,11 +1601,24 @@ EOF;
 }
 EOF;
 
+        $array = json_decode(
+            json: $json,
+            associative: true
+        );
+
+        $array = $this->callExtensions(
+            action: 'fullDeployment',
+            json: $array,
+            projectPrefix: $projectPrefix,
+            jobId: $jobId,
+            hncSuffix: $hncSuffix,
+            useHnc: $useHnc,
+            quotaMode: $quotaMode,
+            defaultsMods: $defaultsMods,
+        );
+
         return json_encode(
-            value: json_decode(
-                json: $json,
-                associative: true
-            ),
+            value: $array,
             flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT,
         );
     }
