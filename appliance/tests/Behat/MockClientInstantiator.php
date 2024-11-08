@@ -39,9 +39,14 @@ use function json_decode;
 use function parse_str;
 use function str_contains;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ */
 class MockClientInstantiator implements InstantiatorInterface
 {
-    public static TestsContext $testsContext;
+    public static SpaceContext $testsContext;
 
     public function build(
         bool $verify,
@@ -52,7 +57,7 @@ class MockClientInstantiator implements InstantiatorInterface
     ): ClientInterface {
         return new class (self::$testsContext) implements HttpClient {
             public function __construct(
-                private readonly TestsContext $testsContext,
+                private readonly SpaceContext $testsContext,
                 private int $counter = 0,
             ) {
             }

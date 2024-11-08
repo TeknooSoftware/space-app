@@ -28,6 +28,13 @@ namespace Teknoo\Space\Tests\Behat\ODM;
 use Doctrine\ODM\MongoDB\Repository\GridFSRepository;
 use Doctrine\ODM\MongoDB\Repository\UploadOptions;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ *
+ * Disabled, not needed in test
+ */
 class GridFSMemoryRepository extends MemoryRepository implements GridFSRepository
 {
     public function openDownloadStream($id)

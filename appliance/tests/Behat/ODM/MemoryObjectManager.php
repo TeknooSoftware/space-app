@@ -26,8 +26,15 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\ODM;
 
 use Doctrine\Persistence\ObjectManager;
-use Teknoo\Space\Tests\Behat\TestsContext;
+use Teknoo\Space\Tests\Behat\SpaceContext;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ *
+ * Disabled, not needed in test
+ */
 class MemoryObjectManager implements ObjectManager
 {
     /**
@@ -37,7 +44,7 @@ class MemoryObjectManager implements ObjectManager
 
     public function __construct(
         callable $getRepository,
-        private TestsContext $context,
+        private SpaceContext $context,
     ) {
         $this->getRepository = $getRepository;
     }

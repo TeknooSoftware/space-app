@@ -36,7 +36,6 @@ use Teknoo\East\Paas\Infrastructures\ProjectBuilding\MakeHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\NpmHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\PipHook;
 use Teknoo\East\Paas\Infrastructures\ProjectBuilding\SfConsoleHook;
-use Traversable;
 
 use function class_exists;
 use function is_a;

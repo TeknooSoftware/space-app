@@ -54,7 +54,7 @@ parameters:
     teknoo.east.paas.symfony.history.prefer-real-date: true
     teknoo.east.paas.symfony.prepare-job.prefer-real-date: true
 
-    teknoo.space.assets.version: '2024.05.04'
+    teknoo.space.assets.version: '2024.10.28'
 
     teknoo.space.jwt.enable_in-query: '%env(bool:SPACE_JWT_ENABLE_IN_QUERY)%'
 

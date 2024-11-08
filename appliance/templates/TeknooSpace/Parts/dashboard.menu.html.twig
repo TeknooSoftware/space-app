@@ -3,10 +3,11 @@
     <div class="sidebar-content" data-simplebar style="height: calc(100% - 60px);">
         <div class="sidebar-brand">
             <a href="{{ path('space_dashboard') }}">
-                <img src="images/logo-dark.svg" height="24" class="logo-light-mode" alt="">
-                <img src="images/logo-light.svg" height="24" class="logo-dark-mode" alt="">
+                <img src="images/logo-dark.svg" height="24" class="logo-light-mode" alt="Teknoo Space">
+                <img src="images/logo-light.svg" height="24" class="logo-dark-mode" alt="Teknoo Space">
                 <span class="sidebar-colored">
-                    <img src="images/logo-light.svg" height="24" alt="">
+                    <img src="images/logo-light.svg" height="24" alt="Teknoo Space">
+                    {{ space_extension('space_left_brand') }}
                 </span>
             </a>
         </div>
@@ -30,6 +31,7 @@
                         </a>
                     </li>
                 {% endif %}
+                {{ space_extension('space_left_menu') }}
             {% endif %}
             {% if is_granted('ROLE_ADMIN') %}
                 <li class="sidebar-dropdown">

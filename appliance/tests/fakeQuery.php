@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
-use Teknoo\Space\Tests\Behat\TestsContext;
+use Teknoo\Space\Tests\Behat\SpaceContext;
 
 use function count;
 use function is_iterable;
@@ -30,7 +30,7 @@ if (!\class_exists(Query::class, false)) {
 
         public object|iterable|int|null $resultToReturn = null;
 
-        public static ?TestsContext $testsContext = null;
+        public static ?SpaceContext $testsContext = null;
 
         public static ?ObjectManager $testsObjecttManager = null;
 

@@ -27,6 +27,8 @@ namespace Teknoo\Space\App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Teknoo\East\FoundationBundle\Extension\Routes as RoutesExtension;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -36,5 +38,14 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
  */
 class Kernel extends BaseKernel
 {
-    use MicroKernelTrait;
+    use MicroKernelTrait {
+        configureRoutes as protected configureRoutesTrait;
+    }
+
+    private function configureRoutes(RoutingConfigurator $routes): void
+    {
+        $this->configureRoutesTrait($routes);
+
+        RoutesExtension::extendsRoutes($routes, $this->getEnvironment());
+    }
 }

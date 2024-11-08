@@ -4,8 +4,8 @@ parameters:
             message: '#mixed#'
             path:  config/
         -
-            message: '#::add#'
-            path:  config/
+            message: '#Psr\\Container\\ContainerInterface::get#'
+            path:  config/di.recipe.plans.php
         -
             message: '#is never read, only written#'
             path:  domain/Object/Persisted/
@@ -54,3 +54,6 @@ parameters:
         -
             message: '#mixed#'
             path:   infrastructures/Twig/Extension/UpdateQueryField.php
+        -
+            message: '#Kernel::configureRoutes#'
+            path:   src/Kernel.php

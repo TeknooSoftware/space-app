@@ -33,7 +33,7 @@ use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Diactoros\MessageFactory;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Foundation\Liveness\PingService;
-use Teknoo\East\Foundation\Recipe\RecipeInterface;
+use Teknoo\East\Foundation\Recipe\PlanInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\TimerService;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ListObjectsAccessControl;
@@ -54,21 +54,24 @@ return [
         return new HostnameRedirectionMiddleware($container->get('teknoo.space.hostname'));
     },
 
-    RecipeInterface::class => decorate(function ($previous, ContainerInterface $container): mixed {
-        $previous = $previous->registerMiddleware(
-            $container->get(HostnameRedirectionMiddleware::class),
-            4
-        );
+    PlanInterface::class => decorate(
+        static function (
+            PlanInterface $previous,
+            ContainerInterface $container,
+        ): PlanInterface {
+            $previous->add(
+                $container->get(HostnameRedirectionMiddleware::class)->execute(...),
+                4
+            );
 
-        $previous = $previous->cook(
-            $container->get(LoadUserInSpace::class),
-            LoadUserInSpace::class,
-            [],
-            5
-        );
+            $previous->add(
+                $container->get(LoadUserInSpace::class),
+                5
+            );
 
-        return $previous;
-    }),
+            return $previous;
+        }
+    ),
 
     ListObjectsAccessControlInterface::class => get(ListObjectsAccessControl::class),
     ListObjectsAccessControl::class => static function (ContainerInterface $container): ListObjectsAccessControl {
