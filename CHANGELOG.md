@@ -24,7 +24,7 @@
   - Add new endpoints and features
   - Complete the definitions of clusters, OCI libraries, extensions.
   - Add some assets
-  Without change a file into the `config` folder. `Space Entreprise edition` will use this feature, it will a set of 
+  Without change a file into the `config` folder. `Space Enterprise edition` will use this feature, it will a set of 
   extensions.
   - Available extensions modules in `Space` are :
     - `Teknoo\East\FoundationBundle\Extension\Bundles` : to add bundles to load.
