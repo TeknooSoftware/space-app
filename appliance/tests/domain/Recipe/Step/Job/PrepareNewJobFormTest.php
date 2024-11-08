@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -40,8 +41,8 @@ use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm
  */
+#[CoversClass(PrepareNewJobForm::class)]
 class PrepareNewJobFormTest extends TestCase
 {
     private PrepareNewJobForm $prepareNewJobForm;

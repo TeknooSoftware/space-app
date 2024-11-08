@@ -27,6 +27,8 @@ namespace Teknoo\Space\App;
 
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Teknoo\East\FoundationBundle\Extension\Routes as RoutesExtension;
 
 use function rtrim;
 use function str_contains;
@@ -42,6 +44,10 @@ use function substr;
  */
 class Kernel extends BaseKernel
 {
+    use MicroKernelTrait {
+        configureRoutes as protected configureRoutesTrait;
+    }
+
     use MicroKernelTrait;
 
     private const PHAR_NAME = 'space.phar';
@@ -49,6 +55,13 @@ class Kernel extends BaseKernel
     private const PHAR_SCHEME = 'phar://';
 
     private ?string $pharDir = null;
+
+    private function configureRoutes(RoutingConfigurator $routes): void
+    {
+        $this->configureRoutesTrait($routes);
+
+        RoutesExtension::extendsRoutes($routes, $this->getEnvironment());
+    }
 
     private static function isPhar(): bool
     {

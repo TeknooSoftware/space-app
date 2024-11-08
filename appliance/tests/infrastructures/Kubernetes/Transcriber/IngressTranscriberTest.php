@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Transcriber;
 
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\Ingress;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\IngressPath;
@@ -43,8 +44,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber
  */
+#[CoversClass(IngressTranscriber::class)]
 class IngressTranscriberTest extends TestCase
 {
     public function buildTranscriber(): IngressTranscriber
@@ -57,7 +58,7 @@ class IngressTranscriberTest extends TestCase
         $kubeClient = $this->createMock(KubeClient::class);
         $cd = $this->createMock(CompiledDeploymentInterface::class);
 
-        $cd->expects(self::once())
+        $cd->expects($this->once())
             ->method('foreachIngress')
             ->willReturnCallback(function (callable $callback) use ($cd) {
                 $callback(
@@ -94,23 +95,23 @@ class IngressTranscriberTest extends TestCase
 
         $repoIngress = $this->createMock(IngressRepository::class);
 
-        $kubeClient->expects(self::atLeastOnce())
+        $kubeClient->expects($this->atLeastOnce())
             ->method('setNamespace')
             ->with('default_namespace');
 
-        $kubeClient->expects(self::any())
+        $kubeClient->expects($this->any())
             ->method('__call')
             ->willReturnMap([
                 ['ingresses', [], $repoIngress],
             ]);
 
-        $repoIngress->expects(self::exactly(2))
+        $repoIngress->expects($this->exactly(2))
             ->method('apply')
             ->willReturn(['foo']);
 
         $promise = $this->createMock(PromiseInterface::class);
-        $promise->expects(self::exactly(2))->method('success')->with(['foo']);
-        $promise->expects(self::never())->method('fail');
+        $promise->expects($this->exactly(2))->method('success')->with(['foo']);
+        $promise->expects($this->never())->method('fail');
 
         self::assertInstanceOf(
             IngressTranscriber::class,
@@ -130,7 +131,7 @@ class IngressTranscriberTest extends TestCase
         $kubeClient = $this->createMock(KubeClient::class);
         $cd = $this->createMock(CompiledDeploymentInterface::class);
 
-        $cd->expects(self::once())
+        $cd->expects($this->once())
             ->method('foreachIngress')
             ->willReturnCallback(function (callable $callback) use ($cd) {
                 $callback(
@@ -165,13 +166,13 @@ class IngressTranscriberTest extends TestCase
             });
 
         $repo = $this->createMock(IngressRepository::class);
-        $kubeClient->expects(self::any())
+        $kubeClient->expects($this->any())
             ->method('__call')
             ->with('ingresses')
             ->willReturn($repo);
 
         $counter = 0;
-        $repo->expects(self::exactly(2))
+        $repo->expects($this->exactly(2))
             ->method('apply')
             ->willReturnCallback(function () use (&$counter) {
                 if (0 === $counter) {
@@ -183,8 +184,8 @@ class IngressTranscriberTest extends TestCase
             });
 
         $promise = $this->createMock(PromiseInterface::class);
-        $promise->expects(self::once())->method('success')->with(['foo']);
-        $promise->expects(self::once())->method('fail');
+        $promise->expects($this->once())->method('success')->with(['foo']);
+        $promise->expects($this->once())->method('fail');
 
         self::assertInstanceOf(
             IngressTranscriber::class,

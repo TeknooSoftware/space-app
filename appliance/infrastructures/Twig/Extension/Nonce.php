@@ -28,8 +28,8 @@ namespace Teknoo\Space\Infrastructures\Twig\Extension;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-use function substr;
-use function uniqid;
+use function bin2hex;
+use function random_bytes;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -44,7 +44,10 @@ class Nonce extends AbstractExtension
     public function getFunctions(): array
     {
         return array(
-            new TwigFunction('space_nonce', $this->getNonce(...))
+            new TwigFunction(
+                name: 'space_nonce',
+                callable: $this->getNonce(...)
+            )
         );
     }
 
@@ -55,6 +58,6 @@ class Nonce extends AbstractExtension
 
     public function getNonce(): string
     {
-        return self::$currentNonce ?? self::$currentNonce = substr(uniqid("", true), 0, 14);
+        return self::$currentNonce ?? self::$currentNonce = \bin2hex(random_bytes(14));
     }
 }

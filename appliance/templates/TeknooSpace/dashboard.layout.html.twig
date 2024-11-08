@@ -153,6 +153,7 @@
                                                                     {{ 'teknoo.space.action.account-settings'|trans }}
                                                                 </a>
                                                             {% endif %}
+                                                            {{ space_extension('space_top_header_menu') }}
                                                             <div class="dropdown-divider border-top"></div>
                                                             <a class="dropdown-item text-dark"
                                                                hreflang="{{ locale }}"
@@ -174,6 +175,7 @@
 
                         {% block containerFluid %}
                             <div class="container-fluid">
+                                {{ space_extension('space_container') }}
                                 {% block containerFluidInner '' %}
                             </div>
                         {% endblock %}{# containerFluid #}

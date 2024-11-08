@@ -1,4 +1,6 @@
-FROM mongo:7
+ARG MONGO_VERSION=7
+
+FROM mongo:$MONGO_VERSION
 
 ENV DEBIAN_FRONTEND noninteractive
 

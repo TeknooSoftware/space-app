@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Authenticator\Exception;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use DomainException as BaseException;
 use Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\Exception\NotManagedResourceException;
@@ -36,8 +37,8 @@ use Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\Exception\NotMan
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\Exception\NotManagedResourceException
  */
+#[CoversClass(NotManagedResourceException::class)]
 class NotManagedResourceExceptionTest extends TestCase
 {
     public function testConstructor(): void

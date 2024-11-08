@@ -28,6 +28,11 @@ namespace Teknoo\Space\Tests\Behat;
 use Teknoo\East\Paas\Contracts\Hook\HookInterface;
 use Teknoo\Recipe\Promise\PromiseInterface;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ */
 class HookMock implements HookInterface
 {
     public function __construct(

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Service\Account;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator;
@@ -36,8 +37,8 @@ use Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator
  */
+#[CoversClass(CodeGenerator::class)]
 class CodeGeneratorTest extends TestCase
 {
     private CodeGenerator $codeGenerator;

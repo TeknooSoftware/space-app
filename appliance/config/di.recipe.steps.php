@@ -25,8 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Writer\PngWriter;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -42,7 +40,7 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -60,7 +58,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServic
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardInfo;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
@@ -99,6 +97,7 @@ use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
+use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
@@ -382,14 +381,19 @@ return [
             get('teknoo.space.clusters_catalog'),
         ),
 
-    DashboardInfoInterface::class => get(DashboardInfo::class),
-    DashboardInfo::class => create()
+    ClustersInfoInterface::class => get(ClustersInfo::class),
+    ClustersInfo::class => create()
+        ->constructor(
+            get('teknoo.space.clusters_catalog'),
+        ),
+
+    ClusterAndEnvSelection::class => create()
         ->constructor(
             get('teknoo.space.clusters_catalog'),
         ),
 
     DashboardFrameInterface::class => get(DashboardFrame::class),
-    DashboardFrame::class => function (ContainerInterface $container): DashboardFrame {
+    DashboardFrame::class => static function (ContainerInterface $container): DashboardFrame {
         if ($container->has(ClientInterface::class)) {
             $httpClient = $container->get(ClientInterface::class);
         } else {
@@ -424,14 +428,10 @@ return [
     },
 
     PngWriter::class => create(),
-    BuilderInterface::class => static function (): BuilderInterface {
-        return Builder::create();
-    },
 
     BuildQrCodeInterface::class => get(BuildQrCode::class),
     BuildQrCode::class => create()
         ->constructor(
-            get(BuilderInterface::class),
             get(PngWriter::class),
             get(StreamFactoryInterface::class),
         ),

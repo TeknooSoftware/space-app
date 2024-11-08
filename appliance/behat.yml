@@ -2,7 +2,7 @@ default:
     suites:
         default:
             contexts:
-                - Teknoo\Space\Tests\Behat\TestsContext
+                - Teknoo\Space\Tests\Behat\SpaceContext
 
     extensions:
         FriendsOfBehat\SymfonyExtension:

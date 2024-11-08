@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Infrastructures\Twig\Extension\Nonce;
 
@@ -35,8 +36,8 @@ use Teknoo\Space\Infrastructures\Twig\Extension\Nonce;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Twig\Extension\Nonce
  */
+#[CoversClass(Nonce::class)]
 class NonceTest extends TestCase
 {
     private Nonce $nonce;

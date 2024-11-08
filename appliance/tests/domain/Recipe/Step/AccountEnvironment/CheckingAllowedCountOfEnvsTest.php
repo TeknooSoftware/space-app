@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
@@ -37,8 +38,8 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs
  */
+#[CoversClass(CheckingAllowedCountOfEnvs::class)]
 class CheckingAllowedCountOfEnvsTest extends TestCase
 {
     private CheckingAllowedCountOfEnvs $checkingAllowedCountOfEnvs;

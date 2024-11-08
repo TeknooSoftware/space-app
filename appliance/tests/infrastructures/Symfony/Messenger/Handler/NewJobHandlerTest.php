@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Messenger\Handler;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -33,7 +34,7 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
-use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
+use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler;
@@ -47,8 +48,8 @@ use Teknoo\Space\Service\PersistedVariableEncryption;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler
  */
+#[CoversClass(NewJobHandler::class)]
 class NewJobHandlerTest extends TestCase
 {
     private NewJobHandler $newJobHandler;

@@ -27,6 +27,11 @@ namespace Teknoo\Space\Tests\Behat;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ */
 class GetTokenStorageService
 {
     public function __construct(

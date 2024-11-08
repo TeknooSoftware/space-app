@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Middleware;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
 use Teknoo\East\Foundation\Http\ClientInterface;
@@ -38,8 +39,8 @@ use Teknoo\Space\Middleware\HostnameRedirectionMiddleware;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Middleware\HostnameRedirectionMiddleware
  */
+#[CoversClass(HostnameRedirectionMiddleware::class)]
 class HostnameRedirectionMiddlewareTest extends TestCase
 {
     private HostnameRedirectionMiddleware $hostnameRedirectionMiddleware;

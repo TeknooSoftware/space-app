@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder;
@@ -36,8 +37,8 @@ use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder
  */
+#[CoversClass(MFARoutesFinder::class)]
 class MFARoutesFinderTest extends TestCase
 {
     private ?UserInterface $user;

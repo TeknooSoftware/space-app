@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\SpaceAccount;
@@ -39,8 +40,8 @@ use Teknoo\Space\Object\DTO\SpaceView;
  * @license http://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Object\DTO\SpaceView
  */
+#[CoversClass(SpaceView::class)]
 class SpaceViewTest extends TestCase
 {
     private SpaceView $spaceView;

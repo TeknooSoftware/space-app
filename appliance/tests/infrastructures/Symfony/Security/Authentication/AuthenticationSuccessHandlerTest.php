@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Authentication;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,8 +40,8 @@ use Teknoo\Space\Infrastructures\Symfony\Security\Authentication\AuthenticationS
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
- * @covers \Teknoo\Space\Infrastructures\Symfony\Security\Authentication\AuthenticationSuccessHandler
  */
+#[CoversClass(AuthenticationSuccessHandler::class)]
 class AuthenticationSuccessHandlerTest extends TestCase
 {
     private AuthenticationSuccessHandler $handler;
@@ -55,7 +56,7 @@ class AuthenticationSuccessHandlerTest extends TestCase
         parent::setUp();
 
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->urlGenerator->expects(self::any())
+        $this->urlGenerator->expects($this->any())
             ->method('generate')
             ->willReturn('/foo');
 

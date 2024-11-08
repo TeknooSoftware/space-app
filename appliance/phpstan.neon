@@ -4,8 +4,8 @@ parameters:
             message: '#mixed#'
             path:  config/
         -
-            message: '#::add#'
-            path:  config/
+            message: '#Psr\\Container\\ContainerInterface::get#'
+            path:  config/di.recipe.plans.php
         -
             message: '#is never read, only written#'
             path:  domain/Object/Persisted/
@@ -37,7 +37,7 @@ parameters:
             message: '#to string#'
             path:  infrastructures/Symfony/Form/Type/
         -
-            message: '#expects (string\|null|string|bool|array<[, a-zA-Z\\]+>|[, a-zA-Z\\|]+), mixed given#'
+            message: '#mixed given#'
             path:  infrastructures/Symfony/Form/Type/
         -
             message: "#Cannot access offset 'readonly' on mixed#"
@@ -51,3 +51,9 @@ parameters:
         -
             message: '#on mixed#'
             path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
+        -
+            message: '#mixed#'
+            path:   infrastructures/Twig/Extension/UpdateQueryField.php
+        -
+            message: '#Kernel::configureRoutes#'
+            path:   src/Kernel.php

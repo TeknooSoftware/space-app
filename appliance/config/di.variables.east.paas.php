@@ -25,18 +25,9 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
-use ArrayObject;
-use Teknoo\Space\Configuration\Exception\UnsupportedConfigurationException;
-
 use function DI\env;
 use function DI\get;
-use function DI\factory;
 use function dirname;
-use function is_array;
-use function is_file;
-use function json_decode;
-
-use const JSON_THROW_ON_ERROR;
 
 return [
     //East PaaS Configuration

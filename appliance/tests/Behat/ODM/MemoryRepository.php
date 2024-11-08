@@ -30,14 +30,21 @@ use Doctrine\ODM\MongoDB\Query\Builder as QueryBuilder;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
-use Teknoo\Space\Tests\Behat\TestsContext;
+use Teknoo\Space\Tests\Behat\SpaceContext;
 
+/**
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
+ *
+ * Disabled, not needed in test
+ */
 class MemoryRepository extends DocumentRepository
 {
     public function __construct(
         private string $className,
         private ObjectManager $objectManager,
-        private TestsContext $context,
+        private SpaceContext $context,
     ) {
     }
 
@@ -79,7 +86,7 @@ class MemoryRepository extends DocumentRepository
             private ?int $limit = null;
 
             public function __construct(
-                private TestsContext $context,
+                private SpaceContext $context,
                 private string $className,
             ) {
             }

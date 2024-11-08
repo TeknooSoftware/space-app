@@ -79,14 +79,15 @@ lint: 		## To detect error in PHP file causing compilation errors
 	find ./infrastructures -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 	find ./tests -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 	find ./config -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
+	find ./extensions -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
 
 .PHONY: phpstan
 phpstan: 	## To run code analyze with PHPStan to prevent bugs
-	${PHP} -d memory_limit=256M vendor/bin/phpstan analyse domain src infrastructures config --level max
+	${PHP} -d memory_limit=256M vendor/bin/phpstan analyse domain src infrastructures config extensions --level max
 
 .PHONY: phpcs
 phpcs: 		## To check if the code follow the PSR 12
-	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=config/secrets domain/ src/ infrastructures/ tests/ config/
+	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=config/secrets domain/ src/ infrastructures/ tests/ config/ extensions/
 
 .PHONY: composerunsed
 composerunsed:	## To detect unused vendor in the code

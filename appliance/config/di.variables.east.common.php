@@ -26,5 +26,5 @@ declare(strict_types=1);
 namespace Teknoo\Space\App\Config;
 
 return [
-    'teknoo.east.common.cookbook.default_error_template' => '@TeknooEastCommon/Error/default.html.twig',
+    'teknoo.east.common.plan.default_error_template' => '@TeknooEastCommon/Error/default.html.twig',
 ];

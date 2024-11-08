@@ -62,6 +62,15 @@ class ClusterCatalog implements IteratorAggregate
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
 
+    public function getDefaultClusterName(): string
+    {
+        foreach ($this->clusters as $name => $cluster) {
+            return $name;
+        }
+
+        throw new DomainException("Missing cluster configuration able to support privates registries");
+    }
+
     public function getCluster(string|EastCluster $name): Cluster
     {
         if ($name instanceof EastCluster) {

@@ -33,7 +33,7 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
-use Teknoo\East\Paas\Contracts\Recipe\Cookbook\NewJobInterface;
+use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
