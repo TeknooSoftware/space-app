@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Endroid\QrCode\Recipe\Step;
 
-use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Writer\PngWriter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -48,8 +47,6 @@ class BuildQrCodeTest extends TestCase
 {
     private BuildQrCode $buildQrCode;
 
-    private BuilderInterface|MockObject $builder;
-
     private PngWriter|MockObject $pngWriter;
 
     private StreamFactoryInterface|MockObject $streamFactory;
@@ -61,10 +58,9 @@ class BuildQrCodeTest extends TestCase
     {
         parent::setUp();
 
-        $this->builder = $this->createMock(BuilderInterface::class);
         $this->pngWriter = new PngWriter();
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->buildQrCode = new BuildQrCode($this->builder, $this->pngWriter, $this->streamFactory);
+        $this->buildQrCode = new BuildQrCode($this->pngWriter, $this->streamFactory);
     }
 
     public function testInvoke(): void

@@ -39,7 +39,10 @@ class OrderInUrl extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('app_order_in_url', $this->orderInUrl(...))
+            new TwigFunction(
+                name: 'app_order_in_url',
+                callable: $this->orderInUrl(...)
+            )
         ];
     }
 

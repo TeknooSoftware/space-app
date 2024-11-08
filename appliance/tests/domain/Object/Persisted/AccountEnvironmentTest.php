@@ -67,6 +67,8 @@ class AccountEnvironmentTest extends TestCase
 
     private string $token;
 
+    private array $metadata;
+
     /**
      * {@inheritdoc}
      */
@@ -85,6 +87,7 @@ class AccountEnvironmentTest extends TestCase
         $this->clientCertificate = '42';
         $this->clientKey = '42';
         $this->token = '42';
+        $this->metadata = ['foo' => 'bar'];
         $this->accountEnvironment = new AccountEnvironment(
             $this->account,
             $this->clusterName,
@@ -97,6 +100,7 @@ class AccountEnvironmentTest extends TestCase
             $this->clientCertificate,
             $this->clientKey,
             $this->token,
+            $this->metadata,
         );
     }
 
@@ -178,5 +182,16 @@ class AccountEnvironmentTest extends TestCase
         $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
         self::assertEquals($expected, $this->accountEnvironment->getToken());
+    }
+
+    public function testGetAllMetaData(): void
+    {
+        $expected = ['foo' => 'bar'];
+        $property = (new ReflectionClass(AccountEnvironment::class))
+            ->getProperty('metadata');
+        $property->setAccessible(true);
+        $property->setValue($this->accountEnvironment, $expected);
+        self::assertEquals($expected, $this->accountEnvironment->getAllMetaData());
+        self::assertEquals('bar', $this->accountEnvironment->getMetaData('foo'));
     }
 }

@@ -25,9 +25,10 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step;
 
-use Endroid\QrCode\Builder\BuilderInterface;
+use Endroid\QrCode\Color\Color;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\QrCode;
 use Endroid\QrCode\RoundBlockSizeMode;
 use Endroid\QrCode\Writer\PngWriter;
 use Laminas\Diactoros\Response;
@@ -44,7 +45,6 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 class BuildQrCode implements BuildQrCodeInterface
 {
     public function __construct(
-        private BuilderInterface $builder,
         private PngWriter $pngWriter,
         private StreamFactoryInterface $streamFactory,
     ) {
@@ -55,16 +55,19 @@ class BuildQrCode implements BuildQrCodeInterface
         ClientInterface $client,
         string $qrCodeValue,
     ): BuildQrCodeInterface {
-        $result = $this->builder
-            ->writer($this->pngWriter)
-            ->writerOptions([])
-            ->data($qrCodeValue)
-            ->encoding(new Encoding('UTF-8'))
-            ->errorCorrectionLevel(ErrorCorrectionLevel::High)
-            ->size(400)
-            ->margin(0)
-            ->roundBlockSizeMode(RoundBlockSizeMode::Margin)
-            ->build();
+        $qrCode = new QrCode(
+            data: $qrCodeValue,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::High,
+            size: 400,
+            margin: 0,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin,
+            backgroundColor: new Color(255, 255, 255),
+        );
+
+        $result = $this->pngWriter->write(
+            qrCode: $qrCode,
+        );
 
         $client->acceptResponse(
             new Response(

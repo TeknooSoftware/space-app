@@ -49,7 +49,7 @@ return [
         'SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE',
     'teknoo.space.pvars.encryption.public_key.env_key' => 'SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY',
 
-    'teknoo.space.pvars.encryption.service' => function (ContainerInterface $container): ?EncryptionInterface {
+    'teknoo.space.pvars.encryption.service' => static function (ContainerInterface $container): ?EncryptionInterface {
         try {
             $algoEnvKey = $container->get('teknoo.space.pvars.encryption.algorithm.env_key');
             $algoDefault = $container->get('teknoo.space.pvars.encryption.algorithm.default');

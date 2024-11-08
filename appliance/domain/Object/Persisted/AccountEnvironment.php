@@ -66,6 +66,14 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
 
     private string $token;
 
+    /**
+     * @var array<string, mixed>
+     */
+    private ?array $metadata;
+
+    /**
+     * @param array<string, mixed> $metadata
+     */
     public function __construct(
         Account $account,
         string $clusterName,
@@ -80,6 +88,7 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
         string $clientKey,
         #[SensitiveParameter]
         string $token,
+        ?array $metadata,
     ) {
         $this->uniqueConstructorCheck();
 
@@ -94,6 +103,7 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
         $this->clientCertificate = $clientCertificate;
         $this->clientKey = $clientKey;
         $this->token = $token;
+        $this->metadata = $metadata;
     }
 
     public function getAccount(): Account
@@ -149,5 +159,18 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
     public function getToken(): string
     {
         return $this->token;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function getAllMetaData(): ?array
+    {
+        return $this->metadata;
+    }
+
+    public function getMetaData(string $key, mixed $default = null): mixed
+    {
+        return $this->metadata[$key] ?? $default;
     }
 }

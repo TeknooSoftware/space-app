@@ -17,6 +17,7 @@
         <field field-name="clientCertificate" name="client_certificate" type="string" nullable="false"/>
         <field field-name="clientKey" name="client_key" type="string" nullable="false"/>
         <field field-name="token" name="token" type="string" nullable="false"/>
+        <field field-name="metadata" name="metadata" type="hash" nullable="true"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date" />
         <reference-one field="account" target-document="Teknoo\East\Paas\Object\Account">

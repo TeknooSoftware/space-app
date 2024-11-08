@@ -52,9 +52,9 @@ class CollectionSerializing extends AbstractExtension
     {
         return array(
             new TwigFilter(
-                'space_collection_serialization',
-                $this->serialize(...),
-                [
+                name: 'space_collection_serialization',
+                callable: $this->serialize(...),
+                options: [
                     'is_safe' => ['html', 'json'],
                 ],
             )
