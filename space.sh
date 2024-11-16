@@ -2,5 +2,4 @@
 
 set -eu
 
-cd appliance
-make "$@"
+make -C appliance "$@"

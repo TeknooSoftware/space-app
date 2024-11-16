@@ -68,7 +68,7 @@ Requirements
 
 This applications requires
 
-    * PHP 8.2+
+    * PHP 8.3+
     * A PHP autoloader (Composer is recommended)
     * A webserver (like Httpd/nginx + PHP-FPM)
     * A MongoDB server (for the web interfaces and all workers except the builder)
@@ -82,11 +82,12 @@ This application is bundled with :
     * Teknoo/States
     * Teknoo/Recipe
     * Teknoo/East-Foundation
-    * Teknoo/space-app
+    * Teknoo/East-Common
+    * Teknoo/East-PaaS
     * Teknoo/Kubernetes Clent
-    * Symfony 6.4+
+    * Symfony 6.4+ or 7.1+
     * Doctrine ODM 2.6+ / MongoDB
-    * Flysystem
+    * FlySystem
     * Buildah
 
 Installation
@@ -120,7 +121,6 @@ project. `make` commandes are :
     * `lint`:          To detect error in PHP file causing compilation errors.
     * `phpstan`:       To run code analyze with PHPStan to prevent bugs.
     * `phpcs`:         To check if the code follow the PSR 12.
-    * `composerunsed`: To detect unused vendor in the code.
     * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
 * **Testing**:
     * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can

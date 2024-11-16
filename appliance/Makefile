@@ -13,7 +13,7 @@ help: 		## Show this help.
 
 .PHONY: verify
 verify: 	## Download dependencies via Composer and verify space installation
-verify: clean dev-install test qa-offline
+verify: clean dev-install test-without-coverage qa-offline clean install
 
 ##
 ### Installations:
@@ -88,10 +88,6 @@ phpstan: 	## To run code analyze with PHPStan to prevent bugs
 .PHONY: phpcs
 phpcs: 		## To check if the code follow the PSR 12
 	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=config/secrets domain/ src/ infrastructures/ tests/ config/ extensions/
-
-.PHONY: composerunsed
-composerunsed:	## To detect unused vendor in the code
-	${PHP} vendor/bin/composer-unused
 
 .PHONY: audit
 audit: 		## Run an audit on vendors to detect CVE and deprecated libraries

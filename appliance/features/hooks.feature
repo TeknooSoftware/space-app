@@ -7,10 +7,10 @@ Feature: On a space instance, we can define some hooks to build a project before
     And without any hooks path defined
     And composer in several version as hook
     When the hook library is generated
-    Then it obtains non empty hooks library with "composer" key.
+    Then it obtains non empty hooks library with "behat-composer" key.
 
   Scenario: Get the Hook library without composer
     Given A Space app instance
     And without any hooks path defined
     When the hook library is generated
-    Then it obtains empty hooks library
+    Then it obtains an hooks library without "behat-composer" key.
