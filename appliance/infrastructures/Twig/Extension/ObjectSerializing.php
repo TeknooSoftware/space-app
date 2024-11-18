@@ -52,7 +52,7 @@ class ObjectSerializing extends AbstractExtension
                 name: 'space_object_serialization',
                 callable: $this->serialize(...),
                 options: [
-                    'is_safe' => ['html', 'json'],
+                    'is_safe' => ['html', 'json', 'js'],
                 ],
             )
         );

@@ -55,7 +55,7 @@ class CollectionSerializing extends AbstractExtension
                 name: 'space_collection_serialization',
                 callable: $this->serialize(...),
                 options: [
-                    'is_safe' => ['html', 'json'],
+                    'is_safe' => ['html', 'json', 'js'],
                 ],
             )
         );
