@@ -151,6 +151,17 @@ Environnements variables configuration
       * `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
       * (optional) `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the private key.
       * `SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
+  * Space Extensions : It's provided by `East Foundation` and use it's default configuration 
+    * `TEKNOO_EAST_EXTENSION_DISABLED` : *optional* To disable extension (By default, if this env var is set and NOT 
+       empty, the extension behavior will be disabled
+    * `TEKNOO_EAST_EXTENSION_LOADER` : *optional* The full class name to find extensions. The class must implements the
+       interface `Teknoo\East\Foundation\Extension\LoaderInterface`. There are to bundled loaded, but you can use our :
+      * `Teknoo\East\Foundation\Extension\FileLoader` : Extensions are referenced into an array in a json file.
+      * `Teknoo\East\Foundation\Extension\ComposerLoader` : Browse all loaded class from the autoloader's mapping to 
+        find all extensions. (Configuration less but poor performances).
+    * `TEKNOO_EAST_EXTENSION_FILE` : *optional* If the extension loader is the `FileLoader`, the file referencing all
+       extensions must be a json file returning an array of full class string of extension to load. The file is by
+       default available at `extensions/enabled.json` from the common working directory of Space.
 * Web configuration
     * Doctrine ODM
         * `MONGODB_SERVER` : (string) mongodb DSN.

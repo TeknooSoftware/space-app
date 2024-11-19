@@ -54,6 +54,10 @@ readForYesOrNoToBool() {
 readAMandatoryResponse() {
   returnVal=""
 
+  if [ "$#" = "2" ]; then
+    echo " (default : ${2})"
+  fi
+
   while [ -z "$returnVal" ]; do
     read -r -p "$1 : " returnVal
 
@@ -109,6 +113,15 @@ mailerDSN=$(readAMandatoryResponse "Mailer DSN [null://null]" "null://null")
 mailerSenderAddress=$(readAMandatoryResponse "Mailer sender adress")
 oauthEnabled=$(readForYesOrNoToBool "OAuth Enabled [y/n]")
 redisEnabled=$(readForYesOrNoToBool "Redis Enabled [y/n]")
+enableExtensions=$(readForYesOrNoToBool "Enable extension [y/n]")
+
+if [ "$enableExtensions" = "1" ]; then
+  extensionClassLoader=$(readAMandatoryResponse "Extension loader [file/composer]" "file")
+
+  if [ "$extensionClassLoader" = "file" ]; then
+    extensionFile=$(readAMandatoryResponse "Extension file name [extensions/enabled.json]" "extensions/enabled.json")
+  fi
+fi
 
 oauthServerType=""
 oauthServerUrl=""
@@ -267,6 +280,17 @@ updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/message
 updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_ALGORITHM" "rsa"
 updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY" "var/keys/variables/private.pem"
 updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys/variables/public.pem"
+if [ "$enableExtensions" = "1" ]; then
+  updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
+  if [ "extensionClassLoader" = "file" ]; then
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\FileLoader"
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
+  else
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\ComposerLoader"
+  fi
+else
+  updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" "1"
+fi
 
 if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "APP_ENV" "$APP_ENV"
@@ -291,6 +315,17 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_ALGORITHM" "rsa"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY" "var/keys/variables/private.pem"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys/variables/public.pem"
+  if [ "$enableExtensions" = "1" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
+    if [ "extensionClassLoader" = "file" ]; then
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\FileLoader"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
+    else
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\ComposerLoader"
+    fi
+  else
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" "1"
+  fi
 
   echo ""
   echo ">> $RED To use blackfire with Space, please update blackfire section under $DOCKER_COMPOSE_OVERRIDE_FILE $NC"

@@ -39,6 +39,9 @@ services:
             - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
             - SPACE_OCI_REGISTRY_URL=.ToChange!
             - SPACE_SUPPORT_CONTACT=support@teknoo.space
+            - TEKNOO_EAST_EXTENSION_DISABLED=
+            - TEKNOO_EAST_EXTENSION_FILE=extensions/enabled.json
+            - TEKNOO_EAST_EXTENSION_LOADER=Teknoo\East\Foundation\Extension\FileLoader
     cli_new_job:
         environment:
             - APP_ENV=dev
@@ -50,8 +53,11 @@ services:
             - MESSENGER_HISTORY_SENT_DSN=ToChange!
             - MONGODB_SERVER=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
             - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - TEKNOO_EAST_EXTENSION_DISABLED=
+            - TEKNOO_EAST_EXTENSION_FILE=extensions/enabled.json
+            - TEKNOO_EAST_EXTENSION_LOADER=Teknoo\East\Foundation\Extension\FileLoader
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_job_done:
         environment:
             - APP_ENV=dev
@@ -59,6 +65,9 @@ services:
             - MESSENGER_JOB_DONE_DSN=ToChange!
             - MONGODB_SERVER=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
+            - TEKNOO_EAST_EXTENSION_DISABLED=
+            - TEKNOO_EAST_EXTENSION_FILE=extensions/enabled.json
+            - TEKNOO_EAST_EXTENSION_LOADER=Teknoo\East\Foundation\Extension\FileLoader
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_history_sent:
         environment:
@@ -67,6 +76,9 @@ services:
             - MESSENGER_HISTORY_SENT_DSN=ToChange!
             - MONGODB_SERVER=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
+            - TEKNOO_EAST_EXTENSION_DISABLED=
+            - TEKNOO_EAST_EXTENSION_FILE=extensions/enabled.json
+            - TEKNOO_EAST_EXTENSION_LOADER=Teknoo\East\Foundation\Extension\FileLoader
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     cli_execute:
         environment:
@@ -76,6 +88,9 @@ services:
             - MESSENGER_HISTORY_SENT_DSN=ToChange!
             - MESSENGER_JOB_DONE_DSN=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
+            - TEKNOO_EAST_EXTENSION_DISABLED=
+            - TEKNOO_EAST_EXTENSION_FILE=extensions/enabled.json
+            - TEKNOO_EAST_EXTENSION_LOADER=Teknoo\East\Foundation\Extension\FileLoader
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
     blackfire:
         environment:
