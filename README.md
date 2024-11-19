@@ -42,11 +42,34 @@ A commercial `Enterprise` version is planned with some additional features.
 
 Support this project
 ---------------------
-This project is free and will remain free. It is fully supported by the activities of the EIRL.
+This project is free and will remain free. It is fully supported by the activities of the EIRL and
+by the `Enterprise` edition sales.
 If you like it and help me maintain it and evolve it, don't hesitate to support me on
 [Patreon](https://patreon.com/teknoo_software) or [Github](https://github.com/sponsors/TeknooSoftware).
 
 Thanks :) Richard.
+
+Enterprise edition
+------------------
+
+The Enterprise edition includes :
+* Bundled hooks
+  * `Composer`
+  * `PIP`
+  * `NPM`
+  * `Symfony Console`
+  * `Laravel Artisan`
+  * `Make tool`
+* A set of containers, pods, service sand ingresses libraries to reduce the size of your `space.paas.yml` file.
+  * It's called `BigBang`.
+* Helm charts to install and configuring your Space instance in your kubernetes and embedding Space in your Kubernetes.
+* Trivy audit reports in the Space's Dashboard.
+* Backup feature in your pods.
+* a commercial support.
+
+The Enterprise edition is currently in alpha. With sponsoring, you can get a perpetual license and sources and update to
+the first stable realase (for an internal use only).  Please contact me at <richard@teknoo.software> to get a quote or 
+more information.
 
 Credits
 -------
@@ -90,6 +113,31 @@ This application is bundled with :
     * FlySystem
     * Buildah
 
+Extensions
+----------
+
+Space comes from an extension system, provided by `Teknoo East Foundation` since the 8 version. The extension allows 
+developpers to add more features and alter the Space behavior easily than edit Space's environments variables. Notably
+extensions can :
+    * Add more Symfony Bundles.
+    * Complete the PHP-DI configuration.
+        * including :   
+            * Add more Recipe's steps, decorate bundled EditabledPlan and add more Plan.
+            * Add/Complete `Teknoo East PaaS` compiler. (By decorating `CompilerCollectionInterface`).
+            * Update the hooks collection, like `SPACE_HOOKS_COLLECTION_FILE/JSON`.
+            * Update the containers libraries, like `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the pods libraries, like `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the services libraries, like `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the ingresses libraries, like `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the `globals`, like `SPACE_PAAS_GLOBAL_VARIABLES_FILE/JSON`.
+            * Update other configuration editable from environments variables.
+    * Add more routes and templates.
+    * Add entries to twig menus (top left menu and the main left menu).
+    * Change the logo.
+    * Add or alter assets (CSS, JS).
+
+*The `Space Enterprise Edition` is a `Space Standard Edition` (free, and under MIT LICENSE) with a commercial plugin
+`Enterprise` (under commercial LICENSE) and a commercial support.*
 
 Installation
 ------------
