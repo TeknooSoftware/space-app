@@ -32,8 +32,17 @@ dev-install: clean
 	APP_ENV=prod ${PHP} bin/console cache:warmup
 
 .PHONY: update
-update: 	## Install and update all dependencies according to composer configuration
+update: 	## Install and update all dependencies according to composer configuration, without dev libraries, build Symfony app and warmup caches
         	## Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions
+ifeq ($(DEPENDENCIES), lowest)
+	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-lowest --no-dev --prefer-dist --no-interaction;
+else
+	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} install --prefer-dist --no-dev --no-interaction;
+endif
+
+.PHONY: dev-update
+dev-update: 	## Install and update all dependencies according to composer configuration,
+             	## Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions
 ifeq ($(DEPENDENCIES), lowest)
 	COMPOSER_MEMORY_LIMIT=-1 ${COMPOSER} update --prefer-lowest --prefer-dist --no-interaction;
 else
