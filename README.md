@@ -90,6 +90,7 @@ This application is bundled with :
     * FlySystem
     * Buildah
 
+
 Installation
 ------------
 
@@ -102,12 +103,13 @@ project. `make` commandes are :
     * `verify`:        Download dependencies via Composer and verify space installation.
 * **Installations**:
     * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony
-      app
-      and warmup caches.
+      app and warmup caches.
     * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
-    * `update`:        Install and update all dependencies according to composer configuration
-      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts
-      versions.
+    * `update`:        Install and update all dependencies according to composer configuration without dev libraries, 
+      build Symfony app and warmup caches.
+      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
+    * `dev-update`:    Install and update all dependencies according to composer configuration, including dev libraries.
+      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
     * `config`:        To set values in env file to configure Space.
 * **Docker**:
     * `build`:         To build docker images to run locally Space on Docker.
@@ -225,8 +227,8 @@ Environnements variables configuration
           * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
           * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
               Space dashboard. *Optional*
-          * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
-            (namespace, role, etc..).
+          * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client
+            account namespace, role, etc..).
           * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
             *Optional*
           * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
@@ -264,7 +266,8 @@ Environnements variables configuration
               * `envsCountAllowed` : (int) count of managed clusters's namespace/env allowed for this plan
               * `quotas[].category` : (string) `compute` or `memory` - Category of the quota 
               * `quotas[].type` : (string) name of the quota
-              * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's `limit`)
+              * `quotas[].capacity` : (string) total of capacity allowed for an account
+                (sum of all containers's `limit`)
               * `quotas[].require` : (string) *Optional* Total of requires / requests allowed for an account
               * `clusters`: (string[]) *Optional* List of clusters allowed with this plan (available later)
 
