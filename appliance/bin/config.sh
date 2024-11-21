@@ -205,6 +205,16 @@ else
   SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
   SPACE_JWT_PASSPHRASE=$(cat /proc/sys/kernel/random/uuid | sed 's/[-]//g' | sha256sum | head -c 48; echo)
 
+  if [ ! -f var/keys/messages/private.pem ]; then
+    openssl genpkey -algorithm RSA -aes256 -out var/keys/messages/private.pem -pass pass:"$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE" -pkeyopt rsa_keygen_bits:2048
+    openssl rsa -in var/keys/messages/private.pem -pubout -out var/keys/messages/public.pem -passin pass:"$TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE"
+  fi
+
+  if [ ! -f var/keys/variables/private.pem ]; then
+    openssl genpkey -algorithm RSA -aes256 -out var/keys/variables/private.pem -pass pass:"$SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE" -pkeyopt rsa_keygen_bits:2048
+    openssl rsa -in var/keys/variables/private.pem -pubout -out var/keys/variables/public.pem -passin pass:"$SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE"
+  fi
+
   if [ "$useSfSeret" = "y" ]; then
       cp .env.local.dist "$ENV_LOCAL_FILE"
 
