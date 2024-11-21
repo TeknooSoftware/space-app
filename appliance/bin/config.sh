@@ -54,12 +54,12 @@ readForYesOrNoToBool() {
 readAMandatoryResponse() {
   returnVal=""
 
-  if [ "$#" = "2" ]; then
-    echo " (default : ${2})"
-  fi
-
   while [ -z "$returnVal" ]; do
-    read -r -p "$1 : " returnVal
+    if [ "$#" = "2" ]; then
+      read -r -p "$1 (default : ${2}) : " returnVal
+    else
+      read -r -p "$1 : " returnVal
+    fi
 
     if [ -z "$returnVal" ] && [ "$#" = "2" ]; then
       returnVal="${2}"
@@ -72,12 +72,12 @@ readAMandatoryResponse() {
 readAMandatoryFileResponse() {
   returnVal=""
 
-  if [ "$#" = "2" ]; then
-    echo " (default : ${2})"
-  fi
-
   while [ -z "$returnVal" ] && [ ! -e "$returnVal" ]; do
-    read -r -p "$1 : " returnVal
+    if [ "$#" = "2" ]; then
+      read -r -p "$1 (default : ${2}) : " returnVal
+    else
+      read -r -p "$1 : " returnVal
+    fi
 
     if [ -z "$returnVal" ] && [ "$#" = "2" ]; then
       returnVal="${2}"
