@@ -72,7 +72,7 @@ readAMandatoryResponse() {
 readAMandatoryFileResponse() {
   returnVal=""
 
-  while [ -z "$returnVal" ] || [ ! -e "$returnVal" ]; do
+  while [ -z "$returnVal" ] || [ ! -r "$returnVal" ]; do
     if [ "$#" = "2" ]; then
       read -r -p "$1 (default : ${2}) : " returnVal
     else
