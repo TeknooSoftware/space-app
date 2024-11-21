@@ -325,10 +325,10 @@ updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys
 if [ "$enableExtensions" = "1" ]; then
   updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
   if [ "$extensionClassLoader" = "file" ]; then
-    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\FileLoader"
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\\\East\\\\Foundation\\\\Extension\\\\FileLoader"
     updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
   else
-    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\ComposerLoader"
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\\\East\\\\Foundation\\\\Extension\\\\ComposerLoader"
   fi
 else
   updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" "1"
@@ -367,10 +367,10 @@ if [ "$useDockerCompose" = "y" ]; then
   if [ "$enableExtensions" = "1" ]; then
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
     if [ "$extensionClassLoader" = "file" ]; then
-      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\FileLoader"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\\\East\\\\Foundation\\\\Extension\\\\FileLoader"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
     else
-      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\ComposerLoader"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\\\East\\\\Foundation\\\\Extension\\\\ComposerLoader"
     fi
   else
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" "1"
