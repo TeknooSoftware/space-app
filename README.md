@@ -279,8 +279,8 @@ Environnements variables configuration
             account namespace, role, etc..).
           * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
             *Optional*
-          * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
-          * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
+          * `SPACE_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
+          * `SPACE_CLUSTER_TYPE` : (string) type of cluster in the project's form.
                 `kubernetes` by default. *Optional*
         * Several clusters : 
           * `SPACE_CLUSTER_CATALOG_JSON` : (json string).

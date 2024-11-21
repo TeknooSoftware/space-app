@@ -69,6 +69,24 @@ readAMandatoryResponse() {
   echo "$returnVal"
 }
 
+readAMandatoryFileResponse() {
+  returnVal=""
+
+  if [ "$#" = "2" ]; then
+    echo " (default : ${2})"
+  fi
+
+  while [ -z "$returnVal" ] && [ ! -e "$returnVal" ]; do
+    read -r -p "$1 : " returnVal
+
+    if [ -z "$returnVal" ] && [ "$#" = "2" ]; then
+      returnVal="${2}"
+    fi
+  done
+
+  echo "$returnVal"
+}
+
 updateSecret() {
   echo "Set $1 into Symfony Secret"
   echo -n "$2" | APP_ENV="$APP_ENV" ${PHP} bin/console secrets:set $1 -
@@ -101,9 +119,17 @@ else
 fi
 
 mercureJwtToken=$(readAMandatoryResponse "Mercure JWT Token")
-kubernetesApi=$(readAMandatoryResponse "Kubernetes API Url")
-kubernetesToken=$(readAMandatoryResponse "Kubernetes API Service Token to create new namespace and roles")
-kubernetesDashboard=$(readAMandatoryResponse "Kubernetes Dashboard URL")
+useCatalog=$(readForYesOrNoToBool "Use Cluster Catalog ? [y/n]")
+if [ "$useCatalog" = "0" ]; then
+  kubernetesApi=$(readAMandatoryResponse "Kubernetes API Url")
+  kubernetesCAFile=$(readAMandatoryFileResponse "Kubernetes CA file")
+  kubernetesToken=$(readAMandatoryResponse "Kubernetes API Service Token to create new namespace and roles")
+  kubernetesClusterName=$(readAMandatoryResponse "Kubernetes cluster name")
+  kubernetesHnc=$(readForYesOrNoToBool "Kubernetes cluster use hierarchical namespaces [y/n]")
+  kubernetesDashboard=$(readAMandatoryResponse "Kubernetes Dashboard URL")
+else
+  clusterCatalogFile=$(readAMandatoryFileResponse "Cluster Catalog file")
+fi
 dockerGlobalRegistryApi=$(readAMandatoryResponse "Docker Registry API Url")
 dockerGlobalRegistryUser=$(readAMandatoryResponse "Docker Registry User")
 dockerGlobalRegistryPassword=$(readAMandatoryResponse "Docker Registry Password")
@@ -226,7 +252,10 @@ if [ "$useSfSeret" = "y" ]; then
   updateSecret "MONGODB_SERVER" "$mongoDbDSN"
   updateSecret "OAUTH_CLIENT_ID" "$oauthClientId"
   updateSecret "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
-  updateSecret "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
+  if [ "$useCatalog" = "0" ]; then
+    updateSecret "SPACE_KUBERNETES_CA_VALUE" "$(cat "$kubernetesCAFile")"
+    updateSecret "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
+  fi
   updateSecret "SPACE_OCI_GLOBAL_REGISTRY_PWD" "$dockerGlobalRegistryPassword"
 else
   updateFile "$ENV_LOCAL_FILE" "MAILER_DSN" "$mailerDSN"
@@ -238,7 +267,10 @@ else
   updateFile "$ENV_LOCAL_FILE" "MONGODB_SERVER" "$mongoDbDSN"
   updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
   updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
-  updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
+  if [ "$useCatalog" = "0" ]; then
+    updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CA_VALUE" "$(cat "$kubernetesCAFile")"
+    updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
+  fi
   updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_GLOBAL_REGISTRY_PWD" "$dockerGlobalRegistryPassword"
 fi
 
@@ -254,7 +286,10 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MONGODB_SERVER" "$mongoDbDSN"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
+  if [ "$useCatalog" = "0" ]; then
+    updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CA_VALUE" "$(cat "$kubernetesCAFile")"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
+  fi
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_GLOBAL_REGISTRY_PWD" "$dockerGlobalRegistryPassword"
 fi
 
@@ -267,8 +302,15 @@ updateFile "$ENV_LOCAL_FILE" "OAUTH_ENABLED" "$oauthEnabled"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
 updateFile "$ENV_LOCAL_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
-updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
-updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
+if [ "$useCatalog" = "0" ]; then
+  updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
+  updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
+  updateFile "$ENV_LOCAL_FILE" "SPACE_CLUSTER_NAME" "$kubernetesClusterName"
+  updateFile "$ENV_LOCAL_FILE" "SPACE_CLUSTER_TYPE" "kubernetes"
+  updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CLUSTER_USE_HNC" "$kubernetesHnc"
+else
+  updateFile "$ENV_LOCAL_FILE" "SPACE_CLUSTER_CATALOG_FILE" "$clusterCatalogFile"
+fi
 updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_GLOBAL_REGISTRY_URL" "$dockerGlobalRegistryApi"
 updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_GLOBAL_REGISTRY_USERNAME" "$dockerGlobalRegistryUser"
 updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_REGISTRY_URL" "$dockerPrivateRegistryUrl"
@@ -282,7 +324,7 @@ updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY" "var/key
 updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys/variables/public.pem"
 if [ "$enableExtensions" = "1" ]; then
   updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
-  if [ "extensionClassLoader" = "file" ]; then
+  if [ "$extensionClassLoader" = "file" ]; then
     updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\FileLoader"
     updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
   else
@@ -302,8 +344,15 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
+  if [ "$useCatalog" = "0" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CLUSTER_NAME" "$kubernetesClusterName"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CLUSTER_TYPE" "kubernetes"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_CLUSTER_USE_HNC" "$kubernetesHnc"
+  else
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CLUSTER_CATALOG_FILE" "$clusterCatalogFile"
+  fi
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_GLOBAL_REGISTRY_URL" "$dockerGlobalRegistryApi"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_GLOBAL_REGISTRY_USERNAME" "$dockerGlobalRegistryUser"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_REGISTRY_URL" "$dockerPrivateRegistryUrl"
@@ -317,7 +366,7 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys/variables/public.pem"
   if [ "$enableExtensions" = "1" ]; then
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
-    if [ "extensionClassLoader" = "file" ]; then
+    if [ "$extensionClassLoader" = "file" ]; then
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\FileLoader"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
     else

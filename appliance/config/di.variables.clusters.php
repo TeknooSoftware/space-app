@@ -42,13 +42,13 @@ use function strtolower;
 use function trim;
 
 return [
-    'teknoo.space.kubernetes.default_cluster.master' => env('SPACE_KUBERNETES_MASTER', null),
-    'teknoo.space.kubernetes.default_cluster.dashboard' => env('SPACE_KUBERNETES_DASHBOARD', null),
-    'teknoo.space.kubernetes.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN', null),
-    'teknoo.space.kubernetes.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE', null),
-    'teknoo.space.kubernetes.default_cluster.name' => env('SPACE_KUBERNETES_CLUSTER_NAME', 'localhost'),
-    'teknoo.space.kubernetes.default_cluster.type' => env('SPACE_KUBERNETES_CLUSTER_TYPE', 'kubernetes'),
-    'teknoo.space.kubernetes.default_cluster.use_hnc' => env('SPACE_KUBERNETES_CLUSTER_USE_HNC', false),
+    'teknoo.space.clusters.default_cluster.master' => env('SPACE_KUBERNETES_MASTER', null),
+    'teknoo.space.clusters.default_cluster.dashboard' => env('SPACE_KUBERNETES_DASHBOARD', null),
+    'teknoo.space.clusters.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN', null),
+    'teknoo.space.clusters.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE', null),
+    'teknoo.space.clusters.default_cluster.name' => env('SPACE_CLUSTER_NAME', 'localhost'),
+    'teknoo.space.clusters.default_cluster.type' => env('SPACE_CLUSTER_TYPE', 'kubernetes'),
+    'teknoo.space.clusters.default_cluster.use_hnc' => env('SPACE_KUBERNETES_CLUSTER_USE_HNC', false),
 
     BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
 
@@ -67,22 +67,22 @@ return [
             }
         }
 
-        $master = $container->get('teknoo.space.kubernetes.default_cluster.master');
-        $clusterName = $container->get('teknoo.space.kubernetes.default_cluster.name');
+        $master = $container->get('teknoo.space.clusters.default_cluster.master');
+        $clusterName = $container->get('teknoo.space.clusters.default_cluster.name');
 
         if (empty($definitions) && !empty($clusterName) && !empty($master)) {
             $definitions = [
                 [
                     'master' => $master,
-                    'dashboard' => $container->get('teknoo.space.kubernetes.default_cluster.dashboard'),
+                    'dashboard' => $container->get('teknoo.space.clusters.default_cluster.dashboard'),
                     'create_account' => [
-                        'token' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.token'),
-                        'ca_cert' => $container->get('teknoo.space.kubernetes.default_cluster.create_account.ca_cert'),
+                        'token' => $container->get('teknoo.space.clusters.default_cluster.create_account.token'),
+                        'ca_cert' => $container->get('teknoo.space.clusters.default_cluster.create_account.ca_cert'),
                     ],
                     'name' => $clusterName,
-                    'type' => $container->get('teknoo.space.kubernetes.default_cluster.type'),
+                    'type' => $container->get('teknoo.space.clusters.default_cluster.type'),
                     'support_registry' => true,
-                    'use_hnc' => $container->get('teknoo.space.kubernetes.default_cluster.use_hnc'),
+                    'use_hnc' => $container->get('teknoo.space.clusters.default_cluster.use_hnc'),
                 ]
             ];
         }
