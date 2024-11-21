@@ -1,5 +1,26 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.0-RC9] - 2024-11-21
+### Release Candidate
+- Last Release Candidate. Stable release come the 25th November.
+- Fix some mistakes.
+- Update `teknoo.space.assets.version`.
+- Update libs and dev libraries.
+- Update libs and temp fix about incompatibility between symfony/type-info and phpstan/phpdoc-parser.
+- Update Symfony lib about CVE and other issues.
+- Fix space.sh make call without change working directory.
+- Update illuminates libraries.
+- Allow running PHP Unit Tests in extensions.
+- Update behat configuration.
+- Update twig and fixing issue with json twig template with Twig 3.15.
+- Update make tool.
+- Add cli tool to manage extensions.
+- Update and fix configuration cli tool.
+- Rename `SPACE_KUBERNETES_CLUSTER_NAME` to `SPACE_CLUSTER_NAME`.
+- Rename `SPACE_KUBERNETES_CLUSTER_TYPE` to `SPACE_CLUSTER_TYPE`.
+- Rename `di.variables.kubernetes.php` to `di.variables.clusters.php`.
+- Rename `teknoo.space.kubernetes.default_cluster` to `teknoo.space.clusters.default_cluster`.
+
 ## [1.0.0-RC8] - 2024-11-08
 ### Release Candidate
 - Huge realase for an RC (To improve the future of Space and migrate some behavior from internals projects to Space 
