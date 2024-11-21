@@ -72,7 +72,7 @@ readAMandatoryResponse() {
 readAMandatoryFileResponse() {
   returnVal=""
 
-  while [ -z "$returnVal" ] && [ ! -e "$returnVal" ]; do
+  while [ -z "$returnVal" ] || [ ! -e "$returnVal" ]; do
     if [ "$#" = "2" ]; then
       read -r -p "$1 (default : ${2}) : " returnVal
     else
@@ -135,7 +135,7 @@ dockerGlobalRegistryUser=$(readAMandatoryResponse "Docker Registry User")
 dockerGlobalRegistryPassword=$(readAMandatoryResponse "Docker Registry Password")
 dockerPrivateRegistryUrl=$(readAMandatoryResponse "Docker Private Registry Url")
 mFAProvider=$(readAMandatoryResponse "2FA Provider [google_authenticator/generic]" "google_authenticator")
-mailerDSN=$(readAMandatoryResponse "Mailer DSN [null://null]" "null://null")
+mailerDSN=$(readAMandatoryResponse "Mailer DSN" "null://null")
 mailerSenderAddress=$(readAMandatoryResponse "Mailer sender adress")
 oauthEnabled=$(readForYesOrNoToBool "OAuth Enabled [y/n]")
 redisEnabled=$(readForYesOrNoToBool "Redis Enabled [y/n]")
@@ -145,7 +145,7 @@ if [ "$enableExtensions" = "1" ]; then
   extensionClassLoader=$(readAMandatoryResponse "Extension loader [file/composer]" "file")
 
   if [ "$extensionClassLoader" = "file" ]; then
-    extensionFile=$(readAMandatoryResponse "Extension file name [extensions/enabled.json]" "extensions/enabled.json")
+    extensionFile=$(readAMandatoryResponse "Extension file name" "extensions/enabled.json")
   fi
 fi
 
@@ -325,10 +325,10 @@ updateFile "$ENV_LOCAL_FILE" "SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY" "var/keys
 if [ "$enableExtensions" = "1" ]; then
   updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
   if [ "$extensionClassLoader" = "file" ]; then
-    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\FileLoader"
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\FileLoader"
     updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
   else
-    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\ComposerLoader"
+    updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\ComposerLoader"
   fi
 else
   updateFile "$ENV_LOCAL_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" "1"
@@ -367,10 +367,10 @@ if [ "$useDockerCompose" = "y" ]; then
   if [ "$enableExtensions" = "1" ]; then
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" ""
     if [ "$extensionClassLoader" = "file" ]; then
-      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\FileLoader"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\FileLoader"
       updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_FILE" "$extensionFile"
     else
-      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\East\Foundation\Extension\ComposerLoader"
+      updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_LOADER" "Teknoo\\East\\Foundation\\Extension\\ComposerLoader"
     fi
   else
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_EAST_EXTENSION_DISABLED" "1"
