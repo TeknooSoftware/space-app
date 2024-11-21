@@ -42,11 +42,34 @@ A commercial `Enterprise` version is planned with some additional features.
 
 Support this project
 ---------------------
-This project is free and will remain free. It is fully supported by the activities of the EIRL.
+This project is free and will remain free. It is fully supported by the activities of the EIRL and
+by the `Enterprise` edition sales.
 If you like it and help me maintain it and evolve it, don't hesitate to support me on
 [Patreon](https://patreon.com/teknoo_software) or [Github](https://github.com/sponsors/TeknooSoftware).
 
 Thanks :) Richard.
+
+Enterprise edition
+------------------
+
+The Enterprise edition includes :
+* Bundled hooks
+  * `Composer`
+  * `PIP`
+  * `NPM`
+  * `Symfony Console`
+  * `Laravel Artisan`
+  * `Make tool`
+* A set of containers, pods, service sand ingresses libraries to reduce the size of your `space.paas.yml` file.
+  * It's called `BigBang`.
+* Helm charts to install and configuring your Space instance in your kubernetes and embedding Space in your Kubernetes.
+* Trivy audit reports in the Space's Dashboard.
+* Backup feature in your pods.
+* a commercial support.
+
+The Enterprise edition is currently in alpha. With sponsoring, you can get a perpetual license and sources and update to
+the first stable realase (for an internal use only).  Please contact me at <richard@teknoo.software> to get a quote or 
+more information.
 
 Credits
 -------
@@ -90,6 +113,32 @@ This application is bundled with :
     * FlySystem
     * Buildah
 
+Extensions
+----------
+
+Space comes from an extension system, provided by `Teknoo East Foundation` since the 8 version. The extension allows 
+developpers to add more features and alter the Space behavior easily than edit Space's environments variables. Notably
+extensions can :
+    * Add more Symfony Bundles.
+    * Complete the PHP-DI configuration.
+        * including :   
+            * Add more Recipe's steps, decorate bundled EditabledPlan and add more Plan.
+            * Add/Complete `Teknoo East PaaS` compiler. (By decorating `CompilerCollectionInterface`).
+            * Update the hooks collection, like `SPACE_HOOKS_COLLECTION_FILE/JSON`.
+            * Update the containers libraries, like `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the pods libraries, like `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the services libraries, like `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the ingresses libraries, like `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE/JSON`.
+            * Update the `globals`, like `SPACE_PAAS_GLOBAL_VARIABLES_FILE/JSON`.
+            * Update other configuration editable from environments variables.
+    * Add more routes and templates.
+    * Add entries to twig menus (top left menu and the main left menu).
+    * Change the logo.
+    * Add or alter assets (CSS, JS).
+
+*The `Space Enterprise Edition` is a `Space Standard Edition` (free, and under MIT LICENSE) with a commercial plugin
+`Enterprise` (under commercial LICENSE) and a commercial support.*
+
 Installation
 ------------
 
@@ -102,12 +151,13 @@ project. `make` commandes are :
     * `verify`:        Download dependencies via Composer and verify space installation.
 * **Installations**:
     * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony
-      app
-      and warmup caches.
+      app and warmup caches.
     * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
-    * `update`:        Install and update all dependencies according to composer configuration
-      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts
-      versions.
+    * `update`:        Install and update all dependencies according to composer configuration without dev libraries, 
+      build Symfony app and warmup caches.
+      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
+    * `dev-update`:    Install and update all dependencies according to composer configuration, including dev libraries.
+      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
     * `config`:        To set values in env file to configure Space.
 * **Docker**:
     * `build`:         To build docker images to run locally Space on Docker.
@@ -151,6 +201,17 @@ Environnements variables configuration
       * `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
       * (optional) `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the private key.
       * `SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
+  * Space Extensions : It's provided by `East Foundation` and use it's default configuration 
+    * `TEKNOO_EAST_EXTENSION_DISABLED` : *optional* To disable extension (By default, if this env var is set and NOT 
+       empty, the extension behavior will be disabled
+    * `TEKNOO_EAST_EXTENSION_LOADER` : *optional* The full class name to find extensions. The class must implements the
+       interface `Teknoo\East\Foundation\Extension\LoaderInterface`. There are to bundled loaded, but you can use our :
+      * `Teknoo\East\Foundation\Extension\FileLoader` : Extensions are referenced into an array in a json file.
+      * `Teknoo\East\Foundation\Extension\ComposerLoader` : Browse all loaded class from the autoloader's mapping to 
+        find all extensions. (Configuration less but poor performances).
+    * `TEKNOO_EAST_EXTENSION_FILE` : *optional* If the extension loader is the `FileLoader`, the file referencing all
+       extensions must be a json file returning an array of full class string of extension to load. The file is by
+       default available at `extensions/enabled.json` from the common working directory of Space.
 * Web configuration
     * Doctrine ODM
         * `MONGODB_SERVER` : (string) mongodb DSN.
@@ -214,12 +275,12 @@ Environnements variables configuration
           * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
           * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
               Space dashboard. *Optional*
-          * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client account
-            (namespace, role, etc..).
+          * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client
+            account namespace, role, etc..).
           * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
             *Optional*
-          * `SPACE_KUBERNETES_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
-          * `SPACE_KUBERNETES_CLUSTER_TYPE` : (string) type of cluster in the project's form.
+          * `SPACE_CLUSTER_NAME` : (string) name of the default Kubernetes cluster in the project's form.
+          * `SPACE_CLUSTER_TYPE` : (string) type of cluster in the project's form.
                 `kubernetes` by default. *Optional*
         * Several clusters : 
           * `SPACE_CLUSTER_CATALOG_JSON` : (json string).
@@ -253,7 +314,8 @@ Environnements variables configuration
               * `envsCountAllowed` : (int) count of managed clusters's namespace/env allowed for this plan
               * `quotas[].category` : (string) `compute` or `memory` - Category of the quota 
               * `quotas[].type` : (string) name of the quota
-              * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's `limit`)
+              * `quotas[].capacity` : (string) total of capacity allowed for an account
+                (sum of all containers's `limit`)
               * `quotas[].require` : (string) *Optional* Total of requires / requests allowed for an account
               * `clusters`: (string[]) *Optional* List of clusters allowed with this plan (available later)
 

@@ -40,6 +40,12 @@ services:
             MONGO_INITDB_DATABASE: teknoo_space
         volumes:
             - mongo_data:/data/db
+        healthcheck:
+            test: ["CMD", "sh", "-c", "nc -z localhost 27017 || exit 1"]
+            interval: 30s
+            retries: 5
+            start_period: 10s
+            timeout: 1s
     amqp:
         build:
             context: ./build.dev/rabbitmq
@@ -51,6 +57,12 @@ services:
             RABBITMQ_PASSWORD: space_pwd
         networks:
             - amqp
+        healthcheck:
+            test: ["CMD", "sh", "-c", "nc -z localhost 5672 || exit 1"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
     fpm:
         build:
             context: build.dev/php-fpm
@@ -96,11 +108,18 @@ services:
             - SPACE_REDIS_HOST=redis
             - SPACE_REDIS_PORT=6379
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
-            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
-            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+        healthcheck:
+            test: ["CMD", "sh", "-c", "nc -z localhost 9000 || exit 1"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
+        depends_on:
+            db:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
     cli_new_job:
         build:
             context: build.dev/php-cli
@@ -123,13 +142,18 @@ services:
             - SPACE_JWT_TTL=31104000
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
-            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
-            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
-            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
-            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
             - SPACE_PERSISTED_VAR_AGENT_MODE=1
+        healthcheck:
+            test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
+        depends_on:
+            db:
+                condition: service_healthy
+            amqp:
+                condition: service_healthy
     cli_job_done:
         build:
             context: build.dev/php-cli
@@ -150,10 +174,18 @@ services:
             - SPACE_JWT_TTL=31104000
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
-            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
-            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+        healthcheck:
+            test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
+        depends_on:
+            db:
+                condition: service_healthy
+            amqp:
+                condition: service_healthy
     cli_history_sent:
         build:
             context: build.dev/php-cli
@@ -174,10 +206,18 @@ services:
             - SPACE_JWT_TTL=31104000
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
-            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
-            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+        healthcheck:
+            test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
+        depends_on:
+            db:
+                condition: service_healthy
+            amqp:
+                condition: service_healthy
     cli_execute:
         build:
             context: build.dev/php-buildah
@@ -200,10 +240,13 @@ services:
             - SPACE_PING_SECONDS=60
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - SPACE_STORAGE_DEFAULT_SIZE=3Gi
-            - TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
-            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+        healthcheck:
+            test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
     httpd:
         build:
             context: build.dev/httpd
@@ -219,6 +262,12 @@ services:
             context: build.dev/redis
         networks:
             - redis
+        healthcheck:
+            test: ["CMD", "sh", "-c", "nc -z localhost 6379 || exit 1"]
+            interval: 30s
+            retries: 5
+            start_period: 240s
+            timeout: 1s
     blackfire:
         image: blackfire/blackfire:2
         ports: ["8307"]
