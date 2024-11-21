@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d47d7e6cf6a8ee5bddcafdcdeae3c101",
+    "content-hash": "552b72bfc2fe3b9f42d9a1b1351b03fe",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1632,7 +1632,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v11.32.0",
+            "version": "v11.33.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1687,7 +1687,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v11.32.0",
+            "version": "v11.33.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1733,7 +1733,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.32.0",
+            "version": "v11.33.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1781,7 +1781,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v11.32.0",
+            "version": "v11.33.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -1827,28 +1827,28 @@
         },
         {
             "name": "jean85/pretty-package-versions",
-            "version": "2.0.6",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Jean85/pretty-package-versions.git",
-                "reference": "f9fdd29ad8e6d024f52678b570e5593759b550b4"
+                "reference": "3c4e5f62ba8d7de1734312e4fff32f67a8daaf10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/f9fdd29ad8e6d024f52678b570e5593759b550b4",
-                "reference": "f9fdd29ad8e6d024f52678b570e5593759b550b4",
+                "url": "https://api.github.com/repos/Jean85/pretty-package-versions/zipball/3c4e5f62ba8d7de1734312e4fff32f67a8daaf10",
+                "reference": "3c4e5f62ba8d7de1734312e4fff32f67a8daaf10",
                 "shasum": ""
             },
             "require": {
-                "composer-runtime-api": "^2.0.0",
-                "php": "^7.1|^8.0"
+                "composer-runtime-api": "^2.1.0",
+                "php": "^7.4|^8.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.2",
                 "jean85/composer-provided-replaced-stub-package": "^1.0",
                 "phpstan/phpstan": "^1.4",
-                "phpunit/phpunit": "^7.5|^8.5|^9.4",
-                "vimeo/psalm": "^4.3"
+                "phpunit/phpunit": "^7.5|^8.5|^9.6",
+                "vimeo/psalm": "^4.3 || ^5.0"
             },
             "type": "library",
             "extra": {
@@ -1880,9 +1880,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Jean85/pretty-package-versions/issues",
-                "source": "https://github.com/Jean85/pretty-package-versions/tree/2.0.6"
+                "source": "https://github.com/Jean85/pretty-package-versions/tree/2.1.0"
             },
-            "time": "2024-03-08T09:58:59+00:00"
+            "time": "2024-11-18T16:19:46+00:00"
         },
         {
             "name": "knpuniversity/oauth2-client-bundle",
@@ -1945,16 +1945,16 @@
         },
         {
             "name": "laminas/laminas-code",
-            "version": "4.15.1",
+            "version": "4.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-code.git",
-                "reference": "877ad42fe9c164785182fca8afa3f416a056884d"
+                "reference": "1793e78dad4108b594084d05d1fb818b85b110af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/877ad42fe9c164785182fca8afa3f416a056884d",
-                "reference": "877ad42fe9c164785182fca8afa3f416a056884d",
+                "url": "https://api.github.com/repos/laminas/laminas-code/zipball/1793e78dad4108b594084d05d1fb818b85b110af",
+                "reference": "1793e78dad4108b594084d05d1fb818b85b110af",
                 "shasum": ""
             },
             "require": {
@@ -2004,7 +2004,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2024-10-25T10:15:16+00:00"
+            "time": "2024-11-20T13:15:13+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",
@@ -2096,16 +2096,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.6",
+            "version": "v1.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96"
+                "reference": "4f48ade902b94323ca3be7646db16209ec76be3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/f865a58ea3a0107c336b7045104c75243fa59d96",
-                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/4f48ade902b94323ca3be7646db16209ec76be3d",
+                "reference": "4f48ade902b94323ca3be7646db16209ec76be3d",
                 "shasum": ""
             },
             "require": {
@@ -2153,7 +2153,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2024-11-11T17:06:04+00:00"
+            "time": "2024-11-14T18:34:49+00:00"
         },
         {
             "name": "lcobucci/clock",
@@ -10767,16 +10767,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "3.0.1",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "8050fe19511fdb92d8a99806a15c07827ea6fb91"
+                "reference": "a88701171254bfc30ea4c6e4badefab75b6f2acf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/8050fe19511fdb92d8a99806a15c07827ea6fb91",
-                "reference": "8050fe19511fdb92d8a99806a15c07827ea6fb91",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/a88701171254bfc30ea4c6e4badefab75b6f2acf",
+                "reference": "a88701171254bfc30ea4c6e4badefab75b6f2acf",
                 "shasum": ""
             },
             "require": {
@@ -10885,20 +10885,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-06T22:18:31+00:00"
+            "time": "2024-11-20T09:01:30+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "3.0.1",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "cd6c87e4a6bdb274dc992573a9fd0a200068700f"
+                "reference": "9d142847ce68289d18c06461c3cb549728fed806"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/cd6c87e4a6bdb274dc992573a9fd0a200068700f",
-                "reference": "cd6c87e4a6bdb274dc992573a9fd0a200068700f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/9d142847ce68289d18c06461c3cb549728fed806",
+                "reference": "9d142847ce68289d18c06461c3cb549728fed806",
                 "shasum": ""
             },
             "require": {
@@ -10921,7 +10921,7 @@
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.1",
-                "teknoo/east-common": "^3.0.1",
+                "teknoo/east-common": "^3.0.2",
                 "teknoo/east-foundation-symfony": "^8",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/recipe": "^6",
@@ -10972,20 +10972,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-06T22:19:09+00:00"
+            "time": "2024-11-20T09:02:08+00:00"
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "8.0.0",
+            "version": "8.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "703147508499ca74bb72fc9c3f3964400030f198"
+                "reference": "b0539157ac6d4b08f4f4ffc4c29d80ec463ff1da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/703147508499ca74bb72fc9c3f3964400030f198",
-                "reference": "703147508499ca74bb72fc9c3f3964400030f198",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/b0539157ac6d4b08f4f4ffc4c29d80ec463ff1da",
+                "reference": "b0539157ac6d4b08f4f4ffc4c29d80ec463ff1da",
                 "shasum": ""
             },
             "require": {
@@ -11075,20 +11075,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-01T13:03:41+00:00"
+            "time": "2024-11-20T08:55:24+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "8.0.0",
+            "version": "8.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "79849cee0f0049df98e89e59f4b8c1721840eaef"
+                "reference": "a8d45d6cadd29ac8099c2759469849e742b58f6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/79849cee0f0049df98e89e59f4b8c1721840eaef",
-                "reference": "79849cee0f0049df98e89e59f4b8c1721840eaef",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/a8d45d6cadd29ac8099c2759469849e742b58f6b",
+                "reference": "a8d45d6cadd29ac8099c2759469849e742b58f6b",
                 "shasum": ""
             },
             "require": {
@@ -11104,7 +11104,7 @@
                 "symfony/serializer": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.1",
-                "teknoo/east-foundation": "^8",
+                "teknoo/east-foundation": "^8.0.1",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/recipe": "^6",
                 "teknoo/states": "^6.4.1"
@@ -11153,20 +11153,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-01T13:05:29+00:00"
+            "time": "2024-11-20T08:55:56+00:00"
         },
         {
             "name": "teknoo/east-paas",
-            "version": "4.0.0",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "764ada1cd981a8c079e1fe832d2fa19dbce08688"
+                "reference": "ad754b460165b3ecd5d7c3810eb85ae973290317"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/764ada1cd981a8c079e1fe832d2fa19dbce08688",
-                "reference": "764ada1cd981a8c079e1fe832d2fa19dbce08688",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/ad754b460165b3ecd5d7c3810eb85ae973290317",
+                "reference": "ad754b460165b3ecd5d7c3810eb85ae973290317",
                 "shasum": ""
             },
             "require": {
@@ -11187,7 +11187,7 @@
                 "doctrine/common": "^3.4.3",
                 "doctrine/mongodb-odm": "^2.9",
                 "doctrine/mongodb-odm-bundle": "^4.7||^5",
-                "doctrine/persistence": "^3.4",
+                "doctrine/persistence": "^3.4||^4",
                 "guzzlehttp/guzzle": "^7.9.2",
                 "laminas/laminas-diactoros": "^3.5",
                 "league/flysystem": "^3.29.1",
@@ -11293,20 +11293,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-02T17:58:48+00:00"
+            "time": "2024-11-19T16:47:00+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "4.0.0",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "85e5b83feacb18c3c5d4eb3f079d8e75a3658c01"
+                "reference": "abf3da5c0b75526c8388bedca61e5de351d9b4a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/85e5b83feacb18c3c5d4eb3f079d8e75a3658c01",
-                "reference": "85e5b83feacb18c3c5d4eb3f079d8e75a3658c01",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/abf3da5c0b75526c8388bedca61e5de351d9b4a6",
+                "reference": "abf3da5c0b75526c8388bedca61e5de351d9b4a6",
                 "shasum": ""
             },
             "require": {
@@ -11345,7 +11345,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.1",
                 "teknoo/east-common-symfony": "^3",
                 "teknoo/east-foundation-symfony": "^8",
-                "teknoo/east-paas": "^4",
+                "teknoo/east-paas": "^4.1",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/kubernetes-client": "^1.7",
                 "teknoo/recipe": "^6",
@@ -11407,7 +11407,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-01T21:57:02+00:00"
+            "time": "2024-11-19T16:54:23+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13313,12 +13313,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "9f1d9b2460cdd0422e8cfd58763bf3156ad7f487"
+                "reference": "b33a18b5d222c63472a4b41f6fa3e15e591c9595"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9f1d9b2460cdd0422e8cfd58763bf3156ad7f487",
-                "reference": "9f1d9b2460cdd0422e8cfd58763bf3156ad7f487",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/b33a18b5d222c63472a4b41f6fa3e15e591c9595",
+                "reference": "b33a18b5d222c63472a4b41f6fa3e15e591c9595",
                 "shasum": ""
             },
             "conflict": {
@@ -13364,7 +13364,7 @@
                 "azuracast/azuracast": "<0.18.3",
                 "backdrop/backdrop": "<1.27.3|>=1.28,<1.28.2",
                 "backpack/crud": "<3.4.9",
-                "backpack/filemanager": "<3.0.9",
+                "backpack/filemanager": "<2.0.2|>=3,<3.0.9",
                 "bacula-web/bacula-web": "<8.0.0.0-RC2-dev",
                 "badaso/core": "<2.7",
                 "bagisto/bagisto": "<2.1",
@@ -13696,7 +13696,7 @@
                 "mojo42/jirafeau": "<4.4",
                 "mongodb/mongodb": ">=1,<1.9.2",
                 "monolog/monolog": ">=1.8,<1.12",
-                "moodle/moodle": "<4.3.6|>=4.4,<4.4.4",
+                "moodle/moodle": "<4.3.8|>=4.4,<4.4.4",
                 "mos/cimage": "<0.7.19",
                 "movim/moxl": ">=0.8,<=0.10",
                 "movingbytes/social-network": "<=1.2.1",
@@ -13784,7 +13784,7 @@
                 "phpmyfaq/phpmyfaq": "<3.2.5|==3.2.5",
                 "phpoffice/common": "<0.2.9",
                 "phpoffice/phpexcel": "<1.8.1",
-                "phpoffice/phpspreadsheet": "<1.29.2|>=2,<2.1.1|>=2.2,<2.3",
+                "phpoffice/phpspreadsheet": "<1.29.4|>=2,<2.1.3|>=2.2,<2.3.2|>=3.3,<3.4",
                 "phpseclib/phpseclib": "<2.0.47|>=3,<3.0.36",
                 "phpservermon/phpservermon": "<3.6",
                 "phpsysinfo/phpsysinfo": "<3.4.3",
@@ -13838,7 +13838,7 @@
                 "rap2hpoutre/laravel-log-viewer": "<0.13",
                 "react/http": ">=0.7,<1.9",
                 "really-simple-plugins/complianz-gdpr": "<6.4.2",
-                "redaxo/source": "<=5.17.1",
+                "redaxo/source": "<5.18",
                 "remdex/livehelperchat": "<4.29",
                 "reportico-web/reportico": "<=8.1",
                 "rhukster/dom-sanitizer": "<1.0.7",
@@ -13894,7 +13894,7 @@
                 "slim/slim": "<2.6",
                 "slub/slub-events": "<3.0.3",
                 "smarty/smarty": "<4.5.3|>=5,<5.1.1",
-                "snipe/snipe-it": "<7.0.10",
+                "snipe/snipe-it": "<=7.0.13",
                 "socalnick/scn-social-auth": "<1.15.2",
                 "socialiteproviders/steam": "<1.1",
                 "spatie/browsershot": "<3.57.4",
@@ -13905,7 +13905,7 @@
                 "squizlabs/php_codesniffer": ">=1,<2.8.1|>=3,<3.0.1",
                 "ssddanbrown/bookstack": "<24.05.1",
                 "starcitizentools/citizen-skin": ">=2.6.3,<2.31",
-                "statamic/cms": "<4.46|>=5.3,<5.6.2",
+                "statamic/cms": "<=5.16",
                 "stormpath/sdk": "<9.9.99",
                 "studio-42/elfinder": "<=2.1.64",
                 "studiomitte/friendlycaptcha": "<0.1.4",
@@ -14147,7 +14147,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-11-13T19:05:18+00:00"
+            "time": "2024-11-19T21:04:39+00:00"
         },
         {
             "name": "sebastian/cli-parser",
