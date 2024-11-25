@@ -96,7 +96,7 @@
         "teknoo/bridge-phpdi-symfony": "^6.1",
         "teknoo/east-common-symfony": "^3.0.2",
         "teknoo/east-foundation-symfony": "^8.0.3",
-        "teknoo/east-paas-symfony": "^4.2",
+        "teknoo/east-paas-symfony": "^4.2.1",
         "teknoo/immutable": "^3.0.18",
         "teknoo/kubernetes-client": "^1.7.1",
         "teknoo/recipe": "^6",

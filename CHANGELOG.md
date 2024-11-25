@@ -3,7 +3,7 @@
 ## [1.0.0] - 2024-11-25
 ### Stable Version
 - First stable version.
-- Update to `Teknoo East PaaS` 4.2.
+- Update to `Teknoo East PaaS` 4.2.1. (About enhancements and prevent a bug with PHP-DI and PHP 8.4
 - Fix deprecation with PHP 8.4
 
 ## [1.0.0-RC9] - 2024-11-21

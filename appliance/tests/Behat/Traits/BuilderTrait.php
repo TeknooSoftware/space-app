@@ -224,7 +224,7 @@ trait BuilderTrait
                 return $this;
             }
 
-            public function writeFile(FileInterface $file, callable $return = null): JobWorkspaceInterface
+            public function writeFile(FileInterface $file, ?callable $return = null): JobWorkspaceInterface
             {
                 return $this;
             }
