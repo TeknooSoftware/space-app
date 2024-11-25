@@ -54,6 +54,11 @@ trait WorkerTrait
         $historySentTransport = $this->testTransport->get('history_sent');
         $jobDoneTransport = $this->testTransport->get('job_done');
 
+        $newJobTransport->throwExceptions();
+        $executeJobTransport->throwExceptions();
+        $historySentTransport->throwExceptions();
+        $jobDoneTransport->throwExceptions();
+
         $newJobTransport->process();
         $executeJobTransport->process();
         $historySentTransport->process();
