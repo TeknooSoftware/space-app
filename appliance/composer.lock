@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2739f0fb9bc48829c8d41dcbdac3222d",
+    "content-hash": "b9d404b080a0bc23b37269283e7a887a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10976,16 +10976,16 @@
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "8.0.1",
+            "version": "8.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "b0539157ac6d4b08f4f4ffc4c29d80ec463ff1da"
+                "reference": "6a40458b2ad7e61067b151eac5f01efc503c8514"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/b0539157ac6d4b08f4f4ffc4c29d80ec463ff1da",
-                "reference": "b0539157ac6d4b08f4f4ffc4c29d80ec463ff1da",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/6a40458b2ad7e61067b151eac5f01efc503c8514",
+                "reference": "6a40458b2ad7e61067b151eac5f01efc503c8514",
                 "shasum": ""
             },
             "require": {
@@ -10997,7 +10997,7 @@
                 "psr/http-factory": "^1.0.2",
                 "psr/http-message": "^2",
                 "teknoo/immutable": "^3.0.18",
-                "teknoo/recipe": "^6",
+                "teknoo/recipe": "^6.0.1",
                 "teknoo/states": "^6.4.1"
             },
             "require-dev": {
@@ -11075,20 +11075,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-20T08:55:24+00:00"
+            "time": "2024-11-25T14:57:58+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "8.0.1",
+            "version": "8.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "a8d45d6cadd29ac8099c2759469849e742b58f6b"
+                "reference": "d58634682811b873dac9e36da92d9c46b57aef0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/a8d45d6cadd29ac8099c2759469849e742b58f6b",
-                "reference": "a8d45d6cadd29ac8099c2759469849e742b58f6b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/d58634682811b873dac9e36da92d9c46b57aef0c",
+                "reference": "d58634682811b873dac9e36da92d9c46b57aef0c",
                 "shasum": ""
             },
             "require": {
@@ -11104,9 +11104,9 @@
                 "symfony/serializer": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.1",
-                "teknoo/east-foundation": "^8.0.1",
+                "teknoo/east-foundation": "^8.0.3",
                 "teknoo/immutable": "^3.0.18",
-                "teknoo/recipe": "^6",
+                "teknoo/recipe": "^6.0.1",
                 "teknoo/states": "^6.4.1"
             },
             "require-dev": {
@@ -11153,7 +11153,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-20T08:55:56+00:00"
+            "time": "2024-11-25T14:58:36+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -11479,16 +11479,16 @@
         },
         {
             "name": "teknoo/kubernetes-client",
-            "version": "1.7.0",
+            "version": "1.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "c9c10711b731fdd5d2c19e8f35013fea7c0181ac"
+                "reference": "3183bb2e77a2393b787320935a466ddc20c43b5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/c9c10711b731fdd5d2c19e8f35013fea7c0181ac",
-                "reference": "c9c10711b731fdd5d2c19e8f35013fea7c0181ac",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/3183bb2e77a2393b787320935a466ddc20c43b5d",
+                "reference": "3183bb2e77a2393b787320935a466ddc20c43b5d",
                 "shasum": ""
             },
             "require": {
@@ -11496,8 +11496,8 @@
                 "illuminate/collections": "^10.48||^11",
                 "illuminate/contracts": "^10.48||^11",
                 "php": "^8.2",
-                "php-http/client-common": "^2.7",
-                "php-http/discovery": "^1.19",
+                "php-http/client-common": "^2.7.2",
+                "php-http/discovery": "^1.20",
                 "psr/http-message": "^1.0.1||^2",
                 "symfony/yaml": "^6.4||^7.0"
             },
@@ -11559,20 +11559,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-10-25T21:55:53+00:00"
+            "time": "2024-11-25T13:38:23+00:00"
         },
         {
             "name": "teknoo/recipe",
-            "version": "6.0.0",
+            "version": "6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/recipe.git",
-                "reference": "0c9166a92fd5984d9d78a3226ac509ce66126cb1"
+                "reference": "a14b8705fe9ef5c212069d13766a5d5298a7c224"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/0c9166a92fd5984d9d78a3226ac509ce66126cb1",
-                "reference": "0c9166a92fd5984d9d78a3226ac509ce66126cb1",
+                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/a14b8705fe9ef5c212069d13766a5d5298a7c224",
+                "reference": "a14b8705fe9ef5c212069d13766a5d5298a7c224",
                 "shasum": ""
             },
             "require": {
@@ -11642,7 +11642,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-02T11:37:37+00:00"
+            "time": "2024-11-25T13:30:03+00:00"
         },
         {
             "name": "teknoo/states",
