@@ -61,7 +61,7 @@ class SpaceProjectWriter implements WriterInterface
 
     public function save(
         ObjectInterface $object,
-        PromiseInterface $promise = null,
+        ?PromiseInterface $promise = null,
         ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceProject) {
@@ -127,7 +127,7 @@ class SpaceProjectWriter implements WriterInterface
         return $this;
     }
 
-    public function remove(ObjectInterface $object, PromiseInterface $promise = null): WriterInterface
+    public function remove(ObjectInterface $object, ?PromiseInterface $promise = null): WriterInterface
     {
         if (!$object instanceof SpaceProject) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));
