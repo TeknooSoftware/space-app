@@ -3,6 +3,7 @@ COMPOSER ?= /usr/bin/env composer
 DEPENDENCIES ?= latest
 PHP ?= /usr/bin/env php
 APP_ENV ?= prod
+IGNORE_DEPRECATIONS ?= 0
 
 MAKEFLAGS += --no-print-directory
 
@@ -129,7 +130,7 @@ test-without-coverage: ## Run tests (units tests and behavior tests without a co
 	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat
+	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat
 	rm -rf var/cache/test
 
 ##
