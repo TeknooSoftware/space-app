@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.1] - 2024-11-26
+### Stable Version
+- Upgrading illuminate/collections
+- Upgrading illuminate/conditionable
+- Upgrading illuminate/contracts
+- Upgrading illuminate/macroable
+- Upgrading php-http/guzzle7-adapter
+- 
 ## [1.0.0] - 2024-11-25
 ### Stable Version
 - First stable version.
