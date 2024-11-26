@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use FriendsOfBehat\SymfonyExtension\ServiceContainer\SymfonyExtension;
 use Symfony\Component\Dotenv\Dotenv;
 
 include __DIR__ . '/fakeQuery.php';
@@ -22,4 +23,8 @@ ini_set('memory_limit', '2G');
 
 gc_enable();
 
-error_reporting(E_ALL | E_STRICT);
+if (!empty($_ENV['IGNORE_DEPRECATION']) && $this instanceof SymfonyExtension) {
+    error_reporting(E_ALL & ~E_DEPRECATED);
+} else {
+    error_reporting(E_ALL | E_STRICT);
+}

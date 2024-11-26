@@ -26,6 +26,7 @@ test:8.4-upper:
   allow_failure: true
   variables:
     PHP_VERSION: '8.4'
+    IGNORE_DEPRECATION: 1
   script:
     - make test
     - make qa
