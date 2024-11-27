@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.3] - 2024-11-27
+### Stable Version
+- Upgrading to Symfony 7.1.9.
+
 ## [1.0.2] - 2024-11-27
 ### Stable Version
 - Upgrading illuminate/collections
