@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.2] - 2024-11-27
+### Stable Version
+- Upgrading illuminate/collections
+- Upgrading illuminate/conditionable
+- Upgrading illuminate/contracts
+- Upgrading illuminate/macroable
+
 ## [1.0.1] - 2024-11-26
 ### Stable Version
 - Upgrading illuminate/collections
