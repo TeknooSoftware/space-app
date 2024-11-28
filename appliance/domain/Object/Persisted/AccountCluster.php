@@ -41,6 +41,8 @@ use Teknoo\Immutable\ImmutableTrait;
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
+ *
+ * @implements SluggableInterface<AccountCluster>
  */
 class AccountCluster implements
     IdentifiedObjectInterface,
@@ -51,51 +53,22 @@ class AccountCluster implements
     use ObjectTrait;
     use ImmutableTrait;
 
-    private Account $account;
-
-    private string $name;
-
-    private string $slug;
-
-    private string $type;
-
-    private string $masterAddress;
-
-    private string $storageProvisioner;
-
-    private string $dashboardAddress;
-
-    private string $caCertificate;
-
-    private string $token;
-
-    private bool $useHnc;
-
     public function __construct(
-        Account $account,
-        string $name,
-        string $slug,
-        string $type,
-        string $masterAddress,
-        string $storageProvisioner,
-        string $dashboardAddress,
-        string $caCertificate,
+        private readonly Account $account,
+        private readonly string $name,
+        private string $slug,
+        private readonly string $type,
+        private readonly string $masterAddress,
+        private readonly string $storageProvisioner,
+        private readonly string $dashboardAddress,
+        private readonly string $caCertificate,
         #[SensitiveParameter]
-        string $token,
-        bool $useHnc,
+        private readonly string $token,
+        private readonly bool $supportRegistry,
+        private readonly ?string $registryUrl,
+        private readonly bool $useHnc,
     ) {
         $this->uniqueConstructorCheck();
-
-        $this->account = $account;
-        $this->name = $name;
-        $this->type = $type;
-        $this->slug = $slug;
-        $this->masterAddress = $masterAddress;
-        $this->storageProvisioner = $storageProvisioner;
-        $this->dashboardAddress = $dashboardAddress;
-        $this->caCertificate = $caCertificate;
-        $this->token = $token;
-        $this->useHnc = $useHnc;
     }
 
     public function getAccount(): Account
@@ -143,11 +116,24 @@ class AccountCluster implements
         return $this->token;
     }
 
+    public function getRegistryUrl(): ?string
+    {
+        return $this->registryUrl;
+    }
+
+    public function isSupportRegistry(): bool
+    {
+        return $this->supportRegistry;
+    }
+
     public function isUseHnc(): bool
     {
         return $this->useHnc;
     }
 
+    /**
+     * @param LoaderInterface<AccountCluster> $loader
+     */
     public function prepareSlugNear(
         LoaderInterface $loader,
         FindSlugService $findSlugService,
