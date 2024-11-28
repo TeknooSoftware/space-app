@@ -63,7 +63,7 @@ class LoadEnvironments
         if (false === $allowEmptyCredentials) {
             $errorCallback = static fn (Throwable $error) => $manager->error(
                 new DomainException(
-                    message: 'teknoo.space.error.space_account.account_credential.fetching',
+                    message: 'teknoo.space.error.space_account.account_environment.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,
                     previous: $error,
                 )

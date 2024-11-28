@@ -118,7 +118,7 @@ teknoo.space.error.messenger.handler.message-can-not-decrypted: "Configuration e
 teknoo.space.error.space_account.account.deleting: "Can not delete the account"
 teknoo.space.error.space_account.account.fetching: "Main account's data can not be fetched"
 teknoo.space.error.space_account.account.persisting: "Can not persist account's updates"
-teknoo.space.error.space_account.account_credential.fetching: "Account's credentials can not be fetched"
+teknoo.space.error.space_account.account_environment.fetching: "Account's credentials can not be fetched"
 teknoo.space.error.space_account.account_data.fetching: "Account's data can not be fetched"
 teknoo.space.error.space_project.project.deleting: "Can not delete the project"
 teknoo.space.error.space_project.project.fetching: "Main project's data can not be fetched"
