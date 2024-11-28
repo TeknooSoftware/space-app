@@ -121,7 +121,7 @@ This application is bundled with :
     * Teknoo/East-PaaS
     * Teknoo/Kubernetes Clent
     * Symfony 6.4+ or 7.1+
-    * Doctrine ODM 2.6+ / MongoDB
+    * Doctrine ODM 2.9+ / MongoDB
     * FlySystem
     * Buildah
 
@@ -156,40 +156,54 @@ Installation
 
 Space can be installed with standards composer command, but a Makefile is available to help to install and use it.
 `make` is available in the folder `application`, but you can use the link `space.sh` instead of at the root of this
-project. `make` commandes are :
+project. Commands are listed in the next section.
+
+Space.sh CLI Tool
+-----------------
+
+This tool can be executed directly by calling the `space.sh` tool from the `application` folder or fron the root project.
+You can also use the `make` command directly under the folder `application` but extensions are not managed
 
 * **Generics**:
-    * `help`:          Show this help.
-    * `verify`:        Download dependencies via Composer and verify space installation.
+  * `help`:          Show this help.
+  * `verify`:        Download dependencies via Composer and verify space installation.
 * **Installations**:
-    * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony
-      app and warmup caches.
-    * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
-    * `update`:        Install and update all dependencies according to composer configuration without dev libraries, 
-      build Symfony app and warmup caches.
-      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
-    * `dev-update`:    Install and update all dependencies according to composer configuration, including dev libraries.
-      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
-    * `config`:        To set values in env file to configure Space.
+  * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony
+    app and warmup caches.
+  * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
+  * `update`:        Install and update all dependencies according to composer configuration without dev libraries, 
+    build Symfony app and warmup caches.
+    Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
+  * `dev-update`:    Install and update all dependencies according to composer configuration, including dev libraries.
+    Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
+* **Configuration**:
+  * `config`:             To set values in env file to configure Space.
+  * `create-admin`:       To create an administrator in users, requires "email" and "password" parameter.
+  * `extension-list`:     To list available extension
+  * `extension-enable`:   To enable an extension into Space, requires "name" parameter
+  * `extension-disable`:  To disable an extension into Space, requires "name" parameter
 * **Docker**:
-    * `build`:         To build docker images to run locally Space on Docker.
-    * `start`:         To start or refresh the docker stack and use Space locally on localhost.
-    * `stop`:          To stop the docker stack.
-    * `restart`:       To restart the docker stack.
+  * `build`:         To build docker images to run locally Space on Docker.
+  * `start`:         To start or refresh the docker stack and use Space locally on localhost.
+  * `stop`:          To stop the docker stack.
+  * `restart`:       To restart the docker stack.
 * **QA**:
-    * `qa`:            Run a set of quality tests, to detect bugs, securities or qualities issues.
-    * `qa-offline`:    Run a set of quality tests, without audit, in offline, to detect bugs, securities or qualities
-      issues.
-    * `lint`:          To detect error in PHP file causing compilation errors.
-    * `phpstan`:       To run code analyze with PHPStan to prevent bugs.
-    * `phpcs`:         To check if the code follow the PSR 12.
-    * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
+  * `qa`:            Run a set of quality tests, to detect bugs, securities or qualities issues.
+  * `qa-offline`:    Run a set of quality tests, without audit, in offline, to detect bugs, securities or qualities
+                     issues.
+  * `lint`:          To detect error in PHP file causing compilation errors.
+  * `phpstan`:       To run code analyze with PHPStan to prevent bugs.
+  * `phpcs`:         To check if the code follow the PSR 12.
+  * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
 * **Testing**:
-    * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can
-      work properly.
-    * `test-without-coverage`:  Run tests (units tests and behavior tests without a code coverage).
+  * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can
+                     work properly.
+  * `test-without-coverage`:  Run tests (units tests and behavior tests without a code coverage).
 * **Cleaning**:
-    * `clean`:         Remove all PHP vendors, composer generated map, clean all Symfony builds, caches and logs.
+  * `clean`:         Remove all PHP vendors, composer generated map, clean all Symfony builds, caches and logs
+  * `warmup`:        Clear cache and warming , dump autoloader
+* **Extensions**:
+  * `ext <extension name>`: To call a command from an extension.
 
 Environnements variables configuration
 --------------------------------------
@@ -421,8 +435,10 @@ Environnements variables configuration
             * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
               `lets-encrypt` by default. *Optional*
 
-Commands
---------
+Worker Commands
+---------------
+
+To launch workers on your environment if you does not use docker compose :
 
 * worker to prepare a new job : `bin/console messenger:consume new_job`
 * worker to persist histories of jobs : `bin/console messenger:consume history_sent`
