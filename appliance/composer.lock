@@ -10713,8 +10713,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "php-di/php-di",
-                    "url": "https://github.com/PHP-DI/PHP-DI"
+                    "url": "https://github.com/PHP-DI/PHP-DI",
+                    "name": "php-di/php-di"
                 }
             },
             "autoload": {
@@ -10831,8 +10831,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "teknoo/east-foundation",
-                    "url": "https://github.com/TeknooSoftware/east-foundation"
+                    "url": "https://github.com/TeknooSoftware/east-foundation",
+                    "name": "teknoo/east-foundation"
                 }
             },
             "autoload": {
@@ -11026,8 +11026,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "teknoo/recipe",
-                    "url": "https://github.com/TeknooSoftware/recipe"
+                    "url": "https://github.com/TeknooSoftware/recipe",
+                    "name": "teknoo/recipe"
                 }
             },
             "autoload": {
@@ -11226,8 +11226,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "teknoo/east-foundation",
-                    "url": "https://github.com/TeknooSoftware/east-foundation"
+                    "url": "https://github.com/TeknooSoftware/east-foundation",
+                    "name": "teknoo/east-foundation"
                 }
             },
             "autoload": {
@@ -11590,8 +11590,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "teknoo/states",
-                    "url": "https://github.com/TeknooSoftware/states"
+                    "url": "https://github.com/TeknooSoftware/states",
+                    "name": "teknoo/states"
                 }
             },
             "autoload": {
@@ -11671,8 +11671,8 @@
             "type": "library",
             "extra": {
                 "thanks": {
-                    "name": "teknoo/immutable",
-                    "url": "https://github.com/TeknooSoftware/immutable"
+                    "url": "https://github.com/TeknooSoftware/immutable",
+                    "name": "teknoo/immutable"
                 },
                 "phpstan": {
                     "includes": [
