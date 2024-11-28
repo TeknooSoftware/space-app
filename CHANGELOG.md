@@ -1,5 +1,51 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.3] - 2024-11-27
+### Stable Version
+- Upgrading to Symfony 7.1.9.
+
+## [1.0.2] - 2024-11-27
+### Stable Version
+- Upgrading illuminate/collections
+- Upgrading illuminate/conditionable
+- Upgrading illuminate/contracts
+- Upgrading illuminate/macroable
+
+## [1.0.1] - 2024-11-26
+### Stable Version
+- Upgrading illuminate/collections
+- Upgrading illuminate/conditionable
+- Upgrading illuminate/contracts
+- Upgrading illuminate/macroable
+- Upgrading php-http/guzzle7-adapter
+- 
+## [1.0.0] - 2024-11-25
+### Stable Version
+- First stable version.
+- Update to `Teknoo East PaaS` 4.2.1. (About enhancements and prevent a bug with PHP-DI and PHP 8.4
+- Fix deprecation with PHP 8.4
+
+## [1.0.0-RC9] - 2024-11-21
+### Release Candidate
+- Last Release Candidate. Stable release come the 25th November.
+- Fix some mistakes.
+- Update `teknoo.space.assets.version`.
+- Update libs and dev libraries.
+- Update libs and temp fix about incompatibility between symfony/type-info and phpstan/phpdoc-parser.
+- Update Symfony lib about CVE and other issues.
+- Fix space.sh make call without change working directory.
+- Update illuminates libraries.
+- Allow running PHP Unit Tests in extensions.
+- Update behat configuration.
+- Update twig and fixing issue with json twig template with Twig 3.15.
+- Update make tool.
+- Add cli tool to manage extensions.
+- Update and fix configuration cli tool.
+- Rename `SPACE_KUBERNETES_CLUSTER_NAME` to `SPACE_CLUSTER_NAME`.
+- Rename `SPACE_KUBERNETES_CLUSTER_TYPE` to `SPACE_CLUSTER_TYPE`.
+- Rename `di.variables.kubernetes.php` to `di.variables.clusters.php`.
+- Rename `teknoo.space.kubernetes.default_cluster` to `teknoo.space.clusters.default_cluster`.
+
 ## [1.0.0-RC8] - 2024-11-08
 ### Release Candidate
 - Huge realase for an RC (To improve the future of Space and migrate some behavior from internals projects to Space 
@@ -24,7 +70,7 @@
   - Add new endpoints and features
   - Complete the definitions of clusters, OCI libraries, extensions.
   - Add some assets
-  Without change a file into the `config` folder. `Space Entreprise edition` will use this feature, it will a set of 
+  Without change a file into the `config` folder. `Space Enterprise edition` will use this feature, it will a set of 
   extensions.
   - Available extensions modules in `Space` are :
     - `Teknoo\East\FoundationBundle\Extension\Bundles` : to add bundles to load.

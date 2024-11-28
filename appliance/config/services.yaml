@@ -26,7 +26,16 @@ services:
         resource: '../src/*'
         exclude: '../src/{patch,DependencyInjection,Kernel.php}'
 
+    Teknoo\Space\Infrastructures\Symfony\Command\:
+        resource: '../infrastructures/Symfony/Command/*'
+        bind:
+            $spacePath: '%kernel.project_dir%'
+        tags:
+            - {name: 'console.command' }
+
     Teknoo\Space\Infrastructures\Symfony\:
+        exclude:
+            - '../infrastructures/Symfony/Command/*'
         resource: '../infrastructures/Symfony/*'
 
     Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig:

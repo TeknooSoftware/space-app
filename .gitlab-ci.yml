@@ -1,6 +1,6 @@
 before_script:
   - cd appliance
-  - make update
+  - make dev-update
 
 .abstract_tests:
   image: $PHP_IMAGE:$PHP_VERSION
@@ -26,6 +26,7 @@ test:8.4-upper:
   allow_failure: true
   variables:
     PHP_VERSION: '8.4'
+    IGNORE_DEPRECATIONS: 1
   script:
     - make test
     - make qa

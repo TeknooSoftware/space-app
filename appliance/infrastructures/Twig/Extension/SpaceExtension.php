@@ -51,7 +51,7 @@ class SpaceExtension extends AbstractExtension
                 callable: $this->runExtension(...),
                 options: [
                     'needs_environment' => true,
-                    'is_safe' => ['html', 'json'],
+                    'is_safe' => ['html', 'json', 'js'],
                 ],
             )
         ];
