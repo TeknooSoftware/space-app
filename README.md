@@ -7,7 +7,7 @@ Teknoo Software - Space
 
 Space is a `Platform as a Service` or a `Platform as a code` application, a continuous integration/delivery/deployment 
 solution, built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` and several `Symfony` components. The application 
-is multi-account, multi-users and multi-projects. It ables to build and deploy IT projects on dedicated containerized 
+is multi-account, multi-users and multi-projects. It able to build and deploy IT projects on dedicated containerized 
 platforms on cluster. Space supports natively `Kubernetes` cluster but it was designed to support other types of 
 clusters by writting some drivers.
 
