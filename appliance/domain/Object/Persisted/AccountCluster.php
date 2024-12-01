@@ -42,7 +42,7 @@ use Teknoo\Immutable\ImmutableTrait;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements SluggableInterface<AccountCluster>
+ * @implements SluggableInterface<IdentifiedObjectInterface>
  */
 class AccountCluster implements
     IdentifiedObjectInterface,
@@ -131,9 +131,6 @@ class AccountCluster implements
         return $this->useHnc;
     }
 
-    /**
-     * @param LoaderInterface<AccountCluster> $loader
-     */
     public function prepareSlugNear(
         LoaderInterface $loader,
         FindSlugService $findSlugService,
