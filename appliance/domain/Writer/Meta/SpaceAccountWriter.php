@@ -15,7 +15,7 @@
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  *
- * @link        http://teknoo.space Project website
+ * @link        https://teknoo.software/applications/space Project website
  *
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
@@ -73,7 +73,7 @@ class SpaceAccountWriter implements WriterInterface
 
     public function save(
         ObjectInterface $object,
-        PromiseInterface $promise = null,
+        ?PromiseInterface $promise = null,
         ?bool $preferRealDateOnUpdate = null,
     ): WriterInterface {
         if (!$object instanceof SpaceAccount) {
@@ -142,7 +142,7 @@ class SpaceAccountWriter implements WriterInterface
         return $this;
     }
 
-    public function remove(ObjectInterface $object, PromiseInterface $promise = null): WriterInterface
+    public function remove(ObjectInterface $object, ?PromiseInterface $promise = null): WriterInterface
     {
         if (!$object instanceof SpaceAccount) {
             $promise?->fail(new RuntimeException($object::class . 'is not supported by this writer', 500));

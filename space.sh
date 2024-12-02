@@ -2,5 +2,6 @@
 
 set -eu
 
-cd appliance
-make "$@"
+cd ./appliance
+
+./space.sh "$@"

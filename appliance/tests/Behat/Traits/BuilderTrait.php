@@ -15,7 +15,7 @@
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  *
- * @link        http://teknoo.space Project website
+ * @link        https://teknoo.software/applications/space Project website
  *
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
@@ -224,7 +224,7 @@ trait BuilderTrait
                 return $this;
             }
 
-            public function writeFile(FileInterface $file, callable $return = null): JobWorkspaceInterface
+            public function writeFile(FileInterface $file, ?callable $return = null): JobWorkspaceInterface
             {
                 return $this;
             }
@@ -357,7 +357,7 @@ trait BuilderTrait
         $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode(
             [
                 [
-                    'name' => 'composer',
+                    'name' => 'behat-composer',
                     'type' => 'composer',
                     'command' => [
                         'php',
@@ -368,7 +368,7 @@ trait BuilderTrait
                     'timeout' => 240,
                 ],
                 [
-                    'name' => 'composer-8.1',
+                    'name' => 'behat-composer-8.1',
                     'type' => 'composer',
                     'command' => [
                         'php8.1',
@@ -379,7 +379,7 @@ trait BuilderTrait
                     'timeout' => 240,
                 ],
                 [
-                    'name' => 'composer-8.2',
+                    'name' => 'behat-composer-8.2',
                     'type' => 'composer',
                     'command' => [
                         'php8.2',
@@ -414,11 +414,11 @@ trait BuilderTrait
     }
 
     /**
-     * @Then it obtains empty hooks library
+     * @Then it obtains an hooks library without :name key.
      */
-    public function itObtainsEmptyHooksLibrary(): void
+    public function itObtainsEmptyHooksLibrary(string $name): void
     {
         $hooks = iterator_to_array($this->hookCollection);
-        Assert::assertEmpty($hooks);
+        Assert::assertArrayNotHasKey($name, $hooks);
     }
 }

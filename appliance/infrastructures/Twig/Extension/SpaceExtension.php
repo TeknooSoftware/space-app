@@ -15,7 +15,7 @@
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  *
- * @link        http://teknoo.space Project website
+ * @link        https://teknoo.software/applications/space Project website
  *
  * @license     http://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
@@ -51,7 +51,7 @@ class SpaceExtension extends AbstractExtension
                 callable: $this->runExtension(...),
                 options: [
                     'needs_environment' => true,
-                    'is_safe' => ['html', 'json'],
+                    'is_safe' => ['html', 'json', 'js'],
                 ],
             )
         ];
