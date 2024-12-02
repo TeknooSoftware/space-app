@@ -5,36 +5,48 @@ Teknoo Software - Space
 [![License](https://shields.io/badge/license-MIT-green?style=flat)](https://raw.githubusercontent.com/TeknooSoftware/space-app/main/LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
-Space is a `Platform as a Service` application, a continuous integration/delivery/deployment solution, built on
-`Teknoo East PaaS`, `Teknoo Kubernetes Client` and the `Symfony` components. The application is multi-account,
-multi-users and multi-projects, and able to build and deploy projects on dedicated containerized platforms on
-`Kubernetes` cluster.
+Space is a `Platform as a Service` or a `Platform as a code` application, a continuous integration/delivery/deployment 
+solution, built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` and several `Symfony` components. The application 
+is multi-account, multi-users and multi-projects. It able to build and deploy IT projects on dedicated containerized 
+platforms on cluster. Space supports natively `Kubernetes` cluster but it was designed to support other types of 
+clusters by writting some drivers.
 
 This is the `Standard` version of Space. It is released under MIT licence. This version includes :
 
-* an account represents the top entity (a company, a service, a foundation, an human, etc...)
-* an account has at least one user.
-* an user represent an human.
-* an account has projects.
-* projects have deployment jobs.
-* all projects must be hosted on a Git instance, reachable via the protocoles HTTPS or SSH.
-* projects' images are built thanks to Buildah.
-* Kubernetes clusters 1.22+ are supported.
-* a job represents a deployment
-* a job can provide several variables to pass to the compiler about the deployment.
-    * variables can be persisted to the project to be reused in the future in next deployments.
-    * projects can host persisted variables to be used in all next deployments.
-    * accounts can host also persisted variables to be used on all deployments of all of this projects if they are not
-      already defined in projects.
-    * persisted variables can contains secrets.
-        * Warning, secrets are not visible in Space's web app, but they are passed unencrypted to the workers if
-          encryption is not enabled between servers and agents. Fill environments variables about East PaaS Encryption
-          described later in this document..
-* Space is bundled with Composer hook to create a PHP project. Python and PIP, NodeJs and NPM and gcc and Make are
-  also supported.
-* Space allow any users to subscribe, but it's not manage billings.
-    * Subscriptions can be restricted with unique code to forbid non granted user to subscribe
-* Space supports 2FA authentication with an TOTP application like Google Authenticator.
+* `East PaaS` integration
+* Accounts and users management
+  * Support of OAuth2 and MFA 
+  * an account represents the top entity (a company, a service, a foundation, an human, etc...)
+  * an account has at least one user.
+  * an user represents an human.
+  * an account can have several environments.
+* Quota
+  * Applied on accounts.
+  * Distributed on projects.
+* Cluster namespace installation.
+  * For each environment of accounts.
+* Projects and jobs management
+  * Projects are owned by account
+  * all projects must be hosted on a Git instance, reachable via the protocols HTTPS or SSH.
+  * projects' images are built thanks to Buildah.
+  * Kubernetes clusters 1.30+ are supported.
+  * a job represents a deployment
+  * a job can provide several variables to pass to the compiler about the deployment.
+      * variables can be persisted to the project to be reused in the future in next deployments.
+      * projects can host persisted variables to be used in all next deployments.
+      * accounts can host also persisted variables to be used on all deployments of all of this projects if they are not
+        already defined in projects.
+      * persisted variables can contains secrets.
+          * **Warning**, secrets are not visible in Space's web app, but they are passed unencrypted to the workers if
+            encryption is not enabled between servers and agents. Fill environments variables about East PaaS Encryption
+            described later in this document.
+* Web UI interface
+* RESTFull API interfaces
+* Deployment workers
+* Kubernetes integration
+  * include a Dashboard integration
+* Space can allow any users to subscribe, but it's not manage billings.
+    * Subscriptions can be restricted with unique code to forbid non granted user to subscribe.
 
 A free support is available by Github issues of this repository.
 About priority support, please contact us at <contact@teknoo.software>.
@@ -109,7 +121,7 @@ This application is bundled with :
     * Teknoo/East-PaaS
     * Teknoo/Kubernetes Clent
     * Symfony 6.4+ or 7.1+
-    * Doctrine ODM 2.6+ / MongoDB
+    * Doctrine ODM 2.9+ / MongoDB
     * FlySystem
     * Buildah
 
@@ -144,40 +156,54 @@ Installation
 
 Space can be installed with standards composer command, but a Makefile is available to help to install and use it.
 `make` is available in the folder `application`, but you can use the link `space.sh` instead of at the root of this
-project. `make` commandes are :
+project. Commands are listed in the next section.
+
+Space.sh CLI Tool
+-----------------
+
+This tool can be executed directly by calling the `space.sh` tool from the `application` folder or fron the root project.
+You can also use the `make` command directly under the folder `application` but extensions are not managed
 
 * **Generics**:
-    * `help`:          Show this help.
-    * `verify`:        Download dependencies via Composer and verify space installation.
+  * `help`:          Show this help.
+  * `verify`:        Download dependencies via Composer and verify space installation.
 * **Installations**:
-    * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony
-      app and warmup caches.
-    * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
-    * `update`:        Install and update all dependencies according to composer configuration without dev libraries, 
-      build Symfony app and warmup caches.
-      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
-    * `dev-update`:    Install and update all dependencies according to composer configuration, including dev libraries.
-      Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
-    * `config`:        To set values in env file to configure Space.
+  * `install`:       To install all PHP vendors for Space, thanks to Composer, without dev libraries, build Symfony
+    app and warmup caches.
+  * `dev-install`:   To install all PHP vendors for Space, thanks to Composer, including dev libraries.
+  * `update`:        Install and update all dependencies according to composer configuration without dev libraries, 
+    build Symfony app and warmup caches.
+    Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
+  * `dev-update`:    Install and update all dependencies according to composer configuration, including dev libraries.
+    Set the env var DEPENDENCIES to lowest to download lowest vendors versions instead of lasts versions.
+* **Configuration**:
+  * `config`:             To set values in env file to configure Space.
+  * `create-admin`:       To create an administrator in users, requires "email" and "password" parameter.
+  * `extension-list`:     To list available extension
+  * `extension-enable`:   To enable an extension into Space, requires "name" parameter
+  * `extension-disable`:  To disable an extension into Space, requires "name" parameter
 * **Docker**:
-    * `build`:         To build docker images to run locally Space on Docker.
-    * `start`:         To start or refresh the docker stack and use Space locally on localhost.
-    * `stop`:          To stop the docker stack.
-    * `restart`:       To restart the docker stack.
+  * `build`:         To build docker images to run locally Space on Docker.
+  * `start`:         To start or refresh the docker stack and use Space locally on localhost.
+  * `stop`:          To stop the docker stack.
+  * `restart`:       To restart the docker stack.
 * **QA**:
-    * `qa`:            Run a set of quality tests, to detect bugs, securities or qualities issues.
-    * `qa-offline`:    Run a set of quality tests, without audit, in offline, to detect bugs, securities or qualities
-      issues.
-    * `lint`:          To detect error in PHP file causing compilation errors.
-    * `phpstan`:       To run code analyze with PHPStan to prevent bugs.
-    * `phpcs`:         To check if the code follow the PSR 12.
-    * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
+  * `qa`:            Run a set of quality tests, to detect bugs, securities or qualities issues.
+  * `qa-offline`:    Run a set of quality tests, without audit, in offline, to detect bugs, securities or qualities
+                     issues.
+  * `lint`:          To detect error in PHP file causing compilation errors.
+  * `phpstan`:       To run code analyze with PHPStan to prevent bugs.
+  * `phpcs`:         To check if the code follow the PSR 12.
+  * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
 * **Testing**:
-    * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can
-      work properly.
-    * `test-without-coverage`:  Run tests (units tests and behavior tests without a code coverage).
+  * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can
+                     work properly.
+  * `test-without-coverage`:  Run tests (units tests and behavior tests without a code coverage).
 * **Cleaning**:
-    * `clean`:         Remove all PHP vendors, composer generated map, clean all Symfony builds, caches and logs.
+  * `clean`:         Remove all PHP vendors, composer generated map, clean all Symfony builds, caches and logs
+  * `warmup`:        Clear cache and warming , dump autoloader
+* **Extensions**:
+  * `ext <extension name>`: To call a command from an extension.
 
 Environnements variables configuration
 --------------------------------------
@@ -409,8 +435,10 @@ Environnements variables configuration
             * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
               `lets-encrypt` by default. *Optional*
 
-Commands
---------
+Worker Commands
+---------------
+
+To launch workers on your environment if you does not use docker compose :
 
 * worker to prepare a new job : `bin/console messenger:consume new_job`
 * worker to persist histories of jobs : `bin/console messenger:consume history_sent`

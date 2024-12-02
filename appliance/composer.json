@@ -3,7 +3,7 @@
     "type": "project",
     "description": "Space is a Platform as a Service application, a continuous integration/delivery/deployment solution, built on Teknoo East PaaS , Teknoo Kubernetes Client and the Symfony components. The application is multi-account, multi-users and multi-projects, and able to build and deploy projects on dedicated containerized platforms on Kubernetes cluster.",
     "keywords": ["space","paas","image","containerd","oci","docker","buildah","kubernetes","platform","service","ci","cd","continuous-delivery","continuous-integration","continuous-deployment","platform.sh","heroku"],
-    "homepage": "https://teknoo.software/space",
+    "homepage": "https://teknoo.software/applications/space",
     "license": "MIT",
     "authors": [
         {
@@ -82,7 +82,7 @@
         "symfony/process": "*",
         "symfony/property-access": "*",
         "symfony/property-info": "*",
-        "symfony/psr-http-message-bridge": "^6.4||^7.1.6",
+        "symfony/psr-http-message-bridge": "^6.4||^7.2",
         "symfony/runtime": "*",
         "symfony/security-bundle": "*",
         "symfony/security-http": "*",
@@ -123,7 +123,7 @@
         "symfony/error-handler": "*",
         "symfony/stopwatch": "*",
         "symfony/web-profiler-bundle": "*",
-        "symfony/var-dumper": "^6.4||^7.1",
+        "symfony/var-dumper": "^6.4||^7.2",
         "webmozart/assert": "^1.11",
         "zenstruck/messenger-test": "^1.11"
     },
@@ -186,7 +186,7 @@
                 "https://api.github.com/repos/TeknooSoftware/symfony-recipes/contents/index.json",
                 "flex://defaults"
             ],
-            "require": "^6.4||^7.1"
+            "require": "^6.4||^7.2"
         }
     }
 }

@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.4] - 2024-11-29
+### Stable Version
+- Upgrading to Symfony 7.2.
+
 ## [1.0.3] - 2024-11-27
 ### Stable Version
 - Upgrading to Symfony 7.1.9.
