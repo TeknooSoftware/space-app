@@ -3,7 +3,7 @@
     "type": "project",
     "description": "Space is a Platform as a Service application, a continuous integration/delivery/deployment solution, built on Teknoo East PaaS , Teknoo Kubernetes Client and the Symfony components. The application is multi-account, multi-users and multi-projects, and able to build and deploy projects on dedicated containerized platforms on Kubernetes cluster.",
     "keywords": ["space","paas","image","containerd","oci","docker","buildah","kubernetes","platform","service","ci","cd","continuous-delivery","continuous-integration","continuous-deployment","platform.sh","heroku"],
-    "homepage": "https://teknoo.space",
+    "homepage": "https://teknoo.software/applications/space",
     "license": "MIT",
     "authors": [
         {
