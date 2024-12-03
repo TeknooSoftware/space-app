@@ -72,7 +72,7 @@ The Enterprise edition includes :
   * `Symfony Console`
   * `Laravel Artisan`
   * `Make tool`
-* A set of containers, pods, service sand ingresses libraries to reduce the size of your `space.paas.yml` file.
+* A set of containers, pods, services and ingresses libraries to reduce the size of your `space.paas.yml` file.
   * It's called `BigBang`.
 * Helm charts to install and configuring your Space instance in your kubernetes and embedding Space in your Kubernetes.
 * Trivy audit reports in the Space's Dashboard.
