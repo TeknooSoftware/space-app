@@ -42,6 +42,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
@@ -72,6 +73,8 @@ class AccountRefreshQuotaTest extends TestCase
     private LoadHistory|MockObject $loadHistory;
 
     private LoadEnvironments|MockObject $loadCredentials;
+
+    private LoadAccountClusters|MockObject $loadAccountClusters;
 
     private ReloadNamespace|MockObject $reloadNamespace;
 
@@ -106,6 +109,7 @@ class AccountRefreshQuotaTest extends TestCase
         $this->loadCredentials = $this->createMock(LoadEnvironments::class);
         $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
         $this->reloadEnvironement = $this->createMock(ReloadEnvironement::class);
+        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
         $this->selectClusterConfig = $this->createMock(SelectClusterConfig::class);
         $this->createQuota = $this->createMock(CreateQuota::class);
         $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
@@ -120,6 +124,7 @@ class AccountRefreshQuotaTest extends TestCase
             redirectClient: $this->redirectClient,
             loadHistory: $this->loadHistory,
             loadCredentials: $this->loadCredentials,
+            loadAccountClusters: $this->loadAccountClusters,
             reloadNamespace: $this->reloadNamespace,
             reloadEnvironement: $this->reloadEnvironement,
             selectClusterConfig: $this->selectClusterConfig,

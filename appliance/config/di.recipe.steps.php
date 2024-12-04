@@ -37,8 +37,10 @@ use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\CommonBundle\Contracts\Recipe\Step\BuildQrCodeInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
+use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\Kubernetes\HttpClientDiscovery;
+use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
@@ -65,6 +67,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm as PrepareAccountForm;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser;
+use Teknoo\Space\Loader\AccountClusterLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
@@ -79,6 +82,7 @@ use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
@@ -301,6 +305,13 @@ return [
 
     LoadAccountData::class => create()
         ->constructor(get(AccountDataLoader::class)),
+
+    LoadAccountClusters::class => create()
+        ->constructor(
+            get(AccountClusterLoader::class),
+            get(ClientFactoryInterface::class),
+            get(RepositoryRegistry::class),
+        ),
 
     LoadHistory::class => create()
         ->constructor(

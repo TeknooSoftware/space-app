@@ -120,6 +120,7 @@ use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
@@ -205,6 +206,7 @@ return [
     AccountEnvironmentInstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(LoadAccountClusters::class),
             diGet(CreateNamespace::class),
             diGet(SelectClusterConfig::class),
             diGet(CreateServiceAccount::class),
@@ -242,11 +244,13 @@ return [
     AccountRegistryInstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(LoadAccountClusters::class),
             diGet(CreateNamespace::class),
             diGet(CreateStorage::class),
             diGet(CreateRegistryDeployment::class),
             diGet(PersistRegistryCredential::class),
             diGet(PrepareAccountErrorHandler::class),
+            diGet(ObjectAccessControlInterface::class),
             diGet('teknoo.east.paas.default_storage_size'),
         ),
 
@@ -277,6 +281,7 @@ return [
             diGet(SetRedirectClientAtEnd::class),
             diGet(LoadHistory::class),
             diGet(LoadEnvironments::class),
+            diGet(LoadAccountClusters::class),
             diGet(ReloadNamespace::class),
             diGet(ReloadEnvironement::class),
             diGet(SelectClusterConfig::class),

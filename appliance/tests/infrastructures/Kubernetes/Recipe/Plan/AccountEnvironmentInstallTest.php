@@ -41,6 +41,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRoleBinding;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
@@ -59,6 +60,8 @@ class AccountEnvironmentInstallTest extends TestCase
     private AccountEnvironmentInstall $accountInstall;
 
     private RecipeInterface|MockObject $recipe;
+
+    private LoadAccountClusters|MockObject $loadAccountClusters;
 
     private CreateNamespace|MockObject $createNamespace;
 
@@ -90,6 +93,7 @@ class AccountEnvironmentInstallTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
+        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
         $this->createNamespace = $this->createMock(CreateNamespace::class);
         $this->selectClusterConfig = $this->createMock(SelectClusterConfig::class);
         $this->createServiceAccount = $this->createMock(CreateServiceAccount::class);
@@ -104,6 +108,7 @@ class AccountEnvironmentInstallTest extends TestCase
 
         $this->accountInstall = new AccountEnvironmentInstall(
             recipe: $this->recipe,
+            loadAccountClusters: $this->loadAccountClusters,
             createNamespace: $this->createNamespace,
             selectClusterConfig: $this->selectClusterConfig,
             createServiceAccount: $this->createServiceAccount,

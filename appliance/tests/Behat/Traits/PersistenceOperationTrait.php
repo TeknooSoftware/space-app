@@ -37,6 +37,7 @@ use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\East\Paas\Object\Cluster;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
@@ -317,6 +318,7 @@ trait PersistenceOperationTrait
         $this->buildRepository(AccountRegistry::class);
         $this->buildRepository(AccountData::class);
         $this->buildRepository(AccountHistory::class);
+        $this->buildRepository(AccountCluster::class);
         $this->buildRepository(AccountPersistedVariable::class);
         $this->buildRepository(ProjectPersistedVariable::class);
         $this->buildRepository(ProjectMetadata::class);

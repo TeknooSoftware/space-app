@@ -46,6 +46,7 @@ use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Recipe\Plan\Traits\PrepareAccountTrait;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
@@ -69,6 +70,7 @@ class AccountRefreshQuota implements EditablePlanInterface
         private readonly SetRedirectClientAtEnd $redirectClient,
         private readonly LoadHistory $loadHistory,
         private readonly LoadEnvironments $loadCredentials,
+        private readonly LoadAccountClusters $loadAccountClusters,
         private readonly ReloadNamespace $reloadNamespace,
         private readonly ReloadEnvironement $reloadEnvironement,
         private readonly SelectClusterConfig $selectClusterConfig,
@@ -86,7 +88,6 @@ class AccountRefreshQuota implements EditablePlanInterface
     {
         $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
         $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
-        $recipe = $recipe->require(new Ingredient(ClusterCatalog::class));
         $recipe = $recipe->require(new Ingredient('string', 'id'));
 
         $recipe = $this->prepareRecipeForAccount($recipe);

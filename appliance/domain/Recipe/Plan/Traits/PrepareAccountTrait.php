@@ -33,6 +33,7 @@ use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
@@ -76,6 +77,10 @@ trait PrepareAccountTrait
 
         if (isset($this->loadRegistryCredential)) {
             $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 60);
+        }
+
+        if (isset($this->loadAccountClusters)) {
+            $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 60);
         }
 
         if (!isset($this->jumpIf) || !isset($this->render)) {

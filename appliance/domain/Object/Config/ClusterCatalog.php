@@ -48,6 +48,7 @@ class ClusterCatalog implements IteratorAggregate
     public function __construct(
         private readonly array $clusters,
         private readonly array $aliases,
+        private readonly ?self $parentCatalog = null,
     ) {
     }
 
@@ -59,6 +60,8 @@ class ClusterCatalog implements IteratorAggregate
             }
         }
 
+        $this->parentCatalog?->getClusterForRegistry();
+
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
 
@@ -67,6 +70,8 @@ class ClusterCatalog implements IteratorAggregate
         foreach ($this->clusters as $name => $cluster) {
             return $name;
         }
+
+        $this->parentCatalog?->getDefaultClusterName();
 
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
@@ -82,6 +87,10 @@ class ClusterCatalog implements IteratorAggregate
         }
 
         if (!isset($this->clusters[$name])) {
+            if ($this->parentCatalog) {
+                return $this->parentCatalog->getCluster($name);
+            }
+
             throw new DomainException("Cluster {$name} is not available in the catalog");
         }
 
