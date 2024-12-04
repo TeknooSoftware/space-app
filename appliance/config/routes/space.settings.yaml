@@ -38,32 +38,3 @@ space_my_settings_token:
         template: '@@TeknooSpace/User/jwt.form.html.twig'
         tokenTemplate: '@@TeknooSpace/User/jwt.token.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
-
-space_account_settings:
-    path: '/account/settings'
-    methods: ['GET', 'POST', 'PUT']
-    schemes: ['https']
-    defaults:
-        _controller: 'teknoo.space.endpoint.account.settings'
-        clusterCatalog: '@teknoo.space.clusters_catalog'
-        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
-        formOptions:
-            enableEnvManagement: true
-        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
-        objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
-        template: '@@TeknooSpace/Account/settings.html.twig'
-        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
-        cleanHtml: "%teknoo.space.rendering.clean_html%"
-
-space_account_edit_variables:
-    path: '/account/variables'
-    methods: ['GET', 'POST', 'PUT']
-    defaults:
-        _controller: 'teknoo.space.endpoint.account.settings_without_steps'
-        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
-        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
-        template: '@@TeknooSpace/Account/variables.html.twig'
-        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
-        cleanHtml: "%teknoo.space.rendering.clean_html%"
