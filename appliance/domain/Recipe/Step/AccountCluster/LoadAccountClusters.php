@@ -108,7 +108,7 @@ class LoadAccountClusters
         ClusterCatalog $clusterCatalog,
         ?Account $accountInstance = null,
     ): self {
-        if (null === $accountInstance) {
+        if (null === $accountInstance || $clusterCatalog->hasParentCatalog()) {
             return $this;
         }
 

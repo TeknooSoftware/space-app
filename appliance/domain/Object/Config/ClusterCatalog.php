@@ -101,4 +101,9 @@ class ClusterCatalog implements IteratorAggregate
     {
         yield from $this->clusters;
     }
+
+    public function hasParentCatalog(): bool
+    {
+        return null !== $this->parentCatalog;
+    }
 }
