@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\Project;
+namespace Teknoo\Space\Recipe\Step\Misc;
 
 use Teknoo\East\Common\Query\Expr\ObjectReference;
 use Teknoo\East\Foundation\Manager\ManagerInterface;

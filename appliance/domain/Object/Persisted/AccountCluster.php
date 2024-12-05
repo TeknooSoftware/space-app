@@ -31,10 +31,13 @@ use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\SluggableInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -48,7 +51,8 @@ class AccountCluster implements
     IdentifiedObjectInterface,
     TimestampableInterface,
     ImmutableInterface,
-    SluggableInterface
+    SluggableInterface,
+    AccountComponentInterface
 {
     use ObjectTrait;
     use ImmutableTrait;
@@ -156,6 +160,13 @@ class AccountCluster implements
     public function setSlug(string $slug): SluggableInterface
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
+    {
+        $this->account->verifyAccessToUser($user, $promise);
 
         return $this;
     }

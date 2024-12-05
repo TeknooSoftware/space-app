@@ -27,9 +27,12 @@ namespace Teknoo\Space\Object\Persisted;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 
 /**
@@ -43,7 +46,8 @@ class AccountPersistedVariable implements
     TimestampableInterface,
     ImmutableInterface,
     EncryptableVariableInterface,
-    NormalizableInterface
+    NormalizableInterface,
+    AccountComponentInterface
 {
     use PersistedVariableTrait;
 
@@ -74,5 +78,12 @@ class AccountPersistedVariable implements
     public function getAccount(): Account
     {
         return $this->account;
+    }
+
+    public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
+    {
+        $this->account->verifyAccessToUser($user, $promise);
+
+        return $this;
     }
 }

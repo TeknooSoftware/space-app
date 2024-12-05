@@ -40,7 +40,7 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Plan\ProjectList;
-use Teknoo\Space\Recipe\Step\Project\PrepareCriteria;
+use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
  * Class ProjectListTest.

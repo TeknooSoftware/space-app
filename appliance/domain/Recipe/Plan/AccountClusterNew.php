@@ -26,16 +26,17 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Plan;
 
 use Stringable;
-use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\SearchFormLoaderInterface;
-use Teknoo\East\Common\Recipe\Plan\ListObjectEndPoint;
-use Teknoo\East\Common\Recipe\Step\ExtractOrder;
-use Teknoo\East\Common\Recipe\Step\ExtractPage;
-use Teknoo\East\Common\Recipe\Step\LoadListObjects;
+use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\FormProcessingInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
+use Teknoo\East\Common\Recipe\Plan\CreateObjectEndPoint;
+use Teknoo\East\Common\Recipe\Step\CreateObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
-use Teknoo\East\Common\Recipe\Step\RenderList;
+use Teknoo\East\Common\Recipe\Step\SaveObject;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -43,44 +44,35 @@ use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ProjectList extends ListObjectEndPoint
+class AccountClusterNew extends CreateObjectEndPoint
 {
-    /**
-     * @param array<string, string> $loadListObjectsWiths
-     */
     public function __construct(
         RecipeInterface $recipe,
-        ExtractPage $extractPage,
-        ExtractOrder $extractOrder,
-        private PrepareCriteria $prepareCriteria,
-        LoadListObjects $loadListObjects,
-        RenderList $renderList,
+        ObjectAccessControlInterface $objectAccessControl,
+        CreateObject $createObject,
+        FormHandlingInterface $formHandling,
+        FormProcessingInterface $formProcessing,
+        SaveObject $saveObject,
+        RedirectClientInterface $redirectClient,
+        RenderFormInterface $renderForm,
         RenderError $renderError,
-        SearchFormLoaderInterface $searchFormLoader,
-        ListObjectsAccessControlInterface $listObjectsAccessControl,
         string|Stringable $defaultErrorTemplate,
-        array $loadListObjectsWiths,
     ) {
         parent::__construct(
             $recipe,
-            $extractPage,
-            $extractOrder,
-            $loadListObjects,
-            $renderList,
+            $createObject,
+            $formHandling,
+            $formProcessing,
+            null,
+            $saveObject,
+            $redirectClient,
+            $renderForm,
             $renderError,
-            $searchFormLoader,
-            $listObjectsAccessControl,
+            $objectAccessControl,
             $defaultErrorTemplate,
-            $loadListObjectsWiths
+            [
+                'constructorArguments' => Account::class,
+            ],
         );
-    }
-
-    protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
-    {
-        $recipe = parent::populateRecipe($recipe);
-
-        $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
-
-        return $recipe;
     }
 }

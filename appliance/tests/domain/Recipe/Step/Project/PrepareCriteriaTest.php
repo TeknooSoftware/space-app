@@ -29,7 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Recipe\Step\Project\PrepareCriteria;
+use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
  * Class PrepareCriteriaTest.

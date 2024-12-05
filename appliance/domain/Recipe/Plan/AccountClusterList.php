@@ -43,7 +43,7 @@ use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ProjectList extends ListObjectEndPoint
+class AccountClusterList extends ListObjectEndPoint
 {
     /**
      * @param array<string, string> $loadListObjectsWiths

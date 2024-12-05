@@ -63,8 +63,8 @@ use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -97,6 +97,9 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
+use Teknoo\Space\Recipe\Plan\AccountClusterList;
+use Teknoo\Space\Recipe\Plan\AccountClusterNew;
 use Teknoo\Space\Recipe\Plan\AccountEditSettings;
 use Teknoo\Space\Recipe\Plan\Contact;
 use Teknoo\Space\Recipe\Plan\Dashboard;
@@ -141,11 +144,11 @@ use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
 use Teknoo\Space\Recipe\Step\Job\PrepareCriteria as JobPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
+use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria as ProjectPrepareCriteria;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
-use Teknoo\Space\Recipe\Step\Project\PrepareCriteria as ProjectPrepareCriteria;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
 use Teknoo\Space\Recipe\Step\ProjectMetadata\InjectToViewMetadata;
@@ -725,6 +728,48 @@ return [
             diGet(RedirectClientInterface::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    AccountClusterEdit::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(FormHandlingInterface::class),
+            diGet(FormProcessingInterface::class),
+            diGet(SaveObject::class),
+            diGet(RenderFormInterface::class),
+            diGet(RenderError::class),
+            diGet(ObjectAccessControlInterface::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    AccountClusterNew::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(ObjectAccessControlInterface::class),
+            diGet(CreateObject::class),
+            diGet(FormHandlingInterface::class),
+            diGet(FormProcessingInterface::class),
+            diGet(SaveObject::class),
+            diGet(RedirectClientInterface::class),
+            diGet(RenderFormInterface::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    AccountClusterList::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(ExtractPage::class),
+            diGet(ExtractOrder::class),
+            diGet(ProjectPrepareCriteria::class),
+            diGet(LoadListObjects::class),
+            diGet(RenderList::class),
+            diGet(RenderError::class),
+            diGet(SearchFormLoaderInterface::class),
+            diGet(ListObjectsAccessControlInterface::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+            value([]),
         ),
 
     Dashboard::class => create()

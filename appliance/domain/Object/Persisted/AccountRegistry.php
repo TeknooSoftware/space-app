@@ -29,9 +29,12 @@ use SensitiveParameter;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -39,7 +42,11 @@ use Teknoo\Immutable\ImmutableTrait;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountRegistry implements IdentifiedObjectInterface, TimestampableInterface, ImmutableInterface
+class AccountRegistry implements
+    IdentifiedObjectInterface,
+    TimestampableInterface,
+    ImmutableInterface,
+    AccountComponentInterface
 {
     use ObjectTrait;
     use ImmutableTrait;
@@ -126,5 +133,12 @@ class AccountRegistry implements IdentifiedObjectInterface, TimestampableInterfa
         $that->registryPassword = $registryPassword;
 
         return $that;
+    }
+
+    public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
+    {
+        $this->account->verifyAccessToUser($user, $promise);
+
+        return $this;
     }
 }

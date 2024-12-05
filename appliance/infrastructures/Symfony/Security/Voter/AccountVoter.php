@@ -30,6 +30,7 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
@@ -51,6 +52,7 @@ class AccountVoter implements VoterInterface
         if (
             !$subject instanceof Account
             && !$subject instanceof SpaceAccount
+            && !$subject instanceof AccountComponentInterface
         ) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
