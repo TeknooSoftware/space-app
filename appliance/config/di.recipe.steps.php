@@ -359,9 +359,6 @@ return [
 
     CreateUserInterface::class => get(CreateUser::class),
 
-    CreateUser::class => create()
-        ->constructor(get(SpaceUserWriter::class)),
-
     LoadUserData::class => create()
         ->constructor(get(UserDataLoader::class)),
 

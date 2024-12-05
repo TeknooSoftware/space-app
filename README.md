@@ -77,6 +77,7 @@ The Enterprise edition includes :
 * Helm charts to install and configuring your Space instance in your kubernetes and embedding Space in your Kubernetes.
 * Trivy audit reports in the Space's Dashboard.
 * Backup feature in your pods.
+* AI Assistant to write `space.paas.yaml`
 * a commercial support.
 
 The Enterprise edition is currently in alpha. With sponsoring, you can get a perpetual license and sources and update to

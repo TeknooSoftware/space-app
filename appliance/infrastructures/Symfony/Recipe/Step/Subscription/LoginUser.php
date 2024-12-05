@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription;
 
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkDetails;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser;
@@ -48,14 +49,15 @@ class LoginUser implements LoginUserInterface, RedirectingInterface
     use RoutingTrait;
 
     public function __construct(
-        private LoginLinkHandlerInterface $loginLinkHandler,
+        private readonly LoginLinkHandlerInterface $loginLinkHandler,
+        private readonly Security $security,
     ) {
     }
 
     public function __invoke(
         User $user,
         ManagerInterface $manager,
-        ClientInterface $client
+        ClientInterface $client,
     ): LoginUserInterface {
         $storedPassword = null;
         foreach ($user->getAuthData() as $authData) {
@@ -71,6 +73,9 @@ class LoginUser implements LoginUserInterface, RedirectingInterface
                 code: 403,
             );
         }
+
+        //To prevent pre auth user.
+        $this->security->logout(false);
 
         $linkDetails = $this->loginLinkHandler->createLoginLink(
             new PasswordAuthenticatedUser($user, $storedPassword)

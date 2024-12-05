@@ -113,7 +113,15 @@ trait HttpTrait
             && false === $noCookies
             && !empty($cookies = $this->response->headers->getCookies())
         ) {
-            $this->cookies = array_merge($this->cookies, $this->extractCookies($cookies));
+            $cookies = array_merge($this->cookies, $this->extractCookies($cookies));
+
+            //Exclude null cookies, must be deleted
+            $this->cookies = [];
+            foreach ($cookies as $name => $value) {
+                if (null !== $value) {
+                    $this->cookies[$name] = $value;
+                }
+            }
         }
 
         if (302 === $this->response->getStatusCode()) {
