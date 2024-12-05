@@ -43,8 +43,8 @@ use Teknoo\Space\Writer\Meta\SpaceUserWriter;
 class CreateUser implements CreateUserInterface
 {
     public function __construct(
-        private SpaceUserWriter $userWriter,
-        private Security $security,
+        private readonly SpaceUserWriter $userWriter,
+        private readonly Security $security,
     ) {
     }
 
