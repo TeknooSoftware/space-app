@@ -187,7 +187,7 @@ class AccountClusterType extends AbstractType
                 }
 
                 /**
-                 * @param Traversable<string, FormInterface<AccountClusterType>> $forms
+                 * @param Traversable<string, FormInterface<AccountCluster>> $forms
                  * @param ?AccountCluster $data
                  */
                 public function mapFormsToData($forms, &$data): void
@@ -198,6 +198,16 @@ class AccountClusterType extends AbstractType
 
                     $forms = iterator_to_array($forms);
                     $data->setName((string) $forms['name']->getData());
+                    $data->setSlug((string) $forms['slug']->getData());
+                    $data->setType((string) $forms['type']->getData());
+                    $data->setMasterAddress((string) $forms['masterAddress']->getData());
+                    $data->setStorageProvisioner((string) $forms['storageProvisioner']->getData());
+                    $data->setDashboardAddress((string) $forms['dashboardAddress']->getData());
+                    $data->setCaCertificate((string) $forms['caCertificate']->getData());
+                    $data->setToken((string) $forms['token']->getData());
+                    $data->setSupportRegistry(!empty($forms['supportRegistry']->getData()));
+                    $data->setRegistryUrl((string) $forms['registryUrl']->getData());
+                    $data->setUseHnc(!empty($forms['useHnc']->getData()));
                 }
             }
         );

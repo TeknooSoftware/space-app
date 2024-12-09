@@ -62,34 +62,15 @@ class LoadAccountClusters
         $formattedClusters = [];
         $aliases = [];
 
-        /** @var AccountCluster $cluster */
-        foreach ($clusters as $cluster) {
-            $caCertificate = base64_decode($cluster->getCaCertificate());
-
-            $credentials = new ClusterCredentials(
-                caCertificate: $caCertificate,
-                token: $cluster->getToken(),
+        /** @var AccountCluster $accountCluster */
+        foreach ($clusters as $accountCluster) {
+            $cluster = $accountCluster->convertToConfigCluster(
+                $this->clientFactory,
+                $this->repositoryRegistry,
             );
 
-            $name = $cluster->getName();
-            $slug = $cluster->getSlug();
-            $formattedClusters[$name] = new Cluster(
-                name: $name,
-                sluggyName: $slug,
-                type: $cluster->getType(),
-                masterAddress: $cluster->getMasterAddress(),
-                storageProvisioner: $cluster->getStorageProvisioner(),
-                dashboardAddress: $cluster->getDashboardAddress(),
-                kubernetesClient: fn() => ($this->clientFactory)(
-                    $cluster->getMasterAddress(),
-                    $credentials,
-                    $this->repositoryRegistry,
-                ),
-                token: $cluster->getToken(),
-                supportRegistry: $cluster->isSupportRegistry(),
-                useHnc: $cluster->isUseHnc()
-            );
-            $aliases[$slug] = $name;
+            $formattedClusters[$cluster->sluggyName] = $cluster;
+            $aliases[$cluster->sluggyName] = $cluster->name;
         }
 
         if (empty($formattedClusters)) {

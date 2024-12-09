@@ -35,11 +35,17 @@ use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Object\VisitableTrait;
 use Teknoo\East\Common\Service\FindSlugService;
+use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
+use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Contracts\Object\AccountComponentInterface;
+use Teknoo\Space\Object\Config\Cluster;
+
+use function Symfony\Component\String\s;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -52,93 +58,106 @@ use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 class AccountCluster implements
     IdentifiedObjectInterface,
     TimestampableInterface,
-    ImmutableInterface,
     SluggableInterface,
     VisitableInterface,
     AccountComponentInterface
 {
     use ObjectTrait;
-    use ImmutableTrait;
     use VisitableTrait {
         VisitableTrait::runVisit as realRunVisit;
     }
 
     public function __construct(
-        private readonly Account $account,
-        private readonly string $name,
+        private Account $account,
+        private string $name,
         private string $slug,
-        private readonly string $type,
-        private readonly string $masterAddress,
-        private readonly string $storageProvisioner,
-        private readonly string $dashboardAddress,
-        private readonly string $caCertificate,
+        private string $type,
+        private string $masterAddress,
+        private string $storageProvisioner,
+        private string $dashboardAddress,
+        private string $caCertificate,
         #[SensitiveParameter]
-        private readonly string $token,
-        private readonly bool $supportRegistry,
-        private readonly ?string $registryUrl,
-        private readonly bool $useHnc,
+        private string $token,
+        private bool $supportRegistry,
+        private ?string $registryUrl,
+        private bool $useHnc,
     ) {
-        $this->uniqueConstructorCheck();
     }
 
-    public function getAccount(): Account
+    public function setAccount(Account $account): AccountCluster
     {
-        return $this->account;
+        $this->account = $account;
+        return $this;
     }
 
-    public function getName(): string
+    public function setCaCertificate(string $caCertificate): AccountCluster
     {
-        return $this->name;
+        $this->caCertificate = $caCertificate;
+
+        return $this;
     }
 
-    public function getSlug(): string
+    public function setDashboardAddress(string $dashboardAddress): AccountCluster
     {
-        return $this->slug;
+        $this->dashboardAddress = $dashboardAddress;
+
+        return $this;
     }
 
-    public function getType(): string
+    public function setMasterAddress(string $masterAddress): AccountCluster
     {
-        return $this->type;
+        $this->masterAddress = $masterAddress;
+
+        return $this;
     }
 
-    public function getMasterAddress(): string
+    public function setName(string $name): AccountCluster
     {
-        return $this->masterAddress;
+        $this->name = $name;
+
+        return $this;
     }
 
-    public function getStorageProvisioner(): string
+    public function setRegistryUrl(?string $registryUrl): AccountCluster
     {
-        return $this->storageProvisioner;
+        $this->registryUrl = $registryUrl;
+
+        return $this;
     }
 
-    public function getDashboardAddress(): string
+    public function setStorageProvisioner(string $storageProvisioner): AccountCluster
     {
-        return $this->dashboardAddress;
+        $this->storageProvisioner = $storageProvisioner;
+
+        return $this;
     }
 
-    public function getCaCertificate(): string
+    public function setSupportRegistry(bool $supportRegistry): AccountCluster
     {
-        return $this->caCertificate;
+        $this->supportRegistry = $supportRegistry;
+
+        return $this;
     }
 
-    public function getToken(): string
+    public function setToken(#[SensitiveParameter] string $token): AccountCluster
     {
-        return $this->token;
+        $this->token = $token;
+
+        return $this;
     }
 
-    public function getRegistryUrl(): ?string
+    public function setType(string $type): AccountCluster
     {
-        return $this->registryUrl;
+        $this->type = $type;
+
+        return $this;
     }
 
-    public function isSupportRegistry(): bool
+    public function setUseHnc(bool $useHnc): AccountCluster
     {
-        return $this->supportRegistry;
-    }
+        $this->useHnc = $useHnc;
 
-    public function isUseHnc(): bool
-    {
-        return $this->useHnc;
+        return $this;
     }
 
     public function prepareSlugNear(
@@ -146,9 +165,9 @@ class AccountCluster implements
         FindSlugService $findSlugService,
         string $slugField
     ): SluggableInterface {
-        $slugValue = $this->getSlug();
+        $slugValue = $this->slug;
         if (empty($slugValue)) {
-            $slugValue = $this->getName();
+            $slugValue = $this->name;
         }
 
         $findSlugService->process(
@@ -168,6 +187,35 @@ class AccountCluster implements
         $this->slug = $slug;
 
         return $this;
+    }
+
+    public function convertToConfigCluster(
+        ClientFactoryInterface $clientFactory,
+        RepositoryRegistry $repositoryRegistry,
+    ): Cluster {
+        $caCertificate = base64_decode($this->caCertificate);
+
+        $credentials = new ClusterCredentials(
+            caCertificate: $caCertificate,
+            token: $this->token,
+        );
+
+        return new Cluster(
+            name: $this->name,
+            sluggyName: $this->slug,
+            type: $this->type,
+            masterAddress: $this->masterAddress,
+            storageProvisioner: $this->storageProvisioner,
+            dashboardAddress: $this->dashboardAddress,
+            kubernetesClient: fn() => ($clientFactory)(
+                $this->masterAddress,
+                $credentials,
+                $repositoryRegistry,
+            ),
+            token: $this->token,
+            supportRegistry: $this->supportRegistry,
+            useHnc: $this->useHnc,
+        );
     }
 
     /**
