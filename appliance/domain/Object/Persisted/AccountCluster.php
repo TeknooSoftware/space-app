@@ -30,8 +30,10 @@ use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\SluggableInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
+use Teknoo\East\Common\Contracts\Object\VisitableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\User;
+use Teknoo\East\Common\Object\VisitableTrait;
 use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
@@ -52,10 +54,14 @@ class AccountCluster implements
     TimestampableInterface,
     ImmutableInterface,
     SluggableInterface,
+    VisitableInterface,
     AccountComponentInterface
 {
     use ObjectTrait;
     use ImmutableTrait;
+    use VisitableTrait {
+        VisitableTrait::runVisit as realRunVisit;
+    }
 
     public function __construct(
         private readonly Account $account,
@@ -162,6 +168,30 @@ class AccountCluster implements
         $this->slug = $slug;
 
         return $this;
+    }
+
+    /**
+     * @param array<string, callable> $visitors
+     */
+    private function runVisit(array &$visitors): void
+    {
+        $caseMapping = [
+            'master_address' => 'masterAddress',
+            'storage_provisioner' => 'storage_provisioner',
+            'dashboard_address' => 'dashboardAddress',
+            'ca_certificate' => 'caCertificate',
+            'support_registry' => 'supportRegistry',
+            'registry_url' => 'registryUrl',
+        ];
+
+        foreach ($caseMapping as $snake => $camel) {
+            if (isset($visitors[$snake])) {
+                $visitors[$camel] = $visitors[$snake];
+                unset($visitors[$snake]);
+            }
+        }
+
+        $this->realRunVisit($visitors);
     }
 
     public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface

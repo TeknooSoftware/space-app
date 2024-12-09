@@ -188,7 +188,7 @@ class AccountClusterType extends AbstractType
 
                 /**
                  * @param Traversable<string, FormInterface<AccountClusterType>> $forms
-                 * @param ?AccoAccountClusterunt $data
+                 * @param ?AccountCluster $data
                  */
                 public function mapFormsToData($forms, &$data): void
                 {
