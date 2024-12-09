@@ -84,6 +84,11 @@ class AccountCluster implements
     ) {
     }
 
+    public function getAccount(): Account
+    {
+        return $this->account;
+    }
+
     public function setAccount(Account $account): AccountCluster
     {
         $this->account = $account;
@@ -116,6 +121,11 @@ class AccountCluster implements
         $this->name = $name;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 
     public function setRegistryUrl(?string $registryUrl): AccountCluster

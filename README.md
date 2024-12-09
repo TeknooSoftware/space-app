@@ -78,6 +78,7 @@ The Enterprise edition includes :
 * Trivy audit reports in the Space's Dashboard.
 * Backup feature in your pods.
 * AI Assistant to write `space.paas.yaml`
+* WebHooks call.
 * a commercial support.
 
 The Enterprise edition is currently in alpha. With sponsoring, you can get a perpetual license and sources and update to
