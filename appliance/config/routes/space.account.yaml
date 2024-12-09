@@ -69,7 +69,6 @@ space_account_clusters_list:
     schemes: ['https']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.list'
-        accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         defaultOrderDirection: 'ASC'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
@@ -82,7 +81,6 @@ space_account_clusters_edit:
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.edit'
-        accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
@@ -112,7 +110,6 @@ space_account_clusters_delete:
     methods: ['GET']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.delete'
-        accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         deleter: '@teknoo.space.deleting.account_cluster'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
