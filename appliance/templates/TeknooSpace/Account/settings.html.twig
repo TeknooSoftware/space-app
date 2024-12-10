@@ -69,5 +69,10 @@
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
         </a>
+        <a href="{{ path('space_account_clusters_list', {'accountId': objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large mb-2">
+            <i class="uil uil-server"></i>
+            {{ 'teknoo.space.action.accounts_clusters'|trans }}
+        </a>
     </div>
 {% endblock %}
