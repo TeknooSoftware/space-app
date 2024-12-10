@@ -361,3 +361,4 @@ teknoo.space.title.user.jwt: 'JWT Token'
 teknoo.space.title.user.settings: 'My Settings'
 teknoo.space.title.user.update_password: 'Update my password'
 teknoo.space.title.variables: 'Variables'
+teknoo.space.action.accounts_clusters: "Account's Cluster"
