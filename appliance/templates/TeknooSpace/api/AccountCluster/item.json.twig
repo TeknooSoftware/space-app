@@ -1,0 +1,6 @@
+{# templates/TeknooSpace/api/AccountCluster/item.json.twig  #}
+{% if formView.vars.errors | length == 0 %}
+{{ accountClusterInstance|space_object_serialization({'groups': ['crud']}) }}
+{% else %}
+{{ field_errors(formView)|space_object_serialization({}, 'json', {"error": true}) }}
+{% endif %}
