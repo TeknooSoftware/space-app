@@ -7,7 +7,13 @@
 {% block instanceMainTitle %}<i class="uil uil-server"></i> {{ 'teknoo.space.title.account.account_cluster.new'|trans }}{% endblock %}
 
 {% block breadcrumFormTitle %}{{ 'teknoo.space.title.account.account_cluster.new'|trans }}{% endblock %}
-{% block breadcrumbListLink path('space_account_clusters_list', {'accountId': account.id}) %}
+{%- block breadcrumbListLink -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}
+    {% else %}
+        {{ path('space_account_clusters_list') }}
+    {% endif %}
+{%- endblock -%}
 {% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.new'|trans }}{% endblock %}
 
 {% block crudFormFields %}

@@ -27,7 +27,7 @@ space_api_v1_account_edit_variables:
         template: '@@TeknooSpace/api/Account/variables.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
-space_account_clusters_list:
+space_api_v1_account_clusters_list:
     path: '/account/clusters'
     methods: [ 'GET' ]
     schemes: ['https']
@@ -41,8 +41,8 @@ space_account_clusters_list:
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         template: '@@TeknooSpace/api/AccountCluster/list.json.twig'
 
-space_account_clusters_edit:
-    path: '/account/{accountId}/cluster/{id}'
+space_api_v1_account_clusters_edit:
+    path: '/account/cluster/{id}'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.edit'
@@ -54,8 +54,8 @@ space_account_clusters_edit:
         template: '@@TeknooEastPaas/api/AccountCluster/item.json.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
 
-space_account_clusters_new:
-    path: '/account/{accountId}/cluster/new'
+space_api_v1_account_clusters_new:
+    path: '/account/cluster/new'
     methods: ['POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.new'
@@ -70,8 +70,8 @@ space_account_clusters_new:
         template: '@@TeknooEastPaas/api/AccountCluster/item.json.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
 
-space_account_clusters_delete:
-    path: '/account/{accountId}/cluster/{id}/delete'
+space_api_v1_account_clusters_delete:
+    path: '/account/cluster/{id}/delete'
     methods: ['POST', 'DELETE']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

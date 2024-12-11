@@ -64,7 +64,7 @@ space_account_edit_variables:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_account_clusters_list:
-    path: '/account/{accountId}/clusters'
+    path: '/account/clusters'
     methods: [ 'GET' ]
     schemes: ['https']
     defaults:
@@ -77,7 +77,7 @@ space_account_clusters_list:
         template: '@@TeknooSpace/AccountCluster/list.html.twig'
 
 space_account_clusters_edit:
-    path: '/account/{accountId}/cluster/{id}/edit'
+    path: '/account/cluster/{id}/edit'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.edit'
@@ -90,7 +90,7 @@ space_account_clusters_edit:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_account_clusters_new:
-    path: '/account/{accountId}/cluster/new'
+    path: '/account/cluster/new'
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.new'
@@ -106,7 +106,7 @@ space_account_clusters_new:
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_account_clusters_delete:
-    path: '/account/{accountId}/cluster/{id}/delete'
+    path: '/account/cluster/{id}/delete'
     methods: ['GET']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'

@@ -17,36 +17,41 @@
 {%- endblock -%}
 {% block breadcrumbListTitle %}{{ 'teknoo.space.title.account.account_cluster'|trans }}{% endblock %}
 
-{% block topHeaderButton %}
+{%- block topHeaderButton -%}
     <li class="list-inline-item mb-0 ms-1">
         <a rel="noopener"
            class="btn btn-outline-light"
-           href="{{ path('space_account_clusters_new', {'accountId': account.id}) }}"
+           href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_new', {'accountId': account.id}) }}{% else %}{{ path('space_account_clusters_new') }}{% endif %}"
            title="{{ 'teknoo.space.text.create_account_cluster'|trans }}">
             <i class="uil uil-book-medical"></i>
             {{ 'teknoo.space.action.create_account_cluster'|trans }}
         </a>
     </li>
-{% endblock %}
+{%- endblock -%}
 
 {% block listTableHeader %}
     <thead class="bg-light">
     <tr>
+        {% if is_granted('ROLE_ADMIN') %}
+            {% set clusterListUrl = path('space_admin_account_clusters_list', {'accountId': account.id}) %}
+        {% else %}
+            {% set clusterListUrl = path('space_account_clusters_list') %}
+        {% endif %}
         <th scope="col" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('space_account_clusters_list', {'accountId': account.id}) }}{{ app_order_in_url(queryParams, 'name') }}">
+               href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'name') }}">
                 {{ 'teknoo.space.text.cols_account_cluster_name'|trans }}
             </a>
         </th>
         <th scope="col" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('space_account_clusters_list', {'accountId': account.id}) }}{{ app_order_in_url(queryParams, 'createdAt') }}">
+               href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'createdAt') }}">
                 {{ 'teknoo.space.text.cols_account_cluster_created_at'|trans }}
             </a>
         </th>
         <th scope="col" class="border-bottom">
             <a class="text-primary"
-               href="{{ path('space_account_clusters_list', {'accountId': account.id}) }}{{ app_order_in_url(queryParams, 'updatedAt') }}">
+               href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'updatedAt') }}">
                 {{ 'teknoo.space.text.cols_account_cluster_updated_at'|trans }}
             </a>
         </th>
@@ -66,7 +71,7 @@
     <tr {% if loop.index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
         <td>
             <a class="text-primary space-account-cluster-name"
-               href="{{ path('space_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
                title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">
                 {{ object }}
             </a>
@@ -75,13 +80,13 @@
         <td>{{ object.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
             <a class="text-primary"
-               href="{{ path('space_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
                title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">
                 <span class="mdi mdi-pencil"></span>
             </a>
             <a class="text-primary"
                onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
-               href="{{ path('space_account_clusters_delete', {'accountId': account.id, 'id':object.id}) }}"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_delete', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_delete', {'id':object.id}) }}{% endif %}"
                title="{{ 'teknoo.space.action.delete_account_cluster'|trans }}">
                 <span class="mdi mdi-trash-can"></span>
             </a>
