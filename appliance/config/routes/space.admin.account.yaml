@@ -61,6 +61,7 @@ space_admin_account_clusters_list:
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.list'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         defaultOrderDirection: 'ASC'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         itemsPerPage: 20
@@ -73,6 +74,7 @@ space_admin_account_clusters_edit:
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.edit'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
@@ -87,6 +89,7 @@ space_admin_account_clusters_new:
         _controller: 'teknoo.space.endpoint.account_cluster.new'
         accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
@@ -102,6 +105,7 @@ space_admin_account_clusters_delete:
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         deleter: '@teknoo.space.deleting.account_cluster'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'

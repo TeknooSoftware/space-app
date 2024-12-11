@@ -34,6 +34,7 @@ space_api_v1_account_clusters_list:
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.list'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         api: 'json'
         defaultOrderDirection: 'ASC'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
@@ -47,6 +48,7 @@ space_api_v1_account_clusters_edit:
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.edit'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
@@ -61,6 +63,7 @@ space_api_v1_account_clusters_new:
         _controller: 'teknoo.space.endpoint.account_cluster.new'
         accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
@@ -77,6 +80,7 @@ space_api_v1_account_clusters_delete:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
         api: 'json'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
         deleter: '@teknoo.space.deleting.account_cluster'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
