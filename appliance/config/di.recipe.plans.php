@@ -120,7 +120,7 @@ use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
-use Teknoo\Space\Recipe\Step\Account\SetPlan;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
@@ -300,7 +300,7 @@ return [
         //After ObjectAccessControlInterface
         ExtractFromAccountDTO::class => 54,
         SetAccountNamespace::class => 55,
-        SetPlan::class => 55,
+        SetSubscriptionPlan::class => 55,
         SetQuota::class => 55,
 
         //After SaveObject
@@ -383,7 +383,7 @@ return [
             $steps->add($container->get(PrepareAccountForm::class), 29);
 
             //After FormProcessingInterface
-            $steps->add($container->get(SetPlan::class), 57);
+            $steps->add($container->get(SetSubscriptionPlan::class), 57);
             $steps->add($container->get(CheckingAllowedCountOfEnvs::class), 58);
             $steps->add($container->get(CreateAccountHistory::class), 58);
 

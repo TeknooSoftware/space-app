@@ -79,7 +79,7 @@ use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
-use Teknoo\Space\Recipe\Step\Account\SetPlan;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
@@ -350,7 +350,7 @@ return [
     CreateAccount::class => create()
         ->constructor(get(SpaceAccountWriter::class)),
 
-    SetPlan::class => create()
+    SetSubscriptionPlan::class => create()
         ->constructor(get('teknoo.space.subscription_plan_catalog')),
 
     SetQuota::class => create(),

@@ -38,7 +38,7 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SetPlan
+class SetSubscriptionPlan
 {
     public function __construct(
         private SubscriptionPlanCatalog $catalog

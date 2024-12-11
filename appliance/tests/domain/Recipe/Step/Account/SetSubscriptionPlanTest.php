@@ -32,7 +32,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Recipe\Step\Account\SetPlan;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 
 /**
  * Class SetPlanTest.
@@ -42,10 +42,10 @@ use Teknoo\Space\Recipe\Step\Account\SetPlan;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(SetPlan::class)]
-class SetPlanTest extends TestCase
+#[CoversClass(SetSubscriptionPlan::class)]
+class SetSubscriptionPlanTest extends TestCase
 {
-    private SetPlan $SetPlan;
+    private SetSubscriptionPlan $SetPlan;
 
     private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
 
@@ -58,7 +58,7 @@ class SetPlanTest extends TestCase
 
         $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
 
-        $this->SetPlan = new SetPlan(
+        $this->SetPlan = new SetSubscriptionPlan(
             $this->subscriptionPlanCatalog,
         );
     }
@@ -66,7 +66,7 @@ class SetPlanTest extends TestCase
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            SetPlan::class,
+            SetSubscriptionPlan::class,
             ($this->SetPlan)(
                 $this->createMock(ManagerInterface::class),
                 new SpaceAccount($this->createMock(Account::class)),
