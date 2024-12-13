@@ -93,6 +93,7 @@ class AccountClusterNew extends CreateObjectEndPoint
                 requiredType: 'string',
                 name: 'accountId',
                 mandatory: false,
+                default: '',
             )
         );
         $recipe = $recipe->require(

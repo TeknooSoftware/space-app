@@ -86,6 +86,7 @@ class AccountClusterEdit extends AbstractEditObjectEndPoint
                 requiredType: 'string',
                 name: 'accountId',
                 mandatory: false,
+                default: '',
             )
         );
 
