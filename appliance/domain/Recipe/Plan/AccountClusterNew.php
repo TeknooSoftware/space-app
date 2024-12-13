@@ -41,6 +41,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -59,6 +60,7 @@ class AccountClusterNew extends CreateObjectEndPoint
         FormHandlingInterface $formHandling,
         FormProcessingInterface $formProcessing,
         SaveObject $saveObject,
+        private readonly InjectToView $injectToView,
         RedirectClientInterface $redirectClient,
         RenderFormInterface $renderForm,
         RenderError $renderError,
@@ -130,6 +132,13 @@ class AccountClusterNew extends CreateObjectEndPoint
                 'object' => Account::class,
             ],
             06,
+        );
+
+        $recipe = $recipe->cook(
+            $this->injectToView,
+            InjectToView::class,
+            [],
+            79,
         );
 
         return $recipe;

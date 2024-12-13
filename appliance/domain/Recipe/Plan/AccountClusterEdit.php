@@ -39,6 +39,7 @@ use Teknoo\East\Paas\Recipe\Plan\AbstractEditObjectEndPoint;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -55,6 +56,7 @@ class AccountClusterEdit extends AbstractEditObjectEndPoint
         FormHandlingInterface $formHandling,
         FormProcessingInterface $formProcessing,
         SaveObject $saveObject,
+        private readonly InjectToView $injectToView,
         RenderFormInterface $renderForm,
         RenderError $renderError,
         private readonly ObjectAccessControlInterface $objectAccessControl,
@@ -124,6 +126,13 @@ class AccountClusterEdit extends AbstractEditObjectEndPoint
                 'object' => Account::class,
             ],
             06,
+        );
+
+        $recipe = $recipe->cook(
+            $this->injectToView,
+            InjectToView::class,
+            [],
+            69,
         );
 
         return $recipe;

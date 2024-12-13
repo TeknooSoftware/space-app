@@ -41,6 +41,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
@@ -63,6 +64,7 @@ class AccountClusterList extends ListObjectEndPoint
         private readonly ObjectAccessControlInterface $objectAccessControl,
         private PrepareCriteria $prepareCriteria,
         LoadListObjects $loadListObjects,
+        private readonly InjectToView $injectToView,
         RenderList $renderList,
         RenderError $renderError,
         SearchFormLoaderInterface $searchFormLoader,
@@ -93,6 +95,7 @@ class AccountClusterList extends ListObjectEndPoint
                 requiredType: 'string',
                 name: 'accountId',
                 mandatory: false,
+                default: '',
             )
         );
         $recipe = $recipe->require(
@@ -135,6 +138,13 @@ class AccountClusterList extends ListObjectEndPoint
         );
 
         $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
+
+        $recipe = $recipe->cook(
+            $this->injectToView,
+            InjectToView::class,
+            [],
+            49,
+        );
 
         return $recipe;
     }

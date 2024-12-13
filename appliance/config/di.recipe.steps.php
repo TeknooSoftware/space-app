@@ -77,6 +77,7 @@ use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
@@ -118,7 +119,6 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountRegistryWriter;
 use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
-use Teknoo\Space\Writer\Meta\SpaceUserWriter;
 
 use function DI\create;
 use function DI\get;
@@ -312,6 +312,8 @@ return [
             get(ClientFactoryInterface::class),
             get(RepositoryRegistry::class),
         ),
+
+    InjectToView::class => create(),
 
     LoadHistory::class => create()
         ->constructor(

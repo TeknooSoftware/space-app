@@ -362,3 +362,12 @@ teknoo.space.title.user.settings: 'My Settings'
 teknoo.space.title.user.update_password: 'Update my password'
 teknoo.space.title.variables: 'Variables'
 teknoo.space.action.accounts_clusters: "Account's Cluster"
+teknoo.space.title.account.account_cluster: "Account's Clusters"
+Search: 'Search'
+teknoo.space.text.create_account_cluster: 'Add a cluster'
+teknoo.space.action.create_account_cluster: 'New'
+teknoo.space.text.cols_account_cluster_name: 'Name'
+teknoo.space.text.cols_account_cluster_action: 'Action'
+teknoo.space.text.cols_account_cluster_created_at: 'Created At'
+teknoo.space.text.cols_account_cluster_updated_at: 'Updated At'
+teknoo.space.text.account_cluster_no_entries: 'No entries found'

@@ -23,10 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\ProjectMetadata;
+namespace Teknoo\Space\Recipe\Step\Account;
 
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\Space\Object\Persisted\ProjectMetadata;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,13 +35,20 @@ use Teknoo\Space\Object\Persisted\ProjectMetadata;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class InjectToViewMetadata
+class InjectToView
 {
     public function __invoke(
         ParametersBag $bag,
-        ?ProjectMetadata $projectMetadata = null,
+        ?SpaceAccount $spaceAccount = null,
+        ?Account $account = null,
     ): self {
-        $projectMetadata?->export($bag);
+        if (null !== $spaceAccount) {
+            $bag->set('spaceAccount', $spaceAccount);
+        }
+
+        if (null !== $account) {
+            $bag->set('account', $account);
+        }
 
         return $this;
     }

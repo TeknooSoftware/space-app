@@ -119,6 +119,7 @@ use Teknoo\Space\Recipe\Plan\UserGetJwtToken;
 use Teknoo\Space\Recipe\Plan\UserMySettings;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
@@ -739,6 +740,7 @@ return [
             diGet(FormHandlingInterface::class),
             diGet(FormProcessingInterface::class),
             diGet(SaveObject::class),
+            diGet(InjectToView::class),
             diGet(RenderFormInterface::class),
             diGet(RenderError::class),
             diGet(ObjectAccessControlInterface::class),
@@ -755,6 +757,7 @@ return [
             diGet(FormHandlingInterface::class),
             diGet(FormProcessingInterface::class),
             diGet(SaveObject::class),
+            diGet(InjectToView::class),
             diGet(RedirectClientInterface::class),
             diGet(RenderFormInterface::class),
             diGet(RenderError::class),
@@ -771,6 +774,7 @@ return [
             diGet(ObjectAccessControlInterface::class),
             diGet(ProjectPrepareCriteria::class),
             diGet(LoadListObjects::class),
+            diGet(InjectToView::class),
             diGet(RenderList::class),
             diGet(RenderError::class),
             diGet(SearchFormLoaderInterface::class),
