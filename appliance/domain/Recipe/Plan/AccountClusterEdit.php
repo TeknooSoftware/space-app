@@ -25,7 +25,20 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Plan;
 
+use Stringable;
+use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\FormProcessingInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
+use Teknoo\East\Common\Recipe\Step\LoadObject;
+use Teknoo\East\Common\Recipe\Step\RenderError;
+use Teknoo\East\Common\Recipe\Step\SaveObject;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Recipe\Plan\AbstractEditObjectEndPoint;
+use Teknoo\Recipe\Ingredient\Ingredient;
+use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Recipe\Value;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -35,4 +48,84 @@ use Teknoo\East\Paas\Recipe\Plan\AbstractEditObjectEndPoint;
  */
 class AccountClusterEdit extends AbstractEditObjectEndPoint
 {
+    public function __construct(
+        RecipeInterface $recipe,
+        private readonly JumpIfNot $jumpIfNot,
+        private readonly LoadObject $loadObject,
+        FormHandlingInterface $formHandling,
+        FormProcessingInterface $formProcessing,
+        SaveObject $saveObject,
+        RenderFormInterface $renderForm,
+        RenderError $renderError,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
+        string|Stringable|null $defaultErrorTemplate = null,
+        array $loadObjectWiths = [],
+    ) {
+        parent::__construct(
+            recipe: $recipe,
+            loadObject: $loadObject,
+            formHandling: $formHandling,
+            formProcessing: $formProcessing,
+            saveObject: $saveObject,
+            renderForm: $renderForm,
+            renderError: $renderError,
+            objectAccessControl: $objectAccessControl,
+            defaultErrorTemplate: $defaultErrorTemplate,
+            loadObjectWiths: $loadObjectWiths,
+        );
+    }
+
+    protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
+    {
+        $recipe = parent::populateRecipe($recipe);
+
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'string',
+                name: 'accountId',
+                mandatory: false,
+            )
+        );
+
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'bool',
+                name: 'allowAccountSelection',
+                mandatory: false,
+                default: false,
+            )
+        );
+
+        $recipe = $recipe->cook(
+            $this->jumpIfNot,
+            JumpIfNot::class,
+            [
+                'testValue' => 'allowAccountSelection',
+                'nextStep' => new Value(LoadObject::class),
+            ],
+            04,
+        );
+
+        $recipe = $recipe->cook(
+            $this->loadObject,
+            LoadObject::class . ':Account',
+            [
+                'loader' => 'accountLoader',
+                'id' => 'accountId',
+                'workPlanKey' => 'accountKey'
+            ],
+            05,
+        );
+
+        $recipe = $recipe->cook(
+            $this->objectAccessControl,
+            ObjectAccessControlInterface::class . ':Account',
+            [
+                'object' => Account::class,
+            ],
+            06,
+        );
+
+        return $recipe;
+    }
 }

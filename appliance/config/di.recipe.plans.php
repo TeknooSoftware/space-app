@@ -38,6 +38,7 @@ use Teknoo\East\Common\Recipe\Step\EndLooping;
 use Teknoo\East\Common\Recipe\Step\ExtractOrder;
 use Teknoo\East\Common\Recipe\Step\ExtractPage;
 use Teknoo\East\Common\Recipe\Step\JumpIf;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
 use Teknoo\East\Common\Recipe\Step\LoadListObjects;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\Render;
@@ -733,6 +734,7 @@ return [
     AccountClusterEdit::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(JumpIfNot::class),
             diGet(LoadObject::class),
             diGet(FormHandlingInterface::class),
             diGet(FormProcessingInterface::class),
@@ -746,6 +748,8 @@ return [
     AccountClusterNew::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(JumpIfNot::class),
+            diGet(LoadObject::class),
             diGet(ObjectAccessControlInterface::class),
             diGet(CreateObject::class),
             diGet(FormHandlingInterface::class),
@@ -762,6 +766,9 @@ return [
             diGet(OriginalRecipeInterface::class),
             diGet(ExtractPage::class),
             diGet(ExtractOrder::class),
+            diGet(JumpIfNot::class),
+            diGet(LoadObject::class),
+            diGet(ObjectAccessControlInterface::class),
             diGet(ProjectPrepareCriteria::class),
             diGet(LoadListObjects::class),
             diGet(RenderList::class),

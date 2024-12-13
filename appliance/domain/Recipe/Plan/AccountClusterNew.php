@@ -33,10 +33,14 @@ use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
 use Teknoo\East\Common\Recipe\Plan\CreateObjectEndPoint;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
+use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\SaveObject;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Recipe\Value;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -48,7 +52,9 @@ class AccountClusterNew extends CreateObjectEndPoint
 {
     public function __construct(
         RecipeInterface $recipe,
-        ObjectAccessControlInterface $objectAccessControl,
+        private readonly JumpIfNot $jumpIfNot,
+        private readonly LoadObject $loadObject,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
         CreateObject $createObject,
         FormHandlingInterface $formHandling,
         FormProcessingInterface $formProcessing,
@@ -59,20 +65,73 @@ class AccountClusterNew extends CreateObjectEndPoint
         string|Stringable $defaultErrorTemplate,
     ) {
         parent::__construct(
-            $recipe,
-            $createObject,
-            $formHandling,
-            $formProcessing,
-            null,
-            $saveObject,
-            $redirectClient,
-            $renderForm,
-            $renderError,
-            $objectAccessControl,
-            $defaultErrorTemplate,
-            [
+            recipe: $recipe,
+            createObject: $createObject,
+            formHandling: $formHandling,
+            formProcessing: $formProcessing,
+            slugPreparation: null,
+            saveObject: $saveObject,
+            redirectClient: $redirectClient,
+            renderForm: $renderForm,
+            renderError: $renderError,
+            objectAccessControl: $this->objectAccessControl,
+            defaultErrorTemplate: $defaultErrorTemplate,
+            createObjectWiths: [
                 'constructorArguments' => Account::class,
             ],
         );
+    }
+
+    protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
+    {
+        $recipe = parent::populateRecipe($recipe);
+
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'string',
+                name: 'accountId',
+                mandatory: false,
+            )
+        );
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'bool',
+                name: 'allowAccountSelection',
+                mandatory: false,
+                default: false,
+            )
+        );
+
+        $recipe = $recipe->cook(
+            $this->jumpIfNot,
+            JumpIfNot::class,
+            [
+                'testValue' => 'allowAccountSelection',
+                'nextStep' => new Value(CreateObject::class),
+            ],
+            04,
+        );
+
+        $recipe = $recipe->cook(
+            $this->loadObject,
+            LoadObject::class . ':Account',
+            [
+                'loader' => 'accountLoader',
+                'id' => 'accountId',
+                'workPlanKey' => 'accountKey'
+            ],
+            05,
+        );
+
+        $recipe = $recipe->cook(
+            $this->objectAccessControl,
+            ObjectAccessControlInterface::class . ':Account',
+            [
+                'object' => Account::class,
+            ],
+            06,
+        );
+
+        return $recipe;
     }
 }

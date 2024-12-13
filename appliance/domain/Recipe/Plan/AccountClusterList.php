@@ -27,14 +27,20 @@ namespace Teknoo\Space\Recipe\Plan;
 
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\SearchFormLoaderInterface;
 use Teknoo\East\Common\Recipe\Plan\ListObjectEndPoint;
 use Teknoo\East\Common\Recipe\Step\ExtractOrder;
 use Teknoo\East\Common\Recipe\Step\ExtractPage;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
 use Teknoo\East\Common\Recipe\Step\LoadListObjects;
+use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\RenderList;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Recipe\Value;
 use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
@@ -52,6 +58,9 @@ class AccountClusterList extends ListObjectEndPoint
         RecipeInterface $recipe,
         ExtractPage $extractPage,
         ExtractOrder $extractOrder,
+        private readonly JumpIfNot $jumpIfNot,
+        private readonly LoadObject $loadObject,
+        private readonly ObjectAccessControlInterface $objectAccessControl,
         private PrepareCriteria $prepareCriteria,
         LoadListObjects $loadListObjects,
         RenderList $renderList,
@@ -78,6 +87,52 @@ class AccountClusterList extends ListObjectEndPoint
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
         $recipe = parent::populateRecipe($recipe);
+
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'string',
+                name: 'accountId',
+                mandatory: false,
+            )
+        );
+        $recipe = $recipe->require(
+            new Ingredient(
+                requiredType: 'bool',
+                name: 'allowAccountSelection',
+                mandatory: false,
+                default: false,
+            )
+        );
+
+        $recipe = $recipe->cook(
+            $this->jumpIfNot,
+            JumpIfNot::class,
+            [
+                'testValue' => 'allowAccountSelection',
+                'nextStep' => new Value(ExtractOrder::class),
+            ],
+            04,
+        );
+
+        $recipe = $recipe->cook(
+            $this->loadObject,
+            LoadObject::class . ':Account',
+            [
+                'loader' => 'accountLoader',
+                'id' => 'accountId',
+                'workPlanKey' => 'accountKey'
+            ],
+            05
+        );
+
+        $recipe = $recipe->cook(
+            $this->objectAccessControl,
+            ObjectAccessControlInterface::class . ':Account',
+            [
+                'object' => Account::class,
+            ],
+            06,
+        );
 
         $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
 
