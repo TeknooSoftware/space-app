@@ -135,7 +135,7 @@ space_api_v1_admin_account_clusters_edit:
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
-        template: '@@TeknooEastPaas/api/AccountCluster/item.json.twig'
+        template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
 
 space_api_v1_admin_account_clusters_new:
@@ -143,7 +143,6 @@ space_api_v1_admin_account_clusters_new:
     methods: ['POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.new'
-        accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
@@ -151,7 +150,7 @@ space_api_v1_admin_account_clusters_new:
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         objectClass: 'Teknoo\Space\Object\Persisted\AccountCluster'
         route: 'space_account_clusters_edit'
-        template: '@@TeknooEastPaas/api/AccountCluster/item.json.twig'
+        template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
 
 space_api_v1_admin_account_clusters_delete:

@@ -8,7 +8,7 @@
     <i class="uil uil-server"></i> {{ 'teknoo.space.title.account.account_cluster.edit'|trans }} : {{ objectInstance }}
 {%- endblock -%}
 
-{% block breadcrumFormTitle %}{{ 'teknoo.space.title.account.account_cluster.edit'|trans }}{% endblock %}
+{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.account.account_cluster.edit'|trans }}{% endblock %}
 {%- block breadcrumbListLink -%}
     {% if is_granted('ROLE_ADMIN') %}
         {{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}
@@ -29,8 +29,22 @@
         {{ form_row(formView.caCertificate, {"largeRow": true}) }}
         {{ form_row(formView.token, {"largeRow": true}) }}
         {{ form_row(formView.registryUrl, {"largeRow": true}) }}
-        {{ form_row(formView.supportRegistry) }}
-        {{ form_row(formView.useHnc) }}
+        {{ form_row(
+            formView.supportRegistry,
+            {
+                'label_attr': {
+                'class': 'switch-custom'
+            }
+            }
+        ) }}
+        {{ form_row(
+            formView.useHnc,
+            {
+                'label_attr': {
+                'class': 'switch-custom'
+            }
+            }
+        ) }}
     </div>
 
 {% endblock %}

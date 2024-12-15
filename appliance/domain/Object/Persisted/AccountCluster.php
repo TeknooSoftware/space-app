@@ -69,18 +69,18 @@ class AccountCluster implements
 
     public function __construct(
         private Account $account,
-        private string $name,
-        private string $slug,
-        private string $type,
-        private string $masterAddress,
-        private string $storageProvisioner,
-        private string $dashboardAddress,
-        private string $caCertificate,
+        private string $name = '',
+        private string $slug = '',
+        private string $type = '',
+        private string $masterAddress = '',
+        private string $storageProvisioner = '',
+        private string $dashboardAddress = '',
+        private string $caCertificate = '',
         #[SensitiveParameter]
-        private string $token,
-        private bool $supportRegistry,
-        private ?string $registryUrl,
-        private bool $useHnc,
+        private string $token = '',
+        private bool $supportRegistry = false,
+        private ?string $registryUrl = null,
+        private bool $useHnc = false,
     ) {
     }
 

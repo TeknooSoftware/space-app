@@ -121,7 +121,7 @@ class AccountClusterNew extends CreateObjectEndPoint
             [
                 'loader' => 'accountLoader',
                 'id' => 'accountId',
-                'workPlanKey' => 'accountKey'
+                'workPlanKey' => new Value(Account::class),
             ],
             05,
         );
@@ -139,7 +139,7 @@ class AccountClusterNew extends CreateObjectEndPoint
             $this->injectToView,
             InjectToView::class,
             [],
-            79,
+            07,
         );
 
         return $recipe;

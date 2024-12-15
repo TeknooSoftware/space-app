@@ -78,7 +78,7 @@ space_admin_account_clusters_edit:
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
-        template: '@@TeknooEastPaas/AccountCluster/edit.html.twig'
+        template: '@@TeknooSpace/AccountCluster/edit.html.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
@@ -87,7 +87,6 @@ space_admin_account_clusters_new:
     methods: ['GET', 'POST', 'PUT']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.new'
-        accountKey: 'constructorArguments'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         allowAccountSelection: true
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
@@ -95,7 +94,7 @@ space_admin_account_clusters_new:
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         objectClass: 'Teknoo\Space\Object\Persisted\AccountCluster'
         route: 'space_account_clusters_edit'
-        template: '@@TeknooEastPaas/AccountCluster/new.html.twig'
+        template: '@@TeknooSpace/AccountCluster/new.html.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
