@@ -34,6 +34,7 @@ use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\SearchFormLoaderInterface;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
+use Teknoo\East\Common\Recipe\Step\DeleteObject;
 use Teknoo\East\Common\Recipe\Step\EndLooping;
 use Teknoo\East\Common\Recipe\Step\ExtractOrder;
 use Teknoo\East\Common\Recipe\Step\ExtractPage;
@@ -98,6 +99,7 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Recipe\Plan\AccountClusterDelete;
 use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
 use Teknoo\Space\Recipe\Plan\AccountClusterList;
 use Teknoo\Space\Recipe\Plan\AccountClusterNew;
@@ -734,7 +736,7 @@ return [
 
     AccountClusterEdit::class => create()
         ->constructor(
-            diGet(OriginalRecipeInterface::class),
+            diGet(OriginalRecipeInterface::class . ':CRUD'),
             diGet(JumpIfNot::class),
             diGet(LoadObject::class),
             diGet(FormHandlingInterface::class),
@@ -749,7 +751,7 @@ return [
 
     AccountClusterNew::class => create()
         ->constructor(
-            diGet(OriginalRecipeInterface::class),
+            diGet(OriginalRecipeInterface::class . ':CRUD'),
             diGet(JumpIfNot::class),
             diGet(LoadObject::class),
             diGet(ObjectAccessControlInterface::class),
@@ -764,9 +766,24 @@ return [
             diGet('teknoo.east.common.get_default_error_template'),
         ),
 
+    AccountClusterDelete::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class . ':CRUD'),
+            diGet(JumpIfNot::class),
+            diGet(LoadObject::class),
+            diGet(InjectToView::class),
+            diGet(DeleteObject::class),
+            diGet(JumpIf::class),
+            diGet(RedirectClientInterface::class),
+            diGet(Render::class),
+            diGet(RenderError::class),
+            diGet(ObjectAccessControlInterface::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
     AccountClusterList::class => create()
         ->constructor(
-            diGet(OriginalRecipeInterface::class),
+            diGet(OriginalRecipeInterface::class . ':CRUD'),
             diGet(ExtractPage::class),
             diGet(ExtractOrder::class),
             diGet(JumpIfNot::class),

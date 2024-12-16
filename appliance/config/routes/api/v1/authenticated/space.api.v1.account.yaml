@@ -73,7 +73,7 @@ space_api_v1_account_clusters_delete:
     path: '/account/cluster/{id}/delete'
     methods: ['POST', 'DELETE']
     defaults:
-        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        _controller: 'teknoo.space.endpoint.account_cluster.delete'
         api: 'json'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         deleter: '@teknoo.space.deleting.account_cluster'

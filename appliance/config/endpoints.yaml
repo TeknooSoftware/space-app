@@ -102,6 +102,13 @@ services:
             - '@Teknoo\Space\Recipe\Plan\AccountClusterNew'
             - '@service_container'
 
+    teknoo.space.endpoint.account_cluster.delete:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\AccountClusterDelete'
+            - '@service_container'
+
     teknoo.space.endpoint.admin.account.edit_without_steps:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true

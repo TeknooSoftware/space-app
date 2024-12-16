@@ -108,7 +108,7 @@ space_account_clusters_delete:
     path: '/account/cluster/{id}/delete'
     methods: ['GET']
     defaults:
-        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        _controller: 'teknoo.space.endpoint.account_cluster.delete'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         deleter: '@teknoo.space.deleting.account_cluster'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
