@@ -48,15 +48,11 @@ use function sprintf;
  */
 class AddManagedEnvironmentToProject
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         ManagerInterface $manager,
         SpaceProject $spaceProject,
         AccountWallet $accountWallet,
+        ClusterCatalog $catalog,
     ): AddManagedEnvironmentToProject {
         if (
             empty($spaceProject->addClusterEnv)
@@ -95,7 +91,7 @@ class AddManagedEnvironmentToProject
         }
 
         try {
-            $clusterConfig = $this->catalog->getCluster($spaceProject->addClusterName);
+            $clusterConfig = $catalog->getCluster($spaceProject->addClusterName);
 
             $newCluster = new Cluster();
             $newCluster->setName($spaceProject->addClusterName);

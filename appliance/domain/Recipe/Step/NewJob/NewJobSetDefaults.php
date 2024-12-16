@@ -38,22 +38,18 @@ use Teknoo\Space\Object\DTO\SpaceProject;
  */
 class NewJobSetDefaults
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         SpaceProject $project,
         NewJob $newJob,
+        ClusterCatalog $catalog,
     ): self {
         $project->project->visit(
             'clusters',
-            function (iterable $clusters) use ($newJob): void {
+            function (iterable $clusters) use ($newJob, $catalog): void {
                 /** @var Cluster[] $clusters */
                 foreach ($clusters as $cluster) {
                     if ($cluster->isLocked()) {
-                        $config = $this->catalog->getCluster($cluster);
+                        $config = $catalog->getCluster($cluster);
 
                         $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
                     }

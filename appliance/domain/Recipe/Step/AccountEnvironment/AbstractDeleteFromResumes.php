@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -39,11 +40,15 @@ use function array_flip;
  */
 abstract class AbstractDeleteFromResumes
 {
-    abstract protected function delete(AccountEnvironment $accountEnvironment): void;
+    abstract protected function delete(
+        AccountEnvironment $accountEnvironment,
+        ClusterCatalog $catalog,
+    ): void;
 
     public function __invoke(
         AccountWallet $wallet,
         SpaceAccount $spaceAccount,
+        ClusterCatalog $catalog,
     ): self {
         if (empty($spaceAccount->environmentResumes)) {
             return $this;
@@ -61,7 +66,7 @@ abstract class AbstractDeleteFromResumes
         /** @var AccountEnvironment $env */
         foreach ($wallet as $env) {
             if (!empty($env->getId()) && !isset($idsInResumes[$env->getId()])) {
-                $this->delete($env);
+                $this->delete($env, $catalog);
             }
         }
 

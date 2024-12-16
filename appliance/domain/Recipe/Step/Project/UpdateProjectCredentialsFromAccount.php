@@ -45,17 +45,12 @@ use Teknoo\Space\Object\Persisted\AccountRegistry;
  */
 class UpdateProjectCredentialsFromAccount
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         SpaceProject $spaceProject,
         AccountWallet $accountWallet,
         AccountRegistry $accountRegistry,
+        ClusterCatalog $catalog,
     ): UpdateProjectCredentialsFromAccount {
-        $catalog = $this->catalog;
         $eastProject = $spaceProject->project;
         $eastProject->visit(
             [

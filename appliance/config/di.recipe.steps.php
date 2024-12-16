@@ -431,7 +431,6 @@ return [
         );
 
         return new DashboardFrame(
-            catalog: $container->get('teknoo.space.clusters_catalog'),
             httpMethodsClient: $httpMethodsClient,
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
         );

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
@@ -41,8 +42,10 @@ class DeleteEnvFromResumes extends AbstractDeleteFromResumes
     ) {
     }
 
-    protected function delete(AccountEnvironment $accountEnvironment): void
-    {
+    protected function delete(
+        AccountEnvironment $accountEnvironment,
+        ClusterCatalog $catalog,
+    ): void {
         $this->writer->remove($accountEnvironment);
     }
 }

@@ -37,14 +37,11 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
  */
 class DeleteNamespaceFromResumes extends AbstractDeleteFromResumes
 {
-    public function __construct(
-        private ClusterCatalog $clusterCatalog,
-    ) {
-    }
-
-    protected function delete(AccountEnvironment $accountEnvironment): void
-    {
-        $clusterConfig = $this->clusterCatalog->getCluster($accountEnvironment->getClusterName());
+    protected function delete(
+        AccountEnvironment $accountEnvironment,
+        ClusterCatalog $catalog,
+    ): void {
+        $clusterConfig = $catalog->getCluster($accountEnvironment->getClusterName());
         $client = $clusterConfig->getKubernetesClient();
         $namespace = $accountEnvironment->getNamespace();
 

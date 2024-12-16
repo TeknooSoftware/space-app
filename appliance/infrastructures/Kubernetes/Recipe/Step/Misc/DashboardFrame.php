@@ -52,7 +52,6 @@ use function str_contains;
 class DashboardFrame implements DashboardFrameInterface
 {
     public function __construct(
-        private ClusterCatalog $catalog,
         private HttpMethodsClientInterface $httpMethodsClient,
         private ResponseFactoryInterface $responseFactory,
     ) {
@@ -80,6 +79,7 @@ class DashboardFrame implements DashboardFrameInterface
         EastClient $client,
         ServerRequestInterface $serverRequest,
         User $user,
+        ClusterCatalog $catalog,
         string $clusterName,
         string $wildcard = '',
         ?Account $account = null,
@@ -90,7 +90,7 @@ class DashboardFrame implements DashboardFrameInterface
             $wildcard = '#/workloads';
         }
 
-        $clusterConfig = $this->catalog->getCluster($clusterName);
+        $clusterConfig = $catalog->getCluster($clusterName);
 
         $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
         $accountEnvironment = null;

@@ -51,11 +51,6 @@ use function in_array;
  */
 class AccountEnvironmentResumesType extends AbstractType
 {
-    public function __construct(
-        private ClusterCatalog $clusterCatalog,
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         if (
@@ -65,11 +60,19 @@ class AccountEnvironmentResumesType extends AbstractType
             throw new DomainException("Missing subscription plan for this account");
         }
 
+        if (
+            empty($options['clustersCatalog'])
+            || !$options['clustersCatalog'] instanceof ClusterCatalog
+        ) {
+            throw new DomainException("Missing cluster catalog for this account");
+        }
+
         $subscriptionPlan = $options['subscriptionPlan'];
         $clustersInPlan = $subscriptionPlan->getClusters();
+        $clustersCatalog = $options['clustersCatalog'];
         $clustersList = [];
         /** @var Cluster $cluster */
-        foreach ($this->clusterCatalog as $cluster) {
+        foreach ($clustersCatalog as $cluster) {
             if (in_array($cluster->name, $clustersInPlan)) {
                 $clustersList[$cluster->name] = $cluster->name;
             }
@@ -142,8 +145,11 @@ class AccountEnvironmentResumesType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => AccountEnvironmentResume::class,
-            'subscriptionPlan' => null,
         ]);
+
+        $resolver->setRequired(['subscriptionPlan', 'clustersCatalog']);
+        $resolver->setAllowedTypes('clustersCatalog', ClusterCatalog::class);
+        $resolver->setAllowedTypes('subscriptionPlan', SubscriptionPlan::class);
 
         return $this;
     }

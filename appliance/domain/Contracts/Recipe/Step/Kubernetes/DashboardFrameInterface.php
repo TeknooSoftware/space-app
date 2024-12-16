@@ -30,6 +30,7 @@ use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
@@ -45,6 +46,7 @@ interface DashboardFrameInterface
         EastClient $client,
         ServerRequestInterface $serverRequest,
         User $user,
+        ClusterCatalog $catalog,
         string $clusterName,
         string $wildcard = '',
         ?Account $account = null,
