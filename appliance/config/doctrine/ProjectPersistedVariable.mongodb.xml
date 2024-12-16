@@ -14,7 +14,7 @@
         <field field-name="encryptionAlgorithm" name="encryption_algorithm" type="string" nullable="true"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date" />
-        <reference-one field="project" target-document="Teknoo\East\Paas\Object\Project">
+        <reference-one field="project" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project">
             <cascade />
         </reference-one>
     </document>

@@ -8,14 +8,35 @@
     <i class="uil uil-server"></i> {{ 'teknoo.space.title.account.account_cluster.edit'|trans }} : {{ objectInstance }}
 {%- endblock -%}
 
-{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.account.account_cluster.edit'|trans }}{% endblock %}
 {%- block breadcrumbListLink -%}
     {% if is_granted('ROLE_ADMIN') %}
-        {{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}
+        {{ path('_teknoo_paas_admin_account_list') }}
     {% else %}
-        {{ path('space_account_clusters_list') }}
+        {{ path('space_account_settings') }}
     {% endif %}
 {%- endblock -%}
+{%- block breadcrumbFormTitle -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ 'teknoo.space.title.admin_account'|trans }}
+    {% else %}
+        {{ 'teknoo.space.title.account.settings'|trans }}
+    {% endif %}
+{%- endblock -%}
+{% block breadcrumbAddsItems %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('_teknoo_paas_admin_account_edit', {'id': account.id}) }}">{{ account }}</a>
+        </li>
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+        </li>
+    {% else %}
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('space_account_clusters_list') }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+        </li>
+    {% endif %}
+{% endblock %}
+
 {% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
 
 {% block crudFormFields %}

@@ -93,7 +93,7 @@ space_admin_account_clusters_new:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         objectClass: 'Teknoo\Space\Object\Persisted\AccountCluster'
-        route: 'space_account_clusters_edit'
+        route: 'space_admin_account_clusters_edit'
         template: '@@TeknooSpace/AccountCluster/new.html.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

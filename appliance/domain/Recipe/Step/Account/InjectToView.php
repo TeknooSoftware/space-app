@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Step\Account;
 
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
@@ -37,17 +38,29 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
  */
 class InjectToView
 {
+    /**
+     * @param array<string, mixed> $parameters
+     */
     public function __invoke(
+        ManagerInterface $manager,
         ParametersBag $bag,
         ?SpaceAccount $spaceAccount = null,
         ?Account $account = null,
+        bool $allowAccountSelection = false,
+        array $parameters = [],
     ): self {
         if (null !== $spaceAccount) {
             $bag->set('spaceAccount', $spaceAccount);
+            $parameters['accountId'] = $spaceAccount->account->getId();
         }
 
         if (null !== $account) {
             $bag->set('account', $account);
+            $parameters['accountId'] = $account->getId();
+        }
+
+        if ($allowAccountSelection) {
+            $manager->updateWorkPlan(['parameters' => $parameters]);
         }
 
         return $this;

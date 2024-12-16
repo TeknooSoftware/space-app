@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "70cdceb5525237d63f3daf2b4005f966",
+    "content-hash": "b5df9521ce97df3c5a4e8ca14e835c23",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4019,16 +4019,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.42",
+            "version": "3.0.43",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "db92f1b1987b12b13f248fe76c3a52cadb67bb98"
+                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/db92f1b1987b12b13f248fe76c3a52cadb67bb98",
-                "reference": "db92f1b1987b12b13f248fe76c3a52cadb67bb98",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/709ec107af3cb2f385b9617be72af8cf62441d02",
+                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02",
                 "shasum": ""
             },
             "require": {
@@ -4109,7 +4109,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.42"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.43"
             },
             "funding": [
                 {
@@ -4125,7 +4125,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-16T03:06:04+00:00"
+            "time": "2024-12-14T21:12:59+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -10762,16 +10762,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "58a5d44b526fb6c68cc66a8f98b1b994564df536"
+                "reference": "0aae642ce014151765bf30d4873471bebdb5bad2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/58a5d44b526fb6c68cc66a8f98b1b994564df536",
-                "reference": "58a5d44b526fb6c68cc66a8f98b1b994564df536",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/0aae642ce014151765bf30d4873471bebdb5bad2",
+                "reference": "0aae642ce014151765bf30d4873471bebdb5bad2",
                 "shasum": ""
             },
             "require": {
@@ -10880,20 +10880,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-29T12:06:35+00:00"
+            "time": "2024-12-16T10:33:43+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "c89ccfc069a3efab64808820ca4f04f9677ef50d"
+                "reference": "1faa7230c2fbc793ad080ae43299f2dc3af58d1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/c89ccfc069a3efab64808820ca4f04f9677ef50d",
-                "reference": "c89ccfc069a3efab64808820ca4f04f9677ef50d",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/1faa7230c2fbc793ad080ae43299f2dc3af58d1a",
+                "reference": "1faa7230c2fbc793ad080ae43299f2dc3af58d1a",
                 "shasum": ""
             },
             "require": {
@@ -10916,7 +10916,7 @@
                 "symfony/validator": "^6.3||^7",
                 "symfony/yaml": "^6.3||^7",
                 "teknoo/bridge-phpdi-symfony": "^6.1",
-                "teknoo/east-common": "^3.0.3",
+                "teknoo/east-common": "^3.0.4",
                 "teknoo/east-foundation-symfony": "^8",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/recipe": "^6",
@@ -10967,7 +10967,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-11-29T12:41:23+00:00"
+            "time": "2024-12-16T10:34:33+00:00"
         },
         {
             "name": "teknoo/east-foundation",
