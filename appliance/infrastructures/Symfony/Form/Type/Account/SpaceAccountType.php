@@ -95,13 +95,15 @@ class SpaceAccountType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => SpaceAccount::class,
-            'doctrine_type' => '',
             'enableEnvManagement' => null,
+            'subscriptionPlan' => null,
+            'clustersCatalog' => null,
         ]);
 
-        $resolver->setRequired(['subscriptionPlan', 'clustersCatalog']);
-        $resolver->setAllowedTypes('clustersCatalog', ClusterCatalog::class);
-        $resolver->setAllowedTypes('subscriptionPlan', SubscriptionPlan::class);
+        $resolver->setRequired(['doctrine_type']);
+        $resolver->setAllowedTypes('doctrine_type', 'string');
+        $resolver->setAllowedTypes('clustersCatalog', [ClusterCatalog::class, null]);
+        $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, null]);
 
         return $this;
     }

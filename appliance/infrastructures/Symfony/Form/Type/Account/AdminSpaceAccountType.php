@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints\Count;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Form\Type\AccountType as EastPaaSAccountType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnvironmentResumesType;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
@@ -66,6 +67,7 @@ class AdminSpaceAccountType extends AbstractType
         if (
             !empty($options['subscriptionPlan'])
             && $options['subscriptionPlan'] instanceof SubscriptionPlan
+            && !empty($options['clustersCatalog']) && $options['clustersCatalog'] instanceof ClusterCatalog
         ) {
             $builder->add(
                 'environmentResumes',
@@ -77,6 +79,7 @@ class AdminSpaceAccountType extends AbstractType
                     'prototype' => true,
                     'entry_options' => [
                         'subscriptionPlan' => $options['subscriptionPlan'],
+                        'clustersCatalog' => $options['clustersCatalog'],
                     ],
                     'constraints' => [
                         new Count([
@@ -97,10 +100,15 @@ class AdminSpaceAccountType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => SpaceAccount::class,
-            'doctrine_type' => '',
             'namespace_in_readonly' => false,
             'subscriptionPlan' => null,
+            'clustersCatalog' => null,
         ]);
+
+        $resolver->setRequired(['doctrine_type']);
+        $resolver->setAllowedTypes('doctrine_type', 'string');
+        $resolver->setAllowedTypes('clustersCatalog', [ClusterCatalog::class, null]);
+        $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, null]);
 
         return $this;
     }
