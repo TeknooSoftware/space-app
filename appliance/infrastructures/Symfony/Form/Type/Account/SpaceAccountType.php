@@ -62,7 +62,7 @@ class SpaceAccountType extends AbstractType
         if (
             !empty($options['enableEnvManagement'])
             && !empty($options['subscriptionPlan']) && $options['subscriptionPlan'] instanceof SubscriptionPlan
-            && !empty($options['clustersCatalog']) && $options['clustersCatalog'] instanceof ClusterCatalog
+            && !empty($options['clusterCatalog']) && $options['clusterCatalog'] instanceof ClusterCatalog
         ) {
             $builder->add(
                 'environmentResumes',
@@ -74,7 +74,7 @@ class SpaceAccountType extends AbstractType
                     'prototype' => true,
                     'entry_options' => [
                         'subscriptionPlan' => $options['subscriptionPlan'],
-                        'clustersCatalog' => $options['clustersCatalog'],
+                        'clusterCatalog' => $options['clusterCatalog'],
                     ],
                     'constraints' => [
                         new Count([
@@ -97,12 +97,12 @@ class SpaceAccountType extends AbstractType
             'data_class' => SpaceAccount::class,
             'enableEnvManagement' => null,
             'subscriptionPlan' => null,
-            'clustersCatalog' => null,
+            'clusterCatalog' => null,
         ]);
 
         $resolver->setRequired(['doctrine_type']);
         $resolver->setAllowedTypes('doctrine_type', 'string');
-        $resolver->setAllowedTypes('clustersCatalog', [ClusterCatalog::class, null]);
+        $resolver->setAllowedTypes('clusterCatalog', [ClusterCatalog::class, null]);
         $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, null]);
 
         return $this;

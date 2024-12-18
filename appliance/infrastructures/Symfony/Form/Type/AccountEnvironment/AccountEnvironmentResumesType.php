@@ -61,18 +61,18 @@ class AccountEnvironmentResumesType extends AbstractType
         }
 
         if (
-            empty($options['clustersCatalog'])
-            || !$options['clustersCatalog'] instanceof ClusterCatalog
+            empty($options['clusterCatalog'])
+            || !$options['clusterCatalog'] instanceof ClusterCatalog
         ) {
             throw new DomainException("Missing cluster catalog for this account");
         }
 
         $subscriptionPlan = $options['subscriptionPlan'];
         $clustersInPlan = $subscriptionPlan->getClusters();
-        $clustersCatalog = $options['clustersCatalog'];
+        $clusterCatalog = $options['clusterCatalog'];
         $clustersList = [];
         /** @var Cluster $cluster */
-        foreach ($clustersCatalog as $cluster) {
+        foreach ($clusterCatalog as $cluster) {
             if (in_array($cluster->name, $clustersInPlan)) {
                 $clustersList[$cluster->name] = $cluster->name;
             }
@@ -147,8 +147,8 @@ class AccountEnvironmentResumesType extends AbstractType
             'data_class' => AccountEnvironmentResume::class,
         ]);
 
-        $resolver->setRequired(['subscriptionPlan', 'clustersCatalog']);
-        $resolver->setAllowedTypes('clustersCatalog', ClusterCatalog::class);
+        $resolver->setRequired(['subscriptionPlan', 'clusterCatalog']);
+        $resolver->setAllowedTypes('clusterCatalog', ClusterCatalog::class);
         $resolver->setAllowedTypes('subscriptionPlan', SubscriptionPlan::class);
 
         return $this;

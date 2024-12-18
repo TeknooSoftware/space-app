@@ -48,7 +48,7 @@ class ClustersInfo implements ClustersInfoInterface
         ?AccountWallet $accountWallet = null,
     ): ClustersInfoInterface {
         $parametersBag->set('accountWallet', $accountWallet);
-        $parametersBag->set('clustersCatalog', $this->catalog);
+        $parametersBag->set('clusterCatalog', $this->catalog);
 
         return $this;
     }
