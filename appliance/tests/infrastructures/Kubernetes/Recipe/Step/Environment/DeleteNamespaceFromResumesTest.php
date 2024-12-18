@@ -59,9 +59,7 @@ class DeleteNamespaceFromResumesTest extends TestCase
 
         $this->clusterCatalog = $this->createMock(ClusterCatalog::class);
 
-        $this->deleteNamespaceFromResumes = new DeleteNamespaceFromResumes(
-            $this->clusterCatalog,
-        );
+        $this->deleteNamespaceFromResumes = new DeleteNamespaceFromResumes();
     }
 
     public function testInvoke(): void
@@ -74,6 +72,7 @@ class DeleteNamespaceFromResumesTest extends TestCase
                     account: $this->createMock(Account::class),
                     environmentResumes: []
                 ),
+                $this->clusterCatalog,
             ),
         );
     }

@@ -29,6 +29,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -73,6 +75,7 @@ class DeleteEnvFromResumesTest extends TestCase
                     account: $this->createMock(Account::class),
                     environmentResumes: []
                 ),
+                new ClusterCatalog(['Foo' => $this->createMock(Cluster::class)], ['Foo' => 'foo']),
             ),
         );
     }

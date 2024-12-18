@@ -91,7 +91,6 @@ class DashboardFrameTest extends TestCase
         );
 
         $this->dashboardFrame = new DashboardFrame(
-            $this->catalog,
             $this->httpMethodsClient,
             $this->responseFactory,
         );
@@ -136,6 +135,7 @@ class DashboardFrameTest extends TestCase
                 client: $this->createMock(EastClient::class),
                 serverRequest: $sRequest,
                 user: $this->createMock(User::class),
+                catalog: $this->catalog,
                 clusterName: 'clusterName',
                 wildcard: '*',
                 account: $this->createMock(Account::class),
