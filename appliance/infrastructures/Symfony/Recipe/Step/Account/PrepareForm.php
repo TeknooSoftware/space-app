@@ -28,6 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
@@ -50,6 +51,7 @@ class PrepareForm
      */
     public function __invoke(
         ManagerInterface $manager,
+        ClusterCatalog $catalog,
         ?SpaceAccount $spaceAccount = null,
         array $formOptions = [],
     ): self {
@@ -72,6 +74,7 @@ class PrepareForm
         $accountData->visit('subscriptionPlan', $promise);
 
         $formOptions['subscriptionPlan'] = $promise->fetchResult();
+        $formOptions['clusterCatalog'] = $catalog;
         $manager->updateWorkPlan([
             'formOptions' => $formOptions,
         ]);
