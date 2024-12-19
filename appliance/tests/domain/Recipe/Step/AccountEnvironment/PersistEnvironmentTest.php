@@ -104,6 +104,7 @@ class PersistEnvironmentTest extends TestCase
                     token: 'foo',
                     supportRegistry: true,
                     useHnc: true,
+                    isExternal: false,
                 ),
                 envMetadata: ['foo' => 'bar'],
             ),

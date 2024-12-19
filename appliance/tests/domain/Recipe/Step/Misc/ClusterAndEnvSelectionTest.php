@@ -72,6 +72,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
+            isExternal: false,
         );
 
         $this->clusterCatalog = new ClusterCatalog(

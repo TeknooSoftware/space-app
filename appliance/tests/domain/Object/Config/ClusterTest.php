@@ -61,6 +61,7 @@ class ClusterTest extends TestCase
             token: 'foo',
             supportRegistry: true,
             useHnc: true,
+            isExternal: false,
         );
     }
 

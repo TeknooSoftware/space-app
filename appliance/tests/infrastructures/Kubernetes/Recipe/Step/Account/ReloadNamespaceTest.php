@@ -73,6 +73,7 @@ class ReloadNamespaceTest extends TestCase
                     token: 'foo',
                     supportRegistry: true,
                     useHnc: false,
+                    isExternal: false,
                 )
             );
 

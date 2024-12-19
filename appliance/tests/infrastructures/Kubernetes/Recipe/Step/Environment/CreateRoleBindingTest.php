@@ -80,6 +80,7 @@ class CreateRoleBindingTest extends TestCase
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
+            isExternal: false,
         );
 
         self::assertInstanceOf(
