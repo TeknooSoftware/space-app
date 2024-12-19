@@ -79,7 +79,7 @@ class DashboardFrame implements DashboardFrameInterface
         EastClient $client,
         ServerRequestInterface $serverRequest,
         User $user,
-        ClusterCatalog $catalog,
+        ClusterCatalog $clusterCatalog,
         string $clusterName,
         string $wildcard = '',
         ?Account $account = null,
@@ -90,7 +90,7 @@ class DashboardFrame implements DashboardFrameInterface
             $wildcard = '#/workloads';
         }
 
-        $clusterConfig = $catalog->getCluster($clusterName);
+        $clusterConfig = $clusterCatalog->getCluster($clusterName);
 
         $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
         $accountEnvironment = null;

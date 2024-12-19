@@ -43,7 +43,7 @@ use function explode;
 class ClusterAndEnvSelection
 {
     public function __construct(
-        private readonly ClusterCatalog $catalog,
+        private readonly ClusterCatalog $clusterCatalog,
     ) {
     }
 
@@ -75,7 +75,7 @@ class ClusterAndEnvSelection
 
                 if (empty($clusterSelectedStr) || $clusterSelectedStr === $currentValue) {
                     $clusterSelectedStr = $currentValue;
-                    $clusterSelected = $this->catalog->getCluster($accountEnv->getClusterName());
+                    $clusterSelected = $this->clusterCatalog->getCluster($accountEnv->getClusterName());
                     $clusterSlug = $clusterSelected->sluggyName;
                     $envName = $accountEnv->getEnvName();
                     $namespace = $accountEnv->getNamespace();
@@ -84,7 +84,7 @@ class ClusterAndEnvSelection
                 }
             }
         } else {
-            foreach ($this->catalog as $clusterConfig) {
+            foreach ($this->clusterCatalog as $clusterConfig) {
                 if (empty($clusterSelectedStr) || $clusterSelectedStr === $clusterConfig->sluggyName) {
                     $clusterSelectedStr = $clusterConfig->sluggyName;
                     $clusterSlug = $clusterConfig->sluggyName;

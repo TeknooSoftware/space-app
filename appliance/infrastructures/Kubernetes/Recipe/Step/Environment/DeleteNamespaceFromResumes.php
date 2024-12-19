@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
+use RuntimeException;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
@@ -39,9 +40,13 @@ class DeleteNamespaceFromResumes extends AbstractDeleteFromResumes
 {
     protected function delete(
         AccountEnvironment $accountEnvironment,
-        ClusterCatalog $catalog,
+        ?ClusterCatalog $clusterCatalog,
     ): void {
-        $clusterConfig = $catalog->getCluster($accountEnvironment->getClusterName());
+        if (!$clusterCatalog) {
+            throw new RuntimeException('Cluster catalog is required');
+        }
+
+        $clusterConfig = $clusterCatalog->getCluster($accountEnvironment->getClusterName());
         $client = $clusterConfig->getKubernetesClient();
         $namespace = $accountEnvironment->getNamespace();
 

@@ -46,7 +46,7 @@ interface DashboardFrameInterface
         EastClient $client,
         ServerRequestInterface $serverRequest,
         User $user,
-        ClusterCatalog $catalog,
+        ClusterCatalog $clusterCatalog,
         string $clusterName,
         string $wildcard = '',
         ?Account $account = null,

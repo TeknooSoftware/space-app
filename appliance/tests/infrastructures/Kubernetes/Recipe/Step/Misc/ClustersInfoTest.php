@@ -47,7 +47,7 @@ class ClustersInfoTest extends TestCase
 {
     private ClustersInfo $clustersInfo;
 
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     /**
      * {@inheritdoc}

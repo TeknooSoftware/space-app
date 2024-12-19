@@ -41,15 +41,15 @@ class NewJobSetDefaults
     public function __invoke(
         SpaceProject $project,
         NewJob $newJob,
-        ClusterCatalog $catalog,
+        ClusterCatalog $clusterCatalog,
     ): self {
         $project->project->visit(
             'clusters',
-            function (iterable $clusters) use ($newJob, $catalog): void {
+            function (iterable $clusters) use ($newJob, $clusterCatalog): void {
                 /** @var Cluster[] $clusters */
                 foreach ($clusters as $cluster) {
                     if ($cluster->isLocked()) {
-                        $config = $catalog->getCluster($cluster);
+                        $config = $clusterCatalog->getCluster($cluster);
 
                         $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
                     }

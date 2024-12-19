@@ -63,7 +63,7 @@ class NewJobSetDefaultsTest extends TestCase
             ($this->newJobSetDefaults)(
                 project: new SpaceProject($this->createMock(Project::class)),
                 newJob: $this->createMock(NewJob::class),
-                catalog: $this->createMock(ClusterCatalog::class),
+                clusterCatalog: $this->createMock(ClusterCatalog::class),
             ),
         );
     }

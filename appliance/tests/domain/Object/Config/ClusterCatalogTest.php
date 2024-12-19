@@ -43,7 +43,7 @@ use function iterator_to_array;
 #[CoversClass(ClusterCatalog::class)]
 class ClusterCatalogTest extends TestCase
 {
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     /**
      * {@inheritdoc}

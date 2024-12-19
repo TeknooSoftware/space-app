@@ -41,7 +41,7 @@ use Throwable;
 class Health implements HealthInterface
 {
     public function __construct(
-        private readonly ClusterCatalog $catalog,
+        private readonly ClusterCatalog $clusterCatalog,
     ) {
     }
 
@@ -51,7 +51,7 @@ class Health implements HealthInterface
     ): HealthInterface {
         $values = [];
 
-        foreach ($this->catalog as $cluster) {
+        foreach ($this->clusterCatalog as $cluster) {
             $client = $cluster->getKubernetesClient();
             try {
                 $values = [

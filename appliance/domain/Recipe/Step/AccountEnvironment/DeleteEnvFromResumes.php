@@ -44,7 +44,7 @@ class DeleteEnvFromResumes extends AbstractDeleteFromResumes
 
     protected function delete(
         AccountEnvironment $accountEnvironment,
-        ClusterCatalog $catalog,
+        ?ClusterCatalog $clusterCatalog,
     ): void {
         $this->writer->remove($accountEnvironment);
     }

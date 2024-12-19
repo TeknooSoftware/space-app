@@ -49,7 +49,7 @@ class UpdateProjectCredentialsFromAccount
         SpaceProject $spaceProject,
         AccountWallet $accountWallet,
         AccountRegistry $accountRegistry,
-        ClusterCatalog $catalog,
+        ClusterCatalog $clusterCatalog,
     ): UpdateProjectCredentialsFromAccount {
         $eastProject = $spaceProject->project;
         $eastProject->visit(
@@ -76,7 +76,7 @@ class UpdateProjectCredentialsFromAccount
                         ),
                     );
                 },
-                'clusters' => static function (iterable $clusters) use ($accountWallet, $catalog): void {
+                'clusters' => static function (iterable $clusters) use ($accountWallet, $clusterCatalog): void {
                     foreach ($clusters as $cluster) {
                         if ($cluster instanceof Cluster) {
                             $cluster->visit(
@@ -84,14 +84,14 @@ class UpdateProjectCredentialsFromAccount
                                 static function (Environment $environment) use (
                                     $cluster,
                                     $accountWallet,
-                                    $catalog,
+                                    $clusterCatalog,
                                 ): void {
                                     $clusterName = (string) $cluster;
                                     if (!$accountWallet->has($clusterName, $environment)) {
                                         return;
                                     }
 
-                                    $clusterConfig = $catalog->getCluster($clusterName);
+                                    $clusterConfig = $clusterCatalog->getCluster($clusterName);
                                     $cluster->setType($clusterConfig->type);
                                     $cluster->useHierarchicalNamespaces($clusterConfig->useHnc);
                                     $cluster->setAddress($clusterConfig->masterAddress);

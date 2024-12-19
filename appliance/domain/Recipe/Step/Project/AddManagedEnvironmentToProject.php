@@ -52,7 +52,7 @@ class AddManagedEnvironmentToProject
         ManagerInterface $manager,
         SpaceProject $spaceProject,
         AccountWallet $accountWallet,
-        ClusterCatalog $catalog,
+        ClusterCatalog $clusterCatalog,
     ): AddManagedEnvironmentToProject {
         if (
             empty($spaceProject->addClusterEnv)
@@ -91,7 +91,7 @@ class AddManagedEnvironmentToProject
         }
 
         try {
-            $clusterConfig = $catalog->getCluster($spaceProject->addClusterName);
+            $clusterConfig = $clusterCatalog->getCluster($spaceProject->addClusterName);
 
             $newCluster = new Cluster();
             $newCluster->setName($spaceProject->addClusterName);

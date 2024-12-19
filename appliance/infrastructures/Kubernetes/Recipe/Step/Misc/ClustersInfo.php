@@ -39,7 +39,7 @@ use Teknoo\Space\Object\DTO\AccountWallet;
 class ClustersInfo implements ClustersInfoInterface
 {
     public function __construct(
-        private readonly ClusterCatalog $catalog,
+        private readonly ClusterCatalog $clusterCatalog,
     ) {
     }
 
@@ -48,7 +48,7 @@ class ClustersInfo implements ClustersInfoInterface
         ?AccountWallet $accountWallet = null,
     ): ClustersInfoInterface {
         $parametersBag->set('accountWallet', $accountWallet);
-        $parametersBag->set('clusterCatalog', $this->catalog);
+        $parametersBag->set('clusterCatalog', $this->clusterCatalog);
 
         return $this;
     }

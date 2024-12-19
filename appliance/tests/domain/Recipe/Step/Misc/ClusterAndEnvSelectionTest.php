@@ -51,7 +51,7 @@ class ClusterAndEnvSelectionTest extends TestCase
 {
     private ClusterAndEnvSelection $clusterAndEnvSelection;
 
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     /**
      * {@inheritdoc}

@@ -51,7 +51,7 @@ class PrepareForm
      */
     public function __invoke(
         ManagerInterface $manager,
-        ClusterCatalog $catalog,
+        ClusterCatalog $clusterCatalog,
         ?SpaceAccount $spaceAccount = null,
         array $formOptions = [],
     ): self {
@@ -74,7 +74,7 @@ class PrepareForm
         $accountData->visit('subscriptionPlan', $promise);
 
         $formOptions['subscriptionPlan'] = $promise->fetchResult();
-        $formOptions['clusterCatalog'] = $catalog;
+        $formOptions['clusterCatalog'] = $clusterCatalog;
         $manager->updateWorkPlan([
             'formOptions' => $formOptions,
         ]);

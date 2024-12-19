@@ -42,13 +42,13 @@ abstract class AbstractDeleteFromResumes
 {
     abstract protected function delete(
         AccountEnvironment $accountEnvironment,
-        ClusterCatalog $catalog,
+        ?ClusterCatalog $clusterCatalog,
     ): void;
 
     public function __invoke(
         AccountWallet $wallet,
         SpaceAccount $spaceAccount,
-        ClusterCatalog $catalog,
+        ?ClusterCatalog $clusterCatalog = null,
     ): self {
         if (empty($spaceAccount->environmentResumes)) {
             return $this;
@@ -66,7 +66,7 @@ abstract class AbstractDeleteFromResumes
         /** @var AccountEnvironment $env */
         foreach ($wallet as $env) {
             if (!empty($env->getId()) && !isset($idsInResumes[$env->getId()])) {
-                $this->delete($env, $catalog);
+                $this->delete($env, $clusterCatalog);
             }
         }
 

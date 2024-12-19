@@ -48,6 +48,7 @@ space_project_edit_refresh_credentials:
         route: 'space_project_edit'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_project_new:
     path: '/project/new'

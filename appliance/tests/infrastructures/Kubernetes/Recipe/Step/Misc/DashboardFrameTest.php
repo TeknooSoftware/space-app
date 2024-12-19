@@ -59,7 +59,7 @@ class DashboardFrameTest extends TestCase
 
     private HttpMethodsClientInterface|MockObject $httpMethodsClient;
 
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     private ResponseFactoryInterface|MockObject $responseFactory;
 
@@ -135,7 +135,7 @@ class DashboardFrameTest extends TestCase
                 client: $this->createMock(EastClient::class),
                 serverRequest: $sRequest,
                 user: $this->createMock(User::class),
-                catalog: $this->catalog,
+                clusterCatalog: $this->catalog,
                 clusterName: 'clusterName',
                 wildcard: '*',
                 account: $this->createMock(Account::class),
