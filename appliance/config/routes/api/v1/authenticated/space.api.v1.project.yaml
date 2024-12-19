@@ -45,6 +45,7 @@ space_api_v1_project_edit_variables:
         populateFormOptions: true
         template: '@@TeknooSpace/api/Project/variables.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_project_list:
     path: '/projects'

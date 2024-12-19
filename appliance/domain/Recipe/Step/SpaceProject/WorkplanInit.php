@@ -28,6 +28,7 @@ namespace Teknoo\Space\Recipe\Step\SpaceProject;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\East\Paas\Object\Project\Executable;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 
@@ -62,9 +63,16 @@ class WorkplanInit
         if (null !== $projectInstance && $populateFormOptions) {
             $environmentsList = [];
 
-            $projectInstance->listMeYourEnvironments(
-                static function (Environment $env) use (&$environmentsList) {
-                    $environmentsList[(string) $env] = (string) $env;
+            $projectInstance->isInState(
+                [
+                    Executable::class,
+                ],
+                static function () use ($projectInstance, &$environmentsList): void {
+                    $projectInstance->listMeYourEnvironments(
+                        static function (Environment $env) use (&$environmentsList) {
+                            $environmentsList[(string) $env] = (string) $env;
+                        }
+                    );
                 }
             );
 
