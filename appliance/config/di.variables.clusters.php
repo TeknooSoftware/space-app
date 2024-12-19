@@ -126,6 +126,7 @@ return [
                 token: $definition['create_account']['token'],
                 supportRegistry: !empty($definition['support_registry']),
                 useHnc: !empty($definition['use_hnc']),
+                isExternal: false,
             );
         }
 

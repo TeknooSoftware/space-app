@@ -55,6 +55,7 @@ class Cluster
         public readonly string $token,
         public readonly bool $supportRegistry,
         public readonly bool $useHnc,
+        public readonly bool $isExternal,
     ) {
         if ($kubernetesClient instanceof Client) {
             $this->kubernetesClient = $kubernetesClient;

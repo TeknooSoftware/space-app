@@ -100,6 +100,10 @@ class ClusterCatalog implements IteratorAggregate
     public function getIterator(): Traversable
     {
         yield from $this->clusters;
+
+        if ($this->parentCatalog instanceof self) {
+            yield from $this->parentCatalog;
+        }
     }
 
     public function hasParentCatalog(): bool

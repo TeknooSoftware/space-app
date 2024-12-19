@@ -377,6 +377,7 @@ return [
         ): EditablePlanInterface {
             //After LoadObject
             $steps->add($container->get(ExtractFromAccountDTO::class), 11);
+            $steps->add($container->get(LoadAccountClusters::class), 12);
             $steps->add($container->get(LoadEnvironments::class), 12);
             $steps->add($container->get(CreateResumes::class), 13);
 

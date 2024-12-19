@@ -73,7 +73,7 @@ class AccountEnvironmentResumesType extends AbstractType
         $clustersList = [];
         /** @var Cluster $cluster */
         foreach ($clusterCatalog as $cluster) {
-            if (in_array($cluster->name, $clustersInPlan)) {
+            if (in_array($cluster->name, $clustersInPlan) || $cluster->isExternal) {
                 $clustersList[$cluster->name] = $cluster->name;
             }
         }

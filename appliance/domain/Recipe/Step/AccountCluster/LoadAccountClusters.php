@@ -29,11 +29,9 @@ use DomainException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\AccountClusterLoader;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Query\AccountCluster\LoadFromAccountQuery;
@@ -97,8 +95,10 @@ class LoadAccountClusters
         $fetchedPromise = new Promise(
             /** @var iterable<AccountCluster> $fetchedClusters */
             function (iterable $fetchedClusters) use ($manager, $clusterCatalog) {
+                $updatedClusterCatalog = $this->generateCatalog($fetchedClusters, $clusterCatalog);
                 $manager->updateWorkPlan([
-                    ClusterCatalog::class => $this->generateCatalog($fetchedClusters, $clusterCatalog),
+                    ClusterCatalog::class => $updatedClusterCatalog,
+                    'clusterCatalog' => $updatedClusterCatalog,
                 ]);
             },
             static fn (Throwable $error) => $manager->error(

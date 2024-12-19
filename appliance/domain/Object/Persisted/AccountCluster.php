@@ -225,6 +225,7 @@ class AccountCluster implements
             token: $this->token,
             supportRegistry: $this->supportRegistry,
             useHnc: $this->useHnc,
+            isExternal: true,
         );
     }
 
