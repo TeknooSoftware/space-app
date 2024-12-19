@@ -10,6 +10,7 @@ space_api_v1_account_settings:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
         formOptions:
             enableEnvManagement: true
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
         template: '@@TeknooSpace/api/Account/settings.json.twig'
