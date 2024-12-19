@@ -74,12 +74,12 @@ class ClusterAndEnvSelectionTest extends TestCase
             useHnc: false,
         );
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['clusterName' => $clusterConfig],
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->clusterAndEnvSelection = new ClusterAndEnvSelection($this->catalog);
+        $this->clusterAndEnvSelection = new ClusterAndEnvSelection($this->clusterCatalog);
     }
 
     public function testInvokeWithoutAccount(): void

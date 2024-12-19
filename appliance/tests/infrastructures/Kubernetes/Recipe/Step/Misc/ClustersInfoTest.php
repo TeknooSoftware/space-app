@@ -68,12 +68,12 @@ class ClustersInfoTest extends TestCase
             useHnc: false,
         );
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['clusterName' => $clusterConfig],
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->clustersInfo = new ClustersInfo($this->catalog);
+        $this->clustersInfo = new ClustersInfo($this->clusterCatalog);
     }
 
     public function testInvoke(): void

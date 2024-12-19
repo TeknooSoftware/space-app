@@ -52,7 +52,7 @@ class ClusterCatalogTest extends TestCase
     {
         parent::setUp();
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['Foo' => $this->createMock(Cluster::class)],
             ['foo' => 'Foo'],
         );
@@ -62,12 +62,12 @@ class ClusterCatalogTest extends TestCase
     {
         self::assertInstanceOf(
             Cluster::class,
-            iterator_to_array($this->catalog)['Foo'],
+            iterator_to_array($this->clusterCatalog)['Foo'],
         );
 
         self::assertInstanceOf(
             Cluster::class,
-            $this->catalog->getCluster('foo'),
+            $this->clusterCatalog->getCluster('foo'),
         );
     }
 }

@@ -85,7 +85,7 @@ class DashboardFrameTest extends TestCase
             useHnc: false,
         );
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['clusterName' => $clusterConfig],
             ['cluster-name' => 'clusterName'],
         );
@@ -135,7 +135,7 @@ class DashboardFrameTest extends TestCase
                 client: $this->createMock(EastClient::class),
                 serverRequest: $sRequest,
                 user: $this->createMock(User::class),
-                clusterCatalog: $this->catalog,
+                clusterCatalog: $this->clusterCatalog,
                 clusterName: 'clusterName',
                 wildcard: '*',
                 account: $this->createMock(Account::class),
