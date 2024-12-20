@@ -71,6 +71,9 @@ class SpaceSubscriptionType extends AbstractType
         $builder->add(
             'account',
             SpaceAccountType::class,
+            [
+                'doctrine_type' => $options['doctrine_type'] ?? '',
+            ]
         );
 
         if ($this->enableCodeRestriction) {
@@ -119,6 +122,9 @@ class SpaceSubscriptionType extends AbstractType
         $resolver->setDefaults([
             'data_class' => SpaceSubscriptionDTO::class,
         ]);
+
+        $resolver->setRequired(['doctrine_type']);
+        $resolver->setAllowedTypes('doctrine_type', 'string');
 
         return $this;
     }
