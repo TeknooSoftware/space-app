@@ -94,16 +94,16 @@ class JobRestartTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->jobRestart = new JobRestart(
-            $this->recipe,
-            $this->loadObject,
-            $this->objectAccessControl,
-            $this->createObject,
-            $this->loadPersistedVariablesForJob,
-            $this->prepareNewJobForm,
-            $this->formHandling,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            objectAccessControl: $this->objectAccessControl,
+            createObject: $this->createObject,
+            loadPersistedVariablesForJob: $this->loadPersistedVariablesForJob,
+            prepareNewJobForm: $this->prepareNewJobForm,
+            formHandling: $this->formHandling,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

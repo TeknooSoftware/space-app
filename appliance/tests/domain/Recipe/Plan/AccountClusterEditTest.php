@@ -13,7 +13,7 @@
  *
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
- * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterEdit@teknoo.software)
  *
  * @link        https://teknoo.software/applications/space Project website
  *
@@ -31,41 +31,48 @@ use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormProcessingInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
-use Teknoo\East\Common\Recipe\Step\CreateObject;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
+use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
+use Teknoo\East\Common\Recipe\Step\SaveObject;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
-use Teknoo\Space\Recipe\Plan\Contact;
+use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 
 /**
- * Class ContactTest.
+ * Class AccountClusterEditTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
- * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterEdit@teknoo.software)
  * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(Contact::class)]
-class ContactTest extends TestCase
+#[CoversClass(AccountClusterEdit::class)]
+class AccountClusterEditTest extends TestCase
 {
-    private Contact $contact;
+    private AccountClusterEdit $AccountClusterEdit;
 
     private RecipeInterface|MockObject $recipe;
 
-    private CreateObject|MockObject $createObject;
+    private JumpIfNot|MockObject $jumpIfNot;
+
+    private LoadObject|MockObject $loadObject;
+
+    private ObjectAccessControlInterface|MockObject $objectAccessControl;
 
     private FormHandlingInterface|MockObject $formHandling;
 
     private FormProcessingInterface|MockObject $formProcessing;
 
-    private SendEmailInterface|MockObject $sendEmail;
+    private SaveObject|MockObject $saveObject;
 
-    private RedirectClientInterface|MockObject $redirectClient;
+    private InjectToView|MockObject $injectToView;
 
     private RenderFormInterface|MockObject $renderForm;
 
@@ -81,25 +88,29 @@ class ContactTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->createObject = $this->createMock(CreateObject::class);
+        $this->jumpIfNot = $this->createMock(JumpIfNot::class);
+        $this->loadObject = $this->createMock(LoadObject::class);
+        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->formHandling = $this->createMock(FormHandlingInterface::class);
         $this->formProcessing = $this->createMock(FormProcessingInterface::class);
-        $this->sendEmail = $this->createMock(SendEmailInterface::class);
+        $this->saveObject = $this->createMock(SaveObject::class);
+        $this->injectToView = $this->createMock(InjectToView::class);
         $this->redirectClient = $this->createMock(RedirectClientInterface::class);
         $this->renderForm = $this->createMock(RenderFormInterface::class);
         $this->renderError = $this->createMock(RenderError::class);
-
         $this->defaultErrorTemplate = '42';
 
-        $this->contact = new Contact(
+        $this->AccountClusterEdit = new AccountClusterEdit(
             recipe: $this->recipe,
-            createObject: $this->createObject,
+            jumpIfNot: $this->jumpIfNot,
+            loadObject: $this->loadObject,
             formHandling: $this->formHandling,
             formProcessing: $this->formProcessing,
-            sendEmail: $this->sendEmail,
-            redirectClient: $this->redirectClient,
+            saveObject: $this->saveObject,
+            injectToView: $this->injectToView,
             renderForm: $this->renderForm,
             renderError: $this->renderError,
+            objectAccessControl: $this->objectAccessControl,
             defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
@@ -107,8 +118,8 @@ class ContactTest extends TestCase
     public function testConstruct(): void
     {
         self::assertInstanceOf(
-            Contact::class,
-            $this->contact,
+            AccountClusterEdit::class,
+            $this->AccountClusterEdit,
         );
     }
 
@@ -116,7 +127,7 @@ class ContactTest extends TestCase
     {
         self::assertInstanceOf(
             EditablePlanInterface::class,
-            $this->contact->train(
+            $this->AccountClusterEdit->train(
                 $this->createMock(ChefInterface::class),
             )
         );

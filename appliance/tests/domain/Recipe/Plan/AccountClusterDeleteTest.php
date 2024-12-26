@@ -13,7 +13,7 @@
  *
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
- * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterDelete@teknoo.software)
  *
  * @link        https://teknoo.software/applications/space Project website
  *
@@ -30,41 +30,52 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
+use Teknoo\East\Common\Recipe\Step\DeleteObject;
+use Teknoo\East\Common\Recipe\Step\JumpIf;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
-use Teknoo\Recipe\Recipe;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface;
-use Teknoo\Space\Recipe\Plan\JobPending;
+use Teknoo\Space\Recipe\Plan\AccountClusterDelete;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
 
 /**
- * Class JobPendingTest.
+ * Class AccountClusterDeleteTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
- * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterDelete@teknoo.software)
  * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(JobPending::class)]
-class JobPendingTest extends TestCase
+#[CoversClass(AccountClusterDelete::class)]
+class AccountClusterDeleteTest extends TestCase
 {
-    private JobPending $jobPending;
+    private AccountClusterDelete $AccountClusterDelete;
 
     private RecipeInterface|MockObject $recipe;
 
+    private JumpIfNot|MockObject $jumpIfNot;
+
     private LoadObject|MockObject $loadObject;
 
-    private FetchJobIdFromPendingInterface|MockObject $fetchJobIdFromPendingInterface;
+    private InjectToView|MockObject $injectToView;
+
+    private ObjectAccessControlInterface|MockObject $objectAccessControl;
+
+    private DeleteObject|MockObject $deleteObject;
+
+    private JumpIf|MockObject $jumpIf;
+
+    private RedirectClientInterface|MockObject $redirectClientInterface;
 
     private Render|MockObject $render;
 
     private RenderError|MockObject $renderError;
-
-    private ObjectAccessControlInterface|MockObject $objectAccessControl;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -75,20 +86,31 @@ class JobPendingTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(Recipe::class);
+        $this->recipe = $this->createMock(RecipeInterface::class);
+        $this->jumpIfNot = $this->createMock(JumpIfNot::class);
         $this->loadObject = $this->createMock(LoadObject::class);
-        $this->fetchJobIdFromPendingInterface = $this->createMock(FetchJobIdFromPendingInterface::class);
+        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+        $this->deleteObject = $this->createMock(DeleteObject::class);
+        $this->jumpIf = $this->createMock(JumpIf::class);
+        $this->redirectClientInterface = $this->createMock(RedirectClientInterface::class);
+        $this->injectToView = $this->createMock(InjectToView::class);
+        $this->redirectClient = $this->createMock(RedirectClientInterface::class);
         $this->render = $this->createMock(Render::class);
         $this->renderError = $this->createMock(RenderError::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+
         $this->defaultErrorTemplate = '42';
-        $this->jobPending = new JobPending(
+
+        $this->AccountClusterDelete = new AccountClusterDelete(
             recipe: $this->recipe,
+            jumpIfNot: $this->jumpIfNot,
             loadObject: $this->loadObject,
-            objectAccessControl: $this->objectAccessControl,
-            fetchJobIdFromPending: $this->fetchJobIdFromPendingInterface,
+            injectToView: $this->injectToView,
+            deleteObject: $this->deleteObject,
+            jumpIf: $this->jumpIf,
+            redirectClient: $this->redirectClientInterface,
             render: $this->render,
             renderError: $this->renderError,
+            objectAccessControl: $this->objectAccessControl,
             defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
@@ -96,8 +118,8 @@ class JobPendingTest extends TestCase
     public function testConstruct(): void
     {
         self::assertInstanceOf(
-            JobPending::class,
-            $this->jobPending,
+            AccountClusterDelete::class,
+            $this->AccountClusterDelete,
         );
     }
 
@@ -105,7 +127,7 @@ class JobPendingTest extends TestCase
     {
         self::assertInstanceOf(
             EditablePlanInterface::class,
-            $this->jobPending->train(
+            $this->AccountClusterDelete->train(
                 $this->createMock(ChefInterface::class),
             )
         );

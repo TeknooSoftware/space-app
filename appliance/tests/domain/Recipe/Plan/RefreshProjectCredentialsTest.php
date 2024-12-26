@@ -102,18 +102,18 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->refreshProjectCredentials = new RefreshProjectCredentials(
-            $this->recipe,
-            $this->loadObject,
-            $this->objectAccessControl,
-            $this->loadAccountFromProject,
-            $this->loadCredentials,
-            $this->loadRegistryCredential,
-            $this->updateProjectCredentialsFromAccount,
-            $this->saveObject,
-            $this->spaceProjectPrepareRedirection,
-            $this->redirectClient,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            objectAccessControl: $this->objectAccessControl,
+            loadAccountFromProject: $this->loadAccountFromProject,
+            loadCredentials: $this->loadCredentials,
+            loadRegistryCredential: $this->loadRegistryCredential,
+            updateProjectCredentialsFromAccount: $this->updateProjectCredentialsFromAccount,
+            saveObject: $this->saveObject,
+            spaceProjectPrepareRedirection: $this->spaceProjectPrepareRedirection,
+            redirectClient: $this->redirectClient,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

@@ -87,14 +87,14 @@ class AccountEditSettingsTest extends TestCase
         $this->defaultErrorTemplate = '42';
 
         $this->accountEditSettings = new AccountEditSettings(
-            $this->recipe,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->saveObject,
-            $this->renderForm,
-            $this->renderError,
-            $this->objectClass,
-            $this->defaultErrorTemplate
+            recipe: $this->recipe,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            saveObject: $this->saveObject,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            objectClass: $this->objectClass,
+            defaultErrorTemplate: $this->defaultErrorTemplate
         );
     }
 

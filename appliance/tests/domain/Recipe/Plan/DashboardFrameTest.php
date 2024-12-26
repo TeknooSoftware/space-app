@@ -74,11 +74,11 @@ class DashboardFrameTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->dashboardFrame = new DashboardFrame(
-            $this->recipe,
-            $this->loadCredentials,
-            $this->dashboard,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadEnvironments: $this->loadCredentials,
+            dashboard: $this->dashboard,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

@@ -90,15 +90,15 @@ class JobGetTest extends TestCase
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->jobGet = new JobGet(
-            $this->recipe,
-            $this->loadObject,
-            $this->extractProject,
-            $this->loadProjectMetadata,
-            $this->injectToViewMetadata,
-            $this->render,
-            $this->renderError,
-            $this->objectAccessControl,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            extractProject: $this->extractProject,
+            loadProjectMetadata: $this->loadProjectMetadata,
+            injectToViewMetadata: $this->injectToViewMetadata,
+            render: $this->render,
+            renderError: $this->renderError,
+            objectAccessControl: $this->objectAccessControl,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

@@ -97,17 +97,17 @@ class ProjectListTest extends TestCase
         $this->defaultErrorTemplate = '42';
         $this->loadListObjectsWiths = [];
         $this->projectList = new ProjectList(
-            $this->recipe,
-            $this->extractPage,
-            $this->extractOrder,
-            $this->prepareCriteria,
-            $this->loadListObjects,
-            $this->renderList,
-            $this->renderError,
-            $this->searchFormLoader,
-            $this->listObjectsAccessControl,
-            $this->defaultErrorTemplate,
-            $this->loadListObjectsWiths,
+            recipe: $this->recipe,
+            extractPage: $this->extractPage,
+            extractOrder: $this->extractOrder,
+            prepareCriteria: $this->prepareCriteria,
+            loadListObjects: $this->loadListObjects,
+            renderList: $this->renderList,
+            renderError: $this->renderError,
+            searchFormLoader: $this->searchFormLoader,
+            listObjectsAccessControl: $this->listObjectsAccessControl,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
+            loadListObjectsWiths: $this->loadListObjectsWiths,
         );
     }
 

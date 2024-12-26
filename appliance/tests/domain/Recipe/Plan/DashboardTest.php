@@ -86,14 +86,14 @@ class DashboardTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->dashboard = new Dashboard(
-            $this->recipe,
-            $this->health,
-            $this->loadCredentials,
-            $this->clustersInfo,
-            $this->clusterAndEnvSelection,
-            $this->render,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            health: $this->health,
+            loadEnvironments: $this->loadCredentials,
+            clustersInfo: $this->clustersInfo,
+            clusterAndEnvSelection: $this->clusterAndEnvSelection,
+            render: $this->render,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

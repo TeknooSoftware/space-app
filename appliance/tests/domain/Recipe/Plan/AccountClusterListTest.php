@@ -13,7 +13,7 @@
  *
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
- * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterList@teknoo.software)
  *
  * @link        https://teknoo.software/applications/space Project website
  *
@@ -30,9 +30,11 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\SearchFormLoaderInterface;
 use Teknoo\East\Common\Recipe\Step\ExtractOrder;
 use Teknoo\East\Common\Recipe\Step\ExtractPage;
+use Teknoo\East\Common\Recipe\Step\JumpIfNot;
 use Teknoo\East\Common\Recipe\Step\LoadListObjects;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\RenderError;
@@ -40,32 +42,37 @@ use Teknoo\East\Common\Recipe\Step\RenderList;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Recipe\Plan\JobList;
-use Teknoo\Space\Recipe\Step\Job\PrepareCriteria;
+use Teknoo\Space\Recipe\Plan\AccountClusterList;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
+use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
- * Class JobListTest.
+ * Class AccountClusterListTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
- * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterList@teknoo.software)
  * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(JobList::class)]
-class JobListTest extends TestCase
+#[CoversClass(AccountClusterList::class)]
+class AccountClusterListTest extends TestCase
 {
-    private JobList $jobList;
+    private AccountClusterList $AccountClusterList;
 
     private RecipeInterface|MockObject $recipe;
 
+    private JumpIfNot|MockObject $jumpIfNot;
+
     private LoadObject|MockObject $loadObject;
+
+    private ObjectAccessControlInterface|MockObject $objectAccessControl;
 
     private ExtractPage|MockObject $extractPage;
 
     private ExtractOrder|MockObject $extractOrder;
 
-    private PrepareCriteria|MockObject $jobPrepareCriteria;
+    private PrepareCriteria|MockObject $prepareCriteria;
 
     private LoadListObjects|MockObject $loadListObjects;
 
@@ -89,24 +96,31 @@ class JobListTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
         $this->extractPage = $this->createMock(ExtractPage::class);
         $this->extractOrder = $this->createMock(ExtractOrder::class);
-        $this->jobPrepareCriteria = $this->createMock(PrepareCriteria::class);
+        $this->jumpIfNot = $this->createMock(JumpIfNot::class);
+        $this->loadObject = $this->createMock(LoadObject::class);
+        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+        $this->prepareCriteria = $this->createMock(PrepareCriteria::class);
         $this->loadListObjects = $this->createMock(LoadListObjects::class);
+        $this->injectToView = $this->createMock(InjectToView::class);
         $this->renderList = $this->createMock(RenderList::class);
         $this->renderError = $this->createMock(RenderError::class);
         $this->searchFormLoader = $this->createMock(SearchFormLoaderInterface::class);
         $this->listObjectsAccessControl = $this->createMock(ListObjectsAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->loadListObjectsWiths = [];
-        $this->jobList = new JobList(
+
+        $this->AccountClusterList = new AccountClusterList(
             recipe: $this->recipe,
-            loadObject: $this->loadObject,
             extractPage: $this->extractPage,
             extractOrder: $this->extractOrder,
-            jobPrepareCriteria: $this->jobPrepareCriteria,
+            jumpIfNot: $this->jumpIfNot,
+            loadObject: $this->loadObject,
+            objectAccessControl: $this->objectAccessControl,
+            prepareCriteria: $this->prepareCriteria,
             loadListObjects: $this->loadListObjects,
+            injectToView: $this->injectToView,
             renderList: $this->renderList,
             renderError: $this->renderError,
             searchFormLoader: $this->searchFormLoader,
@@ -119,8 +133,8 @@ class JobListTest extends TestCase
     public function testConstruct(): void
     {
         self::assertInstanceOf(
-            JobList::class,
-            $this->jobList,
+            AccountClusterList::class,
+            $this->AccountClusterList,
         );
     }
 
@@ -128,7 +142,7 @@ class JobListTest extends TestCase
     {
         self::assertInstanceOf(
             EditablePlanInterface::class,
-            $this->jobList->train(
+            $this->AccountClusterList->train(
                 $this->createMock(ChefInterface::class),
             )
         );

@@ -28,24 +28,25 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\Space\Object\Persisted\AccountEnvironment;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
-use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Loader\AccountEnvironmentLoader;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
- * Class RemoveCredentialTest.
+ * Class LoadCredentialsTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(RemoveEnvironment::class)]
-class RemoveCredentialTest extends TestCase
+#[CoversClass(LoadEnvironments::class)]
+class LoadEnvironmentsTest extends TestCase
 {
-    private RemoveEnvironment $removeCredentials;
+    private LoadEnvironments $loadCredentials;
 
-    private AccountEnvironmentWriter|MockObject $writer;
+    private AccountEnvironmentLoader|MockObject $loader;
 
     /**
      * {@inheritdoc}
@@ -54,16 +55,18 @@ class RemoveCredentialTest extends TestCase
     {
         parent::setUp();
 
-        $this->writer = $this->createMock(AccountEnvironmentWriter::class);
-        $this->removeCredentials = new RemoveEnvironment($this->writer);
+        $this->loader = $this->createMock(AccountEnvironmentLoader::class);
+        $this->loadCredentials = new LoadEnvironments($this->loader);
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            RemoveEnvironment::class,
-            ($this->removeCredentials)(
-                $this->createMock(AccountEnvironment::class),
+            LoadEnvironments::class,
+            ($this->loadCredentials)(
+                $this->createMock(ManagerInterface::class),
+                $this->createMock(Account::class),
+                true,
             ),
         );
     }

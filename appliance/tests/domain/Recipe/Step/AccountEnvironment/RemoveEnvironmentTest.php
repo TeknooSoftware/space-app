@@ -28,25 +28,24 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Loader\AccountEnvironmentLoader;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
- * Class LoadCredentialsTest.
+ * Class RemoveCredentialTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(LoadEnvironments::class)]
-class LoadCredentialsTest extends TestCase
+#[CoversClass(RemoveEnvironment::class)]
+class RemoveEnvironmentTest extends TestCase
 {
-    private LoadEnvironments $loadCredentials;
+    private RemoveEnvironment $removeCredentials;
 
-    private AccountEnvironmentLoader|MockObject $loader;
+    private AccountEnvironmentWriter|MockObject $writer;
 
     /**
      * {@inheritdoc}
@@ -55,18 +54,16 @@ class LoadCredentialsTest extends TestCase
     {
         parent::setUp();
 
-        $this->loader = $this->createMock(AccountEnvironmentLoader::class);
-        $this->loadCredentials = new LoadEnvironments($this->loader);
+        $this->writer = $this->createMock(AccountEnvironmentWriter::class);
+        $this->removeCredentials = new RemoveEnvironment($this->writer);
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            LoadEnvironments::class,
-            ($this->loadCredentials)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
-                true,
+            RemoveEnvironment::class,
+            ($this->removeCredentials)(
+                $this->createMock(AccountEnvironment::class),
             ),
         );
     }

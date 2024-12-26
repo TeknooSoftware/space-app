@@ -94,16 +94,16 @@ class ProjectNewTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->projectNew = new ProjectNew(
-            $this->recipe,
-            $this->objectAccessControl,
-            $this->createObject,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->saveObject,
-            $this->redirectClient,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            objectAccessControl: $this->objectAccessControl,
+            createObject: $this->createObject,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            saveObject: $this->saveObject,
+            redirectClient: $this->redirectClient,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

@@ -95,16 +95,16 @@ class SubscriptionTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->subscription = new Subscription(
-            $this->recipe,
-            $this->createObject,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->createUser,
-            $this->createAccount,
-            $this->loginUser,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            createObject: $this->createObject,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            createUser: $this->createUser,
+            createAccount: $this->createAccount,
+            loginUser: $this->loginUser,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

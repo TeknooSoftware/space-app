@@ -95,16 +95,16 @@ class UserGetJwtTokenTest extends TestCase
         $this->defaultErrorTemplate = '42';
 
         $this->userGetJwtToken = new UserGetJwtToken(
-            $this->recipe,
-            $this->createObject,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->jwtCreateToken,
-            $this->render,
-            $this->stop,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate
+            recipe: $this->recipe,
+            createObject: $this->createObject,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            jwtCreateToken: $this->jwtCreateToken,
+            render: $this->render,
+            stop: $this->stop,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate
         );
     }
 
