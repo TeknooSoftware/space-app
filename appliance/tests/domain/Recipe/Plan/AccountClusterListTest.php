@@ -76,6 +76,8 @@ class AccountClusterListTest extends TestCase
 
     private LoadListObjects|MockObject $loadListObjects;
 
+    private InjectToView|MockObject $injectToView;
+
     private RenderList|MockObject $renderList;
 
     private RenderError|MockObject $renderError;

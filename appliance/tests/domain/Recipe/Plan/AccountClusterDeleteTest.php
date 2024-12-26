@@ -71,7 +71,7 @@ class AccountClusterDeleteTest extends TestCase
 
     private JumpIf|MockObject $jumpIf;
 
-    private RedirectClientInterface|MockObject $redirectClientInterface;
+    private RedirectClientInterface|MockObject $redirectClient;
 
     private Render|MockObject $render;
 
@@ -92,9 +92,8 @@ class AccountClusterDeleteTest extends TestCase
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->deleteObject = $this->createMock(DeleteObject::class);
         $this->jumpIf = $this->createMock(JumpIf::class);
-        $this->redirectClientInterface = $this->createMock(RedirectClientInterface::class);
-        $this->injectToView = $this->createMock(InjectToView::class);
         $this->redirectClient = $this->createMock(RedirectClientInterface::class);
+        $this->injectToView = $this->createMock(InjectToView::class);
         $this->render = $this->createMock(Render::class);
         $this->renderError = $this->createMock(RenderError::class);
 
@@ -107,7 +106,7 @@ class AccountClusterDeleteTest extends TestCase
             injectToView: $this->injectToView,
             deleteObject: $this->deleteObject,
             jumpIf: $this->jumpIf,
-            redirectClient: $this->redirectClientInterface,
+            redirectClient: $this->redirectClient,
             render: $this->render,
             renderError: $this->renderError,
             objectAccessControl: $this->objectAccessControl,

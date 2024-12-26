@@ -74,6 +74,8 @@ class AccountClusterEditTest extends TestCase
 
     private InjectToView|MockObject $injectToView;
 
+    private RedirectClientInterface|MockObject $redirectClient;
+
     private RenderFormInterface|MockObject $renderForm;
 
     private RenderError|MockObject $renderError;
