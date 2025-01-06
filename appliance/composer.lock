@@ -902,16 +902,16 @@
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
-            "version": "5.1.1",
+            "version": "5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoDBBundle.git",
-                "reference": "0952d9af5e8d2b9423cd535e05d96da551fb0ba8"
+                "reference": "08b29d4000771b2a6ff863de40fdc2cf4a9da429"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/0952d9af5e8d2b9423cd535e05d96da551fb0ba8",
-                "reference": "0952d9af5e8d2b9423cd535e05d96da551fb0ba8",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/08b29d4000771b2a6ff863de40fdc2cf4a9da429",
+                "reference": "08b29d4000771b2a6ff863de40fdc2cf4a9da429",
                 "shasum": ""
             },
             "require": {
@@ -982,9 +982,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineMongoDBBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.1.1"
+                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.1.2"
             },
-            "time": "2024-12-16T08:30:40+00:00"
+            "time": "2025-01-05T13:51:23+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -12905,16 +12905,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.14",
+            "version": "1.12.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "e73868f809e68fff33be961ad4946e2e43ec9e38"
+                "reference": "c91d4e8bc056f46cf653656e6f71004b254574d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e73868f809e68fff33be961ad4946e2e43ec9e38",
-                "reference": "e73868f809e68fff33be961ad4946e2e43ec9e38",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c91d4e8bc056f46cf653656e6f71004b254574d1",
+                "reference": "c91d4e8bc056f46cf653656e6f71004b254574d1",
                 "shasum": ""
             },
             "require": {
@@ -12959,7 +12959,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-31T07:26:13+00:00"
+            "time": "2025-01-05T16:40:22+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
