@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "572c1988b8c514d509ad5d07737bbc7d",
+    "content-hash": "9b583acd02467515c6d58759cf8aa39d",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11155,16 +11155,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "4.2.3",
+            "version": "4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "95a52541f00edd80f0d37328bd66ca54eddbde6c"
+                "reference": "ba461987a05fd931a7c56f0ae360965df63939a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/95a52541f00edd80f0d37328bd66ca54eddbde6c",
-                "reference": "95a52541f00edd80f0d37328bd66ca54eddbde6c",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/ba461987a05fd931a7c56f0ae360965df63939a9",
+                "reference": "ba461987a05fd931a7c56f0ae360965df63939a9",
                 "shasum": ""
             },
             "require": {
@@ -11291,20 +11291,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-12-18T07:13:25+00:00"
+            "time": "2025-01-07T15:08:39+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "4.2.3",
+            "version": "4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "8bdab5fbea83bf114f5c525c8bff240caa3c5d65"
+                "reference": "14b52e4aea2a05a1442afec0ea2c7d941307f115"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/8bdab5fbea83bf114f5c525c8bff240caa3c5d65",
-                "reference": "8bdab5fbea83bf114f5c525c8bff240caa3c5d65",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/14b52e4aea2a05a1442afec0ea2c7d941307f115",
+                "reference": "14b52e4aea2a05a1442afec0ea2c7d941307f115",
                 "shasum": ""
             },
             "require": {
@@ -11343,7 +11343,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.1",
                 "teknoo/east-common-symfony": "^3.0.4",
                 "teknoo/east-foundation-symfony": "^8.0.3",
-                "teknoo/east-paas": "^4.2.3",
+                "teknoo/east-paas": "^4.2.4",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/kubernetes-client": "^1.7",
                 "teknoo/recipe": "^6.0.1",
@@ -11405,7 +11405,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-12-18T07:21:13+00:00"
+            "time": "2025-01-07T15:09:33+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -11644,16 +11644,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "6.4.1",
+            "version": "6.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "4623c447018132558e4ea0fa07b9b9dbeb2c2662"
+                "reference": "6c4e2ead2ab8f5cab40cddb90dab8de8019327ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/4623c447018132558e4ea0fa07b9b9dbeb2c2662",
-                "reference": "4623c447018132558e4ea0fa07b9b9dbeb2c2662",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/6c4e2ead2ab8f5cab40cddb90dab8de8019327ef",
+                "reference": "6c4e2ead2ab8f5cab40cddb90dab8de8019327ef",
                 "shasum": ""
             },
             "require": {
@@ -11661,11 +11661,11 @@
                 "teknoo/immutable": "^3.0.17"
             },
             "require-dev": {
-                "doctrine/mongodb-odm": "^2.6.2",
-                "doctrine/orm": "^2.17.2||^3",
+                "doctrine/mongodb-odm": "^2.9.1",
+                "doctrine/orm": "^3.3.1",
                 "nikic/php-parser": "^4.19.1",
                 "phpstan/phpstan": "^1.12.3",
-                "phpunit/phpunit": "^10.5.34|^11",
+                "phpunit/phpunit": "^10.5.34||^11",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.10.2",
                 "symfony/property-access": "^6.3||^7.0"
@@ -11703,7 +11703,7 @@
                 }
             ],
             "description": "Library to create classes following the State pattern in PHP. This can be a cleaner way for an object to change its behavior at runtime without resorting to large monolithic conditional statements and this improve maintainability and workflow writing.",
-            "homepage": "http://teknoo.software/states",
+            "homepage": "https://teknoo.software/libraries/states",
             "keywords": [
                 "behavioral software design pattern",
                 "class",
@@ -11726,7 +11726,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-10-11T13:24:26+00:00"
+            "time": "2025-01-07T16:16:52+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
