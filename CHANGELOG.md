@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.5] - 2025-01-07
+### Stable Version
+- Upgrading to Symfony 7.2.2
+- Upgrading Illuminates libraries
+- Upgrading Doctrine
+- Upgrading Teknoo libraries
+- Upgrading Twig
+
 ## [1.0.4] - 2024-11-29
 ### Stable Version
 - Upgrading to Symfony 7.2.

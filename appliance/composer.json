@@ -84,7 +84,7 @@
         "symfony/property-info": "*",
         "symfony/psr-http-message-bridge": "^6.4||^7.2",
         "symfony/runtime": "*",
-        "symfony/security-bundle": "*",
+        "symfony/security-bundle": "*,!=7.2.2",
         "symfony/security-http": "*",
         "symfony/serializer": "*",
         "symfony/string": "*",
