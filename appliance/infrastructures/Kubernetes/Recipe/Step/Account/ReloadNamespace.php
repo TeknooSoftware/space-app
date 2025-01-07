@@ -62,8 +62,6 @@ class ReloadNamespace
 
                     return $this;
                 }
-
-                public function getAccount(): Account {}
             }
         );
 
