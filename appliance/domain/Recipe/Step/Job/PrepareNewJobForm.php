@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Job;
 
+use RuntimeException;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Environment;
@@ -55,6 +56,10 @@ class PrepareNewJobForm
     ): self {
         if ($projectInstance instanceof SpaceProject) {
             $projectInstance = $projectInstance->project;
+        }
+
+        if (!$projectInstance->isRunnable()) {
+            throw new RuntimeException('Project is not fully configured');
         }
 
         $newJobInstance->projectId = $projectInstance->getId();
