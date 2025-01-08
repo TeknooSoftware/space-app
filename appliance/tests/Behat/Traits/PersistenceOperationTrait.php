@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Given;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
@@ -299,9 +300,7 @@ trait PersistenceOperationTrait
         );
     }
 
-    /**
-     * @Given A memory document database
-     */
+    #[Given('A memory document database')]
     public function aMemoryDocumentDatabase(): void
     {
         $this->sfContainer->set(ObjectManager::class, $this->buildObjectManager());

@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Given;
+use Behat\Step\Then;
 use Http\Adapter\Guzzle7\Client as ClientAlias;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
@@ -52,9 +54,7 @@ use function trim;
  */
 trait KubernetesTrait
 {
-    /**
-     * @Given A kubernetes client
-     */
+    #[Given('A kubernetes client')]
     public function aKubernetesClient(): void
     {
         MockClientInstantiator::$testsContext = $this;
@@ -82,9 +82,7 @@ trait KubernetesTrait
         $this->deletedManifests[$uri] = true;
     }
 
-    /**
-     * @Then some Kubernetes manifests have been created and executed
-     */
+    #[Then('some Kubernetes manifests have been created and executed')]
     public function someKubernetesManifestsHaveBeenCreatedAndExecuted(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -116,25 +114,19 @@ trait KubernetesTrait
         );
     }
 
-    /**
-     * @Then no Kubernetes manifests must not be created
-     */
+    #[Then('no Kubernetes manifests must not be created')]
     public function noKubernetesManifestsMustNotBeCreated(): void
     {
         Assert::assertEmpty($this->manifests);
     }
 
-    /**
-     * @Then no Kubernetes manifests must not be deleted
-     */
+    #[Then('no Kubernetes manifests must not be deleted')]
     public function noKubernetesManifestsMustNotBeDeleted(): void
     {
         Assert::assertEmpty($this->deletedManifests);
     }
 
-    /**
-     * @Then a Kubernetes namespace dedicated to registry for :namespace is applied and populated
-     */
+    #[Then('a Kubernetes namespace dedicated to registry for :namespace is applied and populated')]
     public function aKubernetesNamespaceDedicatedToRegistryIsAppliedAndPopulated(string $namespace): void
     {
         $expected = trim(
@@ -160,9 +152,7 @@ trait KubernetesTrait
         );
     }
 
-    /**
-     * @Then a Kubernetes manifests dedicated to quota for the last account has been applied
-     */
+    #[Then('a Kubernetes manifests dedicated to quota for the last account has been applied')]
     public function aKubernetesManifestsDedicatedToQuotaForTheLastAccountHasBeenApplied(): void
     {
         $account = $this->recall(Account::class);
@@ -201,9 +191,7 @@ trait KubernetesTrait
         );
     }
 
-    /**
-     * @Then a Kubernetes namespaces :namespaces must be deleted
-     */
+    #[Then('a Kubernetes namespaces :namespaces must be deleted')]
     public function aKubernetesNamespacesMustBeDeleted(string $namespaces): void
     {
         $nsList = explode(',', $namespaces);
@@ -213,9 +201,7 @@ trait KubernetesTrait
         );
     }
 
-    /**
-     * @Then a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated
-     */
+    #[Then('a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated')]
     public function aKubernetesNamespaceDedicatedToClusterIsAppliedAndPopulated(string $namespace): void
     {
         $account = $this->recall(Account::class);

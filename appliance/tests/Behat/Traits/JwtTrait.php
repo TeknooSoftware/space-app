@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\When;
 use DateTime;
 use PHPUnit\Framework\Assert;
 
@@ -38,9 +39,10 @@ use function trim;
 trait JwtTrait
 {
     /**
-     * @When get a JWT token for the user
+     *
      * @throws \DateMalformedStringException
      */
+    #[When('get a JWT token for the user')]
     public function getAJwtTokenForTheUser(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(

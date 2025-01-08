@@ -25,7 +25,10 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 use Teknoo\East\Common\Object\User;
@@ -67,9 +70,7 @@ use function trim;
  */
 trait ApiTrait
 {
-    /**
-     * @When the API is called to list of jobs
-     */
+    #[When('the API is called to list of jobs')]
     public function theApiIsCalledToListOfJobs(): void
     {
         $project = $this->recall(Project::class);
@@ -89,10 +90,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to list of projects
-     * @When the API is called to list of projects as :role
-     */
+    #[When('the API is called to list of projects as :role')]
+    #[When('the API is called to list of projects')]
     public function theApiIsCalledToListOfProjects(?string $role = null): void
     {
         $this->executeRequest(
@@ -110,9 +109,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to list of users as admin
-     */
+    #[When('the API is called to list of users as admin')]
     public function theApiIsCalledToListOfUsers(): void
     {
         $this->executeRequest(
@@ -127,9 +124,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to list of accounts as admin
-     */
+    #[When('the API is called to list of accounts as admin')]
     public function theApiIsCalledToListOfAccountsAsAdmin(): void
     {
         $this->executeRequest(
@@ -144,9 +139,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last job
-     */
+    #[When('the API is called to get the last job')]
     public function theApiIsCalledToGetTheLastJob(): void
     {
         $project = $this->recall(Project::class);
@@ -168,17 +161,13 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last project as admin
-     */
+    #[When('the API is called to get the last project as admin')]
     public function theApiIsCalledToGetTheLastProjectAsAdmin(): void
     {
         $this->theApiIsCalledToGetTheLastProject('space_api_v1_admin_project_edit');
     }
 
-    /**
-     * @When the API is called to get the last project
-     */
+    #[When('the API is called to get the last project')]
     public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_v1_project_edit'): void
     {
         $project = $this->recall(Project::class);
@@ -198,9 +187,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last user
-     */
+    #[When('the API is called to get the last user')]
     public function theApiIsCalledToGetTheLastUser(): void
     {
         $user = $this->recall(User::class);
@@ -220,9 +207,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last account
-     */
+    #[When('the API is called to get the last account')]
     public function theApiIsCalledToGetTheLastAccount(): void
     {
         $account = $this->recall(Account::class);
@@ -242,17 +227,13 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last project's variables
-     */
+    #[When("the API is called to get the last project's variables")]
     public function theApiIsCalledToGetTheLastProjectsVariables(): void
     {
         $this->theApiIsCalledToGetTheLastProject('space_api_v1_project_edit_variables');
     }
 
-    /**
-     * @When the API is called to get the last generated job
-     */
+    #[When('the API is called to get the last generated job')]
     public function theApiIsCalledToGetTheLastGeneratedJob(): void
     {
         $project = $this->recall(Project::class);
@@ -281,12 +262,10 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last project
-     * @When the API is called to delete the last project with :method method
-     * @When the API is called to delete the last project as :role
-     * @When the API is called to delete the last project with :method method as :role
-     */
+    #[When('the API is called to delete the last project with :method method as :role')]
+    #[When('the API is called to delete the last project as :role')]
+    #[When('the API is called to delete the last project with :method method')]
+    #[When('the API is called to delete the last project')]
     public function theApiIsCalledToDeleteTheLastProject(string $method = 'POST', ?string $role = null): void
     {
         $route = match ($role) {
@@ -311,10 +290,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last user
-     * @When the API is called to delete the last user with :method method
-     */
+    #[When('the API is called to delete the last user with :method method')]
+    #[When('the API is called to delete the last user')]
     public function theApiIsCalledToDeleteTheLastUser(string $method = 'POST'): void
     {
         $user = $this->recall(User::class);
@@ -334,10 +311,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last account
-     * @When the API is called to delete the last account with :method method
-     */
+    #[When('the API is called to delete the last account with :method method')]
+    #[When('the API is called to delete the last account')]
     public function theApiIsCalledToDeleteTheLastAccount(string $method = 'POST'): void
     {
         $account = $this->recall(Account::class);
@@ -357,10 +332,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last job
-     * @When the API is called to delete the last job with :method method
-     */
+    #[When('the API is called to delete the last job with :method method')]
+    #[When('the API is called to delete the last job')]
     public function theApiIsCalledToDeleteTheLastJob(string $method = 'POST'): void
     {
         $project = $this->recall(Project::class);
@@ -382,9 +355,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create a new job with a json body:
-     */
+    #[When('the API is called to create a new job with a json body:')]
     public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToCreateANewJob($bodyFields, 'json');
@@ -455,34 +426,26 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit a project's variables with a json body:
-     */
+    #[When("the API is called to edit a project's variables with a json body:")]
     public function theApiIsCalledToEditAProjectsVariablesWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_v1_project_edit_variables');
     }
 
-    /**
-     * @When the API is called to edit a project's variables:
-     */
+    #[When("the API is called to edit a project's variables:")]
     public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_v1_project_edit_variables');
     }
 
-    /**
-     * @When the API is called to edit a project with a json body:
-     */
+    #[When("the API is called to edit a project with a json body:")]
     public function theApiIsCalledToEditAProjectWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToEditAProject($bodyFields, 'json');
     }
 
-    /**
-     * @When the API is called to edit a project as admin:
-     * @When the API is called to edit a project as admin with a :format body:
-     */
+    #[When('the API is called to edit a project as admin with a :format body:')]
+    #[When('the API is called to edit a project as admin:')]
     public function theApiIsCalledToEditAProjectAsAdmin(
         TableNode $bodyFields,
         string $format = 'default',
@@ -494,9 +457,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit a project:
-     */
+    #[When('the API is called to edit a project:')]
     public function theApiIsCalledToEditAProject(
         TableNode $bodyFields,
         string $format = 'default',
@@ -516,12 +477,10 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create a project:
-     * @When the API is called to create a project with a :format body:
-     * @When the API is called to create a project as :role:
-     * @When the API is called to create a project as :role with a :format body:
-     */
+    #[When('the API is called to create a project as :role with a :format body:')]
+    #[When('the API is called to create a project as :role:')]
+    #[When('the API is called to create a project with a :format body:')]
+    #[When('the API is called to create a project:')]
     public function theApiIsCalledToCreateAProject(
         TableNode $bodyFields,
         string $format = 'default',
@@ -547,10 +506,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create an user as admin:
-     * @When the API is called to create an user as admin with a :format body:
-     */
+    #[When('the API is called to create an user as admin with a :format body:')]
+    #[When('the API is called to create an user as admin:')]
     public function theApiIsCalledToCreateAnUserAsAdmin(
         TableNode $bodyFields,
         string $format = 'default',
@@ -564,10 +521,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create an account as admin:
-     * @When the API is called to create an account as admin with a :format body:
-     */
+    #[When('the API is called to create an account as admin with a :format body:')]
+    #[When('the API is called to create an account as admin:')]
     public function theApiIsCalledToCreateAnAccountAsAdmin(
         TableNode $bodyFields,
         string $format = 'default',
@@ -581,10 +536,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit the last user:
-     * @When the API is called to edit the last user with a :format body:
-     */
+    #[When('the API is called to edit the last user with a :format body:')]
+    #[When('the API is called to edit the last user:')]
     public function theApiIsCalledToEditAnUser(
         TableNode $bodyFields,
         string $format = 'default',
@@ -604,10 +557,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit the last account:
-     * @When the API is called to edit the last account with a :format body:
-     */
+    #[When('the API is called to edit the last account with a :format body:')]
+    #[When('the API is called to edit the last account:')]
     public function theApiIsCalledToEditAnAccount(
         TableNode $bodyFields,
         string $format = 'default',
@@ -627,9 +578,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to reinstall the account registry
-     */
+    #[When('the API is called to reinstall the account registry')]
     public function theApiIsCalledToReinstallTheAccountRegistry(): void
     {
         $account = $this->recall(Account::class);
@@ -647,9 +596,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to refresh quota of account's environment
-     */
+    #[When('the API is called to refresh quota of account\'s environment')]
     public function theApiIsCalledToRefreshQuotaOfAccountsEnvironment(): void
     {
         $account = $this->recall(Account::class);
@@ -667,9 +614,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to reinstall the account's environment :envName on :clusterName
-     */
+    #[When("the API is called to reinstall the account's environment :envName on :clusterName")]
     public function theApiIsCalledToReinstallTheAccountsEnvironmentOn(string $envName, string $clusterName): void
     {
         $account = $this->recall(Account::class);
@@ -689,9 +634,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get user's settings
-     */
+    #[When("the API is called to get user's settings")]
     public function theApiIsCalledToGetUsersSettings(): void
     {
         $this->executeRequest(
@@ -704,9 +647,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get account's settings
-     */
+    #[When("the API is called to get account's settings")]
     public function theApiIsCalledToGetAccountsSettings(): void
     {
         $this->executeRequest(
@@ -719,10 +660,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to update user's settings:
-     * @When the API is called to update user's settings with a :format body:
-     */
+    #[When("the API is called to update user's settings:")]
+    #[When("the API is called to update user's settings with a :format body:")]
     public function theApiIsCalledToUpdateUsersSettings(TableNode $bodyFields, string $format = 'default'): void
     {
         $this->submitValuesThroughAPI(
@@ -734,10 +673,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to update account's settings:
-     * @When the API is called to update account's settings with a :format body:
-     */
+    #[When("the API is called to update account's settings:")]
+    #[When("the API is called to update account's settings with a :format body:")]
     public function theApiIsCalledToUpdateAccountsSettings(TableNode $bodyFields, string $format = 'default'): void
     {
         $this->submitValuesThroughAPI(
@@ -749,12 +686,10 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to update account's variables:
-     * @When the API is called to update account's variables with a :format body:
-     * @When the API is called to update variables of last account with as :role:
-     * @When the API is called to update variables of last account with a :format body as :role:
-     */
+    #[When('the API is called to update account\'s variables:')]
+    #[When('the API is called to update account\'s variables with a :format body:')]
+    #[When('the API is called to update variables of last account with a :format body as :role:')]
+    #[When('the API is called to update variables of last account with as :role:')]
     public function theApiIsCalledToUpdateAccountsVariables(
         TableNode $bodyFields,
         string $format = 'default',
@@ -783,10 +718,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get account's variables
-     * @When the API is called to get variables of last account as :role
-     */
+    #[When('the API is called to get account\'s variables')]
+    #[When('the API is called to get variables of last account as :role')]
     public function theApiIsCalledToGetAccountsVariables(?string $role = null): void
     {
         if (null === $role) {
@@ -816,11 +749,8 @@ trait ApiTrait
     }
 
 
-
-    /**
-     * @Then the serialized accounts variables
-     * @Then the serialized accounts variables with :count variables
-     */
+    #[Then('the serialized accounts variables with :count variables')]
+    #[Then('the serialized accounts variables')]
     public function theSerializedAccountsVariables(?int $count = null): void
     {
         $this->checkIfResponseIsAFinal();
@@ -867,9 +797,7 @@ trait ApiTrait
         }
     }
 
-    /**
-     * @When the API is called to create a new job:
-     */
+    #[When('the API is called to create a new job:')]
     public function theApiIsCalledToCreateANewJob(TableNode $bodyFields, string $format = 'default'): void
     {
         $project = $this->recall(Project::class);
@@ -886,9 +814,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to restart a the job:
-     */
+    #[When('the API is called to restart a the job:')]
     public function theApiIsCalledToRestartATheJob(TableNode $bodyFields, string $format = 'default'): void
     {
         $project = $this->recall(Project::class);
@@ -907,9 +833,7 @@ trait ApiTrait
         $this->clearJobMemory = true;
     }
 
-    /**
-     * @When the API is called to pending job status api
-     */
+    #[When('the API is called to pending job status api')]
     public function theApiIsCalledToPendingJobStatusApi(): void
     {
         Assert::assertNotEmpty($this->apiPendingJobUrl);
@@ -924,9 +848,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then get a JSON reponse
-     */
+    #[Then('get a JSON reponse')]
     public function getAJsonReponse(): void
     {
         Assert::assertEquals(
@@ -935,9 +857,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized success result
-     */
+    #[Then('the serialized success result')]
     public function theSerializedSuccessResult()
     {
         Assert::assertEquals(200, $this->response?->getStatusCode());
@@ -960,9 +880,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When an :arg1 error
-     */
+    #[When('an :arg1 error')]
     public function anError(int $code): void
     {
         Assert::assertEquals(
@@ -979,9 +897,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then a pending job id
-     */
+    #[Then('a pending job id')]
     public function aPendingJobId(): void
     {
         $body = (string) $this->response->getContent();
@@ -1004,9 +920,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then a pending job status without a job id
-     */
+    #[Then('a pending job status without a job id')]
     public function aPendingJobStatusWithoutAJobId(): void
     {
         $body = (string) $this->response->getContent();
@@ -1018,9 +932,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When is a serialized collection of :count items on :total pages
-     */
+    #[When('is a serialized collection of :count items on :total pages')]
     public function isASerializedCollectionOfItemsOnPages(int $count, int $page): void
     {
         $body = (string) $this->response->getContent();
@@ -1044,9 +956,7 @@ trait ApiTrait
         $this->itemsPerPages = $count / $page;
     }
 
-    /**
-     * @Then the a list of serialized users
-     */
+    #[Then('the a list of serialized users')]
     public function theAListOfSerializedUsers(): void
     {
         $users = [];
@@ -1084,9 +994,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the a list of serialized accounts
-     */
+    #[Then('the a list of serialized accounts')]
     public function theAListOfSerializedAccounts(): void
     {
         $accounts = [];
@@ -1125,9 +1033,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the a list of serialized jobs
-     */
+    #[When('the a list of serialized jobs')]
     public function theListSerializedJobs(): void
     {
         $jobs = $this->getListOfPersistedObjects(Job::class);
@@ -1161,9 +1067,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the a list of serialized owned projects
-     */
+    #[Then('the a list of serialized owned projects')]
     public function theAListOfSerializedOwnedProjects(): void
     {
         $account = $this->recall(Account::class);
@@ -1205,9 +1109,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the a list of serialized projects
-     */
+    #[Then('the a list of serialized projects')]
     public function theAListOfSerializedProjects(): void
     {
         $projects = [];
@@ -1245,10 +1147,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized :count project's variables
-     * @Then the serialized :count project's variables with :name equals to :value
-     */
+    #[Then('the serialized :count project\'s variables')]
+    #[Then('the serialized :count project\'s variables with :name equals to :value')]
     public function theSerializedProjectsVariables(int $count, ?string $name = null, ?string $value = null): void
     {
         $this->checkIfResponseIsAFinal();
@@ -1325,18 +1225,14 @@ trait ApiTrait
         $service->setAgentMode(false);
     }
 
-    /**
-     * @Then the serialized created project :name
-     */
+    #[Then('the serialized created project :name')]
     public function theSerializedCreatedProject(string $name): void
     {
         $this->theSerializedProject(created: true, name: $name);
     }
 
-    /**
-     * @Then the serialized user :lastName :firstName
-     * @Then the serialized user :lastName :firstName for :role
-     */
+    #[Then('the serialized user :lastName :firstName')]
+    #[Then('the serialized user :lastName :firstName for :role')]
     public function theSerializedUser(string $lastName, string $firstName, ?string $role = null): void
     {
         foreach ($this->listObjects(User::class) as $user) {
@@ -1389,10 +1285,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized account :accountName
-     * @Then the serialized account :accountName for :role
-     */
+    #[Then('the serialized account :accountName')]
+    #[Then('the serialized account :accountName for :role')]
     public function theSerializedAccount(string $accountName, ?string $role = null): void
     {
         $account = $this->recall(Account::class);
@@ -1446,10 +1340,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized project :name
-     * @Then the serialized updated project :name
-     */
+    #[Then('the serialized project :name')]
+    #[Then('the serialized updated project :name')]
     public function theSerializedProject(bool $created = false, string $name = ''): void
     {
         if ($created) {
@@ -1501,9 +1393,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the serialized job
-     */
+    #[When('the serialized job')]
     public function theSerializedJob(): void
     {
         $job = $this->recall(Job::class);
@@ -1536,9 +1426,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized deleted project
-     */
+    #[Then('the serialized deleted project')]
     public function theSerializedDeletedProject(): void
     {
         $project = $this->recall(Project::class);
@@ -1567,9 +1455,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized deleted user
-     */
+    #[Then('the serialized deleted user')]
     public function theSerializedDeletedUser(): void
     {
         $user = $this->recall(User::class);
@@ -1598,9 +1484,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized deleted account
-     */
+    #[Then('the serialized deleted account')]
     public function theSerializedDeletedAccount(): void
     {
         $account = $this->recall(Account::class);
@@ -1629,9 +1513,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the serialized deleted job
-     */
+    #[When('the serialized deleted job')]
     public function theSerializedDeletedJob(): void
     {
         $job = $this->recall(Job::class);
@@ -1667,5 +1549,90 @@ trait ApiTrait
             $normalized,
             $unserialized,
         );
+    }
+
+    #[When('the API is called to list of accounts clusters')]
+    public function theApiIsCalledToListOfAccountsClusters(): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the a list of serialized owned accounts clusters')]
+    public function theAListOfSerializedOwnedAccountsClusters(): void
+    {
+        throw new PendingException();
+    }
+
+
+    #[When('the API is called to create a account cluster:')]
+    public function theApiIsCalledToCreateAAccountCluster(TableNode $table): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the serialized created account cluster :arg1')]
+    public function theSerializedCreatedAccountCluster($arg1): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('there is a account cluster in the memory for this account')]
+    public function thereIsAAccountClusterInTheMemoryForThisAccount(): void
+    {
+        throw new PendingException();
+    }
+
+    #[When('the API is called to create a account cluster with a json body:')]
+    public function theApiIsCalledToCreateAAccountClusterWithAJsonBody(TableNode $table): void
+    {
+        throw new PendingException();
+    }
+
+    #[When('the API is called to get the last account cluster')]
+    public function theApiIsCalledToGetTheLastAccountCluster(): void
+    {
+        throw new PendingException();
+    }
+
+    #[When('the API is called to edit a account cluster:')]
+    public function theApiIsCalledToEditAAccountCluster(TableNode $table): void
+    {
+        throw new PendingException();
+    }
+
+    #[When('the API is called to edit a account cluster with a json body:')]
+    public function theApiIsCalledToEditAAccountClusterWithAJsonBody(TableNode $table): void
+    {
+        throw new PendingException();
+    }
+
+    #[When('the API is called to delete the last account cluster')]
+    public function theApiIsCalledToDeleteTheLastAccountCluster(): void
+    {
+        throw new PendingException();
+    }
+
+    #[When('the API is called to delete the last account cluster with DELETE method')]
+    public function theApiIsCalledToDeleteTheLastAccountClusterWithDeleteMethod(): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the serialized account cluster :arg1')]
+    public function theSerializedAccountCluster($arg1): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the serialized updated account cluster :arg1')]
+    public function theSerializedUpdatedAccountCluster($arg1): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the serialized deleted account cluster')]
+    public function theSerializedDeletedAccountCluster(): void
+    {
+        throw new PendingException();
     }
 }

@@ -25,7 +25,11 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Doctrine\Object\Media as MediaODM;
 use Teknoo\East\Common\Object\StoredPassword;
@@ -75,9 +79,7 @@ use function trim;
  */
 trait PersistenceStepsTrait
 {
-    /**
-     * @Given an account for :accountName with the account namespace :accountNamespace
-     */
+    #[Given('an account for :accountName with the account namespace :accountNamespace')]
     public function anAccountForWithTheAccountNamespace(string $accountName, string $accountNamespace): void
     {
         $account = new Account();
@@ -152,9 +154,7 @@ trait PersistenceStepsTrait
         $this->persistAndRegister($accountRegistry);
     }
 
-    /**
-     * @Given quotas defined for this account
-     */
+    #[Given('quotas defined for this account')]
     public function quotasDefinedForThisAccount()
     {
         $this->recall(Account::class)?->setQuotas(
@@ -165,9 +165,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Given an :role, called :lastName :firstName with the :email with the password :password
-     */
+    #[Given('an :role, called :lastName :firstName with the :email with the password :password')]
     public function anUserCalledWithTheWithThePassword(
         string $lastName,
         string $firstName,
@@ -218,9 +216,7 @@ trait PersistenceStepsTrait
         $this->persistAndRegister($userData);
     }
 
-    /**
-     * @Given the 2FA authentication enable for last user
-     */
+    #[Given('the 2FA authentication enable for last user')]
     public function theFaAuthenticationEnableForLastUser(): void
     {
         $totpAlgorithm = 'sha1';
@@ -242,9 +238,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the account keeps these persisted variables
-     */
+    #[Then('the account keeps these persisted variables')]
     public function theAccountKeepsThesePersistedVariables(TableNode $expectedVariables): void
     {
         $account = $this->recall(Account::class);
@@ -327,9 +321,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Then the account must have these persisted variables
-     */
+    #[Then('the account must have these persisted variables')]
     public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
         $this->checkIfResponseIsAFinal();
@@ -337,9 +329,7 @@ trait PersistenceStepsTrait
         $this->theAccountKeepsThesePersistedVariables($expectedVariables);
     }
 
-    /**
-     * @Given the account has these persisted variables:
-     */
+    #[Given('the account has these persisted variables:')]
     public function theAccountHasThesePersistedVariables(TableNode $variables): void
     {
         $account = $this->recall(Account::class);
@@ -389,9 +379,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given a standard website project :projectName
-     */
+    #[Given('a standard website project :projectName')]
     public function aStandardWebsiteProject(string $projectName): void
     {
         /** @var AccountEnvironment $credential */
@@ -481,9 +469,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :count standard websites projects :projectName and a prefix :prefix
-     */
+    #[Given(':count standard websites projects :projectName and a prefix :prefix')]
     public function standardWebsitesProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
     {
         for ($i = 1; $i <= $count; $i++) {
@@ -491,9 +477,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :count basics users for this account
-     */
+    #[Given(':count basics users for this account')]
     public function basicsUsersForThisAccount(int $count): void
     {
         $users = [];
@@ -520,9 +504,7 @@ trait PersistenceStepsTrait
         $this->recall(Account::class)?->setUsers($users);
     }
 
-    /**
-     * @Given :count accounts with some users
-     */
+    #[Given(':count accounts with some users')]
     public function accountsWithSomeUsers(int $count): void
     {
         for ($i = 1; $i <= $count; $i++) {
@@ -554,9 +536,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given a standard website project :projectName and a prefix :prefix
-     */
+    #[Given('a standard website project :projectName and a prefix :prefix')]
     public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix): void
     {
         /** @var AccountEnvironment $credential */
@@ -652,9 +632,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :count project's variables
-     */
+    #[Given(':count project\'s variables')]
     public function andSomeProjectVariables(int $count): void
     {
         $project = $this->recall(Project::class);
@@ -705,9 +683,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Then the project must be persisted
-     */
+    #[Then('the project must be persisted')]
     public function theProjectMustBePersisted(): void
     {
         $this->checkIfResponseIsAFinal();
@@ -729,9 +705,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the project must be updated
-     */
+    #[Then('the project must be updated')]
     public function theProjectMustBeUpdated(): void
     {
         $this->checkIfResponseIsAFinal();
@@ -759,26 +733,20 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the project is not deleted
-     */
+    #[Then('the project is not deleted')]
     public function theProjectIsNotDeleted(): void
     {
         $projects = $this->listObjects(Project::class);
         Assert::assertNotEmpty($projects);
     }
 
-    /**
-     * @Then there are no project persisted variables
-     */
+    #[Then('there are no project persisted variables')]
     public function thereAreNoProjectPersistedVariables(): void
     {
         Assert::assertEmpty($this->listObjects(ProjectPersistedVariable::class));
     }
 
-    /**
-     * @Then data have been saved
-     */
+    #[Then('data have been saved')]
     public function dataHaveBeenSaved(): void
     {
         $crawler = $this->createCrawler();
@@ -791,9 +759,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the project keeps these persisted variables
-     */
+    #[Then('the project keeps these persisted variables')]
     public function theProjectKeepsTheseePersistedVariables(TableNode $expectedVariables): void
     {
         $vars = $this->listObjects(ProjectPersistedVariable::class);
@@ -877,9 +843,7 @@ trait PersistenceStepsTrait
         $service->setAgentMode(false);
     }
 
-    /**
-     * @Then the project must have these persisted variables
-     */
+    #[Then('the project must have these persisted variables')]
     public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
         $this->checkIfResponseIsAFinal();
@@ -887,9 +851,7 @@ trait PersistenceStepsTrait
         $this->theProjectKeepsTheseePersistedVariables($expectedVariables);
     }
 
-    /**
-     * @Given the project has these persisted variables:
-     */
+    #[Given('the project has these persisted variables:')]
     public function theProjectHasThesePersistedVariables(TableNode $variables): void
     {
         $project = $this->recall(Project::class);
@@ -939,9 +901,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :number jobs for the project
-     */
+    #[Given(':number jobs for the project')]
     public function jobsForTheProject(int $number): void
     {
         $project = $this->recall(Project::class);
@@ -962,9 +922,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @When the job is deleted
-     */
+    #[When('the job is deleted')]
     public function theJobIsDeleted(): void
     {
         Assert::assertEmpty(
@@ -972,9 +930,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then there is a project in the memory for this account
-     */
+    #[Then('there is a project in the memory for this account')]
     public function thereIsAProjectInTheMemoryForThisAccount(): void
     {
         Assert::assertCount(
@@ -983,9 +939,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then there is an user in the memory
-     */
+    #[Then('there is an user in the memory')]
     public function thereIsAnUserInTheMemory(): void
     {
         Assert::assertCount(
@@ -994,9 +948,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then there is an account in the memory
-     */
+    #[Then('there is an account in the memory')]
     public function thereIsAnAccountInTheMemory(): void
     {
         Assert::assertNotEmpty(
@@ -1004,17 +956,13 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then no object has been deleted
-     */
+    #[Then('no object has been deleted')]
     public function noObjectHasBeenDeleted()
     {
         Assert::assertEmpty($this->removedObjects);
     }
 
-    /**
-     * @Then the old account environment account :namespace must be deleted
-     */
+    #[Then('the old account environment account :namespace must be deleted')]
     public function theOldAccountEnvironmentAccountMustBeDeleted(string $namespace): void
     {
         Assert::assertNotEmpty($this->removedObjects[AccountEnvironment::class]);
@@ -1029,9 +977,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Then the old account registry object has been deleted and remplaced
-     */
+    #[Then('the old account registry object has been deleted and remplaced')]
     public function theOldAccountRegistryObjectHasBeenDeletedAndRemplaced(): void
     {
         $account = $this->recall(Account::class);
@@ -1059,9 +1005,7 @@ trait PersistenceStepsTrait
         Assert::fail('Missing AccountRegistry');
     }
 
-    /**
-     * @Then the old account environment :namespace object has been deleted and remplaced
-     */
+    #[Then('the old account environment :namespace object has been deleted and remplaced')]
     public function theOldAccountEnvironmentObjectHasBeenDeletedAndRemplaced(string $namespace): void
     {
         $account = $this->recall(Account::class);
@@ -1094,9 +1038,7 @@ trait PersistenceStepsTrait
         Assert::fail('Missing AccountEnvironment');
     }
 
-    /**
-     * @Then the project is deleted
-     */
+    #[Then('the project is deleted')]
     public function theProjectIsDeleted(): void
     {
         Assert::assertEmpty(
@@ -1104,9 +1046,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the user is deleted
-     */
+    #[Then('the user is deleted')]
     public function theUserIsDeleted(): void
     {
         Assert::assertCount(
@@ -1115,9 +1055,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the account is deleted
-     */
+    #[Then('the account is deleted')]
     public function theAccountIsDeleted(): void
     {
         Assert::assertEmpty(
@@ -1125,9 +1063,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @When the job is not deleted
-     */
+    #[When('the job is not deleted')]
     public function theJobIsNotDeleted(): void
     {
         Assert::assertNotEmpty(
@@ -1135,9 +1071,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then job must be successful finished
-     */
+    #[Then('job must be successful finished')]
     public function jobMustBeSuccessfulFinished(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -1154,9 +1088,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then An account :accountName is created
-     */
+    #[Then('An account :accountName is created')]
     public function anAccountIsCreated(string $accountName): void
     {
         $accounts = $this->listObjects(AccountOrigin::class);
@@ -1168,9 +1100,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then an user :email is created
-     */
+    #[Then('an user :email is created')]
     public function anUserIsCreated(string $email): void
     {
         $users = $this->listObjects(User::class);
@@ -1180,5 +1110,29 @@ trait PersistenceStepsTrait
             $email,
             current($users)->getEmail(),
         );
+    }
+
+    #[Given(':arg1 accounts clusters :arg2 and a slug :arg3')]
+    public function accountsClustersAndASlug($arg1, $arg2, $arg3): void
+    {
+        throw new PendingException();
+    }
+
+    #[Given('an account clusters :arg1 and a slug :arg2')]
+    public function anAccountClustersAndASlug($arg1, $arg2): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the account cluster is deleted')]
+    public function theAccountClusterIsDeleted(): void
+    {
+        throw new PendingException();
+    }
+
+    #[Then('the account cluster is not deleted')]
+    public function theAccountClusterIsNotDeleted(): void
+    {
+        throw new PendingException();
     }
 }

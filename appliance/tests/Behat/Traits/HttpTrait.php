@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Then;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -148,28 +149,22 @@ trait HttpTrait
         return $this->response;
     }
 
-    /**
-     * @Then a session is opened
-     * @Then a new session is open
-     */
+    #[Then('a session is opened')]
+    #[Then('a new session is open')]
     public function aNewSessionIsOpen(): void
     {
         Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
         Assert::assertInstanceOf(PasswordAuthenticatedUser::class, $token?->getUser());
     }
 
-    /**
-     * @Then a recovery session is opened
-     */
+    #[Then('a recovery session is opened')]
     public function aNewRecoverySessionIsOpen(): void
     {
         Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
         Assert::assertInstanceOf(UserWithRecoveryAccess::class, $token?->getUser());
     }
 
-    /**
-     * @Then a session must be not opened
-     */
+    #[Then('a session must be not opened')]
     public function aSessionMustBeNotOpened(): void
     {
         Assert::assertEmpty($this->getTokenStorageService->tokenStorage?->getToken());

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Then;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\Space\Service\PersistedVariableEncryption;
@@ -36,9 +37,7 @@ use Teknoo\Space\Service\PersistedVariableEncryption;
  */
 trait WorkerTrait
 {
-    /**
-     * @Then Space executes the job
-     */
+    #[Then('Space executes the job')]
     public function spaceExecutesTheJob(): void
     {
         if ($this->clearJobMemory) {
