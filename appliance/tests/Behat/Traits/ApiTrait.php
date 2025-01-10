@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Then;
 use Behat\Step\When;
@@ -43,6 +42,7 @@ use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
@@ -100,6 +100,24 @@ trait ApiTrait
                 route: match ($role) {
                     'admin' => 'space_api_v1_admin_project_list',
                     default => 'space_api_v1_project_list',
+                }
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to list of accounts clusters')]
+    public function theApiIsCalledToListOfAccountsClusters(?string $role = null): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: match ($role) {
+                    'admin' => 'space_api_v1_admin_account_clusters_list',
+                    default => 'space_api_v1_account_clusters_list',
                 }
             ),
             headers: [
@@ -178,6 +196,26 @@ trait ApiTrait
                 route: $routeName,
                 parameters: [
                     'id' => $project->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to get the last account cluster')]
+    public function theApiIsCalledToGetTheLastAccountCluster(string $routeName = 'space_api_v1_account_clusters_edit'): void
+    {
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: $routeName,
+                parameters: [
+                    'id' => $accountCluster->getId(),
                 ],
             ),
             headers: [
@@ -281,6 +319,32 @@ trait ApiTrait
                 route: $route,
                 parameters: [
                     'id' => $project->getId(),
+                ],
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to delete the last account cluster')]
+    #[When('the API is called to delete the last account cluster with :method method')]
+    public function theApiIsCalledToDeleteTheLastAccountCluster(string $method = 'POST', ?string $role = null): void
+    {
+        $route = match ($role) {
+            'admin' => 'space_api_v1_admin_account_clusters_delete',
+            default => 'space_api_v1_account_clusters_delete',
+        };
+
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: [
+                    'id' => $accountCluster->getId(),
                 ],
             ),
             headers: [
@@ -477,6 +541,27 @@ trait ApiTrait
         );
     }
 
+    #[When('the API is called to edit a account cluster:')]
+    #[When('the API is called to edit a account cluster with a :format body:')]
+    public function theApiIsCalledToEditAAccountCluster(
+        TableNode $bodyFields,
+        string $format = 'default',
+        string $routeName = 'space_api_v1_account_clusters_edit',
+    ): void {
+        $accountProject = $this->recall(AccountCluster::class);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: $routeName,
+                parameters: [
+                    'id' => $accountProject->getId(),
+                ]
+            ),
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
     #[When('the API is called to create a project as :role with a :format body:')]
     #[When('the API is called to create a project as :role:')]
     #[When('the API is called to create a project with a :format body:')]
@@ -496,6 +581,33 @@ trait ApiTrait
         } else {
             $url = $this->getPathFromRoute(
                 route: 'space_api_v1_project_new',
+            );
+        }
+
+        $this->submitValuesThroughAPI(
+            url: $url,
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    #[When('the API is called to create a account cluster:')]
+    #[When('the API is called to create a account cluster with a :format body:')]
+    public function theApiIsCalledToCreateAAccountCluster(
+        TableNode $bodyFields,
+        string $format = 'default',
+        ?string $role = null,
+    ): void {
+        if ('admin' === $role) {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_v1_admin_account_clusters_new',
+                parameters: [
+                    'accountId' => $this->recall(Account::class)->getId(),
+                ]
+            );
+        } else {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_v1_account_clusters_new',
             );
         }
 
@@ -1109,6 +1221,41 @@ trait ApiTrait
         );
     }
 
+    #[Then('the a list of serialized owned accounts clusters')]
+    public function theAListOfSerializedOwnedAccountsClusters(): void
+    {
+        $accountClusters = $this->getListOfPersistedObjects(AccountCluster::class);
+
+        $selectedAccountsClusters = array_values(
+            array_slice(
+                array: $accountClusters,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedAccountsClusters,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
     #[Then('the a list of serialized projects')]
     public function theAListOfSerializedProjects(): void
     {
@@ -1229,6 +1376,12 @@ trait ApiTrait
     public function theSerializedCreatedProject(string $name): void
     {
         $this->theSerializedProject(created: true, name: $name);
+    }
+
+    #[Then('the serialized created account cluster :name')]
+    public function theSerializedCreatedAccountCluster(string $name): void
+    {
+        $this->theSerializedAccountCluster(created: true, name: $name);
     }
 
     #[Then('the serialized user :lastName :firstName')]
@@ -1393,6 +1546,54 @@ trait ApiTrait
         );
     }
 
+
+    #[Then('the serialized account cluster :name')]
+    #[Then('the serialized updated account cluster :name')]
+    public function theSerializedAccountCluster(bool $created = false, string $name = ''): void
+    {
+        if ($created) {
+            $accountCluster = null;
+            foreach ($this->listObjects(AccountCluster::class) as $accountCluster) {
+                break;
+            }
+
+            Assert::assertNotEmpty($accountCluster);
+        } else {
+            $accountCluster = $this->recall(AccountCluster::class);
+        }
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => AccountCluster::class,
+                    'id' => $accountCluster->getId(),
+                ],
+                'data' => $accountCluster
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['crud'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        Assert::assertEquals(
+            $name,
+            (string) $accountCluster,
+        );
+    }
+
     #[When('the serialized job')]
     public function theSerializedJob(): void
     {
@@ -1442,6 +1643,35 @@ trait ApiTrait
             ],
             'data' => $this->normalizer->normalize(
                 new SpaceProject($project),
+                format: 'json',
+                context: [
+                    'groups' => ['digest'],
+                ],
+            ),
+        ];
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+    }
+
+    #[Then('the serialized deleted account cluster')]
+    public function theSerializedDeletedAccountCluster(): void
+    {
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = [
+            'meta' => [
+                '@class' => AccountCluster::class,
+                'id' => $accountCluster->getId(),
+                'deleted' => 'success',
+            ],
+            'data' => $this->normalizer->normalize(
+                $accountCluster,
                 format: 'json',
                 context: [
                     'groups' => ['digest'],
@@ -1549,90 +1779,5 @@ trait ApiTrait
             $normalized,
             $unserialized,
         );
-    }
-
-    #[When('the API is called to list of accounts clusters')]
-    public function theApiIsCalledToListOfAccountsClusters(): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the a list of serialized owned accounts clusters')]
-    public function theAListOfSerializedOwnedAccountsClusters(): void
-    {
-        throw new PendingException();
-    }
-
-
-    #[When('the API is called to create a account cluster:')]
-    public function theApiIsCalledToCreateAAccountCluster(TableNode $table): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the serialized created account cluster :arg1')]
-    public function theSerializedCreatedAccountCluster($arg1): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('there is a account cluster in the memory for this account')]
-    public function thereIsAAccountClusterInTheMemoryForThisAccount(): void
-    {
-        throw new PendingException();
-    }
-
-    #[When('the API is called to create a account cluster with a json body:')]
-    public function theApiIsCalledToCreateAAccountClusterWithAJsonBody(TableNode $table): void
-    {
-        throw new PendingException();
-    }
-
-    #[When('the API is called to get the last account cluster')]
-    public function theApiIsCalledToGetTheLastAccountCluster(): void
-    {
-        throw new PendingException();
-    }
-
-    #[When('the API is called to edit a account cluster:')]
-    public function theApiIsCalledToEditAAccountCluster(TableNode $table): void
-    {
-        throw new PendingException();
-    }
-
-    #[When('the API is called to edit a account cluster with a json body:')]
-    public function theApiIsCalledToEditAAccountClusterWithAJsonBody(TableNode $table): void
-    {
-        throw new PendingException();
-    }
-
-    #[When('the API is called to delete the last account cluster')]
-    public function theApiIsCalledToDeleteTheLastAccountCluster(): void
-    {
-        throw new PendingException();
-    }
-
-    #[When('the API is called to delete the last account cluster with DELETE method')]
-    public function theApiIsCalledToDeleteTheLastAccountClusterWithDeleteMethod(): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the serialized account cluster :arg1')]
-    public function theSerializedAccountCluster($arg1): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the serialized updated account cluster :arg1')]
-    public function theSerializedUpdatedAccountCluster($arg1): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the serialized deleted account cluster')]
-    public function theSerializedDeletedAccountCluster(): void
-    {
-        throw new PendingException();
     }
 }

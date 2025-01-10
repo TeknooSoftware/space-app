@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Given;
 use Behat\Step\Then;
@@ -52,6 +51,7 @@ use Teknoo\East\Paas\Object\Project as ProjectOrigin;
 use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
@@ -477,6 +477,14 @@ trait PersistenceStepsTrait
         }
     }
 
+    #[Given(':count accounts clusters :name and a slug :slug')]
+    public function accountsClustersAndASlug(int $count, string $name, string $slug): void
+    {
+        for ($i = 1; $i <= $count; $i++) {
+            $this->anAccountClustersAndASlug(str_replace('X', (string) $i, $name), $slug . '-' . $i);
+        }
+    }
+
     #[Given(':count basics users for this account')]
     public function basicsUsersForThisAccount(int $count): void
     {
@@ -683,6 +691,29 @@ trait PersistenceStepsTrait
         }
     }
 
+    #[Given('an account clusters :name and a slug :slug')]
+    public function anAccountClustersAndASlug(string $name, string $slug): void
+    {
+        $account = $this->recall(Account::class);
+
+        $cluster = new AccountCluster(
+            account: $account,
+            name: $name,
+            slug: $slug,
+            type: 'kubernetes',
+            masterAddress: "https://kubernetes.{$slug}.behat",
+            storageProvisioner: 'nfs',
+            dashboardAddress: "https://dashboard.{$slug}.behat",
+            caCertificate: \base64_encode('behatCaCertificate'),
+            token: \base64_encode('behatToken'),
+            supportRegistry: true,
+            registryUrl: "https://registry.{$slug}.behat",
+            useHnc: false,
+        );
+
+        $this->persistAndRegister($cluster);
+    }
+
     #[Then('the project must be persisted')]
     public function theProjectMustBePersisted(): void
     {
@@ -738,6 +769,13 @@ trait PersistenceStepsTrait
     {
         $projects = $this->listObjects(Project::class);
         Assert::assertNotEmpty($projects);
+    }
+
+    #[Then('the account cluster is not deleted')]
+    public function theAccountClusterIsNotDeleted(): void
+    {
+        $clusters = $this->listObjects(AccountCluster::class);
+        Assert::assertNotEmpty($clusters);
     }
 
     #[Then('there are no project persisted variables')]
@@ -939,6 +977,15 @@ trait PersistenceStepsTrait
         );
     }
 
+    #[Then('there is a account cluster in the memory for this account')]
+    public function thereIsAAccountClusterInTheMemoryForThisAccount(): void
+    {
+        Assert::assertCount(
+            1,
+            $this->listObjects(AccountCluster::class),
+        );
+    }
+
     #[Then('there is an user in the memory')]
     public function thereIsAnUserInTheMemory(): void
     {
@@ -1046,6 +1093,14 @@ trait PersistenceStepsTrait
         );
     }
 
+    #[Then('the account cluster is deleted')]
+    public function theAccountClusterIsDeleted(): void
+    {
+        Assert::assertEmpty(
+            $this->listObjects(AccountCluster::class),
+        );
+    }
+
     #[Then('the user is deleted')]
     public function theUserIsDeleted(): void
     {
@@ -1110,29 +1165,5 @@ trait PersistenceStepsTrait
             $email,
             current($users)->getEmail(),
         );
-    }
-
-    #[Given(':arg1 accounts clusters :arg2 and a slug :arg3')]
-    public function accountsClustersAndASlug($arg1, $arg2, $arg3): void
-    {
-        throw new PendingException();
-    }
-
-    #[Given('an account clusters :arg1 and a slug :arg2')]
-    public function anAccountClustersAndASlug($arg1, $arg2): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the account cluster is deleted')]
-    public function theAccountClusterIsDeleted(): void
-    {
-        throw new PendingException();
-    }
-
-    #[Then('the account cluster is not deleted')]
-    public function theAccountClusterIsNotDeleted(): void
-    {
-        throw new PendingException();
     }
 }
