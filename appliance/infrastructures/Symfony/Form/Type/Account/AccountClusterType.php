@@ -125,7 +125,7 @@ class AccountClusterType extends AbstractType
             'token',
             TextareaType::class,
             [
-                'required' => true,
+                'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.token',
             ],
         );

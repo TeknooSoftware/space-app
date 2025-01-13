@@ -35,17 +35,17 @@ use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Object\VisitableTrait;
 use Teknoo\East\Common\Service\FindSlugService;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
+use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\ClusterCredentials;
-use Teknoo\Immutable\ImmutableInterface;
-use Teknoo\Immutable\ImmutableTrait;
+use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Object\Config\Cluster;
-
-use function Symfony\Component\String\s;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -60,12 +60,33 @@ class AccountCluster implements
     TimestampableInterface,
     SluggableInterface,
     VisitableInterface,
+    NormalizableInterface,
     AccountComponentInterface
 {
     use ObjectTrait;
+    use GroupsTrait;
+    use ExportConfigurationsTrait;
     use VisitableTrait {
         VisitableTrait::runVisit as realRunVisit;
     }
+
+    /**
+     * @var array<string, string[]>
+     */
+    private static array $exportConfigurations = [
+        '@class' => ['default', 'crud'],
+        'name' => ['default', 'crud'],
+        'slug' => ['default', 'crud'],
+        'type' => ['crud'],
+        'masterAddress' => ['crud'],
+        'storageProvisioner' => ['crud'],
+        'dashboardAddress' => ['crud'],
+        'caCertificate' => ['crud'],
+        'token' => ['crud'],
+        'supportRegistry' => ['crud'],
+        'registryUrl' => ['crud'],
+        'useHnc' => ['crud'],
+    ];
 
     public function __construct(
         private Account $account,
@@ -149,9 +170,11 @@ class AccountCluster implements
         return $this;
     }
 
-    public function setToken(#[SensitiveParameter] string $token): AccountCluster
+    public function setToken(#[SensitiveParameter] ?string $token): AccountCluster
     {
-        $this->token = $token;
+        if (!empty($token)) {
+            $this->token = $token;
+        }
 
         return $this;
     }
@@ -251,6 +274,35 @@ class AccountCluster implements
         }
 
         $this->realRunVisit($visitors);
+    }
+
+    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
+    {
+        $data = [
+            '@class' => self::class,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'type' => $this->type,
+            'masterAddress' => $this->masterAddress,
+            'storageProvisioner' => $this->storageProvisioner,
+            'dashboardAddress' => $this->dashboardAddress,
+            'caCertificate' => $this->caCertificate,
+            'token' => '',
+            'supportRegistry' => $this->supportRegistry,
+            'registryUrl' => $this->registryUrl,
+            'useHnc' => $this->useHnc,
+        ];
+
+        $this->setGroupsConfiguration(self::$exportConfigurations);
+
+        $normalizer->injectData(
+            $this->filterExport(
+                data: $data,
+                groups: (array) ($context['groups'] ?? ['default']),
+            )
+        );
+
+        return $this;
     }
 
     public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface

@@ -1589,6 +1589,11 @@ trait ApiTrait
         );
 
         Assert::assertEquals(
+            '',
+            $unserialized['data']['token'],
+        );
+
+        Assert::assertEquals(
             $name,
             (string) $accountCluster,
         );

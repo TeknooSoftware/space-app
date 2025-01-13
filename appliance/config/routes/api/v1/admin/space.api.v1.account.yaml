@@ -126,20 +126,6 @@ space_api_v1_admin_account_clusters_list:
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         template: '@@TeknooSpace/api/AccountCluster/list.json.twig'
 
-space_api_v1_admin_account_clusters_edit:
-    path: '/account/{accountId}/cluster/{id}'
-    methods: ['GET', 'POST', 'PUT']
-    defaults:
-        _controller: 'teknoo.space.endpoint.account_cluster.edit'
-        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
-        allowAccountSelection: true
-        api: 'json'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
-        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
-        template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
-        writer: '@Teknoo\Space\Writer\AccountClusterWriter'
-
 space_api_v1_admin_account_clusters_new:
     path: '/account/{accountId}/cluster/new'
     methods: ['POST', 'PUT']
@@ -152,7 +138,21 @@ space_api_v1_admin_account_clusters_new:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
         loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         objectClass: 'Teknoo\Space\Object\Persisted\AccountCluster'
-        route: 'space_account_clusters_edit'
+        route: 'space_api_v1_admin_account_clusters_edit'
+        template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
+        writer: '@Teknoo\Space\Writer\AccountClusterWriter'
+
+space_api_v1_admin_account_clusters_edit:
+    path: '/account/{accountId}/cluster/{id}'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.edit'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
         template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
         writer: '@Teknoo\Space\Writer\AccountClusterWriter'
 
