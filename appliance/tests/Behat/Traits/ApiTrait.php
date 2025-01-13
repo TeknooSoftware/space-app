@@ -206,8 +206,9 @@ trait ApiTrait
     }
 
     #[When('the API is called to get the last account cluster')]
-    public function theApiIsCalledToGetTheLastAccountCluster(string $routeName = 'space_api_v1_account_clusters_edit'): void
-    {
+    public function theApiIsCalledToGetTheLastAccountCluster(
+        string $routeName = 'space_api_v1_account_clusters_edit'
+    ): void {
         $accountCluster = $this->recall(AccountCluster::class);
 
         $this->executeRequest(
