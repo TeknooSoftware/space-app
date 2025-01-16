@@ -109,6 +109,7 @@ trait ApiTrait
         );
     }
 
+    #[When('the API is called to list of accounts clusters of last account as :role')]
     #[When('the API is called to list of accounts clusters')]
     public function theApiIsCalledToListOfAccountsClusters(?string $role = null): void
     {
@@ -118,6 +119,12 @@ trait ApiTrait
                 route: match ($role) {
                     'admin' => 'space_api_v1_admin_account_clusters_list',
                     default => 'space_api_v1_account_clusters_list',
+                },
+                parameters: match ($role) {
+                    'admin' => [
+                        'accountId' => $this->recall(Account::class)->getId(),
+                    ],
+                    default => [],
                 }
             ),
             headers: [
@@ -205,6 +212,12 @@ trait ApiTrait
         );
     }
 
+    #[When('the API is called to get the last account cluster as admin')]
+    public function theApiIsCalledToGetTheLastAccountClusterAsAdmin(): void
+    {
+        $this->theApiIsCalledToGetTheLastAccountCluster('space_api_v1_admin_account_clusters_edit');
+    }
+
     #[When('the API is called to get the last account cluster')]
     public function theApiIsCalledToGetTheLastAccountCluster(
         string $routeName = 'space_api_v1_account_clusters_edit'
@@ -215,9 +228,15 @@ trait ApiTrait
             method: 'GET',
             url: $this->getPathFromRoute(
                 route: $routeName,
-                parameters: [
-                    'id' => $accountCluster->getId(),
-                ],
+                parameters: match ($routeName) {
+                    'space_api_v1_admin_account_clusters_edit' => [
+                        'id' => $accountCluster->getId(),
+                        'accountId' => $accountCluster->getAccount()->getId(),
+                    ],
+                    default => [
+                        'id' => $accountCluster->getId(),
+                    ],
+                }
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -329,6 +348,8 @@ trait ApiTrait
         );
     }
 
+    #[When('the API is called to delete the last account cluster with :method method as :role')]
+    #[When('the API is called to delete the last account cluster as :role')]
     #[When('the API is called to delete the last account cluster')]
     #[When('the API is called to delete the last account cluster with :method method')]
     public function theApiIsCalledToDeleteTheLastAccountCluster(string $method = 'POST', ?string $role = null): void
@@ -344,9 +365,15 @@ trait ApiTrait
             method: $method,
             url: $this->getPathFromRoute(
                 route: $route,
-                parameters: [
-                    'id' => $accountCluster->getId(),
-                ],
+                parameters: match ($role) {
+                    'admin' => [
+                        'id' => $accountCluster->getId(),
+                        'accountId' => $accountCluster->getAccount()->getId(),
+                    ],
+                    default => [
+                        'id' => $accountCluster->getId(),
+                    ],
+                },
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -542,21 +569,42 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to edit a account cluster:')]
-    #[When('the API is called to edit a account cluster with a :format body:')]
-    public function theApiIsCalledToEditAAccountCluster(
+    #[When('the API is called to edit an account cluster as admin with a :format body:')]
+    #[When('the API is called to edit an account cluster as admin:')]
+    public function theApiIsCalledToEditAnAccountClusterAsAdmin(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $this->theApiIsCalledToEditAnAccountCluster(
+            bodyFields: $bodyFields,
+            format: $format,
+            routeName: 'space_api_v1_admin_account_clusters_edit',
+            role: 'admin',
+        );
+    }
+
+    #[When('the API is called to edit an account cluster:')]
+    #[When('the API is called to edit an account cluster with a :format body:')]
+    public function theApiIsCalledToEditAnAccountCluster(
         TableNode $bodyFields,
         string $format = 'default',
         string $routeName = 'space_api_v1_account_clusters_edit',
+        ?string $role = null,
     ): void {
-        $accountProject = $this->recall(AccountCluster::class);
+        $accountCluster = $this->recall(AccountCluster::class);
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
                 route: $routeName,
-                parameters: [
-                    'id' => $accountProject->getId(),
-                ]
+                parameters: match ($role) {
+                    'admin' =>  [
+                        'id' => $accountCluster->getId(),
+                        'accountId' => $accountCluster->getAccount()->getId(),
+                    ],
+                    default =>  [
+                        'id' => $accountCluster->getId(),
+                    ],
+                }
             ),
             bodyFields: $bodyFields,
             format: $format,
@@ -592,9 +640,11 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to create a account cluster:')]
-    #[When('the API is called to create a account cluster with a :format body:')]
-    public function theApiIsCalledToCreateAAccountCluster(
+    #[When('the API is called to create an account cluster as :role with a :format body:')]
+    #[When('the API is called to create an account cluster as :role:')]
+    #[When('the API is called to create an account cluster:')]
+    #[When('the API is called to create an account cluster with a :format body:')]
+    public function theApiIsCalledToCreateAnAccountCluster(
         TableNode $bodyFields,
         string $format = 'default',
         ?string $role = null,
@@ -1223,9 +1273,17 @@ trait ApiTrait
     }
 
     #[Then('the a list of serialized owned accounts clusters')]
+    #[Then('the a list of serialized accounts clusters')]
     public function theAListOfSerializedOwnedAccountsClusters(): void
     {
-        $accountClusters = $this->getListOfPersistedObjects(AccountCluster::class);
+        $account = $this->recall(Account::class);
+        $allAccountClusters = $this->getListOfPersistedObjects(AccountCluster::class);
+        $accountClusters = [];
+        foreach ($allAccountClusters as $accountCluster) {
+            if ($accountCluster->getAccount() === $account) {
+                $accountClusters[] = $accountCluster;
+            }
+        }
 
         $selectedAccountsClusters = array_values(
             array_slice(

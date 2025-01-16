@@ -74,13 +74,13 @@ class AccountCluster implements
      * @var array<string, string[]>
      */
     private static array $exportConfigurations = [
-        '@class' => ['default', 'crud'],
-        'name' => ['default', 'crud'],
-        'slug' => ['default', 'crud'],
-        'type' => ['crud'],
-        'masterAddress' => ['crud'],
+        '@class' => ['default', 'crud', 'api'],
+        'name' => ['default', 'crud', 'api'],
+        'slug' => ['default', 'crud', 'api'],
+        'type' => ['crud', 'api'],
+        'masterAddress' => ['crud', 'api'],
         'storageProvisioner' => ['crud'],
-        'dashboardAddress' => ['crud'],
+        'dashboardAddress' => ['crud', 'api'],
         'caCertificate' => ['crud'],
         'token' => ['crud'],
         'supportRegistry' => ['crud'],

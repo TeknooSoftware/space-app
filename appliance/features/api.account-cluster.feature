@@ -5,17 +5,16 @@ Feature: On space, users on a same account can define some clusters to use with 
   But users of anothers accounts can only access to account'clusters owned by theirs accounts.
   An API is available to manage these clusters.
 
-
   Scenario: List owned accounts clusters from the API
     Given A Space app instance
     And A memory document database
     And an account for "My First Company" with the account namespace "my-first-company"
     And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
-    And "5" accounts clusters "cluster X" and a slug "a-cluster"
+    And "5" accounts clusters "cluster A X" and a slug "a-cluster"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And "5" accounts clusters "cluster X" and a slug "a-cluster"
+    And "5" accounts clusters "cluster B X" and a slug "a-cluster"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -39,8 +38,8 @@ Feature: On space, users on a same account can define some clusters to use with 
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to create a account cluster:
-      | field                               | value                   |
+    When the API is called to create an account cluster:
+      | field                              | value                   |
       | account_cluster.name               | Behats Test             |
       | account_cluster.slug               | behat-test              |
       | account_cluster.type               | kubernetes              |
@@ -54,9 +53,9 @@ Feature: On space, users on a same account can define some clusters to use with 
       | account_cluster.useHnc             | 0                       |
     Then get a JSON reponse
     And the serialized created account cluster "Behats Test"
-    And there is a account cluster in the memory for this account
+    And there is an account cluster in the memory for this account
 
-  Scenario: Create a account cluster from the API with a json body
+  Scenario: Create an account cluster from the API with a json body
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -68,7 +67,7 @@ Feature: On space, users on a same account can define some clusters to use with 
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to create a account cluster with a json body:
+    When the API is called to create an account cluster with a json body:
       | field                               | value                   |
       | name               | Behats Test             |
       | slug               | behat-test              |
@@ -83,7 +82,7 @@ Feature: On space, users on a same account can define some clusters to use with 
       | useHnc             | 0                       |
     Then get a JSON reponse
     And the serialized created account cluster "Behats Test"
-    And there is a account cluster in the memory for this account
+    And there is an account cluster in the memory for this account
 
   Scenario: Get an owned account cluster from the API
     Given A Space app instance
@@ -134,7 +133,7 @@ Feature: On space, users on a same account can define some clusters to use with 
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to edit a account cluster:
+    When the API is called to edit an account cluster:
       | field                               | value                   |
       | account_cluster.name               | Behats Test             |
       | account_cluster.slug               | behat-test              |
@@ -165,7 +164,7 @@ Feature: On space, users on a same account can define some clusters to use with 
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to edit a account cluster:
+    When the API is called to edit an account cluster:
       | field                               | value                   |
       | account_cluster.name               | Behats Test             |
       | account_cluster.slug               | behat-test              |
@@ -194,7 +193,7 @@ Feature: On space, users on a same account can define some clusters to use with 
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to edit a account cluster with a json body:
+    When the API is called to edit an account cluster with a json body:
       | field                               | value                   |
       | name               | Behats Test             |
       | slug               | behat-test              |
@@ -225,7 +224,7 @@ Feature: On space, users on a same account can define some clusters to use with 
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the API is called to edit a account cluster with a json body:
+    When the API is called to edit an account cluster with a json body:
       | field                               | value                   |
       | account_cluster.name               | Behats Test             |
       | account_cluster.slug               | behat-test              |

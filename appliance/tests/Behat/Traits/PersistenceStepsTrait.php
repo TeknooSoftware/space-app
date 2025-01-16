@@ -977,8 +977,8 @@ trait PersistenceStepsTrait
         );
     }
 
-    #[Then('there is a account cluster in the memory for this account')]
-    public function thereIsAAccountClusterInTheMemoryForThisAccount(): void
+    #[Then('there is an account cluster in the memory for this account')]
+    public function thereIsAnAccountClusterInTheMemoryForThisAccount(): void
     {
         Assert::assertCount(
             1,

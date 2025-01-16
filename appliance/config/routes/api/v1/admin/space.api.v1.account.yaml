@@ -112,7 +112,7 @@ space_api_v1_admin_account_environment_reinstall:
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_clusters_list:
-    path: '/account/clusters'
+    path: '/account/{accountId}/clusters'
     methods: [ 'GET' ]
     schemes: ['https']
     defaults:
