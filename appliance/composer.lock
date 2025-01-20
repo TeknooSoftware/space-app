@@ -788,16 +788,16 @@
         },
         {
             "name": "doctrine/mongodb-odm",
-            "version": "2.9.1",
+            "version": "2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "ad7827c7915b8b867cb28f5252d99b08ec67ac78"
+                "reference": "8f0b3702b0c600d54bafc7c418ec13f4c2e990be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/ad7827c7915b8b867cb28f5252d99b08ec67ac78",
-                "reference": "ad7827c7915b8b867cb28f5252d99b08ec67ac78",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/8f0b3702b0c600d54bafc7c418ec13f4c2e990be",
+                "reference": "8f0b3702b0c600d54bafc7c418ec13f4c2e990be",
                 "shasum": ""
             },
             "require": {
@@ -882,7 +882,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/mongodb-odm/issues",
-                "source": "https://github.com/doctrine/mongodb-odm/tree/2.9.1"
+                "source": "https://github.com/doctrine/mongodb-odm/tree/2.9.2"
             },
             "funding": [
                 {
@@ -898,7 +898,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-19T09:54:22+00:00"
+            "time": "2025-01-17T14:16:04+00:00"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
@@ -3334,16 +3334,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "2.3.4",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/59f15608528d8a8838d69b422a919fd6b16aa576",
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576",
                 "shasum": ""
             },
             "require": {
@@ -3377,7 +3377,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
-                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.6"
             },
             "funding": [
                 {
@@ -3385,7 +3385,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-08T09:24:21+00:00"
+            "time": "2025-01-17T12:49:27+00:00"
         },
         {
             "name": "php-di/php-di",
