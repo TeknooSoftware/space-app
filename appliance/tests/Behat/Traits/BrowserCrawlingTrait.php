@@ -68,7 +68,7 @@ trait BrowserCrawlingTrait
 
     public function findUrlFromRouteInPageAndOpenIt(Crawler $crawler, string $routeName, array $parameters = []): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute($routeName, $parameters);
         $node = $crawler->filter("a[href=\"{$url}\"]");
@@ -136,7 +136,7 @@ trait BrowserCrawlingTrait
     #[Then('it is redirected to the dashboard')]
     public function itIsRedirectedToTheDashboard(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_dashboard'),
             $this->currentUrl,
@@ -146,7 +146,7 @@ trait BrowserCrawlingTrait
     #[Then('It has a welcome message with :fullName in the dashboard header')]
     public function itHasAWelcomeMessageWithInTheDashboardHeader(string $fullName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -162,7 +162,7 @@ trait BrowserCrawlingTrait
     #[Then('it must redirected to the TOTP code page')]
     public function itMustRedirectedToTheTotpCodePage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('2fa_login'),
             $this->currentUrl,
@@ -183,7 +183,7 @@ trait BrowserCrawlingTrait
     #[Then('it is redirected to the login page with an error')]
     public function itIsRedirectedToTheLoginPageWithAnError(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_account_login'),
             $this->currentUrl,
@@ -208,7 +208,7 @@ trait BrowserCrawlingTrait
     #[Then('the user obtains a project list:')]
     public function theUserObtainsAProjectList(TableNode $projects): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -252,7 +252,7 @@ trait BrowserCrawlingTrait
     #[Then('it obtains a deployment page')]
     public function itObtainsADeploymentPage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertStringStartsWith(
             '/job/pending/',
             $this->currentUrl,
@@ -288,7 +288,7 @@ trait BrowserCrawlingTrait
     #[Then('the user obtains an error')]
     public function theUserObtainsAnError(): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
         $node = $crawler->filter('.space-form-error');
@@ -329,7 +329,7 @@ trait BrowserCrawlingTrait
     #[Then('the user is redirected to the dashboard page')]
     public function theUserIsRedirectedToTheDashboardPage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_dashboard'),
             $this->currentUrl,
@@ -339,7 +339,7 @@ trait BrowserCrawlingTrait
     #[Then('the account name is now :accountName')]
     public function theAccountNameIsNow(string $accountName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         if ($this->isApiCall) {
             $account = $this->recall(Account::class);
@@ -373,7 +373,7 @@ trait BrowserCrawlingTrait
     #[Then('the user\'s name is now :fullName')]
     public function itsNameIsNow(string $fullName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         if ($this->isApiCall) {
             $user = $this->recall(User::class);
@@ -415,7 +415,7 @@ trait BrowserCrawlingTrait
     #[Then('it is redirected to the recovery password page')]
     public function itIsRedirectedToTheRecoveryPasswordPage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_update_password'),
             $this->currentUrl,

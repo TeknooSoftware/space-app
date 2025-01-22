@@ -37,7 +37,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
-    And a Kubernetes namespaces "space-client-my-company-dev" must be deleted
+    And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
 
   Scenario: Edit an account and environments from the API with a json body as Admin
@@ -76,7 +76,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
-    And a Kubernetes namespaces "space-client-my-company-dev" must be deleted
+    And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
 
   Scenario: Edit an account and edit read only environments from the API as Admin

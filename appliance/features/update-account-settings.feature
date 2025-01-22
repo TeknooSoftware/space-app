@@ -101,7 +101,7 @@ Feature: On a space instance, users are grouped in shared accounts : there are a
       | space_account.environmentResumes.2.clusterName | Demo Kube Cluster |
       | space_account.environmentResumes.2.envName     | testing           |
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
-    And a Kubernetes namespaces "space-client-my-company-dev" must be deleted
+    And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
 
   Scenario: Update my account's read only environment

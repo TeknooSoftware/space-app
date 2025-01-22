@@ -244,7 +244,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and paas file is valid with url encoded body with encrypted message
     Given A Space app instance
@@ -283,7 +283,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Re-execute a job from an owned project with prefix and paas file is valid with url encoded body with encrypted message
     Given A Space app instance
@@ -323,7 +323,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from a non-owned project with prefix and paas file is valid with url encoded body
     Given A Space app instance
@@ -392,7 +392,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and paas file is valid with a json body with encrypted message
     Given A Space app instance
@@ -431,7 +431,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid without resources defined and the request has a json body
     Given A Space app instance
@@ -470,7 +470,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid without resources defined and the request has a json body
     Given A Space app instance
@@ -510,7 +510,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid without partial resources defined and the request has a json body
     Given A Space app instance
@@ -549,7 +549,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid without partial resources defined and the request has a json body
     Given A Space app instance
@@ -589,7 +589,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid without full resources defined and the request has a json body
     Given A Space app instance
@@ -628,7 +628,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid full partial resources defined and the request has a json body
     Given A Space app instance
@@ -668,7 +668,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with prefix and defined quota and paas file is valid with quota exceeded and the request has a json body
     Given A Space app instance
@@ -785,7 +785,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job, with server's defaults, from a project with prefix and paas file is valid and has defaults, with encrypted message
     Given A Space app instance
@@ -824,7 +824,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job, with server's defaults, from a project with prefix and paas file is valid and has defaults for the cluster
     Given A Space app instance
@@ -862,7 +862,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job, with server's defaults, from a project with prefix and paas file is valid and has defaults for the cluster, with encrypted message
     Given A Space app instance
@@ -901,7 +901,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from a non-owned project with prefix and paas file is valid with a json body
     Given A Space app instance
@@ -972,7 +972,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with hierarchical namespace and paas file is valid with a json body
     Given A Space app instance
@@ -1011,7 +1011,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with hierarchical namespace and paas file with extends is valid with json body
     Given A Space app instance
@@ -1051,7 +1051,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with hierarchical namespace and prefix and paas file is valid with json body
     Given A Space app instance
@@ -1090,7 +1090,7 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: Execute a job from an owned project with hierarchical namespace and prefix and paas file with extends is valid with a json body
     Given A Space app instance
@@ -1130,4 +1130,4 @@ Feature: On a space instance, an API is available to manage and run jobs to allo
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"

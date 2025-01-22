@@ -42,7 +42,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -86,7 +86,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -131,7 +131,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -174,7 +174,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -218,7 +218,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -263,7 +263,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -308,7 +308,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -353,7 +353,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -442,7 +442,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -497,7 +497,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -554,7 +554,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |

@@ -324,7 +324,7 @@ trait PersistenceStepsTrait
     #[Then('the account must have these persisted variables')]
     public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $this->theAccountKeepsThesePersistedVariables($expectedVariables);
     }
@@ -717,7 +717,7 @@ trait PersistenceStepsTrait
     #[Then('the project must be persisted')]
     public function theProjectMustBePersisted(): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -739,7 +739,7 @@ trait PersistenceStepsTrait
     #[Then('the project must be updated')]
     public function theProjectMustBeUpdated(): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -884,7 +884,7 @@ trait PersistenceStepsTrait
     #[Then('the project must have these persisted variables')]
     public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $this->theProjectKeepsTheseePersistedVariables($expectedVariables);
     }

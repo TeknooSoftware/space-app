@@ -44,7 +44,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
-    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
   Scenario: Create a account from the API with subscription plan as Admin
@@ -75,7 +75,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
     And with the subscription plan "test-1"
-    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
   Scenario: Create a account from the API with a json body as Admin
@@ -104,7 +104,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
-    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
   Scenario: Create a account from the API with a json body with subscription plan as Admin
@@ -135,7 +135,7 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
     And with the subscription plan "test-1"
-    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated
+    And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
   Scenario: Get an account from the API as Admin
@@ -270,6 +270,6 @@ Feature: On a space instance, an API is available to manage accounts as admin an
     When the API is called to reinstall the account registry
     Then get a JSON reponse
     And the serialized success result
-    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
     And the old account registry object has been deleted and remplaced

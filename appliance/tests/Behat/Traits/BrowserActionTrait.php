@@ -43,13 +43,13 @@ use function substr;
  */
 trait BrowserActionTrait
 {
-    private function checkIfUserHasBeenRedirected(): void
+    private function hasBeenUserRedirected(): void
     {
         Assert::assertTrue($this->hasBeenRedirected);
         $this->hasBeenRedirected = false;
     }
 
-    public function checkIfResponseIsAFinal(): void
+    public function isAFinalResponse(): void
     {
         Assert::assertEquals(200, $this->response?->getStatusCode());
     }
@@ -137,7 +137,7 @@ trait BrowserActionTrait
             clearCookies: true,
         );
 
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
     }
 
     #[When('it submits the form:')]
@@ -254,7 +254,7 @@ trait BrowserActionTrait
     #[When('It goes to project page of :projectName of :accountName')]
     public function itGoesToProjectPageOfOf(string $projectName, string $accountName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute(
             route: 'space_project_edit',
@@ -269,7 +269,7 @@ trait BrowserActionTrait
     #[When('It goes to delete the project :projectName of :accountName')]
     public function itGoesToDeleteTheProjectOf(string $projectName, string $accountName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute(
             route: 'space_project_delete',

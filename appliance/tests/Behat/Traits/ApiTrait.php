@@ -916,7 +916,7 @@ trait ApiTrait
     #[Then('the serialized accounts variables')]
     public function theSerializedAccountsVariables(?int $count = null): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $account = $this->recall(Account::class);
         $accountData = $this->getRepository(AccountData::class)->findOneBy(['account' => $account]);
@@ -1357,7 +1357,7 @@ trait ApiTrait
     #[Then('the serialized :count project\'s variables with :name equals to :value')]
     public function theSerializedProjectsVariables(int $count, ?string $name = null, ?string $value = null): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $project = $this->recall(Project::class);
         $project ??= $this->recall(ProjectOrigin::class);
