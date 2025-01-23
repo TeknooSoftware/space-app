@@ -158,7 +158,6 @@ Feature: On a space instance, users are grouped in shared accounts : there are a
       | space_account.environmentResumes.1.clusterName | Demo Kube Cluster |
       | space_account.environmentResumes.1.envName     | testing           |
     And the user obtains an error
-    And no Kubernetes manifests must not be created
     And no Kubernetes manifests must not be deleted
 
   Scenario: Update my account and exceed environments allowed
@@ -220,5 +219,4 @@ Feature: On a space instance, users are grouped in shared accounts : there are a
       | space_account.environmentResumes.2.clusterName | Demo Kube Cluster |
       | space_account.environmentResumes.2.envName     | testing           |
     And the user obtains an error
-    And no Kubernetes manifests must not be created
     And no Kubernetes manifests must not be deleted

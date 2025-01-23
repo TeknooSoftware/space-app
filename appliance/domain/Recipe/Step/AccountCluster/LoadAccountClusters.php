@@ -67,7 +67,7 @@ class LoadAccountClusters
                 $this->repositoryRegistry,
             );
 
-            $formattedClusters[$cluster->sluggyName] = $cluster;
+            $formattedClusters[$cluster->name] = $cluster;
             $aliases[$cluster->sluggyName] = $cluster->name;
         }
 

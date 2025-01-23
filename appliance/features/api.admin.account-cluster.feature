@@ -1,5 +1,5 @@
 Feature: On a space instance, an API is available to manage accounts'clusters as admin.
-  An admin must has same rights of than the web access #todo
+  An admin must has same rights of than the web access
 
   Scenario: List of accounts clusters from the API as Admin
     Given A Space app instance

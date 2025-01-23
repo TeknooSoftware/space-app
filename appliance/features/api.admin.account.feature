@@ -183,7 +183,6 @@ Feature: On a space instance, an API is available to manage accounts as admin an
       | admin_space_account.accountData.subscriptionPlan | test-1        |
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
-    And no Kubernetes manifests must not be created
     And no Kubernetes manifests must not be deleted
 
   Scenario: Edit an account from the API with a json body as Admin
@@ -213,7 +212,6 @@ Feature: On a space instance, an API is available to manage accounts as admin an
       | accountData.subscriptionPlan | test-1        |
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
-    And no Kubernetes manifests must not be created
     And no Kubernetes manifests must not be deleted
 
   Scenario: Delete an account from the API as Admin

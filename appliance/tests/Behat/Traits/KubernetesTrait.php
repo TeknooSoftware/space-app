@@ -172,6 +172,15 @@ trait KubernetesTrait
         Assert::assertEmpty($this->manifests);
     }
 
+    #[Then('no Kubernetes manifests must not be created on :cluster')]
+    public function noKubernetesManifestsMustNotBeCreatedOn(string $cluster): void
+    {
+        $host = $this->getHostFromClusterName($cluster, $this->recall(Account::class));
+        if (isset($this->manifests[$host])) {
+            Assert::assertEmpty($this->manifests[$host]);
+        }
+    }
+
     #[Then('no Kubernetes manifests must not be deleted')]
     public function noKubernetesManifestsMustNotBeDeleted(): void
     {
