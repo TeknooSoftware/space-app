@@ -9,7 +9,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
     When the user enter a valid TOTP code
@@ -70,7 +70,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "demo"
+    And a standard project "my project" and a prefix "demo"
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
     When the user enter a valid TOTP code
@@ -142,7 +142,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And an account for "My Firm" with the account namespace "my-firm"
     And an user, called "Hanin" "Roger" with the "hanin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
@@ -158,7 +158,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
     When the user enter a valid TOTP code
@@ -176,7 +176,7 @@ Feature: On a space instance, eacch allowed users can register a new project on 
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And an account for "My Firm" with the account namespace "my-firm"
     And an user, called "Hanin" "Roger" with the "hanin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user

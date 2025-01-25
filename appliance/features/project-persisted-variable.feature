@@ -8,7 +8,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -67,7 +67,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the project has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |
@@ -179,7 +179,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -239,7 +239,7 @@ Feature: On space, users on a some variables and secrets on a project to reuse t
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the project has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |

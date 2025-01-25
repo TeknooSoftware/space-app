@@ -379,7 +379,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    #[Given('a standard website project :projectName')]
+    #[Given('a standard project :projectName')]
     public function aStandardWebsiteProject(string $projectName): void
     {
         /** @var AccountEnvironment $credential */
@@ -469,11 +469,11 @@ trait PersistenceStepsTrait
         }
     }
 
-    #[Given(':count standard websites projects :projectName and a prefix :prefix')]
-    public function standardWebsitesProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
+    #[Given(':count standard projects :projectName and a prefix :prefix')]
+    public function standardProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
     {
         for ($i = 1; $i <= $count; $i++) {
-            $this->aStandardWebsiteProjectAndAPrefix(str_replace('X', (string) $i, $projectName), $prefix);
+            $this->aStandardProjectAndAPrefix(str_replace('X', (string) $i, $projectName), $prefix);
         }
     }
 
@@ -544,9 +544,73 @@ trait PersistenceStepsTrait
         }
     }
 
-    #[Given('a standard website project :projectName and a prefix :prefix')]
-    public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix): void
+    private function createCustomCluster(Account $account): Cluster
     {
+        $cluster = new Cluster();
+        $cluster->setName('Custom Cluster');
+        $cluster->setType($this->defaultClusterType);
+        $cluster->setAddress('custom.cluster');
+        $cluster->useHierarchicalNamespaces(false);
+        $account->namespaceIsItDefined(fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $cluster->setEnvironment($env = new Environment('prod'));
+
+        if (empty($this->recall(Environment::class))) {
+            $this->register($env);
+        }
+
+        $cluster->setLocked(false);
+
+        $cluster->setIdentity(
+            new ClusterCredentials(
+                caCertificate: 'foo',
+                clientCertificate: '',
+                clientKey: '',
+                token: 'bar',
+            )
+        );
+
+        return $cluster;
+    }
+
+    private function createCatalogCluster(
+        Account $account,
+        AccountEnvironment $credential,
+        string $prefix,
+        string $envName,
+    ): Cluster {
+        $cluster = new Cluster();
+        $cluster->setName($this->defaultClusterName);
+        $cluster->setType($this->defaultClusterType);
+        $cluster->setAddress($prefix . $this->defaultClusterAddress);
+        $cluster->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(
+            fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-' . $envName)
+        );
+        $cluster->setEnvironment($env = new Environment($envName));
+        $cluster->setLocked(true);
+
+        if (empty($this->recall(Environment::class))) {
+            $this->register($env);
+        }
+
+        $cluster->setIdentity(
+            new ClusterCredentials(
+                caCertificate: $credential->getCaCertificate(),
+                clientCertificate: $credential->getClientCertificate(),
+                clientKey: $credential->getClientKey(),
+                token: $credential->getToken()
+            )
+        );
+
+        return $cluster;
+    }
+
+    private function createAndPersistProject(
+        string $projectName,
+        string $prefix,
+        bool $customCluster
+    ): void {
+
         /** @var AccountEnvironment $credential */
         $credential = $this->recall(AccountEnvironment::class);
         /** @var AccountRegistry $registry */
@@ -583,47 +647,27 @@ trait PersistenceStepsTrait
 
         $this->register($repository);
 
-        $cluster = new Cluster();
-        $cluster->setName($this->defaultClusterName);
-        $cluster->setType($this->defaultClusterType);
-        $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->useHierarchicalNamespaces($this->useHnc);
-        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
-        $cluster->setEnvironment($env = new Environment('prod'));
-        $cluster->setLocked(true);
-        $this->register($env);
-        $cluster->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+        if (false === $customCluster) {
+            $cluster = $this->createCatalogCluster($account, $credential, '', 'prod');
+            $clusterDev = $this->createCatalogCluster($account, $credential, 'dev.', 'dev');
 
-        $clusterDev = new Cluster();
-        $clusterDev->setName($this->defaultClusterName);
-        $clusterDev->setType($this->defaultClusterType);
-        $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
-        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
-        $clusterDev->useHierarchicalNamespaces($this->useHnc);
-        $clusterDev->setEnvironment(new Environment('dev'));
-        $clusterDev->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+            $project->setClusters([
+                $cluster,
+                $clusterDev,
+            ]);
 
-        $project->setClusters([
-            $cluster,
-            $clusterDev,
-        ]);
+            $this->persistAndRegister($clusterDev);
+            $this->persistAndRegister($cluster);
+        } else {
+            $cluster = $this->createCustomCluster($account);
 
-        $this->persistAndRegister($clusterDev);
-        $this->persistAndRegister($cluster);
+            $project->setClusters([
+                $cluster,
+            ]);
+
+            $this->persistAndRegister($cluster);
+        }
+
         $this->persistAndRegister($project);
 
         $projectMetadata = new ProjectMetadata(
@@ -638,6 +682,18 @@ trait PersistenceStepsTrait
         } else {
             $this->hncSuffix = '';
         }
+    }
+
+    #[Given('a standard project :projectName and a prefix :prefix')]
+    public function aStandardProjectAndAPrefix(string $projectName, string $prefix): void
+    {
+        $this->createAndPersistProject($projectName, $prefix, false);
+    }
+
+    #[Given('a custom project :projectName and a prefix :prefix on custom cluster')]
+    public function aCustomProjectAndAPrefixOnCustomCluster(string $projectName, string $prefix): void
+    {
+        $this->createAndPersistProject($projectName, $prefix, true);
     }
 
     #[Given(':count project\'s variables')]

@@ -8,10 +8,10 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
-    And "5" standard websites projects "project X" and a prefix "a-prefix"
+    And "5" standard projects "project X" and a prefix "a-prefix"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And "5" standard websites projects "other project X" and a prefix "other-prefix"
+    And "5" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -106,7 +106,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -124,7 +124,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -143,7 +143,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -181,7 +181,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -219,7 +219,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -245,7 +245,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -272,7 +272,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -299,7 +299,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
@@ -325,7 +325,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -344,7 +344,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page

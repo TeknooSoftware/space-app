@@ -14,7 +14,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the project has a complete paas file
     And simulate a too long image building
     And the platform is booted
@@ -51,7 +51,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And a project with a paas file using extends
     And simulate a too long image building
     And the platform is booted
@@ -87,7 +87,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -124,7 +124,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -161,7 +161,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -199,7 +199,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -236,7 +236,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -274,7 +274,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -311,7 +311,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -349,7 +349,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -386,7 +386,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -424,7 +424,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -460,7 +460,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -497,7 +497,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -533,7 +533,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -570,7 +570,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -607,7 +607,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And a project with a paas file using extends
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -644,7 +644,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -682,7 +682,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And a project with a paas file using extends
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -719,7 +719,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "demo"
+    And a standard project "my project" and a prefix "demo"
     And the project has a complete paas file
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
@@ -757,7 +757,7 @@ Feature: On a space instance, we can start a job from a project, User can define
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And a project with a paas file using extends
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"

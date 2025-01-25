@@ -15,7 +15,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -59,7 +59,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -103,7 +103,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -149,7 +149,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -183,7 +183,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -227,7 +227,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -271,7 +271,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -316,7 +316,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -360,7 +360,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -405,7 +405,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -449,7 +449,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -494,7 +494,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -538,7 +538,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -583,7 +583,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -626,7 +626,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -670,7 +670,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -715,7 +715,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -750,7 +750,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And a project with a paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -794,7 +794,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -839,7 +839,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And a project with a paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -883,7 +883,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "demo"
+    And a standard project "my project" and a prefix "demo"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -928,7 +928,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And a project with a paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -971,7 +971,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                | environment |
@@ -1029,7 +1029,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                | environment |

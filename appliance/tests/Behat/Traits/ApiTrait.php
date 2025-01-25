@@ -35,6 +35,7 @@ use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\East\Paas\Object\Account as AccountOrigin;
+use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
@@ -566,6 +567,23 @@ trait ApiTrait
             ),
             bodyFields: $bodyFields,
             format: $format,
+        );
+    }
+
+    #[When('the API is called to refresh credentials of the last project')]
+    public function theApiIsCalledToRefreshCredentialsOfTheLastProject(): void
+    {
+        $project = $this->recall(Project::class);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_project_edit_refresh_credentials',
+                parameters: [
+                    'id' => $project->getId(),
+                ]
+            ),
+            bodyFields: [],
+            format: 'json',
         );
     }
 
@@ -1605,6 +1623,47 @@ trait ApiTrait
         );
     }
 
+    #[Then('the last project\'s cluster remains unchanged')]
+    public function theLastProjectsClusterRemainsUnchanged(): void
+    {
+        $project = $this->recall(Project::class);
+        $clusters = $this->listObjects(Cluster::class);
+
+        Assert::assertCount(1, $clusters);
+        /** @var Cluster $cluster */
+        foreach ($clusters as $cluster) {
+            Assert::assertSame($project, $cluster->getProject());
+            Assert::assertEquals(
+                $this->createCustomCluster($this->recall(Account::class)),
+                $cluster,
+            );
+        }
+    }
+
+    #[Then('the last project\'s cluster returns to its original state from the clusters catalog')]
+    public function theLastProjectsClusterReturnsToItsOriginalStateFromTheClustersCatalog(): void
+    {
+        $account = $this->recall(Account::class);
+        $credentials = $this->recall(AccountEnvironment::class);
+        $project = $this->recall(Project::class);
+        $clusters = $this->listObjects(Cluster::class);
+
+        Assert::assertCount(2, $clusters);
+        /** @var Cluster $cluster */
+        foreach ($clusters as $cluster) {
+            Assert::assertSame($project, $cluster->getProject());
+            Assert::assertEquals(
+                $this->createCatalogCluster($account, $credentials, $prefix, $envName),
+                $cluster,
+            );
+        }
+    }
+
+    #[Then('the last project\'s cluster returns to its original state from the account cluster')]
+    public function theLastProjectsClusterReturnsToItsOriginalStateFromTheAccountCluster(): void
+    {
+        throw new PendingException();
+    }
 
     #[Then('the serialized account cluster :name')]
     #[Then('the serialized updated account cluster :name')]
