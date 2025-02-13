@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Given;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
@@ -37,6 +38,7 @@ use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\East\Paas\Object\Cluster;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
@@ -86,7 +88,7 @@ trait PersistenceOperationTrait
         return null;
     }
 
-    private function checkValue(mixed $expected, mixed $value): bool
+    private function testValue(mixed $expected, mixed $value): bool
     {
         if (is_array($value)) {
             return match (key($value)) {
@@ -99,20 +101,20 @@ trait PersistenceOperationTrait
         return $expected === $value;
     }
 
-    private function checkACriteria(string $criteria, mixed &$value, ReflectionObject $roInstance, object $object): bool
+    private function testACriteria(string $criteria, mixed &$value, ReflectionObject $roInstance, object $object): bool
     {
         $checkByGetter = function (string $method, mixed $value) use ($roInstance, $object): bool {
             if (!$roInstance->hasMethod($method)) {
                 return false;
             }
 
-            return $this->checkValue($object->{$method}(), $value);
+            return $this->testValue($object->{$method}(), $value);
         };
 
         if ('$or' === $criteria) {
             $valid = false;
             foreach ($value as $subCriterias) {
-                $valid = $this->checkListOfCriteria($subCriterias, $roInstance, $object);
+                $valid = $this->testListOfCriteria($subCriterias, $roInstance, $object);
 
                 if ($valid) {
                     break;
@@ -125,7 +127,7 @@ trait PersistenceOperationTrait
         if ('$and' === $criteria) {
             $valid = true;
             foreach ($value as $subCriterias) {
-                $valid = $valid && $this->checkListOfCriteria($subCriterias, $roInstance, $object);
+                $valid = $valid && $this->testListOfCriteria($subCriterias, $roInstance, $object);
 
                 if (!$valid) {
                     break;
@@ -149,7 +151,7 @@ trait PersistenceOperationTrait
 
                 foreach ($subObjectsList as &$subObject) {
                     $sro = new ReflectionObject($subObject);
-                    if ($this->checkACriteria($attr, $value, $sro, $subObject)) {
+                    if ($this->testACriteria($attr, $value, $sro, $subObject)) {
                         return true;
                     }
                 }
@@ -162,7 +164,7 @@ trait PersistenceOperationTrait
             $rp = $roInstance->getProperty($criteria);
             $rp->setAccessible(true);
 
-            if ($this->checkValue($rp->getValue($object), $value)) {
+            if ($this->testValue($rp->getValue($object), $value)) {
                 return true;
             }
         }
@@ -182,10 +184,10 @@ trait PersistenceOperationTrait
         return false;
     }
 
-    private function checkListOfCriteria(array $criteria, ReflectionObject $roInstance, object $object): bool
+    private function testListOfCriteria(array $criteria, ReflectionObject $roInstance, object $object): bool
     {
         foreach ($criteria as $name => &$value) {
-            if (!$this->checkACriteria($name, $value, $roInstance, $object)) {
+            if (!$this->testACriteria($name, $value, $roInstance, $object)) {
                 return false;
             }
         }
@@ -208,7 +210,7 @@ trait PersistenceOperationTrait
             foreach ($this->objects[$className] as $object) {
                 $roInstance = new ReflectionObject($object);
 
-                if ($this->checkListOfCriteria($criteria, $roInstance, $object)) {
+                if ($this->testListOfCriteria($criteria, $roInstance, $object)) {
                     $final[] = $object;
                 }
 
@@ -298,9 +300,7 @@ trait PersistenceOperationTrait
         );
     }
 
-    /**
-     * @Given A memory document database
-     */
+    #[Given('A memory document database')]
     public function aMemoryDocumentDatabase(): void
     {
         $this->sfContainer->set(ObjectManager::class, $this->buildObjectManager());
@@ -317,6 +317,7 @@ trait PersistenceOperationTrait
         $this->buildRepository(AccountRegistry::class);
         $this->buildRepository(AccountData::class);
         $this->buildRepository(AccountHistory::class);
+        $this->buildRepository(AccountCluster::class);
         $this->buildRepository(AccountPersistedVariable::class);
         $this->buildRepository(ProjectPersistedVariable::class);
         $this->buildRepository(ProjectMetadata::class);

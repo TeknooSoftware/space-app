@@ -11,6 +11,7 @@ space_api_v1_job_new:
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooSpace/api/Job/new.json.twig'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_job_new_pending:
     path: '/project/{projectId}/job/pending/{newJobId}'
@@ -32,7 +33,7 @@ space_api_v1_job_restart:
         _controller: 'teknoo.space.endpoint.job.restart'
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formActionRoute: 'space_job_new'
+        formActionRoute: 'space_api_v1_job_new'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\ApiNewJobType'
         objectClass: 'Teknoo\Space\Object\DTO\NewJob'
         projectKey: 'Teknoo\East\Paas\Object\Project'

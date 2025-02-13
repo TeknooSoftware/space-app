@@ -85,9 +85,17 @@ services:
         public: true
         arguments:
             - '@Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface'
+            - '@security.helper'
         calls:
             - ['setResponseFactory', ['@Psr\Http\Message\ResponseFactoryInterface']]
             - ['setRouter', ['@router']]
+
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser'
+        arguments:
+            - '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+            - '@security.helper'
+        public: true
 
     Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface:
         alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending'

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -29,17 +29,25 @@ use SensitiveParameter;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
 use Teknoo\Immutable\ImmutableTrait;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInterface, ImmutableInterface
+class AccountEnvironment implements
+    IdentifiedObjectInterface,
+    TimestampableInterface,
+    ImmutableInterface,
+    AccountComponentInterface
 {
     use ObjectTrait;
     use ImmutableTrait;
@@ -172,5 +180,21 @@ class AccountEnvironment implements IdentifiedObjectInterface, TimestampableInte
     public function getMetaData(string $key, mixed $default = null): mixed
     {
         return $this->metadata[$key] ?? $default;
+    }
+
+    public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
+    {
+        $this->account->verifyAccessToUser($user, $promise);
+
+        return $this;
+    }
+
+    public function resume(): AccountEnvironmentResume
+    {
+        return new AccountEnvironmentResume(
+            clusterName: $this->getClusterName(),
+            envName: $this->getEnvName(),
+            accountEnvironmentId: $this->getId(),
+        );
     }
 }

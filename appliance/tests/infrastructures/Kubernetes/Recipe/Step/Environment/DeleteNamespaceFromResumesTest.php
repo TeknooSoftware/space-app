@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,11 +30,14 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
+use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
+use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -46,8 +49,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
 #[CoversClass(AbstractDeleteFromResumes::class)]
 class DeleteNamespaceFromResumesTest extends TestCase
 {
-    private ClusterCatalog&MockObject $clusterCatalog;
-
+    private AccountEnvironmentWriter&MockObject $accountEnvironmentWriter;
     private DeleteNamespaceFromResumes $deleteNamespaceFromResumes;
 
     /**
@@ -57,24 +59,67 @@ class DeleteNamespaceFromResumesTest extends TestCase
     {
         parent::setUp();
 
-        $this->clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $this->accountEnvironmentWriter = $this->createMock(AccountEnvironmentWriter::class);
 
         $this->deleteNamespaceFromResumes = new DeleteNamespaceFromResumes(
-            $this->clusterCatalog,
+            $this->accountEnvironmentWriter,
         );
     }
 
     public function testInvoke(): void
     {
+        $account = $this->createMock(Account::class);
+
         self::assertInstanceOf(
             DeleteNamespaceFromResumes::class,
             ($this->deleteNamespaceFromResumes)(
-                new AccountWallet([$this->createMock(AccountEnvironment::class)]),
+                new AccountWallet([
+                    (new AccountEnvironment(
+                        $account,
+                        'Foo',
+                        'Prod',
+                        'foo',
+                        'foo',
+                        'foo',
+                        'foo',
+                        'foo',
+                        'foo',
+                        'foo',
+                        'foo',
+                        [],
+                    )
+                    )->setId('foo'),
+                ]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
-                    environmentResumes: []
+                    account: $account,
+                    environments: [
+                        new AccountEnvironmentResume(
+                            'Foo',
+                            'Prod',
+                            'foo5',
+                        )
+                    ]
                 ),
+                new ClusterCatalog(['foo' => $this->createMock(Cluster::class)], ['Foo' => 'foo']),
             ),
         );
     }
 }
+
+/**
+ * (new AccountEnvironment(
+ * $account,
+ * 'Foo',
+ * 'Prod',
+ * 'foo',
+ * 'foo',
+ * 'foo',
+ * 'foo',
+ * 'foo',
+ * 'foo',
+ * 'foo',
+ * 'foo',
+ * [],
+ * )
+ * )->setId('foo'),
+ */

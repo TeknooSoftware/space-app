@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,6 +26,8 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\Traits;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
@@ -66,7 +68,7 @@ trait BrowserCrawlingTrait
 
     public function findUrlFromRouteInPageAndOpenIt(Crawler $crawler, string $routeName, array $parameters = []): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute($routeName, $parameters);
         $node = $crawler->filter("a[href=\"{$url}\"]");
@@ -111,18 +113,14 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then it obtains a empty account's variables form
-     */
+    #[Then('it obtains a empty account\'s variables form')]
     public function itObtainsAEmptyAccountsVariablesForm(): void
     {
         $formValues = $this->createForm('account_vars')->getPhpValues();
         Assert::assertFalse(isset($formValues['account_vars']['sets']));
     }
 
-    /**
-     * @Then the user obtains the form:
-     */
+    #[Then('the user obtains the form:')]
     public function theUserObtainsTheForm(TableNode $formFields): void
     {
         $formValues = $this->createForm($this->formName)->getPhpValues();
@@ -135,24 +133,20 @@ trait BrowserCrawlingTrait
         }
     }
 
-    /**
-     * @Then it is redirected to the dashboard
-     */
+    #[Then('it is redirected to the dashboard')]
     public function itIsRedirectedToTheDashboard(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_dashboard'),
             $this->currentUrl,
         );
     }
 
-    /**
-     * @Then It has a welcome message with :fullName in the dashboard header
-     */
+    #[Then('It has a welcome message with :fullName in the dashboard header')]
     public function itHasAWelcomeMessageWithInTheDashboardHeader(string $fullName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -165,21 +159,17 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then it must redirected to the TOTP code page
-     */
+    #[Then('it must redirected to the TOTP code page')]
     public function itMustRedirectedToTheTotpCodePage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('2fa_login'),
             $this->currentUrl,
         );
     }
 
-    /**
-     * @Then it must have a TOTP error
-     */
+    #[Then('it must have a TOTP error')]
     public function itMustHaveATotpError(): void
     {
         $crawler = $this->createCrawler();
@@ -190,12 +180,10 @@ trait BrowserCrawlingTrait
         Assert::assertNotEmpty($nodeValue);
     }
 
-    /**
-     * @Then it is redirected to the login page with an error
-     */
+    #[Then('it is redirected to the login page with an error')]
     public function itIsRedirectedToTheLoginPageWithAnError(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_account_login'),
             $this->currentUrl,
@@ -208,9 +196,7 @@ trait BrowserCrawlingTrait
         Assert::assertNotEmpty($nodeValue);
     }
 
-    /**
-     * @When It goes to projects list page
-     */
+    #[When('It goes to projects list page')]
     public function itGoesToProjectsListPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -219,12 +205,10 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then the user obtains a project list:
-     */
+    #[Then('the user obtains a project list:')]
     public function theUserObtainsAProjectList(TableNode $projects): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -245,47 +229,37 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then it obtains a empty project's form
-     */
+    #[Then('it obtains a empty project\'s form')]
     public function itObtainsAEmptyProjectsForm(): void
     {
         $formValues = $this->createForm('space_project')->getPhpValues();
         Assert::assertEmpty($formValues['space_project']['project']['name']);
     }
 
-    /**
-     * @Then the user must have a :code error
-     */
+    #[Then('the user must have a :code error')]
     public function theUserMustHaveAError(int $code): void
     {
         Assert::assertEquals($code, $this->response?->getStatusCode());
     }
 
-    /**
-     * @Then it obtains a empty project's variables form
-     */
+    #[Then('it obtains a empty project\'s variables form')]
     public function itObtainsAEmptyProjectsVariablesForm(): void
     {
         $formValues = $this->createForm('project_vars')->getPhpValues();
         Assert::assertFalse(isset($formValues['project_vars']['sets']));
     }
 
-    /**
-     * @Then it obtains a deployment page
-     */
+    #[Then('it obtains a deployment page')]
     public function itObtainsADeploymentPage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertStringStartsWith(
             '/job/pending/',
             $this->currentUrl,
         );
     }
 
-    /**
-     * @Then it is forwared to job page
-     */
+    #[Then('it is forwared to job page')]
     public function itIsForwaredToJobPage(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -311,12 +285,10 @@ trait BrowserCrawlingTrait
         $this->executeRequest('GET', $url);
     }
 
-    /**
-     * @Then the user obtains an error
-     */
+    #[Then('the user obtains an error')]
     public function theUserObtainsAnError(): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
         $node = $crawler->filter('.space-form-error');
@@ -326,9 +298,7 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then a password mismatch error
-     */
+    #[Then('a password mismatch error')]
     public function aPasswordMismatchError(): void
     {
         $crawler = $this->createCrawler();
@@ -342,9 +312,7 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then an invalid code error
-     */
+    #[Then('an invalid code error')]
     public function anInvalidCodeError(): void
     {
         $crawler = $this->createCrawler();
@@ -358,24 +326,20 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then the user is redirected to the dashboard page
-     */
+    #[Then('the user is redirected to the dashboard page')]
     public function theUserIsRedirectedToTheDashboardPage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_dashboard'),
             $this->currentUrl,
         );
     }
 
-    /**
-     * @Then the account name is now :accountName
-     */
+    #[Then('the account name is now :accountName')]
     public function theAccountNameIsNow(string $accountName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         if ($this->isApiCall) {
             $account = $this->recall(Account::class);
@@ -405,13 +369,11 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then the user's name is now :fullName
-     * @Then its name is now :fullName
-     */
+    #[Then('its name is now :fullName')]
+    #[Then('the user\'s name is now :fullName')]
     public function itsNameIsNow(string $fullName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         if ($this->isApiCall) {
             $user = $this->recall(User::class);
@@ -441,9 +403,7 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then The client must go to recovery request sent page
-     */
+    #[Then('The client must go to recovery request sent page')]
     public function theClientMustGoToRecoveryRequestSentPage(): void
     {
         Assert::assertStringStartsWith(
@@ -452,12 +412,10 @@ trait BrowserCrawlingTrait
         );
     }
 
-    /**
-     * @Then it is redirected to the recovery password page
-     */
+    #[Then('it is redirected to the recovery password page')]
     public function itIsRedirectedToTheRecoveryPasswordPage(): void
     {
-        $this->checkIfUserHasBeenRedirected();
+        $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_update_password'),
             $this->currentUrl,

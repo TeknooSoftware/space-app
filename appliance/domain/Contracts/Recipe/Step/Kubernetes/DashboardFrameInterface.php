@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,12 +30,13 @@ use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 interface DashboardFrameInterface
@@ -45,6 +46,7 @@ interface DashboardFrameInterface
         EastClient $client,
         ServerRequestInterface $serverRequest,
         User $user,
+        ClusterCatalog $clusterCatalog,
         string $clusterName,
         string $wildcard = '',
         ?Account $account = null,

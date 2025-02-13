@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,41 +30,45 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Count;
+use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnvironmentResumesType;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class SpaceAccountType extends AbstractType
+class SpaceAccountType extends AbstractType implements FormApiAwareInterface
 {
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
-        $builder->add(
-            'account',
-            AccountType::class,
-        );
+        if (empty($options['api']) || empty($options['enableEnvManagement'])) {
+            $builder->add(
+                'account',
+                AccountType::class,
+            );
 
-        $builder->add(
-            'accountData',
-            AccountDataType::class,
-            [
-                'can_update_subscription' => false,
-            ]
-        );
+            $builder->add(
+                'accountData',
+                AccountDataType::class,
+                [
+                    'can_update_subscription' => false,
+                ]
+            );
+        }
 
         if (
             !empty($options['enableEnvManagement'])
-            && !empty($options['subscriptionPlan'])
-            && $options['subscriptionPlan'] instanceof SubscriptionPlan
+            && !empty($options['subscriptionPlan']) && $options['subscriptionPlan'] instanceof SubscriptionPlan
+            && !empty($options['clusterCatalog']) && $options['clusterCatalog'] instanceof ClusterCatalog
         ) {
             $builder->add(
-                'environmentResumes',
+                'environments',
                 CollectionType::class,
                 [
                     'entry_type' => AccountEnvironmentResumesType::class,
@@ -73,6 +77,7 @@ class SpaceAccountType extends AbstractType
                     'prototype' => true,
                     'entry_options' => [
                         'subscriptionPlan' => $options['subscriptionPlan'],
+                        'clusterCatalog' => $options['clusterCatalog'],
                     ],
                     'constraints' => [
                         new Count([
@@ -93,10 +98,16 @@ class SpaceAccountType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => SpaceAccount::class,
-            'doctrine_type' => '',
-            'subscriptionPlan' => null,
+            'api' => null,
             'enableEnvManagement' => null,
+            'subscriptionPlan' => null,
+            'clusterCatalog' => null,
         ]);
+
+        $resolver->setRequired(['doctrine_type']);
+        $resolver->setAllowedTypes('doctrine_type', 'string');
+        $resolver->setAllowedTypes('clusterCatalog', [ClusterCatalog::class, 'null']);
+        $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, 'null']);
 
         return $this;
     }

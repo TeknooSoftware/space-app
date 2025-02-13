@@ -23,6 +23,7 @@ _teknoo_paas_admin_project_edit:
         template: '@@TeknooEastPaas/AdminProject/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 _teknoo_paas_admin_project_new:
     path: '/admin/account/{accountId}/project/new'
@@ -41,6 +42,7 @@ _teknoo_paas_admin_project_new:
         template: '@@TeknooEastPaas/AdminProject/new.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 _teknoo_paas_admin_project_delete:
     path: '/admin/project/{id}/delete'

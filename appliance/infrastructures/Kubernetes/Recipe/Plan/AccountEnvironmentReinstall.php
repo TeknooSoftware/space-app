@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -52,7 +52,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class AccountEnvironmentReinstall implements EditablePlanInterface
@@ -66,7 +66,7 @@ class AccountEnvironmentReinstall implements EditablePlanInterface
         private readonly PrepareRedirection $prepareRedirection,
         private readonly SetRedirectClientAtEnd $redirectClient,
         private readonly LoadHistory $loadHistory,
-        private readonly LoadEnvironments $loadCredentials,
+        private readonly LoadEnvironments $loadEnvironments,
         private readonly LoadRegistryCredential $loadRegistryCredential,
         private readonly ReloadNamespace $reloadNamespace,
         private readonly FindEnvironmentInWallet $findEnvironmentInWallet,

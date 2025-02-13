@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -37,8 +37,10 @@ use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\CommonBundle\Contracts\Recipe\Step\BuildQrCodeInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
+use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\Kubernetes\HttpClientDiscovery;
+use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
@@ -65,6 +67,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm as PrepareAccountForm;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser;
+use Teknoo\Space\Loader\AccountClusterLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
@@ -74,11 +77,14 @@ use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
+use Teknoo\Space\Recipe\Step\Account\InjectToView;
+use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
-use Teknoo\Space\Recipe\Step\Account\SetPlan;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
@@ -114,7 +120,6 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountRegistryWriter;
 use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
-use Teknoo\Space\Writer\Meta\SpaceUserWriter;
 
 use function DI\create;
 use function DI\get;
@@ -299,8 +304,20 @@ return [
     LoadRegistryCredential::class => create()
         ->constructor(get(AccountRegistryLoader::class)),
 
+    LoadAccountFromRequest::class => create()
+        ->constructor(get(AccountLoader::class)),
+
     LoadAccountData::class => create()
         ->constructor(get(AccountDataLoader::class)),
+
+    LoadAccountClusters::class => create()
+        ->constructor(
+            get(AccountClusterLoader::class),
+            get(ClientFactoryInterface::class),
+            get(RepositoryRegistry::class),
+        ),
+
+    InjectToView::class => create(),
 
     LoadHistory::class => create()
         ->constructor(
@@ -339,7 +356,7 @@ return [
     CreateAccount::class => create()
         ->constructor(get(SpaceAccountWriter::class)),
 
-    SetPlan::class => create()
+    SetSubscriptionPlan::class => create()
         ->constructor(get('teknoo.space.subscription_plan_catalog')),
 
     SetQuota::class => create(),
@@ -347,9 +364,6 @@ return [
     PrepareInstall::class => create(),
 
     CreateUserInterface::class => get(CreateUser::class),
-
-    CreateUser::class => create()
-        ->constructor(get(SpaceUserWriter::class)),
 
     LoadUserData::class => create()
         ->constructor(get(UserDataLoader::class)),
@@ -421,7 +435,6 @@ return [
         );
 
         return new DashboardFrame(
-            catalog: $container->get('teknoo.space.clusters_catalog'),
             httpMethodsClient: $httpMethodsClient,
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
         );

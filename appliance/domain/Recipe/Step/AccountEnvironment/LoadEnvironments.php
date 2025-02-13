@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -39,7 +39,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class LoadEnvironments
@@ -63,7 +63,7 @@ class LoadEnvironments
         if (false === $allowEmptyCredentials) {
             $errorCallback = static fn (Throwable $error) => $manager->error(
                 new DomainException(
-                    message: 'teknoo.space.error.space_account.account_credential.fetching',
+                    message: 'teknoo.space.error.space_account.account_environment.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,
                     previous: $error,
                 )

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -48,7 +48,7 @@ use Teknoo\Space\Recipe\Step\Job\PrepareCriteria;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -101,18 +101,18 @@ class JobListTest extends TestCase
         $this->defaultErrorTemplate = '42';
         $this->loadListObjectsWiths = [];
         $this->jobList = new JobList(
-            $this->recipe,
-            $this->loadObject,
-            $this->extractPage,
-            $this->extractOrder,
-            $this->jobPrepareCriteria,
-            $this->loadListObjects,
-            $this->renderList,
-            $this->renderError,
-            $this->searchFormLoader,
-            $this->listObjectsAccessControl,
-            $this->defaultErrorTemplate,
-            $this->loadListObjectsWiths,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            extractPage: $this->extractPage,
+            extractOrder: $this->extractOrder,
+            jobPrepareCriteria: $this->jobPrepareCriteria,
+            loadListObjects: $this->loadListObjects,
+            renderList: $this->renderList,
+            renderError: $this->renderError,
+            searchFormLoader: $this->searchFormLoader,
+            listObjectsAccessControl: $this->listObjectsAccessControl,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
+            loadListObjectsWiths: $this->loadListObjectsWiths,
         );
     }
 

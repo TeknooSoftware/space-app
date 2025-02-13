@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
@@ -36,6 +37,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 
 /**
@@ -43,7 +45,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -53,6 +55,8 @@ class AccountRegistryInstallTest extends TestCase
     private AccountRegistryInstall $accountInstall;
 
     private RecipeInterface|MockObject $recipe;
+
+    private LoadAccountClusters|MockObject $loadAccountClusters;
 
     private CreateNamespace|MockObject $createNamespace;
 
@@ -64,6 +68,8 @@ class AccountRegistryInstallTest extends TestCase
 
     private PrepareAccountErrorHandler|MockObject $errorHandler;
 
+    private ObjectAccessControlInterface|MockObject $objectAccessControlInterface;
+
     private string $defaultStorageSizeToClaim;
 
     /**
@@ -74,20 +80,24 @@ class AccountRegistryInstallTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
+        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
         $this->createNamespace = $this->createMock(CreateNamespace::class);
         $this->createStorage = $this->createMock(CreateStorage::class);
         $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
         $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredential::class);
         $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
+        $this->objectAccessControlInterface = $this->createMock(ObjectAccessControlInterface::class);
         $this->defaultStorageSizeToClaim = '42';
 
         $this->accountInstall = new AccountRegistryInstall(
             recipe: $this->recipe,
+            loadAccountClusters: $this->loadAccountClusters,
             createNamespace: $this->createNamespace,
             createStorage: $this->createStorage,
             createRegistryAccount: $this->createRegistryAccount,
             persistRegistryCredential: $this->persistRegistryCredentials,
             errorHandler: $this->errorHandler,
+            objectAccessControl: $this->objectAccessControlInterface,
             defaultStorageSizeToClaim: $this->defaultStorageSizeToClaim,
         );
     }

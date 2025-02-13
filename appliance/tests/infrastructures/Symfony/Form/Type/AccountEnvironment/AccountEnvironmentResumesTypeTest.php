@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -53,9 +53,7 @@ class AccountEnvironmentResumesTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountEnvironmentResumesType = new AccountEnvironmentResumesType(
-            $this->createMock(ClusterCatalog::class)
-        );
+        $this->accountEnvironmentResumesType = new AccountEnvironmentResumesType();
     }
 
     public function testBuildForm(): void
@@ -66,6 +64,7 @@ class AccountEnvironmentResumesTypeTest extends TestCase
                 $this->createMock(FormBuilderInterface::class),
                 [
                     'subscriptionPlan' => $this->createMock(SubscriptionPlan::class),
+                    'clusterCatalog' => $this->createMock(ClusterCatalog::class),
                 ],
             ),
         );

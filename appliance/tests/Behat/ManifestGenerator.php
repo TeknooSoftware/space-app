@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -670,15 +670,15 @@ EOF;
         $hncManifest = '';
         if ($useHnc) {
             $hncManifest = <<<"EOF"
-"namespaces/space-behat-my-company-prod/subnamespacesanchors": [
+"namespaces/space-client-my-company-prod/subnamespacesanchors": [
         {
             "kind": "SubnamespaceAnchor",
             "apiVersion": "hnc.x-k8s.io/v1",
             "metadata": {
                 "name": "{$nameHnc}",
-                "namespace": "space-behat-my-company-prod",
+                "namespace": "space-client-my-company-prod",
                 "labels": {
-                    "name": "space-behat-my-company-prod{$hncSuffix}"
+                    "name": "space-client-my-company-prod{$hncSuffix}"
                 }
             }
         }
@@ -836,13 +836,13 @@ EOF;
 
         $json = <<<"EOF"
 {
-    $hncManifest"namespaces/space-behat-my-company-prod{$hncSuffix}/secrets": [
+    $hncManifest"namespaces/space-client-my-company-prod{$hncSuffix}/secrets": [
         {
             "kind": "Secret",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map-vault-secret",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map-vault"
                 }
@@ -858,7 +858,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map-vault2-secret",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map-vault2"
                 }
@@ -873,7 +873,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}volume-vault-secret",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}volume-vault"
                 }
@@ -885,13 +885,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-company-prod{$hncSuffix}/configmaps": [
+    "namespaces/space-client-my-company-prod{$hncSuffix}/configmaps": [
         {
             "kind": "ConfigMap",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map1-map",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map1"
                 }
@@ -906,7 +906,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}map2-map",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}map2"
                 }
@@ -917,13 +917,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-company-prod{$hncSuffix}/persistentvolumeclaims": [
+    "namespaces/space-client-my-company-prod{$hncSuffix}/persistentvolumeclaims": [
         {
             "kind": "PersistentVolumeClaim",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}data",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}data"
                 }
@@ -945,7 +945,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}data-replicated",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}data-replicated"
                 }
@@ -963,13 +963,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-company-prod{$hncSuffix}/deployments": [
+    "namespaces/space-client-my-company-prod{$hncSuffix}/deployments": [
         {
             "kind": "Deployment",
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}shell-dplmt",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}shell"
                 },
@@ -994,7 +994,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}shell-pod",
-                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                        "namespace": "space-client-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}shell",
                             "vname": "{$projectPrefix}shell-v1"
@@ -1031,7 +1031,7 @@ EOF;
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-dplmt",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 },
@@ -1052,7 +1052,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}demo-pod",
-                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                        "namespace": "space-client-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}demo",
                             "vname": "{$projectPrefix}demo-v1"
@@ -1147,13 +1147,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-company-prod{$hncSuffix}/statefulsets": [
+    "namespaces/space-client-my-company-prod{$hncSuffix}/statefulsets": [
         {
             "kind": "StatefulSet",
             "apiVersion": "apps/v1",
             "metadata": {
                 "name": "{$projectPrefix}php-pods-sfset",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-pods"
                 },
@@ -1179,7 +1179,7 @@ EOF;
                 "template": {
                     "metadata": {
                         "name": "{$projectPrefix}php-pods-pod",
-                        "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                        "namespace": "space-client-my-company-prod{$hncSuffix}",
                         "labels": {
                             "name": "{$projectPrefix}php-pods",
                             "vname": "{$projectPrefix}php-pods-v1"
@@ -1371,13 +1371,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-company-prod{$hncSuffix}/services": [
+    "namespaces/space-client-my-company-prod{$hncSuffix}/services": [
         {
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}php-service",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}php-service"
                 }
@@ -1402,7 +1402,7 @@ EOF;
             "apiVersion": "v1",
             "metadata": {
                 "name": "{$projectPrefix}demo",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 }
@@ -1429,13 +1429,13 @@ EOF;
             }
         }
     ],
-    "namespaces/space-behat-my-company-prod{$hncSuffix}/ingresses": [
+    "namespaces/space-client-my-company-prod{$hncSuffix}/ingresses": [
         {
             "kind": "Ingress",
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-ingress",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo"
                 },
@@ -1556,7 +1556,7 @@ EOF;
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
                 "name": "{$projectPrefix}demo-secure-ingress",
-                "namespace": "space-behat-my-company-prod{$hncSuffix}",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
                     "name": "{$projectPrefix}demo-secure"
                 },

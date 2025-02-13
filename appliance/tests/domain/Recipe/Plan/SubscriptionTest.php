@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -48,7 +48,7 @@ use Teknoo\Space\Recipe\Plan\Subscription;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -95,16 +95,16 @@ class SubscriptionTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->subscription = new Subscription(
-            $this->recipe,
-            $this->createObject,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->createUser,
-            $this->createAccount,
-            $this->loginUser,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            createObject: $this->createObject,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            createUser: $this->createUser,
+            createAccount: $this->createAccount,
+            loginUser: $this->loginUser,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--config/doctrine/AccountEnvironment.mongodb.xml-->
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                                            http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Teknoo\Space\Object\Persisted\AccountCluster" collection="accounts_clusters">
+        <id type="string" strategy="UUID"/>
+        <field field-name="name" name="name" type="string" nullable="false"/>
+        <field field-name="slug" name="slug" type="string" nullable="false"/>
+        <field field-name="type" name="type" type="string" nullable="false"/>
+        <field field-name="masterAddress" name="master_address" type="string" nullable="false"/>
+        <field field-name="storageProvisioner" name="storage_provisioner" type="string" nullable="false"/>
+        <field field-name="dashboardAddress" name="dashboard_address" type="string" nullable="false"/>
+        <field field-name="caCertificate" name="ca_certificate" type="string" nullable="false"/>
+        <field field-name="token" name="token" type="string" nullable="false"/>
+        <field field-name="supportRegistry" name="support_registry" type="bool" nullable="false"/>
+        <field field-name="registryUrl" name="registry_url" type="string" nullable="true"/>
+        <field field-name="useHnc" name="use_hnc" type="bool" nullable="true"/>
+        <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
+        <field field-name="updatedAt" name="updated_at" type="date" />
+        <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">
+            <cascade />
+        </reference-one>
+    </document>
+</doctrine-mongo-mapping>

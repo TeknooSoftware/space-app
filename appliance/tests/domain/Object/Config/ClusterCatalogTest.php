@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,7 +43,7 @@ use function iterator_to_array;
 #[CoversClass(ClusterCatalog::class)]
 class ClusterCatalogTest extends TestCase
 {
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     /**
      * {@inheritdoc}
@@ -52,7 +52,7 @@ class ClusterCatalogTest extends TestCase
     {
         parent::setUp();
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['Foo' => $this->createMock(Cluster::class)],
             ['foo' => 'Foo'],
         );
@@ -62,12 +62,12 @@ class ClusterCatalogTest extends TestCase
     {
         self::assertInstanceOf(
             Cluster::class,
-            iterator_to_array($this->catalog)['Foo'],
+            iterator_to_array($this->clusterCatalog)['Foo'],
         );
 
         self::assertInstanceOf(
             Cluster::class,
-            $this->catalog->getCluster('foo'),
+            $this->clusterCatalog->getCluster('foo'),
         );
     }
 }

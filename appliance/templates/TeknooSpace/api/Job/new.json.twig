@@ -4,5 +4,5 @@
 {% set object = {"job_queue_id": newJobId} %}
 {{ object|space_object_serialization({}, 'json', {'url': path }) }}
 {% else %}
-{{ field_errors(formView)|space_object_serialization({}, 'json', {"error": true}) }}
+{{ space_form_errors(formView)|space_object_serialization({}, 'json', {"error": true}) }}
 {% endif %}

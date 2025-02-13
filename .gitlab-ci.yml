@@ -18,12 +18,11 @@ test:8.3-upper:
   variables:
     PHP_VERSION: '8.3'
   script:
-    - make test
+    - make test-mono-thread
     - make qa
 
 test:8.4-upper:
   extends: .abstract_tests
-  allow_failure: true
   variables:
     PHP_VERSION: '8.4'
     IGNORE_DEPRECATIONS: 1

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -40,7 +40,7 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery as LoadCredentialsFromAccountQuery;
+use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery as LoadEnvironmentsFromAccountQuery;
 use Teknoo\Space\Query\AccountHistory\LoadFromAccountQuery as LoadHistoryFromAccountQuery;
 use Teknoo\Space\Query\AccountPersistedVariable\DeleteVariablesQuery;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
@@ -52,7 +52,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements WriterInterface<SpaceAccount>
@@ -163,7 +163,7 @@ class SpaceAccountWriter implements WriterInterface
                         fn (AccountEnvironment $credential) => $this->credentialWriter->remove($credential),
                     );
                     $this->credentialLoader->fetch(
-                        new LoadCredentialsFromAccountQuery($account),
+                        new LoadEnvironmentsFromAccountQuery($account),
                         $credentialsPromise,
                     );
 

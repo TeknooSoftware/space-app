@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,16 +45,18 @@ use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Recipe\Plan\JobStart;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
+use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 
 /**
  * Class JobStartTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -69,11 +71,15 @@ class JobStartTest extends TestCase
 
     private ObjectAccessControlInterface|MockObject $objectAccessControl;
 
+    private LoadAccountFromProject|MockObject $loadAccountFromProject;
+
     private CreateObject|MockObject $createObject;
 
     private PrepareNewJobForm|MockObject $prepareNewJobForm;
 
     private LoadPersistedVariablesForJob|MockObject $loadPersistedVariablesForJob;
+
+    private LoadAccountClusters|MockObject $loadAccountClusters;
 
     private FormHandlingInterface|MockObject $formHandling;
 
@@ -108,9 +114,11 @@ class JobStartTest extends TestCase
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->loadObject = $this->createMock(LoadObject::class);
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+        $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
         $this->createObject = $this->createMock(CreateObject::class);
         $this->prepareNewJobForm = $this->createMock(PrepareNewJobForm::class);
         $this->loadPersistedVariablesForJob = $this->createMock(LoadPersistedVariablesForJob::class);
+        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
         $this->formHandling = $this->createMock(FormHandlingInterface::class);
         $this->formProcessing = $this->createMock(FormProcessingInterface::class);
         $this->newJobSetDefaults = $this->createMock(NewJobSetDefaults::class);
@@ -123,23 +131,25 @@ class JobStartTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->jobStart = new JobStart(
-            $this->recipe,
-            $this->loadObject,
-            $this->objectAccessControl,
-            $this->createObject,
-            $this->prepareNewJobForm,
-            $this->loadPersistedVariablesForJob,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->newJobSetDefaults,
-            $this->persistJobVar,
-            $this->newJobNotifier,
-            $this->jumpIf,
-            $this->callNewJob,
-            $this->redirectClient,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            objectAccessControl: $this->objectAccessControl,
+            loadAccountFromProject: $this->loadAccountFromProject,
+            createObject: $this->createObject,
+            prepareNewJobForm: $this->prepareNewJobForm,
+            loadPersistedVariablesForJob: $this->loadPersistedVariablesForJob,
+            loadAccountClusters: $this->loadAccountClusters,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            newJobSetDefaults: $this->newJobSetDefaults,
+            persistJobVar: $this->persistJobVar,
+            newJobNotifier: $this->newJobNotifier,
+            jumpIf: $this->jumpIf,
+            callNewJob: $this->callNewJob,
+            redirectClient: $this->redirectClient,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate
         );
     }
 
