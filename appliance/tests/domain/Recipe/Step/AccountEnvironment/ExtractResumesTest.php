@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -61,7 +61,7 @@ class ExtractResumesTest extends TestCase
                 $this->createMock(ManagerInterface::class),
                 new SpaceAccount(
                     account: $this->createMock(Account::class),
-                    environmentResumes: []
+                    environments: []
                 ),
             ),
         );

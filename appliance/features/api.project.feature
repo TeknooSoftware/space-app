@@ -1,15 +1,27 @@
-Feature: On a space instance, an API is available to manage projects and integrating it with any platform
+Feature: API endpoints to manage account's projects
+  In order to manage account's projects
+  As an user of an account
+  I want to manage my account's projects only
 
-  Scenario: List owned projects from the API
+  On a space instance, each allowed users can register a new project on its attached account. A project must hosted on
+  a source repository like GIT. Currently Space support only GIT via https and ssh, with tls keys or access token.
+  A project can be compiled and pushed to a private OCI registry dedicated to the account and deploy builded containers
+  to a cluster / servers (only Kubernetes is currently supported) in a dedicated namespace reserved to the account's
+  environment selected on the job deployment.
+  The Project's configuration store only informations about get the project from a repository and clusters where deploy
+  it, per environment. The project's configuration can store variables. All others informations are stored directly into
+  the space.paas.yaml file available at the root of the source repostirory.
+
+  Scenario: From the API, list owned projects
     Given A Space app instance
     And A memory document database
     And an account for "My First Company" with the account namespace "my-first-company"
     And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
-    And "5" standard websites projects "project X" and a prefix "a-prefix"
+    And "5" standard projects "project X" and a prefix "a-prefix"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And "5" standard websites projects "other project X" and a prefix "other-prefix"
+    And "5" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -21,7 +33,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And is a serialized collection of "5" items on "1" pages
     And the a list of serialized owned projects
 
-  Scenario: Create a project from the API
+  Scenario: From the API, create a project, via a request with a form url encoded body
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -58,7 +70,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
-  Scenario: Create a project from the API with a json body
+  Scenario: From the API, create a project, via a request with a json body
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -95,13 +107,13 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
-  Scenario: Get an owned project from the API
+  Scenario: From the API, get an owned project
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -112,7 +124,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized project "my project"
 
-  Scenario: Get an non-owned project from the API
+  Scenario: From the API, get an non-owned project and get an error
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -120,7 +132,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -129,53 +141,15 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to get the last project
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
 
-  Scenario: Get an owned project'variables from the API
+  Scenario: From the API, edit an owned project, via a request with a form url encoded body
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to get the last project's variables
-    Then get a JSON reponse
-    And the serialized "10" project's variables
-
-  Scenario: Get an non-owned project' variables from the API
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to get the last project's variables
-    Then get a JSON reponse
-    And an 403 error
-
-  Scenario: Edit an owned project from the API
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -206,7 +180,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized updated project "Behats Test"
 
-  Scenario: Edit an non-owned project from the API
+  Scenario: From the API, edit an non-owned project, via a request with a form url encoded body and get an error
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -214,7 +188,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -243,15 +217,15 @@ Feature: On a space instance, an API is available to manage projects and integra
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | aFakeToken                            |
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
 
-  Scenario: Edit an owned project from the API with a json body
+  Scenario: From the API, edit an owned project, via a request with a json body
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -282,7 +256,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized updated project "Behats Test"
 
-  Scenario: Edit an non-owned project from the API with a json body
+  Scenario: From the API, edit an non-owned project, via a request with a json body and get an error
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -290,7 +264,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -319,228 +293,15 @@ Feature: On a space instance, an API is available to manage projects and integra
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | aFakeToken                            |
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
 
-  Scenario: Edit an owned project's variables from the API
+  Scenario: From the API, delete an owned project
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables:
-      | field                                      | value            |
-      | project_vars.sets.prod.envName             | prod             |
-      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
-      | project_vars.sets.prod.variables.20.value  | space_project_db |
-      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
-      | project_vars.sets.prod.variables.21.secret | 1                |
-      | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
-
-  Scenario: Edit an non-owned project's project variables from the API
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables:
-      | field                                      | value            |
-      | project_vars.sets.prod.envName             | prod             |
-      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
-      | project_vars.sets.prod.variables.20.value  | space_project_db |
-      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
-      | project_vars.sets.prod.variables.21.secret | 1                |
-      | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
-    And an 403 error
-
-  Scenario: Edit an owned project's variables from the API with a json body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables with a json body:
-      | field                        | value            |
-      | sets.prod.envName            | prod             |
-      | sets.prod.variables.0.name   | DB_NAME          |
-      | sets.prod.variables.0.value  | space_project_db |
-      | sets.prod.variables.1.name   | DB_PWD           |
-      | sets.prod.variables.1.secret | 1                |
-      | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
-    And the serialized "2" project's variables with "DB_PWD" equals to "fooBar"
-
-  Scenario: Edit an non-owned project's project variables from the API with a json body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables with a json body:
-      | field                        | value            |
-      | sets.prod.envName            | prod             |
-      | sets.prod.variables.0.name   | DB_NAME          |
-      | sets.prod.variables.0.value  | space_project_db |
-      | sets.prod.variables.1.name   | DB_PWD           |
-      | sets.prod.variables.1.secret | 1                |
-      | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
-    And an 403 error
-
-  Scenario: Edit an owned project's variables from the API with secrets encryptions
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables:
-      | field                                      | value            |
-      | project_vars.sets.prod.envName             | prod             |
-      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
-      | project_vars.sets.prod.variables.20.value  | space_project_db |
-      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
-      | project_vars.sets.prod.variables.21.secret | 1                |
-      | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_PWD" equals to "fooBar"
-
-  Scenario: Edit an non-owned project's project variables from the API with secrets encryptions
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables:
-      | field                                      | value            |
-      | project_vars.sets.prod.envName             | prod             |
-      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
-      | project_vars.sets.prod.variables.20.value  | space_project_db |
-      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
-      | project_vars.sets.prod.variables.21.secret | 1                |
-      | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
-    And an 403 error
-
-  Scenario: Edit an owned project's variables from the API with a json body with secrets encryptions
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables with a json body:
-      | field                        | value            |
-      | sets.prod.envName            | prod             |
-      | sets.prod.variables.0.name   | DB_NAME          |
-      | sets.prod.variables.0.value  | space_project_db |
-      | sets.prod.variables.1.name   | DB_PWD           |
-      | sets.prod.variables.1.secret | 1                |
-      | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_PWD" equals to "fooBar"
-
-  Scenario: Edit an non-owned project's project variables from the API with a json body with secrets encryptions
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables with a json body:
-      | field                        | value            |
-      | sets.prod.envName            | prod             |
-      | sets.prod.variables.0.name   | DB_NAME          |
-      | sets.prod.variables.0.value  | space_project_db |
-      | sets.prod.variables.1.name   | DB_PWD           |
-      | sets.prod.variables.1.secret | 1                |
-      | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
-    And an 403 error
-
-  Scenario: Delete an owned project from the API
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -552,7 +313,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized deleted project
     And the project is deleted
 
-  Scenario: Delete an non-owned project from the API
+  Scenario: From the API, delete an non-owned project and get an error
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -560,7 +321,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -569,16 +330,16 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to delete the last project
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
     And the project is not deleted
 
-  Scenario: Delete an owned project from the API with DELETE method
+  Scenario: From the API, delete an owned project via a request with DELETE method
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -590,7 +351,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized deleted project
     And the project is deleted
 
-  Scenario: Delete an non-owned project from the API with DELETE method
+  Scenario: From the API, delete a non-owned project via a request with DELETE method and get an error
     Given A Space app instance
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
@@ -598,7 +359,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -607,5 +368,5 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the user logs out
     When the API is called to delete the last project with DELETE method
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
     And the project is not deleted

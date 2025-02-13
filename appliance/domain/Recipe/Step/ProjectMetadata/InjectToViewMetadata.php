@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -31,7 +31,7 @@ use Teknoo\Space\Object\Persisted\ProjectMetadata;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class InjectToViewMetadata
@@ -40,11 +40,7 @@ class InjectToViewMetadata
         ParametersBag $bag,
         ?ProjectMetadata $projectMetadata = null,
     ): self {
-        if (null === $projectMetadata) {
-            return $this;
-        }
-
-        $projectMetadata->export($bag);
+        $projectMetadata?->export($bag);
 
         return $this;
     }

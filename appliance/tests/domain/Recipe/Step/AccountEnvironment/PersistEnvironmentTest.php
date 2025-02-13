@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -104,6 +104,7 @@ class PersistEnvironmentTest extends TestCase
                     token: 'foo',
                     supportRegistry: true,
                     useHnc: true,
+                    isExternal: false,
                 ),
                 envMetadata: ['foo' => 'bar'],
             ),

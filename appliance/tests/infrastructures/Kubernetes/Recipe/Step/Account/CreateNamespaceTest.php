@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -91,6 +91,7 @@ class CreateNamespaceTest extends TestCase
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
+            isExternal: false,
         );
 
         self::assertInstanceOf(

@@ -1,5 +1,36 @@
 # Teknoo Software - Space - Change Log
 
+## [1.1.0-beta1] - XXXX
+### Beta Version
+- Update libraries:
+  - Illuminate libraries 11.42
+  - Symfony 7.2.2
+  - Doctrine
+  - Omines Oauth2
+  - Teknoo States, Recipe and East Foundation
+  - Teknoo East PaaS
+  - PHPUnit 12
+- Support of PHP 8.4
+- Rename `Managed Cluster` as `Managed Environment`
+- Rename `Plan` to `SubscriptionPlan`
+- Add `Account Cluster` (with `AccountCluster` object, loader and writer, API endpoints, Web UI ) to allow users to
+  register theirs owns (Kubernetes) clusters like defined clusters in the space configuration. Users can create 
+  `Accounts Environments` on these clusters, to be used as `Managed Environment`.
+- Migrate `ClusterCatalog` to ingredient into cookbooks and recipes instead of constructors arguments to allow update
+  it with account's clusters
+  - `Teknoo\Space\Object\Config\Cluster` has a new property `isExternal`
+    - If it is at `false`, the cluster is defined in the `Space` configuration
+    - If it is at `true`, the cluster come from an `Account Cluster`
+- Rename `$catalog` variables to `$clusterCatalog`
+- Improve error response on API endpoints
+- Fix ACL errors on subscribing user 
+- Fix issue in project editing vars in non executable project
+- Fix error when Project is not fully completed and it is runned or with last Doctrine version
+- Improve and fixes Behat tests
+  - Fix memory leaks in Behat
+  - Enable parallel tests in Behat
+  - Rewrite Behat features and scenario to be more understable
+
 ## [1.0.5] - 2025-01-07
 ### Stable Version
 - Upgrading to Symfony 7.2.2

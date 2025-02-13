@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -40,22 +40,17 @@ use Teknoo\Space\Object\Persisted\AccountRegistry;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class UpdateProjectCredentialsFromAccount
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         SpaceProject $spaceProject,
         AccountWallet $accountWallet,
         AccountRegistry $accountRegistry,
+        ClusterCatalog $clusterCatalog,
     ): UpdateProjectCredentialsFromAccount {
-        $catalog = $this->catalog;
         $eastProject = $spaceProject->project;
         $eastProject->visit(
             [
@@ -81,7 +76,7 @@ class UpdateProjectCredentialsFromAccount
                         ),
                     );
                 },
-                'clusters' => static function (iterable $clusters) use ($accountWallet, $catalog): void {
+                'clusters' => static function (iterable $clusters) use ($accountWallet, $clusterCatalog): void {
                     foreach ($clusters as $cluster) {
                         if ($cluster instanceof Cluster) {
                             $cluster->visit(
@@ -89,14 +84,14 @@ class UpdateProjectCredentialsFromAccount
                                 static function (Environment $environment) use (
                                     $cluster,
                                     $accountWallet,
-                                    $catalog,
+                                    $clusterCatalog,
                                 ): void {
                                     $clusterName = (string) $cluster;
                                     if (!$accountWallet->has($clusterName, $environment)) {
                                         return;
                                     }
 
-                                    $clusterConfig = $catalog->getCluster($clusterName);
+                                    $clusterConfig = $clusterCatalog->getCluster($clusterName);
                                     $cluster->setType($clusterConfig->type);
                                     $cluster->useHierarchicalNamespaces($clusterConfig->useHnc);
                                     $cluster->setAddress($clusterConfig->masterAddress);

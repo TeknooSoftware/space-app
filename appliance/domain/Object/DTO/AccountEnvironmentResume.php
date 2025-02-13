@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,18 +25,29 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Object\DTO;
 
+use JsonSerializable;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountEnvironmentResume
+class AccountEnvironmentResume implements JsonSerializable
 {
     public function __construct(
         public string $clusterName = '',
         public string $envName = '',
         public ?string $accountEnvironmentId = null,
     ) {
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'clusterName' => $this->clusterName,
+            'envName' => $this->envName,
+            'accountEnvironmentId' => $this->accountEnvironmentId,
+        ];
     }
 }

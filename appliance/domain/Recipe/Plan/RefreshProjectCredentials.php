@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -38,6 +38,7 @@ use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
@@ -47,7 +48,7 @@ use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrep
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class RefreshProjectCredentials implements EditablePlanInterface
@@ -59,7 +60,8 @@ class RefreshProjectCredentials implements EditablePlanInterface
         private readonly LoadObject $loadObject,
         private readonly ObjectAccessControlInterface $objectAccessControl,
         private readonly LoadAccountFromProject $loadAccountFromProject,
-        private readonly LoadEnvironments $loadCredentials,
+        private readonly LoadEnvironments $loadEnvironments,
+        private readonly LoadAccountClusters $loadAccountClusters,
         private readonly LoadRegistryCredential $loadRegistryCredential,
         private readonly UpdateProjectCredentialsFromAccount $updateProjectCredentialsFromAccount,
         private readonly SaveObject $saveObject,
@@ -96,7 +98,9 @@ class RefreshProjectCredentials implements EditablePlanInterface
 
         $recipe = $recipe->cook($this->loadAccountFromProject, LoadAccountFromProject::class, [], 20);
 
-        $recipe = $recipe->cook($this->loadCredentials, LoadEnvironments::class, [], 30);
+        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 30);
+
+        $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 30);
 
         $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 30);
 

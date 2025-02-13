@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -33,6 +33,7 @@ use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
@@ -41,7 +42,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 trait PrepareAccountTrait
@@ -70,12 +71,16 @@ trait PrepareAccountTrait
 
         $recipe = $recipe->cook($this->loadHistory, LoadHistory::class, [], 50);
 
-        if (isset($this->loadCredentials)) {
-            $recipe = $recipe->cook($this->loadCredentials, LoadEnvironments::class, [], 60);
+        if (isset($this->loadEnvironments)) {
+            $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 60);
         }
 
         if (isset($this->loadRegistryCredential)) {
             $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 60);
+        }
+
+        if (isset($this->loadAccountClusters)) {
+            $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 60);
         }
 
         if (!isset($this->jumpIf) || !isset($this->render)) {

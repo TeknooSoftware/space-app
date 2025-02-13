@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -39,6 +39,7 @@ use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\East\Paas\Writer\AccountWriter;
 use Teknoo\East\Paas\Writer\ProjectWriter;
+use Teknoo\Space\Contracts\DbSource\Repository\AccountClusterRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountEnvironmentRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountDataRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountHistoryRepositoryInterface;
@@ -47,6 +48,7 @@ use Teknoo\Space\Contracts\DbSource\Repository\AccountRegistryRepositoryInterfac
 use Teknoo\Space\Contracts\DbSource\Repository\PersistedVariableRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\ProjectMetadataRepositoryInterface;
 use Teknoo\Space\Contracts\DbSource\Repository\UserDataRepositoryInterface;
+use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountClusterRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountEnvironmentRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountDataRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountHistoryRepository;
@@ -55,6 +57,7 @@ use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountRegistryReposito
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\ProjectPersistedVariableRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\ProjectMetadataRepository;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\UserDataRepository;
+use Teknoo\Space\Loader\AccountClusterLoader;
 use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
@@ -66,6 +69,7 @@ use Teknoo\Space\Loader\Meta\SpaceUserLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\UserDataLoader;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountHistory;
@@ -75,6 +79,7 @@ use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Service\PersistedVariableEncryption;
+use Teknoo\Space\Writer\AccountClusterWriter;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountDataWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
@@ -91,6 +96,29 @@ use function DI\create;
 use function DI\get;
 
 return [
+    //AccountCluster
+    AccountClusterRepositoryInterface::class => get(AccountClusterRepository::class),
+    AccountClusterRepository::class => static function (
+        ContainerInterface $container
+    ): AccountClusterRepository {
+        $repository = $container->get(ObjectManager::class)?->getRepository(AccountCluster::class);
+        if ($repository instanceof DocumentRepository) {
+            return new AccountClusterRepository($repository);
+        }
+
+        throw new NonManagedRepositoryException(sprintf(
+            'Error, repository of class %s are not currently managed',
+            $repository::class
+        ));
+    },
+
+    AccountClusterLoader::class => create(AccountClusterLoader::class)
+        ->constructor(get(AccountClusterRepositoryInterface::class)),
+    AccountClusterWriter::class => create(AccountClusterWriter::class)
+        ->constructor(get(ManagerInterface::class), get(DatesService::class)),
+    'teknoo.space.deleting.account_cluster' => create(DeletingService::class)
+        ->constructor(get(AccountClusterWriter::class), get(DatesService::class)),
+
     //AccountEnvironment
     AccountEnvironmentRepositoryInterface::class => get(AccountEnvironmentRepository::class),
     AccountEnvironmentRepository::class => static function (
@@ -111,7 +139,7 @@ return [
         ->constructor(get(AccountEnvironmentRepositoryInterface::class)),
     AccountEnvironmentWriter::class => create(AccountEnvironmentWriter::class)
         ->constructor(get(ManagerInterface::class), get(DatesService::class)),
-    'teknoo.space.deleting.account_credential' => create(DeletingService::class)
+    'teknoo.space.deleting.account_environment' => create(DeletingService::class)
         ->constructor(get(AccountEnvironmentWriter::class), get(DatesService::class)),
 
     //AccountRegistry

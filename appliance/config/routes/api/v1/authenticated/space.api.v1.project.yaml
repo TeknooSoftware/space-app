@@ -14,6 +14,7 @@ space_api_v1_project_new:
         route: 'space_api_v1_project_edit'
         template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_project_edit:
     path: '/project/{id}'
@@ -29,6 +30,7 @@ space_api_v1_project_edit:
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_project_edit_variables:
     path: '/project/{id}/variables'
@@ -43,6 +45,22 @@ space_api_v1_project_edit_variables:
         populateFormOptions: true
         template: '@@TeknooSpace/api/Project/variables.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_project_refresh_credentials:
+    path: '/project/{id}/refresh-credentials'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.refresh_credentials'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+        route: 'space_api_v1_project_edit'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_project_list:
     path: '/projects'

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -126,6 +126,7 @@ return [
                 token: $definition['create_account']['token'],
                 supportRegistry: !empty($definition['support_registry']),
                 useHnc: !empty($definition['use_hnc']),
+                isExternal: false,
             );
         }
 

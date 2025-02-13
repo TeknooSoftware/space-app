@@ -109,6 +109,7 @@ services:
             - SPACE_REDIS_PORT=6379
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+            - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
             test: ["CMD", "sh", "-c", "nc -z localhost 9000 || exit 1"]
             interval: 30s
@@ -143,6 +144,7 @@ services:
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
             - SPACE_PERSISTED_VAR_AGENT_MODE=1
+            - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
             test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
             interval: 30s
@@ -175,6 +177,7 @@ services:
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+            - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
             test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
             interval: 30s
@@ -207,6 +210,7 @@ services:
             - SPACE_PING_FILE=var/ping_file
             - SPACE_PING_SECONDS=60
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+            - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
             test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
             interval: 30s
@@ -241,6 +245,7 @@ services:
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
             - SPACE_STORAGE_DEFAULT_SIZE=3Gi
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
+            - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
             test: ["CMD", "sh", "-c", "[ $$(( $$(date +%s) - $$(stat var/ping_file -c %Y) )) -lt 120 ]"]
             interval: 30s

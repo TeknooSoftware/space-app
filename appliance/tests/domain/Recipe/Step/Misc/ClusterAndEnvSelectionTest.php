@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -51,7 +51,7 @@ class ClusterAndEnvSelectionTest extends TestCase
 {
     private ClusterAndEnvSelection $clusterAndEnvSelection;
 
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     /**
      * {@inheritdoc}
@@ -72,14 +72,15 @@ class ClusterAndEnvSelectionTest extends TestCase
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
+            isExternal: false,
         );
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['clusterName' => $clusterConfig],
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->clusterAndEnvSelection = new ClusterAndEnvSelection($this->catalog);
+        $this->clusterAndEnvSelection = new ClusterAndEnvSelection($this->clusterCatalog);
     }
 
     public function testInvokeWithoutAccount(): void

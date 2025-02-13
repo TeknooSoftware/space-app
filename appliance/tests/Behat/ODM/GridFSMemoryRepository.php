@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Behat\ODM;
 
 use Doctrine\ODM\MongoDB\Repository\GridFSRepository;
 use Doctrine\ODM\MongoDB\Repository\UploadOptions;
+use Exception;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -39,26 +40,26 @@ class GridFSMemoryRepository extends MemoryRepository implements GridFSRepositor
 {
     public function openDownloadStream($id)
     {
-        throw new \Exception('todo1');
+        throw new Exception('not implemented');
     }
 
     public function downloadToStream($id, $destination): void
     {
-        throw new \Exception('todo2');
+        throw new Exception('not implemented');
     }
 
     public function openUploadStream(string $filename, ?UploadOptions $uploadOptions = null)
     {
-        throw new \Exception('todo3');
+        throw new Exception('not implemented');
     }
 
     public function uploadFromStream(string $filename, $source, ?UploadOptions $uploadOptions = null)
     {
-        throw new \Exception('todo4');
+        throw new Exception('not implemented');
     }
 
     public function uploadFromFile(string $source, ?string $filename = null, ?UploadOptions $uploadOptions = null)
     {
-        throw new \Exception('todo5');
+        throw new Exception('not implemented');
     }
 }

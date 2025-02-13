@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -33,27 +33,23 @@ use Teknoo\Space\Object\DTO\SpaceProject;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class NewJobSetDefaults
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         SpaceProject $project,
         NewJob $newJob,
+        ClusterCatalog $clusterCatalog,
     ): self {
         $project->project->visit(
             'clusters',
-            function (iterable $clusters) use ($newJob): void {
+            function (iterable $clusters) use ($newJob, $clusterCatalog): void {
                 /** @var Cluster[] $clusters */
                 foreach ($clusters as $cluster) {
                     if ($cluster->isLocked()) {
-                        $config = $this->catalog->getCluster($cluster);
+                        $config = $clusterCatalog->getCluster($cluster);
 
                         $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
                     }

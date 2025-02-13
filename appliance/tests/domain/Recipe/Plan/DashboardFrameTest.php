@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -42,7 +42,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -53,7 +53,7 @@ class DashboardFrameTest extends TestCase
 
     private RecipeInterface|MockObject $recipe;
 
-    private LoadEnvironments|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadEnvironments;
 
     private DashboardFrameInterface|MockObject $dashboard;
 
@@ -69,16 +69,16 @@ class DashboardFrameTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
+        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
         $this->dashboard = $this->createMock(DashboardFrameInterface::class);
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->dashboardFrame = new DashboardFrame(
-            $this->recipe,
-            $this->loadCredentials,
-            $this->dashboard,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadEnvironments: $this->loadEnvironments,
+            dashboard: $this->dashboard,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

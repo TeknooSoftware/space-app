@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -35,12 +35,13 @@ use Teknoo\East\Common\Recipe\Step\LoadListObjects;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\RenderList;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Recipe\Step\Project\PrepareCriteria;
+use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class ProjectList extends ListObjectEndPoint
@@ -52,6 +53,7 @@ class ProjectList extends ListObjectEndPoint
         RecipeInterface $recipe,
         ExtractPage $extractPage,
         ExtractOrder $extractOrder,
+        private LoadAccountFromRequest $loadAccountFromRequest,
         private PrepareCriteria $prepareCriteria,
         LoadListObjects $loadListObjects,
         RenderList $renderList,
@@ -79,6 +81,7 @@ class ProjectList extends ListObjectEndPoint
     {
         $recipe = parent::populateRecipe($recipe);
 
+        $recipe = $recipe->cook($this->loadAccountFromRequest, LoadAccountFromRequest::class, [], 24);
         $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
 
         return $recipe;

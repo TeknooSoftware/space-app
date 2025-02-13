@@ -1,17 +1,28 @@
-Feature: On a space instance, an API is available to manage projects and integrating it with any platform.
-  An admin must has same rights of than the web access
+Feature: API admin endpoints to administrate projects
+  In order to manage projects
+  As an administrator of Space
+  I want to manage all registered projects.
 
-  Scenario: List of projects from the API
+  On a space instance, each allowed users can register a new project on its attached account. A project must hosted on
+  a source repository like GIT. Currently Space support only GIT via https and ssh, with tls keys or access token.
+  A project can be compiled and pushed to a private OCI registry dedicated to the account and deploy builded containers
+  to a cluster / servers (only Kubernetes is currently supported) in a dedicated namespace reserved to the account's
+  environment selected on the job deployment.
+  The Project's configuration store only informations about get the project from a repository and clusters where deploy
+  it, per environment. The project's configuration can store variables. All others informations are stored directly into
+  the space.paas.yaml file available at the root of the source repostirory.
+
+  Scenario: From the API, as Admin, list all registered projects
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
-    And "5" standard websites projects "project X" and a prefix "a-prefix"
+    And "5" standard projects "project X" and a prefix "a-prefix"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And "5" standard websites projects "other project X" and a prefix "other-prefix"
+    And "5" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -23,7 +34,29 @@ Feature: On a space instance, an API is available to manage projects and integra
     And is a serialized collection of "10" items on "1" pages
     And the a list of serialized projects
 
-  Scenario: Create a project from the API
+  Scenario: From the API, as Admin, list all projects of the selected account
+    Given A Space app instance
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My First Company" with the account namespace "my-first-company"
+    And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    And "5" standard projects "project X" and a prefix "a-prefix"
+    And an account for "My Other Company" with the account namespace "my-other-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "5" standard projects "other project X" and a prefix "other-prefix"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to list of projects of last account as admin
+    Then get a JSON reponse
+    And is a serialized collection of "5" items on "1" pages
+    And the a list of serialized projects of last account
+
+  Scenario: From the API, as Admin, create a project, via a request with a form url encoded body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -61,7 +94,7 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
-  Scenario: Create a project from the API with a json body
+  Scenario: From the API, as Admin, create a project, via a request with a json body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -99,14 +132,14 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
-  Scenario: Get an project from the API
+  Scenario: From the API, as Admin, get an project
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -117,33 +150,14 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized project "my project"
 
-  Scenario: Get an project'variables from the API
+  Scenario: From the API, as Admin, edit an project via a request with a form url encoded body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to get the last project's variables
-    Then get a JSON reponse
-    And the serialized "10" project's variables
-
-  Scenario: Edit an project from the API
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -174,14 +188,14 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized updated project "Behats Test"
 
-  Scenario: Edit an project from the API with a json body
+  Scenario: From the API, as Admin, edit an project via a request with a json body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -212,120 +226,14 @@ Feature: On a space instance, an API is available to manage projects and integra
     Then get a JSON reponse
     And the serialized updated project "Behats Test"
 
-  Scenario: Edit an project's variables from the API
+  Scenario: From the API, as Admin, delete an project
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables:
-      | field                                      | value            |
-      | project_vars.sets.prod.envName             | prod             |
-      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
-      | project_vars.sets.prod.variables.20.value  | space_project_db |
-      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
-      | project_vars.sets.prod.variables.21.secret | 1                |
-      | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
-
-  Scenario: Edit an project's variables from the API with a json body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables with a json body:
-      | field                        | value            |
-      | sets.prod.envName            | prod             |
-      | sets.prod.variables.0.name   | DB_NAME          |
-      | sets.prod.variables.0.value  | space_project_db |
-      | sets.prod.variables.1.name   | DB_PWD           |
-      | sets.prod.variables.1.secret | 1                |
-      | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
-
-  Scenario: Edit an project's variables from the API with secrets encryptions
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables:
-      | field                                      | value            |
-      | project_vars.sets.prod.envName             | prod             |
-      | project_vars.sets.prod.variables.20.name   | DB_NAME          |
-      | project_vars.sets.prod.variables.20.value  | space_project_db |
-      | project_vars.sets.prod.variables.21.name   | DB_PWD           |
-      | project_vars.sets.prod.variables.21.secret | 1                |
-      | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
-
-  Scenario: Edit an project's variables from the API with a json body with secrets encryptions
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to edit a project's variables with a json body:
-      | field                        | value            |
-      | sets.prod.envName            | prod             |
-      | sets.prod.variables.0.name   | DB_NAME          |
-      | sets.prod.variables.0.value  | space_project_db |
-      | sets.prod.variables.1.name   | DB_PWD           |
-      | sets.prod.variables.1.secret | 1                |
-      | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
-    And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
-
-  Scenario: Delete an project from the API
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page
@@ -337,14 +245,14 @@ Feature: On a space instance, an API is available to manage projects and integra
     And the serialized deleted project
     And the project is deleted
 
-  Scenario: Delete an project from the API with DELETE method
+  Scenario: From the API, as Admin, delete an project via a request with DELETE method
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
     When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     Then it must redirected to the TOTP code page

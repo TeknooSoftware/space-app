@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -31,7 +31,7 @@ use Teknoo\Kubernetes\Client;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class Cluster
@@ -55,6 +55,7 @@ class Cluster
         public readonly string $token,
         public readonly bool $supportRegistry,
         public readonly bool $useHnc,
+        public readonly bool $isExternal,
     ) {
         if ($kubernetesClient instanceof Client) {
             $this->kubernetesClient = $kubernetesClient;

@@ -1,6 +1,6 @@
 default:
     testers:
-        stop_on_failure: true
+        stop_on_failure: false
         strict: true
 
     suites:
@@ -9,6 +9,7 @@ default:
                 - Teknoo\Space\Tests\Behat\SpaceContext
 
     extensions:
+        DMarynicz\BehatParallelExtension\Extension: ~
         FriendsOfBehat\SymfonyExtension:
             bootstrap: tests/bootstrap.php
             kernel:

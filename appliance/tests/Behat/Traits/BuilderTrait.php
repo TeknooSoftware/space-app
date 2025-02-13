@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,9 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\Transport;
@@ -53,9 +56,7 @@ use function json_encode;
  */
 trait BuilderTrait
 {
-    /**
-     * @When It goes to account settings
-     */
+    #[When('It goes to account settings')]
     public function itGoesToAccountSettings(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -66,9 +67,7 @@ trait BuilderTrait
         $this->formName = 'space_account';
     }
 
-    /**
-     * @When open the account variables page
-     */
+    #[When('open the account variables page')]
     public function openTheAccountVariablesPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -79,9 +78,7 @@ trait BuilderTrait
         $this->formName = 'account_vars';
     }
 
-    /**
-     * @Then it has an error about a timeout
-     */
+    #[Then('it has an error about a timeout')]
     public function itHasAnErrorAboutATimeout(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -98,9 +95,7 @@ trait BuilderTrait
         );
     }
 
-    /**
-     * @Then it has an error about a quota exceeded
-     */
+    #[Then('it has an error about a quota exceeded')]
     public function itHasAnErrorAboutQuotaExceeded(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -117,9 +112,7 @@ trait BuilderTrait
         );
     }
 
-    /**
-     * @Given extensions libraries provided by administrators
-     */
+    #[Given('extensions libraries provided by administrators')]
     public function extensionsLibrariesProvidedByAdministrators(): void
     {
         $lib = $this->sfContainer->get('teknoo.east.paas.compilation.ingresses_extends.library');
@@ -201,9 +194,7 @@ trait BuilderTrait
         ];
     }
 
-    /**
-     * @Given a job workspace agent
-     */
+    #[Given('a job workspace agent')]
     public function aJobWorkspaceAgent(): void
     {
         $workspace = new class ($this->paasFile) implements JobWorkspaceInterface {
@@ -273,9 +264,7 @@ trait BuilderTrait
         );
     }
 
-    /**
-     * @Given a git cloning agent
-     */
+    #[Given('a git cloning agent')]
     public function aGitCloningAgent(): void
     {
         $cloningAgent = new class () implements CloningAgentInterface {
@@ -313,9 +302,7 @@ trait BuilderTrait
         );
     }
 
-    /**
-     * @Given a composer hook as hook builder
-     */
+    #[Given('a composer hook as hook builder')]
     public function aComposerHookAsHookBuilder(): void
     {
         $hook = new HookMock();
@@ -341,17 +328,13 @@ trait BuilderTrait
         );
     }
 
-    /**
-     * @Given without any hooks path defined
-     */
+    #[Given('without any hooks path defined')]
     public function withoutAnyHooksPathDefined(): void
     {
         $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode([], JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * @Given composer in several version as hook
-     */
+    #[Given('composer in several version as hook')]
     public function composerInSeveralVersionAsHook(): void
     {
         $_ENV['SPACE_HOOKS_COLLECTION_JSON'] = json_encode(
@@ -394,17 +377,13 @@ trait BuilderTrait
         );
     }
 
-    /**
-     * @When the hook library is generated
-     */
+    #[When('the hook library is generated')]
     public function theHookLibraryIsGenerated(): void
     {
         $this->hookCollection = $this->sfContainer->get(HooksCollectionInterface::class);
     }
 
-    /**
-     * @Then it obtains non empty hooks library with :name key.
-     */
+    #[Then('it obtains non empty hooks library with :name key.')]
     public function itObtainsNonEmptyHooksLibraryWithKey(string $name): void
     {
         $hooks = iterator_to_array($this->hookCollection);
@@ -413,9 +392,7 @@ trait BuilderTrait
         Assert::assertArrayHasKey($name . '-8.2', $hooks);
     }
 
-    /**
-     * @Then it obtains an hooks library without :name key.
-     */
+    #[Then('it obtains an hooks library without :name key.')]
     public function itObtainsEmptyHooksLibrary(string $name): void
     {
         $hooks = iterator_to_array($this->hookCollection);
