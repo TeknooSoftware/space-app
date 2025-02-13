@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -65,17 +65,18 @@ class MockClientInstantiator implements InstantiatorInterface
             public function sendRequest(RequestInterface $request): ResponseInterface
             {
                 if ('GET' !== $request->getMethod()) {
-                    $uri = (string) $request->getUri();
-                    $uriPars = explode('v1', $uri);
+                    $uriStr = (string) $request->getUri();
+                    $host = $request->getUri()->getHost();
+                    $uriPars = explode('v1', $uriStr);
                     $model = trim(array_pop($uriPars), '/');
 
                     $body = (string) $request->getBody();
 
                     if ('DELETE' === $request->getMethod()) {
                         $a = explode('/', $model);
-                        $this->testsContext->setDeletedManifests(array_pop($a));
+                        $this->testsContext->setDeletedManifests($host, array_pop($a));
                     } else {
-                        $this->testsContext->setManifests($model, json_decode($body, true));
+                        $this->testsContext->setManifests($host, $model, json_decode($body, true));
                     }
                 }
 

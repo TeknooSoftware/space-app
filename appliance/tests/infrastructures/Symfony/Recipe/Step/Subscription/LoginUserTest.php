@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,6 +30,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Teknoo\East\Common\Object\StoredPassword;
@@ -53,6 +54,8 @@ class LoginUserTest extends TestCase
 
     private LoginLinkHandlerInterface|MockObject $loginLinkHandler;
 
+    private Security|MockObject $security;
+
     private ResponseFactoryInterface|MockObject $responseFactory;
 
     /**
@@ -63,7 +66,11 @@ class LoginUserTest extends TestCase
         parent::setUp();
 
         $this->loginLinkHandler = $this->createMock(LoginLinkHandlerInterface::class);
-        $this->loginUser = new LoginUser($this->loginLinkHandler);
+        $this->security = $this->createMock(Security::class);
+        $this->loginUser = new LoginUser(
+            $this->loginLinkHandler,
+            $this->security,
+        );
         $this->loginUser->setRouter($this->createMock(UrlGeneratorInterface::class));
         $this->loginUser->setResponseFactory(
             $this->responseFactory = $this->createMock(ResponseFactoryInterface::class)

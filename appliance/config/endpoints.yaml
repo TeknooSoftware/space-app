@@ -81,6 +81,34 @@ services:
             - '@Teknoo\Space\Recipe\Plan\AccountEditSettings:without-steps'
             - '@service_container'
 
+    teknoo.space.endpoint.account_cluster.list:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\AccountClusterList'
+            - '@service_container'
+
+    teknoo.space.endpoint.account_cluster.edit:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\AccountClusterEdit'
+            - '@service_container'
+
+    teknoo.space.endpoint.account_cluster.new:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\AccountClusterNew'
+            - '@service_container'
+
+    teknoo.space.endpoint.account_cluster.delete:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\AccountClusterDelete'
+            - '@service_container'
+
     teknoo.space.endpoint.admin.account.edit_without_steps:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true

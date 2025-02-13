@@ -2,6 +2,7 @@
 COMPOSER ?= /usr/bin/env composer
 DEPENDENCIES ?= latest
 PHP ?= /usr/bin/env php
+NB_THREADS ?= 4
 APP_ENV ?= prod
 IGNORE_DEPRECATIONS ?= 0
 
@@ -14,7 +15,7 @@ MAKEFLAGS += --no-print-directory
 .PHONY: config create-admin extension-list extension-enable extension-disable
 .PHONY: build start stop restart
 .PHONY: qa qa-offline lint phpstan phpcs audit
-.PHONY: test test-without-coverage
+.PHONY: test test-mono-thread test-without-coverage
 .PHONY: clean warmup
 
 ##Teknoo Space
@@ -117,20 +118,28 @@ audit: 		## Run an audit on vendors to detect CVE and deprecated libraries
 
 ##
 ### Testing:
-test: 		## Run tests (units tests and behavior tests, with a code coverage) to check if the installation can work properly
+test: 		## Run tests in $NB_THREADS threads (units tests and behavior tests, with a code coverage) to check if the installation can work properly
 	rm -rf var/cache/test
 	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat
+	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat -l ${NB_THREADS} --colors
 	rm -rf var/cache/test
 
-test-without-coverage: ## Run tests (units tests and behavior tests without a code coverage)
+test-mono-thread : 	  ## Run tests in a mono thread (units tests and behavior tests, with a code coverage) to check if the installation can work properly
+	rm -rf var/cache/test
+	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
+	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
+	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
+	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --colors
+	rm -rf var/cache/test
+
+test-without-coverage: ## Run tests in $NB_THREADS threads (units tests and behavior tests without a code coverage)
 	rm -rf var/cache/test
 	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat
+	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat -l ${NB_THREADS} --colors
 	rm -rf var/cache/test
 
 ##

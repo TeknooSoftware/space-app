@@ -13,6 +13,7 @@ space_admin_job_new:
         route: 'space_job_new_pending'
         template: '@@TeknooEastPaas/AdminJob/new.html.twig'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_admin_job_restart:
     path: '/admin/project/{projectId}/job/{jobId}/restart'

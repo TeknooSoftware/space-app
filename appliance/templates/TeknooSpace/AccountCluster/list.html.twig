@@ -1,0 +1,115 @@
+{# templates/TeknooSpace/AccountCluster/list.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.list.html.twig' %}
+
+{% set formClass = 'Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\AccountClusterSearchType' %}
+
+{% block title %}{{ 'teknoo.space.title.account.account_cluster'|trans }} - {{ account }}{% endblock %}
+
+{% block listTitle %}<i class="uil uil-server"></i> {{ 'teknoo.space.title.account.account_cluster'|trans }}{% endblock %}
+
+{%- block breadcrumbListLink -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ path('_teknoo_paas_admin_account_list') }}
+    {% else %}
+        {{ path('space_account_settings') }}
+    {% endif %}
+{%- endblock -%}
+{%- block breadcrumbListTitle -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ 'teknoo.space.title.admin_account'|trans }}
+    {% else %}
+        {{ 'teknoo.space.title.account.settings'|trans }}
+    {% endif %}
+{%- endblock -%}
+{% block additionalBreadcrumbs %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('_teknoo_paas_admin_account_edit', {'id': account.id}) }}">{{ account }}</a>
+        </li>
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+        </li>
+    {% else %}
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('space_account_clusters_list') }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{%- block topHeaderButton -%}
+    <li class="list-inline-item mb-0 ms-1">
+        <a rel="noopener"
+           class="btn btn-outline-light"
+           href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_new', {'accountId': account.id}) }}{% else %}{{ path('space_account_clusters_new') }}{% endif %}"
+           title="{{ 'teknoo.space.text.create_account_cluster'|trans }}">
+            <i class="uil uil-book-medical"></i>
+            {{ 'teknoo.space.action.create_account_cluster'|trans }}
+        </a>
+    </li>
+{%- endblock -%}
+
+{% block listTableHeader %}
+    <thead class="bg-light">
+    <tr>
+        {% if is_granted('ROLE_ADMIN') %}
+            {% set clusterListUrl = path('space_admin_account_clusters_list', {'accountId': account.id}) %}
+        {% else %}
+            {% set clusterListUrl = path('space_account_clusters_list') %}
+        {% endif %}
+        <th scope="col" class="col-7 border-bottom">
+            <a class="text-primary"
+               href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'name') }}">
+                {{ 'teknoo.space.text.cols_account_cluster_name'|trans }}
+            </a>
+        </th>
+        <th scope="col" class="col-2 border-bottom">
+            <a class="text-primary"
+               href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'createdAt') }}">
+                {{ 'teknoo.space.text.cols_account_cluster_created_at'|trans }}
+            </a>
+        </th>
+        <th scope="col" class="col-2 border-bottom">
+            <a class="text-primary"
+               href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'updatedAt') }}">
+                {{ 'teknoo.space.text.cols_account_cluster_updated_at'|trans }}
+            </a>
+        </th>
+        <th scope="col" class="col-1 border-bottom text-end">{{ 'teknoo.space.text.cols_account_cluster_action'|trans }}</th>
+    </tr>
+    </thead>
+{% endblock %}
+
+{% block listTableEmpty %}
+    <tr>
+        <td colspan="4">{{ 'teknoo.space.text.account_cluster_no_entries'|trans }}</td>
+    </tr>
+{% endblock %}
+
+
+{% block listTableRow %}
+    <tr {% if loop.index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
+        <td>
+            <a class="text-primary space-account-cluster-name"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
+               title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">
+                {{ object }}
+            </a>
+        </td>
+        <td>{{ object.createdAt|date('Y M d H:i:s') }}</td>
+        <td>{{ object.updatedAt|date('Y M d H:i:s') }}</td>
+        <td class="text-end">
+            <a class="text-primary"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
+               title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">
+                <span class="mdi mdi-pencil"></span>
+            </a>
+            <a class="text-primary"
+               onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_delete', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_delete', {'id':object.id}) }}{% endif %}"
+               title="{{ 'teknoo.space.action.delete_account_cluster'|trans }}">
+                <span class="mdi mdi-trash-can"></span>
+            </a>
+        </td>
+    </tr>
+{% endblock %}

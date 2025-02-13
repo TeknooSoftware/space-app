@@ -10,7 +10,7 @@
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date" />
         <embed-one field="history" target-document="Teknoo\East\Paas\Object\History" nullable="true" />
-        <reference-one field="account" target-document="Teknoo\East\Paas\Object\Account">
+        <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">
             <cascade />
         </reference-one>
     </document>

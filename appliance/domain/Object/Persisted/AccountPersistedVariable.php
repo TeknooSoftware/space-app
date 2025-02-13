@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -27,15 +27,18 @@ namespace Teknoo\Space\Object\Persisted;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Immutable\ImmutableInterface;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class AccountPersistedVariable implements
@@ -43,7 +46,8 @@ class AccountPersistedVariable implements
     TimestampableInterface,
     ImmutableInterface,
     EncryptableVariableInterface,
-    NormalizableInterface
+    NormalizableInterface,
+    AccountComponentInterface
 {
     use PersistedVariableTrait;
 
@@ -74,5 +78,12 @@ class AccountPersistedVariable implements
     public function getAccount(): Account
     {
         return $this->account;
+    }
+
+    public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
+    {
+        $this->account->verifyAccessToUser($user, $promise);
+
+        return $this;
     }
 }

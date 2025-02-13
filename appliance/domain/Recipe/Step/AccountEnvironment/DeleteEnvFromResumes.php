@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,13 +25,14 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class DeleteEnvFromResumes extends AbstractDeleteFromResumes
@@ -41,8 +42,10 @@ class DeleteEnvFromResumes extends AbstractDeleteFromResumes
     ) {
     }
 
-    protected function delete(AccountEnvironment $accountEnvironment): void
-    {
+    protected function delete(
+        AccountEnvironment $accountEnvironment,
+        ?ClusterCatalog $clusterCatalog,
+    ): void {
         $this->writer->remove($accountEnvironment);
     }
 }

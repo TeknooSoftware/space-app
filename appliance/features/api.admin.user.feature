@@ -1,7 +1,13 @@
-Feature: On a space instance, an API is available to manage user as admin and integrating it with any platform.
-  An admin must has same rights of than the web access
+Feature: API admin endpoints to administrate users
+  In order to manage users
+  As an administrator of Space
+  I want to manage users.
 
-  Scenario: List of users from the API
+  On a space instance, each user can edit its own settings, like its firstname, lastname, email and photo.
+  There is only one profile per user, profil and user are not separable. This settings host also the user's password
+  and other 2FA authentication.
+
+  Scenario: From the API, as Admin, List of users
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -21,7 +27,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And is a serialized collection of "16" items on "1" pages
     And the a list of serialized users
 
-  Scenario: Create a user from the API
+  Scenario: From the API, as Admin, create a user via a request with a form url encoded body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -43,7 +49,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And the serialized user "Test" "Behat" for admin
     And there is an user in the memory
 
-  Scenario: Create a user from the API with a json body
+  Scenario: From the API, as Admin, create a user via a request with a json body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -65,7 +71,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And the serialized user "Test" "Behat" for admin
     And there is an user in the memory
 
-  Scenario: Get an user from the API
+  Scenario: From the API, as Admin, get an user
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -82,7 +88,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     Then get a JSON reponse
     And the serialized user "Dupont" "Jean" for admin
 
-  Scenario: Edit an user from the API
+  Scenario: From the API, as Admin, edit an user via a request with a form url encoded body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -105,7 +111,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     Then get a JSON reponse
     And the serialized user "Test" "Behat" for admin
 
-  Scenario: Edit an user from the API with a json body
+  Scenario: From the API, as Admin, edit an user via a request with a json body
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -128,7 +134,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     Then get a JSON reponse
     And the serialized user "Test" "Behat" for admin
 
-  Scenario: Delete an user from the API
+  Scenario: From the API, as Admin, delete an user
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
@@ -146,7 +152,7 @@ Feature: On a space instance, an API is available to manage user as admin and in
     And the serialized deleted user
     And the user is deleted
 
-  Scenario: Delete an user from the API with DELETE method
+  Scenario: From the API, as Admin, delete an user via a request with DELETE method
     Given A Space app instance
     And A memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"

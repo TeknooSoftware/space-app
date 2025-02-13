@@ -1,0 +1,102 @@
+space_api_v1_account_settings:
+    path: '/account/settings'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account.settings'
+        api: 'json'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
+        formOptions:
+            enableEnvManagement: false
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
+        template: '@@TeknooSpace/api/Account/settings.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+
+space_api_v1_account_environments:
+    path: '/account/environments'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account.settings'
+        api: 'json'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
+        formOptions:
+            enableEnvManagement: true
+            doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
+        template: '@@TeknooSpace/api/Account/environments.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+
+space_api_v1_account_edit_variables:
+    path: '/account/variables'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account.settings_without_steps'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        template: '@@TeknooSpace/api/Account/variables.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
+
+space_api_v1_account_clusters_list:
+    path: '/account/clusters'
+    methods: [ 'GET' ]
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.list'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        api: 'json'
+        defaultOrderDirection: 'ASC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        template: '@@TeknooSpace/api/AccountCluster/list.json.twig'
+
+space_api_v1_account_clusters_new:
+    path: '/account/cluster/new'
+    methods: ['POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.new'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        objectClass: 'Teknoo\Space\Object\Persisted\AccountCluster'
+        route: 'space_api_v1_account_clusters_edit'
+        template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
+        writer: '@Teknoo\Space\Writer\AccountClusterWriter'
+
+space_api_v1_account_clusters_edit:
+    path: '/account/cluster/{id}'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.edit'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        template: '@@TeknooSpace/api/AccountCluster/item.json.twig'
+        writer: '@Teknoo\Space\Writer\AccountClusterWriter'
+
+space_api_v1_account_clusters_delete:
+    path: '/account/cluster/{id}/delete'
+    methods: ['POST', 'DELETE']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.delete'
+        api: 'json'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        deleter: '@teknoo.space.deleting.account_cluster'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        objectViewKey: 'accountClusterInstance'
+        template: '@@TeknooSpace/api/AccountCluster/deleted.json.twig'

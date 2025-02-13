@@ -39,7 +39,7 @@
                                     </option>
                                 {%- endfor -%}
                             {%- else -%}
-                                {%- for clusterConfig in clustersCatalog -%}
+                                {%- for clusterConfig in clusterCatalog -%}
                                     <option {% if clusterSelectedStr == clusterConfig.sluggyName %}selected="selected"{% endif %}
                                         value="{{ clusterConfig.sluggyName }}">
                                             {{ clusterConfig.name }}

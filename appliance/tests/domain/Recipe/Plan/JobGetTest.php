@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -46,7 +46,7 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -90,15 +90,15 @@ class JobGetTest extends TestCase
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->jobGet = new JobGet(
-            $this->recipe,
-            $this->loadObject,
-            $this->extractProject,
-            $this->loadProjectMetadata,
-            $this->injectToViewMetadata,
-            $this->render,
-            $this->renderError,
-            $this->objectAccessControl,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            extractProject: $this->extractProject,
+            loadProjectMetadata: $this->loadProjectMetadata,
+            injectToViewMetadata: $this->injectToViewMetadata,
+            render: $this->render,
+            renderError: $this->renderError,
+            objectAccessControl: $this->objectAccessControl,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

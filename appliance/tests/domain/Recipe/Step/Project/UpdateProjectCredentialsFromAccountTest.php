@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -55,9 +55,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->updateProjectCredentialsFromAccount = new UpdateProjectCredentialsFromAccount(
-            $this->createMock(ClusterCatalog::class),
-        );
+        $this->updateProjectCredentialsFromAccount = new UpdateProjectCredentialsFromAccount();
     }
 
     public function testInvoke(): void
@@ -72,6 +70,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
                 new SpaceProject($this->createMock(Project::class)),
                 $wallet,
                 $this->createMock(AccountRegistry::class),
+                $this->createMock(ClusterCatalog::class),
             )
         );
     }

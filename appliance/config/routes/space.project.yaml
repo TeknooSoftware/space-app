@@ -23,6 +23,7 @@ space_project_edit:
         template: '@@TeknooSpace/Project/edit.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_project_edit_variables:
     path: '/project/edit/{id}/variables'
@@ -36,6 +37,7 @@ space_project_edit_variables:
         template: '@@TeknooSpace/Project/variables.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_project_edit_refresh_credentials:
     path: '/project/edit/{id}/refresh-credentials'
@@ -48,6 +50,7 @@ space_project_edit_refresh_credentials:
         route: 'space_project_edit'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_project_new:
     path: '/project/new'
@@ -63,7 +66,7 @@ space_project_new:
         route: 'space_project_edit'
         template: '@@TeknooSpace/Project/new.html.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
-        cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_project_delete:
     path: '/project/{id}/delete'

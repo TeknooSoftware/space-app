@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
+use RuntimeException;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
@@ -32,19 +33,20 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class DeleteNamespaceFromResumes extends AbstractDeleteFromResumes
 {
-    public function __construct(
-        private ClusterCatalog $clusterCatalog,
-    ) {
-    }
+    protected function delete(
+        AccountEnvironment $accountEnvironment,
+        ?ClusterCatalog $clusterCatalog,
+    ): void {
+        if (!$clusterCatalog) {
+            throw new RuntimeException('Cluster catalog is required');
+        }
 
-    protected function delete(AccountEnvironment $accountEnvironment): void
-    {
-        $clusterConfig = $this->clusterCatalog->getCluster($accountEnvironment->getClusterName());
+        $clusterConfig = $clusterCatalog->getCluster($accountEnvironment->getClusterName());
         $client = $clusterConfig->getKubernetesClient();
         $namespace = $accountEnvironment->getNamespace();
 

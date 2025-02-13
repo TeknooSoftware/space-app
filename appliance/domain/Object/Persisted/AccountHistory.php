@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -29,16 +29,22 @@ use DateTimeInterface;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\History;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class AccountHistory implements IdentifiedObjectInterface, TimestampableInterface
+class AccountHistory implements
+    IdentifiedObjectInterface,
+    TimestampableInterface,
+    AccountComponentInterface
 {
     use ObjectTrait;
 
@@ -77,6 +83,13 @@ class AccountHistory implements IdentifiedObjectInterface, TimestampableInterfac
         }
 
         $callback($this->history);
+
+        return $this;
+    }
+
+    public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
+    {
+        $this->account->verifyAccessToUser($user, $promise);
 
         return $this;
     }

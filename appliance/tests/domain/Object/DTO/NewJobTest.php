@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -53,6 +53,8 @@ class NewJobTest extends TestCase
 
     private string $projectId;
 
+    private string $accountId;
+
     private string $envName;
 
     /**
@@ -68,11 +70,13 @@ class NewJobTest extends TestCase
             $this->createMock(JobVar::class),
         ];
         $this->projectId = '42';
+        $this->accountId = '42';
         $this->envName = '42';
         $this->newJob = new NewJob(
             newJobId: $this->newJobId,
             variables: $this->variables,
             projectId: $this->projectId,
+            accountId: $this->accountId,
             envName: $this->envName
         );
     }

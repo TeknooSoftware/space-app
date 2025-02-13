@@ -8,7 +8,7 @@ use Symfony\Component\Dotenv\Dotenv;
 include __DIR__ . '/fakeQuery.php';
 include __DIR__ . '/fakeUOW.php';
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
 if (file_exists(dirname(__DIR__) . '/config/bootstrap.php')) {
     require dirname(__DIR__) . '/config/bootstrap.php';

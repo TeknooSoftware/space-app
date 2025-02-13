@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -59,7 +59,7 @@ class DashboardFrameTest extends TestCase
 
     private HttpMethodsClientInterface|MockObject $httpMethodsClient;
 
-    private ClusterCatalog $catalog;
+    private ClusterCatalog $clusterCatalog;
 
     private ResponseFactoryInterface|MockObject $responseFactory;
 
@@ -83,15 +83,15 @@ class DashboardFrameTest extends TestCase
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
+            isExternal: false,
         );
 
-        $this->catalog = new ClusterCatalog(
+        $this->clusterCatalog = new ClusterCatalog(
             ['clusterName' => $clusterConfig],
             ['cluster-name' => 'clusterName'],
         );
 
         $this->dashboardFrame = new DashboardFrame(
-            $this->catalog,
             $this->httpMethodsClient,
             $this->responseFactory,
         );
@@ -136,6 +136,7 @@ class DashboardFrameTest extends TestCase
                 client: $this->createMock(EastClient::class),
                 serverRequest: $sRequest,
                 user: $this->createMock(User::class),
+                clusterCatalog: $this->clusterCatalog,
                 clusterName: 'clusterName',
                 wildcard: '*',
                 account: $this->createMock(Account::class),

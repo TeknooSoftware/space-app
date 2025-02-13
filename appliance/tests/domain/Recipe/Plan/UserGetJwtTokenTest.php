@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -47,7 +47,7 @@ use Teknoo\Space\Recipe\Plan\UserGetJwtToken;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -95,16 +95,16 @@ class UserGetJwtTokenTest extends TestCase
         $this->defaultErrorTemplate = '42';
 
         $this->userGetJwtToken = new UserGetJwtToken(
-            $this->recipe,
-            $this->createObject,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->jwtCreateToken,
-            $this->render,
-            $this->stop,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate
+            recipe: $this->recipe,
+            createObject: $this->createObject,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            jwtCreateToken: $this->jwtCreateToken,
+            render: $this->render,
+            stop: $this->stop,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate
         );
     }
 

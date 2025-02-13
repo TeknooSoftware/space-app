@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -37,13 +37,13 @@ use function explode;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class ClusterAndEnvSelection
 {
     public function __construct(
-        private readonly ClusterCatalog $catalog,
+        private readonly ClusterCatalog $clusterCatalog,
     ) {
     }
 
@@ -75,7 +75,7 @@ class ClusterAndEnvSelection
 
                 if (empty($clusterSelectedStr) || $clusterSelectedStr === $currentValue) {
                     $clusterSelectedStr = $currentValue;
-                    $clusterSelected = $this->catalog->getCluster($accountEnv->getClusterName());
+                    $clusterSelected = $this->clusterCatalog->getCluster($accountEnv->getClusterName());
                     $clusterSlug = $clusterSelected->sluggyName;
                     $envName = $accountEnv->getEnvName();
                     $namespace = $accountEnv->getNamespace();
@@ -84,7 +84,7 @@ class ClusterAndEnvSelection
                 }
             }
         } else {
-            foreach ($this->catalog as $clusterConfig) {
+            foreach ($this->clusterCatalog as $clusterConfig) {
                 if (empty($clusterSelectedStr) || $clusterSelectedStr === $clusterConfig->sluggyName) {
                     $clusterSelectedStr = $clusterConfig->sluggyName;
                     $clusterSlug = $clusterConfig->sluggyName;
