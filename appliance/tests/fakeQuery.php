@@ -4,6 +4,8 @@ namespace Doctrine\ODM\MongoDB\Query;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Iterator\IterableResult;
+use Doctrine\ODM\MongoDB\Iterator\Iterator;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Teknoo\Space\Tests\Behat\SpaceContext;
@@ -12,7 +14,7 @@ use function count;
 use function is_iterable;
 
 if (!\class_exists(Query::class, false)) {
-    class Query
+    class Query implements IterableResult
     {
         final public const TYPE_FIND            = 1;
         final public const TYPE_FIND_AND_UPDATE = 2;
@@ -56,7 +58,7 @@ if (!\class_exists(Query::class, false)) {
         /**
          * @var iterable|int
          */
-        public function execute()
+        public function execute(): mixed
         {
             $type = ($this->query['type'] ?? self::TYPE_FIND);
             if (self::TYPE_REMOVE === $type) {
@@ -81,7 +83,7 @@ if (!\class_exists(Query::class, false)) {
         /**
          * @return array|object|null
          */
-        public function getSingleResult()
+        public function getSingleResult(): mixed
         {
             if (empty($this->resultToReturn)) {
                 return null;
@@ -100,6 +102,11 @@ if (!\class_exists(Query::class, false)) {
 
         public function setHydrate(bool $hydrate): void
         {
+        }
+
+        public function getIterator(): Iterator
+        {
+            // TODO: Implement getIterator() method.
         }
     }
 }

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,6 +26,10 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat;
 
 use Behat\Behat\Context\Context;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\Then;
 use DateTime;
 use DateTimeInterface;
 use DI\Container as DiContainer;
@@ -276,20 +280,17 @@ class SpaceContext implements Context
         TestTransport::disableResetOnKernelShutdown();
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function prepareScenario(): void
     {
         $this->clear();
     }
 
-    /**
-     * @AfterScenario
-     */
+    #[AfterScenario]
     public function cleanAfterScenario(): void
     {
         $this->clear();
+        TestTransport::resetAll();
     }
 
     public function clearRouterCache(): void
@@ -300,9 +301,7 @@ class SpaceContext implements Context
         $rc->setStaticPropertyValue('cache', []);
     }
 
-    /**
-     * @AfterScenario
-     */
+    #[AfterScenario]
     public function cleanScenario(): void
     {
         Query::$testsContext = $this;
@@ -329,9 +328,7 @@ class SpaceContext implements Context
             ->setGenerator($generator);
     }
 
-    /**
-     * @Given A Space app instance
-     */
+    #[Given('A Space app instance')]
     public function aSpaceAppInstance(): void
     {
         $this->kernel->boot();
@@ -346,9 +343,7 @@ class SpaceContext implements Context
         );
     }
 
-    /**
-     * @Given encryption capacities between servers and agents
-     */
+    #[Given('encryption capacities between servers and agents')]
     public function encryptionCapacitiesBetweenServersAndAgents(): void
     {
         if (!file_exists($this->messagePrivateKey) || !is_readable($this->messagePrivateKey)) {
@@ -363,9 +358,7 @@ class SpaceContext implements Context
         $_ENV['TEKNOO_PAAS_SECURITY_PUBLIC_KEY'] = $this->messagePublicKey;
     }
 
-    /**
-     * @Given encryption of persisted variables in the database
-     */
+    #[Given('encryption of persisted variables in the database')]
     public function encryptionOfPersistedVariablesInTheDatabase(): void
     {
         if (!file_exists($this->varPrivateKey) || !is_readable($this->varPrivateKey)) {
@@ -386,9 +379,7 @@ class SpaceContext implements Context
         return $_ENV['SPACE_PERSISTED_VAR_SECURITY_ALGORITHM'] ?? null;
     }
 
-    /**
-     * @Given a subscription plan :id is selected
-     */
+    #[Given('a subscription plan :id is selected')]
     public function aSubscriptionPlanIsSelected(string $id): void
     {
         $_ENV['SPACE_SUBSCRIPTION_DEFAULT_PLAN'] = $id;
@@ -397,16 +388,12 @@ class SpaceContext implements Context
         $this->clearRouterCache();
     }
 
-    /**
-     * @Given the platform is booted
-     */
+    #[Given('the platform is booted')]
     public function thePlatformIsBooted(): void
     {
     }
 
-    /**
-     * @Given the project has a complete paas file
-     */
+    #[Given('the project has a complete paas file')]
     public function theProjectHasACompletePaasFile(): void
     {
         $this->paasFile = __DIR__ . '/Project/Basic/paas.yaml';
@@ -414,9 +401,7 @@ class SpaceContext implements Context
         $this->defaultsMode = '';
     }
 
-    /**
-     * @Given the project has a complete paas file with defaults
-     */
+    #[Given('the project has a complete paas file with defaults')]
     public function theProjectHasACompletePaasFileWithDefaults(): void
     {
         $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.yaml';
@@ -424,9 +409,7 @@ class SpaceContext implements Context
         $this->defaultsMode = 'generic';
     }
 
-    /**
-     * @Given the project has a complete paas file with defaults for the cluster
-     */
+    #[Given('the project has a complete paas file with defaults for the cluster')]
     public function theProjectHasACompletePaasFileWithDefaultsForCluster(): void
     {
         $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.with-clusters.yaml';
@@ -434,106 +417,82 @@ class SpaceContext implements Context
         $this->defaultsMode = 'cluster';
     }
 
-    /**
-     * @Given a project with a paas file using extends
-     */
+    #[Given('a project with a paas file using extends')]
     public function aProjectWithAPaasFileUsingExtends(): void
     {
         $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
         $this->quotasMode = '';
     }
 
-    /**
-     * @Given the project has a complete paas file without resources
-     */
+    #[Given('the project has a complete paas file without resources')]
     public function aProjectWithAPaasFileWithoutResource()
     {
         $this->paasFile = __DIR__ . '/Project/Basic/paas.yaml';
         $this->quotasMode = 'automatic';
     }
 
-    /**
-     * @Given the project has a complete paas file with partial resources
-     */
+    #[Given('the project has a complete paas file with partial resources')]
     public function aProjectWithAPaasFileWithPartialResources()
     {
         $this->paasFile = __DIR__ . '/Project/Basic/paas.with-partial-resources.yaml';
         $this->quotasMode = 'partial';
     }
 
-    /**
-     * @Given the project has a complete paas file with resources
-     */
+    #[Given('the project has a complete paas file with resources')]
     public function aProjectWithAPaasFileWithResources()
     {
         $this->paasFile = __DIR__ . '/Project/Basic/paas.with-resources.yaml';
         $this->quotasMode = 'full';
     }
 
-    /**
-     * @Given the project has a complete paas file with limited quota
-     */
+    #[Given('the project has a complete paas file with limited quota')]
     public function aProjectWithAPaasFileWithLimitedQuota()
     {
         $this->paasFile = __DIR__ . '/Project/Basic/paas.with-quotas-exceeded.yaml';
         $this->quotasMode = 'limited';
     }
 
-    /**
-     * @Then with the subscription plan :id
-     */
+    #[Then('with the subscription plan :id')]
     public function withTheSubscriptionPlan(string $id): void
     {
         $this->quotasMode = $id;
     }
 
-    /**
-     * @Given simulate a too long image building
-     */
+    #[Given('simulate a too long image building')]
     public function simulateATooLongImageBuilding(): void
     {
         $this->slowBuilder = true;
     }
 
-    /**
-     * @Given a cluster supporting hierarchical namespace
-     */
+    #[Given('a cluster supporting hierarchical namespace')]
     public function aClusterSupportingHierarchicalNamespace(): void
     {
         $this->useHnc = true;
     }
 
-    /**
-     * @Given a subscription restriction
-     */
+    #[Given('a subscription restriction')]
     public function aSubscriptionRestriction(): void
     {
         $type = $this->sfContainer->get(SpaceSubscriptionType::class);
         $type->setEnableCodeRestriction(true);
     }
 
-    /**
-     * @Given without a subscription restriction
-     */
+    #[Given('without a subscription restriction')]
     public function withoutAaSubscriptionRestriction(): void
     {
         $type = $this->sfContainer->get(SpaceSubscriptionType::class);
         $type->setEnableCodeRestriction(false);
     }
 
-    /**
-     * @Given an OCI builder
-     */
+    #[Given('an OCI builder')]
     public function anOciBuilder(): void
     {
         $generator = new Generator();
         $mock = $generator->testDouble(
             type: Process::class,
             mockObject: true,
-            markAsMockObject: false,
             callOriginalConstructor: false,
             callOriginalClone: false,
-            callOriginalMethods: false,
         );
 
         $mock->expects(new AnyInvokedCountMatcher())

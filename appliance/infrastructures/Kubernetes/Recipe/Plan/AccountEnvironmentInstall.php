@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,13 +43,14 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServic
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class AccountEnvironmentInstall implements EditablePlanInterface
@@ -58,6 +59,7 @@ class AccountEnvironmentInstall implements EditablePlanInterface
 
     public function __construct(
         RecipeInterface $recipe,
+        private readonly LoadAccountClusters $loadAccountClusters,
         private readonly CreateNamespace $createNamespace,
         private readonly SelectClusterConfig $selectClusterConfig,
         private readonly CreateServiceAccount $createServiceAccount,
@@ -84,6 +86,8 @@ class AccountEnvironmentInstall implements EditablePlanInterface
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
 
         $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);
+
+        $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
 
         $recipe = $recipe->cook($this->createNamespace, CreateNamespace::class, [], 20);
 

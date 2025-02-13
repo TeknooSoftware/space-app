@@ -264,12 +264,6 @@
     "sebastian/cli-parser": {
         "version": "1.0.0"
     },
-    "sebastian/code-unit": {
-        "version": "1.0.5"
-    },
-    "sebastian/code-unit-reverse-lookup": {
-        "version": "1.0.1"
-    },
     "sebastian/comparator": {
         "version": "2.1.3"
     },

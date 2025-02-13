@@ -15,7 +15,7 @@
         {{ path('space_project_list') }}
     {% endif %}
 {%- endblock -%}
-{% block breadcrumFormTitle %}{{ 'teknoo.space.title.admin_job.new'|trans }}{% endblock %}
+{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.admin_job.new'|trans }}{% endblock %}
 {% block breadcrumbAddsItems %}
     <li class="breadcrumb-item text-capitalize">
         <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': project.id}) }}">{{ project }}

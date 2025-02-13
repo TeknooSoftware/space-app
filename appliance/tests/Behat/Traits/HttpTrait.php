@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Then;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -113,7 +114,15 @@ trait HttpTrait
             && false === $noCookies
             && !empty($cookies = $this->response->headers->getCookies())
         ) {
-            $this->cookies = array_merge($this->cookies, $this->extractCookies($cookies));
+            $cookies = array_merge($this->cookies, $this->extractCookies($cookies));
+
+            //Exclude null cookies, must be deleted
+            $this->cookies = [];
+            foreach ($cookies as $name => $value) {
+                if (null !== $value) {
+                    $this->cookies[$name] = $value;
+                }
+            }
         }
 
         if (302 === $this->response->getStatusCode()) {
@@ -140,28 +149,22 @@ trait HttpTrait
         return $this->response;
     }
 
-    /**
-     * @Then a session is opened
-     * @Then a new session is open
-     */
+    #[Then('a session is opened')]
+    #[Then('a new session is open')]
     public function aNewSessionIsOpen(): void
     {
         Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
         Assert::assertInstanceOf(PasswordAuthenticatedUser::class, $token?->getUser());
     }
 
-    /**
-     * @Then a recovery session is opened
-     */
+    #[Then('a recovery session is opened')]
     public function aNewRecoverySessionIsOpen(): void
     {
         Assert::assertNotEmpty($token = $this->getTokenStorageService->tokenStorage?->getToken());
         Assert::assertInstanceOf(UserWithRecoveryAccess::class, $token?->getUser());
     }
 
-    /**
-     * @Then a session must be not opened
-     */
+    #[Then('a session must be not opened')]
     public function aSessionMustBeNotOpened(): void
     {
         Assert::assertEmpty($this->getTokenStorageService->tokenStorage?->getToken());

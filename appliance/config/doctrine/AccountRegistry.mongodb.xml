@@ -15,7 +15,7 @@
         <field field-name="persistentVolumeClaimName" name="persistent_volume_claim_name" type="string" nullable="false"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date" />
-        <reference-one field="account" target-document="Teknoo\East\Paas\Object\Account">
+        <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">
             <cascade />
         </reference-one>
     </document>

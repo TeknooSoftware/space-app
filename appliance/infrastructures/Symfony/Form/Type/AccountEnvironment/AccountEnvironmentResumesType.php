@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -46,16 +46,11 @@ use function in_array;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class AccountEnvironmentResumesType extends AbstractType
 {
-    public function __construct(
-        private ClusterCatalog $clusterCatalog,
-    ) {
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         if (
@@ -65,12 +60,20 @@ class AccountEnvironmentResumesType extends AbstractType
             throw new DomainException("Missing subscription plan for this account");
         }
 
+        if (
+            empty($options['clusterCatalog'])
+            || !$options['clusterCatalog'] instanceof ClusterCatalog
+        ) {
+            throw new DomainException("Missing cluster catalog for this account");
+        }
+
         $subscriptionPlan = $options['subscriptionPlan'];
         $clustersInPlan = $subscriptionPlan->getClusters();
+        $clusterCatalog = $options['clusterCatalog'];
         $clustersList = [];
         /** @var Cluster $cluster */
-        foreach ($this->clusterCatalog as $cluster) {
-            if (in_array($cluster->name, $clustersInPlan)) {
+        foreach ($clusterCatalog as $cluster) {
+            if (in_array($cluster->name, $clustersInPlan) || $cluster->isExternal) {
                 $clustersList[$cluster->name] = $cluster->name;
             }
         }
@@ -142,8 +145,11 @@ class AccountEnvironmentResumesType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => AccountEnvironmentResume::class,
-            'subscriptionPlan' => null,
         ]);
+
+        $resolver->setRequired(['subscriptionPlan', 'clusterCatalog']);
+        $resolver->setAllowedTypes('clusterCatalog', ClusterCatalog::class);
+        $resolver->setAllowedTypes('subscriptionPlan', SubscriptionPlan::class);
 
         return $this;
     }

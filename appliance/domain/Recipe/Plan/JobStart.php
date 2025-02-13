@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,14 +45,17 @@ use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\Job\PrepareNewJobForm;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
+use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class JobStart implements EditablePlanInterface
@@ -63,9 +66,11 @@ class JobStart implements EditablePlanInterface
         RecipeInterface $recipe,
         private readonly LoadObject $loadObject,
         private readonly ObjectAccessControlInterface $objectAccessControl,
+        private readonly LoadAccountFromProject $loadAccountFromProject,
         private readonly CreateObject $createObject,
         private readonly PrepareNewJobForm $prepareNewJobForm,
         private readonly LoadPersistedVariablesForJob $loadPersistedVariablesForJob,
+        private readonly LoadAccountClusters $loadAccountClusters,
         private readonly FormHandlingInterface $formHandling,
         private readonly FormProcessingInterface $formProcessing,
         private readonly NewJobSetDefaults $newJobSetDefaults,
@@ -92,6 +97,7 @@ class JobStart implements EditablePlanInterface
             )
         );
 
+        $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
         $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'objectClass'));
         $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'formClass'));
         $recipe = $recipe->require(
@@ -124,10 +130,13 @@ class JobStart implements EditablePlanInterface
             ],
             06
         );
+        $recipe = $recipe->cook($this->loadAccountFromProject, LoadAccountFromProject::class, [], 07);
 
         $recipe = $recipe->cook($this->createObject, CreateObject::class, [], 10);
 
         $recipe = $recipe->cook($this->loadPersistedVariablesForJob, LoadPersistedVariablesForJob::class, [], 20);
+
+        $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 20);
 
         $recipe = $recipe->cook($this->prepareNewJobForm, PrepareNewJobForm::class, [], 30);
 

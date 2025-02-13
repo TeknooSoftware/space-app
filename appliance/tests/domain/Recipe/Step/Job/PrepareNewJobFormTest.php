@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -29,6 +29,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Contracts\Object\ImageRegistryInterface;
+use Teknoo\East\Paas\Contracts\Object\SourceRepositoryInterface;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
@@ -60,11 +64,16 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvoke(): void
     {
+        $project = new Project($this->createMock(Account::class));
+        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+            ->setClusters([$this->createMock(Cluster::class)]);
+
         self::assertInstanceOf(
             PrepareNewJobForm::class,
             ($this->prepareNewJobForm)(
                 $this->createMock(ManagerInterface::class),
-                new SpaceProject($this->createMock(Project::class)),
+                new SpaceProject($project),
                 $this->createMock(NewJob::class),
                 $this->createMock(ParametersBag::class),
                 'foo',

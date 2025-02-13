@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Given;
+use Behat\Step\Then;
 use Http\Adapter\Guzzle7\Client as ClientAlias;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
@@ -32,16 +34,20 @@ use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Tests\Behat\ManifestGenerator;
 use Teknoo\Space\Tests\Behat\MockClientInstantiator;
 
+use function is_array;
 use function class_exists;
 use function current;
 use function explode;
 use function json_encode;
 use function preg_replace;
+use function parse_url;
 use function strtolower;
 use function trim;
 
@@ -52,9 +58,51 @@ use function trim;
  */
 trait KubernetesTrait
 {
-    /**
-     * @Given A kubernetes client
-     */
+    private function getHostFromClusterName(string $clusterName, ?Account $account): string
+    {
+        $host = null;
+
+        $clusterCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
+        /** @var Cluster $clusterInstance */
+        foreach ($clusterCatalog as $clusterInstance) {
+            if ($clusterInstance->name === $clusterName) {
+                $urlParts = parse_url($clusterInstance->masterAddress);
+
+                if (is_array($urlParts) && isset($urlParts['host'])) {
+                    $host = $urlParts['host'];
+                }
+
+                break;
+            }
+        }
+
+        if (empty($host) && !empty($account)) {
+            /** @var AccountCluster $accountClusterInstance */
+            foreach ($this->listObjects(AccountCluster::class) as $accountClusterInstance) {
+                if (
+                    $accountClusterInstance->getAccount() === $account
+                    && $clusterName === (string) $accountClusterInstance
+                ) {
+                    $accountClusterInstance->visit(
+                        'masterAddress',
+                        static function ($address) use (&$host) {
+                            $urlParts = parse_url($address);
+
+                            if (is_array($urlParts) && isset($urlParts['host'])) {
+                                $host = $urlParts['host'];
+                            }
+                        }
+                    );
+                }
+            }
+        }
+
+        Assert::assertNotEmpty($host);
+
+        return $host;
+    }
+
+    #[Given('A kubernetes client')]
     public function aKubernetesClient(): void
     {
         MockClientInstantiator::$testsContext = $this;
@@ -68,24 +116,22 @@ trait KubernetesTrait
         }
     }
 
-    public function setManifests(string $uri, array $manifests): void
+    public function setManifests(string $host, string $uri, array $manifests): void
     {
         if (isset($manifests['metadata']['labels']['id'])) {
             $manifests['metadata']['labels']['id'] = '#ID#';
         }
 
-        $this->manifests[$uri][] = $manifests;
+        $this->manifests[$host][$uri][] = $manifests;
     }
 
-    public function setDeletedManifests(string $uri): void
+    public function setDeletedManifests(string $host, string $uri): void
     {
-        $this->deletedManifests[$uri] = true;
+        $this->deletedManifests[$host][$uri] = true;
     }
 
-    /**
-     * @Then some Kubernetes manifests have been created and executed
-     */
-    public function someKubernetesManifestsHaveBeenCreatedAndExecuted(): void
+    #[Then('some Kubernetes manifests have been created and executed on :cluster')]
+    public function someKubernetesManifestsHaveBeenCreatedAndExecuted(string $cluster): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
@@ -94,7 +140,11 @@ trait KubernetesTrait
         $job = current($jobs);
         Assert::assertInstanceOf(JobOrigin::class, $job);
 
-        $json = json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        $host = $this->getHostFromClusterName($cluster, $job?->getProject()->getAccount());
+
+        Assert::assertNotEmpty($this->manifests[$host]);
+
+        $json = json_encode($this->manifests[$host], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
 
         $id = $job->getId();
         if (strlen($id) < 9) {
@@ -116,53 +166,58 @@ trait KubernetesTrait
         );
     }
 
-    /**
-     * @Then no Kubernetes manifests must not be created
-     */
+    #[Then('no Kubernetes manifests must not be created')]
     public function noKubernetesManifestsMustNotBeCreated(): void
     {
         Assert::assertEmpty($this->manifests);
     }
 
-    /**
-     * @Then no Kubernetes manifests must not be deleted
-     */
+    #[Then('no Kubernetes manifests must not be created on :cluster')]
+    public function noKubernetesManifestsMustNotBeCreatedOn(string $cluster): void
+    {
+        $host = $this->getHostFromClusterName($cluster, $this->recall(Account::class));
+        if (isset($this->manifests[$host])) {
+            Assert::assertEmpty($this->manifests[$host]);
+        }
+    }
+
+    #[Then('no Kubernetes manifests must not be deleted')]
     public function noKubernetesManifestsMustNotBeDeleted(): void
     {
         Assert::assertEmpty($this->deletedManifests);
     }
 
-    /**
-     * @Then a Kubernetes namespace dedicated to registry for :namespace is applied and populated
-     */
-    public function aKubernetesNamespaceDedicatedToRegistryIsAppliedAndPopulated(string $namespace): void
-    {
+    #[Then('a Kubernetes namespace dedicated to registry for :namespace is applied and populated on :cluster')]
+    public function aKubernetesNamespaceDedicatedToRegistryIsAppliedAndPopulated(
+        string $namespace,
+        string $cluster,
+    ): void {
         $expected = trim(
             (new ManifestGenerator())->registryCreation(
                 $namespace,
             )
         );
 
+        $host = $this->getHostFromClusterName($cluster, $this->recall(Account::class));
+
         Assert::assertNotEmpty(
-            $this->manifests["namespaces/space-registry-$namespace/secrets"],
+            $this->manifests[$host]["namespaces/space-registry-$namespace/secrets"],
         );
 
-        foreach ($this->manifests["namespaces/space-registry-$namespace/secrets"] as &$secret) {
+        foreach ($this->manifests[$host]["namespaces/space-registry-$namespace/secrets"] as &$secret) {
             if (!empty($secret['data']['htpasswd'])) {
                 $secret['data']['htpasswd'] = '===';
             }
         }
 
-        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        $json = trim(json_encode($this->manifests[$host], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         Assert::assertEquals(
             $expected,
             $json,
         );
     }
 
-    /**
-     * @Then a Kubernetes manifests dedicated to quota for the last account has been applied
-     */
+    #[Then('a Kubernetes manifests dedicated to quota for the last account has been applied')]
     public function aKubernetesManifestsDedicatedToQuotaForTheLastAccountHasBeenApplied(): void
     {
         $account = $this->recall(Account::class);
@@ -177,47 +232,51 @@ trait KubernetesTrait
             ]
         );
 
-        $namespaces = [];
+        $namespacesByHosts = [];
 
         /** @var AccountEnvironment $ae */
         foreach ($this->listObjects(AccountEnvironment::class) as $ae) {
             if ($ae->getAccount() === $account) {
-                $namespaces[] = $ae->getNamespace();
+                $host = $this->getHostFromClusterName($ae->getClusterName(), $account);
+                $namespacesByHosts[$host][] = $ae->getNamespace();
             }
         }
 
-        $expected = trim(
-            (new ManifestGenerator())->quotaRefresh(
-                $prNr->fetchResult(''),
-                $namespaces,
-                $prQt->fetchResult([]),
-            )
-        );
+        foreach ($namespacesByHosts as $host => $namespaces) {
+            $expected = trim(
+                (new ManifestGenerator())->quotaRefresh(
+                    $prNr->fetchResult(''),
+                    $namespaces,
+                    $prQt->fetchResult([]),
+                )
+            );
 
-        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
-        Assert::assertEquals(
-            $expected,
-            $json,
-        );
+            $json = trim(json_encode($this->manifests[$host], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+            Assert::assertEquals(
+                $expected,
+                $json,
+            );
+        }
     }
 
-    /**
-     * @Then a Kubernetes namespaces :namespaces must be deleted
-     */
-    public function aKubernetesNamespacesMustBeDeleted(string $namespaces): void
+    #[Then('a Kubernetes namespaces :namespaces must be deleted on :cluster')]
+    public function aKubernetesNamespacesMustBeDeleted(string $namespaces, string $cluster): void
     {
+        $account = $this->recall(Account::class);
+        $host = $this->getHostFromClusterName($cluster, $account);
+
         $nsList = explode(',', $namespaces);
         Assert::assertEquals(
             $nsList,
-            array_keys($this->deletedManifests),
+            array_keys($this->deletedManifests[$host]),
         );
     }
 
-    /**
-     * @Then a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated
-     */
-    public function aKubernetesNamespaceDedicatedToClusterIsAppliedAndPopulated(string $namespace): void
-    {
+    #[Then('a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated')]
+    public function aKubernetesNamespaceDedicatedToClusterIsAppliedAndPopulated(
+        string $namespace,
+        string $cluster,
+    ): void {
         $account = $this->recall(Account::class);
         $prNr = new Promise(fn ($s): string => $s);
         $prQt = new Promise(fn ($q): array => $q);
@@ -239,17 +298,19 @@ trait KubernetesTrait
             )
         );
 
+        $host = $this->getHostFromClusterName($cluster, $account);
+
         Assert::assertNotEmpty(
-            $this->manifests["namespaces/space-client-$namespace/secrets"],
+            $this->manifests[$host]["namespaces/space-client-$namespace/secrets"],
         );
 
-        foreach ($this->manifests["namespaces/space-client-$namespace/secrets"] as &$secret) {
+        foreach ($this->manifests[$host]["namespaces/space-client-$namespace/secrets"] as &$secret) {
             if (!empty($secret['data']['.dockerconfigjson'])) {
                 $secret['data']['.dockerconfigjson'] = '===';
             }
         }
 
-        $json = trim(json_encode($this->manifests, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+        $json = trim(json_encode($this->manifests[$host], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
         Assert::assertEquals(
             $expected,
             $json,

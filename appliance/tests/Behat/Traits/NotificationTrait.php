@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\Traits;
 
+use Behat\Step\Then;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Mailer\Event\MessageEvents;
 use Symfony\Component\Mailer\Test\Constraint\EmailCount;
@@ -46,9 +47,7 @@ trait NotificationTrait
         return $this->messageLoggerListener->getEvents();
     }
 
-    /**
-     * @Then no notification must be sent
-     */
+    #[Then('no notification must be sent')]
     public function noNotificationMustBeSent(): void
     {
         Assert::assertThat(
@@ -57,9 +56,7 @@ trait NotificationTrait
         );
     }
 
-    /**
-     * @Then a notification must be sent
-     */
+    #[Then('a notification must be sent')]
     public function aNotificationMustBeSent(): void
     {
         Assert::assertThat(

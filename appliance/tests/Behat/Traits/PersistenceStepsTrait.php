@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,6 +26,9 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\Traits;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Doctrine\Object\Media as MediaODM;
 use Teknoo\East\Common\Object\StoredPassword;
@@ -36,6 +39,7 @@ use Teknoo\East\Paas\Contracts\Recipe\Step\Job\DispatchResultInterface;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
+use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Object\Account as AccountOrigin;
 use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\East\Paas\Object\Cluster;
@@ -47,7 +51,11 @@ use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
 use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
+use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
@@ -75,16 +83,14 @@ use function trim;
  */
 trait PersistenceStepsTrait
 {
-    /**
-     * @Given an account for :accountName with the account namespace :accountNamespace
-     */
+    #[Given('an account for :accountName with the account namespace :accountNamespace')]
     public function anAccountForWithTheAccountNamespace(string $accountName, string $accountNamespace): void
     {
         $account = new Account();
         $account->setId($this->generateId());
         $account->setName($accountName);
         $account->setNamespace($accountNamespace);
-        $account->setPrefixNamespace('space-behat-');
+        $account->setPrefixNamespace('space-client-');
 
         $this->persistAndRegister($account);
 
@@ -103,7 +109,7 @@ trait PersistenceStepsTrait
         $this->persistAndRegister($accountData);
 
         $sac = mb_strtolower(str_replace(' ', '-', $accountName));
-        $accountEnvironments = new AccountEnvironment(
+        $accountEnvironment = new AccountEnvironment(
             account: $account,
             clusterName: 'Demo Kube Cluster',
             envName: 'dev',
@@ -117,10 +123,10 @@ trait PersistenceStepsTrait
             token: "aFakeToken",
             metadata: [],
         );
-        $accountEnvironments->setId($this->generateId());
+        $accountEnvironment->setId($this->generateId());
 
-        $this->persistAndRegister($accountEnvironments);
-        $accountEnvironments = new AccountEnvironment(
+        $this->persistAndRegister($accountEnvironment);
+        $accountEnvironment = new AccountEnvironment(
             account: $account,
             clusterName: 'Demo Kube Cluster',
             envName: 'prod',
@@ -134,9 +140,9 @@ trait PersistenceStepsTrait
             token: "aFakeToken",
             metadata: [],
         );
-        $accountEnvironments->setId($this->generateId());
+        $accountEnvironment->setId($this->generateId());
 
-        $this->persistAndRegister($accountEnvironments);
+        $this->persistAndRegister($accountEnvironment);
 
         $accountRegistry = new AccountRegistry(
             account: $account,
@@ -152,9 +158,7 @@ trait PersistenceStepsTrait
         $this->persistAndRegister($accountRegistry);
     }
 
-    /**
-     * @Given quotas defined for this account
-     */
+    #[Given('quotas defined for this account')]
     public function quotasDefinedForThisAccount()
     {
         $this->recall(Account::class)?->setQuotas(
@@ -165,9 +169,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Given an :role, called :lastName :firstName with the :email with the password :password
-     */
+    #[Given('an :role, called :lastName :firstName with the :email with the password :password')]
     public function anUserCalledWithTheWithThePassword(
         string $lastName,
         string $firstName,
@@ -218,9 +220,7 @@ trait PersistenceStepsTrait
         $this->persistAndRegister($userData);
     }
 
-    /**
-     * @Given the 2FA authentication enable for last user
-     */
+    #[Given('the 2FA authentication enable for last user')]
     public function theFaAuthenticationEnableForLastUser(): void
     {
         $totpAlgorithm = 'sha1';
@@ -242,9 +242,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the account keeps these persisted variables
-     */
+    #[Then('the account keeps these persisted variables')]
     public function theAccountKeepsThesePersistedVariables(TableNode $expectedVariables): void
     {
         $account = $this->recall(Account::class);
@@ -327,19 +325,15 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Then the account must have these persisted variables
-     */
+    #[Then('the account must have these persisted variables')]
     public function theAccountMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $this->theAccountKeepsThesePersistedVariables($expectedVariables);
     }
 
-    /**
-     * @Given the account has these persisted variables:
-     */
+    #[Given('the account has these persisted variables:')]
     public function theAccountHasThesePersistedVariables(TableNode $variables): void
     {
         $account = $this->recall(Account::class);
@@ -389,9 +383,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given a standard website project :projectName
-     */
+    #[Given('a standard project :projectName')]
     public function aStandardWebsiteProject(string $projectName): void
     {
         /** @var AccountEnvironment $credential */
@@ -481,19 +473,23 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :count standard websites projects :projectName and a prefix :prefix
-     */
-    public function standardWebsitesProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
+    #[Given(':count standard projects :projectName and a prefix :prefix')]
+    public function standardProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
     {
         for ($i = 1; $i <= $count; $i++) {
-            $this->aStandardWebsiteProjectAndAPrefix(str_replace('X', (string) $i, $projectName), $prefix);
+            $this->aStandardProjectAndAPrefix(str_replace('X', (string) $i, $projectName), $prefix);
         }
     }
 
-    /**
-     * @Given :count basics users for this account
-     */
+    #[Given(':count accounts clusters :name and a slug :slug')]
+    public function accountsClustersAndASlug(int $count, string $name, string $slug): void
+    {
+        for ($i = 1; $i <= $count; $i++) {
+            $this->anAccountClustersAndASlug(str_replace('X', (string) $i, $name), $slug . '-' . $i);
+        }
+    }
+
+    #[Given(':count basics users for this account')]
     public function basicsUsersForThisAccount(int $count): void
     {
         $users = [];
@@ -520,9 +516,7 @@ trait PersistenceStepsTrait
         $this->recall(Account::class)?->setUsers($users);
     }
 
-    /**
-     * @Given :count accounts with some users
-     */
+    #[Given(':count accounts with some users')]
     public function accountsWithSomeUsers(int $count): void
     {
         for ($i = 1; $i <= $count; $i++) {
@@ -554,11 +548,117 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given a standard website project :projectName and a prefix :prefix
-     */
-    public function aStandardWebsiteProjectAndAPrefix(string $projectName, string $prefix): void
+    private function createCustomCluster(Account $account): Cluster
     {
+        $cluster = new Cluster();
+        $cluster->setName('Custom Cluster');
+        $cluster->setType($this->defaultClusterType);
+        $cluster->setAddress('https://custom.cluster');
+        $cluster->useHierarchicalNamespaces(false);
+        $account->namespaceIsItDefined(fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $cluster->setEnvironment($env = new Environment('prod'));
+
+        if (empty($this->recall(Environment::class))) {
+            $this->register($env);
+        }
+
+        $cluster->setLocked(false);
+
+        $cluster->setIdentity(
+            new ClusterCredentials(
+                caCertificate: 'foo',
+                clientCertificate: '',
+                clientKey: '',
+                token: 'bar',
+            )
+        );
+
+        return $cluster;
+    }
+
+    private function createCatalogCluster(
+        Account $account,
+        ClusterConfig $clusterConfig,
+        AccountEnvironment $credential,
+        string $prefix,
+        string $envName,
+    ): Cluster {
+        $cluster = new Cluster();
+        $cluster->setName($clusterConfig->name);
+        $cluster->setType($clusterConfig->type);
+        $cluster->setAddress(\str_replace('https://', 'https://' . $prefix, $clusterConfig->masterAddress));
+        $cluster->useHierarchicalNamespaces($this->useHnc);
+        $account->namespaceIsItDefined(
+            fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-' . $envName)
+        );
+        $cluster->setEnvironment($env = new Environment($envName));
+        $cluster->setLocked(true);
+
+        if (empty($this->recall(Environment::class))) {
+            $this->register($env);
+        }
+
+        $cluster->setIdentity(
+            new ClusterCredentials(
+                caCertificate: $credential->getCaCertificate(),
+                clientCertificate: $credential->getClientCertificate(),
+                clientKey: $credential->getClientKey(),
+                token: $credential->getToken()
+            )
+        );
+
+        return $cluster;
+    }
+
+    private function createCatalogAccountCluster(
+        Account $account,
+        string $envName,
+    ): Cluster {
+        /** @var AccountCluster $accountCluster */
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $cluster = new Cluster();
+        $caCertificate = '';
+        $token = '';
+        $accountCluster->visit([
+            'name' => $cluster->setName(...),
+            'type' => $cluster->setType(...),
+            'masterAddress' => $cluster->setAddress(...),
+            'useHnc' => $cluster->useHierarchicalNamespaces(...),
+            'caCertificate' => function (string $v) use (&$caCertificate): void {
+                $caCertificate = $v;
+            },
+            'token' => function (string $v) use (&$token): void {
+                $token = $v;
+            },
+        ]);
+
+        $account->namespaceIsItDefined(
+            fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-' . $envName)
+        );
+        $cluster->setEnvironment($env = new Environment($envName));
+        $cluster->setLocked(true);
+
+        $cluster->setIdentity(
+            new ClusterCredentials(
+                caCertificate: $caCertificate,
+                clientCertificate: '',
+                clientKey: '',
+                token: $token,
+            ),
+        );
+
+        return $cluster;
+    }
+
+    private function createAndPersistProject(
+        string $projectName,
+        string $prefix,
+        bool $customCluster,
+        ?string $clusterName = null,
+        ?string $envName = null,
+    ): void {
+
         /** @var AccountEnvironment $credential */
         $credential = $this->recall(AccountEnvironment::class);
         /** @var AccountRegistry $registry */
@@ -595,47 +695,58 @@ trait PersistenceStepsTrait
 
         $this->register($repository);
 
-        $cluster = new Cluster();
-        $cluster->setName($this->defaultClusterName);
-        $cluster->setType($this->defaultClusterType);
-        $cluster->setAddress($this->defaultClusterAddress);
-        $cluster->useHierarchicalNamespaces($this->useHnc);
-        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
-        $cluster->setEnvironment($env = new Environment('prod'));
-        $cluster->setLocked(true);
-        $this->register($env);
-        $cluster->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+        if (!empty($clusterName) && !empty($envName)) {
+            /** @var AccountCluster $accountCluster */
+            $accountCluster = $this->recall(AccountCluster::class);
+            $clusterConfig = $accountCluster->convertToConfigCluster(
+                $this->sfContainer->get(ClientFactoryInterface::class),
+                new RepositoryRegistry(),
+            );
 
-        $clusterDev = new Cluster();
-        $clusterDev->setName($this->defaultClusterName);
-        $clusterDev->setType($this->defaultClusterType);
-        $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
-        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
-        $clusterDev->useHierarchicalNamespaces($this->useHnc);
-        $clusterDev->setEnvironment(new Environment('dev'));
-        $clusterDev->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+            $cluster = $this->createCatalogCluster($account, $clusterConfig, $credential, '', $envName);
 
-        $project->setClusters([
-            $cluster,
-            $clusterDev,
-        ]);
+            $project->setClusters([
+                $cluster,
+            ]);
 
-        $this->persistAndRegister($clusterDev);
-        $this->persistAndRegister($cluster);
+            $this->persistAndRegister($cluster);
+        } elseif (false === $customCluster) {
+            /** @var ClusterCatalog $clustersCatalog */
+            $clustersCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
+
+            $cluster = $this->createCatalogCluster(
+                $account,
+                $clustersCatalog->getCluster($this->defaultClusterName),
+                $credential,
+                '',
+                'prod',
+            );
+
+            $clusterDev = $this->createCatalogCluster(
+                $account,
+                $clustersCatalog->getCluster($this->defaultClusterName),
+                $credential,
+                'dev.',
+                'dev',
+            );
+
+            $project->setClusters([
+                $cluster,
+                $clusterDev,
+            ]);
+
+            $this->persistAndRegister($clusterDev);
+            $this->persistAndRegister($cluster);
+        } else {
+            $cluster = $this->createCustomCluster($account);
+
+            $project->setClusters([
+                $cluster,
+            ]);
+
+            $this->persistAndRegister($cluster);
+        }
+
         $this->persistAndRegister($project);
 
         $projectMetadata = new ProjectMetadata(
@@ -652,9 +763,24 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :count project's variables
-     */
+    #[Given('a standard project :projectName and a prefix :prefix')]
+    #[Given('a standard project :projectName and a prefix :prefix on :clusterName for :envName')]
+    public function aStandardProjectAndAPrefix(
+        string $projectName,
+        string $prefix,
+        ?string $clusterName = null,
+        ?string $envName = null,
+    ): void {
+        $this->createAndPersistProject($projectName, $prefix, false, $clusterName, $envName);
+    }
+
+    #[Given('a custom project :projectName and a prefix :prefix on custom cluster')]
+    public function aCustomProjectAndAPrefixOnCustomCluster(string $projectName, string $prefix): void
+    {
+        $this->createAndPersistProject($projectName, $prefix, true);
+    }
+
+    #[Given(':count project\'s variables')]
     public function andSomeProjectVariables(int $count): void
     {
         $project = $this->recall(Project::class);
@@ -705,12 +831,77 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Then the project must be persisted
-     */
+    #[Given('an account clusters :name and a slug :slug')]
+    public function anAccountClustersAndASlug(string $name, string $slug): void
+    {
+        $account = $this->recall(Account::class);
+
+        $cluster = new AccountCluster(
+            account: $account,
+            name: $name,
+            slug: $slug,
+            type: 'kubernetes',
+            masterAddress: "https://kubernetes.{$slug}.behat",
+            storageProvisioner: 'nfs.csi.k8s.io',
+            dashboardAddress: "https://dashboard.{$slug}.behat",
+            caCertificate: \base64_encode('behatCaCertificate'),
+            token: \base64_encode('behatToken'),
+            supportRegistry: true,
+            registryUrl: "https://registry.{$slug}.behat",
+            useHnc: false,
+        );
+
+        $this->persistAndRegister($cluster);
+    }
+
+    #[Given('an account environment on :clusterName for the environment :environmentName')]
+    public function anAccountEnvironmentOnForTheEnvironment(string $clusterName, string $environmentName): void
+    {
+        $account = $this->recall(Account::class);
+        $sac = mb_strtolower(str_replace(' ', '-', (string) $account));
+
+        $namespace = '';
+        $account->namespaceIsItDefined(
+            function (string $ns, string $pf) use (&$namespace, $environmentName) {
+                $namespace = $pf . $ns . '-' . $environmentName;
+            }
+        );
+
+        $accountCluster = $this->recall(AccountCluster::class);
+        $caCertificate = '';
+        $token = '';
+        $accountCluster->visit([
+            'caCertificate' => function (string $v) use (&$caCertificate): void {
+                $caCertificate = $v;
+            },
+            'token' => function (string $v) use (&$token): void {
+                $token = $v;
+            },
+        ]);
+
+        $accountEnvironment = new AccountEnvironment(
+            account: $account,
+            clusterName: $clusterName,
+            envName: $environmentName,
+            namespace: $namespace,
+            serviceAccountName:  $sac . "-{$environmentName}-account",
+            roleName: $sac . "-{$environmentName}-role",
+            roleBindingName: $sac . "-{$environmentName}-role-binding",
+            caCertificate: $caCertificate,
+            clientCertificate: "",
+            clientKey: "",
+            token: $token,
+            metadata: [],
+        );
+        $accountEnvironment->setId($this->generateId());
+
+        $this->persistAndRegister($accountEnvironment);
+    }
+
+    #[Then('the project must be persisted')]
     public function theProjectMustBePersisted(): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -729,12 +920,10 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the project must be updated
-     */
+    #[Then('the project must be updated')]
     public function theProjectMustBeUpdated(): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $crawler = $this->createCrawler();
 
@@ -759,26 +948,27 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the project is not deleted
-     */
+    #[Then('the project is not deleted')]
     public function theProjectIsNotDeleted(): void
     {
         $projects = $this->listObjects(Project::class);
         Assert::assertNotEmpty($projects);
     }
 
-    /**
-     * @Then there are no project persisted variables
-     */
+    #[Then('the account cluster is not deleted')]
+    public function theAccountClusterIsNotDeleted(): void
+    {
+        $clusters = $this->listObjects(AccountCluster::class);
+        Assert::assertNotEmpty($clusters);
+    }
+
+    #[Then('there are no project persisted variables')]
     public function thereAreNoProjectPersistedVariables(): void
     {
         Assert::assertEmpty($this->listObjects(ProjectPersistedVariable::class));
     }
 
-    /**
-     * @Then data have been saved
-     */
+    #[Then('data have been saved')]
     public function dataHaveBeenSaved(): void
     {
         $crawler = $this->createCrawler();
@@ -791,9 +981,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the project keeps these persisted variables
-     */
+    #[Then('the project keeps these persisted variables')]
     public function theProjectKeepsTheseePersistedVariables(TableNode $expectedVariables): void
     {
         $vars = $this->listObjects(ProjectPersistedVariable::class);
@@ -877,19 +1065,15 @@ trait PersistenceStepsTrait
         $service->setAgentMode(false);
     }
 
-    /**
-     * @Then the project must have these persisted variables
-     */
+    #[Then('the project must have these persisted variables')]
     public function theProjectMustHaveTheseePersistedVariables(TableNode $expectedVariables): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $this->theProjectKeepsTheseePersistedVariables($expectedVariables);
     }
 
-    /**
-     * @Given the project has these persisted variables:
-     */
+    #[Given('the project has these persisted variables:')]
     public function theProjectHasThesePersistedVariables(TableNode $variables): void
     {
         $project = $this->recall(Project::class);
@@ -939,9 +1123,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Given :number jobs for the project
-     */
+    #[Given(':number jobs for the project')]
     public function jobsForTheProject(int $number): void
     {
         $project = $this->recall(Project::class);
@@ -962,9 +1144,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @When the job is deleted
-     */
+    #[When('the job is deleted')]
     public function theJobIsDeleted(): void
     {
         Assert::assertEmpty(
@@ -972,9 +1152,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then there is a project in the memory for this account
-     */
+    #[Then('there is a project in the memory for this account')]
     public function thereIsAProjectInTheMemoryForThisAccount(): void
     {
         Assert::assertCount(
@@ -983,9 +1161,16 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then there is an user in the memory
-     */
+    #[Then('there is an account cluster in the memory for this account')]
+    public function thereIsAnAccountClusterInTheMemoryForThisAccount(): void
+    {
+        Assert::assertCount(
+            1,
+            $this->listObjects(AccountCluster::class),
+        );
+    }
+
+    #[Then('there is an user in the memory')]
     public function thereIsAnUserInTheMemory(): void
     {
         Assert::assertCount(
@@ -994,9 +1179,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then there is an account in the memory
-     */
+    #[Then('there is an account in the memory')]
     public function thereIsAnAccountInTheMemory(): void
     {
         Assert::assertNotEmpty(
@@ -1004,17 +1187,13 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then no object has been deleted
-     */
+    #[Then('no object has been deleted')]
     public function noObjectHasBeenDeleted()
     {
         Assert::assertEmpty($this->removedObjects);
     }
 
-    /**
-     * @Then the old account environment account :namespace must be deleted
-     */
+    #[Then('the old account environment account :namespace must be deleted')]
     public function theOldAccountEnvironmentAccountMustBeDeleted(string $namespace): void
     {
         Assert::assertNotEmpty($this->removedObjects[AccountEnvironment::class]);
@@ -1029,9 +1208,7 @@ trait PersistenceStepsTrait
         }
     }
 
-    /**
-     * @Then the old account registry object has been deleted and remplaced
-     */
+    #[Then('the old account registry object has been deleted and remplaced')]
     public function theOldAccountRegistryObjectHasBeenDeletedAndRemplaced(): void
     {
         $account = $this->recall(Account::class);
@@ -1059,9 +1236,7 @@ trait PersistenceStepsTrait
         Assert::fail('Missing AccountRegistry');
     }
 
-    /**
-     * @Then the old account environment :namespace object has been deleted and remplaced
-     */
+    #[Then('the old account environment :namespace object has been deleted and remplaced')]
     public function theOldAccountEnvironmentObjectHasBeenDeletedAndRemplaced(string $namespace): void
     {
         $account = $this->recall(Account::class);
@@ -1094,9 +1269,7 @@ trait PersistenceStepsTrait
         Assert::fail('Missing AccountEnvironment');
     }
 
-    /**
-     * @Then the project is deleted
-     */
+    #[Then('the project is deleted')]
     public function theProjectIsDeleted(): void
     {
         Assert::assertEmpty(
@@ -1104,9 +1277,15 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the user is deleted
-     */
+    #[Then('the account cluster is deleted')]
+    public function theAccountClusterIsDeleted(): void
+    {
+        Assert::assertEmpty(
+            $this->listObjects(AccountCluster::class),
+        );
+    }
+
+    #[Then('the user is deleted')]
     public function theUserIsDeleted(): void
     {
         Assert::assertCount(
@@ -1115,9 +1294,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then the account is deleted
-     */
+    #[Then('the account is deleted')]
     public function theAccountIsDeleted(): void
     {
         Assert::assertEmpty(
@@ -1125,9 +1302,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @When the job is not deleted
-     */
+    #[When('the job is not deleted')]
     public function theJobIsNotDeleted(): void
     {
         Assert::assertNotEmpty(
@@ -1135,9 +1310,8 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then job must be successful finished
-     */
+    #[Then('job must be successful finished')]
+    #[Then('job must be finished with an error about a timeout')]
     public function jobMustBeSuccessfulFinished(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -1154,9 +1328,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then An account :accountName is created
-     */
+    #[Then('An account :accountName is created')]
     public function anAccountIsCreated(string $accountName): void
     {
         $accounts = $this->listObjects(AccountOrigin::class);
@@ -1168,9 +1340,7 @@ trait PersistenceStepsTrait
         );
     }
 
-    /**
-     * @Then an user :email is created
-     */
+    #[Then('an user :email is created')]
     public function anUserIsCreated(string $email): void
     {
         $users = $this->listObjects(User::class);

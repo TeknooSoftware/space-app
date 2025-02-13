@@ -1,0 +1,71 @@
+{# templates/TeknooSpace/AccountCluster/edit.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.account.account_cluster.edit'|trans }} : {{ objectInstance }} - {% endblock %}
+
+{%- block instanceMainTitle -%}
+    <i class="uil uil-server"></i> {{ 'teknoo.space.title.account.account_cluster.edit'|trans }} : {{ objectInstance }}
+{%- endblock -%}
+
+{%- block breadcrumbListLink -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ path('_teknoo_paas_admin_account_list') }}
+    {% else %}
+        {{ path('space_account_settings') }}
+    {% endif %}
+{%- endblock -%}
+{%- block breadcrumbFormTitle -%}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ 'teknoo.space.title.admin_account'|trans }}
+    {% else %}
+        {{ 'teknoo.space.title.account.settings'|trans }}
+    {% endif %}
+{%- endblock -%}
+{% block breadcrumbAddsItems %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('_teknoo_paas_admin_account_edit', {'id': account.id}) }}">{{ account }}</a>
+        </li>
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+        </li>
+    {% else %}
+        <li class="breadcrumb-item text-capitalize">
+            <a href="{{ path('space_account_clusters_list') }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+        </li>
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        {{ form_row(formView.name) }}
+        {{ form_row(formView.slug) }}
+        {{ form_row(formView.type) }}
+        {{ form_row(formView.masterAddress) }}
+        {{ form_row(formView.storageProvisioner) }}
+        {{ form_row(formView.dashboardAddress) }}
+        {{ form_row(formView.caCertificate, {"largeRow": true}) }}
+        {{ form_row(formView.token, {"largeRow": true}) }}
+        {{ form_row(formView.registryUrl, {"largeRow": true}) }}
+        {{ form_row(
+            formView.supportRegistry,
+            {
+                'label_attr': {
+                'class': 'switch-custom'
+            }
+            }
+        ) }}
+        {{ form_row(
+            formView.useHnc,
+            {
+                'label_attr': {
+                'class': 'switch-custom'
+            }
+            }
+        ) }}
+    </div>
+
+{% endblock %}

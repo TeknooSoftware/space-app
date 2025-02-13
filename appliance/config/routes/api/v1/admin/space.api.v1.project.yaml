@@ -16,9 +16,10 @@ space_api_v1_admin_project_new:
         route: 'space_api_v1_admin_project_edit'
         template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_project_edit:
-    path: '/project/{id}'
+    path: '/account/{accountId}/project/{id}'
     methods: ['GET', 'POST', 'PUT']
     schemes: ['https']
     defaults:
@@ -33,6 +34,50 @@ space_api_v1_admin_project_edit:
         route: 'space_api_v1_admin_project_edit'
         template: '@@TeknooSpace/api/Project/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_admin_project_edit_variables:
+    path: '/account/{accountId}/project/{id}/variables'
+    methods: ['GET', 'POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.edit'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Project\VarsType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        populateFormOptions: true
+        template: '@@TeknooSpace/api/Project/variables.json.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_admin_project_refresh_credentials:
+    path: '/account/{accountId}/project/{id}/refresh-credentials'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.refresh_credentials'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+        route: 'space_api_v1_admin_project_edit'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceProjectWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_admin_account_project_list:
+    path: '/account/{accountId}/projects'
+    methods: ['GET', 'POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.project.list'
+        api: 'json'
+        defaultOrderDirection: 'ASC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooSpace/api/Project/list.json.twig'
 
 space_api_v1_admin_project_list:
     path: '/projects'
@@ -48,7 +93,7 @@ space_api_v1_admin_project_list:
         template: '@@TeknooSpace/api/Project/list.json.twig'
 
 space_api_v1_admin_project_delete:
-    path: '/project/{id}/delete'
+    path: '/account/{accountId}/project/{id}/delete'
     methods: ['POST', 'DELETE']
     schemes: ['https']
     defaults:

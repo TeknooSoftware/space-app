@@ -1,10 +1,15 @@
 default:
+    testers:
+        stop_on_failure: true
+        strict: true
+
     suites:
         default:
             contexts:
-                - Teknoo\Space\Tests\Behat\TestsContext
+                - Teknoo\Space\Tests\Behat\SpaceContext
 
     extensions:
+        DMarynicz\BehatParallelExtension\Extension: ~
         FriendsOfBehat\SymfonyExtension:
             bootstrap: tests/bootstrap.php
             kernel:

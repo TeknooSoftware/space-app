@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -34,10 +34,12 @@ use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 
+use function array_values;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface
@@ -50,20 +52,21 @@ class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface
      */
     private static array $exportConfigurations = [
         '@class' => ['default', 'api', 'crud', 'digest'],
-        'account' => ['default', 'api', 'crud', 'digest'],
+        'account' => ['default', 'crud', 'digest'],
         'accountData' => ['crud'],
         'variables' => ['crud_variables'],
+        'environments' => ['crud_environments'],
     ];
 
     /**
      * @param iterable<AccountPersistedVariable>|AccountPersistedVariable[] $variables
-     * @param AccountEnvironmentResume[] $environmentResumes
+     * @param AccountEnvironmentResume[] $environments
      */
     public function __construct(
         public Account $account = new Account(),
         public ?AccountData $accountData = null,
         public iterable $variables = [],
-        public ?array $environmentResumes = null,
+        public ?array $environments = null,
     ) {
         if (null === $this->accountData) {
             $this->accountData = new AccountData($this->account);
@@ -87,6 +90,7 @@ class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface
             'account' => fn () => $this->account,
             'accountData' => fn () => $this->accountData,
             'variables' => fn () => $this->variables,
+            'environments' => fn () => array_values($this->environments ?? []),
         ];
 
         $this->setGroupsConfiguration(self::$exportConfigurations);

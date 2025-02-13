@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -42,7 +42,7 @@ use function array_merge;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class ApiNewJobType extends AbstractType implements FormApiAwareInterface
@@ -130,6 +130,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                     $form->get('newJobId')->getData(),
                     $form->get('variables')->getData(),
                     $form->get('projectId')->getData(),
+                    $form->get('accountId')->getData(),
                     $form->get('envName')->getData(),
                 );
             },

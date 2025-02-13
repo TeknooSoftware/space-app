@@ -1,0 +1,82 @@
+space_api_v1_admin_job_new:
+    path: '/account/{accountId}/project/{projectId}/job/new'
+    methods: ['POST', 'PUT']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.new'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\ApiNewJobType'
+        objectClass: 'Teknoo\Space\Object\DTO\NewJob'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooSpace/api/AdminJob/new.json.twig'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
+
+space_api_v1_admin_job_new_pending:
+    path: '/account/{accountId}/project/{projectId}/job/pending/{newJobId}'
+    methods: ['GET']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.pending'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
+
+space_api_v1_admin_job_restart:
+    path: '/account/{accountId}/project/{projectId}/job/{jobId}/restart'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.restart'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formActionRoute: 'space_api_v1_admin_job_new'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\ApiNewJobType'
+        objectClass: 'Teknoo\Space\Object\DTO\NewJob'
+        projectKey: 'Teknoo\East\Paas\Object\Project'
+        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
+
+space_api_v1_admin_job_list:
+    path: '/account/{accountId}/project/{projectId}/jobs'
+    methods: ['GET', 'POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.list'
+        api: 'json'
+        defaultOrderColumn: 'updatedAt'
+        defaultOrderDirection: 'DESC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\East\Paas\Loader\JobLoader'
+        projectKey: 'Teknoo\Space\Object\DTO\SpaceProject'
+        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
+        template: '@@TeknooSpace/api/AdminJob/list.json.twig'
+
+space_api_v1_admin_job_get:
+    path: '/account/{accountId}/project/{projectId}/job/{id}'
+    methods: ['GET']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.job.get'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\East\Paas\Loader\JobLoader'
+        objectViewKey: 'jobInstance'
+        template: '@@TeknooSpace/api/AdminJob/get.json.twig'
+
+space_api_v1_admin_job_delete:
+    path: '/account/{accountId}/project/{projectId}/job/{id}/delete'
+    methods: ['POST', 'DELETE']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.east.common.endpoint.crud.delete'
+        api: 'json'
+        deleter: '@teknoo.east.paas.deleting.job'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        loader: '@Teknoo\East\Paas\Loader\JobLoader'
+        objectViewKey: 'jobInstance'
+        template: '@@TeknooSpace/api/AdminJob/deleted.json.twig'

@@ -12,6 +12,7 @@ space_job_new:
         route: 'space_job_new_pending'
         template: '@@TeknooSpace/Job/new.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_job_restart:
     path: '/project/{projectId}/{jobId}/restart'

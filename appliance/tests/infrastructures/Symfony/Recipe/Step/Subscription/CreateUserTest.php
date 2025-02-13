@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Subscripti
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\SecurityBundle\Security;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
@@ -52,6 +53,8 @@ class CreateUserTest extends TestCase
 
     private SpaceUserWriter|MockObject $userWriter;
 
+    private Security|MockObject $security;
+
     /**
      * {@inheritdoc}
      */
@@ -60,7 +63,11 @@ class CreateUserTest extends TestCase
         parent::setUp();
 
         $this->userWriter = $this->createMock(SpaceUserWriter::class);
-        $this->createUser = new CreateUser($this->userWriter);
+        $this->security = $this->createMock(Security::class);
+        $this->createUser = new CreateUser(
+            $this->userWriter,
+            $this->security,
+        );
     }
 
     public function testInvoke(): void

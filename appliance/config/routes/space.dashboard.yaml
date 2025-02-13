@@ -17,6 +17,7 @@ space_dashboard_frame:
         _controller: 'teknoo.space.endpoint.dashboard_frame'
         allowEmptyCredentials: true
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_dashboard_frame_url:
     path: '/dashboard/frame/{clusterName}/{envName}/{wildcard}'
@@ -28,3 +29,4 @@ space_dashboard_frame_url:
         _controller: 'teknoo.space.endpoint.dashboard_frame'
         allowEmptyCredentials: true
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        clusterCatalog: '@teknoo.space.clusters_catalog'

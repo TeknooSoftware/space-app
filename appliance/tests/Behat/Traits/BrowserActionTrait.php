@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\Traits;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\When;
 use OTPHP\TOTP;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Object\TOTPAuth;
@@ -42,13 +43,13 @@ use function substr;
  */
 trait BrowserActionTrait
 {
-    private function checkIfUserHasBeenRedirected(): void
+    private function hasBeenUserRedirected(): void
     {
         Assert::assertTrue($this->hasBeenRedirected);
         $this->hasBeenRedirected = false;
     }
 
-    public function checkIfResponseIsAFinal(): void
+    public function isAFinalResponse(): void
     {
         Assert::assertEquals(200, $this->response?->getStatusCode());
     }
@@ -125,9 +126,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When the user logs out
-     */
+    #[When('the user logs out')]
     public function theUserLogsOut(): void
     {
         $this->executeRequest(
@@ -138,12 +137,10 @@ trait BrowserActionTrait
             clearCookies: true,
         );
 
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
     }
 
-    /**
-     * @When it submits the form:
-     */
+    #[When('it submits the form:')]
     public function itSubmitsTheForm(TableNode $formFields): void
     {
         Assert::assertNotEmpty($this->formName);
@@ -167,9 +164,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When the user sign in with :email and the password :password
-     */
+    #[When('the user sign in with :email and the password :password')]
     public function theUserSignInWithAndThePassword(string $email, string $password): void
     {
         $this->executeRequest(
@@ -208,9 +203,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When the user enter a valid TOTP code
-     */
+    #[When('the user enter a valid TOTP code')]
     public function theUserEnterAValidTotpCode(): void
     {
         $this->submitTotpCode(
@@ -220,9 +213,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When the user enter a wrong TOTP code
-     */
+    #[When('the user enter a wrong TOTP code')]
     public function theUserEnterAWrongTotpCode(): void
     {
         $this->submitTotpCode(
@@ -230,9 +221,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When It goes to new project page
-     */
+    #[When('It goes to new project page')]
     public function itGoesToNewProjectPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -248,9 +237,7 @@ trait BrowserActionTrait
         $this->formName = 'space_project';
     }
 
-    /**
-     * @When it opens the project page of :projectName
-     */
+    #[When('it opens the project page of :projectName')]
     public function itOpensTheProjectPageOf(string $projectName): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -264,12 +251,10 @@ trait BrowserActionTrait
         $this->formName = 'space_project';
     }
 
-    /**
-     * @When It goes to project page of :projectName of :accountName
-     */
+    #[When('It goes to project page of :projectName of :accountName')]
     public function itGoesToProjectPageOfOf(string $projectName, string $accountName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute(
             route: 'space_project_edit',
@@ -281,12 +266,10 @@ trait BrowserActionTrait
         $this->executeRequest('GET', $url);
     }
 
-    /**
-     * @When It goes to delete the project :projectName of :accountName
-     */
+    #[When('It goes to delete the project :projectName of :accountName')]
     public function itGoesToDeleteTheProjectOf(string $projectName, string $accountName): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute(
             route: 'space_project_delete',
@@ -298,9 +281,7 @@ trait BrowserActionTrait
         $this->executeRequest('GET', $url);
     }
 
-    /**
-     * @When it goes to project page of :projectName
-     */
+    #[When('it goes to project page of :projectName')]
     public function itGoesToProjectPageOf(string $projectName): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -312,9 +293,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When open the project variables page
-     */
+    #[When('open the project variables page')]
     public function openTheProjectVariablesPage(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -328,9 +307,7 @@ trait BrowserActionTrait
         $this->formName = 'project_vars';
     }
 
-    /**
-     * @When an user go to subscription page
-     */
+    #[When('an user go to subscription page')]
     public function anUserGoToSubscriptionPage(): void
     {
         $url = $this->getPathFromRoute(
@@ -341,9 +318,7 @@ trait BrowserActionTrait
         $this->formName = 'space_subscription';
     }
 
-    /**
-     * @When It goes to user settings
-     */
+    #[When('It goes to user settings')]
     public function itGoesToUserSettings(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(
@@ -354,9 +329,7 @@ trait BrowserActionTrait
         $this->formName = 'space_user';
     }
 
-    /**
-     * @When an user go to recovery request page
-     */
+    #[When('an user go to recovery request page')]
     public function anUserGoToRecoveryRequestPage(): void
     {
         $url = $this->getPathFromRoute(
@@ -367,9 +340,7 @@ trait BrowserActionTrait
         $this->formName = 'email_form';
     }
 
-    /**
-     * @When the user click on the link in the notification
-     */
+    #[When('the user click on the link in the notification')]
     public function theUserClickOnTheLinkInTheNotification(): void
     {
         $message = $this->getMailerEvents()->getMessages(null)[0];
@@ -384,9 +355,7 @@ trait BrowserActionTrait
         );
     }
 
-    /**
-     * @When it runs a job
-     */
+    #[When('it runs a job')]
     public function itRunsAJob(): void
     {
         $this->findUrlFromRouteInPageAndOpenIt(

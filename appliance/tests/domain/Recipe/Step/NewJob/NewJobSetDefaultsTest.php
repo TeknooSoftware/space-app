@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -53,9 +53,7 @@ class NewJobSetDefaultsTest extends TestCase
     {
         parent::setUp();
 
-        $this->newJobSetDefaults = new NewJobSetDefaults(
-            $this->createMock(ClusterCatalog::class)
-        );
+        $this->newJobSetDefaults = new NewJobSetDefaults();
     }
 
     public function testInvoke(): void
@@ -65,6 +63,7 @@ class NewJobSetDefaultsTest extends TestCase
             ($this->newJobSetDefaults)(
                 project: new SpaceProject($this->createMock(Project::class)),
                 newJob: $this->createMock(NewJob::class),
+                clusterCatalog: $this->createMock(ClusterCatalog::class),
             ),
         );
     }

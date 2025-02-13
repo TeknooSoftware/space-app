@@ -30,6 +30,9 @@ parameters:
         "@TeknooEastCommon/AdminMedia/list.html.twig": {
             "media_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\MediaSearchType"
         },
+        "@TeknooEastCommon/AccountCluster/list.html.twig": {
+            "account_cluster_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\AccountClusterSearchType"
+        },
     }
 
     teknoo.space.default.code.subscription.required: true

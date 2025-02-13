@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -34,7 +34,7 @@ use Traversable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements IteratorAggregate<Cluster>
@@ -48,6 +48,7 @@ class ClusterCatalog implements IteratorAggregate
     public function __construct(
         private readonly array $clusters,
         private readonly array $aliases,
+        private readonly ?self $parentCatalog = null,
     ) {
     }
 
@@ -59,6 +60,8 @@ class ClusterCatalog implements IteratorAggregate
             }
         }
 
+        $this->parentCatalog?->getClusterForRegistry();
+
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
 
@@ -67,6 +70,8 @@ class ClusterCatalog implements IteratorAggregate
         foreach ($this->clusters as $name => $cluster) {
             return $name;
         }
+
+        $this->parentCatalog?->getDefaultClusterName();
 
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
@@ -82,6 +87,10 @@ class ClusterCatalog implements IteratorAggregate
         }
 
         if (!isset($this->clusters[$name])) {
+            if ($this->parentCatalog) {
+                return $this->parentCatalog->getCluster($name);
+            }
+
             throw new DomainException("Cluster {$name} is not available in the catalog");
         }
 
@@ -91,5 +100,14 @@ class ClusterCatalog implements IteratorAggregate
     public function getIterator(): Traversable
     {
         yield from $this->clusters;
+
+        if ($this->parentCatalog instanceof self) {
+            yield from $this->parentCatalog;
+        }
+    }
+
+    public function hasParentCatalog(): bool
+    {
+        return null !== $this->parentCatalog;
     }
 }

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -29,6 +29,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -71,8 +73,9 @@ class DeleteEnvFromResumesTest extends TestCase
                 new AccountWallet([$this->createMock(AccountEnvironment::class)]),
                 new SpaceAccount(
                     account: $this->createMock(Account::class),
-                    environmentResumes: []
+                    environments: []
                 ),
+                new ClusterCatalog(['Foo' => $this->createMock(Cluster::class)], ['Foo' => 'foo']),
             ),
         );
     }

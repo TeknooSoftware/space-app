@@ -46,6 +46,9 @@ parameters:
             message: "#Cannot access an offset on mixed#"
             path:  infrastructures/Symfony/Form/Type/
         -
+            message: "#is not falsy#"
+            path:  infrastructures/Symfony/Form/Type/
+        -
             message: '#Argument of an invalid type mixed supplied for foreach#'
             path:  infrastructures/Symfony/Form/DataMapper/
         -

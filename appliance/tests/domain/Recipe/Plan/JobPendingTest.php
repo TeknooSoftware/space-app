@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ use Teknoo\Space\Recipe\Plan\JobPending;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -83,13 +83,13 @@ class JobPendingTest extends TestCase
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->jobPending = new JobPending(
-            $this->recipe,
-            $this->loadObject,
-            $this->objectAccessControl,
-            $this->fetchJobIdFromPendingInterface,
-            $this->render,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            objectAccessControl: $this->objectAccessControl,
+            fetchJobIdFromPending: $this->fetchJobIdFromPendingInterface,
+            render: $this->render,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

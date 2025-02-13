@@ -53,3 +53,60 @@ space_admin_account_code_generator:
         objectClass: 'Teknoo\East\Common\Object\EmptyObject'
         template: '@@TeknooSpace/AdminAccount/code_generator.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+
+space_admin_account_clusters_list:
+    path: '/admin/account/{accountId}/clusters'
+    methods: [ 'GET' ]
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.list'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
+        defaultOrderDirection: 'ASC'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        itemsPerPage: 20
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        template: '@@TeknooSpace/AccountCluster/list.html.twig'
+
+space_admin_account_clusters_edit:
+    path: '/admin/account/{accountId}/cluster/{id}/edit'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.edit'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        template: '@@TeknooSpace/AccountCluster/edit.html.twig'
+        writer: '@Teknoo\Space\Writer\AccountClusterWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+
+space_admin_account_clusters_new:
+    path: '/admin/account/{accountId}/cluster/new'
+    methods: ['GET', 'POST', 'PUT']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.new'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        objectClass: 'Teknoo\Space\Object\Persisted\AccountCluster'
+        route: 'space_admin_account_clusters_edit'
+        template: '@@TeknooSpace/AccountCluster/new.html.twig'
+        writer: '@Teknoo\Space\Writer\AccountClusterWriter'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
+
+space_admin_account_clusters_delete:
+    path: '/admin/account/{accountId}/cluster/{id}/delete'
+    methods: ['GET']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account_cluster.delete'
+        accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        allowAccountSelection: true
+        deleter: '@teknoo.space.deleting.account_cluster'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        loader: '@Teknoo\Space\Loader\AccountClusterLoader'
+        route: 'space_admin_account_clusters_list'
+        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,20 +26,26 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\Traits;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Step\Then;
+use Behat\Step\When;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 use Teknoo\East\Common\Object\User;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\East\Paas\Object\Account as AccountOrigin;
+use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
@@ -49,6 +55,8 @@ use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
 
+use function array_filter;
+use function array_map;
 use function array_slice;
 use function array_values;
 use function end;
@@ -67,21 +75,30 @@ use function trim;
  */
 trait ApiTrait
 {
-    /**
-     * @When the API is called to list of jobs
-     */
-    public function theApiIsCalledToListOfJobs(): void
+    #[When('the API is called to list of jobs')]
+    #[When('the API is called to list of jobs as :role')]
+    public function theApiIsCalledToListOfJobs(?string $role = null): void
     {
+        /** @var Project $project */
         $project = $this->recall(Project::class);
 
         $this->executeRequest(
             method: 'GET',
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_job_list',
-                parameters: [
-                    'projectId' => $project->getId(),
-                ],
-            ),
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_job_list',
+                    parameters: [
+                        'accountId' => $project->getAccount()->getId(),
+                        'projectId' => $project->getId(),
+                    ],
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_job_list',
+                    parameters: [
+                        'projectId' => $project->getId(),
+                    ],
+                ),
+            },
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -89,10 +106,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to list of projects
-     * @When the API is called to list of projects as :role
-     */
+    #[When('the API is called to list of projects as :role')]
+    #[When('the API is called to list of projects')]
     public function theApiIsCalledToListOfProjects(?string $role = null): void
     {
         $this->executeRequest(
@@ -110,9 +125,53 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to list of users as admin
-     */
+    #[When('the API is called to list of projects of last account as :role')]
+    public function theApiIsCalledToListOfProjectsOfAccount(string $role): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_account_project_list',
+                    parameters: [
+                        'accountId' => $this->recall(Account::class)->getId(),
+                    ]
+                ),
+                default => throw new \InvalidArgumentException('Missing role'),
+            },
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to list of accounts clusters of last account as :role')]
+    #[When('the API is called to list of accounts clusters')]
+    public function theApiIsCalledToListOfAccountsClusters(?string $role = null): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: match ($role) {
+                    'admin' => 'space_api_v1_admin_account_clusters_list',
+                    default => 'space_api_v1_account_clusters_list',
+                },
+                parameters: match ($role) {
+                    'admin' => [
+                        'accountId' => $this->recall(Account::class)->getId(),
+                    ],
+                    default => [],
+                }
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to list of users as admin')]
     public function theApiIsCalledToListOfUsers(): void
     {
         $this->executeRequest(
@@ -127,9 +186,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to list of accounts as admin
-     */
+    #[When('the API is called to list of accounts as admin')]
     public function theApiIsCalledToListOfAccountsAsAdmin(): void
     {
         $this->executeRequest(
@@ -144,23 +201,32 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last job
-     */
-    public function theApiIsCalledToGetTheLastJob(): void
+    #[When('the API is called to get the last job')]
+    #[When('the API is called to get the last job as :role')]
+    public function theApiIsCalledToGetTheLastJob(?string $role = null): void
     {
         $project = $this->recall(Project::class);
         $job = $this->recall(Job::class);
 
         $this->executeRequest(
             method: 'GET',
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_job_get',
-                parameters: [
-                    'projectId' => $project->getId(),
-                    'id' => $job->getId(),
-                ],
-            ),
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_job_get',
+                    parameters: [
+                        'accountId' => $project->getAccount()->getId(),
+                        'projectId' => $project->getId(),
+                        'id' => $job->getId(),
+                    ],
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_job_get',
+                    parameters: [
+                        'projectId' => $project->getId(),
+                        'id' => $job->getId(),
+                    ],
+                ),
+            },
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -168,28 +234,67 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last project as admin
-     */
-    public function theApiIsCalledToGetTheLastProjectAsAdmin(): void
-    {
-        $this->theApiIsCalledToGetTheLastProject('space_api_v1_admin_project_edit');
-    }
-
-    /**
-     * @When the API is called to get the last project
-     */
-    public function theApiIsCalledToGetTheLastProject(string $routeName = 'space_api_v1_project_edit'): void
+    #[When('the API is called to get the last project')]
+    #[When('the API is called to get the last project as :role')]
+    public function theApiIsCalledToGetTheLastProject(bool $isForVariables = false, ?string $role = null): void
     {
         $project = $this->recall(Project::class);
 
         $this->executeRequest(
             method: 'GET',
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: match ($isForVariables) {
+                        true => 'space_api_v1_admin_project_edit_variables',
+                        default => 'space_api_v1_admin_project_edit',
+                    },
+                    parameters: [
+                        'id' => $project->getId(),
+                        'accountId' => $project->getAccount()->getId(),
+                    ],
+                ),
+                default => $this->getPathFromRoute(
+                    route: match ($isForVariables) {
+                        true => 'space_api_v1_project_edit_variables',
+                        default => 'space_api_v1_project_edit',
+                    },
+                    parameters: [
+                        'id' => $project->getId(),
+                    ],
+                ),
+            },
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to get the last account cluster as admin')]
+    public function theApiIsCalledToGetTheLastAccountClusterAsAdmin(): void
+    {
+        $this->theApiIsCalledToGetTheLastAccountCluster('space_api_v1_admin_account_clusters_edit');
+    }
+
+    #[When('the API is called to get the last account cluster')]
+    public function theApiIsCalledToGetTheLastAccountCluster(
+        string $routeName = 'space_api_v1_account_clusters_edit'
+    ): void {
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $this->executeRequest(
+            method: 'GET',
             url: $this->getPathFromRoute(
                 route: $routeName,
-                parameters: [
-                    'id' => $project->getId(),
-                ],
+                parameters: match ($routeName) {
+                    'space_api_v1_admin_account_clusters_edit' => [
+                        'id' => $accountCluster->getId(),
+                        'accountId' => $accountCluster->getAccount()->getId(),
+                    ],
+                    default => [
+                        'id' => $accountCluster->getId(),
+                    ],
+                }
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -198,9 +303,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last user
-     */
+    #[When('the API is called to get the last user')]
     public function theApiIsCalledToGetTheLastUser(): void
     {
         $user = $this->recall(User::class);
@@ -220,9 +323,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last account
-     */
+    #[When('the API is called to get the last account')]
     public function theApiIsCalledToGetTheLastAccount(): void
     {
         $account = $this->recall(Account::class);
@@ -242,17 +343,14 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get the last project's variables
-     */
-    public function theApiIsCalledToGetTheLastProjectsVariables(): void
+    #[When("the API is called to get the last project's variables")]
+    #[When("the API is called to get the last project's variables as :role")]
+    public function theApiIsCalledToGetTheLastProjectsVariables(?string $role = null): void
     {
-        $this->theApiIsCalledToGetTheLastProject('space_api_v1_project_edit_variables');
+        $this->theApiIsCalledToGetTheLastProject(isForVariables: true, role: $role);
     }
 
-    /**
-     * @When the API is called to get the last generated job
-     */
+    #[When('the API is called to get the last generated job')]
     public function theApiIsCalledToGetTheLastGeneratedJob(): void
     {
         $project = $this->recall(Project::class);
@@ -281,28 +379,65 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last project
-     * @When the API is called to delete the last project with :method method
-     * @When the API is called to delete the last project as :role
-     * @When the API is called to delete the last project with :method method as :role
-     */
+    #[When('the API is called to delete the last project with :method method as :role')]
+    #[When('the API is called to delete the last project as :role')]
+    #[When('the API is called to delete the last project with :method method')]
+    #[When('the API is called to delete the last project')]
     public function theApiIsCalledToDeleteTheLastProject(string $method = 'POST', ?string $role = null): void
     {
+        $project = $this->recall(Project::class);
+
+        $this->executeRequest(
+            method: $method,
+            url:
+            match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_project_delete',
+                    parameters: [
+                        'accountId' => $project->getAccount()->getId(),
+                        'id' => $project->getId(),
+                    ],
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_project_delete',
+                    parameters: [
+                        'id' => $project->getId(),
+                    ],
+                ),
+            },
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to delete the last account cluster with :method method as :role')]
+    #[When('the API is called to delete the last account cluster as :role')]
+    #[When('the API is called to delete the last account cluster')]
+    #[When('the API is called to delete the last account cluster with :method method')]
+    public function theApiIsCalledToDeleteTheLastAccountCluster(string $method = 'POST', ?string $role = null): void
+    {
         $route = match ($role) {
-            'admin' => 'space_api_v1_admin_project_delete',
-            default => 'space_api_v1_project_delete',
+            'admin' => 'space_api_v1_admin_account_clusters_delete',
+            default => 'space_api_v1_account_clusters_delete',
         };
 
-        $project = $this->recall(Project::class);
+        $accountCluster = $this->recall(AccountCluster::class);
 
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
                 route: $route,
-                parameters: [
-                    'id' => $project->getId(),
-                ],
+                parameters: match ($role) {
+                    'admin' => [
+                        'id' => $accountCluster->getId(),
+                        'accountId' => $accountCluster->getAccount()->getId(),
+                    ],
+                    default => [
+                        'id' => $accountCluster->getId(),
+                    ],
+                },
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -311,10 +446,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last user
-     * @When the API is called to delete the last user with :method method
-     */
+    #[When('the API is called to delete the last user with :method method')]
+    #[When('the API is called to delete the last user')]
     public function theApiIsCalledToDeleteTheLastUser(string $method = 'POST'): void
     {
         $user = $this->recall(User::class);
@@ -334,10 +467,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last account
-     * @When the API is called to delete the last account with :method method
-     */
+    #[When('the API is called to delete the last account with :method method')]
+    #[When('the API is called to delete the last account')]
     public function theApiIsCalledToDeleteTheLastAccount(string $method = 'POST'): void
     {
         $account = $this->recall(Account::class);
@@ -357,24 +488,34 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to delete the last job
-     * @When the API is called to delete the last job with :method method
-     */
-    public function theApiIsCalledToDeleteTheLastJob(string $method = 'POST'): void
+    #[When('the API is called to delete the last job with :method method')]
+    #[When('the API is called to delete the last job')]
+    #[When('the API is called to delete the last job as :role with :method method')]
+    #[When('the API is called to delete the last job as :role')]
+    public function theApiIsCalledToDeleteTheLastJob(string $method = 'POST', ?string $role = null): void
     {
         $project = $this->recall(Project::class);
         $job = $this->recall(Job::class);
 
         $this->executeRequest(
             method: $method,
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_job_delete',
-                parameters: [
-                    'projectId' => $project->getId(),
-                    'id' => $job->getId(),
-                ],
-            ),
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_job_delete',
+                    parameters: [
+                        'accountId' => $project->getAccount()->getId(),
+                        'projectId' => $project->getId(),
+                        'id' => $job->getId(),
+                    ],
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_job_delete',
+                    parameters: [
+                        'projectId' => $project->getId(),
+                        'id' => $job->getId(),
+                    ],
+                ),
+            },
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -382,17 +523,20 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create a new job with a json body:
-     */
-    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields): void
+    #[When('the API is called to create a new job with a json body:')]
+    #[When('the API is called to create a new job as :role with a json body:')]
+    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields, ?string $role = null): void
     {
-        $this->theApiIsCalledToCreateANewJob($bodyFields, 'json');
+        $this->theApiIsCalledToCreateANewJob(
+            bodyFields: $bodyFields,
+            format: 'json',
+            role: $role,
+        );
     }
 
     private function autoGetId(string $field, string $value): string
     {
-        if (str_contains($field, 'environmentResumes')) {
+        if (str_contains($field, 'environments')) {
             $parts = explode(':', trim($value, '<>'));
             $account = $this->recall(Account::class);
 
@@ -455,73 +599,127 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit a project's variables with a json body:
-     */
-    public function theApiIsCalledToEditAProjectsVariablesWithAJsonBody(TableNode $bodyFields): void
+    #[When("the API is called to edit a project's variables with a :format body:")]
+    #[When("the API is called to edit a project's variables:")]
+    public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields, string $format = 'default',): void
     {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'json', 'space_api_v1_project_edit_variables');
+        /** @var TYPE_NAME $bodyFields */
+        $this->theApiIsCalledToEditAProject($bodyFields, $format, isForVariables: true);
     }
 
-    /**
-     * @When the API is called to edit a project's variables:
-     */
-    public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields): void
-    {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'form', 'space_api_v1_project_edit_variables');
-    }
-
-    /**
-     * @When the API is called to edit a project with a json body:
-     */
-    public function theApiIsCalledToEditAProjectWithAJsonBody(TableNode $bodyFields): void
-    {
-        $this->theApiIsCalledToEditAProject($bodyFields, 'json');
-    }
-
-    /**
-     * @When the API is called to edit a project as admin:
-     * @When the API is called to edit a project as admin with a :format body:
-     */
-    public function theApiIsCalledToEditAProjectAsAdmin(
-        TableNode $bodyFields,
-        string $format = 'default',
-    ): void {
-        $this->theApiIsCalledToEditAProject(
-            bodyFields: $bodyFields,
-            format: $format,
-            routeName: 'space_api_v1_admin_project_edit',
-        );
-    }
-
-    /**
-     * @When the API is called to edit a project:
-     */
+    #[When('the API is called to edit a project:')]
+    #[When("the API is called to edit a project with a :format body:")]
+    #[When('the API is called to edit a project as :role with a :format body:')]
+    #[When('the API is called to edit a project as :role:')]
     public function theApiIsCalledToEditAProject(
         TableNode $bodyFields,
         string $format = 'default',
-        string $routeName = 'space_api_v1_project_edit',
+        ?string $role = null,
+        bool $isForVariables = false,
     ): void {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: match ($isForVariables) {
+                        true => 'space_api_v1_admin_project_edit_variables',
+                        default => 'space_api_v1_admin_project_edit',
+                    },
+                    parameters: [
+                        'id' => $project->getId(),
+                        'accountId' => $project->getAccount()->getId(),
+                    ]
+                ),
+                default => $this->getPathFromRoute(
+                    route: match ($isForVariables) {
+                        true => 'space_api_v1_project_edit_variables',
+                        default => 'space_api_v1_project_edit',
+                    },
+                    parameters: [
+                        'id' => $project->getId(),
+                    ]
+                ),
+            },
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    #[When('the API is called to refresh credentials of the last project')]
+    #[When('the API is called to refresh credentials of the last project as :role')]
+    public function theApiIsCalledToRefreshCredentialsOfTheLastProject(
+        string $role = '',
+    ): void {
+        $project = $this->recall(Project::class);
+
+        $this->submitValuesThroughAPI(
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_project_refresh_credentials',
+                    parameters: [
+                        'id' => $project->getId(),
+                        'accountId' => $project->getAccount()->getId(),
+                    ]
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_project_refresh_credentials',
+                    parameters: [
+                        'id' => $project->getId(),
+                    ]
+                )
+            },
+            bodyFields: null,
+            format: 'json',
+        );
+    }
+
+    #[When('the API is called to edit an account cluster as admin with a :format body:')]
+    #[When('the API is called to edit an account cluster as admin:')]
+    public function theApiIsCalledToEditAnAccountClusterAsAdmin(
+        TableNode $bodyFields,
+        string $format = 'default',
+    ): void {
+        $this->theApiIsCalledToEditAnAccountCluster(
+            bodyFields: $bodyFields,
+            format: $format,
+            routeName: 'space_api_v1_admin_account_clusters_edit',
+            role: 'admin',
+        );
+    }
+
+    #[When('the API is called to edit an account cluster:')]
+    #[When('the API is called to edit an account cluster with a :format body:')]
+    public function theApiIsCalledToEditAnAccountCluster(
+        TableNode $bodyFields,
+        string $format = 'default',
+        string $routeName = 'space_api_v1_account_clusters_edit',
+        ?string $role = null,
+    ): void {
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
                 route: $routeName,
-                parameters: [
-                    'id' => $project->getId(),
-                ]
+                parameters: match ($role) {
+                    'admin' =>  [
+                        'id' => $accountCluster->getId(),
+                        'accountId' => $accountCluster->getAccount()->getId(),
+                    ],
+                    default =>  [
+                        'id' => $accountCluster->getId(),
+                    ],
+                }
             ),
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
-    /**
-     * @When the API is called to create a project:
-     * @When the API is called to create a project with a :format body:
-     * @When the API is called to create a project as :role:
-     * @When the API is called to create a project as :role with a :format body:
-     */
+    #[When('the API is called to create a project as :role with a :format body:')]
+    #[When('the API is called to create a project as :role:')]
+    #[When('the API is called to create a project with a :format body:')]
+    #[When('the API is called to create a project:')]
     public function theApiIsCalledToCreateAProject(
         TableNode $bodyFields,
         string $format = 'default',
@@ -547,10 +745,37 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create an user as admin:
-     * @When the API is called to create an user as admin with a :format body:
-     */
+    #[When('the API is called to create an account cluster as :role with a :format body:')]
+    #[When('the API is called to create an account cluster as :role:')]
+    #[When('the API is called to create an account cluster:')]
+    #[When('the API is called to create an account cluster with a :format body:')]
+    public function theApiIsCalledToCreateAnAccountCluster(
+        TableNode $bodyFields,
+        string $format = 'default',
+        ?string $role = null,
+    ): void {
+        if ('admin' === $role) {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_v1_admin_account_clusters_new',
+                parameters: [
+                    'accountId' => $this->recall(Account::class)->getId(),
+                ]
+            );
+        } else {
+            $url = $this->getPathFromRoute(
+                route: 'space_api_v1_account_clusters_new',
+            );
+        }
+
+        $this->submitValuesThroughAPI(
+            url: $url,
+            bodyFields: $bodyFields,
+            format: $format,
+        );
+    }
+
+    #[When('the API is called to create an user as admin with a :format body:')]
+    #[When('the API is called to create an user as admin:')]
     public function theApiIsCalledToCreateAnUserAsAdmin(
         TableNode $bodyFields,
         string $format = 'default',
@@ -564,10 +789,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to create an account as admin:
-     * @When the API is called to create an account as admin with a :format body:
-     */
+    #[When('the API is called to create an account as admin with a :format body:')]
+    #[When('the API is called to create an account as admin:')]
     public function theApiIsCalledToCreateAnAccountAsAdmin(
         TableNode $bodyFields,
         string $format = 'default',
@@ -581,10 +804,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit the last user:
-     * @When the API is called to edit the last user with a :format body:
-     */
+    #[When('the API is called to edit the last user with a :format body:')]
+    #[When('the API is called to edit the last user:')]
     public function theApiIsCalledToEditAnUser(
         TableNode $bodyFields,
         string $format = 'default',
@@ -604,20 +825,24 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to edit the last account:
-     * @When the API is called to edit the last account with a :format body:
-     */
+    #[When('the API is called to edit the last account with a :format body:')]
+    #[When('the API is called to edit the last account:')]
+    #[When('the API is called to edit the last account :view with a :format body:')]
+    #[When('the API is called to edit the last account :view:')]
     public function theApiIsCalledToEditAnAccount(
         TableNode $bodyFields,
         string $format = 'default',
+        string $view = 'default',
     ): void {
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: 'space_api_v1_admin_account_edit',
+                route: match ($view) {
+                    'environments' => 'space_api_v1_admin_account_edit_environments',
+                    default => 'space_api_v1_admin_account_edit',
+                },
                 parameters: [
                     'id' => $account->getId(),
                 ]
@@ -627,9 +852,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to reinstall the account registry
-     */
+    #[When('the API is called to reinstall the account registry')]
     public function theApiIsCalledToReinstallTheAccountRegistry(): void
     {
         $account = $this->recall(Account::class);
@@ -647,9 +870,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to refresh quota of account's environment
-     */
+    #[When('the API is called to refresh quota of account\'s environment')]
     public function theApiIsCalledToRefreshQuotaOfAccountsEnvironment(): void
     {
         $account = $this->recall(Account::class);
@@ -667,9 +888,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to reinstall the account's environment :envName on :clusterName
-     */
+    #[When("the API is called to reinstall the account's environment :envName on :clusterName")]
     public function theApiIsCalledToReinstallTheAccountsEnvironmentOn(string $envName, string $clusterName): void
     {
         $account = $this->recall(Account::class);
@@ -689,9 +908,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get user's settings
-     */
+    #[When("the API is called to get user's settings")]
     public function theApiIsCalledToGetUsersSettings(): void
     {
         $this->executeRequest(
@@ -704,14 +921,27 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to get account's settings
-     */
-    public function theApiIsCalledToGetAccountsSettings(): void
-    {
+    #[When("the API is called to get account's :view")]
+    #[When("the API is called to get account's :view as :role")]
+    public function theApiIsCalledToGetAccountsSettings(
+        string $view,
+        ?string $role = null,
+    ): void {
         $this->executeRequest(
             method: 'get',
-            url: $this->getPathFromRoute('space_api_v1_account_settings'),
+            url: match ($view) {
+                'settings' => $this->getPathFromRoute('space_api_v1_account_settings'),
+                'environments' => $this->getPathFromRoute('space_api_v1_account_environments'),
+                'variables' => match ($role) {
+                    'admin' => $this->getPathFromRoute(
+                        route: 'space_api_v1_admin_account_edit_variables',
+                        parameters: [
+                            'id' => $this->recall(Account::class)->getId(),
+                        ],
+                    ),
+                    default => $this->getPathFromRoute('space_api_v1_account_edit_variables'),
+                },
+            },
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -719,10 +949,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to update user's settings:
-     * @When the API is called to update user's settings with a :format body:
-     */
+    #[When("the API is called to update user's settings:")]
+    #[When("the API is called to update user's settings with a :format body:")]
     public function theApiIsCalledToUpdateUsersSettings(TableNode $bodyFields, string $format = 'default'): void
     {
         $this->submitValuesThroughAPI(
@@ -734,96 +962,48 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the API is called to update account's settings:
-     * @When the API is called to update account's settings with a :format body:
-     */
-    public function theApiIsCalledToUpdateAccountsSettings(TableNode $bodyFields, string $format = 'default'): void
-    {
-        $this->submitValuesThroughAPI(
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_account_settings',
-            ),
-            bodyFields: $bodyFields,
-            format: $format,
-        );
-    }
-
-    /**
-     * @When the API is called to update account's variables:
-     * @When the API is called to update account's variables with a :format body:
-     * @When the API is called to update variables of last account with as :role:
-     * @When the API is called to update variables of last account with a :format body as :role:
-     */
-    public function theApiIsCalledToUpdateAccountsVariables(
+    #[When("the API is called to update account's :view:")]
+    #[When("the API is called to update account's :view with a :format body:")]
+    #[When("the API is called to update account's :view as :role:")]
+    #[When("the API is called to update account's :view with a :format body as :role:")]
+    #[When('the API is called to update variables of last account with a :format body as :role:')]
+    #[When('the API is called to update variables of last account with as :role:')]
+    public function theApiIsCalledToUpdateAccountsSettings(
         TableNode $bodyFields,
         string $format = 'default',
+        string $view = 'settings',
         ?string $role = null,
     ): void {
-        if (null === $role) {
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_account_edit_variables',
-            );
-        } else {
-            $account = $this->recall(Account::class);
-            Assert::assertNotEmpty($account);
-
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_admin_account_edit_variables',
-                parameters: [
-                    'id' => $account->getId(),
-                ],
-            );
-        }
-
         $this->submitValuesThroughAPI(
-            url: $url,
+            url: match ($view) {
+                'environments' => $this->getPathFromRoute(
+                    route: 'space_api_v1_account_environments',
+                ),
+                'variables' => match ($role) {
+                    'admin' => $this->getPathFromRoute(
+                        route: 'space_api_v1_admin_account_edit_variables',
+                        parameters: [
+                            'id' => $this->recall(Account::class)->getId(),
+                        ],
+                    ),
+                    default => $this->getPathFromRoute(
+                        route: 'space_api_v1_account_edit_variables',
+                    ),
+                },
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_account_settings',
+                ),
+            },
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
-    /**
-     * @When the API is called to get account's variables
-     * @When the API is called to get variables of last account as :role
-     */
-    public function theApiIsCalledToGetAccountsVariables(?string $role = null): void
-    {
-        if (null === $role) {
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_account_edit_variables',
-            );
-        } else {
-            $account = $this->recall(Account::class);
-            Assert::assertNotEmpty($account);
-
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_admin_account_edit_variables',
-                parameters: [
-                    'id' => $account->getId(),
-                ],
-            );
-        }
-
-        $this->executeRequest(
-            method: 'post',
-            url: $url,
-            headers: [
-                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
-            ],
-            noCookies: true,
-        );
-    }
-
-
-
-    /**
-     * @Then the serialized accounts variables
-     * @Then the serialized accounts variables with :count variables
-     */
+    #[Then('the serialized accounts variables with :count variables')]
+    #[Then('the serialized accounts variables')]
     public function theSerializedAccountsVariables(?int $count = null): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $account = $this->recall(Account::class);
         $accountData = $this->getRepository(AccountData::class)->findOneBy(['account' => $account]);
@@ -867,39 +1047,61 @@ trait ApiTrait
         }
     }
 
-    /**
-     * @When the API is called to create a new job:
-     */
-    public function theApiIsCalledToCreateANewJob(TableNode $bodyFields, string $format = 'default'): void
-    {
+    #[When('the API is called to create a new job:')]
+    #[When('the API is called to create a new job as :role:')]
+    public function theApiIsCalledToCreateANewJob(
+        TableNode $bodyFields,
+        string $format = 'default',
+        ?string $role = null
+    ): void {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_job_new',
-                parameters: [
-                    'projectId' => $project->getId(),
-                ]
-            ),
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_job_new',
+                    parameters: [
+                        'accountId' => $project->getAccount()->getId(),
+                        'projectId' => $project->getId(),
+                    ]
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_job_new',
+                    parameters: [
+                        'projectId' => $project->getId(),
+                    ]
+                ),
+            },
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
-    /**
-     * @When the API is called to restart a the job:
-     */
-    public function theApiIsCalledToRestartATheJob(TableNode $bodyFields, string $format = 'default'): void
-    {
+    #[When('the API is called to restart a the job:')]
+    #[When('the API is called to restart a the job as :role:')]
+    public function theApiIsCalledToRestartATheJob(
+        TableNode $bodyFields,
+        string $format = 'default',
+        ?string $role = null,
+    ): void {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_job_new',
-                parameters: [
-                    'projectId' => $project->getId(),
-                ]
-            ),
+            url: match ($role) {
+                'admin' => $this->getPathFromRoute(
+                    route: 'space_api_v1_admin_job_new',
+                    parameters: [
+                        'accountId' => $project->getAccount()->getId(),
+                        'projectId' => $project->getId(),
+                    ]
+                ),
+                default => $this->getPathFromRoute(
+                    route: 'space_api_v1_job_new',
+                    parameters: [
+                        'projectId' => $project->getId(),
+                    ]
+                ),
+            },
             bodyFields: $bodyFields,
             format: $format,
         );
@@ -907,9 +1109,7 @@ trait ApiTrait
         $this->clearJobMemory = true;
     }
 
-    /**
-     * @When the API is called to pending job status api
-     */
+    #[When('the API is called to pending job status api')]
     public function theApiIsCalledToPendingJobStatusApi(): void
     {
         Assert::assertNotEmpty($this->apiPendingJobUrl);
@@ -924,9 +1124,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then get a JSON reponse
-     */
+    #[Then('get a JSON reponse')]
     public function getAJsonReponse(): void
     {
         Assert::assertEquals(
@@ -935,9 +1133,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized success result
-     */
+    #[Then('the serialized success result')]
     public function theSerializedSuccessResult()
     {
         Assert::assertEquals(200, $this->response?->getStatusCode());
@@ -960,9 +1156,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When an :arg1 error
-     */
+    #[When('an :arg1 error')]
     public function anError(int $code): void
     {
         Assert::assertEquals(
@@ -979,10 +1173,9 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then a pending job id
-     */
-    public function aPendingJobId(): void
+    #[Then('a pending job id')]
+    #[Then('a pending job id with :role route')]
+    public function aPendingJobId(?string $role = null): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -993,20 +1186,28 @@ trait ApiTrait
         $this->apiPendingJobUrl = $unserialized['meta']['url'];
 
         Assert::assertEquals(
-            $this->urlGenerator->generate(
-                'space_api_v1_job_new_pending',
-                [
-                    'projectId' => $this->recall(Project::class)?->getId(),
-                    'newJobId' => $unserialized['data']['job_queue_id'],
-                ]
-            ),
+            match ($role) {
+                'admin' => $this->urlGenerator->generate(
+                    'space_api_v1_admin_job_new_pending',
+                    [
+                        'accountId' => $this->recall(Account::class)?->getId(),
+                        'projectId' => $this->recall(Project::class)?->getId(),
+                        'newJobId' => $unserialized['data']['job_queue_id'],
+                    ]
+                ),
+                default => $this->urlGenerator->generate(
+                    'space_api_v1_job_new_pending',
+                    [
+                        'projectId' => $this->recall(Project::class)?->getId(),
+                        'newJobId' => $unserialized['data']['job_queue_id'],
+                    ]
+                ),
+            },
             $unserialized['meta']['url'],
         );
     }
 
-    /**
-     * @Then a pending job status without a job id
-     */
+    #[Then('a pending job status without a job id')]
     public function aPendingJobStatusWithoutAJobId(): void
     {
         $body = (string) $this->response->getContent();
@@ -1018,9 +1219,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When is a serialized collection of :count items on :total pages
-     */
+    #[When('is a serialized collection of :count items on :total pages')]
     public function isASerializedCollectionOfItemsOnPages(int $count, int $page): void
     {
         $body = (string) $this->response->getContent();
@@ -1044,9 +1243,7 @@ trait ApiTrait
         $this->itemsPerPages = $count / $page;
     }
 
-    /**
-     * @Then the a list of serialized users
-     */
+    #[Then('the a list of serialized users')]
     public function theAListOfSerializedUsers(): void
     {
         $users = [];
@@ -1084,9 +1281,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the a list of serialized accounts
-     */
+    #[Then('the a list of serialized accounts')]
     public function theAListOfSerializedAccounts(): void
     {
         $accounts = [];
@@ -1125,9 +1320,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the a list of serialized jobs
-     */
+    #[When('the a list of serialized jobs')]
     public function theListSerializedJobs(): void
     {
         $jobs = $this->getListOfPersistedObjects(Job::class);
@@ -1161,9 +1354,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the a list of serialized owned projects
-     */
+    #[Then('the a list of serialized owned projects')]
     public function theAListOfSerializedOwnedProjects(): void
     {
         $account = $this->recall(Account::class);
@@ -1205,13 +1396,64 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the a list of serialized projects
-     */
-    public function theAListOfSerializedProjects(): void
+    #[Then('the a list of serialized owned accounts clusters')]
+    #[Then('the a list of serialized accounts clusters')]
+    public function theAListOfSerializedOwnedAccountsClusters(): void
     {
+        $account = $this->recall(Account::class);
+        $allAccountClusters = $this->getListOfPersistedObjects(AccountCluster::class);
+        $accountClusters = [];
+        foreach ($allAccountClusters as $accountCluster) {
+            if ($accountCluster->getAccount() === $account) {
+                $accountClusters[] = $accountCluster;
+            }
+        }
+
+        $selectedAccountsClusters = array_values(
+            array_slice(
+                array: $accountClusters,
+                offset: 0,
+                length: $this->itemsPerPages,
+                preserve_keys: false,
+            )
+        );
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            $selectedAccountsClusters,
+            format: 'json',
+            context: [
+                'groups' => ['api'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized['data'],
+        );
+    }
+
+    #[Then('the a list of serialized projects')]
+    #[Then('the a list of serialized projects of last :type')]
+    public function theAListOfSerializedProjects(?string $type = null): void
+    {
+        $account = null;
+        if ('account' === $type) {
+            $account = $this->recall(Account::class);
+        }
+
         $projects = [];
         foreach ($this->getListOfPersistedObjects(Project::class) as $project) {
+            if ($account && $project->getAccount() !== $account) {
+                continue;
+            }
+
             $projects[] = new SpaceProject($project);
         }
 
@@ -1245,13 +1487,11 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized :count project's variables
-     * @Then the serialized :count project's variables with :name equals to :value
-     */
+    #[Then('the serialized :count project\'s variables')]
+    #[Then('the serialized :count project\'s variables with :name equals to :value')]
     public function theSerializedProjectsVariables(int $count, ?string $name = null, ?string $value = null): void
     {
-        $this->checkIfResponseIsAFinal();
+        $this->isAFinalResponse();
 
         $project = $this->recall(Project::class);
         $project ??= $this->recall(ProjectOrigin::class);
@@ -1325,18 +1565,20 @@ trait ApiTrait
         $service->setAgentMode(false);
     }
 
-    /**
-     * @Then the serialized created project :name
-     */
+    #[Then('the serialized created project :name')]
     public function theSerializedCreatedProject(string $name): void
     {
         $this->theSerializedProject(created: true, name: $name);
     }
 
-    /**
-     * @Then the serialized user :lastName :firstName
-     * @Then the serialized user :lastName :firstName for :role
-     */
+    #[Then('the serialized created account cluster :name')]
+    public function theSerializedCreatedAccountCluster(string $name): void
+    {
+        $this->theSerializedAccountCluster(created: true, name: $name);
+    }
+
+    #[Then('the serialized user :lastName :firstName')]
+    #[Then('the serialized user :lastName :firstName for :role')]
     public function theSerializedUser(string $lastName, string $firstName, ?string $role = null): void
     {
         foreach ($this->listObjects(User::class) as $user) {
@@ -1389,11 +1631,11 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized account :accountName
-     * @Then the serialized account :accountName for :role
-     */
-    public function theSerializedAccount(string $accountName, ?string $role = null): void
+    #[Then('the serialized account :accountName')]
+    #[Then('the serialized account :accountName for :role')]
+    #[Then('the serialized account\'s :view of :accountName')]
+    #[Then('the serialized account\'s :view of :accountName for :role')]
+    public function theSerializedAccount(string $accountName, ?string $role = null, string $view = ''): void
     {
         $account = $this->recall(Account::class);
         if (null === $account) {
@@ -1403,6 +1645,19 @@ trait ApiTrait
 
         Assert::assertNotNull($account);
         $accountData = $this->getRepository(AccountData::class)->findOneBy(['account' => $account]);
+
+        $environments = [];
+        if ('environments' === $view) {
+            $environments = array_map(
+                fn (AccountEnvironment $accountEnvironment) => $accountEnvironment->resume(),
+                array_filter(
+                    array_values(
+                        $this->listObjects(AccountEnvironment::class),
+                    ),
+                    fn (AccountEnvironment $accountEnvironment) => $accountEnvironment->getAccount() === $account,
+                ),
+            );
+        }
 
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -1416,24 +1671,47 @@ trait ApiTrait
                 'data' => new SpaceAccount(
                     account: $account,
                     accountData: $accountData,
+                    environments: $environments,
                 ),
             ],
             format: 'json',
             context: [
-                'groups' => match ($role) {
+                'groups' => match ($role . $view) {
                     'admin' => ['admin', 'api', 'crud'],
+                    'environments' => ['api', 'crud_environments'],
+                    'adminenvironments' => ['api', 'crud_environments'],
                     default => ['api', 'crud'],
                 }
             ],
         );
 
-        Assert::assertNotEmpty(
-            $unserialized['data']['account'] ?? null,
-        );
+        if ('environments' !== $view) {
+            Assert::assertNotEmpty(
+                $unserialized['data']['account'] ?? null,
+            );
 
-        Assert::assertNotEmpty(
-            $unserialized['data']['accountData'] ?? null,
-        );
+            Assert::assertNotEmpty(
+                $unserialized['data']['accountData'] ?? null,
+            );
+        } else {
+            Assert::assertEmpty(
+                $unserialized['data']['account'] ?? null,
+            );
+
+            Assert::assertEmpty(
+                $unserialized['data']['accountData'] ?? null,
+            );
+        }
+
+        if ('environments' === $view) {
+            Assert::assertNotEmpty(
+                $unserialized['data']['environments'] ?? null,
+            );
+        } else {
+            Assert::assertEmpty(
+                $unserialized['data']['environments'] ?? null,
+            );
+        }
 
         Assert::assertEquals(
             $normalized,
@@ -1446,10 +1724,8 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized project :name
-     * @Then the serialized updated project :name
-     */
+    #[Then('the serialized project :name')]
+    #[Then('the serialized updated project :name')]
     public function theSerializedProject(bool $created = false, string $name = ''): void
     {
         if ($created) {
@@ -1501,9 +1777,173 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the serialized job
-     */
+    private function compareCluster(Project $expectedProject, Cluster $expected, Cluster $actual): void
+    {
+        $ro = new \ReflectionObject($actual);
+        $rp = $ro->getProperty('project');
+        $rp->setAccessible(true);
+
+        Assert::assertSame($expectedProject, $rp->getValue($actual));
+
+        $fakeNormalizer = new class implements EastNormalizerInterface {
+            public array $data = [];
+
+            public function injectData(#[SensitiveParameter] array $data): EastNormalizerInterface
+            {
+                $this->data = $data;
+
+                return $this;
+            }
+        };
+
+        $expected->exportToMeData($fakeNormalizer);
+        $expectedData = $fakeNormalizer->data;
+        unset($expectedData['id']);
+        unset($expectedData['project']);
+        $expectedData['identity'] = $expectedData['identity']->exportToMeData($fakeNormalizer);
+
+        $actual->exportToMeData($fakeNormalizer);
+        $actualData = $fakeNormalizer->data;
+        unset($actualData['id']);
+        unset($actualData['project']);
+        $actualData['identity'] = $actualData['identity']->exportToMeData($fakeNormalizer);
+
+        Assert::assertEquals($expectedData, $actualData);
+    }
+
+    #[Then('the last project\'s cluster remains unchanged')]
+    public function theLastProjectsClusterRemainsUnchanged(): void
+    {
+        $project = $this->recall(Project::class);
+        $clusters = $this->listObjects(Cluster::class);
+
+        Assert::assertCount(1, $clusters);
+        /** @var Cluster $cluster */
+        foreach ($clusters as $cluster) {
+            $this->compareCluster(
+                $project,
+                $this->createCustomCluster($this->recall(Account::class)),
+                $cluster,
+            );
+        }
+    }
+
+    #[Then('the last project\'s cluster returns to its original state from the clusters catalog')]
+    public function theLastProjectsClusterReturnsToItsOriginalStateFromTheClustersCatalog(): void
+    {
+        $account = $this->recall(Account::class);
+        $credentials = $this->recall(AccountEnvironment::class);
+        /** @var Project $project */
+        $project = $this->recall(Project::class);
+        $clusters = [];
+        $project->visit(
+            'clusters',
+            function ($cs) use (&$clusters) {
+                $clusters = $cs;
+            },
+        );
+
+        Assert::assertCount(1, $clusters);
+
+        /** @var ClusterCatalog $clustersCatalog */
+        $clustersCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
+
+        /** @var Cluster $cluster */
+        foreach ($clusters as $cluster) {
+            $this->compareCluster(
+                $project,
+                $this->createCatalogCluster(
+                    $account,
+                    $clustersCatalog->getCluster($this->defaultClusterName),
+                    $credentials,
+                    '',
+                    'prod',
+                ),
+                $cluster,
+            );
+        }
+    }
+
+    #[Then('the last project\'s cluster returns to its original state from the account cluster')]
+    public function theLastProjectsClusterReturnsToItsOriginalStateFromTheAccountCluster(): void
+    {
+        $account = $this->recall(Account::class);
+
+        /** @var Project $project */
+        $project = $this->recall(Project::class);
+        $clusters = [];
+        $project->visit(
+            'clusters',
+            function ($cs) use (&$clusters) {
+                $clusters = $cs;
+            },
+        );
+
+        Assert::assertCount(1, $clusters);
+
+        /** @var Cluster $cluster */
+        foreach ($clusters as $cluster) {
+            $this->compareCluster(
+                $project,
+                $this->createCatalogAccountCluster($account, 'prod'),
+                $cluster,
+            );
+        }
+    }
+
+    #[Then('the serialized account cluster :name')]
+    #[Then('the serialized updated account cluster :name')]
+    public function theSerializedAccountCluster(bool $created = false, string $name = ''): void
+    {
+        if ($created) {
+            $accountCluster = null;
+            foreach ($this->listObjects(AccountCluster::class) as $accountCluster) {
+                break;
+            }
+
+            Assert::assertNotEmpty($accountCluster);
+        } else {
+            $accountCluster = $this->recall(AccountCluster::class);
+        }
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = $this->normalizer->normalize(
+            [
+                'meta' => [
+                    '@class' => AccountCluster::class,
+                    'id' => $accountCluster->getId(),
+                ],
+                'data' => $accountCluster
+            ],
+            format: 'json',
+            context: [
+                'groups' => ['crud'],
+            ],
+        );
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+
+        Assert::assertEquals(
+            '',
+            $unserialized['data']['token'],
+        );
+
+        Assert::assertEquals(
+            $name,
+            (string) $accountCluster,
+        );
+    }
+
+    #[When('the serialized job')]
     public function theSerializedJob(): void
     {
         $job = $this->recall(Job::class);
@@ -1536,9 +1976,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized deleted project
-     */
+    #[Then('the serialized deleted project')]
     public function theSerializedDeletedProject(): void
     {
         $project = $this->recall(Project::class);
@@ -1567,9 +2005,36 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized deleted user
-     */
+    #[Then('the serialized deleted account cluster')]
+    public function theSerializedDeletedAccountCluster(): void
+    {
+        $accountCluster = $this->recall(AccountCluster::class);
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $normalized = [
+            'meta' => [
+                '@class' => AccountCluster::class,
+                'id' => $accountCluster->getId(),
+                'deleted' => 'success',
+            ],
+            'data' => $this->normalizer->normalize(
+                $accountCluster,
+                format: 'json',
+                context: [
+                    'groups' => ['digest'],
+                ],
+            ),
+        ];
+
+        Assert::assertEquals(
+            $normalized,
+            $unserialized,
+        );
+    }
+
+    #[Then('the serialized deleted user')]
     public function theSerializedDeletedUser(): void
     {
         $user = $this->recall(User::class);
@@ -1598,9 +2063,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @Then the serialized deleted account
-     */
+    #[Then('the serialized deleted account')]
     public function theSerializedDeletedAccount(): void
     {
         $account = $this->recall(Account::class);
@@ -1629,9 +2092,7 @@ trait ApiTrait
         );
     }
 
-    /**
-     * @When the serialized deleted job
-     */
+    #[When('the serialized deleted job')]
     public function theSerializedDeletedJob(): void
     {
         $job = $this->recall(Job::class);
