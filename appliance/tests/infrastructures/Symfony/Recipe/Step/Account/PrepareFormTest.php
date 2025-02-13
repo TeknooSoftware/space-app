@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
@@ -69,9 +70,10 @@ class PrepareFormTest extends TestCase
             PrepareForm::class,
             ($this->prepareForm)(
                 $this->createMock(ManagerInterface::class),
+                $this->createMock(ClusterCatalog::class),
                 new SpaceAccount(
                     account: $this->createMock(Account::class),
-                    environmentResumes: []
+                    environments: []
                 ),
                 [],
             )

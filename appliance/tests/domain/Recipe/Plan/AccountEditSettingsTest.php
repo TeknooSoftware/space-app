@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ use Teknoo\Space\Recipe\Plan\AccountEditSettings;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -87,14 +87,14 @@ class AccountEditSettingsTest extends TestCase
         $this->defaultErrorTemplate = '42';
 
         $this->accountEditSettings = new AccountEditSettings(
-            $this->recipe,
-            $this->formHandling,
-            $this->formProcessing,
-            $this->saveObject,
-            $this->renderForm,
-            $this->renderError,
-            $this->objectClass,
-            $this->defaultErrorTemplate
+            recipe: $this->recipe,
+            formHandling: $this->formHandling,
+            formProcessing: $this->formProcessing,
+            saveObject: $this->saveObject,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            objectClass: $this->objectClass,
+            defaultErrorTemplate: $this->defaultErrorTemplate
         );
     }
 

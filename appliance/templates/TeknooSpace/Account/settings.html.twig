@@ -9,7 +9,7 @@
 {%- endblock -%}
 
 {% block breadcrumbListLink %}{{ path('space_account_settings') }}{% endblock %}
-{% block breadcrumFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
+{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ objectInstance.account }}{% endblock %}
 
 {% block crudFormFields %}
@@ -33,20 +33,20 @@
             </div>
         </div>
     </div>{# end col #}
-    {% if formView.environmentResumes is defined %}
+    {% if formView.environments is defined %}
     <div class="col-12">
         <div class="rounded shadow p-4 bg-white mt-4">
             <div class="row subforms"
                  data-subforms="environments_resumes"
-                 data-prototype="{{ form_widget(formView.environmentResumes.vars.prototype)|e('html_attr') }}">
+                 data-prototype="{{ form_widget(formView.environments.vars.prototype)|e('html_attr') }}">
                 <div class="col-12">
                     <h3>{{ 'teknoo.space.title.account.environments'|trans }}</h3>
                 </div>
-                {% for resume in formView.environmentResumes %}
+                {% for resume in formView.environments %}
                     {{ form_widget(resume, {"largeRow": true}) }}
                 {% endfor %}
             </div>
-            {% do formView.environmentResumes.setRendered %}
+            {% do formView.environments.setRendered %}
         </div>
     </div>
     {% endif %}
@@ -68,6 +68,11 @@
            class="btn btn-outline-dark btn-full-large mb-2">
             <i class="uil uil-setting"></i>
             {{ 'teknoo.space.action.persisted_vars'|trans }}
+        </a>
+        <a href="{{ path('space_account_clusters_list') }}"
+           class="btn btn-outline-dark btn-full-large mb-2">
+            <i class="uil uil-server"></i>
+            {{ 'teknoo.space.action.accounts_clusters'|trans }}
         </a>
     </div>
 {% endblock %}

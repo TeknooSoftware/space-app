@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -56,9 +56,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
     {
         parent::setUp();
 
-        $this->addManagedEnvironmentToProject = new AddManagedEnvironmentToProject(
-            $this->createMock(ClusterCatalog::class),
-        );
+        $this->addManagedEnvironmentToProject = new AddManagedEnvironmentToProject();
     }
 
     public function testInvoke(): void
@@ -73,6 +71,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
                 $this->createMock(ManagerInterface::class),
                 new SpaceProject($this->createMock(Project::class)),
                 $wallet,
+                $this->createMock(ClusterCatalog::class),
             )
         );
     }

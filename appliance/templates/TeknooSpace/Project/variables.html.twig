@@ -15,7 +15,7 @@
         {{ path('space_project_list') }}
     {% endif %}
 {%- endblock -%}
-{% block breadcrumFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
+{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
 {% block breadcrumbAddsItems %}
     <li class="breadcrumb-item text-capitalize">
         {% if is_granted('ROLE_ADMIN') %}

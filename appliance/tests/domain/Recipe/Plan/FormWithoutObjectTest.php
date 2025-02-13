@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,7 +43,7 @@ use Teknoo\Space\Recipe\Plan\FormWithoutObject;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -78,12 +78,12 @@ class FormWithoutObjectTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->formWithoutObject = new FormWithoutObject(
-            $this->recipe,
-            $this->createObject,
-            $this->formHandling,
-            $this->renderForm,
-            $this->renderError,
-            $this->defaultErrorTemplate
+            recipe: $this->recipe,
+            createObject: $this->createObject,
+            formHandling: $this->formHandling,
+            renderForm: $this->renderForm,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate
         );
     }
 

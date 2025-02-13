@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -40,7 +40,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class CallNewJob implements CallNewJobInterface
@@ -82,6 +82,7 @@ class CallNewJob implements CallNewJobInterface
 
         $parametersBag->set('newJobId', $newJob->newJobId);
         $parametersBag->set('projectId', $project->getId());
+        $parametersBag->set('accountId', $newJob->accountId);
 
         $manager->updateWorkPlan([
             'routeParameters' => [

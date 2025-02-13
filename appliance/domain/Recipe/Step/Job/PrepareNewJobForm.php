@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Job;
 
+use RuntimeException;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Environment;
@@ -37,7 +38,7 @@ use function array_merge;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class PrepareNewJobForm
@@ -57,7 +58,12 @@ class PrepareNewJobForm
             $projectInstance = $projectInstance->project;
         }
 
+        if (!$projectInstance->isRunnable()) {
+            throw new RuntimeException('Project is not fully configured');
+        }
+
         $newJobInstance->projectId = $projectInstance->getId();
+        $newJobInstance->accountId = $projectInstance->getAccount()->getId();
 
         $environmentsList = [];
         $projectInstance->listMeYourEnvironments(

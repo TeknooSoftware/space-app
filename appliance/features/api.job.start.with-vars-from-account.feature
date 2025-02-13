@@ -1,10 +1,18 @@
-Feature: On a space instance, an API is available to run jobs with some deployment's variable defined in the account.
-  Variables must be available and imported in the new job.
-  Space will clone the project from its cloning url, install all dependencies and do some other configured stuff
-  in the `.paas.yaml` file, build OCI images, push them to the private OCI registry of the account, generate new
-  Kubernetes manifest and apply them to the cluster
+Feature: API endpoints to create new job and deploy project with variables from account's configuration
+  In order to deploy project
+  As an user of an account
+  I want to create new jobs from account's projets to deploy them with variables from the account's configuration
 
-  Scenario: Execute a job from an owned project, with account's var, prefix and paas file is valid with url encoded body
+  To run a job, Space will clone the project from its cloning url, install all dependencies and do some other configured
+  stuff in the `.paas.yaml` file, build OCI images, push them to the private OCI registry of the account, generate new
+  Kubernetes manifest and apply them to the cluster.
+  Clusters are defined from the environment passed on the job creation, from the clusters list defined in the project.
+  Deployment file can use variables defined at Job's creation. Variables can be persisted on the project or the account
+  to be reused easily. Variables defined on the account are shared on all projects and can be overwritten on each
+  projects.
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, simulate a too long image
+  building and get and error
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -15,7 +23,51 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project"
+    And the project has a complete paas file
+    And the account has these persisted variables:
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+    And simulate a too long image building
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    But job must be finished with an error about a timeout
+    And no Kubernetes manifests must not be created
+    Then the account must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  via a request with a form url encoded body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -41,13 +93,60 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and paas file is valid with url encoded body with encrypted message
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  and the account's variable is overrided via a request with a form url encoded body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file
+    And the account has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    And there are no project persisted variables
+    Then the account must have these persisted variables
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  encrypted messages between workers via a request with a form url encoded body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -59,7 +158,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -85,13 +184,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Re-execute a job from an owned project with account's var, prefix and paas file is valid with url encoded body with encrypted message
+  Scenario: From the API, re-execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  encrypted messages between workers, via a request with a form url encoded body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -103,7 +203,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -130,13 +230,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from a non-owned project with account's var, prefix and paas file is valid with url encoded body
+  Scenario: From the API, execute a job from an non-owned project, with account's variables, prefix, a valid paas
+  file, via a request with a form url encoded body and get an error
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -149,7 +250,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -166,13 +267,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
       | new_job.variables.0.name  | FOO   |
       | new_job.variables.0.value | BAR   |
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
     And there are no project persisted variables
     Then the account keeps these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and paas file is valid with a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -183,7 +285,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -209,13 +311,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and paas file is valid with a json body with encrypted message
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  encrypted messages between workers, via a request with a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -227,7 +330,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -253,13 +356,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid without resources defined and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, without
+  defined resources, a valid paas file, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -271,7 +375,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -297,13 +401,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid without resources defined and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, without
+  defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -316,7 +421,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -342,13 +447,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid without partial resources defined and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, with
+  partial defined resources, a valid paas file, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -360,7 +466,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -386,13 +492,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid without partial resources defined and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, with
+  partial defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -405,7 +512,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -431,13 +538,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid without full resources defined and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, with
+  full defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -449,7 +557,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -475,13 +583,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid full partial resources defined and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, with
+  fully defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -494,7 +603,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -520,13 +629,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid with quota exceeded and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, with
+  required resources exceeded quota, a valid paas file, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -538,7 +648,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -570,7 +680,9 @@ Feature: On a space instance, an API is available to run jobs with some deployme
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and defined quota and paas file is valid with with quota exceeded and the request has a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, defined quota, with
+  required resources exceeded quota, a valid paas file, encrypted messages between workers, via a request with a json
+  body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -583,7 +695,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And quotas defined for this account
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -615,7 +727,8 @@ Feature: On a space instance, an API is available to run jobs with some deployme
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job, with server's defaults, from a project with account's var, prefix and paas file is valid and has defaults for the cluster
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file with
+  default generic values for variables and all variables are not filled via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -626,7 +739,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -652,13 +765,15 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job, with server's defaults, from a project with account's var, prefix and paas file is valid and has defaults for the cluster, with encrypted message
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file with
+  default generic values for variables, encrypted messages between workers and all variables are not filled via a
+  request with a json body
     Given A Space app instance
     And encryption capacities between servers and agents
     And a kubernetes client
@@ -670,7 +785,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -696,13 +811,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from a non-owned project with account's var, prefix and paas file is valid with a json body
+  Scenario: From the API, execute a job from an non-owned project, with account's variables, prefix, a valid paas file,
+  via a request with a form url encoded body and get an error
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -715,7 +831,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And the 2FA authentication enable for last user
     And an account for "An Other Company" with the account namespace "my-company"
     And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -732,13 +848,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
       | variables.0.name  | FOO   |
       | variables.0.value | BAR   |
     Then get a JSON reponse
-    And an 403 error
+    But an 403 error
     And there are no project persisted variables
     Then the account keeps these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, prefix and paas file with extends is valid with a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file
+  using extends, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -750,7 +867,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And a project with a paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -776,13 +893,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, hierarchical namespace and paas file is valid with a json body
+  Scenario: From the API, execute a job from an owned project, without account's variables, prefix, a valid paas file,
+  on cluster supporing hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -794,7 +912,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -820,13 +938,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, hierarchical namespace and paas file with extends is valid with json body
+  Scenario: From the API, execute a job from an owned project, without account's variables, prefix, a valid paas file
+  using extends, on cluster supporting hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -839,7 +958,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project"
+    And a standard project "my project"
     And a project with a paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -865,13 +984,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, hierarchical namespace and prefix and paas file is valid with json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  on cluster supporting hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -883,7 +1003,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "demo"
+    And a standard project "my project" and a prefix "demo"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -909,13 +1029,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project with account's var, hierarchical namespace and prefix and paas file with extends is valid with a json body
+  Scenario: From the API, execute a job from an owned project, with account's variables, prefix, a valid paas file
+  using extends, on cluster supporting hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And extensions libraries provided by administrators
@@ -928,7 +1049,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And a project with a paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
@@ -954,13 +1075,14 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     And there are no project persisted variables
     Then the account must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: Execute a job from an owned project, with account's var, with url encoded body, with new persisted vars
+  Scenario: From the API, execute a job from an owned project, with account's variables, a valid paas file,
+  with new variables to persist after runinto the project, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -971,7 +1093,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                | environment |
@@ -1008,7 +1130,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -1018,7 +1140,8 @@ Feature: On a space instance, an API is available to run jobs with some deployme
       | id  | name          | secret | value                | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
 
-  Scenario: Execute a job from an owned project, with account's var, with json body, with new persisted vars
+  Scenario: From the API, execute a job from an owned project, with account's variables, a valid paas file,
+  with new variables to persist after runinto the project, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -1029,7 +1152,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
-    And a standard website project "my project" and a prefix "a-prefix"
+    And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the account has these persisted variables:
       | id  | name          | secret | value                | environment |
@@ -1066,7 +1189,7 @@ Feature: On a space instance, an API is available to run jobs with some deployme
     Then get a JSON reponse
     And the serialized job
     And job must be successful finished
-    And some Kubernetes manifests have been created and executed
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
     Then the project must have these persisted variables
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |

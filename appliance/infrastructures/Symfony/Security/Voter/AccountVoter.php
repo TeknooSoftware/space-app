@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,12 +30,13 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class AccountVoter implements VoterInterface
@@ -51,6 +52,7 @@ class AccountVoter implements VoterInterface
         if (
             !$subject instanceof Account
             && !$subject instanceof SpaceAccount
+            && !$subject instanceof AccountComponentInterface
         ) {
             return VoterInterface::ACCESS_ABSTAIN;
         }

@@ -15,7 +15,7 @@
         {{ path('space_project_list') }}
     {% endif %}
 {%- endblock -%}
-{% block breadcrumFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
+{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.project.edit'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
 
 {% block crudFormFields %}
@@ -119,10 +119,12 @@
             <i class="uil uil-list-ul"></i>
             {{ 'teknoo.space.action.jobs'|trans }}
         </a>
+        {% if objectInstance.project.isRunnable() %}
         <a href="{{ path('space_job_new', {'projectId':objectInstance.id}) }}"
            class="btn btn-success btn-full-large">
             <i class="uil uil-play"></i>
             {{ 'teknoo.space.action.start_job'|trans }}
         </a>
+        {% endif %}
     </div>
 {% endblock %}

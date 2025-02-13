@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -38,6 +38,7 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Plan\RefreshProjectCredentials;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
@@ -49,7 +50,7 @@ use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -66,7 +67,9 @@ class RefreshProjectCredentialsTest extends TestCase
 
     private LoadAccountFromProject|MockObject $loadAccountFromProject;
 
-    private LoadEnvironments|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadEnvironments;
+
+    private LoadAccountClusters|MockObject $loadAccountClusters;
 
     private LoadRegistryCredential|MockObject $loadRegistryCredential;
 
@@ -93,7 +96,8 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->loadObject = $this->createMock(LoadObject::class);
         $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
         $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
-        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
+        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
+        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
         $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
         $this->updateProjectCredentialsFromAccount = $this->createMock(UpdateProjectCredentialsFromAccount::class);
         $this->saveObject = $this->createMock(SaveObject::class);
@@ -102,18 +106,19 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->refreshProjectCredentials = new RefreshProjectCredentials(
-            $this->recipe,
-            $this->loadObject,
-            $this->objectAccessControl,
-            $this->loadAccountFromProject,
-            $this->loadCredentials,
-            $this->loadRegistryCredential,
-            $this->updateProjectCredentialsFromAccount,
-            $this->saveObject,
-            $this->spaceProjectPrepareRedirection,
-            $this->redirectClient,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            loadObject: $this->loadObject,
+            objectAccessControl: $this->objectAccessControl,
+            loadAccountFromProject: $this->loadAccountFromProject,
+            loadEnvironments: $this->loadEnvironments,
+            loadAccountClusters: $this->loadAccountClusters,
+            loadRegistryCredential: $this->loadRegistryCredential,
+            updateProjectCredentialsFromAccount: $this->updateProjectCredentialsFromAccount,
+            saveObject: $this->saveObject,
+            spaceProjectPrepareRedirection: $this->spaceProjectPrepareRedirection,
+            redirectClient: $this->redirectClient,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

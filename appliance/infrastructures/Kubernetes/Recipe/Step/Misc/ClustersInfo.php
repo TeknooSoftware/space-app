@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -33,13 +33,13 @@ use Teknoo\Space\Object\DTO\AccountWallet;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class ClustersInfo implements ClustersInfoInterface
 {
     public function __construct(
-        private readonly ClusterCatalog $catalog,
+        private readonly ClusterCatalog $clusterCatalog,
     ) {
     }
 
@@ -48,7 +48,7 @@ class ClustersInfo implements ClustersInfoInterface
         ?AccountWallet $accountWallet = null,
     ): ClustersInfoInterface {
         $parametersBag->set('accountWallet', $accountWallet);
-        $parametersBag->set('clustersCatalog', $this->catalog);
+        $parametersBag->set('clusterCatalog', $this->clusterCatalog);
 
         return $this;
     }

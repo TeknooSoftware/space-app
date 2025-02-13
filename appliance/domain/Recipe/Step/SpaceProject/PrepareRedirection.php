@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -28,25 +28,37 @@ namespace Teknoo\Space\Recipe\Step\SpaceProject;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\SpaceProject;
 
+use function str_contains;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class PrepareRedirection
 {
+    /**
+     * @param array<string, string> $parameters
+     */
     public function __invoke(
         ManagerInterface $manager,
         SpaceProject $spaceProject,
+        string $route,
         bool|string|null $objectSaved = null,
+        array $parameters = [],
+        ?string $accountId = null,
     ): self {
+        $parameters['id'] = $spaceProject->getId();
+        $parameters['objectSaved'] = $objectSaved;
+
+        if (null !== $accountId || str_contains($route, '_admin')) {
+            $parameters['accountId'] = $accountId;
+        }
+
         $manager->updateWorkPlan([
             'id' => $spaceProject->getId(),
-            'parameters' => [
-                'id' => $spaceProject->getId(),
-                'objectSaved' => $objectSaved,
-            ],
+            'parameters' => $parameters,
         ]);
 
         return $this;

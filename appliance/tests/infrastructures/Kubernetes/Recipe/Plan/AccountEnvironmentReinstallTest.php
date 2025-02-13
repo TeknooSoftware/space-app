@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -53,7 +53,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -72,7 +72,7 @@ class AccountEnvironmentReinstallTest extends TestCase
 
     private LoadHistory|MockObject $loadHistory;
 
-    private LoadEnvironments|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadEnvironments;
 
     private LoadRegistryCredential|MockObject $loadRegistryCredential;
 
@@ -106,7 +106,7 @@ class AccountEnvironmentReinstallTest extends TestCase
         $this->prepareRedirection = $this->createMock(PrepareRedirection::class);
         $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
         $this->loadHistory = $this->createMock(LoadHistory::class);
-        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
+        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
         $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
         $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
         $this->findEnvironmentInWallet = $this->createMock(FindEnvironmentInWallet::class);
@@ -124,7 +124,7 @@ class AccountEnvironmentReinstallTest extends TestCase
             prepareRedirection: $this->prepareRedirection,
             redirectClient: $this->redirectClient,
             loadHistory: $this->loadHistory,
-            loadCredentials: $this->loadCredentials,
+            loadEnvironments: $this->loadEnvironments,
             loadRegistryCredential: $this->loadRegistryCredential,
             reloadNamespace: $this->reloadNamespace,
             findEnvironmentInWallet: $this->findEnvironmentInWallet,

@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,20 +43,16 @@ use function sprintf;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class AddManagedEnvironmentToProject
 {
-    public function __construct(
-        private ClusterCatalog $catalog,
-    ) {
-    }
-
     public function __invoke(
         ManagerInterface $manager,
         SpaceProject $spaceProject,
         AccountWallet $accountWallet,
+        ClusterCatalog $clusterCatalog,
     ): AddManagedEnvironmentToProject {
         if (
             empty($spaceProject->addClusterEnv)
@@ -95,7 +91,7 @@ class AddManagedEnvironmentToProject
         }
 
         try {
-            $clusterConfig = $this->catalog->getCluster($spaceProject->addClusterName);
+            $clusterConfig = $clusterCatalog->getCluster($spaceProject->addClusterName);
 
             $newCluster = new Cluster();
             $newCluster->setName($spaceProject->addClusterName);

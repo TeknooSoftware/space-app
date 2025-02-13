@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -28,6 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
@@ -35,7 +36,7 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class PrepareForm
@@ -50,6 +51,7 @@ class PrepareForm
      */
     public function __invoke(
         ManagerInterface $manager,
+        ClusterCatalog $clusterCatalog,
         ?SpaceAccount $spaceAccount = null,
         array $formOptions = [],
     ): self {
@@ -72,6 +74,7 @@ class PrepareForm
         $accountData->visit('subscriptionPlan', $promise);
 
         $formOptions['subscriptionPlan'] = $promise->fetchResult();
+        $formOptions['clusterCatalog'] = $clusterCatalog;
         $manager->updateWorkPlan([
             'formOptions' => $formOptions,
         ]);

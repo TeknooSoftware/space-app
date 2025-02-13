@@ -11,32 +11,3 @@ space_api_v1_my_settings:
         objectClass: 'Teknoo\Space\Object\DTO\SpaceUser'
         template: '@@TeknooSpace/api/User/settings.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
-
-space_api_v1_account_settings:
-    path: '/account/settings'
-    methods: ['GET', 'POST', 'PUT']
-    schemes: ['https']
-    defaults:
-        _controller: 'teknoo.space.endpoint.account.settings'
-        api: 'json'
-        clusterCatalog: '@teknoo.space.clusters_catalog'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType'
-        formOptions:
-            enableEnvManagement: true
-        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
-        objectClass: 'Teknoo\Space\Object\DTO\SpaceAccount'
-        template: '@@TeknooSpace/api/Account/settings.json.twig'
-        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
-
-space_api_v1_account_edit_variables:
-    path: '/account/variables'
-    methods: ['GET', 'POST', 'PUT']
-    defaults:
-        _controller: 'teknoo.space.endpoint.account.settings_without_steps'
-        api: 'json'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\VarsType'
-        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
-        template: '@@TeknooSpace/api/Account/variables.json.twig'
-        writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'

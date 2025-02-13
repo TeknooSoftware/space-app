@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -34,23 +35,27 @@ use function array_flip;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 abstract class AbstractDeleteFromResumes
 {
-    abstract protected function delete(AccountEnvironment $accountEnvironment): void;
+    abstract protected function delete(
+        AccountEnvironment $accountEnvironment,
+        ?ClusterCatalog $clusterCatalog,
+    ): void;
 
     public function __invoke(
         AccountWallet $wallet,
         SpaceAccount $spaceAccount,
+        ?ClusterCatalog $clusterCatalog = null,
     ): self {
-        if (empty($spaceAccount->environmentResumes)) {
+        if (empty($spaceAccount->environments)) {
             return $this;
         }
 
         $idsInResumes = [];
-        foreach ($spaceAccount->environmentResumes as $resume) {
+        foreach ($spaceAccount->environments as $resume) {
             if (!empty($resume->accountEnvironmentId)) {
                 $idsInResumes[] = $resume->accountEnvironmentId;
             }
@@ -61,7 +66,7 @@ abstract class AbstractDeleteFromResumes
         /** @var AccountEnvironment $env */
         foreach ($wallet as $env) {
             if (!empty($env->getId()) && !isset($idsInResumes[$env->getId()])) {
-                $this->delete($env);
+                $this->delete($env, $clusterCatalog);
             }
         }
 

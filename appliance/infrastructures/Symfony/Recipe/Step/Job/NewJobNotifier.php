@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -29,8 +29,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Mercure\Exception\ExceptionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Job;
-use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\OtherException;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\UnavailableException;
@@ -41,7 +39,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class NewJobNotifier implements NewJobNotifierInterface
@@ -82,6 +80,7 @@ class NewJobNotifier implements NewJobNotifierInterface
                 'route' => $this->projectJobeRoute,
                 'routeParameters' => [
                     'projectId' => $newJob->projectId,
+                    'accountId' => $newJob->accountId,
                 ],
             ]);
         } catch (Throwable $mainException) {

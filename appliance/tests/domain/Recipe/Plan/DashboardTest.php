@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -58,7 +58,7 @@ class DashboardTest extends TestCase
 
     private HealthInterface|MockObject $health;
 
-    private LoadEnvironments|MockObject $loadCredentials;
+    private LoadEnvironments|MockObject $loadEnvironments;
 
     private ClustersInfoInterface|MockObject $clustersInfo;
 
@@ -79,21 +79,21 @@ class DashboardTest extends TestCase
 
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->health = $this->createMock(HealthInterface::class);
-        $this->loadCredentials = $this->createMock(LoadEnvironments::class);
+        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
         $this->clustersInfo = $this->createMock(ClustersInfoInterface::class);
         $this->clusterAndEnvSelection = $this->createMock(ClusterAndEnvSelection::class);
         $this->render = $this->createMock(Render::class);
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->dashboard = new Dashboard(
-            $this->recipe,
-            $this->health,
-            $this->loadCredentials,
-            $this->clustersInfo,
-            $this->clusterAndEnvSelection,
-            $this->render,
-            $this->renderError,
-            $this->defaultErrorTemplate,
+            recipe: $this->recipe,
+            health: $this->health,
+            loadEnvironments: $this->loadEnvironments,
+            clustersInfo: $this->clustersInfo,
+            clusterAndEnvSelection: $this->clusterAndEnvSelection,
+            render: $this->render,
+            renderError: $this->renderError,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
         );
     }
 

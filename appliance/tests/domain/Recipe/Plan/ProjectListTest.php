@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     http://teknoo.software/license/mit         MIT License
+ * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -40,14 +40,15 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Plan\ProjectList;
-use Teknoo\Space\Recipe\Step\Project\PrepareCriteria;
+use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 
 /**
  * Class ProjectListTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license http://teknoo.software/license/mit         MIT License
+ * @license https://teknoo.software/license/mit         MIT License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -61,6 +62,8 @@ class ProjectListTest extends TestCase
     private ExtractPage|MockObject $extractPage;
 
     private ExtractOrder|MockObject $extractOrder;
+
+    private LoadAccountFromRequest|MockObject $loadAccountFromRequest;
 
     private PrepareCriteria|MockObject $prepareCriteria;
 
@@ -88,6 +91,7 @@ class ProjectListTest extends TestCase
         $this->recipe = $this->createMock(RecipeInterface::class);
         $this->extractPage = $this->createMock(ExtractPage::class);
         $this->extractOrder = $this->createMock(ExtractOrder::class);
+        $this->loadAccountFromRequest = $this->createMock(LoadAccountFromRequest::class);
         $this->prepareCriteria = $this->createMock(PrepareCriteria::class);
         $this->loadListObjects = $this->createMock(LoadListObjects::class);
         $this->renderList = $this->createMock(RenderList::class);
@@ -97,17 +101,18 @@ class ProjectListTest extends TestCase
         $this->defaultErrorTemplate = '42';
         $this->loadListObjectsWiths = [];
         $this->projectList = new ProjectList(
-            $this->recipe,
-            $this->extractPage,
-            $this->extractOrder,
-            $this->prepareCriteria,
-            $this->loadListObjects,
-            $this->renderList,
-            $this->renderError,
-            $this->searchFormLoader,
-            $this->listObjectsAccessControl,
-            $this->defaultErrorTemplate,
-            $this->loadListObjectsWiths,
+            recipe: $this->recipe,
+            extractPage: $this->extractPage,
+            extractOrder: $this->extractOrder,
+            loadAccountFromRequest: $this->loadAccountFromRequest,
+            prepareCriteria: $this->prepareCriteria,
+            loadListObjects: $this->loadListObjects,
+            renderList: $this->renderList,
+            renderError: $this->renderError,
+            searchFormLoader: $this->searchFormLoader,
+            listObjectsAccessControl: $this->listObjectsAccessControl,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
+            loadListObjectsWiths: $this->loadListObjectsWiths,
         );
     }
 
