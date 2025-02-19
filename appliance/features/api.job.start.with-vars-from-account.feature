@@ -900,7 +900,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: From the API, execute a job from an owned project, without account's variables, prefix, a valid paas file,
-  on cluster supporing hierarchical namespace, via a request with a json body
+  on cluster supporting hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent

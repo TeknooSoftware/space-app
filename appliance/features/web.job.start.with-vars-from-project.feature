@@ -1124,7 +1124,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: From the UI, execute a job from an owned project, with project's variables, prefix, a valid paas file,
-  on cluster supporing hierarchical namespace
+  on cluster supporting hierarchical namespace
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent

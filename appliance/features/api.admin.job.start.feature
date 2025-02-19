@@ -750,7 +750,7 @@ Feature: API admin endpoints to create new job and deploy project
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
   Scenario: From the API, as Admin, execute a job from a project, without prefix, a valid paas file, on cluster
-  supporing hierarchical namespace, via a request with a json body
+  supporting hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent

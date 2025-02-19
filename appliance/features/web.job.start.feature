@@ -652,7 +652,7 @@ Feature: Web interface to create new job and deploy project
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the UI, execute a job from an owned project, without prefix, a valid paas file, on cluster supporing
+  Scenario: From the UI, execute a job from an owned project, without prefix, a valid paas file, on cluster supporting
   hierarchical namespace
     Given A Space app instance
     And a kubernetes client
