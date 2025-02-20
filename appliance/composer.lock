@@ -1630,16 +1630,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v11.43.0",
+            "version": "v11.43.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "a9d5e7ef4cffd14ac8e870d4899cde106990329c"
+                "reference": "8a650cf80dce7f37f20b8bf33e11922b291bf0e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/a9d5e7ef4cffd14ac8e870d4899cde106990329c",
-                "reference": "a9d5e7ef4cffd14ac8e870d4899cde106990329c",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/8a650cf80dce7f37f20b8bf33e11922b291bf0e2",
+                "reference": "8a650cf80dce7f37f20b8bf33e11922b291bf0e2",
                 "shasum": ""
             },
             "require": {
@@ -1682,11 +1682,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-02-17T16:11:43+00:00"
+            "time": "2025-02-19T15:59:05+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v11.43.0",
+            "version": "v11.43.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1732,7 +1732,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v11.43.0",
+            "version": "v11.43.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1780,7 +1780,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v11.43.0",
+            "version": "v11.43.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -4132,16 +4132,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "2.0.2",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "51087f87dcce2663e1fed4dfd4e56eccd580297e"
+                "reference": "9b30d6fd026b2c132b3985ce6b23bec09ab3aa68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/51087f87dcce2663e1fed4dfd4e56eccd580297e",
-                "reference": "51087f87dcce2663e1fed4dfd4e56eccd580297e",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/9b30d6fd026b2c132b3985ce6b23bec09ab3aa68",
+                "reference": "9b30d6fd026b2c132b3985ce6b23bec09ab3aa68",
                 "shasum": ""
             },
             "require": {
@@ -4173,9 +4173,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.0.2"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/2.1.0"
             },
-            "time": "2025-02-17T20:25:51+00:00"
+            "time": "2025-02-19T13:28:12+00:00"
         },
         {
             "name": "psr/cache",
@@ -12969,16 +12969,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.18",
+            "version": "1.12.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "fef9f07814a573399229304bb0046affdf558812"
+                "reference": "c42ba9bab7a940ed00092ecb1c77bad98896d789"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/fef9f07814a573399229304bb0046affdf558812",
-                "reference": "fef9f07814a573399229304bb0046affdf558812",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c42ba9bab7a940ed00092ecb1c77bad98896d789",
+                "reference": "c42ba9bab7a940ed00092ecb1c77bad98896d789",
                 "shasum": ""
             },
             "require": {
@@ -13023,7 +13023,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-02-13T12:44:44+00:00"
+            "time": "2025-02-19T15:42:21+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
