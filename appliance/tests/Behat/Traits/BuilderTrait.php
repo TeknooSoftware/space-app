@@ -150,6 +150,8 @@ trait BuilderTrait
                             'storage-size' => '3Gi',
                         ],
                         'data-replicated' => [
+                            'name' => 'data-replicated',
+                            'write-many' => true,
                             'mount-path' => '/opt/data-replicated',
                             'persistent' => true,
                             'storage-provider' => 'replicated-provider',

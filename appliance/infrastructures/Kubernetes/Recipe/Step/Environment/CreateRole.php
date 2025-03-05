@@ -81,6 +81,11 @@ class CreateRole
                     'verbs' => ['get', 'watch', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection'],
                 ],
                 [
+                    'apiGroups' => ['batch'],
+                    'resources' => ['jobs', 'cronjobs'],
+                    'verbs' => ['get', 'watch', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection'],
+                ],
+                [
                     'apiGroups' => ['networking.k8s.io'],
                     'resources' => ['ingresses'],
                     'verbs' => ['get', 'watch', 'list', 'create', 'update', 'patch', 'delete', 'deletecollection'],

@@ -8,7 +8,11 @@
   - Doctrine
   - Omines Oauth2
   - Teknoo States, Recipe and East Foundation
-  - Teknoo East PaaS
+  - Teknoo East PaaS 4.3
+    - PaaS version update to `1.1`
+    - Fix issues when different pods use same volumes' names
+    - For persisted volumes, add `name` option to allow pods to share persistent volume
+    - Always for persisted volumes, add `write-many` to allow concurrent writting (else only concurrent reading is allowed)
   - PHPUnit 12
 - Support of PHP 8.4
 - Rename `Managed Cluster` as `Managed Environment`
@@ -23,6 +27,70 @@
     - If it is at `true`, the cluster come from an `Account Cluster`
 - Rename `$catalog` variables to `$clusterCatalog`
 - Improve error response on API endpoints
+- Add support of `Job` and cronjob:
+
+
+    #Job
+    jobs:
+          <job-name>:
+              pods: #mandatory, one or several pods. Keep the same syntax like pods
+                  <pod name>: 
+                       <pod definition>
+              extends: <name> #optional to extends a job from the library
+              completions: #optional
+                  mode: common or indexed #similar to indexed completion in kubernetes
+                  count: 3 #to launch 3 jobs
+                  time-limit: 10 #time limit in second to set timeout the job (not a pod, but all pods)
+                  success-on: [0, 4] #list of exit int status for a successful job
+                  fail-on: [0, 4] #list of exit int status for a failed job
+                  limit-on: nameof container to listen
+              is-parallel: true #To launch 3*2 pods in parallel or sequential
+              planning: during-deployment or scheduled
+              schedule: 'crontab syntax' only if planning is set to 'scheduled'
+
+
+- Support conditions in `*.paas.yaml`. Conditions can be used in anywhere in the file, expected scalar value.
+  - The pattern is `if{<VARIABLE_NAME><OPERAND><EXPECTED VALUE>}`
+    - With `<VARIABLE_NAME>` is a name of a variable passed to the job at its creation
+    - `<OPERAND>` must be one of these :
+      - `=`
+      - `!=`
+      - `<`
+      - `>`
+      - `<=`
+      - `>=`
+      - `is empty`
+      - `isnot empty`
+      - `is null`
+      - `isnot null`
+    - `<EXPECTED VALUE>` any value, can be wrapped by `"` but is not mandatory
+  - If the condition is validated, all nodes under the condition will be merged with the parent node, else nodes will
+    be dropped.
+  - Nested conditions are allowed
+    - Example:
+
+
+      paas: #Dedicated to compiler
+        version: v1
+        requires:
+          - set1
+    
+      #Defaults
+      defaults:
+        storage-provider: foo
+    
+      if{ENV=prod}:
+        paas: #Dedicated to compiler
+          version: v1.22
+          quotas:
+            -   category: compute
+                type: cpu
+                capacity: 3
+                requires: 4
+                if{PROVIDER=AWS}:
+                  capacity: 2
+                  requires: 1
+
 - Fix ACL errors on subscribing user 
 - Fix issue in project editing vars in non executable project
 - Fix error when Project is not fully completed and it is runned or with last Doctrine version

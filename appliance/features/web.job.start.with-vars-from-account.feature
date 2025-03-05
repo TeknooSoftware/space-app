@@ -69,7 +69,7 @@ Feature: Web interface to create new job and deploy project with variables from 
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard project "my project"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -1117,7 +1117,7 @@ Feature: Web interface to create new job and deploy project with variables from 
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard project "my project" and a prefix "a-prefix"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -1208,7 +1208,7 @@ Feature: Web interface to create new job and deploy project with variables from 
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard project "my project"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -1299,7 +1299,7 @@ Feature: Web interface to create new job and deploy project with variables from 
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard project "my project" and a prefix "a-prefix"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -1346,7 +1346,7 @@ Feature: Web interface to create new job and deploy project with variables from 
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication enable for last user
     And a standard project "my project" and a prefix "a-prefix"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the account has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -1452,6 +1452,132 @@ Feature: Web interface to create new job and deploy project with variables from 
     And the 2FA authentication enable for last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
+    And the account has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And It goes to projects list page
+    And it goes to project page of "my project"
+    When it runs a job
+    And it submits the form:
+      | field                                     | value                   |
+      | new_job._token                            | <auto>                  |
+      | new_job.projectId                         | <auto>                  |
+      | new_job.newJobId                          | <auto>                  |
+      | new_job.envName                           | prod                    |
+      | new_job.variables.SERVER_SCRIPT.name      | SERVER_SCRIPT           |
+      | new_job.variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
+      | new_job.variables.SERVER_SCRIPT.secret    | 1                       |
+      | new_job.variables.SERVER_SCRIPT.persisted | 1                       |
+      | new_job.variables.1.name                  | PROJECT_URL             |
+      | new_job.variables.1.value                 | <auto>                  |
+      | new_job.variables.2.name                  | FOO                     |
+      | new_job.variables.2.value                 | BAR                     |
+      | new_job.variables.3.name                  | hello                   |
+      | new_job.variables.3.value                 | world                   |
+      | new_job.variables.3.secret                | 1                       |
+      | new_job.variables.3.persisted             | 1                       |
+      | new_job.variables.4.name                  | world                   |
+      | new_job.variables.4.value                 | hello                   |
+      | new_job.variables.4.secret                | 0                       |
+      | new_job.variables.4.persisted             | 1                       |
+    Then it obtains a deployment page
+    And Space executes the job
+    And it is forwared to job page
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+      | x   | hello         | 1      | world                   | prod        |
+      | x   | world         | 0      | hello                   | prod        |
+    Then the account must have these persisted variables
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+
+  Scenario: From the UI, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  using conditions and encrypted messages between workers
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using conditions
+    And the account has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+      | bbb | PHP_VERSION   | 1      | 7.4                  | prod        |
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And It goes to projects list page
+    And it goes to project page of "my project"
+    When it runs a job
+    And it submits the form:
+      | field                                     | value                   |
+      | new_job._token                            | <auto>                  |
+      | new_job.projectId                         | <auto>                  |
+      | new_job.newJobId                          | <auto>                  |
+      | new_job.envName                           | prod                    |
+      | new_job.variables.SERVER_SCRIPT.name      | SERVER_SCRIPT           |
+      | new_job.variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
+      | new_job.variables.SERVER_SCRIPT.secret    | 1                       |
+      | new_job.variables.SERVER_SCRIPT.persisted | 1                       |
+      | new_job.variables.1.name                  | PROJECT_URL             |
+      | new_job.variables.1.value                 | <auto>                  |
+      | new_job.variables.2.name                  | FOO                     |
+      | new_job.variables.2.value                 | BAR                     |
+      | new_job.variables.3.name                  | hello                   |
+      | new_job.variables.3.value                 | world                   |
+      | new_job.variables.3.secret                | 1                       |
+      | new_job.variables.3.persisted             | 1                       |
+      | new_job.variables.4.name                  | world                   |
+      | new_job.variables.4.value                 | hello                   |
+      | new_job.variables.4.secret                | 0                       |
+      | new_job.variables.4.persisted             | 1                       |
+      | new_job.variables.5.name                  | ENV                     |
+      | new_job.variables.5.value                 | prod                    |
+      | new_job.variables.6.name                  | PHP_VERSION             |
+      | new_job.variables.6.value                 | 7.4                     |
+    Then it obtains a deployment page
+    And Space executes the job
+    And it is forwared to job page
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+      | x   | hello         | 1      | world                   | prod        |
+      | x   | world         | 0      | hello                   | prod        |
+    Then the account must have these persisted variables
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+      | bbb | PHP_VERSION   | 1      | 7.4                  | prod        |
+
+  Scenario: From the UI, execute a job from an owned project, with account's variables, prefix, a valid paas file,
+  jobs and encrypted messages between workers
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with jobs
     And the account has these persisted variables:
       | id  | name          | secret | value                | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
