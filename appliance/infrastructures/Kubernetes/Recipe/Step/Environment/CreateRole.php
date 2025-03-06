@@ -127,15 +127,11 @@ class CreateRole
 
         $role = $this->createRole($roleName, $kubeNamespace);
         $roleRepository = $client->roles();
-        if (!$roleRepository->exists((string) $role->getMetadata('name'))) {
-            $roleRepository->apply($role);
-        }
+        $roleRepository->apply($role);
 
         $clusterRole = $this->createClusterRole($clusterRoleName);
         $clusterRoleRepository = $client->clusterRoles();
-        if (!$clusterRoleRepository->exists((string) $clusterRole->getMetadata('name'))) {
-            $clusterRoleRepository->apply($clusterRole);
-        }
+        $clusterRoleRepository->apply($clusterRole);
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory, $roleName) {
