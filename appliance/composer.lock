@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cdf11a6a0dffbee3a0f20e9142a16284",
+    "content-hash": "d5843b8f0ecbe9f31e7c5b776ffcfa64",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11157,16 +11157,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "4.3.0-beta1",
+            "version": "4.3.0-beta2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "39d2655c0d38d5edaa1572319c5dd861f42a57aa"
+                "reference": "4583185b3e9ed93a4cda37accdf3eec78003454c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/39d2655c0d38d5edaa1572319c5dd861f42a57aa",
-                "reference": "39d2655c0d38d5edaa1572319c5dd861f42a57aa",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/4583185b3e9ed93a4cda37accdf3eec78003454c",
+                "reference": "4583185b3e9ed93a4cda37accdf3eec78003454c",
                 "shasum": ""
             },
             "require": {
@@ -11293,20 +11293,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-03-03T09:10:06+00:00"
+            "time": "2025-03-06T09:56:19+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "4.3.0-beta1",
+            "version": "4.3.0-beta2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "bd22be0ff4d81ce952588ec82c3d15c1a4068145"
+                "reference": "9df30453e6e55fb49bfbfc8809c48ec18d40b6a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/bd22be0ff4d81ce952588ec82c3d15c1a4068145",
-                "reference": "bd22be0ff4d81ce952588ec82c3d15c1a4068145",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/9df30453e6e55fb49bfbfc8809c48ec18d40b6a8",
+                "reference": "9df30453e6e55fb49bfbfc8809c48ec18d40b6a8",
                 "shasum": ""
             },
             "require": {
@@ -11345,7 +11345,7 @@
                 "teknoo/bridge-phpdi-symfony": "^6.1",
                 "teknoo/east-common-symfony": "^3.0.5",
                 "teknoo/east-foundation-symfony": "^8.0.3",
-                "teknoo/east-paas": "^4.3.0-beta1",
+                "teknoo/east-paas": "^4.3.0-beta2",
                 "teknoo/immutable": "^3.0.18",
                 "teknoo/kubernetes-client": "^1.7.3",
                 "teknoo/recipe": "^6.0.1",
@@ -11407,7 +11407,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-03-03T09:37:26+00:00"
+            "time": "2025-03-06T09:57:10+00:00"
         },
         {
             "name": "teknoo/immutable",
