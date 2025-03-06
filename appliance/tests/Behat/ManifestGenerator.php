@@ -924,6 +924,7 @@ EOF;
                                 "imagePullPolicy": "Always"
                             }
                         ],
+                        "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -968,6 +969,7 @@ EOF;
                                 "imagePullPolicy": "Always"
                             }
                         ],
+                        "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1012,6 +1014,7 @@ EOF;
                                 "imagePullPolicy": "Always"
                             }
                         ],
+                        "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1056,6 +1059,7 @@ EOF;
                                 "imagePullPolicy": "Always"
                             }
                         ],
+                        "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1149,6 +1153,7 @@ EOF;
                                 ]
                             }
                         ],
+                        "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1272,6 +1277,7 @@ EOF;
                                         "imagePullPolicy": "Always"
                                     }
                                 ],
+                                "restartPolicy": "OnFailure",
                                 "imagePullSecrets": [
                                     {
                                         "name": "$imagePullSecrets"
