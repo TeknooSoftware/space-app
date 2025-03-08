@@ -134,6 +134,8 @@ class SupportType extends AbstractType
             'manager' => null,
         ]);
 
+        $resolver->setAllowedTypes('manager', [ManagerInterface::class, 'null']);
+
         return $this;
     }
 }
