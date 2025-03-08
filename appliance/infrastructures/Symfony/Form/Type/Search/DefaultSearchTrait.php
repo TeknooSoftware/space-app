@@ -84,6 +84,8 @@ trait DefaultSearchTrait
             'manager' => null,
         ]);
 
+        $resolver->setAllowedTypes('manager', [ManagerInterface::class, 'null']);
+
         return $this;
     }
 }

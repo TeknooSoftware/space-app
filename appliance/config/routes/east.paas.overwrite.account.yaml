@@ -19,7 +19,7 @@ _teknoo_paas_admin_account_edit:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
             doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
-            namespace_in_readonly: true
+            namespaceIsReadonly: true
             enableEnvManagement: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooEastPaas/AdminAccount/edit.html.twig'

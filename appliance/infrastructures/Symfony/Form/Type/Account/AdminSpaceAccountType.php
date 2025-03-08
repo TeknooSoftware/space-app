@@ -54,7 +54,7 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
                 EastPaaSAccountType::class,
                 [
                     'doctrine_type' => $options['doctrine_type'],
-                    'namespace_in_readonly' => $options['namespace_in_readonly'],
+                    'namespaceIsReadonly' => $options['namespaceIsReadonly'],
                 ],
             );
 
@@ -62,7 +62,7 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
                 'accountData',
                 AccountDataType::class,
                 [
-                    'can_update_subscription' => true,
+                    'canUpdateSubscription' => true,
                 ]
             );
         }
@@ -105,15 +105,17 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
             'data_class' => SpaceAccount::class,
             'api' => null,
             'enableEnvManagement' => null,
-            'namespace_in_readonly' => false,
+            'namespaceIsReadonly' => false,
             'subscriptionPlan' => null,
             'clusterCatalog' => null,
         ]);
 
-        $resolver->setRequired(['doctrine_type']);
+        $resolver->setRequired(['doctrine_type', 'namespaceIsReadonly']);
         $resolver->setAllowedTypes('doctrine_type', 'string');
         $resolver->setAllowedTypes('clusterCatalog', [ClusterCatalog::class, 'null']);
         $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, 'null']);
+        $resolver->setAllowedTypes('namespaceIsReadonly', 'bool');
+        $resolver->setAllowedTypes('enableEnvManagement', ['null', 'bool']);
 
         return $this;
     }
