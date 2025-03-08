@@ -43,6 +43,10 @@
             </a>
         </th>
         <th scope="col"
+            class="border-bottom text-center">
+            {{ 'teknoo.space.text.cols_job_state'|trans }}
+        </th>
+        <th scope="col"
             class="border-bottom">
             <a class="text-primary"
                href="{{ path('space_job_list', {'projectId': projectId}) }}{{ app_order_in_url(queryParams, 'updatedAt') }}">
@@ -65,6 +69,25 @@
     <tr {% if loop.index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
         <td>{{ object.id|slice(0, 10) }}</td>
         <td>{{ object.project }}<br>{% if object.project is not empty %}{{ object.project.account }}{% endif %}</td>
+        <td class="text-center">
+            {% set lastHistory = object.history %}
+            {% if lastHistory is empty %}
+                <span class="badge bg-soft-secondary">{{ 'teknoo.space.text.job_not_started'|trans }}</span>
+            {% else %}
+                {% if lastHistory.isFinal == false %}
+                    <span class="badge bg-soft-info">{{ 'teknoo.space.text.job_not_finished'|trans }}</span>
+                {% else %}
+                    {% if
+                        'Teknoo\\East\\Paas\\Contracts\\Recipe\\Step\\Job\\DispatchResultInterface' == lastHistory.message
+                        and [] == lastHistory.extra.result
+                    %}
+                        <span class="badge bg-soft-primary">{{ 'teknoo.space.text.job_success'|trans }}</span>
+                    {% else %}
+                        <span class="badge bg-soft-danger">{{ 'teknoo.space.text.job_failed'|trans }}</span>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </td>
         <td>{{ object.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
             <a class="text-primary"
