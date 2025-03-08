@@ -2,8 +2,9 @@
 
 ## [1.1.0-beta3] - 2025-03-08
 ### Beta Version
-- Add status label on jobs list and job view to help developpers to know status.
-
+- Add status label on jobs list and job view to help developpers to know status. 
+- Update docker dev images : Update to PHP8.4 and RabbitMq 4. Fix compose.yml
+ 
 ## [1.1.0-beta2] - 2025-03-08
 ### Beta Version
 - Fix issues in Kubernetes Pods Transcriber to not define ports when it is empty
