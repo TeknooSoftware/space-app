@@ -1,6 +1,15 @@
 # Teknoo Software - Space - Change Log
 
-## [1.1.0-beta1] - XXXX
+## [1.1.0-beta2] - 2025-03-08
+### Beta Version
+- Fix issues in Kubernetes Pods Transcriber to not define ports when it is empty
+- Add `restart-policy` to pod, with theses available values : `always`, `never` and `on-failure`. For `pods`, this entry
+  is optional, and by default is at null. For job's pods, the default value is `never`
+- Fix `write-many` behavior, by default it is at false when replica is to one, else it set to true. The defined value by
+  developpers is always kept and used by PaaS.
+- Improve Form options validation
+
+## [1.1.0-beta1] - 2025-03-05
 ### Beta Version
 - Update libraries:
   - Illuminate libraries 11.42
