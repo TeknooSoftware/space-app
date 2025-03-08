@@ -61,7 +61,7 @@ class AdminSpaceAccountTypeTest extends TestCase
             AdminSpaceAccountType::class,
             $this->adminSpaceAccountType->buildForm(
                 $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar', 'doctrine_type' => 'odm', 'namespace_in_readonly' => true,],
+                ['foo' => 'bar', 'doctrine_type' => 'odm', 'namespaceIsReadonly' => true,],
             ),
         );
     }

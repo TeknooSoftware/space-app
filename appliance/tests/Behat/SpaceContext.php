@@ -137,6 +137,8 @@ class SpaceContext implements Context
 
     private string $quotasMode = '';
 
+    private bool $jobsEnabled = false;
+
     private string $defaultsMode = '';
 
     private bool $hasBeenRedirected = false;
@@ -247,6 +249,7 @@ class SpaceContext implements Context
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->apiPendingJobUrl = null;
         $this->clearJobMemory = false;
+        $this->jobsEnabled = false;
         $this->timeoutService->disable();
 
         $envVarsNames = [
@@ -417,11 +420,26 @@ class SpaceContext implements Context
         $this->defaultsMode = 'cluster';
     }
 
-    #[Given('a project with a paas file using extends')]
+    #[Given('the project has a complete paas file using extends')]
     public function aProjectWithAPaasFileUsingExtends(): void
     {
         $this->paasFile = __DIR__ . '/Project/WithExtends/paas.yaml';
         $this->quotasMode = '';
+    }
+
+    #[Given('the project has a complete paas file using conditions')]
+    public function aProjectWithAPaasFileUsingConditions(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithConditions/paas.yaml';
+        $this->quotasMode = '';
+    }
+
+    #[Given('the project has a complete paas file with jobs')]
+    public function aProjectWithAPaasFileWithJobs(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithJobs/paas.yaml';
+        $this->quotasMode = '';
+        $this->jobsEnabled = true;
     }
 
     #[Given('the project has a complete paas file without resources')]

@@ -132,17 +132,13 @@ class CreateRoleBinding
             $kubeNamespace
         );
         $clusterBindingRepository = $client->clusterRoleBindings();
-        if (!$clusterBindingRepository->exists((string) $clusterRoleBinding->getMetadata('name'))) {
-            $clusterBindingRepository->apply($clusterRoleBinding);
-        }
+        $clusterBindingRepository->apply($clusterRoleBinding);
 
         $client->setNamespace($kubeNamespace);
 
         $roleBinding = $this->createRoleBinding($roleBindingName, $serviceName, $roleName, $kubeNamespace);
         $bindingRepository = $client->roleBindings();
-        if (!$bindingRepository->exists((string) $roleBinding->getMetadata('name'))) {
-            $bindingRepository->apply($roleBinding);
-        }
+        $bindingRepository->apply($roleBinding);
 
         $this->datesService->passMeTheDate(
             static function (DateTimeInterface $dateTime) use ($accountHistory, $roleBindingName) {

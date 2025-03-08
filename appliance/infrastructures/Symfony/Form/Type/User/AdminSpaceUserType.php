@@ -68,6 +68,8 @@ class AdminSpaceUserType extends AbstractType implements FormApiAwareInterface
             'api' => null,
         ]);
 
+        $resolver->setAllowedTypes('api', ['null', 'string']);
+
         return $this;
     }
 }

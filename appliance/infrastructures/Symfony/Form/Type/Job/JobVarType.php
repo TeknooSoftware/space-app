@@ -132,7 +132,7 @@ class JobVarType extends AbstractType
             ],
         );
 
-        if (!empty($options['use_password_for_secret'])) {
+        if (!empty($options['usePasswordForSecret'])) {
             $builder->addEventListener(
                 FormEvents::POST_SET_DATA,
                 static function (FormEvent $formEvent): void {
@@ -214,7 +214,7 @@ class JobVarType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => JobVar::class,
-            'use_password_for_secret' => false,
+            'usePasswordForSecret' => false,
             'empty_data' => static function (FormInterface $form) {
                 return new JobVar(
                     id: $form->get('id')->getData(),
@@ -226,6 +226,9 @@ class JobVarType extends AbstractType
                 );
             },
         ]);
+
+        $resolver->setAllowedTypes('usePasswordForSecret', ['bool']);
+        $resolver->setRequired(['usePasswordForSecret']);
 
         return $this;
     }

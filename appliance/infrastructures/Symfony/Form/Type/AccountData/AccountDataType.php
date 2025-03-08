@@ -113,7 +113,7 @@ class AccountDataType extends AbstractType
             $catalog[$plan->name] = $plan->id;
         }
 
-        $canUpdateSubscription = $options['can_update_subscription'] ?? false;
+        $canUpdateSubscription = $options['canUpdateSubscription'] ?? false;
         $builder->add(
             'subscriptionPlan',
             ChoiceType::class,
@@ -181,8 +181,11 @@ class AccountDataType extends AbstractType
 
         $resolver->setDefaults([
             'data_class' => AccountData::class,
-            'can_update_subscription' => false,
+            'canUpdateSubscription' => false,
         ]);
+
+        $resolver->setRequired(['canUpdateSubscription']);
+        $resolver->setAllowedTypes('canUpdateSubscription', ['bool']);
 
         return $this;
     }

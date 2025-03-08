@@ -78,6 +78,9 @@ class SpaceProjectType extends AbstractType
             'allowEditingOfLocked' => false,
         ]);
 
+        $resolver->setrequired(['allowEditingOfLocked']);
+        $resolver->setAllowedTypes('allowEditingOfLocked', ['bool']);
+
         return $this;
     }
 }

@@ -78,7 +78,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                     canPersist: true,
                 ),
                 'entry_options' => [
-                    'use_password_for_secret' => true,
+                    'usePasswordForSecret' => true,
                 ]
             ],
         );
@@ -137,6 +137,9 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
             'environmentsList' => [],
             'api' => null,
         ]);
+
+        $resolver->setAllowedTypes('api', ['null', 'string']);
+        $resolver->setAllowedTypes('environmentsList', ['array']);
 
         return $this;
     }

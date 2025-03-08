@@ -28,7 +28,7 @@ space_api_v1_admin_account_edit:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
             doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
-            namespace_in_readonly: true
+            namespaceIsReadonly: true
             enableEnvManagement: false
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooSpace/api/AdminAccount/item.json.twig'
@@ -46,7 +46,7 @@ space_api_v1_admin_account_edit_environments:
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType'
         formOptions:
             doctrine_type: "%teknoo.east.common.form_type.doctrine.class%"
-            namespace_in_readonly: true
+            namespaceIsReadonly: true
             enableEnvManagement: true
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         template: '@@TeknooSpace/api/AdminAccount/environments.json.twig'
