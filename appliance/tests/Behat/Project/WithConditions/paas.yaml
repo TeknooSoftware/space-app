@@ -1,37 +1,40 @@
 paas: #Dedicated to compiler
-    version: v1
-
-defaults:
-    storage-provider: 'user-default-behat-provider'
-    storage-size: 123Gi
-    oci-registry-config-name: 'oci-registry-behat'
+    version: v1.1
 
 #Config
 maps:
     map1:
         key1: value1
-        key2: ${FOO}
+        key2: wrongValue
     map2:
         foo: bar
-        bar: R{foo}
-
-#Secrets provider
-secrets:
-    map-vault:
-        provider: map #Internal secrets, must be passed in this file
-        options:
+        bar: wrongValue
+    if{ENV=prod}:
+        map1:
             key1: value1
             key2: ${FOO}
-    map-vault2:
-        provider: map #Internal secrets, must be passed in this file
-        options:
-            hello: R{world}
-    volume-vault:
-        provider: map
-        type: foo
-        options:
+        map2:
             foo: bar
-            bar: foo
+            bar: R{foo}
+
+#Secrets provider
+if{ENV=prod}:
+    secrets:
+        map-vault:
+            provider: map #Internal secrets, must be passed in this file
+            options:
+                key1: value1
+                key2: ${FOO}
+        map-vault2:
+            provider: map #Internal secrets, must be passed in this file
+            options:
+                hello: R{world}
+        volume-vault:
+            provider: map
+            type: foo
+            options:
+                foo: bar
+                bar: foo
 
 #Custom image, not available in the library
 images:
@@ -76,6 +79,9 @@ pods:
             php-run: #Container name
                 image: registry.teknoo.software/php-run #Container image to use
                 version: 7.4
+                if{PHP_VERSION>8}:
+                    image: registry.teknoo.software/php-runner #Container image to use
+                    version: 8.4
                 listen: #Port listen by the container
                     - 8080
                 volumes: #Volumes to link

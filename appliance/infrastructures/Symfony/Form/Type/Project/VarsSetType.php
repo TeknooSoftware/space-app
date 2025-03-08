@@ -83,6 +83,8 @@ class VarsSetType extends AbstractType
             'environmentsList' => [],
         ]);
 
+        $resolver->setAllowedTypes('environmentsList', ['array']);
+
         return $this;
     }
 }

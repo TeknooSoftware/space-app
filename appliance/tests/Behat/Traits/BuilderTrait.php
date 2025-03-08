@@ -147,9 +147,12 @@ trait BuilderTrait
                         'data' => [
                             'mount-path' => '/opt/data',
                             'persistent' => true,
+                            'write-many' => false, #default it is at true because replicat is great than 1, force to 1
                             'storage-size' => '3Gi',
                         ],
                         'data-replicated' => [
+                            'name' => 'data-replicated',
+                            //'write-many' => true, #default it is at true because replicat is great than 1, force to 1
                             'mount-path' => '/opt/data-replicated',
                             'persistent' => true,
                             'storage-provider' => 'replicated-provider',

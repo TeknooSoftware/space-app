@@ -451,6 +451,25 @@ EOF;
                 },
                 {
                     "apiGroups": [
+                        "batch"
+                    ],
+                    "resources": [
+                        "jobs",
+                        "cronjobs"
+                    ],
+                    "verbs": [
+                        "get",
+                        "watch",
+                        "list",
+                        "create",
+                        "update",
+                        "patch",
+                        "delete",
+                        "deletecollection"
+                    ]
+                },
+                {
+                    "apiGroups": [
                         "networking.k8s.io"
                     ],
                     "resources": [
@@ -661,6 +680,7 @@ EOF;
         bool $useHnc,
         string $quotaMode,
         string $defaultsMods,
+        bool $jobsEnabled,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -834,6 +854,445 @@ EOF;
             default => ''
         };
 
+
+
+        $jobPersistentVolumeClaim = '';
+        if ($jobsEnabled) {
+            $jobPersistentVolumeClaim = ',' . PHP_EOL
+                . json_encode(
+                    [
+                        "kind" => "PersistentVolumeClaim",
+                        "apiVersion" => "v1",
+                        "metadata" => [
+                            "name" => "{$projectPrefix}data-b424d-43879-43879",
+                            "namespace" => "space-client-my-company-prod{$hncSuffix}",
+                            "labels" => [
+                                "name" => "{$projectPrefix}data-b424d-43879-43879"
+                            ]
+                        ],
+                        "spec" => [
+                            "accessModes" => [
+                                "ReadWriteOnce"
+                            ],
+                            "storageClassName" => "nfs.csi.k8s.io",
+                            "resources" => [
+                                "requests" => [
+                                    "storage" => "3Gi"
+                                ]
+                            ]
+                        ]
+                    ],
+                    JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT
+                );
+        }
+
+        $jobsManifest = '';
+        if ($jobsEnabled) {
+            $jobsManifest = <<<"EOF"
+    "namespaces/space-client-my-company-prod{$hncSuffix}/jobs": [
+        {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "{$projectPrefix}job-init-init-var-job",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}job-init"
+                },
+                "annotations": {
+                    "teknoo.east.paas.version": "v1"
+                }
+            },
+            "spec": {
+                "completions": 3,
+                "completionMode": "Indexed",
+                "parallelism": 3,
+                "template": {
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "init-var"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "init-var",
+                                "image": "registry.hub.docker.com/bash:alpine",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                        "imagePullSecrets": [
+                            {
+                                "name": "$imagePullSecrets"
+                            }
+                        ]
+                    }
+                },
+                "activeDeadlineSeconds": 10
+            }
+        },
+        {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "{$projectPrefix}job-init-update-job",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}job-init"
+                },
+                "annotations": {
+                    "teknoo.east.paas.version": "v1"
+                }
+            },
+            "spec": {
+                "completions": 3,
+                "completionMode": "Indexed",
+                "parallelism": 3,
+                "template": {
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "update"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "update",
+                                "image": "registry.hub.docker.com/bash:alpine",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                        "imagePullSecrets": [
+                            {
+                                "name": "$imagePullSecrets"
+                            }
+                        ]
+                    }
+                },
+                "activeDeadlineSeconds": 10
+            }
+        },
+        {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "{$projectPrefix}job-init-init-var-job",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}job-init"
+                },
+                "annotations": {
+                    "teknoo.east.paas.version": "v1"
+                }
+            },
+            "spec": {
+                "completions": 3,
+                "completionMode": "Indexed",
+                "parallelism": 3,
+                "template": {
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "init-var"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "init-var",
+                                "image": "registry.hub.docker.com/bash:alpine",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                        "imagePullSecrets": [
+                            {
+                                "name": "$imagePullSecrets"
+                            }
+                        ]
+                    }
+                },
+                "activeDeadlineSeconds": 10
+            }
+        },
+        {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "{$projectPrefix}job-init-update-job",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}job-init"
+                },
+                "annotations": {
+                    "teknoo.east.paas.version": "v1"
+                }
+            },
+            "spec": {
+                "completions": 3,
+                "completionMode": "Indexed",
+                "parallelism": 3,
+                "template": {
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "update"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "update",
+                                "image": "registry.hub.docker.com/bash:alpine",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                        "imagePullSecrets": [
+                            {
+                                "name": "$imagePullSecrets"
+                            }
+                        ]
+                    }
+                },
+                "activeDeadlineSeconds": 10
+            }
+        },
+        {
+            "kind": "Job",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "{$projectPrefix}job-translation-php-translation-job",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}job-translation"
+                },
+                "annotations": {
+                    "teknoo.east.paas.version": "v1"
+                }
+            },
+            "spec": {
+                "completions": 1,
+                "completionMode": "NonIndexed",
+                "parallelism": 1,
+                "template": {
+                    "spec": {
+                        "hostAliases": [
+                            {
+                                "hostnames": [
+                                    "php-translation"
+                                ],
+                                "ip": "127.0.0.1"
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "php-translation",
+                                "image": "my-company.registry.demo.teknoo.space/php-run:7.4-b424d-43879-43879-prod",
+                                "imagePullPolicy": "Always",
+                                "envFrom": [
+                                    {
+                                        "configMapRef": {
+                                            "name": "{$projectPrefix}map2-map"
+                                        }
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "SERVER_SCRIPT",
+                                        "value": "/opt/app/src/server.php"
+                                    },
+                                    {
+                                        "name": "KEY0",
+                                        "valueFrom": {
+                                            "configMapKeyRef": {
+                                                "name": "{$projectPrefix}map1-map",
+                                                "key": "key0"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "name": "extra-myproject-volume",
+                                        "mountPath": "/opt/extra",
+                                        "readOnly": true
+                                    },
+                                    {
+                                        "name": "data-b424d-43879-43879-volume",
+                                        "mountPath": "/opt/data",
+                                        "readOnly": false
+                                    },
+                                    {
+                                        "name": "data-replicated-volume",
+                                        "mountPath": "/opt/data-replicated",
+                                        "readOnly": false
+                                    },
+                                    {
+                                        "name": "map-volume",
+                                        "mountPath": "/map",
+                                        "readOnly": false
+                                    },
+                                    {
+                                        "name": "vault-volume",
+                                        "mountPath": "/vault",
+                                        "readOnly": false
+                                    }
+                                ]
+                            }
+                        ],
+                        "restartPolicy": "Never",
+                        "imagePullSecrets": [
+                            {
+                                "name": "$imagePullSecrets"
+                            }
+                        ],
+                        "initContainers": [
+                            {
+                                "name": "extra-myproject",
+                                "image": "my-company.registry.demo.teknoo.space/extra-myproject",
+                                "imagePullPolicy": "Always",
+                                "volumeMounts": [
+                                    {
+                                        "name": "extra-myproject-volume",
+                                        "mountPath": "/opt/extra",
+                                        "readOnly": false
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "MOUNT_PATH",
+                                        "value": "/opt/extra"
+                                    }
+                                ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "extra-myproject-volume",
+                                "emptyDir": []
+                            },
+                            {
+                                "name": "data-b424d-43879-43879-volume",
+                                "persistentVolumeClaim": {
+                                    "claimName": "{$projectPrefix}data-b424d-43879-43879"
+                                }
+                            },
+                            {
+                                "name": "data-replicated-volume",
+                                "persistentVolumeClaim": {
+                                    "claimName": "{$projectPrefix}data-replicated"
+                                }
+                            },
+                            {
+                                "name": "map-volume",
+                                "configMap": {
+                                    "name": "{$projectPrefix}map2-map"
+                                }
+                            },
+                            {
+                                "name": "vault-volume",
+                                "secret": {
+                                    "secretName": "{$projectPrefix}volume-vault-secret"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "podFailurePolicy": {
+                    "rules": [
+                        {
+                            "action": "Ignore",
+                            "onExitCodes": {
+                                "operator": "In",
+                                "values": [
+                                    0,
+                                    5
+                                ],
+                                "containerName": "php-translation"
+                            }
+                        },
+                        {
+                            "action": "FailJob",
+                            "onExitCodes": {
+                                "operator": "In",
+                                "values": [
+                                    1
+                                ],
+                                "containerName": "php-translation"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "namespaces/space-client-my-company-prod{$hncSuffix}/cronjobs": [
+        {
+            "kind": "CronJob",
+            "apiVersion": "batch/v1",
+            "metadata": {
+                "name": "{$projectPrefix}job-backup-backup-cronjob",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}job-backup"
+                },
+                "annotations": {
+                    "teknoo.east.paas.version": "v1"
+                }
+            },
+            "spec": {
+                "schedule": "0 0 /3 * * *",
+                "jobTemplate": {
+                    "spec": {
+                        "completions": 1,
+                        "completionMode": "NonIndexed",
+                        "parallelism": 1,
+                        "template": {
+                            "spec": {
+                                "hostAliases": [
+                                    {
+                                        "hostnames": [
+                                            "backup"
+                                        ],
+                                        "ip": "127.0.0.1"
+                                    }
+                                ],
+                                "containers": [
+                                    {
+                                        "name": "backup",
+                                        "image": "registry.hub.docker.com/backup:alpine",
+                                        "imagePullPolicy": "Always"
+                                    }
+                                ],
+                                "restartPolicy": "OnFailure",
+                                "imagePullSecrets": [
+                                    {
+                                        "name": "$imagePullSecrets"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ],
+EOF;
+        }
+
         $json = <<<"EOF"
 {
     $hncManifest"namespaces/space-client-my-company-prod{$hncSuffix}/secrets": [
@@ -922,10 +1381,10 @@ EOF;
             "kind": "PersistentVolumeClaim",
             "apiVersion": "v1",
             "metadata": {
-                "name": "{$projectPrefix}data",
+                "name": "{$projectPrefix}data-09597-1e225",
                 "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
-                    "name": "{$projectPrefix}data"
+                    "name": "{$projectPrefix}data-09597-1e225"
                 }
             },
             "spec": {
@@ -952,7 +1411,7 @@ EOF;
             },
             "spec": {
                 "accessModes": [
-                    "ReadWriteOnce"
+                    "ReadWriteMany"
                 ],
                 "storageClassName": "replicated-provider",
                 "resources": {
@@ -961,7 +1420,7 @@ EOF;
                     }
                 }
             }
-        }
+        }$jobPersistentVolumeClaim
     ],
     "namespaces/space-client-my-company-prod{$hncSuffix}/deployments": [
         {
@@ -1013,8 +1472,7 @@ EOF;
                             {
                                 "name": "sleep",
                                 "image": "registry.hub.docker.com/bash:alpine",
-                                "imagePullPolicy": "Always",
-                                "ports": []$shellResources
+                                "imagePullPolicy": "Always"$shellResources
                             }
                         ],
                         "imagePullSecrets": [
@@ -1072,7 +1530,7 @@ EOF;
                         "containers": [
                             {
                                 "name": "nginx",
-                                "image": "my-company.registry.demo.teknoo.space/nginx:alpine-prod",
+                                "image": "my-company.registry.demo.teknoo.space/nginx:alpine-2a975-5be1e-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -1197,7 +1655,7 @@ EOF;
                         "containers": [
                             {
                                 "name": "php-run",
-                                "image": "my-company.registry.demo.teknoo.space/php-run:7.4-prod",
+                                "image": "my-company.registry.demo.teknoo.space/php-run:7.4-09597-1e225-prod",
                                 "imagePullPolicy": "Always",
                                 "ports": [
                                     {
@@ -1256,7 +1714,7 @@ EOF;
                                         "readOnly": true
                                     },
                                     {
-                                        "name": "data-volume",
+                                        "name": "data-09597-1e225-volume",
                                         "mountPath": "/opt/data",
                                         "readOnly": false
                                     },
@@ -1342,9 +1800,9 @@ EOF;
                                 "emptyDir": []
                             },
                             {
-                                "name": "data-volume",
+                                "name": "data-09597-1e225-volume",
                                 "persistentVolumeClaim": {
-                                    "claimName": "{$projectPrefix}data"
+                                    "claimName": "{$projectPrefix}data-09597-1e225"
                                 }
                             },
                             {
@@ -1370,7 +1828,7 @@ EOF;
                 }
             }
         }
-    ],
+    ],$jobsManifest
     "namespaces/space-client-my-company-prod{$hncSuffix}/services": [
         {
             "kind": "Service",

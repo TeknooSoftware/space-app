@@ -705,7 +705,7 @@ Feature: API admin endpoints to create new job and deploy project with variables
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the project has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -736,7 +736,7 @@ Feature: API admin endpoints to create new job and deploy project with variables
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
   Scenario: From the API, as Admin, execute a job from a project, with project's variables, prefix, a valid paas
-  file, on cluster supporing hierarchical namespace, via a request with a json body
+  file, on cluster supporting hierarchical namespace, via a request with a json body
     Given A Space app instance
     And a kubernetes client
     And a job workspace agent
@@ -796,7 +796,7 @@ Feature: API admin endpoints to create new job and deploy project with variables
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the project has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -887,7 +887,7 @@ Feature: API admin endpoints to create new job and deploy project with variables
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
-    And a project with a paas file using extends
+    And the project has a complete paas file using extends
     And the project has these persisted variables:
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
@@ -989,6 +989,244 @@ Feature: API admin endpoints to create new job and deploy project with variables
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
+    And the project has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field                             | value                   |
+      | envName                           | prod                    |
+      | variables.0.name                  | FOO                     |
+      | variables.0.value                 | BAR                     |
+      | variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
+      | variables.SERVER_SCRIPT.secret    | 1                       |
+      | variables.SERVER_SCRIPT.persisted | 1                       |
+      | variables.1.name                  | hello                   |
+      | variables.1.value                 | world                   |
+      | variables.1.secret                | 1                       |
+      | variables.1.persisted             | 1                       |
+      | variables.2.name                  | world                   |
+      | variables.2.value                 | hello                   |
+      | variables.2.secret                | 0                       |
+      | variables.2.persisted             | 1                       |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+      | x   | hello         | 1      | world                   | prod        |
+      | x   | world         | 0      | hello                   | prod        |
+
+  Scenario: From the API, as Admin, execute a job from a project, with project's variables, prefix, a valid paas
+  file, using conditions via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using conditions
+    And the project has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+      | bbb | PHP_VERSION   | 1      | 7.4                  | prod        |
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field                             | value                   |
+      | envName                           | prod                    |
+      | variables.0.name                  | FOO                     |
+      | variables.0.value                 | BAR                     |
+      | variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
+      | variables.SERVER_SCRIPT.secret    | 1                       |
+      | variables.SERVER_SCRIPT.persisted | 1                       |
+      | variables.1.name                  | hello                   |
+      | variables.1.value                 | world                   |
+      | variables.1.secret                | 1                       |
+      | variables.1.persisted             | 1                       |
+      | variables.2.name                  | world                   |
+      | variables.2.value                 | hello                   |
+      | variables.2.secret                | 0                       |
+      | variables.2.persisted             | 1                       |
+      | variables.3.name                  | ENV                     |
+      | variables.3.value                 | prod                    |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+      | bbb | PHP_VERSION   | 1      | 7.4                     | prod        |
+      | x   | hello         | 1      | world                   | prod        |
+      | x   | world         | 0      | hello                   | prod        |
+
+  Scenario: From the API, as Admin, execute a job from a project, with project's variables, prefix, a valid paas file,
+  using conditions encrypted messages between workers, via a request with a json body
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using conditions
+    And the project has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+      | bbb | PHP_VERSION   | 1      | 7.4                  | prod        |
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field                             | value                   |
+      | envName                           | prod                    |
+      | variables.0.name                  | FOO                     |
+      | variables.0.value                 | BAR                     |
+      | variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
+      | variables.SERVER_SCRIPT.secret    | 1                       |
+      | variables.SERVER_SCRIPT.persisted | 1                       |
+      | variables.1.name                  | hello                   |
+      | variables.1.value                 | world                   |
+      | variables.1.secret                | 1                       |
+      | variables.1.persisted             | 1                       |
+      | variables.2.name                  | world                   |
+      | variables.2.value                 | hello                   |
+      | variables.2.secret                | 0                       |
+      | variables.2.persisted             | 1                       |
+      | variables.3.name                  | ENV                     |
+      | variables.3.value                 | prod                    |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+      | bbb | PHP_VERSION   | 1      | 7.4                     | prod        |
+      | x   | hello         | 1      | world                   | prod        |
+      | x   | world         | 0      | hello                   | prod        |
+
+  Scenario: From the API, as Admin, execute a job from a project, with project's variables, prefix, a valid paas file,
+  jobs via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with jobs
+    And the project has these persisted variables:
+      | id  | name          | secret | value                | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field                             | value                   |
+      | envName                           | prod                    |
+      | variables.0.name                  | FOO                     |
+      | variables.0.value                 | BAR                     |
+      | variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
+      | variables.SERVER_SCRIPT.secret    | 1                       |
+      | variables.SERVER_SCRIPT.persisted | 1                       |
+      | variables.1.name                  | hello                   |
+      | variables.1.value                 | world                   |
+      | variables.1.secret                | 1                       |
+      | variables.1.persisted             | 1                       |
+      | variables.2.name                  | world                   |
+      | variables.2.value                 | hello                   |
+      | variables.2.secret                | 0                       |
+      | variables.2.persisted             | 1                       |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Then the project must have these persisted variables
+      | id  | name          | secret | value                   | environment |
+      | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
+      | x   | hello         | 1      | world                   | prod        |
+      | x   | world         | 0      | hello                   | prod        |
+
+  Scenario: From the API, as Admin, execute a job from a project, with project's variables, prefix, a valid paas file,
+  jobs encrypted messages between workers, via a request with a json body
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with jobs
     And the project has these persisted variables:
       | id  | name          | secret | value                | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/foo.php | prod        |

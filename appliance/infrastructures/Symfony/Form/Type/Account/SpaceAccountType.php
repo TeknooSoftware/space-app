@@ -57,7 +57,7 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
                 'accountData',
                 AccountDataType::class,
                 [
-                    'can_update_subscription' => false,
+                    'canUpdateSubscription' => false,
                 ]
             );
         }
@@ -108,6 +108,7 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
         $resolver->setAllowedTypes('doctrine_type', 'string');
         $resolver->setAllowedTypes('clusterCatalog', [ClusterCatalog::class, 'null']);
         $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, 'null']);
+        $resolver->setAllowedTypes('enableEnvManagement', ['null', 'bool']);
 
         return $this;
     }
