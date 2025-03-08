@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.1.0-beta3] - 2025-03-08
+### Beta Version
+- Add status label on jobs list and job view to help developpers to know status.
+
 ## [1.1.0-beta2] - 2025-03-08
 ### Beta Version
 - Fix issues in Kubernetes Pods Transcriber to not define ports when it is empty
