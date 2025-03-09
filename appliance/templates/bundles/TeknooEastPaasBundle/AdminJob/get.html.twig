@@ -5,7 +5,7 @@
 {% macro displayJobHistory(history) %}
     <tr>
         <td class="col-1">{{ history.date|date('Y-m-d H:i:s') }}</td>
-        <td class="col-10">{{ history.getMessage }}</td>
+        <td class="col-10">{{ history.message }}</td>
         <td class="col-1">{% if history.isFinal %}{{ 'teknoo.space.text.job_yes'|trans }}{% endif %}</td>
     </tr>
     {% if history.extra is not empty %}
@@ -98,6 +98,23 @@
             </div>
         </div>{# end col #}
         <div class="col-9">
+            {% set lastHistory = jobInstance.history %}
+            {% if lastHistory is empty %}
+                <div class="alert alert-secondary" role="alert">{{ 'teknoo.space.text.admin_job_not_started'|trans }}</div>
+            {% else %}
+                {% if lastHistory.isFinal == false %}
+                    <div class="alert alert-info" role="alert">{{ 'teknoo.space.text.admin_job_not_finished'|trans }}</div>
+                {% else %}
+                    {% if
+                        'Teknoo\\East\\Paas\\Contracts\\Recipe\\Step\\Job\\DispatchResultInterface' == lastHistory.message
+                        and [] == lastHistory.extra.result
+                    %}
+                        <div class="alert alert-primary" role="alert">{{ 'teknoo.space.text.admin_job_success'|trans }}</div>
+                    {% else %}
+                        <div class="alert alert-danger" role="alert">{{ 'teknoo.space.text.admin_job_failed'|trans }}</div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
             <div class="table-responsive bg-white shadow rounded">
                 <table class="table table-fixed mb-0 table-center">
                     {% block listTableHeader %}
