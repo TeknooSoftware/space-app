@@ -1,5 +1,116 @@
 # Teknoo Software - Space - Change Log
 
+## [1.1.0-rc1] - 2025-03-09
+### RC Version
+- Update libraries:
+  - Illuminate libraries 11.42
+  - Symfony 7.2.2
+  - Doctrine
+  - Omines Oauth2
+  - Teknoo States, Recipe and East Foundation
+  - Teknoo East PaaS 4.3
+    - PaaS version update to `1.1`
+    - Fix issues when different pods use same volumes' names
+    - For persisted volumes, add `name` option to allow pods to share persistent volume
+    - Always for persisted volumes, add `write-many` to allow concurrent writting (else only concurrent reading is allowed).
+        - By Default, only if `write-many` is not set, the value is set to false when pod's replicas it's set to 1,
+          else `write-many`'s default value is at true.
+    - Fix issues in Kubernetes Pods Transcriber to not define ports when it is empty.
+    - Add `restart-policy` to pod, with theses available values : `always`, `never` and `on-failure`. For `pods`, this entry
+      is optional, and by default is at null. For job's pods, the default value is `never`.
+  - PHPUnit 12
+- Support of PHP 8.4
+- Rename `Managed Cluster` as `Managed Environment`
+- Rename `Plan` to `SubscriptionPlan`
+- Add `Account Cluster` (with `AccountCluster` object, loader and writer, API endpoints, Web UI ) to allow users to
+  register theirs owns (Kubernetes) clusters like defined clusters in the space configuration. Users can create
+  `Accounts Environments` on these clusters, to be used as `Managed Environment`.
+- Migrate `ClusterCatalog` to ingredient into cookbooks and recipes instead of constructors arguments to allow update
+  it with account's clusters
+  - `Teknoo\Space\Object\Config\Cluster` has a new property `isExternal`
+    - If it is at `false`, the cluster is defined in the `Space` configuration
+    - If it is at `true`, the cluster come from an `Account Cluster`
+- Rename `$catalog` variables to `$clusterCatalog`
+- Improve error response on API endpoints
+- Add support of `Job` and cronjob:
+
+
+    #Job
+    jobs:
+          <job-name>:
+              pods: #mandatory, one or several pods. Keep the same syntax like pods
+                  <pod name>: 
+                       <pod definition>
+              extends: <name> #optional to extends a job from the library
+              completions: #optional
+                  mode: common or indexed #similar to indexed completion in kubernetes
+                  count: 3 #to launch 3 jobs
+                  time-limit: 10 #time limit in second to set timeout the job (not a pod, but all pods)
+                  success-on: [0, 4] #list of exit int status for a successful job
+                  fail-on: [0, 4] #list of exit int status for a failed job
+                  limit-on: nameof container to listen
+              is-parallel: true #To launch 3*2 pods in parallel or sequential
+              planning: during-deployment or scheduled
+              schedule: 'crontab syntax' only if planning is set to 'scheduled'
+
+- Support conditions in `*.paas.yaml`. Conditions can be used in anywhere in the file, expected scalar value.
+    - The pattern is `if{<VARIABLE_NAME><OPERAND><EXPECTED VALUE>}`
+        - With `<VARIABLE_NAME>` is a name of a variable passed to the job at its creation
+        - `<OPERAND>` must be one of these :
+            - `=`
+            - `!=`
+            - `<`
+            - `>`
+            - `<=`
+            - `>=`
+            - `is empty`
+            - `isnot empty`
+            - `is null`
+            - `isnot null`
+        - `<EXPECTED VALUE>` any value, can be wrapped by `"` but is not mandatory
+    - If the condition is validated, all nodes under the condition will be merged with the parent node, else nodes will
+      be dropped.
+    - Nested conditions are allowed
+        - Example:
+
+
+      paas: #Dedicated to compiler
+        version: v1
+        requires:
+          - set1
+    
+      #Defaults
+      defaults:
+        storage-provider: foo
+    
+      if{ENV=prod}:
+        paas: #Dedicated to compiler
+          version: v1.22
+          quotas:
+            -   category: compute
+                type: cpu
+                capacity: 3
+                requires: 4
+                if{PROVIDER=AWS}:
+                  capacity: 2
+                  requires: 1
+
+- Fix ACL errors on subscribing user
+- Fix issue in project editing vars in non executable project
+- Fix error when Project is not fully completed and it is runned or with last Doctrine version
+- Improve and fixes Behat tests
+- Fix memory leaks in Behat
+- Enable parallel tests in Behat
+- Rewrite Behat features and scenario to be more understable
+- Add status label on jobs list and job view to help developpers to know status.
+- Update docker dev images : Update to PHP8.4 and RabbitMq 4. Fix compose.yml
+- Fix issues in Kubernetes Pods Transcriber to not define ports when it is empty
+- Add `restart-policy` to pod, with theses available values : `always`, `never` and `on-failure`. For `pods`, this entry
+  is optional, and by default is at null. For job's pods, the default value is `never`
+- Fix `write-many` behavior, by default it is at false when replica is to one, else it set to true. The defined value by
+  developpers is always kept and used by PaaS.
+- Improve Form options validation
+
 ## [1.1.0-beta3] - 2025-03-08
 ### Beta Version
 - Add status label on jobs list and job view to help developpers to know status. 
