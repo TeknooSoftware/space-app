@@ -121,6 +121,10 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_healthy
+            blackfire:
+                condition: service_started
+            mercure:
+                condition: service_started
     cli_new_job:
         build:
             context: build.dev/php-cli
@@ -156,6 +160,8 @@ services:
                 condition: service_healthy
             amqp:
                 condition: service_healthy
+            mercure:
+                condition: service_started
     cli_job_done:
         build:
             context: build.dev/php-cli
@@ -252,6 +258,11 @@ services:
             retries: 5
             start_period: 240s
             timeout: 1s
+        depends_on:
+            db:
+                condition: service_healthy
+            amqp:
+                condition: service_healthy
     httpd:
         build:
             context: build.dev/httpd
