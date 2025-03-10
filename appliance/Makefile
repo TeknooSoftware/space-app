@@ -123,7 +123,7 @@ test: 		## Run tests in $NB_THREADS threads (units tests and behavior tests, wit
 	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat -l ${NB_THREADS} --colors
+	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --parallel-feature ${NB_THREADS} --colors
 	rm -rf var/cache/test
 
 test-mono-thread : 	  ## Run tests in a mono thread (units tests and behavior tests, with a code coverage) to check if the installation can work properly
