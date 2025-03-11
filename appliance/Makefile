@@ -15,7 +15,7 @@ MAKEFLAGS += --no-print-directory
 .PHONY: config create-admin extension-list extension-enable extension-disable
 .PHONY: build start stop restart
 .PHONY: qa qa-offline lint phpstan phpcs audit
-.PHONY: test test-mono-thread test-without-coverage
+.PHONY: test test-mono-thread test-without-coverage all
 .PHONY: clean warmup
 
 ##Teknoo Space
@@ -95,9 +95,11 @@ restart: stop start
 ### QA:
 qa: 		## Run a set of quality tests, to detect bugs, securities or qualities issues
 qa: lint phpstan phpcs audit
+	@echo "QA successful !"
 
 qa-offline:	## Run a set of quality tests, without audit, in offline, to detect bugs, securities or qualities issues
 qa-offline: lint phpstan phpcs
+	@echo "QA successful !"
 
 lint: 		## To detect error in PHP file causing compilation errors
 	find ./src -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
@@ -125,6 +127,7 @@ test: 		## Run tests in $NB_THREADS threads (units tests and behavior tests, wit
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --parallel-feature ${NB_THREADS} --colors
 	rm -rf var/cache/test
+	@echo "Tests successful !"
 
 test-mono-thread : 	  ## Run tests in a mono thread (units tests and behavior tests, with a code coverage) to check if the installation can work properly
 	rm -rf var/cache/test
@@ -133,6 +136,7 @@ test-mono-thread : 	  ## Run tests in a mono thread (units tests and behavior te
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --colors
 	rm -rf var/cache/test
+	@echo "Tests successful !"
 
 test-without-coverage: ## Run tests in $NB_THREADS threads (units tests and behavior tests without a code coverage)
 	rm -rf var/cache/test
@@ -141,6 +145,10 @@ test-without-coverage: ## Run tests in $NB_THREADS threads (units tests and beha
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
 	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat -l ${NB_THREADS} --colors
 	rm -rf var/cache/test
+	@echo "Tests successful !"
+
+all: ## Run QA and all tests
+all: qa test
 
 ##
 ### Cleaning:
