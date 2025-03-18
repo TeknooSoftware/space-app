@@ -9,9 +9,9 @@
         <id type="string" strategy="UUID"/>
         <field field-name="projectUrl" name="project_url" type="string" nullable="false"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
-        <field field-name="updatedAt" name="updated_at" type="date" />
+        <field field-name="updatedAt" name="updated_at" type="date"/>
         <reference-one field="project" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project">
-            <cascade />
+            <cascade/>
         </reference-one>
     </document>
 </doctrine-mongo-mapping>

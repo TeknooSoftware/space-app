@@ -12,11 +12,14 @@
         <field field-name="registryConfigName" name="registry_config_name" type="string" nullable="false"/>
         <field field-name="registryAccountName" name="registry_account_name" type="string" nullable="false"/>
         <field field-name="registryPassword" name="registry_password" type="string" nullable="false"/>
-        <field field-name="persistentVolumeClaimName" name="persistent_volume_claim_name" type="string" nullable="false"/>
+        <field field-name="persistentVolumeClaimName"
+               name="persistent_volume_claim_name"
+               type="string"
+               nullable="false"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
-        <field field-name="updatedAt" name="updated_at" type="date" />
+        <field field-name="updatedAt" name="updated_at" type="date"/>
         <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">
-            <cascade />
+            <cascade/>
         </reference-one>
     </document>
 </doctrine-mongo-mapping>

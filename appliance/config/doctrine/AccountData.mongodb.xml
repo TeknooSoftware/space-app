@@ -8,7 +8,7 @@
     <document name="Teknoo\Space\Object\Persisted\AccountData" collection="accounts_data">
         <id type="string" strategy="UUID"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
-        <field field-name="updatedAt" name="updated_at" type="date" />
+        <field field-name="updatedAt" name="updated_at" type="date"/>
         <field field-name="legalName" name="legal_name" type="string" nullable="false"/>
         <field field-name="streetAddress" name="street_address" type="string" nullable="false"/>
         <field field-name="zipCode" name="zip_code" type="string" nullable="false"/>
@@ -17,7 +17,7 @@
         <field field-name="vatNumber" name="vat_number" type="string" nullable="false"/>
         <field field-name="subscriptionPlan" name="subscription_plan" type="string" nullable="true"/>
         <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">
-            <cascade />
+            <cascade/>
         </reference-one>
     </document>
 </doctrine-mongo-mapping>

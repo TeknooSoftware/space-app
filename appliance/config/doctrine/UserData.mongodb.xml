@@ -8,9 +8,9 @@
     <document name="Teknoo\Space\Object\Persisted\UserData" collection="users_data">
         <id type="string" strategy="UUID"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
-        <field field-name="updatedAt" name="updated_at" type="date" />
+        <field field-name="updatedAt" name="updated_at" type="date"/>
         <reference-one field="user" target-document="Teknoo\East\Common\Object\User">
-            <cascade />
+            <cascade/>
         </reference-one>
         <reference-one field="picture" target-document="Teknoo\East\Common\Doctrine\Object\Media">
             <cascade>
