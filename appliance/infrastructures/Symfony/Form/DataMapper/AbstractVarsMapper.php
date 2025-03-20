@@ -48,18 +48,18 @@ use function ksort;
 abstract class AbstractVarsMapper implements DataMapperInterface
 {
     /**
-     * @param SpaceAccount|SpaceProject|null $data
+     * @param SpaceAccount|SpaceProject|null $viewData
      * @param Traversable<string, FormInterface> $forms
      */
-    public function mapDataToForms($data, $forms): void
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
-        if (!$data instanceof SpaceAccount && !$data instanceof SpaceProject) {
+        if (!$viewData instanceof SpaceAccount && !$viewData instanceof SpaceProject) {
             return;
         }
 
         $environments = [];
         $varsSet = [];
-        foreach ($data->variables as $variable) {
+        foreach ($viewData->variables as $variable) {
             $envName = $variable->getEnvName();
             if (!isset($environments[$envName])) {
                 $environments[$envName] = new JobVarsSet($envName);
@@ -104,16 +104,16 @@ abstract class AbstractVarsMapper implements DataMapperInterface
     ): AccountPersistedVariable|ProjectPersistedVariable;
 
     /**
-     * @param SpaceAccount|SpaceProject|null $data
+     * @param SpaceAccount|SpaceProject|null $viewData
      */
-    public function mapFormsToData($forms, &$data): void
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
     {
-        if (!$data instanceof SpaceAccount && !$data instanceof SpaceProject) {
+        if (!$viewData instanceof SpaceAccount && !$viewData instanceof SpaceProject) {
             return;
         }
 
         $existentVariables = [];
-        foreach ($data->variables as $variable) {
+        foreach ($viewData->variables as $variable) {
             $existentVariables[$variable->getId()] = $variable;
         }
 
@@ -145,7 +145,7 @@ abstract class AbstractVarsMapper implements DataMapperInterface
                 }
 
                 $variables[] = $this->buildVariable(
-                    parent: $data,
+                    parent: $viewData,
                     id: $variable->getId(),
                     name: $variable->name,
                     value: $value,
@@ -163,6 +163,6 @@ abstract class AbstractVarsMapper implements DataMapperInterface
             }
         }
 
-        $data->variables = $variables;
+        $viewData->variables = $variables;
     }
 }
