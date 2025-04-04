@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.6] - 2025-01-07
+### Stable Version
+- Require Twig 3.20 to avoid CVE
+
 ## [1.0.5] - 2025-01-07
 ### Stable Version
 - Upgrading to Symfony 7.2.2
