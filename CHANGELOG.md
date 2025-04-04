@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [1.0.6] - 2025-01-07
+### Stable Version
+- Require Twig 3.20 to avoid CVE
+
 ## [1.1.0-rc2] - 2025-04-04
 ### RC Version
 - Update libraries:
