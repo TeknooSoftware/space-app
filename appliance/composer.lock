@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "15833fa7f1838749d07e86fb1ff0d9f8",
+    "content-hash": "543ff79dbb4f1470430bbdbebec6d9cb",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -791,16 +791,16 @@
         },
         {
             "name": "doctrine/mongodb-odm",
-            "version": "2.10.2",
+            "version": "2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "8fdc94f30b3ba97ac84aed821e0a9ea10ab03586"
+                "reference": "4cc52c287b1c3cfccdedc4e3a8d8e71223334a1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/8fdc94f30b3ba97ac84aed821e0a9ea10ab03586",
-                "reference": "8fdc94f30b3ba97ac84aed821e0a9ea10ab03586",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/4cc52c287b1c3cfccdedc4e3a8d8e71223334a1b",
+                "reference": "4cc52c287b1c3cfccdedc4e3a8d8e71223334a1b",
                 "shasum": ""
             },
             "require": {
@@ -809,10 +809,10 @@
                 "doctrine/event-manager": "^1.0 || ^2.0",
                 "doctrine/instantiator": "^1.1 || ^2",
                 "doctrine/persistence": "^3.2 || ^4",
-                "ext-mongodb": "^1.17",
+                "ext-mongodb": "^1.21 || ^2.0",
                 "friendsofphp/proxy-manager-lts": "^1.0",
                 "jean85/pretty-package-versions": "^1.3.0 || ^2.0.1",
-                "mongodb/mongodb": "^1.17.0",
+                "mongodb/mongodb": "^1.21 || ^2.0@dev",
                 "php": "^8.1",
                 "psr/cache": "^1.0 || ^2.0 || ^3.0",
                 "symfony/console": "^5.4 || ^6.0 || ^7.0",
@@ -885,7 +885,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/mongodb-odm/issues",
-                "source": "https://github.com/doctrine/mongodb-odm/tree/2.10.2"
+                "source": "https://github.com/doctrine/mongodb-odm/tree/2.11.0"
             },
             "funding": [
                 {
@@ -901,27 +901,27 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-03-19T20:18:28+00:00"
+            "time": "2025-04-08T10:14:13+00:00"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
-            "version": "5.2.1",
+            "version": "5.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoDBBundle.git",
-                "reference": "e7510b4276232632c029d5015f0f250bfaddb748"
+                "reference": "e0a1b4342fb5f82abceef0098302b398ec2f67d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/e7510b4276232632c029d5015f0f250bfaddb748",
-                "reference": "e7510b4276232632c029d5015f0f250bfaddb748",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/e0a1b4342fb5f82abceef0098302b398ec2f67d7",
+                "reference": "e0a1b4342fb5f82abceef0098302b398ec2f67d7",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.0",
                 "doctrine/mongodb-odm": "^2.6",
-                "doctrine/persistence": "^3.0",
-                "ext-mongodb": "^1.16",
+                "doctrine/persistence": "^3.0 || ^4.0",
+                "ext-mongodb": "^1.16 || ^2",
                 "php": "^8.1",
                 "psr/log": "^1.0 || ^2.0 || ^3.0",
                 "symfony/config": "^6.4 || ^7.0",
@@ -985,27 +985,27 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineMongoDBBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.2.1"
+                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.3.0"
             },
-            "time": "2025-03-21T14:35:28+00:00"
+            "time": "2025-04-08T16:32:24+00:00"
         },
         {
             "name": "doctrine/persistence",
-            "version": "3.4.0",
+            "version": "4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/persistence.git",
-                "reference": "0ea965320cec355dba75031c1b23d4c78362e3ff"
+                "reference": "45004aca79189474f113cbe3a53847c2115a55fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/persistence/zipball/0ea965320cec355dba75031c1b23d4c78362e3ff",
-                "reference": "0ea965320cec355dba75031c1b23d4c78362e3ff",
+                "url": "https://api.github.com/repos/doctrine/persistence/zipball/45004aca79189474f113cbe3a53847c2115a55fa",
+                "reference": "45004aca79189474f113cbe3a53847c2115a55fa",
                 "shasum": ""
             },
             "require": {
                 "doctrine/event-manager": "^1 || ^2",
-                "php": "^7.2 || ^8.0",
+                "php": "^8.1",
                 "psr/cache": "^1.0 || ^2.0 || ^3.0"
             },
             "conflict": {
@@ -1013,11 +1013,10 @@
             },
             "require-dev": {
                 "doctrine/coding-standard": "^12",
-                "doctrine/common": "^3.0",
                 "phpstan/phpstan": "1.12.7",
                 "phpstan/phpstan-phpunit": "^1",
                 "phpstan/phpstan-strict-rules": "^1.1",
-                "phpunit/phpunit": "^8.5.38 || ^9.5",
+                "phpunit/phpunit": "^9.6",
                 "symfony/cache": "^4.4 || ^5.4 || ^6.0 || ^7.0"
             },
             "type": "library",
@@ -1067,7 +1066,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/persistence/issues",
-                "source": "https://github.com/doctrine/persistence/tree/3.4.0"
+                "source": "https://github.com/doctrine/persistence/tree/4.0.0"
             },
             "funding": [
                 {
@@ -1083,7 +1082,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-10-30T19:48:12+00:00"
+            "time": "2024-11-01T21:49:07+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -1633,16 +1632,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v12.7.2",
+            "version": "v12.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "f1d8ae882c014673b1f7bedab6435989553776e3"
+                "reference": "c4b1d5b0237f036821ec05a35073bd497f28cc75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/f1d8ae882c014673b1f7bedab6435989553776e3",
-                "reference": "f1d8ae882c014673b1f7bedab6435989553776e3",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/c4b1d5b0237f036821ec05a35073bd497f28cc75",
+                "reference": "c4b1d5b0237f036821ec05a35073bd497f28cc75",
                 "shasum": ""
             },
             "require": {
@@ -1652,6 +1651,7 @@
                 "php": "^8.2"
             },
             "suggest": {
+                "illuminate/http": "Required to convert collections to API resources (^12.0).",
                 "symfony/var-dumper": "Required to use the dump method (^7.2)."
             },
             "type": "library",
@@ -1685,11 +1685,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-04-03T17:58:47+00:00"
+            "time": "2025-04-08T19:48:08+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v12.7.2",
+            "version": "v12.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1735,7 +1735,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v12.7.2",
+            "version": "v12.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1783,7 +1783,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v12.7.2",
+            "version": "v12.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -13533,12 +13533,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "975c081c7e430d0316a94047e5d8ab26e0a8f49e"
+                "reference": "3a9fedb6eaaa962e76b776b9de7c5fc7f1c432df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/975c081c7e430d0316a94047e5d8ab26e0a8f49e",
-                "reference": "975c081c7e430d0316a94047e5d8ab26e0a8f49e",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/3a9fedb6eaaa962e76b776b9de7c5fc7f1c432df",
+                "reference": "3a9fedb6eaaa962e76b776b9de7c5fc7f1c432df",
                 "shasum": ""
             },
             "conflict": {
@@ -13567,8 +13567,8 @@
                 "andrewhaine/silverstripe-form-capture": ">=0.2,<=0.2.3|>=1,<1.0.2|>=2,<2.2.5",
                 "apache-solr-for-typo3/solr": "<2.8.3",
                 "apereo/phpcas": "<1.6",
-                "api-platform/core": "<4.0.22",
-                "api-platform/graphql": "<4.0.22",
+                "api-platform/core": "<3.4.17|>=4.0.0.0-alpha1,<4.0.22",
+                "api-platform/graphql": "<3.4.17|>=4.0.0.0-alpha1,<4.0.22",
                 "appwrite/server-ce": "<=1.2.1",
                 "arc/web": "<3",
                 "area17/twill": "<1.2.5|>=2,<2.5.3",
@@ -14051,7 +14051,7 @@
                 "phpxmlrpc/extras": "<0.6.1",
                 "phpxmlrpc/phpxmlrpc": "<4.9.2",
                 "pi/pi": "<=2.5",
-                "pimcore/admin-ui-classic-bundle": "<1.7.4",
+                "pimcore/admin-ui-classic-bundle": "<1.7.6",
                 "pimcore/customer-management-framework-bundle": "<4.2.1",
                 "pimcore/data-hub": "<1.2.4",
                 "pimcore/data-importer": "<1.8.9|>=1.9,<1.9.3",
@@ -14116,8 +14116,8 @@
                 "serluck/phpwhois": "<=4.2.6",
                 "sfroemken/url_redirect": "<=1.2.1",
                 "sheng/yiicms": "<1.2.1",
-                "shopware/core": "<=6.5.8.12|>=6.6,<=6.6.5",
-                "shopware/platform": "<=6.5.8.12|>=6.6,<=6.6.5",
+                "shopware/core": "<6.5.8.17-dev|>=6.6,<6.6.10.3-dev|>=6.7.0.0-RC1-dev,<6.7.0.0-RC2-dev",
+                "shopware/platform": "<6.5.8.17-dev|>=6.6,<6.6.10.3-dev|>=6.7.0.0-RC1-dev,<6.7.0.0-RC2-dev",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<=5.7.17",
                 "shopware/storefront": "<=6.4.8.1|>=6.5.8,<6.5.8.7-dev",
@@ -14423,7 +14423,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-04T15:05:17+00:00"
+            "time": "2025-04-08T15:06:02+00:00"
         },
         {
             "name": "sebastian/cli-parser",

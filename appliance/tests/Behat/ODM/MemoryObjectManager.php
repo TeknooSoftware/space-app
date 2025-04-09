@@ -25,7 +25,10 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat\ODM;
 
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Mapping\ClassMetadataFactory;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Teknoo\Space\Tests\Behat\SpaceContext;
 
 /**
@@ -68,36 +71,40 @@ class MemoryObjectManager implements ObjectManager
     {
     }
 
-    public function detach($object)
+    public function detach($object): void
     {
     }
 
-    public function refresh($object)
+    public function refresh($object): void
     {
     }
 
-    public function flush()
+    public function flush(): void
     {
     }
 
-    public function getRepository($className)
+    public function getRepository($className): ObjectRepository
     {
         return ($this->getRepository)($className);
     }
 
-    public function getClassMetadata($className)
+    public function getClassMetadata($className): ClassMetadata
     {
     }
 
-    public function getMetadataFactory()
+    public function getMetadataFactory(): ClassMetadataFactory
     {
     }
 
-    public function initializeObject($obj)
+    public function initializeObject($obj): void
     {
     }
 
-    public function contains($object)
+    public function contains($object): bool
+    {
+    }
+
+    public function isUninitializedObject(mixed $value): bool
     {
     }
 }
