@@ -24,7 +24,7 @@
 declare(strict_types=1);
 
 use Teknoo\Space\App\Kernel;
-die('ok');
+
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return function (array $context) {
