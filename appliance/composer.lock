@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "93ccfab9a1068744d07eef6989f667ae",
+    "content-hash": "07840833a22ac1c5de61be5e5a1a3c8a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10771,16 +10771,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "3.5.1",
+            "version": "3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "c7ec6b0a90288d1c2b865fd48e20d915659e14f7"
+                "reference": "f046c66adce73f528f9b0f71d2a5aeca4287c474"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/c7ec6b0a90288d1c2b865fd48e20d915659e14f7",
-                "reference": "c7ec6b0a90288d1c2b865fd48e20d915659e14f7",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/f046c66adce73f528f9b0f71d2a5aeca4287c474",
+                "reference": "f046c66adce73f528f9b0f71d2a5aeca4287c474",
                 "shasum": ""
             },
             "require": {
@@ -10889,20 +10889,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-04-14T13:19:40+00:00"
+            "time": "2025-04-15T13:02:17+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "3.5.1",
+            "version": "3.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "aca9b77648d9e500bf746b3b6aec06163f3a0cb7"
+                "reference": "23128dce52a3ee964b93cd7e90189dd154523823"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/aca9b77648d9e500bf746b3b6aec06163f3a0cb7",
-                "reference": "aca9b77648d9e500bf746b3b6aec06163f3a0cb7",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/23128dce52a3ee964b93cd7e90189dd154523823",
+                "reference": "23128dce52a3ee964b93cd7e90189dd154523823",
                 "shasum": ""
             },
             "require": {
@@ -10926,7 +10926,7 @@
                 "symfony/validator": "^6.4||^7.2",
                 "symfony/yaml": "^6.4||^7.2",
                 "teknoo/bridge-phpdi-symfony": "^6.1.1",
-                "teknoo/east-common": "^3.5.1",
+                "teknoo/east-common": "^3.5.2",
                 "teknoo/east-foundation-symfony": "^8.0.4",
                 "teknoo/immutable": "^3.0.19",
                 "teknoo/recipe": "^6.0.3",
@@ -10977,7 +10977,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-04-14T13:20:19+00:00"
+            "time": "2025-04-15T13:02:58+00:00"
         },
         {
             "name": "teknoo/east-foundation",
