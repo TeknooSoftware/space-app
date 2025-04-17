@@ -932,7 +932,8 @@ EOF;
                         ]
                     }
                 },
-                "activeDeadlineSeconds": 10
+                "activeDeadlineSeconds": 10,
+                "ttlSecondsAfterFinished": 20
             }
         },
         {
@@ -977,7 +978,8 @@ EOF;
                         ]
                     }
                 },
-                "activeDeadlineSeconds": 10
+                "activeDeadlineSeconds": 10,
+                "ttlSecondsAfterFinished": 20
             }
         },
         {
@@ -1022,7 +1024,8 @@ EOF;
                         ]
                     }
                 },
-                "activeDeadlineSeconds": 10
+                "activeDeadlineSeconds": 10,
+                "ttlSecondsAfterFinished": 20
             }
         },
         {
@@ -1067,7 +1070,8 @@ EOF;
                         ]
                     }
                 },
-                "activeDeadlineSeconds": 10
+                "activeDeadlineSeconds": 10,
+                "ttlSecondsAfterFinished": 20
             }
         },
         {
@@ -1284,7 +1288,8 @@ EOF;
                                     }
                                 ]
                             }
-                        }
+                        },
+                        "ttlSecondsAfterFinished": 3600
                     }
                 }
             }

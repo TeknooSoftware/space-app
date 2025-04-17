@@ -29,6 +29,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
+use LogicException;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Doctrine\Object\Media as MediaODM;
 use Teknoo\East\Common\Object\StoredPassword;
@@ -1311,7 +1312,6 @@ trait PersistenceStepsTrait
     }
 
     #[Then('job must be successful finished')]
-    #[Then('job must be finished with an error about a timeout')]
     public function jobMustBeSuccessfulFinished(): void
     {
         $jobs = $this->listObjects(JobOrigin::class);
@@ -1325,6 +1325,54 @@ trait PersistenceStepsTrait
         Assert::assertEquals(
             DispatchResultInterface::class,
             $job->getHistory()->getMessage(),
+        );
+    }
+
+    #[Then('job must be finished with an error about a timeout')]
+    public function jobMustBeErrorAboutTimeout(): void
+    {
+        $jobs = $this->listObjects(JobOrigin::class);
+        Assert::assertNotEmpty($jobs);
+
+        /** @var JobOrigin $job */
+        $job = current($jobs);
+        Assert::assertInstanceOf(JobOrigin::class, $job);
+
+        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
+        Assert::assertEquals(
+            DispatchResultInterface::class,
+            ($history = $job->getHistory())->getMessage(),
+        );
+
+        Assert::assertStringContainsString(
+            "Error, time limit exceeded",
+            $history->getExtra()['result'][0] ?? '',
+        );
+    }
+
+    #[Then('job must be finished with an error about a :type allowed in v1')]
+    public function jobMustBeErrorAboutJobNotAllowedInV1(string $type): void
+    {
+        $jobs = $this->listObjects(JobOrigin::class);
+        Assert::assertNotEmpty($jobs);
+
+        /** @var JobOrigin $job */
+        $job = current($jobs);
+        Assert::assertInstanceOf(JobOrigin::class, $job);
+
+        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
+        Assert::assertEquals(
+            DispatchResultInterface::class,
+            ($history = $job->getHistory())->getMessage(),
+        );
+
+        Assert::assertStringContainsString(
+            match ($type) {
+                'job' => "jobs': This element is not expected",
+                'conditions' => "if{ENV=prod}' is not a valid value of the atomic type",
+                default => throw new LogicException('Unknown type in test'),
+            },
+            $history->getExtra()['result'][0] ?? '',
         );
     }
 

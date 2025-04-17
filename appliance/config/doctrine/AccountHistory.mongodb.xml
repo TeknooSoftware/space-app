@@ -8,10 +8,10 @@
     <document name="Teknoo\Space\Object\Persisted\AccountHistory" collection="accounts_histories">
         <id type="string" strategy="UUID"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
-        <field field-name="updatedAt" name="updated_at" type="date" />
-        <embed-one field="history" target-document="Teknoo\East\Paas\Object\History" nullable="true" />
+        <field field-name="updatedAt" name="updated_at" type="date"/>
+        <embed-one field="history" target-document="Teknoo\East\Paas\Object\History" nullable="true"/>
         <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">
-            <cascade />
+            <cascade/>
         </reference-one>
     </document>
 </doctrine-mongo-mapping>

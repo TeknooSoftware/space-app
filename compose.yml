@@ -50,7 +50,7 @@ services:
         build:
             context: ./build.dev/rabbitmq
         ports:
-            - 8080:8080
+            - 15672:15672
             - 5672:5672
         environment:
             RABBITMQ_USERNAME: space
@@ -137,7 +137,7 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
-        command: ["bin/console", "messenger:consume", "new_job"]
+        command: ["bin/console", "messenger:consume", "-vv", "new_job"]
         environment:
             - MONGODB_NAME=teknoo_space
             - SPACE_CLUSTER_ISSUER=lets-encrypt
@@ -173,7 +173,7 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
-        command: ["bin/console", "messenger:consume", "job_done"]
+        command: ["bin/console", "messenger:consume", "-vv", "job_done"]
         environment:
             - MONGODB_NAME=teknoo_space
             - SPACE_HOSTNAME=localhost
@@ -206,7 +206,7 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
-        command: ["bin/console", "messenger:consume", "history_sent"]
+        command: ["bin/console", "messenger:consume", "-vv", "history_sent"]
         environment:
             - MONGODB_NAME=teknoo_space
             - SPACE_HOSTNAME=localhost
@@ -237,7 +237,7 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
-        command: ["bin/console", "messenger:consume", "execute_job"]
+        command: ["bin/console", "messenger:consume", "-vv", "execute_job"]
         environment:
             - SPACE_HOSTNAME=localhost
             - SPACE_JOB_ROOT=/tmp
