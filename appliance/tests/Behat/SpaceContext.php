@@ -434,10 +434,25 @@ class SpaceContext implements Context
         $this->quotasMode = '';
     }
 
+    #[Given('the project has a complete paas file using conditions with wrong version')]
+    public function aProjectWithAPaasFileUsingConditionsWithWrongVersion(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithConditions/paas.wrong-version.yaml';
+        $this->quotasMode = '';
+    }
+
     #[Given('the project has a complete paas file with jobs')]
     public function aProjectWithAPaasFileWithJobs(): void
     {
         $this->paasFile = __DIR__ . '/Project/WithJobs/paas.yaml';
+        $this->quotasMode = '';
+        $this->jobsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file with jobs with wrong version')]
+    public function aProjectWithAPaasFileWithJobsWithWrongVersion(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithJobs/paas.wrong-version.yaml';
         $this->quotasMode = '';
         $this->jobsEnabled = true;
     }
