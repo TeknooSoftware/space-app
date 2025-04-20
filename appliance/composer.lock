@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "648399972129e9ad81014b12e199b9a0",
+    "content-hash": "94fde17a6b8d43520e7f317286ea4b60",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4743,16 +4743,16 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.7.1",
+            "version": "v7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
-                "reference": "f52e912460ba9fc6af4b451962176ce68146f456"
+                "reference": "62c6099b179903db5ab03b8059068cdb28659294"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/f52e912460ba9fc6af4b451962176ce68146f456",
-                "reference": "f52e912460ba9fc6af4b451962176ce68146f456",
+                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/62c6099b179903db5ab03b8059068cdb28659294",
+                "reference": "62c6099b179903db5ab03b8059068cdb28659294",
                 "shasum": ""
             },
             "require": {
@@ -4786,22 +4786,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.7.1"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.9.0"
             },
-            "time": "2025-03-20T08:56:30+00:00"
+            "time": "2025-04-20T08:27:40+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.7.1",
+            "version": "v7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "9b241074d140c54e0f81742bc089edd8a0efd62b"
+                "reference": "793acc8e9c5f78989d23489205afa6e852c9982b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/9b241074d140c54e0f81742bc089edd8a0efd62b",
-                "reference": "9b241074d140c54e0f81742bc089edd8a0efd62b",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/793acc8e9c5f78989d23489205afa6e852c9982b",
+                "reference": "793acc8e9c5f78989d23489205afa6e852c9982b",
                 "shasum": ""
             },
             "require": {
@@ -4854,22 +4854,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.7.1"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.9.0"
             },
-            "time": "2025-03-24T10:50:27+00:00"
+            "time": "2025-04-20T11:32:24+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v7.7.1",
+            "version": "v7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
-                "reference": "1d67aa4585c706046c7bedef3c6955d85664364c"
+                "reference": "01a446eb68a76c3d0528a190029afa5e6ce5c384"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/1d67aa4585c706046c7bedef3c6955d85664364c",
-                "reference": "1d67aa4585c706046c7bedef3c6955d85664364c",
+                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/01a446eb68a76c3d0528a190029afa5e6ce5c384",
+                "reference": "01a446eb68a76c3d0528a190029afa5e6ce5c384",
                 "shasum": ""
             },
             "require": {
@@ -4904,22 +4904,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.7.1"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.9.0"
             },
-            "time": "2025-03-20T08:56:30+00:00"
+            "time": "2025-04-20T08:38:44+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.7.1",
+            "version": "v7.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
-                "reference": "11155ba1333b3ee6c4f105c6d8172a39c8e277d9"
+                "reference": "cfc7b00eb4a068d8adac71d3f2727b8a24a4f27d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/11155ba1333b3ee6c4f105c6d8172a39c8e277d9",
-                "reference": "11155ba1333b3ee6c4f105c6d8172a39c8e277d9",
+                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/cfc7b00eb4a068d8adac71d3f2727b8a24a4f27d",
+                "reference": "cfc7b00eb4a068d8adac71d3f2727b8a24a4f27d",
                 "shasum": ""
             },
             "require": {
@@ -4954,9 +4954,9 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.7.1"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.9.0"
             },
-            "time": "2025-03-20T08:56:30+00:00"
+            "time": "2025-04-20T08:38:44+00:00"
         },
         {
             "name": "spomky-labs/otphp",
@@ -13534,12 +13534,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "508576e5d70b881870043c666e3e4081b474d23f"
+                "reference": "6c54d20ae795b83ecf3f826311d7f488cd1ef005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/508576e5d70b881870043c666e3e4081b474d23f",
-                "reference": "508576e5d70b881870043c666e3e4081b474d23f",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6c54d20ae795b83ecf3f826311d7f488cd1ef005",
+                "reference": "6c54d20ae795b83ecf3f826311d7f488cd1ef005",
                 "shasum": ""
             },
             "conflict": {
@@ -14046,6 +14046,7 @@
                 "pear/archive_tar": "<1.4.14",
                 "pear/auth": "<1.2.4",
                 "pear/crypt_gpg": "<1.6.7",
+                "pear/http_request2": "<2.7",
                 "pear/pear": "<=1.10.1",
                 "pegasus/google-for-jobs": "<1.5.1|>=2,<2.1.1",
                 "personnummer/personnummer": "<3.0.2",
@@ -14452,7 +14453,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-14T20:05:54+00:00"
+            "time": "2025-04-17T15:05:22+00:00"
         },
         {
             "name": "sebastian/cli-parser",
