@@ -97,7 +97,7 @@
         "teknoo/east-common-symfony": "^3.5.2",
         "teknoo/east-foundation-symfony": "^8.0.4",
         "teknoo/east-paas-symfony": "^4.4.0",
-        "teknoo/immutable": "^3.0.19",
+        "teknoo/immutable": "^3.0.20",
         "teknoo/kubernetes-client": "^1.7.3",
         "teknoo/recipe": "^6.0.3",
         "teknoo/states": "^6.4.3",
