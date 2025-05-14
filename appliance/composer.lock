@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25ca679a703eb7c5bd8240c69e9b2b47",
+    "content-hash": "434e63946eb334ea7ebce0dc8ee2e8e7",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -12931,16 +12931,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.25",
+            "version": "1.12.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "e310849a19e02b8bfcbb63147f495d8f872dd96f"
+                "reference": "84cbf8f018e01834b9b1ac3dacf3b9780e209e53"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e310849a19e02b8bfcbb63147f495d8f872dd96f",
-                "reference": "e310849a19e02b8bfcbb63147f495d8f872dd96f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/84cbf8f018e01834b9b1ac3dacf3b9780e209e53",
+                "reference": "84cbf8f018e01834b9b1ac3dacf3b9780e209e53",
                 "shasum": ""
             },
             "require": {
@@ -12985,7 +12985,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-04-27T12:20:45+00:00"
+            "time": "2025-05-14T11:08:32+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13504,12 +13504,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "5326c903c04c522c27d45dacfb6a521a448a399a"
+                "reference": "4aa0a0890ece3b361fc4179b1e30fdcc0d2c689b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5326c903c04c522c27d45dacfb6a521a448a399a",
-                "reference": "5326c903c04c522c27d45dacfb6a521a448a399a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4aa0a0890ece3b361fc4179b1e30fdcc0d2c689b",
+                "reference": "4aa0a0890ece3b361fc4179b1e30fdcc0d2c689b",
                 "shasum": ""
             },
             "conflict": {
@@ -14004,7 +14004,7 @@
                 "oro/customer-portal": ">=4.1,<=4.1.13|>=4.2,<=4.2.10|>=5,<=5.0.11|>=5.1,<=5.1.3",
                 "oro/platform": ">=1.7,<1.7.4|>=3.1,<3.1.29|>=4.1,<4.1.17|>=4.2,<=4.2.10|>=5,<=5.0.12|>=5.1,<=5.1.3",
                 "oveleon/contao-cookiebar": "<1.16.3|>=2,<2.1.3",
-                "oxid-esales/oxideshop-ce": "<4.5",
+                "oxid-esales/oxideshop-ce": "<=7.0.5",
                 "oxid-esales/paymorrow-module": ">=1,<1.0.2|>=2,<2.0.1",
                 "packbackbooks/lti-1-3-php-library": "<5",
                 "padraic/humbug_get_contents": "<1.1.2",
@@ -14427,7 +14427,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-13T20:06:05+00:00"
+            "time": "2025-05-14T18:07:05+00:00"
         },
         {
             "name": "sebastian/cli-parser",

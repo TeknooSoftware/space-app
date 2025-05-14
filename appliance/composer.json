@@ -113,7 +113,7 @@
         "friends-of-behat/symfony-extension": "^2.6",
         "masterminds/html5": "^2.9",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^1.12.25",
+        "phpstan/phpstan": "^1.12.26",
         "phpstan/phpstan-symfony": "^1.4.15",
         "phpunit/phpunit": "^12.1.5",
         "roave/security-advisories": "dev-latest",
