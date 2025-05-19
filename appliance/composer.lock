@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "434e63946eb334ea7ebce0dc8ee2e8e7",
+    "content-hash": "58f9ffb3d3ddd182c6bcba005138d000",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4743,7 +4743,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.9.0",
+            "version": "v7.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -4786,22 +4786,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.9.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.10.0"
             },
             "time": "2025-04-20T08:27:40+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.9.0",
+            "version": "v7.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "793acc8e9c5f78989d23489205afa6e852c9982b"
+                "reference": "6e66788160fdeb8f594a0c2715ae2156c243671b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/793acc8e9c5f78989d23489205afa6e852c9982b",
-                "reference": "793acc8e9c5f78989d23489205afa6e852c9982b",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/6e66788160fdeb8f594a0c2715ae2156c243671b",
+                "reference": "6e66788160fdeb8f594a0c2715ae2156c243671b",
                 "shasum": ""
             },
             "require": {
@@ -4854,13 +4854,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.9.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.10.0"
             },
-            "time": "2025-04-20T11:32:24+00:00"
+            "time": "2025-05-19T14:17:07+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v7.9.0",
+            "version": "v7.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
@@ -4904,13 +4904,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.9.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.10.0"
             },
             "time": "2025-04-20T08:38:44+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.9.0",
+            "version": "v7.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
@@ -4954,7 +4954,7 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.9.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.10.0"
             },
             "time": "2025-04-20T08:38:44+00:00"
         },
@@ -13504,12 +13504,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "4aa0a0890ece3b361fc4179b1e30fdcc0d2c689b"
+                "reference": "0cc529f6cf08a858fcb7a2c5617780fcdc20d1fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4aa0a0890ece3b361fc4179b1e30fdcc0d2c689b",
-                "reference": "4aa0a0890ece3b361fc4179b1e30fdcc0d2c689b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0cc529f6cf08a858fcb7a2c5617780fcdc20d1fe",
+                "reference": "0cc529f6cf08a858fcb7a2c5617780fcdc20d1fe",
                 "shasum": ""
             },
             "conflict": {
@@ -13551,7 +13551,10 @@
                 "athlon1600/php-proxy-app": "<=3",
                 "athlon1600/youtube-downloader": "<=4",
                 "austintoddj/canvas": "<=3.4.2",
-                "auth0/wordpress": "<=4.6",
+                "auth0/auth0-php": ">=8.0.0.0-beta1,<8.14",
+                "auth0/login": "<7.17",
+                "auth0/symfony": "<5.4",
+                "auth0/wordpress": "<5.3",
                 "automad/automad": "<2.0.0.0-alpha5",
                 "automattic/jetpack": "<9.8",
                 "awesome-support/awesome-support": "<=6.0.7",
@@ -14177,7 +14180,7 @@
                 "subhh/libconnect": "<7.0.8|>=8,<8.1",
                 "sukohi/surpass": "<1",
                 "sulu/form-bundle": ">=2,<2.5.3",
-                "sulu/sulu": "<1.6.44|>=2,<2.5.21|>=2.6,<2.6.5",
+                "sulu/sulu": "<1.6.44|>=2,<2.5.25|>=2.6,<2.6.9|>=3.0.0.0-alpha1,<3.0.0.0-alpha3",
                 "sumocoders/framework-user-bundle": "<1.4",
                 "superbig/craft-audit": "<3.0.2",
                 "svewap/a21glossary": "<=0.4.10",
@@ -14427,7 +14430,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-14T18:07:05+00:00"
+            "time": "2025-05-17T16:05:20+00:00"
         },
         {
             "name": "sebastian/cli-parser",
