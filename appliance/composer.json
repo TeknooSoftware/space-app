@@ -67,7 +67,7 @@
         "symfony/console": ">=7.2.6",
         "symfony/dotenv": ">=7.2",
         "symfony/expression-language": ">=7.2",
-        "symfony/flex": "^2.5.1",
+        "symfony/flex": "^2.6.0",
         "symfony/form": ">=7.2.6",
         "symfony/framework-bundle": ">=7.2.5",
         "symfony/http-client": ">=7.2.4",
