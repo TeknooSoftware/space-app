@@ -1,5 +1,18 @@
 # Teknoo Software - Space - Change Log
 
+## [1.1.1] - 2025-05-22
+### Stable Version
+Update libraries :
+- Scheb/2fa
+- PHP-DI
+- Illuminate
+- Doctrine ODM
+- Symfony 7.2.6
+- Twig
+- Laminas
+- Endroid QRCode
+- dev libraries : Phpunit, Behat
+
 ## [1.1.0] - 2025-04-17
 ### Stable Version
 - Update libraries:
