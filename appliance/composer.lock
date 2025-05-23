@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aaf8791edbee7a53158a04570e1be70c",
+    "content-hash": "8bd665f4dd1e25a4a975221307ee6308",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -791,16 +791,16 @@
         },
         {
             "name": "doctrine/mongodb-odm",
-            "version": "2.11.1",
+            "version": "2.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "a07b9026769d23501a1603dbafa09145fca03abf"
+                "reference": "9cc829197581df02c227f00cfa789b077949dffa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/a07b9026769d23501a1603dbafa09145fca03abf",
-                "reference": "a07b9026769d23501a1603dbafa09145fca03abf",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/9cc829197581df02c227f00cfa789b077949dffa",
+                "reference": "9cc829197581df02c227f00cfa789b077949dffa",
                 "shasum": ""
             },
             "require": {
@@ -885,7 +885,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/mongodb-odm/issues",
-                "source": "https://github.com/doctrine/mongodb-odm/tree/2.11.1"
+                "source": "https://github.com/doctrine/mongodb-odm/tree/2.11.2"
             },
             "funding": [
                 {
@@ -901,7 +901,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-28T11:19:17+00:00"
+            "time": "2025-05-23T07:27:12+00:00"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
@@ -6401,16 +6401,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v2.6.0",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "ccc4d2dc15e90f0fed555d6078c3698396306cdd"
+                "reference": "5d743b3b78fabe9f3146586d77b0a1f9292851fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/ccc4d2dc15e90f0fed555d6078c3698396306cdd",
-                "reference": "ccc4d2dc15e90f0fed555d6078c3698396306cdd",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/5d743b3b78fabe9f3146586d77b0a1f9292851fc",
+                "reference": "5d743b3b78fabe9f3146586d77b0a1f9292851fc",
                 "shasum": ""
             },
             "require": {
@@ -6449,7 +6449,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v2.6.0"
+                "source": "https://github.com/symfony/flex/tree/v2.7.0"
             },
             "funding": [
                 {
@@ -6465,7 +6465,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-21T07:23:28+00:00"
+            "time": "2025-05-23T11:41:40+00:00"
         },
         {
             "name": "symfony/form",
@@ -12238,16 +12238,16 @@
         },
         {
             "name": "behat/gherkin",
-            "version": "v4.13.0",
+            "version": "v4.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Gherkin.git",
-                "reference": "9294d26bb75f1718441b89f3a10e15ecb2c67f70"
+                "reference": "34c9b59c59355a7b4c53b9f041c8dbd1c8acc3b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/9294d26bb75f1718441b89f3a10e15ecb2c67f70",
-                "reference": "9294d26bb75f1718441b89f3a10e15ecb2c67f70",
+                "url": "https://api.github.com/repos/Behat/Gherkin/zipball/34c9b59c59355a7b4c53b9f041c8dbd1c8acc3b4",
+                "reference": "34c9b59c59355a7b4c53b9f041c8dbd1c8acc3b4",
                 "shasum": ""
             },
             "require": {
@@ -12257,6 +12257,7 @@
             "require-dev": {
                 "cucumber/gherkin-monorepo": "dev-gherkin-v32.1.1",
                 "friendsofphp/php-cs-fixer": "^3.65",
+                "mikey179/vfsstream": "^1.6",
                 "phpstan/extension-installer": "^1",
                 "phpstan/phpstan": "^2",
                 "phpstan/phpstan-phpunit": "^2",
@@ -12300,9 +12301,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Gherkin/issues",
-                "source": "https://github.com/Behat/Gherkin/tree/v4.13.0"
+                "source": "https://github.com/Behat/Gherkin/tree/v4.14.0"
             },
-            "time": "2025-05-06T15:26:21+00:00"
+            "time": "2025-05-23T15:06:40+00:00"
         },
         {
             "name": "composer/pcre",
