@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
 
@@ -50,7 +51,8 @@ class AdminVoter implements VoterInterface
     public function vote(
         TokenInterface $token,
         $subject,
-        array $attributes
+        array $attributes,
+        ?Vote $vote = null,
     ): int {
         $user = $token->getUser();
 
@@ -59,6 +61,8 @@ class AdminVoter implements VoterInterface
         }
 
         if (in_array($this->adminRoleName, $token->getRoleNames())) {
+            $vote?->addReason('teknoo.space.vote.granted.user_is_admin');
+
             return VoterInterface::ACCESS_GRANTED;
         }
 

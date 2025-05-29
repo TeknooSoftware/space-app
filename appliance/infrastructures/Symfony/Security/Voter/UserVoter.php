@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Security\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Common\Object\User;
@@ -45,7 +46,8 @@ class UserVoter implements VoterInterface
     public function vote(
         TokenInterface $token,
         $subject,
-        array $attributes
+        array $attributes,
+        ?Vote $vote = null,
     ): int {
         if (
             !$subject instanceof AbstractUser
@@ -58,6 +60,8 @@ class UserVoter implements VoterInterface
         $wrappedUser = $token->getUser();
 
         if (!$wrappedUser instanceof AbstractUser) {
+            $vote?->addReason('teknoo.space.vote.denied.user_anonymous');
+
             return VoterInterface::ACCESS_DENIED;
         }
 
@@ -70,8 +74,12 @@ class UserVoter implements VoterInterface
         }
 
         if ($subject->getId() !== $wrappedUser->getWrappedUser()->getId()) {
+            $vote?->addReason('teknoo.space.vote.denied.is_not_require_user');
+
             return VoterInterface::ACCESS_DENIED;
         }
+
+        $vote?->addReason('teknoo.space.vote.denied.is_require_user');
 
         return VoterInterface::ACCESS_GRANTED;
     }
