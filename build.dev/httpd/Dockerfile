@@ -1,4 +1,4 @@
-FROM httpd:2.4-alpine3.20
+FROM httpd:2.4-alpine3.22
 
 USER root:root
 
