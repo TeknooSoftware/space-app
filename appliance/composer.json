@@ -110,7 +110,7 @@
     "require-dev": {
         "behat/behat": "^3.22.0",
         "dmarynicz/behat-parallel-extension": "^1.0.3",
-        "friends-of-behat/symfony-extension": "^2.6.1",
+        "friends-of-behat/symfony-extension": "^2.6.2",
         "masterminds/html5": "^2.9",
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^1.12.27",
