@@ -1,5 +1,16 @@
 # Teknoo Software - Space - Change Log
 
+## [1.1.2] - 2025-06-03
+### Stable Version
+Update libraries :
+- Symfony 7.3
+- Symfony Flex
+- Symfony Contracts
+- PHP-DI
+- Behat Gherkin and friends-of-behat/symfony-extensio
+- Doctrine Mongodb ODM
+- Other dev libraries
+
 ## [1.1.1] - 2025-05-22
 ### Stable Version
 Update libraries :
