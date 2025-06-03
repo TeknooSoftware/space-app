@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cc70908867262a44f36e6838098d719",
+    "content-hash": "e2e31823788d23cadc467c3ff5a2d6bb",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3392,16 +3392,16 @@
         },
         {
             "name": "php-di/php-di",
-            "version": "7.0.10",
+            "version": "7.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/PHP-DI.git",
-                "reference": "0d1ed64126577e9a095b3204dcaee58cf76432c2"
+                "reference": "32f111a6d214564520a57831d397263e8946c1d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/0d1ed64126577e9a095b3204dcaee58cf76432c2",
-                "reference": "0d1ed64126577e9a095b3204dcaee58cf76432c2",
+                "url": "https://api.github.com/repos/PHP-DI/PHP-DI/zipball/32f111a6d214564520a57831d397263e8946c1d2",
+                "reference": "32f111a6d214564520a57831d397263e8946c1d2",
                 "shasum": ""
             },
             "require": {
@@ -3449,7 +3449,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/PHP-DI/issues",
-                "source": "https://github.com/PHP-DI/PHP-DI/tree/7.0.10"
+                "source": "https://github.com/PHP-DI/PHP-DI/tree/7.0.11"
             },
             "funding": [
                 {
@@ -3461,7 +3461,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-04-22T08:53:15+00:00"
+            "time": "2025-06-03T07:45:57+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -12728,16 +12728,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.4.0",
+            "version": "v5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "447a020a1f875a434d62f2a401f53b82a396e494"
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/447a020a1f875a434d62f2a401f53b82a396e494",
-                "reference": "447a020a1f875a434d62f2a401f53b82a396e494",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/ae59794362fe85e051a58ad36b289443f57be7a9",
+                "reference": "ae59794362fe85e051a58ad36b289443f57be7a9",
                 "shasum": ""
             },
             "require": {
@@ -12780,9 +12780,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.4.0"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.5.0"
             },
-            "time": "2024-12-30T11:07:19+00:00"
+            "time": "2025-05-31T08:24:38+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -13525,12 +13525,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ee2528399ca30fe65a23165183190be42c0b109a"
+                "reference": "e4637c0239d5cc7d5a7c51e7c1cfd5b7d274ce95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ee2528399ca30fe65a23165183190be42c0b109a",
-                "reference": "ee2528399ca30fe65a23165183190be42c0b109a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/e4637c0239d5cc7d5a7c51e7c1cfd5b7d274ce95",
+                "reference": "e4637c0239d5cc7d5a7c51e7c1cfd5b7d274ce95",
                 "shasum": ""
             },
             "conflict": {
@@ -13595,6 +13595,7 @@
                 "baserproject/basercms": "<=5.1.1",
                 "bassjobsen/bootstrap-3-typeahead": ">4.0.2",
                 "bbpress/bbpress": "<2.6.5",
+                "bcit-ci/codeigniter": "<3.1.3",
                 "bcosca/fatfree": "<3.7.2",
                 "bedita/bedita": "<4",
                 "bednee/cooluri": "<1.0.30",
@@ -14064,6 +14065,7 @@
                 "phpmyadmin/phpmyadmin": "<5.2.2",
                 "phpmyfaq/phpmyfaq": "<3.2.5|==3.2.5|>=3.2.10,<=4.0.1",
                 "phpoffice/common": "<0.2.9",
+                "phpoffice/math": "<=0.2",
                 "phpoffice/phpexcel": "<=1.8.2",
                 "phpoffice/phpspreadsheet": "<1.29.9|>=2,<2.1.8|>=2.2,<2.3.7|>=3,<3.9",
                 "phpseclib/phpseclib": "<2.0.47|>=3,<3.0.36",
@@ -14460,7 +14462,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-28T18:06:42+00:00"
+            "time": "2025-06-02T17:06:15+00:00"
         },
         {
             "name": "sebastian/cli-parser",
