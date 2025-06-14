@@ -52,7 +52,8 @@ class CheckingAllowedCountOfEnvs
         }
 
         if (
-            !empty($spaceAccount->environments)
+            0 < $envsAllowed
+            && !empty($spaceAccount->environments)
             && count($spaceAccount->environments) > $envsAllowed
         ) {
             $manager->error(
