@@ -54,6 +54,7 @@ class SubscriptionPlan
         public readonly string $name,
         array $quotas,
         public int $envsCountAllowed = 1,
+        public int $projectsCountAllowed = 1,
         string|array $clusters = [],
     ) {
         $final = [];
