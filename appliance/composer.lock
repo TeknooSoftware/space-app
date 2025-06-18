@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0fe7a5e909b168e037e185c2b3afa701",
+    "content-hash": "61ad0472189cd4a1dbb2de7714bf4a1b",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -905,16 +905,16 @@
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
-            "version": "5.3.0",
+            "version": "5.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoDBBundle.git",
-                "reference": "e0a1b4342fb5f82abceef0098302b398ec2f67d7"
+                "reference": "af0fe776facb5a1761d2dc55f4902e0c40cd763d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/e0a1b4342fb5f82abceef0098302b398ec2f67d7",
-                "reference": "e0a1b4342fb5f82abceef0098302b398ec2f67d7",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/af0fe776facb5a1761d2dc55f4902e0c40cd763d",
+                "reference": "af0fe776facb5a1761d2dc55f4902e0c40cd763d",
                 "shasum": ""
             },
             "require": {
@@ -985,9 +985,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineMongoDBBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.3.0"
+                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.3.1"
             },
-            "time": "2025-04-08T16:32:24+00:00"
+            "time": "2025-06-12T22:11:53+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -1632,16 +1632,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v12.18.0",
+            "version": "v12.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "e5711846b7c68128bc8de72c13e017606043c996"
+                "reference": "21a206b2b2297e838c181b482b5f8bbe7ac48f61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/e5711846b7c68128bc8de72c13e017606043c996",
-                "reference": "e5711846b7c68128bc8de72c13e017606043c996",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/21a206b2b2297e838c181b482b5f8bbe7ac48f61",
+                "reference": "21a206b2b2297e838c181b482b5f8bbe7ac48f61",
                 "shasum": ""
             },
             "require": {
@@ -1685,11 +1685,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-05-28T13:08:33+00:00"
+            "time": "2025-06-12T14:21:37+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v12.18.0",
+            "version": "v12.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1735,16 +1735,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v12.18.0",
+            "version": "v12.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "152313571553ef1be907a3c18b8ef2d635cb4339"
+                "reference": "ad1d16d827927455d3b7e39fabac66b1afb82582"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/152313571553ef1be907a3c18b8ef2d635cb4339",
-                "reference": "152313571553ef1be907a3c18b8ef2d635cb4339",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/ad1d16d827927455d3b7e39fabac66b1afb82582",
+                "reference": "ad1d16d827927455d3b7e39fabac66b1afb82582",
                 "shasum": ""
             },
             "require": {
@@ -1779,11 +1779,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-06-09T18:23:03+00:00"
+            "time": "2025-06-12T15:07:31+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v12.18.0",
+            "version": "v12.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -4025,16 +4025,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.43",
+            "version": "3.0.44",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02"
+                "reference": "1d0b5e7e1434678411787c5a0535e68907cf82d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/709ec107af3cb2f385b9617be72af8cf62441d02",
-                "reference": "709ec107af3cb2f385b9617be72af8cf62441d02",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/1d0b5e7e1434678411787c5a0535e68907cf82d9",
+                "reference": "1d0b5e7e1434678411787c5a0535e68907cf82d9",
                 "shasum": ""
             },
             "require": {
@@ -4115,7 +4115,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.43"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.44"
             },
             "funding": [
                 {
@@ -4131,7 +4131,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-12-14T21:12:59+00:00"
+            "time": "2025-06-15T09:59:26+00:00"
         },
         {
             "name": "phpstan/phpdoc-parser",
@@ -10868,22 +10868,22 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "21620361914420bb614eaacdde4bad6c3905a7d2"
+                "reference": "4ae828b864638d5274dc7b4afe8987c9e672f49b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/21620361914420bb614eaacdde4bad6c3905a7d2",
-                "reference": "21620361914420bb614eaacdde4bad6c3905a7d2",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/4ae828b864638d5274dc7b4afe8987c9e672f49b",
+                "reference": "4ae828b864638d5274dc7b4afe8987c9e672f49b",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.3",
                 "php-di/php-di": "^7.0.9",
-                "teknoo/east-foundation": "^8.0.4",
+                "teknoo/east-foundation": "^8.0.5",
                 "teknoo/immutable": "^3.0.19",
                 "teknoo/recipe": "^6.0.3",
                 "teknoo/states": "^6.4.3"
@@ -10903,7 +10903,7 @@
                 "matthiasmullie/minify": "^1.3.73",
                 "phpstan/extension-installer": "^1.4.3",
                 "phpstan/phpstan": "^1.12.16",
-                "phpunit/phpunit": "^12",
+                "phpunit/phpunit": "^12.2.2",
                 "roave/security-advisories": "dev-latest",
                 "scheb/2fa-backup-code": "^7.6",
                 "scheb/2fa-bundle": "^7.6",
@@ -10986,20 +10986,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-05-19T20:40:59+00:00"
+            "time": "2025-06-17T22:12:25+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "02d00dc2a81f2ccbf9bde9c2ce7a11320126c9f1"
+                "reference": "a8e5d4a5fccd555e92c75e507301e0c0952a44d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/02d00dc2a81f2ccbf9bde9c2ce7a11320126c9f1",
-                "reference": "02d00dc2a81f2ccbf9bde9c2ce7a11320126c9f1",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/a8e5d4a5fccd555e92c75e507301e0c0952a44d4",
+                "reference": "a8e5d4a5fccd555e92c75e507301e0c0952a44d4",
                 "shasum": ""
             },
             "require": {
@@ -11023,8 +11023,8 @@
                 "symfony/validator": "^6.4||^7.2",
                 "symfony/yaml": "^6.4||^7.2",
                 "teknoo/bridge-phpdi-symfony": "^6.1.1",
-                "teknoo/east-common": "^3.5.3",
-                "teknoo/east-foundation-symfony": "^8.0.4",
+                "teknoo/east-common": "^3.5.4",
+                "teknoo/east-foundation-symfony": "^8.0.5",
                 "teknoo/immutable": "^3.0.19",
                 "teknoo/recipe": "^6.0.3",
                 "teknoo/states": "^6.4.3",
@@ -11074,20 +11074,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-05-19T20:41:38+00:00"
+            "time": "2025-06-17T22:14:20+00:00"
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "8.0.4",
+            "version": "8.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "f71f5d3b18deba4e9d5cfdcec92176d3c89b0578"
+                "reference": "773a5ae49e6e239b5362d60479934c6de24b27f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/f71f5d3b18deba4e9d5cfdcec92176d3c89b0578",
-                "reference": "f71f5d3b18deba4e9d5cfdcec92176d3c89b0578",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/773a5ae49e6e239b5362d60479934c6de24b27f8",
+                "reference": "773a5ae49e6e239b5362d60479934c6de24b27f8",
                 "shasum": ""
             },
             "require": {
@@ -11108,8 +11108,8 @@
                 "laminas/laminas-diactoros": "^3.5",
                 "nikic/php-parser": "^4.18||^5.4",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^1.12.16",
-                "phpunit/phpunit": "^12",
+                "phpstan/phpstan": "^1.12.27",
+                "phpunit/phpunit": "^12.2.2",
                 "psr/http-server-middleware": "^1.0.2",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^3.11.3",
@@ -11177,20 +11177,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-02-07T09:20:18+00:00"
+            "time": "2025-06-17T22:02:03+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "8.0.4",
+            "version": "8.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "69c090e1be3271973d5f8ebf39cfbef645e14e7a"
+                "reference": "b8db054a53d900a1f1ab5dd2d0ad33f47c96a40c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/69c090e1be3271973d5f8ebf39cfbef645e14e7a",
-                "reference": "69c090e1be3271973d5f8ebf39cfbef645e14e7a",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/b8db054a53d900a1f1ab5dd2d0ad33f47c96a40c",
+                "reference": "b8db054a53d900a1f1ab5dd2d0ad33f47c96a40c",
                 "shasum": ""
             },
             "require": {
@@ -11206,7 +11206,7 @@
                 "symfony/serializer": "^6.4||^7.2",
                 "symfony/yaml": "^6.4||^7.2",
                 "teknoo/bridge-phpdi-symfony": "^6.1.1",
-                "teknoo/east-foundation": "^8.0.4",
+                "teknoo/east-foundation": "^8.0.5",
                 "teknoo/immutable": "^3.0.19",
                 "teknoo/recipe": "^6.0.2",
                 "teknoo/states": "^6.4.2"
@@ -11255,7 +11255,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-02-07T09:20:48+00:00"
+            "time": "2025-06-17T22:03:19+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -13158,16 +13158,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "12.3.0",
+            "version": "12.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "9075a8efc66e11bc55c319062e147bdb06777267"
+                "reference": "ddec29dfc128eba9c204389960f2063f3b7fa170"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/9075a8efc66e11bc55c319062e147bdb06777267",
-                "reference": "9075a8efc66e11bc55c319062e147bdb06777267",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/ddec29dfc128eba9c204389960f2063f3b7fa170",
+                "reference": "ddec29dfc128eba9c204389960f2063f3b7fa170",
                 "shasum": ""
             },
             "require": {
@@ -13223,7 +13223,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/12.3.0"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/12.3.1"
             },
             "funding": [
                 {
@@ -13243,7 +13243,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-05-23T15:49:03+00:00"
+            "time": "2025-06-18T08:58:13+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -13601,12 +13601,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "c44d680c1033ece6eec5a1e6fef573548d916670"
+                "reference": "2b9122a87c062376685eede1e0a0ce8e31544fe6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c44d680c1033ece6eec5a1e6fef573548d916670",
-                "reference": "c44d680c1033ece6eec5a1e6fef573548d916670",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2b9122a87c062376685eede1e0a0ce8e31544fe6",
+                "reference": "2b9122a87c062376685eede1e0a0ce8e31544fe6",
                 "shasum": ""
             },
             "conflict": {
@@ -13714,7 +13714,7 @@
                 "co-stack/fal_sftp": "<0.2.6",
                 "cockpit-hq/cockpit": "<2.7|==2.7",
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
-                "codeigniter/framework": "<3.1.9",
+                "codeigniter/framework": "<3.1.10",
                 "codeigniter4/framework": "<4.5.8",
                 "codeigniter4/shield": "<1.0.0.0-beta8",
                 "codiad/codiad": "<=2.8.4",
@@ -13817,8 +13817,8 @@
                 "ezsystems/ezdemo-ls-extension": ">=5.4,<5.4.2.1-dev",
                 "ezsystems/ezfind-ls": ">=5.3,<5.3.6.1-dev|>=5.4,<5.4.11.1-dev|>=2017.12,<2017.12.0.1-dev",
                 "ezsystems/ezplatform": "<=1.13.6|>=2,<=2.5.24",
-                "ezsystems/ezplatform-admin-ui": ">=1.3,<1.3.5|>=1.4,<1.4.6|>=1.5,<1.5.29|>=2.3,<2.3.26|>=3.3,<3.3.39",
-                "ezsystems/ezplatform-admin-ui-assets": ">=4,<4.2.1|>=5,<5.0.1|>=5.1,<5.1.1",
+                "ezsystems/ezplatform-admin-ui": ">=1.3,<1.3.5|>=1.4,<1.4.6|>=1.5,<1.5.29|>=2.3,<2.3.38|>=3.3,<3.3.39",
+                "ezsystems/ezplatform-admin-ui-assets": ">=4,<4.2.1|>=5,<5.0.1|>=5.1,<5.1.1|>=5.3.0.0-beta1,<5.3.5",
                 "ezsystems/ezplatform-graphql": ">=1.0.0.0-RC1-dev,<1.0.13|>=2.0.0.0-beta1,<2.3.12",
                 "ezsystems/ezplatform-http-cache": "<2.3.16",
                 "ezsystems/ezplatform-kernel": "<1.2.5.1-dev|>=1.3,<1.3.35",
@@ -13900,6 +13900,7 @@
                 "guzzlehttp/oauth-subscriber": "<0.8.1",
                 "guzzlehttp/psr7": "<1.9.1|>=2,<2.4.5",
                 "haffner/jh_captcha": "<=2.1.3|>=3,<=3.0.2",
+                "handcraftedinthealps/goodby-csv": "<1.4.3",
                 "harvesthq/chosen": "<1.8.7",
                 "helloxz/imgurl": "<=2.31",
                 "hhxsv5/laravel-s": "<3.7.36",
@@ -13909,9 +13910,10 @@
                 "hov/jobfair": "<1.0.13|>=2,<2.0.2",
                 "httpsoft/http-message": "<1.0.12",
                 "hyn/multi-tenant": ">=5.6,<5.7.2",
-                "ibexa/admin-ui": ">=4.2,<4.2.3|>=4.6,<4.6.14",
+                "ibexa/admin-ui": ">=4.2,<4.2.3|>=4.6,<4.6.21",
+                "ibexa/admin-ui-assets": ">=4.6.0.0-alpha1,<4.6.21",
                 "ibexa/core": ">=4,<4.0.7|>=4.1,<4.1.4|>=4.2,<4.2.3|>=4.5,<4.5.6|>=4.6,<4.6.2",
-                "ibexa/fieldtype-richtext": ">=4.6,<4.6.19",
+                "ibexa/fieldtype-richtext": ">=4.6,<4.6.21",
                 "ibexa/graphql": ">=2.5,<2.5.31|>=3.3,<3.3.28|>=4.2,<4.2.3",
                 "ibexa/http-cache": ">=4.6,<4.6.14",
                 "ibexa/post-install": "<1.0.16|>=4.6,<4.6.14",
@@ -14545,7 +14547,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-06-11T20:05:14+00:00"
+            "time": "2025-06-16T22:05:27+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -14606,16 +14608,16 @@
         },
         {
             "name": "sebastian/comparator",
-            "version": "7.0.1",
+            "version": "7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "b478f34614f934e0291598d0c08cbaba9644bee5"
+                "reference": "03d905327dccc0851c9a08d6a979dfc683826b6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/b478f34614f934e0291598d0c08cbaba9644bee5",
-                "reference": "b478f34614f934e0291598d0c08cbaba9644bee5",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/03d905327dccc0851c9a08d6a979dfc683826b6f",
+                "reference": "03d905327dccc0851c9a08d6a979dfc683826b6f",
                 "shasum": ""
             },
             "require": {
@@ -14626,7 +14628,7 @@
                 "sebastian/exporter": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^12.0"
+                "phpunit/phpunit": "^12.2"
             },
             "suggest": {
                 "ext-bcmath": "For comparing BcMath\\Number objects"
@@ -14634,7 +14636,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "7.0-dev"
+                    "dev-main": "7.1-dev"
                 }
             },
             "autoload": {
@@ -14674,15 +14676,27 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/comparator/issues",
                 "security": "https://github.com/sebastianbergmann/comparator/security/policy",
-                "source": "https://github.com/sebastianbergmann/comparator/tree/7.0.1"
+                "source": "https://github.com/sebastianbergmann/comparator/tree/7.1.0"
             },
             "funding": [
                 {
                     "url": "https://github.com/sebastianbergmann",
                     "type": "github"
+                },
+                {
+                    "url": "https://liberapay.com/sebastianbergmann",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
+                    "type": "thanks_dev"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/sebastian/comparator",
+                    "type": "tidelift"
                 }
             ],
-            "time": "2025-03-07T07:00:32+00:00"
+            "time": "2025-06-17T07:41:58+00:00"
         },
         {
             "name": "sebastian/complexity",
@@ -15374,16 +15388,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.13.1",
+            "version": "3.13.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPCSStandards/PHP_CodeSniffer.git",
-                "reference": "1b71b4dd7e7ef651ac749cea67e513c0c832f4bd"
+                "reference": "5b5e3821314f947dd040c70f7992a64eac89025c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/1b71b4dd7e7ef651ac749cea67e513c0c832f4bd",
-                "reference": "1b71b4dd7e7ef651ac749cea67e513c0c832f4bd",
+                "url": "https://api.github.com/repos/PHPCSStandards/PHP_CodeSniffer/zipball/5b5e3821314f947dd040c70f7992a64eac89025c",
+                "reference": "5b5e3821314f947dd040c70f7992a64eac89025c",
                 "shasum": ""
             },
             "require": {
@@ -15454,7 +15468,7 @@
                     "type": "thanks_dev"
                 }
             ],
-            "time": "2025-06-12T15:04:34+00:00"
+            "time": "2025-06-17T22:17:01+00:00"
         },
         {
             "name": "staabm/side-effects-detector",
