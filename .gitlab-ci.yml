@@ -21,6 +21,12 @@ test:8.3-upper:
     - make test-mono-thread
     - make qa
 
+test:8.4-lower:
+  extends: .abstract_tests
+  variables:
+    PHP_VERSION: '8.4'
+    DEPENDENCIES: lowest
+
 test:8.4-upper:
   extends: .abstract_tests
   variables:
