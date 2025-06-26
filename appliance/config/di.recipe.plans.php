@@ -123,10 +123,11 @@ use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
-use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
@@ -153,6 +154,7 @@ use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria as ProjectPrepareCriteria;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
+use Teknoo\Space\Recipe\Step\Project\CheckingAllowedCountOfProjects;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
@@ -350,6 +352,8 @@ return [
         PrepareProject::class => 15,
 
         //After ObjectAccessControlInterface
+        LoadSubscriptionPlan::class => 51,
+        CheckingAllowedCountOfProjects::class => 52,
         AddManagedEnvironmentToProject::class => 58,
         UpdateProjectCredentialsFromAccount::class => 59,
 

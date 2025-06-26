@@ -23,31 +23,30 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
+namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
+use Teknoo\Space\Recipe\Step\Project\CheckingAllowedCountOfProjects;
 
 /**
- * Class setSubscriptionPlanTest.
- *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(SetSubscriptionPlan::class)]
-class SetSubscriptionPlanTest extends TestCase
+#[CoversClass(CheckingAllowedCountOfProjects::class)]
+class CheckingAllowedCountOfProjectsTest extends TestCase
 {
-    private SetSubscriptionPlan $setSubscriptionPlan;
+    private CheckingAllowedCountOfProjects $checkingAllowedCountOfProjects;
 
-    private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
+    private ProjectLoader&MockObject $projectLoader;
 
     /**
      * {@inheritdoc}
@@ -56,21 +55,33 @@ class SetSubscriptionPlanTest extends TestCase
     {
         parent::setUp();
 
-        $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
-
-        $this->setSubscriptionPlan = new SetSubscriptionPlan(
-            $this->subscriptionPlanCatalog,
+        $this->checkingAllowedCountOfProjects = new CheckingAllowedCountOfProjects(
+            projectLoader: $this->projectLoader = $this->createMock(ProjectLoader::class),
         );
     }
 
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            SetSubscriptionPlan::class,
-            ($this->setSubscriptionPlan)(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
                 $this->createMock(ManagerInterface::class),
-                new SpaceAccount($this->createMock(Account::class)),
-                'foo',
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [
+                        [
+                            'category' => 'compute',
+                            'type' => 'cpu',
+                            'capacity' => '5',
+                            'require' => '2',
+                        ]
+                    ]
+                ),
             ),
         );
     }

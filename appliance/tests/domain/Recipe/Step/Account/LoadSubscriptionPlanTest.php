@@ -32,20 +32,20 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 
 /**
- * Class setSubscriptionPlanTest.
+ * Class loadSubscriptionPlanTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(SetSubscriptionPlan::class)]
-class SetSubscriptionPlanTest extends TestCase
+#[CoversClass(LoadSubscriptionPlan::class)]
+class LoadSubscriptionPlanTest extends TestCase
 {
-    private SetSubscriptionPlan $setSubscriptionPlan;
+    private LoadSubscriptionPlan $loadSubscriptionPlan;
 
     private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
 
@@ -58,7 +58,7 @@ class SetSubscriptionPlanTest extends TestCase
 
         $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
 
-        $this->setSubscriptionPlan = new SetSubscriptionPlan(
+        $this->loadSubscriptionPlan = new LoadSubscriptionPlan(
             $this->subscriptionPlanCatalog,
         );
     }
@@ -66,11 +66,10 @@ class SetSubscriptionPlanTest extends TestCase
     public function testInvoke(): void
     {
         self::assertInstanceOf(
-            SetSubscriptionPlan::class,
-            ($this->setSubscriptionPlan)(
+            LoadSubscriptionPlan::class,
+            ($this->loadSubscriptionPlan)(
                 $this->createMock(ManagerInterface::class),
                 new SpaceAccount($this->createMock(Account::class)),
-                'foo',
             ),
         );
     }

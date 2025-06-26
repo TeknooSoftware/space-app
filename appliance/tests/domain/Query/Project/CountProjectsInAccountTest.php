@@ -15,7 +15,7 @@
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  *
- * @link        https://teknoo.software/applications/space Project website
+ * @link        https://teknoo.software/applications/space Account website
  *
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
@@ -23,31 +23,31 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
+namespace Teknoo\Space\Tests\Unit\Query\Project;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
-use Teknoo\Space\Object\DTO\SpaceAccount;
-use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Query\Project\CountProjectsInAccount;
 
 /**
- * Class setSubscriptionPlanTest.
+ * Class CountProjectsInAccountTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(SetSubscriptionPlan::class)]
-class SetSubscriptionPlanTest extends TestCase
+#[CoversClass(CountProjectsInAccount::class)]
+class CountProjectsInAccountTest extends TestCase
 {
-    private SetSubscriptionPlan $setSubscriptionPlan;
+    private CountProjectsInAccount $countProjectsInAccount;
 
-    private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
+    private Account|MockObject $account;
 
     /**
      * {@inheritdoc}
@@ -56,22 +56,19 @@ class SetSubscriptionPlanTest extends TestCase
     {
         parent::setUp();
 
-        $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
-
-        $this->setSubscriptionPlan = new SetSubscriptionPlan(
-            $this->subscriptionPlanCatalog,
-        );
+        $this->account = $this->createMock(Account::class);
+        $this->countProjectsInAccount = new CountProjectsInAccount($this->account);
     }
 
-    public function testInvoke(): void
+    public function testExecute(): void
     {
         self::assertInstanceOf(
-            SetSubscriptionPlan::class,
-            ($this->setSubscriptionPlan)(
-                $this->createMock(ManagerInterface::class),
-                new SpaceAccount($this->createMock(Account::class)),
-                'foo',
-            ),
+            CountProjectsInAccount::class,
+            $this->countProjectsInAccount->fetch(
+                $this->createMock(LoaderInterface::class),
+                $this->createMock(RepositoryInterface::class),
+                $this->createMock(PromiseInterface::class),
+            )
         );
     }
 }
