@@ -69,7 +69,7 @@ class CheckingAllowedCountOfProjects
 
         $projectsCountedPromise = new Promise(
             function ($projectsCount) use ($manager, $projectsAllowed, $errorMessage): void {
-                if ($projectsCount > $projectsAllowed) {
+                if ($projectsCount >= $projectsAllowed) {
                     $manager->error(
                         error: new OverflowException($errorMessage, 400,)
                     );
