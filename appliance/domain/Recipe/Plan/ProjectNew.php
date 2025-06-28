@@ -60,18 +60,18 @@ class ProjectNew extends CreateObjectEndPoint implements NewProjectEndPointInter
         string|Stringable $defaultErrorTemplate,
     ) {
         parent::__construct(
-            $recipe,
-            $createObject,
-            $formHandling,
-            $formProcessing,
-            null,
-            $saveObject,
-            $redirectClient,
-            $renderForm,
-            $renderError,
-            $objectAccessControl,
-            $defaultErrorTemplate,
-            [
+            recipe: $recipe,
+            createObject: $createObject,
+            formHandling: $formHandling,
+            formProcessing: $formProcessing,
+            slugPreparation: null,
+            saveObject: $saveObject,
+            redirectClient: $redirectClient,
+            renderForm: $renderForm,
+            renderError: $renderError,
+            objectAccessControl: $objectAccessControl,
+            defaultErrorTemplate: $defaultErrorTemplate,
+            createObjectWiths: [
                 'constructorArguments' => Account::class,
             ],
         );

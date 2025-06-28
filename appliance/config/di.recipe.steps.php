@@ -74,12 +74,14 @@ use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
 use Teknoo\Space\Loader\AccountRegistryLoader;
+use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
@@ -357,13 +359,24 @@ return [
     CreateAccountInterface::class => get(CreateAccount::class),
 
     CreateAccount::class => create()
-        ->constructor(get(SpaceAccountWriter::class)),
+        ->constructor(
+            get(SpaceAccountWriter::class),
+        ),
+
+    LoadSpaceAccountFromAccount::class => create()
+        ->constructor(
+            get(SpaceAccountLoader::class)
+        ),
 
     LoadSubscriptionPlan::class => create()
-        ->constructor(get('teknoo.space.subscription_plan_catalog')),
+        ->constructor(
+            get('teknoo.space.subscription_plan_catalog'),
+        ),
 
     SetSubscriptionPlan::class => create()
-        ->constructor(get('teknoo.space.subscription_plan_catalog')),
+        ->constructor(
+            get('teknoo.space.subscription_plan_catalog'),
+        ),
 
     SetQuota::class => create(),
 

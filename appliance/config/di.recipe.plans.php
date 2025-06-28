@@ -123,6 +123,7 @@ use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
@@ -342,6 +343,7 @@ return [
 
     'teknoo.space.project.endpoint.new.additional_steps' => [
         //Before CreateObject
+        LoadSpaceAccountFromAccount::class => 6,
         LoadRegistryCredential::class => 6,
         LoadEnvironments::class => 6,
         LoadAccountClusters::class => 6,
