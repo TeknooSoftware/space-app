@@ -16,6 +16,7 @@ teknoo.space.action.2fa.disable: 'Disable'
 teknoo.space.action.2fa.validate: 'Validate'
 teknoo.space.action.2fa: '2FA'
 teknoo.space.action.account-settings: 'Account Settings'
+teknoo.space.action.account-status: 'Account Status'
 teknoo.space.action.accounts_clusters: "Account's Cluster"
 teknoo.space.action.add_account_environment: 'Add Environment'
 teknoo.space.action.add_attachment: 'Add attachment'

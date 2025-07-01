@@ -120,6 +120,7 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 use Teknoo\Space\Recipe\Step\Subscription\CreateAccount;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
@@ -469,6 +470,11 @@ return [
         ),
 
     CheckingAllowedCountOfProjects::class => create()
+        ->constructor(
+            get(ProjectLoader::class),
+        ),
+
+    InjectStatus::class => create()
         ->constructor(
             get(ProjectLoader::class),
         ),
