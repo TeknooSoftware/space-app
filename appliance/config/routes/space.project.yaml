@@ -3,6 +3,7 @@ space_project_list:
     methods: ['GET', 'POST']
     defaults:
         _controller: 'teknoo.space.endpoint.project.list'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
         defaultOrderDirection: 'ASC'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         itemsPerPage: 20

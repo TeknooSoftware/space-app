@@ -81,10 +81,14 @@ class InjectStatus
                 'quota' => $plan?->getQuotas() ?? [],
                 'envsAllowed' => $envsAllowed,
                 'envsCounted' => $envsCounted,
+                'envsExceeded' => !empty($envsAllowed) && $envsCounted > $envsAllowed,
                 'projectsAllowed' => $projectsAllowed,
                 'projectsCounted' => $projectsCounted,
+                'projectsExceeded' => !empty($projectsAllowed) && $projectsCounted > $projectsAllowed,
             ],
         );
+
+        $bag->set('currentAccount', $account);
 
         return $this;
     }

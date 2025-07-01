@@ -52,6 +52,16 @@ space_account_settings:
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
+space_account_status:
+    path: '/account/status'
+    methods: ['GET']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account.status'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        template: '@@TeknooSpace/Account/status.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
 space_account_edit_variables:
     path: '/account/variables'
     methods: ['GET', 'POST', 'PUT']

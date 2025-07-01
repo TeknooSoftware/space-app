@@ -16,18 +16,23 @@
             {% if is_granted('ROLE_USER') %}
                 <li>
                     <a href="{{ path('space_dashboard') }}">
-                        <i class="ti ti-home me-2"></i> {{ 'teknoo.space.action.dashboard'|trans }}
+                        <i class="ti ti-dashboard me-2"></i> {{ 'teknoo.space.action.dashboard'|trans }}
                     </a>
                 </li>
                 <li>
                     <a href="{{ path('space_my_settings') }}">
-                        <i class="ti ti-settings me-2"></i> {{ 'teknoo.space.action.my-settings'|trans }}
+                        <i class="ti ti-user me-2"></i> {{ 'teknoo.space.action.my-settings'|trans }}
                     </a>
                 </li>
                 {% if space.account is defined and space.account is not empty %}
                     <li>
                         <a href="{{ path('space_account_settings') }}">
-                            <i class="ti ti-settings me-2"></i>{{ 'teknoo.space.action.account-settings'|trans }}
+                            <i class="uil uil-data-sharing me-2"></i>{{ 'teknoo.space.action.account-settings'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('space_account_status') }}">
+                            <i class="ti ti-eye me-2"></i>{{ 'teknoo.space.action.account-status'|trans }}
                         </a>
                     </li>
                 {% endif %}
@@ -93,7 +98,7 @@
             {% elseif is_granted('ROLE_USER') %}
                 <li>
                     <a href="{{ path('space_project_list') }}">
-                        <i class="ti ti-home me-2"></i>{{ 'teknoo.space.action.projects'|trans }}
+                        <i class="uil uil-trowel me-2"></i>{{ 'teknoo.space.action.projects'|trans }}
                     </a>
                 </li>
             {% endif %}

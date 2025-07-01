@@ -104,6 +104,7 @@ use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
 use Teknoo\Space\Recipe\Plan\AccountClusterList;
 use Teknoo\Space\Recipe\Plan\AccountClusterNew;
 use Teknoo\Space\Recipe\Plan\AccountEditSettings;
+use Teknoo\Space\Recipe\Plan\AccountStatus;
 use Teknoo\Space\Recipe\Plan\Contact;
 use Teknoo\Space\Recipe\Plan\Dashboard;
 use Teknoo\Space\Recipe\Plan\DashboardFrame;
@@ -163,6 +164,7 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\InjectToViewMetadata;
 use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 
 use function DI\create;
 use function DI\decorate;
@@ -847,4 +849,16 @@ return [
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
         ),
+
+    AccountStatus::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadSubscriptionPlan::class),
+            diGet(LoadEnvironments::class),
+            diGet(CreateResumes::class),
+            diGet(InjectStatus::class),
+            diGet(Render::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        )
 ];

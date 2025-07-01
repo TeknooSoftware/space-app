@@ -81,6 +81,13 @@ services:
             - '@Teknoo\Space\Recipe\Plan\AccountEditSettings:without-steps'
             - '@service_container'
 
+    teknoo.space.endpoint.account.status:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\AccountStatus'
+            - '@service_container'
+
     teknoo.space.endpoint.account_cluster.list:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true

@@ -32,6 +32,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery;
 use Throwable;
@@ -51,9 +52,13 @@ class LoadEnvironments
 
     public function __invoke(
         ManagerInterface $manager,
-        ?Account $accountInstance = null,
+        Account|SpaceAccount|null $accountInstance = null,
         bool $allowEmptyCredentials = false
     ): self {
+        if ($accountInstance instanceof SpaceAccount) {
+            $accountInstance = $accountInstance->account;
+        }
+
         if (true === $allowEmptyCredentials && null === $accountInstance) {
             return $this;
         }
