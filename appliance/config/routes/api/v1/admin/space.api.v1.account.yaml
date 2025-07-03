@@ -34,6 +34,18 @@ space_api_v1_admin_account_edit:
         template: '@@TeknooSpace/api/AdminAccount/item.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
+space_api_v1_admin_account_status:
+    path: '/account/{id}/status'
+    methods: ['GET']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.status'
+        api: 'json'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        template: '@@TeknooSpace/Account/status.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
 space_api_v1_admin_account_edit_environments:
     path: '/account/{id}/environments'
     methods: ['GET', 'POST', 'PUT']

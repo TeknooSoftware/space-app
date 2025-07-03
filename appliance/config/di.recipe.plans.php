@@ -105,6 +105,7 @@ use Teknoo\Space\Recipe\Plan\AccountClusterList;
 use Teknoo\Space\Recipe\Plan\AccountClusterNew;
 use Teknoo\Space\Recipe\Plan\AccountEditSettings;
 use Teknoo\Space\Recipe\Plan\AccountStatus;
+use Teknoo\Space\Recipe\Plan\AdminAccountStatus;
 use Teknoo\Space\Recipe\Plan\Contact;
 use Teknoo\Space\Recipe\Plan\Dashboard;
 use Teknoo\Space\Recipe\Plan\DashboardFrame;
@@ -846,6 +847,19 @@ return [
             diGet(SendEmailInterface::class),
             diGet(RedirectClientInterface::class),
             diGet(RenderFormInterface::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    AdminAccountStatus::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(LoadSubscriptionPlan::class),
+            diGet(LoadEnvironments::class),
+            diGet(CreateResumes::class),
+            diGet(InjectStatus::class),
+            diGet(Render::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
         ),
