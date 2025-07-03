@@ -64,8 +64,6 @@ use function end;
 use function explode;
 use function json_decode;
 use function json_encode;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertFalse;
 use function str_contains;
 use function str_starts_with;
 use function strtolower;
@@ -2145,8 +2143,8 @@ trait ApiTrait
         Assert::assertEquals($name, $unserialized['data']['plan_name']);
     }
 
-    #[Then('with :allowed allowed environments and :created created')]
-    public function withAllowedEnvironmentsAndCreated(int $allowed, int $created): void
+    #[Then('with :allowed allowed environments and :counted created')]
+    public function withAllowedEnvironmentsAndCreated(int $allowed, int $counted): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -2155,7 +2153,7 @@ trait ApiTrait
         Assert::assertArrayHasKey('allowed', $unserialized['data']['environments']);
         Assert::assertEquals($allowed, $unserialized['data']['environments']['allowed']);
         Assert::assertArrayHasKey('counted', $unserialized['data']['environments']);
-        Assert::assertEquals($created, $unserialized['data']['environments']['counted']);
+        Assert::assertEquals($counted, $unserialized['data']['environments']['counted']);
     }
 
     #[Then('without exceeding environments')]
@@ -2180,8 +2178,8 @@ trait ApiTrait
         Assert::assertTrue($unserialized['data']['environments']['exceeding']);
     }
 
-    #[Then('with :allowed allowed projects and :created created')]
-    public function withAllowedProjectsAndCreated(int $allowed, int $created): void
+    #[Then('with :allowed allowed projects and :counted created')]
+    public function withAllowedProjectsAndCreated(int $allowed, int $counted): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -2190,7 +2188,7 @@ trait ApiTrait
         Assert::assertArrayHasKey('allowed', $unserialized['data']['projects']);
         Assert::assertEquals($allowed, $unserialized['data']['projects']['allowed']);
         Assert::assertArrayHasKey('counted', $unserialized['data']['projects']);
-        Assert::assertEquals($created, $unserialized['data']['projects']['counted']);
+        Assert::assertEquals($counted, $unserialized['data']['projects']['counted']);
     }
 
     #[Then('without exceeding projects')]
