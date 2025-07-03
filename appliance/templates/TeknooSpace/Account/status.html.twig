@@ -84,13 +84,13 @@
         </div>{#end col#}
 
         <div class="col-lg-3 mt-4">
-            <div class="card rounded shadow p-4 {% if subscriptionStatus.envsExceeded %} border border-danger{% endif %}">
-                <h5 class="mb-0{% if subscriptionStatus.envsExceeded %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.environments'|trans }}</h5>
+            <div class="card rounded shadow p-4 {% if subscriptionStatus.envsExceeding %} border border-danger{% endif %}">
+                <h5 class="mb-0{% if subscriptionStatus.envsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.environments'|trans }}</h5>
                 <form>
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label{% if subscriptionStatus.envsExceeded %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.allowed'|trans }}</label>
+                                <label class="form-label{% if subscriptionStatus.envsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.allowed'|trans }}</label>
                                 <div class="form-icon position-relative">
                                     <i data-feather="user" class="fea icon-sm icons"></i>
                                     <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ subscriptionStatus.envsAllowed }}">
@@ -99,7 +99,7 @@
                         </div>{#end col#}
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label{% if subscriptionStatus.envsExceeded %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.counted'|trans }}</label>
+                                <label class="form-label{% if subscriptionStatus.envsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.counted'|trans }}</label>
                                 <div class="form-icon position-relative">
                                     <i data-feather="user" class="fea icon-sm icons"></i>
                                     <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ subscriptionStatus.envsCounted }}">
@@ -111,13 +111,13 @@
 
             </div>
 
-            <div class="card rounded shadow p-4 mt-4{% if subscriptionStatus.projectsExceeded %} border border-danger{% endif %}">
-                <h5 class="mb-0{% if subscriptionStatus.projectsExceeded %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.projects'|trans }}</h5>
+            <div class="card rounded shadow p-4 mt-4{% if subscriptionStatus.projectsExceeding %} border border-danger{% endif %}">
+                <h5 class="mb-0{% if subscriptionStatus.projectsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.projects'|trans }}</h5>
                 <form>
                     <div class="row mt-4">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label{% if subscriptionStatus.projectsExceeded %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.allowed'|trans }}</label>
+                                <label class="form-label{% if subscriptionStatus.projectsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.allowed'|trans }}</label>
                                 <div class="form-icon position-relative">
                                     <i data-feather="user" class="fea icon-sm icons"></i>
                                     <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ subscriptionStatus.projectsAllowed }}">
@@ -126,7 +126,7 @@
                         </div>{#end col#}
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label class="form-label{% if subscriptionStatus.projectsExceeded %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.counted'|trans }}</label>
+                                <label class="form-label{% if subscriptionStatus.projectsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.counted'|trans }}</label>
                                 <div class="form-icon position-relative">
                                     <i data-feather="user" class="fea icon-sm icons"></i>
                                     <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ subscriptionStatus.projectsCounted }}">

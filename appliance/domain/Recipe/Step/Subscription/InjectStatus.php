@@ -81,10 +81,10 @@ class InjectStatus
                 'quota' => $plan?->getQuotas() ?? [],
                 'envsAllowed' => $envsAllowed,
                 'envsCounted' => $envsCounted,
-                'envsExceeded' => !empty($envsAllowed) && $envsCounted > $envsAllowed,
+                'envsExceeding' => !empty($envsAllowed) && $envsCounted > $envsAllowed,
                 'projectsAllowed' => $projectsAllowed,
                 'projectsCounted' => $projectsCounted,
-                'projectsExceeded' => !empty($projectsAllowed) && $projectsCounted > $projectsAllowed,
+                'projectsExceeding' => !empty($projectsAllowed) && $projectsCounted > $projectsAllowed,
             ],
         );
 
