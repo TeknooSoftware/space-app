@@ -16,7 +16,7 @@ space_api_v1_account_settings:
         template: '@@TeknooSpace/api/Account/settings.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
-space_account_status:
+space_api_v1_account_status:
     path: '/account/status'
     methods: ['GET']
     schemes: ['https']

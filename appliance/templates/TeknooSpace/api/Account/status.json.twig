@@ -1,5 +1,4 @@
 {# templates/TeknooSpace/api/Account/status.json.twig  #}
-{{ subscriptionStatus|space_object_serialization({'groups': ['crud_variables']}) }}
 {% set object = {
     "plan_name": subscriptionStatus.planName,
     "quota": subscriptionStatus.quota,
