@@ -28,9 +28,10 @@ namespace Teknoo\Space\Recipe\Step\Account;
 use DomainException;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 
 use function in_array;
 
@@ -46,15 +47,15 @@ use function in_array;
 class LoadAccountFromRequest
 {
     public function __construct(
-        private AccountLoader $accountLoader,
+        private SpaceAccountLoader $accountLoader,
     ) {
     }
 
-    private function getAccount(string $accountId): ?Account
+    private function getAccount(string $accountId): ?SpaceAccount
     {
-        /** @var Promise<Account, ?Account, mixed> $accountPromise */
+        /** @var Promise<SpaceAccount, ?SpaceAccount, mixed> $accountPromise */
         $accountPromise = new Promise(
-            fn (Account $account) => $account,
+            fn (SpaceAccount $account) => $account,
         );
 
         $this->accountLoader->load(
@@ -91,7 +92,8 @@ class LoadAccountFromRequest
         $parameters['accountId'] = $accountId;
 
         $manager->updateWorkPlan([
-            Account::class => $account,
+            SpaceAccount::class => $account,
+            Account::class => $account?->account,
             'parameters' => $parameters,
         ]);
 

@@ -232,7 +232,6 @@ return [
             diGet(PersistEnvironment::class),
             diGet(PrepareAccountErrorHandler::class),
             diGet(ObjectAccessControlInterface::class),
-            diGet('teknoo.space.account.additional_steps'),
         ),
 
     AccountEnvironmentReinstall::class => create()
@@ -391,6 +390,8 @@ return [
             $steps->add($container->get(LoadAccountClusters::class), 12);
             $steps->add($container->get(LoadEnvironments::class), 12);
             $steps->add($container->get(CreateResumes::class), 13);
+            $steps->add($container->get(LoadSubscriptionPlan::class), 13);
+            $steps->add($container->get(InjectStatus::class), 14);
 
             //After ObjectAccessControlInterface
             $steps->add($container->get(LoadHistory::class), 25);
@@ -724,7 +725,11 @@ return [
             diGet(ExtractPage::class),
             diGet(ExtractOrder::class),
             diGet(LoadAccountFromRequest::class),
+            diGet(LoadEnvironments::class),
+            diGet(LoadSubscriptionPlan::class),
+            diGet(CreateResumes::class),
             diGet(ProjectPrepareCriteria::class),
+            diGet(InjectStatus::class),
             diGet(LoadListObjects::class),
             diGet(RenderList::class),
             diGet(RenderError::class),

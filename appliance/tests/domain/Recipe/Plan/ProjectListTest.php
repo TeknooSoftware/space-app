@@ -41,7 +41,11 @@ use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Plan\ProjectList;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 
 /**
  * Class ProjectListTest.
@@ -65,7 +69,15 @@ class ProjectListTest extends TestCase
 
     private LoadAccountFromRequest|MockObject $loadAccountFromRequest;
 
+    private LoadEnvironments|MockObject $loadEnvironments;
+
+    private LoadSubscriptionPlan|MockObject $loadSubscriptionPlan;
+
+    private CreateResumes|MockObject $createResumes;
+
     private PrepareCriteria|MockObject $prepareCriteria;
+
+    private InjectStatus|MockObject $injectStatus;
 
     private LoadListObjects|MockObject $loadListObjects;
 
@@ -92,7 +104,11 @@ class ProjectListTest extends TestCase
         $this->extractPage = $this->createMock(ExtractPage::class);
         $this->extractOrder = $this->createMock(ExtractOrder::class);
         $this->loadAccountFromRequest = $this->createMock(LoadAccountFromRequest::class);
+        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
+        $this->loadSubscriptionPlan = $this->createMock(LoadSubscriptionPlan::class);
+        $this->createResumes = $this->createMock(CreateResumes::class);
         $this->prepareCriteria = $this->createMock(PrepareCriteria::class);
+        $this->injectStatus = $this->createMock(InjectStatus::class);
         $this->loadListObjects = $this->createMock(LoadListObjects::class);
         $this->renderList = $this->createMock(RenderList::class);
         $this->renderError = $this->createMock(RenderError::class);
@@ -105,7 +121,11 @@ class ProjectListTest extends TestCase
             extractPage: $this->extractPage,
             extractOrder: $this->extractOrder,
             loadAccountFromRequest: $this->loadAccountFromRequest,
+            loadEnvironments: $this->loadEnvironments,
+            loadSubscriptionPlan: $this->loadSubscriptionPlan,
+            createResumes: $this->createResumes,
             prepareCriteria: $this->prepareCriteria,
+            injectStatus: $this->injectStatus,
             loadListObjects: $this->loadListObjects,
             renderList: $this->renderList,
             renderError: $this->renderError,

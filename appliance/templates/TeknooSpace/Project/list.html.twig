@@ -6,12 +6,13 @@
 
 {% block title %}{{ 'teknoo.space.title.project'|trans }} - {% endblock %}
 
-{% block listTitle %}<i class="uil uil-trowel"></i> {{ 'teknoo.space.title.project'|trans }}{% endblock %}
+{% block listTitle %}<i class="uil uil-trowel" xmlns="http://www.w3.org/1999/html"></i> {{ 'teknoo.space.title.project'|trans }}{% endblock %}
 
 {% block breadcrumbListLink %}{{ path('space_project_list') }}{% endblock %}
 {% block breadcrumbListTitle %}{{ 'teknoo.space.title.project'|trans }}{% endblock %}
 
 {% block topHeaderButton %}
+    {% if subscriptionStatus is not defined or subscriptionStatus.projectsFull is empty %}
     <li class="list-inline-item mb-0 ms-1">
         <a rel="noopener"
            class="btn btn-outline-light"
@@ -21,6 +22,16 @@
             {{ 'teknoo.space.action.new_project'|trans }}
         </a>
     </li>
+    {% else %}
+        <li class="list-inline-item mb-0 ms-1">
+            <button type="button"
+                    disabled
+                    class="btn btn-soft-secondary">
+                <i class="uil uil-book-medical"></i>
+                {{ 'teknoo.space.action.new_project'|trans }}
+            </button>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block listTableHeader %}

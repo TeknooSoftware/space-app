@@ -28,11 +28,8 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Loader\AccountLoader;
-use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
 
 /**
@@ -48,7 +45,7 @@ class LoadAccountFromRequestTest extends TestCase
 {
     private LoadAccountFromRequest $loadAccountFromRequest;
 
-    private AccountLoader|MockObject $accountLoader;
+    private SpaceAccountLoader|MockObject $accountLoader;
 
     /**
      * {@inheritdoc}
@@ -57,7 +54,7 @@ class LoadAccountFromRequestTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountLoader = $this->createMock(AccountLoader::class);
+        $this->accountLoader = $this->createMock(SpaceAccountLoader::class);
 
         $this->loadAccountFromRequest = new LoadAccountFromRequest($this->accountLoader);
     }

@@ -52,13 +52,13 @@ class InjectStatus
     public function __invoke(
         ManagerInterface $manager,
         ParametersBag $bag,
-        SpaceAccount $account,
+        SpaceAccount $spaceAccount,
         ?SubscriptionPlan $plan = null,
     ): self {
         $projectsAllowed = $plan?->projectsCountAllowed ?? 0;
         $envsAllowed = $plan?->envsCountAllowed ?? 0;
 
-        $envsCounted = count($account?->environments ?? []);
+        $envsCounted = count($spaceAccount?->environments ?? []);
 
         $projectsCountedPromise = new Promise(
             static fn ($projectsCount): int => $projectsCount,
@@ -67,7 +67,7 @@ class InjectStatus
 
         $this->projectLoader->fetch(
             new CountProjectsInAccount(
-                $account->account,
+                $spaceAccount->account,
             ),
             $projectsCountedPromise,
         );
@@ -82,13 +82,15 @@ class InjectStatus
                 'envsAllowed' => $envsAllowed,
                 'envsCounted' => $envsCounted,
                 'envsExceeding' => !empty($envsAllowed) && $envsCounted > $envsAllowed,
+                'envsFull' => !empty($envsAllowed) && $envsCounted >= $envsAllowed,
                 'projectsAllowed' => $projectsAllowed,
                 'projectsCounted' => $projectsCounted,
                 'projectsExceeding' => !empty($projectsAllowed) && $projectsCounted > $projectsAllowed,
+                'projectsFull' => !empty($projectsAllowed) && $projectsCounted >= $projectsAllowed,
             ],
         );
 
-        $bag->set('currentAccount', $account);
+        $bag->set('currentAccount', $spaceAccount);
 
         return $this;
     }

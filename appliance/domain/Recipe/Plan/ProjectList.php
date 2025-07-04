@@ -36,7 +36,11 @@ use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\RenderList;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -54,7 +58,11 @@ class ProjectList extends ListObjectEndPoint
         ExtractPage $extractPage,
         ExtractOrder $extractOrder,
         private LoadAccountFromRequest $loadAccountFromRequest,
+        private LoadEnvironments $loadEnvironments,
+        private LoadSubscriptionPlan $loadSubscriptionPlan,
+        private CreateResumes $createResumes,
         private PrepareCriteria $prepareCriteria,
+        private InjectStatus $injectStatus,
         LoadListObjects $loadListObjects,
         RenderList $renderList,
         RenderError $renderError,
@@ -82,7 +90,11 @@ class ProjectList extends ListObjectEndPoint
         $recipe = parent::populateRecipe($recipe);
 
         $recipe = $recipe->cook($this->loadAccountFromRequest, LoadAccountFromRequest::class, [], 24);
+        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 24);
+        $recipe = $recipe->cook($this->loadSubscriptionPlan, LoadSubscriptionPlan::class, [], 24);
+        $recipe = $recipe->cook($this->createResumes, CreateResumes::class, [], 25);
         $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
+        $recipe = $recipe->cook($this->injectStatus, InjectStatus::class, [], 26);
 
         return $recipe;
     }

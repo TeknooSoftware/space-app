@@ -311,7 +311,7 @@ return [
         ->constructor(get(AccountRegistryLoader::class)),
 
     LoadAccountFromRequest::class => create()
-        ->constructor(get(AccountLoader::class)),
+        ->constructor(get(SpaceAccountLoader::class)),
 
     LoadAccountData::class => create()
         ->constructor(get(AccountDataLoader::class)),
