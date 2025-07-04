@@ -23,14 +23,17 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
+namespace Teknoo\Space\Recipe\Step\Project;
 
 use OverflowException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Loader\ProjectLoader;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-
-use function count;
+use Teknoo\Space\Query\Project\CountProjectsInAccount;
+use Throwable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -38,28 +41,49 @@ use function count;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CheckingAllowedCountOfEnvs
+class CheckingAllowedCountOfProjects
 {
+    public function __construct(
+        private readonly ProjectLoader $projectLoader,
+    ) {
+    }
+
     public function __invoke(
         ManagerInterface $manager,
-        SpaceAccount $spaceAccount,
+        SpaceAccount|Account|null $account = null,
         ?SubscriptionPlan $plan = null,
     ): self {
-        $envsAllowed = $plan?->envsCountAllowed ?? 0;
+        $projectsAllowed = $plan?->projectsCountAllowed ?? 0;
         $errorMessage = 'Missing subscription plan for this account';
         if ($plan) {
-            $errorMessage = "The plan {$plan->name} accepts only {$envsAllowed} environments";
+            $errorMessage = "The plan {$plan->name} accepts only {$projectsAllowed} projects";
         }
 
-        if (
-            0 < $envsAllowed
-            && !empty($spaceAccount->environments)
-            && count($spaceAccount->environments) > $envsAllowed
-        ) {
-            $manager->error(
-                error: new OverflowException($errorMessage, 400,)
-            );
+        if ($account instanceof SpaceAccount) {
+            $account = $account->account;
         }
+
+        if (null === $account || 0 === $projectsAllowed) {
+            return $this;
+        }
+
+        $projectsCountedPromise = new Promise(
+            static function ($projectsCounted) use ($manager, $projectsAllowed, $errorMessage): void {
+                if ($projectsCounted >= $projectsAllowed) {
+                    $manager->error(
+                        error: new OverflowException($errorMessage, 400,)
+                    );
+                }
+            },
+            static fn (Throwable $error)  => $manager->error($error)
+        );
+
+        $this->projectLoader->fetch(
+            new CountProjectsInAccount(
+                $account,
+            ),
+            $projectsCountedPromise,
+        );
 
         return $this;
     }

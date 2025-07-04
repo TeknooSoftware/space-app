@@ -89,12 +89,21 @@
         <i class="uil uil-focus-add"></i>
         {{ 'teknoo.space.action.add_quota'|trans }}
     </button>
+    {% if subscriptionStatus is not defined or subscriptionStatus.envsFull is empty %}
     <button type="button"
             data-subforms-id="environments_resumes"
             class="btn btn-outline-secondary btn-full-large btn-add-subform mb-2">
         <i class="uil uil-focus-add"></i>
         {{ 'teknoo.space.action.add_account_environment'|trans }}
     </button>
+    {% else %}
+        <button type="button"
+                disabled
+                class="btn btn-soft-secondary btn-full-large mb-2">
+            <i class="uil uil-focus-add"></i>
+            {{ 'teknoo.space.action.add_account_environment'|trans }}
+        </button>
+    {% endif %}
 {% endblock %}
 
 {% block blockExtra %}
@@ -138,6 +147,11 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
+        <a href="{{ path('space_admin_account_status', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large mb-2">
+            <i class="ti ti-eye"></i>
+            {{ 'teknoo.space.action.status'|trans }}
+        </a>
         <a href="{{ path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}"
            class="btn btn-outline-dark btn-full-large mb-2">
             <i class="uil uil-setting"></i>
@@ -148,11 +162,20 @@
             <i class="uil uil-server"></i>
             {{ 'teknoo.space.action.accounts_clusters'|trans }}
         </a>
-        <a href="{{ path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}"
-           class="btn btn-soft-success btn-full-large">
-            <i class="uil uil-trowel"></i>
-            {{ 'teknoo.space.action.new_project'|trans }}
-        </a>
+        {% if subscriptionStatus is not defined or subscriptionStatus.projectsFull is empty %}
+            <a href="{{ path('_teknoo_paas_admin_project_new', {'accountId':objectInstance.id}) }}"
+               class="btn btn-soft-success btn-full-large">
+                <i class="uil uil-trowel"></i>
+                {{ 'teknoo.space.action.new_project'|trans }}
+            </a>
+        {% else %}
+            <button type="button"
+                disabled
+                class="btn btn-soft-secondary btn-full-large mb-2">
+                <i class="uil uil-trowel"></i>
+                {{ 'teknoo.space.action.new_project'|trans }}
+            </button>
+        {% endif %}
         <a href="{{ path('space_admin_account_refresh_quota', {'id':objectInstance.id}) }}"
            class="btn btn-outline-danger btn-full-large mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>

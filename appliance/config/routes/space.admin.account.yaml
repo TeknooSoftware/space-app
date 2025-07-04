@@ -1,3 +1,14 @@
+space_admin_account_status:
+    path: '/admin/account/{id}/status'
+    methods: ['GET']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.status'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        template: '@@TeknooSpace/AdminAccount/status.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
 space_admin_account_edit_variables:
     path: '/admin/account/{id}/variables'
     methods: ['GET', 'POST', 'PUT']

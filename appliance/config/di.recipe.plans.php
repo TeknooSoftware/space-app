@@ -104,6 +104,8 @@ use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
 use Teknoo\Space\Recipe\Plan\AccountClusterList;
 use Teknoo\Space\Recipe\Plan\AccountClusterNew;
 use Teknoo\Space\Recipe\Plan\AccountEditSettings;
+use Teknoo\Space\Recipe\Plan\AccountStatus;
+use Teknoo\Space\Recipe\Plan\AdminAccountStatus;
 use Teknoo\Space\Recipe\Plan\Contact;
 use Teknoo\Space\Recipe\Plan\Dashboard;
 use Teknoo\Space\Recipe\Plan\DashboardFrame;
@@ -123,10 +125,12 @@ use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
-use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
@@ -153,6 +157,7 @@ use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria as ProjectPrepareCriteria;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
+use Teknoo\Space\Recipe\Step\Project\CheckingAllowedCountOfProjects;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
@@ -160,6 +165,7 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\InjectToViewMetadata;
 use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 
 use function DI\create;
 use function DI\decorate;
@@ -226,7 +232,6 @@ return [
             diGet(PersistEnvironment::class),
             diGet(PrepareAccountErrorHandler::class),
             diGet(ObjectAccessControlInterface::class),
-            diGet('teknoo.space.account.additional_steps'),
         ),
 
     AccountEnvironmentReinstall::class => create()
@@ -340,6 +345,7 @@ return [
 
     'teknoo.space.project.endpoint.new.additional_steps' => [
         //Before CreateObject
+        LoadSpaceAccountFromAccount::class => 6,
         LoadRegistryCredential::class => 6,
         LoadEnvironments::class => 6,
         LoadAccountClusters::class => 6,
@@ -350,6 +356,8 @@ return [
         PrepareProject::class => 15,
 
         //After ObjectAccessControlInterface
+        LoadSubscriptionPlan::class => 51,
+        CheckingAllowedCountOfProjects::class => 52,
         AddManagedEnvironmentToProject::class => 58,
         UpdateProjectCredentialsFromAccount::class => 59,
 
@@ -382,6 +390,8 @@ return [
             $steps->add($container->get(LoadAccountClusters::class), 12);
             $steps->add($container->get(LoadEnvironments::class), 12);
             $steps->add($container->get(CreateResumes::class), 13);
+            $steps->add($container->get(LoadSubscriptionPlan::class), 13);
+            $steps->add($container->get(InjectStatus::class), 14);
 
             //After ObjectAccessControlInterface
             $steps->add($container->get(LoadHistory::class), 25);
@@ -715,7 +725,11 @@ return [
             diGet(ExtractPage::class),
             diGet(ExtractOrder::class),
             diGet(LoadAccountFromRequest::class),
+            diGet(LoadEnvironments::class),
+            diGet(LoadSubscriptionPlan::class),
+            diGet(CreateResumes::class),
             diGet(ProjectPrepareCriteria::class),
+            diGet(InjectStatus::class),
             diGet(LoadListObjects::class),
             diGet(RenderList::class),
             diGet(RenderError::class),
@@ -841,4 +855,29 @@ return [
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
         ),
+
+    AdminAccountStatus::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(LoadSubscriptionPlan::class),
+            diGet(LoadEnvironments::class),
+            diGet(CreateResumes::class),
+            diGet(InjectStatus::class),
+            diGet(Render::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    AccountStatus::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadSubscriptionPlan::class),
+            diGet(LoadEnvironments::class),
+            diGet(CreateResumes::class),
+            diGet(InjectStatus::class),
+            diGet(Render::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        )
 ];

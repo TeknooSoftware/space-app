@@ -336,6 +336,12 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('get a valid web page')]
+    public function getAValidWebOage(): void
+    {
+        $this->isAFinalResponse();
+    }
+
     #[Then('the account name is now :accountName')]
     public function theAccountNameIsNow(string $accountName): void
     {
@@ -420,5 +426,71 @@ trait BrowserCrawlingTrait
             $this->getPathFromRoute('space_update_password'),
             $this->currentUrl,
         );
+    }
+
+    #[Then('in the page, the subscription plan is :name')]
+    public function intThePageTheSubscriptionPlanNameIs(string $name): void
+    {
+        $crawler = $this->createCrawler();
+
+        $node = $crawler->filter('.plan-name');
+        $nodeValue = trim((string) $node->getNode(0)?->attributes->getNamedItem('placeholder')->value);
+        Assert::assertEquals($name, $nodeValue);
+    }
+
+    #[Then('there are :allowed allowed environments and :counted created')]
+    public function thereAreAllowedEnvironmentsAndCreated(int $allowed, int $counted): void
+    {
+        $crawler = $this->createCrawler();
+
+        $node = $crawler->filter('.environments .allowed');
+        $nodeValue = trim((string) $node->getNode(0)?->attributes->getNamedItem('placeholder')->value);
+        Assert::assertEquals($allowed, $nodeValue);
+
+        $node = $crawler->filter('.environments .counted');
+        $nodeValue = trim((string) $node->getNode(0)?->attributes->getNamedItem('placeholder')->value);
+        Assert::assertEquals($counted, $nodeValue);
+    }
+
+    #[Then('there are not exceeding environments')]
+    public function thereAreNotExceedingEnvironments(): void
+    {
+        $crawler = $this->createCrawler();
+        Assert::assertCount(0, $crawler->filter('.environments.border-danger'));
+    }
+
+    #[Then('there are exceeding environments')]
+    public function thereAreExceedingEnvironments(): void
+    {
+        $crawler = $this->createCrawler();
+        Assert::assertGreaterThan(0, $crawler->filter('.environments.border-danger')->count());
+    }
+
+    #[Then('there are :allowed allowed projects and :counter created')]
+    public function thereAreAllowedProjectsAndCreated(int $allowed, int $counted): void
+    {
+        $crawler = $this->createCrawler();
+
+        $node = $crawler->filter('.projects .allowed');
+        $nodeValue = trim((string) $node->getNode(0)?->attributes->getNamedItem('placeholder')->value);
+        Assert::assertEquals($allowed, $nodeValue);
+
+        $node = $crawler->filter('.projects .counted');
+        $nodeValue = trim((string) $node->getNode(0)?->attributes->getNamedItem('placeholder')->value);
+        Assert::assertEquals($counted, $nodeValue);
+    }
+
+    #[Then('there are not exceeding projects')]
+    public function thereAreNotExceedingProjects(): void
+    {
+        $crawler = $this->createCrawler();
+        Assert::assertCount(0, $crawler->filter('.projects.border-danger'));
+    }
+
+    #[Then('there are exceeding projects')]
+    public function thereAreExceedingProjects(): void
+    {
+        $crawler = $this->createCrawler();
+        Assert::assertGreaterThan(0, $crawler->filter('.projects.border-danger')->count());
     }
 }

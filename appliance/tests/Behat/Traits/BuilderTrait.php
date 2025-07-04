@@ -66,6 +66,14 @@ trait BuilderTrait
 
         $this->formName = 'space_account';
     }
+    #[When('It goes to account status')]
+    public function itGoesToAccountStatuss(): void
+    {
+        $this->findUrlFromRouteInPageAndOpenIt(
+            crawler: $this->createCrawler(),
+            routeName: 'space_account_status',
+        );
+    }
 
     #[When('open the account variables page')]
     public function openTheAccountVariablesPage(): void

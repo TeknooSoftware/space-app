@@ -1,0 +1,148 @@
+{# templates/TeknooSpace/AdminAccount/status.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.static.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.admin_account.status'|trans }} : {{ currentAccount }} - {% endblock %}
+
+{%- block instanceMainTitle -%}
+    <i class="ti ti-eye"></i> {{ 'teknoo.space.title.admin_account.status'|trans }} : {{ currentAccount }}
+{%- endblock -%}
+
+{% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
+{% block breadcrumbListTitle %}{{ 'teknoo.space.title.admin_account'|trans }}{% endblock %}
+{% block breadcrumbAddsItems %}
+    <li class="breadcrumb-item text-capitalize">
+        <a href="{{ path('_teknoo_paas_admin_account_edit', {"id": currentAccount.id}) }}">
+            {{ currentAccount }}
+        </a>
+    </li>
+{% endblock %}
+{% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.admin_account.status'|trans }}{% endblock %}
+
+{% block mainContent %}
+    <div class="row">
+        <div class="col-lg-3 mt-4">
+            <div class="card rounded shadow">
+                <div class="card-body">
+                    <h5 class="text-md-start text-center mb-0">{{ 'teknoo.space.text.accout.status.subscription_plan'|trans }}</h5>
+                    <form>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">{{ 'teknoo.space.text.accout.status.plan'|trans }}</label>
+                                    <div class="form-icon position-relative">
+                                        <i data-feather="user" class="fea icon-sm icons"></i>
+                                        <input name="name" id="first" type="text" disabled class="form-control ps-5 plan-name" placeholder="{{ subscriptionStatus.planName }}">
+                                    </div>
+                                </div>
+                            </div>{#end col#}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>{#end col#}
+
+        <div class="col-lg-6 mt-4">
+            <div class="card rounded shadow p-4">
+                <h5 class="mb-0">{{ 'teknoo.space.text.accout.status.quota'|trans }}</h5>
+                <form>
+                {% for quota in subscriptionStatus.quota %}
+                    <div class="row mt-4">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'teknoo.space.text.accout.status.category'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ quota.category }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'teknoo.space.text.accout.status.type'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ quota.type }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'teknoo.space.text.accout.status.max-capacity'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ quota.capacity }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label">{{ 'teknoo.space.text.accout.status.max-capacity'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5" placeholder="{{ quota.requires }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                    </div>
+                {% endfor %}
+                </form>
+            </div>
+        </div>{#end col#}
+
+        <div class="col-lg-3 mt-4">
+            <div class="environments card rounded shadow p-4 {% if subscriptionStatus.envsExceeding %} border border-danger{% endif %}">
+                <h5 class="mb-0{% if subscriptionStatus.envsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.environments'|trans }}</h5>
+                <form>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label{% if subscriptionStatus.envsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.allowed'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5 allowed" placeholder="{{ subscriptionStatus.envsAllowed }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label{% if subscriptionStatus.envsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.counted'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5 counted" placeholder="{{ subscriptionStatus.envsCounted }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                    </div>
+                </form>
+
+            </div>
+
+            <div class="projects card rounded shadow p-4 mt-4{% if subscriptionStatus.projectsExceeding %} border border-danger{% endif %}">
+                <h5 class="mb-0{% if subscriptionStatus.projectsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.projects'|trans }}</h5>
+                <form>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label{% if subscriptionStatus.projectsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.allowed'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5 allowed" placeholder="{{ subscriptionStatus.projectsAllowed }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label{% if subscriptionStatus.projectsExceeding %} text-danger{% endif %}">{{ 'teknoo.space.text.accout.status.counted'|trans }}</label>
+                                <div class="form-icon position-relative">
+                                    <i data-feather="user" class="fea icon-sm icons"></i>
+                                    <input name="name" id="first" type="text" disabled class="form-control ps-5 counted" placeholder="{{ subscriptionStatus.projectsCounted }}">
+                                </div>
+                            </div>
+                        </div>{#end col#}
+                    </div>
+                </form>
+            </div>
+        </div>{#end col#}
+    </div>{#end row#}
+{% endblock %}

@@ -26,18 +26,16 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Plan;
 
 use Stringable;
-use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\FormProcessingInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
-use Teknoo\East\Common\Recipe\Plan\CreateObjectEndPoint;
-use Teknoo\East\Common\Recipe\Step\CreateObject;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Common\Recipe\Step\LoadObject;
+use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
-use Teknoo\East\Common\Recipe\Step\SaveObject;
-use Teknoo\East\Paas\Contracts\Recipe\Plan\NewProjectEndPointInterface;
-use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -45,35 +43,49 @@ use Teknoo\Recipe\RecipeInterface;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ProjectNew extends CreateObjectEndPoint implements NewProjectEndPointInterface
+class AdminAccountStatus extends AccountStatus
 {
     public function __construct(
         RecipeInterface $recipe,
-        ObjectAccessControlInterface $objectAccessControl,
-        CreateObject $createObject,
-        FormHandlingInterface $formHandling,
-        FormProcessingInterface $formProcessing,
-        SaveObject $saveObject,
-        RedirectClientInterface $redirectClient,
-        RenderFormInterface $renderForm,
+        private readonly LoadObject $loadObject,
+        LoadSubscriptionPlan $loadSubscriptionPlan,
+        LoadEnvironments $loadEnvironments,
+        CreateResumes $createResumes,
+        InjectStatus $injectStatus,
+        Render $render,
         RenderError $renderError,
         string|Stringable $defaultErrorTemplate,
     ) {
         parent::__construct(
             recipe: $recipe,
-            createObject: $createObject,
-            formHandling: $formHandling,
-            formProcessing: $formProcessing,
-            slugPreparation: null,
-            saveObject: $saveObject,
-            redirectClient: $redirectClient,
-            renderForm: $renderForm,
+            loadSubscriptionPlan: $loadSubscriptionPlan,
+            loadEnvironments: $loadEnvironments,
+            createResumes: $createResumes,
+            injectStatus: $injectStatus,
+            render: $render,
             renderError: $renderError,
-            objectAccessControl: $objectAccessControl,
             defaultErrorTemplate: $defaultErrorTemplate,
-            createObjectWiths: [
-                'constructorArguments' => Account::class,
+        );
+    }
+
+    protected function populateRecipe(RecipeInterface $recipe, bool $skipRequires = false): RecipeInterface
+    {
+        $recipe = $recipe->require(new Ingredient('string', 'id'));
+        $recipe = $recipe->require(new Ingredient(LoaderInterface::class));
+
+        $recipe = $recipe->cook(
+            $this->loadObject,
+            LoadObject::class . ':Account',
+            [
+                'loader' => 'accountLoader',
+                'workPlanKey' => 'accountKey'
             ],
+            05
+        );
+
+        return parent::populateRecipe(
+            recipe: $recipe,
+            skipRequires: true,
         );
     }
 }

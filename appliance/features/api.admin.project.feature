@@ -132,6 +132,84 @@ Feature: API admin endpoints to administrate projects
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
+  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a form url
+  encoded body and get an error
+    Given A Space app instance
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "3" standard projects "other project X" and a prefix "other-prefix"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a project as admin:
+      | field                                                       | value                                 |
+      | space_project.project.name                                  | Behats Test                           |
+      | space_project.projectMetadata.projectUrl                    | https://behat.tests                   |
+      | space_project.project.prefix                                | behat-test                            |
+      | space_project.project.sourceRepository.pullUrl              | https://oauth:foo@gitlab.teknoo.space |
+      | space_project.project.sourceRepository.defaultBranch        | master                                |
+      | space_project.project.sourceRepository.identity.name        | git                                   |
+      | space_project.project.sourceRepository.identity.privateKey  |                                       |
+      | space_project.project.imagesRegistry.apiUrl                 | registry.teknoo.space                 |
+      | space_project.project.imagesRegistry.identity.auth          |                                       |
+      | space_project.project.imagesRegistry.identity.username      | teknoo-software                       |
+      | space_project.project.imagesRegistry.identity.password      | azertyy                               |
+      | space_project.project.clusters.0.name                       | Demo Kube Cluster                     |
+      | space_project.project.clusters.0.type                       | kubernetes                            |
+      | space_project.project.clusters.0.address                    | https://k8s.teknoo.space              |
+      | space_project.project.clusters.0.environment.name           | prod                                  |
+      | space_project.project.clusters.0.identity.caCertificate     | -----BEGIN CERTIFICATE-----           |
+      | space_project.project.clusters.0.identity.clientCertificate |                                       |
+      | space_project.project.clusters.0.identity.clientKey         |                                       |
+      | space_project.project.clusters.0.identity.token             | fooBar                                |
+    Then get a JSON reponse
+    But an 400 error
+
+  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a json body
+  and get an error
+    Given A Space app instance
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "3" standard projects "other project X" and a prefix "other-prefix"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a project as admin with a json body:
+      | field                                         | value                                 |
+      | project.name                                  | Behats Test                           |
+      | projectMetadata.projectUrl                    | https://behat.tests                   |
+      | project.prefix                                | behat-test                            |
+      | project.sourceRepository.pullUrl              | https://oauth:foo@gitlab.teknoo.space |
+      | project.sourceRepository.defaultBranch        | master                                |
+      | project.sourceRepository.identity.name        | git                                   |
+      | project.sourceRepository.identity.privateKey  |                                       |
+      | project.imagesRegistry.apiUrl                 | registry.teknoo.space                 |
+      | project.imagesRegistry.identity.auth          |                                       |
+      | project.imagesRegistry.identity.username      | teknoo-software                       |
+      | project.imagesRegistry.identity.password      | azertyy                               |
+      | project.clusters.0.name                       | Demo Kube Cluster                     |
+      | project.clusters.0.type                       | kubernetes                            |
+      | project.clusters.0.address                    | https://k8s.teknoo.space              |
+      | project.clusters.0.environment.name           | prod                                  |
+      | project.clusters.0.identity.caCertificate     | -----BEGIN CERTIFICATE-----           |
+      | project.clusters.0.identity.clientCertificate |                                       |
+      | project.clusters.0.identity.clientKey         |                                       |
+      | project.clusters.0.identity.token             | fooBar                                |
+    Then get a JSON reponse
+    But an 400 error
+
   Scenario: From the API, as Admin, get an project
     Given A Space app instance
     And A memory document database

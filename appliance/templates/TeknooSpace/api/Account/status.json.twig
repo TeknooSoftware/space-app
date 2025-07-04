@@ -1,0 +1,16 @@
+{# templates/TeknooSpace/api/Account/status.json.twig  #}
+{% set object = {
+    "plan_name": subscriptionStatus.planName,
+    "quota": subscriptionStatus.quota,
+    "environments": {
+        "allowed": subscriptionStatus.envsAllowed,
+        "counted": subscriptionStatus.envsCounted,
+        "exceeding": subscriptionStatus.envsExceeding,
+    },
+    "projects": {
+        "allowed": subscriptionStatus.projectsAllowed,
+        "counted": subscriptionStatus.projectsCounted,
+        "exceeding": subscriptionStatus.projectsExceeding
+    }
+} %}
+{{ object|space_object_serialization({}, "json", {"error": false}) }}

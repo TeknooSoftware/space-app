@@ -25,77 +25,75 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Account;
 
-use DomainException;
+use BadMethodCallException;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
+use Throwable;
 
 use function in_array;
 
 /**
- * To load from the DB an account instance. Step available only for admin user when the
- * accountId is passed to the request
- *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class LoadAccountFromRequest
+class LoadSpaceAccountFromAccount
 {
     public function __construct(
-        private SpaceAccountLoader $accountLoader,
+        private SpaceAccountLoader $spaceAccountLoader,
     ) {
     }
 
-    private function getAccount(string $accountId): ?SpaceAccount
-    {
-        /** @var Promise<SpaceAccount, ?SpaceAccount, mixed> $accountPromise */
-        $accountPromise = new Promise(
-            fn (SpaceAccount $account) => $account,
-        );
-
-        $this->accountLoader->load(
-            $accountId,
-            $accountPromise
-        );
-
-        return $accountPromise->fetchResult();
-    }
-
-    /**
-     * @param array<string, string> $parameters
-     */
     public function __invoke(
         ManagerInterface $manager,
+        ?Account $accountInstance = null,
+        ?SpaceAccount $spaceAccount = null,
         ?User $user = null,
-        ?Account $account = null,
-        ?string $accountId = null,
-        array $parameters = [],
     ): self {
-        if (empty($accountId) || !in_array('ROLE_ADMIN', (array) $user?->getRoles())) {
+        if (
+            $spaceAccount instanceof SpaceAccount
+            && $accountInstance instanceof Account
+            && $spaceAccount->account->getId() === $accountInstance->getId()
+        ) {
+            //Account used to create project is logged used
             return $this;
         }
 
-        $account ??= $this->getAccount($accountId);
-
-        if ($accountId !== $account?->getId()) {
-            throw new DomainException(
-                message: 'teknoo.space.error.space_account.account.fetching',
-                code: 404,
+        if (null === $accountInstance) {
+            $manager->error(
+                throw new BadMethodCallException(message: "An account is mandatory to create a project", code: 404)
             );
+
+            return $this;
         }
 
-        $parameters['accountId'] = $accountId;
+        if (!in_array('ROLE_ADMIN', (array) $user?->getRoles())) {
+            $manager->error(
+                throw new BadMethodCallException(message: "Account is mandatory for non admin user", code: 403)
+            );
 
-        $manager->updateWorkPlan([
-            SpaceAccount::class => $account,
-            Account::class => $account?->account,
-            'parameters' => $parameters,
-        ]);
+            return $this;
+        }
+
+        //Request come from admin
+        $promiseAccount = new Promise(
+            static function (SpaceAccount $spaceAccount) use ($manager): void {
+                $manager->updateWorkPlan([
+                    SpaceAccount::class => $spaceAccount,
+                ]);
+            },
+            static fn (Throwable $error): never => throw $error,
+        );
+
+        $this->spaceAccountLoader->load(
+            $accountInstance->getId(),
+            $promiseAccount,
+        );
 
         return $this;
     }
