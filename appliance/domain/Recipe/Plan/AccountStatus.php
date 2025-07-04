@@ -62,9 +62,11 @@ class AccountStatus implements EditablePlanInterface
         $this->fill($recipe);
     }
 
-    protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
+    protected function populateRecipe(RecipeInterface $recipe, bool $skipRequires = false): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(SpaceAccount::class));
+        if (false === $skipRequires) {
+            $recipe = $recipe->require(new Ingredient(SpaceAccount::class));
+        }
 
         $recipe = $recipe->cook($this->loadSubscriptionPlan, LoadSubscriptionPlan::class, [], 10);
 

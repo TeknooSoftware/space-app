@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Plan;
 
 use Stringable;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
@@ -67,9 +68,10 @@ class AdminAccountStatus extends AccountStatus
         );
     }
 
-    protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
+    protected function populateRecipe(RecipeInterface $recipe, bool $skipRequires = false): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient('string', 'accountId'));
+        $recipe = $recipe->require(new Ingredient('string', 'id'));
+        $recipe = $recipe->require(new Ingredient(LoaderInterface::class));
 
         $recipe = $recipe->cook(
             $this->loadObject,
@@ -81,6 +83,9 @@ class AdminAccountStatus extends AccountStatus
             05
         );
 
-        return parent::populateRecipe($recipe);
+        return parent::populateRecipe(
+            recipe: $recipe,
+            skipRequires: true,
+        );
     }
 }

@@ -6,7 +6,7 @@ space_admin_account_status:
         _controller: 'teknoo.space.endpoint.admin.account.status'
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
-        template: '@@TeknooSpace/Account/status.html.twig'
+        template: '@@TeknooSpace/AdminAccount/status.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_admin_account_edit_variables:

@@ -138,6 +138,11 @@
 {% block btnExtraBottom %}
     <div class="widget mt-2 mb-2 pb-2">
         <h5 class="widget-title">{{ 'teknoo.space.text.account_actions'|trans }}</h5>
+        <a href="{{ path('space_admin_account_status', {'id':objectInstance.id}) }}"
+           class="btn btn-outline-dark btn-full-large mb-2">
+            <i class="ti ti-eye"></i>
+            {{ 'teknoo.space.action.status'|trans }}
+        </a>
         <a href="{{ path('space_admin_account_edit_variables', {'id':objectInstance.id}) }}"
            class="btn btn-outline-dark btn-full-large mb-2">
             <i class="uil uil-setting"></i>
