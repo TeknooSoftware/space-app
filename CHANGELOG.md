@@ -1,5 +1,21 @@
 # Teknoo Software - Space - Change Log
 
+## [1.2.0] - 2025-07-04
+### Stable Version
+- Add capability to limit the number of projects per accounts, with a behavior like limit on environments
+- Add status page about account subscriptions, quota and limit allowes
+- Add status API about accounts' subscriptions, quota and limit allowes
+- Disable button to create new environment or project when limits are reached
+- Fix some issues in DI
+- Update libraries:
+  - PHPSecLib
+  - Symfony 7.3.1
+  - Teknoo libraries
+  - Illuminates libraries
+  - 2FA libraries
+  - League Flysystem
+  - PHPUnit and Behat
+
 ## [1.1.2] - 2025-06-03
 ### Stable Version
 Update libraries :
