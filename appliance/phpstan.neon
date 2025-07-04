@@ -22,6 +22,12 @@ parameters:
             message: '#::fetch\(\) expects#'
             path:  domain/Loader/Meta/
         -
+            message: '#Parameter \#3 \$promise#'
+            path:  domain/Query/Project/CountProjectsInAccount.php
+        -
+            message: '#SpaceAccount#'
+            path:  domain/Recipe/Step/Account/LoadAccountFromRequest.php
+        -
             message: '#BatchManipulationManagerInterface::deleteQuery#'
             path:  domain/Writer/Meta/
         -

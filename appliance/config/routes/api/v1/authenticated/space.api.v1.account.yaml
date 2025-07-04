@@ -16,6 +16,17 @@ space_api_v1_account_settings:
         template: '@@TeknooSpace/api/Account/settings.json.twig'
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
+space_api_v1_account_status:
+    path: '/account/status'
+    methods: ['GET']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.account.status'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        template: '@@TeknooSpace/api/Account/status.json.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
 space_api_v1_account_environments:
     path: '/account/environments'
     methods: ['GET', 'POST', 'PUT']

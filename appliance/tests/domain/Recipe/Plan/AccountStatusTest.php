@@ -29,26 +29,19 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stringable;
-use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\SearchFormLoaderInterface;
-use Teknoo\East\Common\Recipe\Step\ExtractOrder;
-use Teknoo\East\Common\Recipe\Step\ExtractPage;
-use Teknoo\East\Common\Recipe\Step\LoadListObjects;
+use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
-use Teknoo\East\Common\Recipe\Step\RenderList;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Recipe\Plan\ProjectList;
-use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Plan\AccountStatus;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
-use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 
 /**
- * Class ProjectListTest.
+ * Class AccountStatusTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -56,42 +49,26 @@ use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(ProjectList::class)]
-class ProjectListTest extends TestCase
+#[CoversClass(AccountStatus::class)]
+class AccountStatusTest extends TestCase
 {
-    private ProjectList $projectList;
+    private AccountStatus $accountStatus;
 
     private RecipeInterface|MockObject $recipe;
 
-    private ExtractPage|MockObject $extractPage;
-
-    private ExtractOrder|MockObject $extractOrder;
-
-    private LoadAccountFromRequest|MockObject $loadAccountFromRequest;
+    private LoadSubscriptionPlan|MockObject $loadSubscriptionPlan;
 
     private LoadEnvironments|MockObject $loadEnvironments;
 
-    private LoadSubscriptionPlan|MockObject $loadSubscriptionPlan;
-
     private CreateResumes|MockObject $createResumes;
-
-    private PrepareCriteria|MockObject $prepareCriteria;
 
     private InjectStatus|MockObject $injectStatus;
 
-    private LoadListObjects|MockObject $loadListObjects;
-
-    private RenderList|MockObject $renderList;
+    private Render|MockObject $render;
 
     private RenderError|MockObject $renderError;
 
-    private SearchFormLoaderInterface|MockObject $searchFormLoader;
-
-    private ListObjectsAccessControlInterface|MockObject $listObjectsAccessControl;
-
     private string|Stringable $defaultErrorTemplate;
-
-    private array $loadListObjectsWiths;
 
     /**
      * {@inheritdoc}
@@ -101,46 +78,31 @@ class ProjectListTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->extractPage = $this->createMock(ExtractPage::class);
-        $this->extractOrder = $this->createMock(ExtractOrder::class);
-        $this->loadAccountFromRequest = $this->createMock(LoadAccountFromRequest::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
         $this->loadSubscriptionPlan = $this->createMock(LoadSubscriptionPlan::class);
+        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
         $this->createResumes = $this->createMock(CreateResumes::class);
-        $this->prepareCriteria = $this->createMock(PrepareCriteria::class);
         $this->injectStatus = $this->createMock(InjectStatus::class);
-        $this->loadListObjects = $this->createMock(LoadListObjects::class);
-        $this->renderList = $this->createMock(RenderList::class);
+        $this->render = $this->createMock(Render::class);
         $this->renderError = $this->createMock(RenderError::class);
-        $this->searchFormLoader = $this->createMock(SearchFormLoaderInterface::class);
-        $this->listObjectsAccessControl = $this->createMock(ListObjectsAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
-        $this->loadListObjectsWiths = [];
-        $this->projectList = new ProjectList(
+
+        $this->accountStatus = new AccountStatus(
             recipe: $this->recipe,
-            extractPage: $this->extractPage,
-            extractOrder: $this->extractOrder,
-            loadAccountFromRequest: $this->loadAccountFromRequest,
-            loadEnvironments: $this->loadEnvironments,
             loadSubscriptionPlan: $this->loadSubscriptionPlan,
+            loadEnvironments: $this->loadEnvironments,
             createResumes: $this->createResumes,
-            prepareCriteria: $this->prepareCriteria,
             injectStatus: $this->injectStatus,
-            loadListObjects: $this->loadListObjects,
-            renderList: $this->renderList,
+            render: $this->render,
             renderError: $this->renderError,
-            searchFormLoader: $this->searchFormLoader,
-            listObjectsAccessControl: $this->listObjectsAccessControl,
             defaultErrorTemplate: $this->defaultErrorTemplate,
-            loadListObjectsWiths: $this->loadListObjectsWiths,
         );
     }
 
     public function testConstruct(): void
     {
         self::assertInstanceOf(
-            ProjectList::class,
-            $this->projectList,
+            AccountStatus::class,
+            $this->accountStatus,
         );
     }
 
@@ -148,7 +110,7 @@ class ProjectListTest extends TestCase
     {
         self::assertInstanceOf(
             EditablePlanInterface::class,
-            $this->projectList->train(
+            $this->accountStatus->train(
                 $this->createMock(ChefInterface::class),
             )
         );

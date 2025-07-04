@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Behat\Traits;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Then;
 use Behat\Step\When;
+use DomainException;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 use Teknoo\East\Common\Object\User;
@@ -931,6 +932,7 @@ trait ApiTrait
             method: 'get',
             url: match ($view) {
                 'settings' => $this->getPathFromRoute('space_api_v1_account_settings'),
+                'status' => $this->getPathFromRoute('space_api_v1_account_status'),
                 'environments' => $this->getPathFromRoute('space_api_v1_account_environments'),
                 'variables' => match ($role) {
                     'admin' => $this->getPathFromRoute(
@@ -941,6 +943,7 @@ trait ApiTrait
                     ),
                     default => $this->getPathFromRoute('space_api_v1_account_edit_variables'),
                 },
+                default => throw new DomainException("$view is not available"),
             },
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -2128,5 +2131,85 @@ trait ApiTrait
             $normalized,
             $unserialized,
         );
+    }
+
+    #[Then('the subscription plan is :name')]
+    public function theSubscriptionPlanNameIs(string $name): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('plan_name', $unserialized['data']);
+        Assert::assertEquals($name, $unserialized['data']['plan_name']);
+    }
+
+    #[Then('with :allowed allowed environments and :counted created')]
+    public function withAllowedEnvironmentsAndCreated(int $allowed, int $counted): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('environments', $unserialized['data']);
+        Assert::assertArrayHasKey('allowed', $unserialized['data']['environments']);
+        Assert::assertEquals($allowed, $unserialized['data']['environments']['allowed']);
+        Assert::assertArrayHasKey('counted', $unserialized['data']['environments']);
+        Assert::assertEquals($counted, $unserialized['data']['environments']['counted']);
+    }
+
+    #[Then('without exceeding environments')]
+    public function withoutExceedingEnvironments(): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('environments', $unserialized['data']);
+        Assert::assertArrayHasKey('exceeding', $unserialized['data']['environments']);
+        Assert::assertFalse($unserialized['data']['environments']['exceeding']);
+    }
+
+    #[Then('with exceeding environments')]
+    public function withExceedingEnvironments(): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('environments', $unserialized['data']);
+        Assert::assertArrayHasKey('exceeding', $unserialized['data']['environments']);
+        Assert::assertTrue($unserialized['data']['environments']['exceeding']);
+    }
+
+    #[Then('with :allowed allowed projects and :counted created')]
+    public function withAllowedProjectsAndCreated(int $allowed, int $counted): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('projects', $unserialized['data']);
+        Assert::assertArrayHasKey('allowed', $unserialized['data']['projects']);
+        Assert::assertEquals($allowed, $unserialized['data']['projects']['allowed']);
+        Assert::assertArrayHasKey('counted', $unserialized['data']['projects']);
+        Assert::assertEquals($counted, $unserialized['data']['projects']['counted']);
+    }
+
+    #[Then('without exceeding projects')]
+    public function withoutExceedingProjects(): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('projects', $unserialized['data']);
+        Assert::assertArrayHasKey('exceeding', $unserialized['data']['projects']);
+        Assert::assertFalse($unserialized['data']['projects']['exceeding']);
+    }
+
+    #[Then('with exceeding projects')]
+    public function withExceedingProjects(): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('projects', $unserialized['data']);
+        Assert::assertArrayHasKey('exceeding', $unserialized['data']['projects']);
+        Assert::assertTrue($unserialized['data']['projects']['exceeding']);
     }
 }

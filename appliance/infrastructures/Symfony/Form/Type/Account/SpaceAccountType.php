@@ -67,6 +67,14 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
             && !empty($options['subscriptionPlan']) && $options['subscriptionPlan'] instanceof SubscriptionPlan
             && !empty($options['clusterCatalog']) && $options['clusterCatalog'] instanceof ClusterCatalog
         ) {
+            $contraints = [];
+            if (0 < $options['subscriptionPlan']->envsCountAllowed) {
+                $contraints[] = new Count([
+                    'max' => $options['subscriptionPlan']->envsCountAllowed,
+                    'maxMessage' => "teknoo.space.error.space_account.environments.exceeded.{{ limit }}",
+                ]);
+            }
+
             $builder->add(
                 'environments',
                 CollectionType::class,
@@ -79,12 +87,7 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
                         'subscriptionPlan' => $options['subscriptionPlan'],
                         'clusterCatalog' => $options['clusterCatalog'],
                     ],
-                    'constraints' => [
-                        new Count([
-                            'max' => $options['subscriptionPlan']->envsCountAllowed,
-                            'maxMessage' => "teknoo.space.error.space_account.environments.exceeded.{{ limit }}",
-                        ]),
-                    ],
+                    'constraints' => $contraints,
                 ],
             );
         }

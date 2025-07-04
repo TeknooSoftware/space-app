@@ -39,10 +39,11 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
+use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Kubernetes\RepositoryRegistry;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -59,8 +60,8 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecret
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
@@ -73,16 +74,19 @@ use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
 use Teknoo\Space\Loader\AccountRegistryLoader;
+use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\InjectToView;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
+use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
-use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
+use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
@@ -107,6 +111,7 @@ use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 use Teknoo\Space\Recipe\Step\Project\AddManagedEnvironmentToProject;
+use Teknoo\Space\Recipe\Step\Project\CheckingAllowedCountOfProjects;
 use Teknoo\Space\Recipe\Step\Project\LoadAccountFromProject;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
 use Teknoo\Space\Recipe\Step\Project\UpdateProjectCredentialsFromAccount;
@@ -115,6 +120,7 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 use Teknoo\Space\Recipe\Step\Subscription\CreateAccount;
+use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
@@ -305,7 +311,7 @@ return [
         ->constructor(get(AccountRegistryLoader::class)),
 
     LoadAccountFromRequest::class => create()
-        ->constructor(get(AccountLoader::class)),
+        ->constructor(get(SpaceAccountLoader::class)),
 
     LoadAccountData::class => create()
         ->constructor(get(AccountDataLoader::class)),
@@ -354,10 +360,24 @@ return [
     CreateAccountInterface::class => get(CreateAccount::class),
 
     CreateAccount::class => create()
-        ->constructor(get(SpaceAccountWriter::class)),
+        ->constructor(
+            get(SpaceAccountWriter::class),
+        ),
+
+    LoadSpaceAccountFromAccount::class => create()
+        ->constructor(
+            get(SpaceAccountLoader::class)
+        ),
+
+    LoadSubscriptionPlan::class => create()
+        ->constructor(
+            get('teknoo.space.subscription_plan_catalog'),
+        ),
 
     SetSubscriptionPlan::class => create()
-        ->constructor(get('teknoo.space.subscription_plan_catalog')),
+        ->constructor(
+            get('teknoo.space.subscription_plan_catalog'),
+        ),
 
     SetQuota::class => create(),
 
@@ -447,5 +467,15 @@ return [
         ->constructor(
             get(PngWriter::class),
             get(StreamFactoryInterface::class),
+        ),
+
+    CheckingAllowedCountOfProjects::class => create()
+        ->constructor(
+            get(ProjectLoader::class),
+        ),
+
+    InjectStatus::class => create()
+        ->constructor(
+            get(ProjectLoader::class),
         ),
 ];

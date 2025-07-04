@@ -23,14 +23,14 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
+namespace Teknoo\Space\Recipe\Step\Account;
 
-use OverflowException;
+use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
+use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-
-use function count;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -38,28 +38,40 @@ use function count;
  * @license     https://teknoo.software/license/mit         MIT License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CheckingAllowedCountOfEnvs
+class LoadSubscriptionPlan
 {
+    public function __construct(
+        private SubscriptionPlanCatalog $catalog
+    ) {
+    }
+
     public function __invoke(
         ManagerInterface $manager,
         SpaceAccount $spaceAccount,
-        ?SubscriptionPlan $plan = null,
     ): self {
-        $envsAllowed = $plan?->envsCountAllowed ?? 0;
-        $errorMessage = 'Missing subscription plan for this account';
-        if ($plan) {
-            $errorMessage = "The plan {$plan->name} accepts only {$envsAllowed} environments";
+        $accountData = $spaceAccount->accountData;
+
+        if (null === $accountData) {
+            throw new RuntimeException('Missing Space Account data');
         }
 
-        if (
-            0 < $envsAllowed
-            && !empty($spaceAccount->environments)
-            && count($spaceAccount->environments) > $envsAllowed
-        ) {
-            $manager->error(
-                error: new OverflowException($errorMessage, 400,)
-            );
-        }
+        /** @var Promise<string, ?SubscriptionPlan, mixed> $promise */
+        $promise = new Promise(
+            function (string $planId): ?SubscriptionPlan {
+                if (empty($planId)) {
+                    return null;
+                }
+
+                return $this->catalog->getSubscriptionPlan($planId);
+            },
+        );
+        $accountData->visit('subscriptionPlan', $promise);
+
+        $plan = $promise->fetchResult();
+
+        $manager->updateWorkPlan([
+            SubscriptionPlan::class => $plan,
+        ]);
 
         return $this;
     }

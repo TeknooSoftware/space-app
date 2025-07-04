@@ -72,6 +72,11 @@
                 <span class="mdi mdi-pencil"></span>
             </a>
             <a class="text-primary"
+               href="{{ path('space_admin_account_status', {'id':object.id}) }}"
+               title="{{ 'teknoo.space.action.status'|trans }}">
+                <span class="ti ti-eye"></span>
+            </a>
+            <a class="text-primary"
                href="{{ path('_teknoo_paas_admin_project_new', {'accountId':object.id}) }}"
                title="{{ 'teknoo.space.action.new_project'|trans }}">
                 <span class="mdi mdi-shape-circle-plus"></span>

@@ -224,3 +224,89 @@ Feature: Web interface to manage account's settings
       | space_account.environments.2.envName     | testing           |
     And the user obtains an error
     And no Kubernetes manifests must not be deleted
+
+  Scenario: From the API, get my account status, when all is green
+    Given A Space app instance
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "2" standard projects "project X" and a prefix "a-prefix"
+    And the 2FA authentication enable for last user
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And It goes to account status
+    Then get a valid web page
+    And in the page, the subscription plan is "Test Plan 1"
+    And there are "2" allowed environments and 2 created
+    And there are not exceeding environments
+    And there are "3" allowed projects and 2 created
+    And there are not exceeding projects
+    And no Kubernetes manifests must not be deleted
+
+  Scenario: From the API, get my account status, when it is fully used and all is green
+    Given A Space app instance
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "3" standard projects "project X" and a prefix "a-prefix"
+    And the 2FA authentication enable for last user
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And It goes to account status
+    Then get a valid web page
+    And in the page, the subscription plan is "Test Plan 1"
+    And there are "2" allowed environments and 2 created
+    And there are not exceeding environments
+    And there are "3" allowed projects and 3 created
+    And there are not exceeding projects
+    And no Kubernetes manifests must not be deleted
+
+  Scenario: From the API, get my account status, when there are more projects than allowed
+    Given A Space app instance
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "4" standard projects "project X" and a prefix "a-prefix"
+    And the 2FA authentication enable for last user
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And It goes to account status
+    Then get a valid web page
+    And in the page, the subscription plan is "Test Plan 1"
+    And there are "2" allowed environments and 2 created
+    And there are not exceeding environments
+    And there are "3" allowed projects and 4 created
+    And there are exceeding projects
+    And no Kubernetes manifests must not be deleted
+
+  Scenario: From the API, get my account status, when there are more environments than allowed
+    Given A Space app instance
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an account clusters "Cluster Company" and a slug "my-company-cluster"
+    And an account environment on "Cluster Company" for the environment "prod"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "2" standard projects "project X" and a prefix "a-prefix"
+    And the 2FA authentication enable for last user
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And It goes to account status
+    Then get a valid web page
+    And in the page, the subscription plan is "Test Plan 1"
+    And there are "2" allowed environments and 3 created
+    And there are exceeding environments
+    And there are "3" allowed projects and 2 created
+    And there are not exceeding projects
+    And no Kubernetes manifests must not be deleted

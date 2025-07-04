@@ -35,7 +35,7 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 
 /**
- * Class SetPlanTest.
+ * Class setSubscriptionPlanTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -45,7 +45,7 @@ use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 #[CoversClass(SetSubscriptionPlan::class)]
 class SetSubscriptionPlanTest extends TestCase
 {
-    private SetSubscriptionPlan $SetPlan;
+    private SetSubscriptionPlan $setSubscriptionPlan;
 
     private SubscriptionPlanCatalog|MockObject $subscriptionPlanCatalog;
 
@@ -58,7 +58,7 @@ class SetSubscriptionPlanTest extends TestCase
 
         $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
 
-        $this->SetPlan = new SetSubscriptionPlan(
+        $this->setSubscriptionPlan = new SetSubscriptionPlan(
             $this->subscriptionPlanCatalog,
         );
     }
@@ -67,7 +67,7 @@ class SetSubscriptionPlanTest extends TestCase
     {
         self::assertInstanceOf(
             SetSubscriptionPlan::class,
-            ($this->SetPlan)(
+            ($this->setSubscriptionPlan)(
                 $this->createMock(ManagerInterface::class),
                 new SpaceAccount($this->createMock(Account::class)),
                 'foo',
