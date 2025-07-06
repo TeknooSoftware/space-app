@@ -72,7 +72,7 @@
         "symfony/cache-contracts": ">=3.6",
         "symfony/dotenv": ">=7.3",
         "symfony/expression-language": ">=7.3",
-        "symfony/flex": "^2.8.0",
+        "symfony/flex": "^2.8.1",
         "symfony/form": ">=7.3.1",
         "symfony/framework-bundle": ">=7.3.1",
         "symfony/http-client": ">=7.3.1",
