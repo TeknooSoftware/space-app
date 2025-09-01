@@ -3,9 +3,9 @@ FROM rabbitmq:4.1-management-alpine
 USER root:root
 
 # Define environment variables.
-ENV RABBITMQ_USERNAME space_usr
-ENV RABBITMQ_PASSWORD space_pwd
-ENV RABBITMQ_PID_FILE /var/lib/rabbitmq/space/rabbitmq
+ENV RABBITMQ_USERNAME=space_usr
+ENV RABBITMQ_PASSWORD=space_pwd
+ENV RABBITMQ_PID_FILE=/var/lib/rabbitmq/space/rabbitmq
 
 ADD init.sh /init.sh
 

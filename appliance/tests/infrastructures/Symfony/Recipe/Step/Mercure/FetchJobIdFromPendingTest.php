@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -59,9 +59,9 @@ class FetchJobIdFromPendingTest extends TestCase
 
     private HubRegistry $hub;
 
-    private UrlGeneratorInterface|MockObject $generator;
+    private UrlGeneratorInterface&MockObject $generator;
 
-    private EventSourceHttpClient|MockObject $sseClient;
+    private EventSourceHttpClient $sseClient;
 
     private string $pendingJobRoute;
 
@@ -79,10 +79,10 @@ class FetchJobIdFromPendingTest extends TestCase
         );
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects($this->any())
+        $response
             ->method('getInfo')
             ->willReturnCallback(
-                fn ($key) => match ($key) {
+                fn (?string $key): array|int|false => match ($key) {
                     'http_code' => 200,
                     'response_headers' => [
                         'Content-Type: text/event-stream',
@@ -91,14 +91,14 @@ class FetchJobIdFromPendingTest extends TestCase
                 }
             );
 
-        $httpClient->expects($this->any())
+        $httpClient
             ->method('request')
             ->willReturn($response);
 
-        $httpClient->expects($this->any())
+        $httpClient
             ->method('stream')
             ->willReturnCallback(
-                function () use ($response) {
+                function () use ($response): \Symfony\Component\HttpClient\Response\ResponseStream {
                     $generator = function () use ($response): \Generator {
                         yield $response => new FirstChunk();
                         yield $response => new ServerSentEvent(
@@ -129,7 +129,7 @@ class FetchJobIdFromPendingTest extends TestCase
 
     public function testInvoke(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             FetchJobIdFromPending::class,
             ($this->fetchJobIdFromPending)(
                 $this->createMock(ManagerInterface::class),

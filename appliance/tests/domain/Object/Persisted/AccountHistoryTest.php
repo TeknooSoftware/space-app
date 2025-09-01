@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -47,7 +47,7 @@ class AccountHistoryTest extends TestCase
 {
     private AccountHistory $accountHistory;
 
-    private Account|MockObject $account;
+    private Account&MockObject $account;
 
     /**
      * {@inheritdoc}
@@ -62,7 +62,7 @@ class AccountHistoryTest extends TestCase
 
     public function testAddToHistory(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountHistory::class,
             $this->accountHistory->addToHistory('foo', new DateTime('2023-03-17')),
         );
@@ -71,12 +71,11 @@ class AccountHistoryTest extends TestCase
     public function testSetHistory(): void
     {
         $expected = $this->createMock(History::class);
-        $property = (new ReflectionClass(AccountHistory::class))
+        $property = new ReflectionClass(AccountHistory::class)
             ->getProperty('history');
-        $property->setAccessible(true);
         $this->accountHistory->setHistory($expected);
 
-        self::assertEquals(
+        $this->assertEquals(
             $expected->getMessage(),
             $property->getValue($this->accountHistory)->getMessage()
         );
@@ -85,16 +84,16 @@ class AccountHistoryTest extends TestCase
     public function testPassMeYouHistory(): void
     {
         $final = null;
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountHistory::class,
             $this->accountHistory->setHistory($this->createMock(History::class))->passMeYouHistory(
-                function ($value) use (&$final) {
+                function ($value) use (&$final): void {
                     $final = $value;
                 }
             ),
         );
 
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             expected: History::class,
             actual: $final,
         );

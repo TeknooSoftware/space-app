@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,6 +30,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\RepositoryRegistry;
+use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\AccountClusterLoader;
 use Teknoo\Space\Object\Config\ClusterCatalog;
@@ -40,7 +41,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class LoadAccountClusters
@@ -94,14 +95,15 @@ class LoadAccountClusters
         /** @var Promise<iterable<AccountCluster>, mixed, mixed> $fetchedPromise */
         $fetchedPromise = new Promise(
             /** @var iterable<AccountCluster> $fetchedClusters */
-            function (iterable $fetchedClusters) use ($manager, $clusterCatalog) {
+            function (iterable $fetchedClusters) use ($manager, $clusterCatalog): void {
+                /** @var iterable<AccountCluster> $fetchedClusters */
                 $updatedClusterCatalog = $this->generateCatalog($fetchedClusters, $clusterCatalog);
                 $manager->updateWorkPlan([
                     ClusterCatalog::class => $updatedClusterCatalog,
                     'clusterCatalog' => $updatedClusterCatalog,
                 ]);
             },
-            static fn (Throwable $error) => $manager->error(
+            static fn (Throwable $error): ChefInterface => $manager->error(
                 new DomainException(
                     message: 'teknoo.space.error.space_account.account_environment.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,

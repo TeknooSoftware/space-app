@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -40,14 +40,14 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class LoadHistory
 {
     public function __construct(
-        private AccountHistoryLoader $loader,
-        private AccountHistoryWriter $writer,
+        private readonly AccountHistoryLoader $loader,
+        private readonly AccountHistoryWriter $writer,
     ) {
     }
 
@@ -59,7 +59,7 @@ class LoadHistory
         $passHistory = static function (AccountHistory $accountHistory) use ($manager, $bag): void {
             $bag->set('accountHistory', $accountHistory);
             $accountHistory->passMeYouHistory(
-                static function (History $history) use ($bag) {
+                static function (History $history) use ($bag): void {
                     $bag->set('accountHistoryRoot', $history);
                 }
             );
@@ -71,7 +71,7 @@ class LoadHistory
 
         /** @var Promise<AccountHistory, mixed, mixed> $fetchedPromise */
         $fetchedPromise = new Promise(
-            static function (AccountHistory $accountHistory) use ($passHistory) {
+            static function (AccountHistory $accountHistory) use ($passHistory): void {
                 $passHistory($accountHistory);
             },
             function (Throwable $error) use ($manager, $passHistory, $accountInstance): void {

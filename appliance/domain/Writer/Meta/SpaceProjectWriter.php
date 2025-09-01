@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -44,7 +44,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements WriterInterface<SpaceProject>
@@ -52,10 +52,10 @@ use Throwable;
 class SpaceProjectWriter implements WriterInterface
 {
     public function __construct(
-        private ProjectWriter $projectWriter,
-        private ProjectMetadataWriter $metadataWriter,
-        private ProjectPersistedVariableWriter $persistedVariableWriter,
-        private BatchManipulationManagerInterface $batchManipulationManager,
+        private readonly ProjectWriter $projectWriter,
+        private readonly ProjectMetadataWriter $metadataWriter,
+        private readonly ProjectPersistedVariableWriter $persistedVariableWriter,
+        private readonly BatchManipulationManagerInterface $batchManipulationManager,
     ) {
     }
 
@@ -70,18 +70,9 @@ class SpaceProjectWriter implements WriterInterface
             return $this;
         }
 
-        if (!$object->project instanceof Project) {
-            $promise?->fail(new RuntimeException(
-                message: 'teknoo.space.error.space_project.writer.not_instantiable',
-                code :500
-            ));
-
-            return $this;
-        }
-
         /** @var Promise<Project, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (Project $project, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
+            function (Project $project, PromiseInterface $next) use ($object, $preferRealDateOnUpdate): void {
                 if ($object->projectMetadata instanceof ProjectMetadata) {
                     $metadata = $object->projectMetadata;
                     $metadata->setProject($object->project);
@@ -108,7 +99,7 @@ class SpaceProjectWriter implements WriterInterface
                     $deletedPromise,
                 );
             },
-            static fn (Throwable $error, ?PromiseInterface $next = null) => $next?->fail(
+            static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                 new RuntimeException(
                     message: 'teknoo.space.error.space_project.project.persisting',
                     code: $error->getCode() > 0 ? $error->getCode() : 500,
@@ -138,16 +129,14 @@ class SpaceProjectWriter implements WriterInterface
         if ($object->projectMetadata instanceof ProjectMetadata) {
             /** @var Promise<ProjectMetadata, mixed, mixed> $removedPromise */
             $removedPromise = new Promise(
-                function (mixed $result, ?PromiseInterface $next = null) use ($object) {
-                    if ($object->project instanceof Project) {
-                        $this->projectWriter->remove($object->project, $next);
-                    }
+                function (mixed $result, ?PromiseInterface $next = null) use ($object): void {
+                    $this->projectWriter->remove($object->project, $next);
 
                     foreach ($object->variables as $var) {
                         $this->persistedVariableWriter->remove($var);
                     }
                 },
-                static fn (Throwable $error, ?PromiseInterface $next = null) => $next?->fail(
+                static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                     new RuntimeException(
                         message: 'teknoo.space.error.space_project.project.deleting',
                         code: $error->getCode() > 0 ? $error->getCode() : 500,

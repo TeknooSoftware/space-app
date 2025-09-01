@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -41,18 +41,18 @@ use function base64_decode;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class CreateSecretServiceAccountToken
 {
-    private const SECRET_SUFFIX = '-secret';
+    private const string SECRET_SUFFIX = '-secret';
 
     public function __construct(
-        private DatesService $datesService,
-        private SleepServiceInterface $sleepService,
-        private int $secretWaitingTime = 1000,
-        private bool $preferRealDate = false,
+        private readonly DatesService $datesService,
+        private readonly SleepServiceInterface $sleepService,
+        private readonly int $secretWaitingTime = 1000,
+        private readonly bool $preferRealDate = false,
     ) {
     }
 
@@ -106,7 +106,7 @@ class CreateSecretServiceAccountToken
             }
 
             $secretFetched = $this->fetchSecret($secretRepository, (string) $secret->getMetadata('name'));
-            $counter++;
+            ++$counter;
         } while (
             $counter < 10
             && (
@@ -130,7 +130,7 @@ class CreateSecretServiceAccountToken
         $workPlan['caCertificate'] = base64_decode((string) ($attributes['data']['ca.crt'] ?? ''));
 
         $this->datesService->passMeTheDate(
-            static function (DateTimeInterface $dateTime) use ($accountHistory) {
+            static function (DateTimeInterface $dateTime) use ($accountHistory): void {
                 $accountHistory->addToHistory(
                     'teknoo.space.text.account.kubernetes.secret',
                     $dateTime

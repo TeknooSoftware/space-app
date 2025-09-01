@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -33,11 +33,12 @@ use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 use function explode;
+use function is_string;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class ClusterAndEnvSelection
@@ -59,8 +60,8 @@ class ClusterAndEnvSelection
         $envName = '_all';
         $namespace = '_all';
 
-        if (!empty($clusterSelectedStr)) {
-            $clusterArray = explode('~', $clusterSelectedStr);
+        if (!empty($clusterSelectedStr) && is_string($clusterSelectedStr)) {
+            $clusterArray = explode('~', (string) $clusterSelectedStr);
             $clusterSlug = $clusterArray[0];
 
             if (!empty($clusterArray[1])) {

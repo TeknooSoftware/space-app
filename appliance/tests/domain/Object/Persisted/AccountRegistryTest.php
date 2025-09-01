@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ class AccountRegistryTest extends TestCase
 {
     private AccountRegistry $accountRegistry;
 
-    private Account|MockObject $account;
+    private Account&MockObject $account;
 
     private string $registryNamespace;
 
@@ -56,20 +56,6 @@ class AccountRegistryTest extends TestCase
     private string $registryConfigName;
 
     private string $registryPassword;
-
-    private string $serviceAccountName;
-
-    private string $roleName;
-
-    private string $roleBindingName;
-
-    private string $caCertificate;
-
-    private string $clientCertificate;
-
-    private string $clientKey;
-
-    private string $token;
 
     private string $persistentVolumeClaimName;
 
@@ -101,71 +87,65 @@ class AccountRegistryTest extends TestCase
     public function testGetAccount(): void
     {
         $expected = $this->createMock(Account::class);
-        $property = (new ReflectionClass(AccountRegistry::class))
+        $property = new ReflectionClass(AccountRegistry::class)
             ->getProperty('account');
-        $property->setAccessible(true);
         $property->setValue($this->accountRegistry, $expected);
-        self::assertEquals($expected, $this->accountRegistry->getAccount());
+        $this->assertEquals($expected, $this->accountRegistry->getAccount());
     }
 
     public function testGetRegistryUrl(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountRegistry::class))
+        $property = new ReflectionClass(AccountRegistry::class)
             ->getProperty('registryUrl');
-        $property->setAccessible(true);
         $property->setValue($this->accountRegistry, $expected);
-        self::assertEquals($expected, $this->accountRegistry->getRegistryUrl());
+        $this->assertEquals($expected, $this->accountRegistry->getRegistryUrl());
     }
 
     public function testGetRegistryConfigName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountRegistry::class))
+        $property = new ReflectionClass(AccountRegistry::class)
             ->getProperty('registryConfigName');
-        $property->setAccessible(true);
         $property->setValue($this->accountRegistry, $expected);
-        self::assertEquals($expected, $this->accountRegistry->getRegistryConfigName());
+        $this->assertEquals($expected, $this->accountRegistry->getRegistryConfigName());
     }
 
     public function testGetRegistryAccountName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountRegistry::class))
+        $property = new ReflectionClass(AccountRegistry::class)
             ->getProperty('registryAccountName');
-        $property->setAccessible(true);
         $property->setValue($this->accountRegistry, $expected);
-        self::assertEquals($expected, $this->accountRegistry->getRegistryAccountName());
+        $this->assertEquals($expected, $this->accountRegistry->getRegistryAccountName());
     }
 
     public function testGetRegistryPassword(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountRegistry::class))
+        $property = new ReflectionClass(AccountRegistry::class)
             ->getProperty('registryPassword');
-        $property->setAccessible(true);
         $property->setValue($this->accountRegistry, $expected);
-        self::assertEquals($expected, $this->accountRegistry->getRegistryPassword());
+        $this->assertEquals($expected, $this->accountRegistry->getRegistryPassword());
     }
 
     public function testGetPersistentVolumeClaimName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountRegistry::class))
+        $property = new ReflectionClass(AccountRegistry::class)
             ->getProperty('persistentVolumeClaimName');
-        $property->setAccessible(true);
         $property->setValue($this->accountRegistry, $expected);
-        self::assertEquals($expected, $this->accountRegistry->getPersistentVolumeClaimName());
+        $this->assertEquals($expected, $this->accountRegistry->getPersistentVolumeClaimName());
     }
 
     public function testUpdateRegistry(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountRegistry::class,
             $new = $this->accountRegistry->updateRegistry('foo', 'bar', 'foo'),
         );
 
-        self::assertNotSame(
+        $this->assertNotSame(
             $new,
             $this->accountRegistry,
         );

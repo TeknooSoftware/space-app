@@ -47,15 +47,11 @@ services:
         class: 'Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing'
         arguments:
             $serializer: '@serializer'
-        tags:
-            - { name: twig.extension }
 
     Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing:
         class: 'Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing'
         arguments:
             $serializer: '@serializer'
-        tags:
-            - { name: twig.extension }
 
     Teknoo\Space\Infrastructures\Twig\Extension\:
         resource: '../infrastructures/Twig/Extension/*'
@@ -63,8 +59,6 @@ services:
             - '../infrastructures/Twig/Extension/CollectionSerializing'
             - '../infrastructures/Twig/Extension/ObjectSerializing'
             - '../infrastructures/Twig/Extension/MFARoutesFinder/'
-        tags:
-            - { name: twig.extension }
 
     Teknoo\Space\Infrastructures\Symfony\Security\Voter\:
         resource: '../infrastructures/Symfony/Security/Voter/'

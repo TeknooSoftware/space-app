@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -107,91 +107,82 @@ class AccountEnvironmentTest extends TestCase
     public function testGetAccount(): void
     {
         $expected = $this->createMock(Account::class);
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('account');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getAccount());
+        $this->assertEquals($expected, $this->accountEnvironment->getAccount());
     }
 
     public function testGetServiceAccountName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('serviceAccountName');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getServiceAccountName());
+        $this->assertEquals($expected, $this->accountEnvironment->getServiceAccountName());
     }
 
     public function testGetRoleName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('roleName');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getRoleName());
+        $this->assertEquals($expected, $this->accountEnvironment->getRoleName());
     }
 
     public function testGetRoleBindingName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('roleBindingName');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getRoleBindingName());
+        $this->assertEquals($expected, $this->accountEnvironment->getRoleBindingName());
     }
 
     public function testGetCaCertificate(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('caCertificate');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getCaCertificate());
+        $this->assertEquals($expected, $this->accountEnvironment->getCaCertificate());
     }
 
     public function testGetClientCertificate(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('clientCertificate');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getClientCertificate());
+        $this->assertEquals($expected, $this->accountEnvironment->getClientCertificate());
     }
 
     public function testGetClientKey(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('clientKey');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getClientKey());
+        $this->assertEquals($expected, $this->accountEnvironment->getClientKey());
     }
 
     public function testGetToken(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('token');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getToken());
+        $this->assertEquals($expected, $this->accountEnvironment->getToken());
     }
 
     public function testGetAllMetaData(): void
     {
         $expected = ['foo' => 'bar'];
-        $property = (new ReflectionClass(AccountEnvironment::class))
+        $property = new ReflectionClass(AccountEnvironment::class)
             ->getProperty('metadata');
-        $property->setAccessible(true);
         $property->setValue($this->accountEnvironment, $expected);
-        self::assertEquals($expected, $this->accountEnvironment->getAllMetaData());
-        self::assertEquals('bar', $this->accountEnvironment->getMetaData('foo'));
+        $this->assertEquals($expected, $this->accountEnvironment->getAllMetaData());
+        $this->assertEquals('bar', $this->accountEnvironment->getMetaData('foo'));
     }
 }

@@ -84,7 +84,6 @@ services:
             - MAILER_REPLY_TO_NAME=Teknoo Space - Support
             - MAILER_SENDER_NAME=Teknoo Space App
             - MONGODB_NAME=teknoo_space
-            - PHP_BLACKFIRE_SERVER=blackfire
             - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
             - SPACE_HOSTNAME=localhost
@@ -121,8 +120,6 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_healthy
-            blackfire:
-                condition: service_started
             mercure:
                 condition: service_started
     cli_new_job:
@@ -284,8 +281,3 @@ services:
             retries: 5
             start_period: 240s
             timeout: 1s
-    blackfire:
-        image: blackfire/blackfire:2
-        ports: ["8307"]
-        networks:
-            - backend

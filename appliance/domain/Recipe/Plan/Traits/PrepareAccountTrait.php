@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -30,6 +30,7 @@ use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\Stop;
+use Teknoo\Recipe\Bowl\BowlInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
@@ -39,10 +40,12 @@ use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 
+use function is_callable;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 trait PrepareAccountTrait
@@ -71,15 +74,15 @@ trait PrepareAccountTrait
 
         $recipe = $recipe->cook($this->loadHistory, LoadHistory::class, [], 50);
 
-        if (isset($this->loadEnvironments)) {
+        if (isset($this->loadEnvironments) && $this->loadEnvironments instanceof LoadEnvironments) {
             $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 60);
         }
 
-        if (isset($this->loadRegistryCredential)) {
+        if (isset($this->loadRegistryCredential) && $this->loadRegistryCredential instanceof LoadRegistryCredential) {
             $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 60);
         }
 
-        if (isset($this->loadAccountClusters)) {
+        if (isset($this->loadAccountClusters) && $this->loadAccountClusters instanceof LoadAccountClusters) {
             $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 60);
         }
 

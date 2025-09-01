@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -160,7 +160,7 @@ trait PersistenceStepsTrait
     }
 
     #[Given('quotas defined for this account')]
-    public function quotasDefinedForThisAccount()
+    public function quotasDefinedForThisAccount(): void
     {
         $this->recall(Account::class)?->setQuotas(
             $this->quotasAllowed = [
@@ -297,7 +297,7 @@ trait PersistenceStepsTrait
 
             if ($var->isSecret() && null !== $algo) {
                 $promise = new Promise(
-                    fn (AccountPersistedVariable $apv) => $apv,
+                    fn (AccountPersistedVariable $apv): AccountPersistedVariable => $apv,
                     fn (Throwable $error) => throw $error,
                 );
 
@@ -424,7 +424,9 @@ trait PersistenceStepsTrait
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress($this->defaultClusterAddress);
         $cluster->useHierarchicalNamespaces($this->useHnc);
-        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $account->namespaceIsItDefined(
+            fn (string $ns, string $pf): Cluster => $cluster->setNamespace($pf . $ns . '-prod')
+        );
         $cluster->setEnvironment(new Environment('prod'));
         $cluster->setLocked(true);
         $cluster->setIdentity(
@@ -441,7 +443,9 @@ trait PersistenceStepsTrait
         $clusterDev->setType($this->defaultClusterType);
         $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
         $clusterDev->useHierarchicalNamespaces($this->useHnc);
-        $account->namespaceIsItDefined(fn (string $ns, string $pf) => $clusterDev->setNamespace($pf . $ns . '-dev'));
+        $account->namespaceIsItDefined(
+            fn (string $ns, string $pf): Cluster => $clusterDev->setNamespace($pf . $ns . '-dev')
+        );
         $clusterDev->setEnvironment(new Environment('dev'));
         $clusterDev->setLocked(true);
         $clusterDev->setIdentity(
@@ -538,7 +542,7 @@ trait PersistenceStepsTrait
                 $this->persistAndRegister($user);
                 $users[] = $user;
 
-                $userData = new UserData(user: $user,);
+                $userData = new UserData(user: $user);
                 $userData->setId($this->generateId());
 
                 $this->persistAndRegister($userData);
@@ -556,7 +560,9 @@ trait PersistenceStepsTrait
         $cluster->setType($this->defaultClusterType);
         $cluster->setAddress('https://custom.cluster');
         $cluster->useHierarchicalNamespaces(false);
-        $account->namespaceIsItDefined(fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-prod'));
+        $account->namespaceIsItDefined(
+            fn (string $ns, string $pf): Cluster => $cluster->setNamespace($pf . $ns . '-prod')
+        );
         $cluster->setEnvironment($env = new Environment('prod'));
 
         if (empty($this->recall(Environment::class))) {
@@ -587,10 +593,10 @@ trait PersistenceStepsTrait
         $cluster = new Cluster();
         $cluster->setName($clusterConfig->name);
         $cluster->setType($clusterConfig->type);
-        $cluster->setAddress(\str_replace('https://', 'https://' . $prefix, $clusterConfig->masterAddress));
+        $cluster->setAddress(str_replace('https://', 'https://' . $prefix, $clusterConfig->masterAddress));
         $cluster->useHierarchicalNamespaces($this->useHnc);
         $account->namespaceIsItDefined(
-            fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-' . $envName)
+            fn (string $ns, string $pf): Cluster => $cluster->setNamespace($pf . $ns . '-' . $envName)
         );
         $cluster->setEnvironment($env = new Environment($envName));
         $cluster->setLocked(true);
@@ -635,7 +641,7 @@ trait PersistenceStepsTrait
         ]);
 
         $account->namespaceIsItDefined(
-            fn(string $ns, string $pf) => $cluster->setNamespace($pf . $ns . '-' . $envName)
+            fn (string $ns, string $pf): Cluster => $cluster->setNamespace($pf . $ns . '-' . $envName)
         );
         $cluster->setEnvironment($env = new Environment($envName));
         $cluster->setLocked(true);
@@ -781,13 +787,13 @@ trait PersistenceStepsTrait
         $this->createAndPersistProject($projectName, $prefix, true);
     }
 
-    #[Given(':count project\'s variables')]
+    #[Given(":count project's variables")]
     public function andSomeProjectVariables(int $count): void
     {
         $project = $this->recall(Project::class);
         $service = $this->sfContainer->get(PersistedVariableEncryption::class);
 
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $isSecret = ($i % 3) === 0;
             $algo = null;
             if ($isSecret) {
@@ -863,7 +869,7 @@ trait PersistenceStepsTrait
 
         $namespace = '';
         $account->namespaceIsItDefined(
-            function (string $ns, string $pf) use (&$namespace, $environmentName) {
+            function (string $ns, string $pf) use (&$namespace, $environmentName): void {
                 $namespace = $pf . $ns . '-' . $environmentName;
             }
         );
@@ -1035,7 +1041,7 @@ trait PersistenceStepsTrait
 
             if ($var->isSecret() && null !== $algo) {
                 $promise = new Promise(
-                    fn (ProjectPersistedVariable $ppv) => $ppv,
+                    fn (ProjectPersistedVariable $ppv): ProjectPersistedVariable => $ppv,
                     fn (Throwable $error) => throw $error,
                 );
 
@@ -1133,7 +1139,7 @@ trait PersistenceStepsTrait
         $registry = $this->recall(ImageRegistry::class);
         $repository = $this->recall(GitRepository::class);
 
-        for ($i = 0; $i < $number; $i++) {
+        for ($i = 0; $i < $number; ++$i) {
             $job = new Job();
             $job->setProject($project);
             $job->setEnvironment($env);
@@ -1189,7 +1195,7 @@ trait PersistenceStepsTrait
     }
 
     #[Then('no object has been deleted')]
-    public function noObjectHasBeenDeleted()
+    public function noObjectHasBeenDeleted(): void
     {
         Assert::assertEmpty($this->removedObjects);
     }
@@ -1346,7 +1352,7 @@ trait PersistenceStepsTrait
 
         Assert::assertStringContainsString(
             "Error, time limit exceeded",
-            $history->getExtra()['result'][0] ?? '',
+            (string) ($history->getExtra()['result'][0] ?? ''),
         );
     }
 
@@ -1372,7 +1378,7 @@ trait PersistenceStepsTrait
                 'conditions' => "if{ENV=prod}' is not a valid value of the atomic type",
                 default => throw new LogicException('Unknown type in test'),
             },
-            $history->getExtra()['result'][0] ?? '',
+            (string) ($history->getExtra()['result'][0] ?? ''),
         );
     }
 

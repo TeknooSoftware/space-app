@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -32,13 +32,14 @@ use Twig\TemplateWrapper;
 
 use function array_map;
 use function implode;
+use function is_string;
 
 use const PHP_EOL;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class Twig implements ModuleInterface
@@ -68,9 +69,16 @@ class Twig implements ModuleInterface
         return $that;
     }
 
+    /**
+     * @param callable(?string): ?string $getTemplate
+     */
     public function load(callable $getTemplate): self
     {
-        if ($this->envTwig && !empty($template = $getTemplate($this->block))) {
+        if (
+            $this->envTwig instanceof Environment
+            && !empty($template = $getTemplate($this->block))
+            && is_string($template)
+        ) {
             $this->templates[] = $this->envTwig->load($template);
         }
 
@@ -82,7 +90,7 @@ class Twig implements ModuleInterface
         return implode(
             PHP_EOL,
             array_map(
-                fn (TemplateWrapper $template) => $template->render(),
+                fn (TemplateWrapper $template): string => $template->render(),
                 $this->templates,
             )
         );

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -52,7 +52,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements WriterInterface<SpaceAccount>
@@ -60,14 +60,14 @@ use Throwable;
 class SpaceAccountWriter implements WriterInterface
 {
     public function __construct(
-        private AccountWriter $accountWriter,
-        private AccountDataWriter $dataWriter,
-        private AccountEnvironmentLoader $credentialLoader,
-        private AccountHistoryLoader $historyLoader,
-        private AccountEnvironmentWriter $credentialWriter,
-        private AccountHistoryWriter $historyWriter,
-        private AccountPersistedVariableWriter $accountPersistedVariableWriter,
-        private BatchManipulationManagerInterface $batchManipulationManager,
+        private readonly AccountWriter $accountWriter,
+        private readonly AccountDataWriter $dataWriter,
+        private readonly AccountEnvironmentLoader $credentialLoader,
+        private readonly AccountHistoryLoader $historyLoader,
+        private readonly AccountEnvironmentWriter $credentialWriter,
+        private readonly AccountHistoryWriter $historyWriter,
+        private readonly AccountPersistedVariableWriter $accountPersistedVariableWriter,
+        private readonly BatchManipulationManagerInterface $batchManipulationManager,
     ) {
     }
 
@@ -82,20 +82,9 @@ class SpaceAccountWriter implements WriterInterface
             return $this;
         }
 
-        if (!$object->account instanceof Account) {
-            $promise?->fail(
-                new RuntimeException(
-                    message: 'teknoo.space.error.space_account.writer.not_instantiable',
-                    code: 500,
-                )
-            );
-
-            return $this;
-        }
-
         /** @var Promise<Account, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (Account $account, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
+            function (Account $account, PromiseInterface $next) use ($object, $preferRealDateOnUpdate): void {
                 if ($object->accountData instanceof AccountData) {
                     $data = $object->accountData;
                     $data->setAccount($object->account);
@@ -123,7 +112,7 @@ class SpaceAccountWriter implements WriterInterface
                     $deletedPromise,
                 );
             },
-            static fn (Throwable $error, ?PromiseInterface $next = null) => $next?->fail(
+            static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                 new RuntimeException(
                     message: 'teknoo.space.error.space_account.account.persisting',
                     code: $error->getCode() > 0 ? $error->getCode() : 500,
@@ -154,9 +143,7 @@ class SpaceAccountWriter implements WriterInterface
             /** @var Promise<AccountData, mixed, mixed> $removedPromise */
             $removedPromise = new Promise(
                 function (mixed $result, ?PromiseInterface $next = null) use ($object) {
-                    if (!($account = $object->account) instanceof Account) {
-                        return;
-                    }
+                    $account = $object->account;
 
                     /** @var Promise<AccountEnvironment, mixed, mixed> $credentialsPromise */
                     $credentialsPromise = new Promise(
@@ -182,7 +169,7 @@ class SpaceAccountWriter implements WriterInterface
                         $this->accountPersistedVariableWriter->remove($var);
                     }
                 },
-                static fn (Throwable $error, ?PromiseInterface $next = null) => $next?->fail(
+                static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                     new RuntimeException(
                         message: 'teknoo.space.error.space_account.account.deleting',
                         code: $error->getCode() > 0 ? $error->getCode() : 500,

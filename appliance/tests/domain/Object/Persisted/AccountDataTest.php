@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,20 +45,6 @@ class AccountDataTest extends TestCase
 {
     private AccountData $accountData;
 
-    private Account|MockObject $account;
-
-    private string $legalName;
-
-    private string $streetAddress;
-
-    private string $zipCode;
-
-    private string $cityName;
-
-    private string $countryName;
-
-    private string $vatNumber;
-
     /**
      * {@inheritdoc}
      */
@@ -66,107 +52,100 @@ class AccountDataTest extends TestCase
     {
         parent::setUp();
 
-        $this->account = $this->createMock(Account::class);
-        $this->legalName = '42';
-        $this->streetAddress = '42';
-        $this->zipCode = '42';
-        $this->cityName = '42';
-        $this->countryName = '42';
-        $this->vatNumber = '42';
+        $account = $this->createMock(Account::class);
+        $legalName = '42';
+        $streetAddress = '42';
+        $zipCode = '42';
+        $cityName = '42';
+        $countryName = '42';
+        $vatNumber = '42';
         $this->accountData = new AccountData(
-            $this->account,
-            $this->legalName,
-            $this->streetAddress,
-            $this->zipCode,
-            $this->cityName,
-            $this->countryName,
-            $this->vatNumber,
+            $account,
+            $legalName,
+            $streetAddress,
+            $zipCode,
+            $cityName,
+            $countryName,
+            $vatNumber,
         );
     }
 
     public function testSetAccount(): void
     {
         $expected = $this->createMock(Account::class);
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('account');
-        $property->setAccessible(true);
         $this->accountData->setAccount($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testSetLegalName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('legalName');
-        $property->setAccessible(true);
         $this->accountData->setLegalName($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testSetStreetAddress(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('streetAddress');
-        $property->setAccessible(true);
         $this->accountData->setStreetAddress($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testSetZipCode(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('zipCode');
-        $property->setAccessible(true);
         $this->accountData->setZipCode($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testSetCityName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('cityName');
-        $property->setAccessible(true);
         $this->accountData->setCityName($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testSetCountryName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('countryName');
-        $property->setAccessible(true);
         $this->accountData->setCountryName($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testSetVatNumber(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(AccountData::class))
+        $property = new ReflectionClass(AccountData::class)
             ->getProperty('vatNumber');
-        $property->setAccessible(true);
         $this->accountData->setVatNumber($expected);
-        self::assertEquals($expected, $property->getValue($this->accountData));
+        $this->assertEquals($expected, $property->getValue($this->accountData));
     }
 
     public function testVisit(): void
     {
         $final = null;
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountData::class,
             $this->accountData->visit([
-                'legalName' => function ($value) use (&$final) {
+                'legalName' => function ($value) use (&$final): void {
                     $final = $value;
                 },
                 'foo' => fn () => self::fail('Must be not called'),
             ]),
         );
-        self::assertEquals(
+        $this->assertEquals(
             '42',
             $final,
         );

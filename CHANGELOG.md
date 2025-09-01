@@ -1,5 +1,22 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-beta1] - 2025-08-31
+### Stable Release
+- Drop support of PHP 8.3
+- Requires PHP 8.4
+- Support Symfony 6.4.24+ or 7.3+
+  - Upgrade to last Symfony 3.1
+- Update to Teknoo 
+  - States 7
+  - Recipe 7
+  - East Foundation 9
+  - East Common 4
+  - East PaaS 5
+- Update to PHPStan 2
+- Fix some bugs and QA issues
+- Switch license from MIT to 3-Clause BSD
+- Remove Blackfire integration (may come back later)
+
 ## [1.2.0] - 2025-07-04
 ### Stable Version
 - Add capability to limit the number of projects per accounts, with a behavior like limit on environments

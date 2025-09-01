@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -29,6 +29,8 @@ use OverflowException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\Project;
+use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
@@ -38,7 +40,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class CheckingAllowedCountOfProjects
@@ -55,7 +57,7 @@ class CheckingAllowedCountOfProjects
     ): self {
         $projectsAllowed = $plan?->projectsCountAllowed ?? 0;
         $errorMessage = 'Missing subscription plan for this account';
-        if ($plan) {
+        if ($plan instanceof SubscriptionPlan) {
             $errorMessage = "The plan {$plan->name} accepts only {$projectsAllowed} projects";
         }
 
@@ -67,15 +69,16 @@ class CheckingAllowedCountOfProjects
             return $this;
         }
 
+        /** @var Promise<Project, mixed, mixed> $projectsCountedPromise */
         $projectsCountedPromise = new Promise(
             static function ($projectsCounted) use ($manager, $projectsAllowed, $errorMessage): void {
                 if ($projectsCounted >= $projectsAllowed) {
                     $manager->error(
-                        error: new OverflowException($errorMessage, 400,)
+                        error: new OverflowException($errorMessage, 400)
                     );
                 }
             },
-            static fn (Throwable $error)  => $manager->error($error)
+            static fn (Throwable $error): ChefInterface => $manager->error($error)
         );
 
         $this->projectLoader->fetch(

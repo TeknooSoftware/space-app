@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -36,17 +36,18 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class CreateRoleBinding
 {
-    private const ROLE_BINDING_SUFFIX = '-role-binding';
-    private const CLUSTER_ROLE_BINDING_SUFFIX = '-cluster-role-binding';
+    private const string ROLE_BINDING_SUFFIX = '-role-binding';
+
+    private const string CLUSTER_ROLE_BINDING_SUFFIX = '-cluster-role-binding';
 
     public function __construct(
-        private DatesService $datesService,
-        private bool $preferRealDate,
+        private readonly DatesService $datesService,
+        private readonly bool $preferRealDate,
     ) {
     }
 
@@ -141,7 +142,7 @@ class CreateRoleBinding
         $bindingRepository->apply($roleBinding);
 
         $this->datesService->passMeTheDate(
-            static function (DateTimeInterface $dateTime) use ($accountHistory, $roleBindingName) {
+            static function (DateTimeInterface $dateTime) use ($accountHistory, $roleBindingName): void {
                 $accountHistory->addToHistory(
                     'teknoo.space.text.account.kubernetes.role_binding',
                     $dateTime,

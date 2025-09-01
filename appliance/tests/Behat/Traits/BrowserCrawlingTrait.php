@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -113,7 +113,7 @@ trait BrowserCrawlingTrait
         );
     }
 
-    #[Then('it obtains a empty account\'s variables form')]
+    #[Then("it obtains a empty account's variables form")]
     public function itObtainsAEmptyAccountsVariablesForm(): void
     {
         $formValues = $this->createForm('account_vars')->getPhpValues();
@@ -229,7 +229,7 @@ trait BrowserCrawlingTrait
         );
     }
 
-    #[Then('it obtains a empty project\'s form')]
+    #[Then("it obtains a empty project's form")]
     public function itObtainsAEmptyProjectsForm(): void
     {
         $formValues = $this->createForm('space_project')->getPhpValues();
@@ -242,7 +242,7 @@ trait BrowserCrawlingTrait
         Assert::assertEquals($code, $this->response?->getStatusCode());
     }
 
-    #[Then('it obtains a empty project\'s variables form')]
+    #[Then("it obtains a empty project's variables form")]
     public function itObtainsAEmptyProjectsVariablesForm(): void
     {
         $formValues = $this->createForm('project_vars')->getPhpValues();
@@ -376,7 +376,7 @@ trait BrowserCrawlingTrait
     }
 
     #[Then('its name is now :fullName')]
-    #[Then('the user\'s name is now :fullName')]
+    #[Then("the user's name is now :fullName")]
     public function itsNameIsNow(string $fullName): void
     {
         $this->isAFinalResponse();

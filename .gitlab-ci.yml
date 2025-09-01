@@ -7,20 +7,6 @@ before_script:
   script:
     - make test
 
-test:8.3-lower:
-  extends: .abstract_tests
-  variables:
-    PHP_VERSION: '8.3'
-    DEPENDENCIES: lowest
-
-test:8.3-upper:
-  extends: .abstract_tests
-  variables:
-    PHP_VERSION: '8.3'
-  script:
-    - make test-mono-thread
-    - make qa
-
 test:8.4-lower:
   extends: .abstract_tests
   variables:

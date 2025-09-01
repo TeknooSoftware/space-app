@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -37,20 +37,20 @@ class KernelTest extends TestCase
         return new Kernel('test', false);
     }
 
-    public function testGetCacheDir()
+    public function testGetCacheDir(): void
     {
-        self::assertIsString($this->buildKernel()->getCacheDir());
+        $this->assertIsString($this->buildKernel()->getCacheDir());
     }
 
-    public function testGetLogDir()
+    public function testGetLogDir(): void
     {
-        self::assertIsString($this->buildKernel()->getLogDir());
+        $this->assertIsString($this->buildKernel()->getLogDir());
     }
 
-    public function testTegisterBundles()
+    public function testTegisterBundles(): void
     {
         foreach ($this->buildKernel()->registerBundles() as $bundle) {
-            self::assertIsObject($bundle);
+            $this->assertIsObject($bundle);
         }
     }
 }

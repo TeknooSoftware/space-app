@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -25,8 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 use function bin2hex;
 use function random_bytes;
@@ -34,30 +33,16 @@ use function random_bytes;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class Nonce extends AbstractExtension
+class Nonce
 {
     private static ?string $currentNonce = null;
 
-    public function getFunctions(): array
-    {
-        return array(
-            new TwigFunction(
-                name: 'space_nonce',
-                callable: $this->getNonce(...)
-            )
-        );
-    }
-
-    public function getName(): string
-    {
-        return 'space_nonce';
-    }
-
+    #[AsTwigFunction(name: 'space_nonce')]
     public function getNonce(): string
     {
-        return self::$currentNonce ?? self::$currentNonce = \bin2hex(random_bytes(14));
+        return self::$currentNonce ?? self::$currentNonce = bin2hex(random_bytes(14));
     }
 }

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -53,21 +53,21 @@ class SpaceAccountWriterTest extends TestCase
 {
     private SpaceAccountWriter $spaceAccountWriter;
 
-    private AccountWriter|MockObject $accountWriter;
+    private AccountWriter&MockObject $accountWriter;
 
-    private AccountDataWriter|MockObject $dataWriter;
+    private AccountDataWriter&MockObject $dataWriter;
 
-    private AccountEnvironmentLoader|MockObject $credentialLoader;
+    private AccountEnvironmentLoader&MockObject $credentialLoader;
 
-    private AccountHistoryLoader|MockObject $historyLoader;
+    private AccountHistoryLoader&MockObject $historyLoader;
 
-    private AccountEnvironmentWriter|MockObject $credentialWriter;
+    private AccountEnvironmentWriter&MockObject $credentialWriter;
 
-    private AccountHistoryWriter|MockObject $historyWriter;
+    private AccountHistoryWriter&MockObject $historyWriter;
 
-    private AccountPersistedVariableWriter|MockObject $accountPersistedVariableWriter;
+    private AccountPersistedVariableWriter&MockObject $accountPersistedVariableWriter;
 
-    private BatchManipulationManagerInterface|MockObject $batchManipulationManager;
+    private BatchManipulationManagerInterface&MockObject $batchManipulationManager;
 
     /**
      * {@inheritdoc}
@@ -98,7 +98,7 @@ class SpaceAccountWriterTest extends TestCase
 
     public function testSave(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             SpaceAccountWriter::class,
             $this->spaceAccountWriter->save(
                 $this->createMock(ObjectInterface::class),
@@ -110,7 +110,7 @@ class SpaceAccountWriterTest extends TestCase
 
     public function testRemove(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             SpaceAccountWriter::class,
             $this->spaceAccountWriter->remove(
                 $this->createMock(ObjectInterface::class),

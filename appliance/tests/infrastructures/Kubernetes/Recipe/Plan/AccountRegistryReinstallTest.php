@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -51,7 +51,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -60,33 +60,33 @@ class AccountRegistryReinstallTest extends TestCase
 {
     private AccountRegistryReinstall $accountRegistryReinstall;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private LoadObject|MockObject $loadObject;
+    private LoadObject&MockObject $loadObject;
 
-    private PrepareRedirection|MockObject $prepareRedirection;
+    private PrepareRedirection&MockObject $prepareRedirection;
 
-    private SetRedirectClientAtEnd|MockObject $redirectClient;
+    private SetRedirectClientAtEnd&MockObject $redirectClient;
 
-    private LoadHistory|MockObject $loadHistory;
+    private LoadHistory&MockObject $loadHistory;
 
-    private LoadRegistryCredential|MockObject $loadRegistryCredential;
+    private LoadRegistryCredential&MockObject $loadRegistryCredential;
 
-    private RemoveRegistryCredential|MockObject $removeRegistryCredentials;
+    private RemoveRegistryCredential&MockObject $removeRegistryCredentials;
 
-    private AccountRegistryInstall|MockObject $accountRegistryInstall;
+    private AccountRegistryInstall&MockObject $accountRegistryInstall;
 
-    private ReloadNamespace|MockObject $reloadNamespace;
+    private ReloadNamespace&MockObject $reloadNamespace;
 
-    private UpdateAccountHistory|MockObject $updateAccountHistory;
+    private UpdateAccountHistory&MockObject $updateAccountHistory;
 
-    private JumpIf|MockObject $jumpIf;
+    private JumpIf&MockObject $jumpIf;
 
-    private Render|MockObject $render;
+    private Render&MockObject $render;
 
-    private ReinstallAccountErrorHandler|MockObject $errorHandler;
+    private ReinstallAccountErrorHandler&MockObject $errorHandler;
 
-    private ObjectAccessControlInterface|MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&MockObject $objectAccessControl;
 
     private string $defaultStorageSizeToClaim;
 
@@ -134,7 +134,7 @@ class AccountRegistryReinstallTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountRegistryReinstall::class,
             $this->accountRegistryReinstall,
         );
@@ -142,7 +142,7 @@ class AccountRegistryReinstallTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountRegistryReinstall->train(
                 $this->createMock(ChefInterface::class),

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -50,7 +50,7 @@ use Teknoo\Space\Recipe\Step\Account\InjectToView;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - AccountClusterNew@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -59,29 +59,29 @@ class AccountClusterNewTest extends TestCase
 {
     private AccountClusterNew $AccountClusterNew;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private JumpIfNot|MockObject $jumpIfNot;
+    private JumpIfNot&MockObject $jumpIfNot;
 
-    private LoadObject|MockObject $loadObject;
+    private LoadObject&MockObject $loadObject;
 
-    private ObjectAccessControlInterface|MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&MockObject $objectAccessControl;
 
-    private CreateObject|MockObject $createObject;
+    private CreateObject&MockObject $createObject;
 
-    private FormHandlingInterface|MockObject $formHandling;
+    private FormHandlingInterface&MockObject $formHandling;
 
-    private FormProcessingInterface|MockObject $formProcessing;
+    private FormProcessingInterface&MockObject $formProcessing;
 
-    private SaveObject|MockObject $saveObject;
+    private SaveObject&MockObject $saveObject;
 
-    private InjectToView|MockObject $injectToView;
+    private InjectToView&MockObject $injectToView;
 
-    private RedirectClientInterface|MockObject $redirectClient;
+    private RedirectClientInterface&MockObject $redirectClient;
 
-    private RenderFormInterface|MockObject $renderForm;
+    private RenderFormInterface&MockObject $renderForm;
 
-    private RenderError|MockObject $renderError;
+    private RenderError&MockObject $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -126,7 +126,7 @@ class AccountClusterNewTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountClusterNew::class,
             $this->AccountClusterNew,
         );
@@ -134,7 +134,7 @@ class AccountClusterNewTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->AccountClusterNew->train(
                 $this->createMock(ChefInterface::class),

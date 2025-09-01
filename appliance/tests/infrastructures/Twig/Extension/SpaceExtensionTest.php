@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,7 +43,7 @@ class SpaceExtensionTest extends TestCase
 {
     private SpaceExtension $spaceExtension;
 
-    private TwigExtension|MockObject $twig;
+    private TwigExtension&MockObject $twig;
 
     /**
      * {@inheritdoc}
@@ -59,19 +59,9 @@ class SpaceExtensionTest extends TestCase
         );
     }
 
-    public function testGetFunctions()
+    public function testRunExtension(): void
     {
-        self::assertIsArray($this->spaceExtension->getFunctions());
-    }
-
-    public function testGetName()
-    {
-        self::assertEquals('space_extension', $this->spaceExtension->getName());
-    }
-
-    public function testRunExtension()
-    {
-        self::assertIsString(
+        $this->assertIsString(
             $this->spaceExtension->runExtension(
                 $this->createMock(Environment::class),
                 'foo'

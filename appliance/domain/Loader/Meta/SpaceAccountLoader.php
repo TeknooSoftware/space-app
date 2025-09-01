@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements LoaderInterface<SpaceAccount>
@@ -53,14 +53,13 @@ use Throwable;
 class SpaceAccountLoader implements LoaderInterface
 {
     public function __construct(
-        private AccountLoader $accountLoader,
-        private AccountDataLoader $dataLoader,
-        private AccountPersistedVariableLoader $accountPersistedVariableLoader,
+        private readonly AccountLoader $accountLoader,
+        private readonly AccountDataLoader $dataLoader,
+        private readonly AccountPersistedVariableLoader $accountPersistedVariableLoader,
     ) {
     }
 
     /**
-     * @param Account $account
      * @param PromiseInterface<SpaceAccount, mixed> $promise
      */
     private function fetchData(Account $account, PromiseInterface $promise): self
@@ -69,7 +68,7 @@ class SpaceAccountLoader implements LoaderInterface
 
         /** @var Promise<AccountData, mixed, SpaceAccount> $fetchedPromise */
         $fetchedPromise = new Promise(
-            static function (AccountData $data, PromiseInterface $next) use ($account, $accountPVLoader) {
+            static function (AccountData $data, PromiseInterface $next) use ($account, $accountPVLoader): void {
                 $next->success(
                     new SpaceAccount(
                         $account,
@@ -83,7 +82,7 @@ class SpaceAccountLoader implements LoaderInterface
                     ),
                 );
             },
-            static fn (Throwable $error, PromiseInterface $next) => $next->success(
+            static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->success(
                 new SpaceAccount(
                     $account,
                     new AccountData(
@@ -112,8 +111,8 @@ class SpaceAccountLoader implements LoaderInterface
     {
         /** @var Promise<Account, mixed, SpaceAccount> $fetchedPromise */
         $fetchedPromise = new Promise(
-            fn (Account $account, PromiseInterface $next) => $this->fetchData($account, $next),
-            static fn (Throwable $error, PromiseInterface $next) => $next->fail(
+            fn (Account $account, PromiseInterface $next): SpaceAccountLoader => $this->fetchData($account, $next),
+            static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_account.account.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,
@@ -135,6 +134,7 @@ class SpaceAccountLoader implements LoaderInterface
         /** @var Promise<iterable<Account>, mixed, iterable<SpaceAccount>> $fetchedPromise */
         $fetchedPromise = new Promise(
             static function (iterable $result) {
+                /** @var iterable<Account> $result */
                 $final = [];
                 foreach ($result as $account) {
                     $final[] = new SpaceAccount($account, null); //Not needed actually to fetch metdata
@@ -157,10 +157,10 @@ class SpaceAccountLoader implements LoaderInterface
     {
         /** @var Promise<Account, mixed, SpaceAccount> $fetchedPromise */
         $fetchedPromise = new Promise(
-            function (Account $account, PromiseInterface $next) {
+            function (Account $account, PromiseInterface $next): void {
                 $this->fetchData($account, $next);
             },
-            static fn (Throwable $error, PromiseInterface $next) => $next->fail(
+            static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_account.account_data.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,
