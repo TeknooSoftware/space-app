@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,11 +26,9 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 
@@ -47,7 +45,6 @@ class HealthTest extends TestCase
 {
     private Health $health;
 
-    private Client|MockObject $client;
 
     /**
      * {@inheritdoc}
@@ -56,13 +53,12 @@ class HealthTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
         $this->health = new Health($this->createMock(ClusterCatalog::class));
     }
 
     public function testInvoke(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             Health::class,
             ($this->health)(
                 $this->createMock(ManagerInterface::class),

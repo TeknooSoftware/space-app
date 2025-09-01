@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -32,6 +32,7 @@ use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Loader\Meta\SpaceUserLoader;
@@ -44,15 +45,15 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class LoadUserInSpace
 {
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
-        private SpaceUserLoader $spaceUserLoader,
-        private SpaceAccountLoader $spaceAccountLoader,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly SpaceUserLoader $spaceUserLoader,
+        private readonly SpaceAccountLoader $spaceAccountLoader,
     ) {
     }
 
@@ -74,7 +75,7 @@ class LoadUserInSpace
 
         /** @var Promise<SpaceUser, mixed, mixed> $userPromise */
         $userPromise = new Promise(
-            function (SpaceUser $spaceUser) use ($spaceView, $manager) {
+            function (SpaceUser $spaceUser) use ($spaceView, $manager): void {
                 $spaceView->user = $spaceUser;
                 $manager->updateWorkPlan(
                     [
@@ -83,27 +84,26 @@ class LoadUserInSpace
                     ]
                 );
 
-                if (null !== $spaceUser->user) {
-                    /** @var Promise<SpaceAccount, mixed, mixed> $accountPromise */
-                    $accountPromise = new Promise(
-                        static function (SpaceAccount $spaceAccount) use ($spaceView, $manager) {
-                            $spaceView->account = $spaceAccount;
-                            $manager->updateWorkPlan(
-                                [
-                                    SpaceAccount::class => $spaceAccount,
-                                    Account::class => $spaceAccount->account,
-                                ]
-                            );
-                        },
-                    );
 
-                    $this->spaceAccountLoader->fetch(
-                        new FetchAccountFromUser($spaceUser->user),
-                        $accountPromise
-                    );
-                }
+                /** @var Promise<SpaceAccount, mixed, mixed> $accountPromise */
+                $accountPromise = new Promise(
+                    static function (SpaceAccount $spaceAccount) use ($spaceView, $manager): void {
+                        $spaceView->account = $spaceAccount;
+                        $manager->updateWorkPlan(
+                            [
+                                SpaceAccount::class => $spaceAccount,
+                                Account::class => $spaceAccount->account,
+                            ]
+                        );
+                    },
+                );
+
+                $this->spaceAccountLoader->fetch(
+                    new FetchAccountFromUser($spaceUser->user),
+                    $accountPromise
+                );
             },
-            fn (Throwable $error) => $manager->error($error),
+            fn (Throwable $error): ChefInterface => $manager->error($error),
         );
 
         $this->spaceUserLoader->load(

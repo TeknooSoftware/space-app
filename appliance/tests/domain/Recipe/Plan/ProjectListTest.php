@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -52,7 +52,7 @@ use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -61,33 +61,33 @@ class ProjectListTest extends TestCase
 {
     private ProjectList $projectList;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private ExtractPage|MockObject $extractPage;
+    private ExtractPage&MockObject $extractPage;
 
-    private ExtractOrder|MockObject $extractOrder;
+    private ExtractOrder&MockObject $extractOrder;
 
-    private LoadAccountFromRequest|MockObject $loadAccountFromRequest;
+    private LoadAccountFromRequest&MockObject $loadAccountFromRequest;
 
-    private LoadEnvironments|MockObject $loadEnvironments;
+    private LoadEnvironments&MockObject $loadEnvironments;
 
-    private LoadSubscriptionPlan|MockObject $loadSubscriptionPlan;
+    private LoadSubscriptionPlan&MockObject $loadSubscriptionPlan;
 
-    private CreateResumes|MockObject $createResumes;
+    private CreateResumes&MockObject $createResumes;
 
-    private PrepareCriteria|MockObject $prepareCriteria;
+    private PrepareCriteria&MockObject $prepareCriteria;
 
-    private InjectStatus|MockObject $injectStatus;
+    private InjectStatus&MockObject $injectStatus;
 
-    private LoadListObjects|MockObject $loadListObjects;
+    private LoadListObjects&MockObject $loadListObjects;
 
-    private RenderList|MockObject $renderList;
+    private RenderList&MockObject $renderList;
 
-    private RenderError|MockObject $renderError;
+    private RenderError&MockObject $renderError;
 
-    private SearchFormLoaderInterface|MockObject $searchFormLoader;
+    private SearchFormLoaderInterface&MockObject $searchFormLoader;
 
-    private ListObjectsAccessControlInterface|MockObject $listObjectsAccessControl;
+    private ListObjectsAccessControlInterface&MockObject $listObjectsAccessControl;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -138,7 +138,7 @@ class ProjectListTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             ProjectList::class,
             $this->projectList,
         );
@@ -146,7 +146,7 @@ class ProjectListTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->projectList->train(
                 $this->createMock(ChefInterface::class),

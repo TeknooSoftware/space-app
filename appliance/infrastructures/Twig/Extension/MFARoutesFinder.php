@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -33,41 +33,26 @@ use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Exception\Runtim
 use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Operation;
 use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Provider;
 use Throwable;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class MFARoutesFinder extends AbstractExtension
+class MFARoutesFinder
 {
     /**
      * @param array<string, array<string, string>> $routesFor2FAByProviders
      */
     public function __construct(
-        private string $default2FAProviderName,
-        private array $routesFor2FAByProviders,
+        private readonly string $default2FAProviderName,
+        private readonly array $routesFor2FAByProviders,
     ) {
     }
 
-    public function getFunctions(): array
-    {
-        return array(
-            new TwigFunction(
-                name: 'space_2fa_route_finder',
-                callable: $this->find(...),
-            )
-        );
-    }
-
-    public function getName(): string
-    {
-        return 'space_2fa_route_finder';
-    }
-
+    #[AsTwigFunction(name: 'space_2fa_route_finder')]
     public function find(
         UserInterface $user,
         string $operationStr,

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements LoaderInterface<SpaceProject>
@@ -53,14 +53,13 @@ use Throwable;
 class SpaceProjectLoader implements LoaderInterface
 {
     public function __construct(
-        private ProjectLoader $projectLoader,
-        private ProjectMetadataLoader $metadataLoader,
-        private ProjectPersistedVariableLoader $persistedVariableLoader,
+        private readonly ProjectLoader $projectLoader,
+        private readonly ProjectMetadataLoader $metadataLoader,
+        private readonly ProjectPersistedVariableLoader $persistedVariableLoader,
     ) {
     }
 
     /**
-     * @param Project $project
      * @param PromiseInterface<SpaceProject, mixed> $promise
      */
     private function fetchMetadata(Project $project, PromiseInterface $promise): self
@@ -69,7 +68,13 @@ class SpaceProjectLoader implements LoaderInterface
 
         /** @var Promise<ProjectMetadata, mixed, SpaceProject> $fetchedPromise */
         $fetchedPromise = new Promise(
-            static function (ProjectMetadata $data, PromiseInterface $next) use ($project, $persistedVariableLoader) {
+            static function (
+                ProjectMetadata $data,
+                PromiseInterface $next,
+            ) use (
+                $project,
+                $persistedVariableLoader,
+            ): void {
                 $next->success(
                     new SpaceProject(
                         $project,
@@ -81,7 +86,7 @@ class SpaceProjectLoader implements LoaderInterface
                     )
                 );
             },
-            static fn (Throwable $error, PromiseInterface $next) => $next->fail(
+            static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_project.project_metadata.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,
@@ -103,8 +108,8 @@ class SpaceProjectLoader implements LoaderInterface
     {
         /** @var Promise<Project, mixed, SpaceProject> $fetchedPromise */
         $fetchedPromise = new Promise(
-            fn (Project $project, PromiseInterface $next) => $this->fetchMetadata($project, $next),
-            static fn (Throwable $error, PromiseInterface $next) => $next->fail(
+            fn (Project $project, PromiseInterface $next): SpaceProjectLoader => $this->fetchMetadata($project, $next),
+            static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_project.project.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,
@@ -126,6 +131,7 @@ class SpaceProjectLoader implements LoaderInterface
         /** @var Promise<iterable<Project>, mixed, iterable<SpaceProject>> $fetchedPromise */
         $fetchedPromise = new Promise(
             static function (iterable $result) {
+                /** @var iterable<Project> $result */
                 $final = [];
                 foreach ($result as $project) {
                     $final[] = new SpaceProject($project, null); //Not needed actually to fetch metdata
@@ -148,10 +154,10 @@ class SpaceProjectLoader implements LoaderInterface
     {
         /** @var Promise<Project, mixed, SpaceProject> $fetchedPromise */
         $fetchedPromise = new Promise(
-            function (Project $project, PromiseInterface $next) {
+            function (Project $project, PromiseInterface $next): void {
                 $this->fetchMetadata($project, $next);
             },
-            static fn (Throwable $error, PromiseInterface $next) => $next->fail(
+            static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_project.project_metadata.fetching',
                     code: $error->getCode() > 0 ? $error->getCode() : 404,

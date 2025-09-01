@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,6 +43,7 @@ use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
@@ -560,7 +561,10 @@ trait ApiTrait
         if (null !== $bodyFields) {
             foreach ($bodyFields as $field) {
                 $value = match (true) {
-                    str_starts_with($field['value'], '<auto') => $this->autoGetId($field['field'], $field['value']),
+                    str_starts_with((string) $field['value'], '<auto') => $this->autoGetId(
+                        field: $field['field'],
+                        value: $field['value'],
+                    ),
                     default => $field['value'],
                 };
 
@@ -602,7 +606,7 @@ trait ApiTrait
 
     #[When("the API is called to edit a project's variables with a :format body:")]
     #[When("the API is called to edit a project's variables:")]
-    public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields, string $format = 'default',): void
+    public function theApiIsCalledToEditAProjectsVariables(TableNode $bodyFields, string $format = 'default'): void
     {
         /** @var TYPE_NAME $bodyFields */
         $this->theApiIsCalledToEditAProject($bodyFields, $format, isForVariables: true);
@@ -871,7 +875,7 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to refresh quota of account\'s environment')]
+    #[When("the API is called to refresh quota of account's environment")]
     public function theApiIsCalledToRefreshQuotaOfAccountsEnvironment(): void
     {
         $account = $this->recall(Account::class);
@@ -1137,7 +1141,7 @@ trait ApiTrait
     }
 
     #[Then('the serialized success result')]
-    public function theSerializedSuccessResult()
+    public function theSerializedSuccessResult(): void
     {
         Assert::assertEquals(200, $this->response?->getStatusCode());
 
@@ -1490,8 +1494,8 @@ trait ApiTrait
         );
     }
 
-    #[Then('the serialized :count project\'s variables')]
-    #[Then('the serialized :count project\'s variables with :name equals to :value')]
+    #[Then("the serialized :count project's variables")]
+    #[Then("the serialized :count project's variables with :name equals to :value")]
     public function theSerializedProjectsVariables(int $count, ?string $name = null, ?string $value = null): void
     {
         $this->isAFinalResponse();
@@ -1538,7 +1542,7 @@ trait ApiTrait
 
                     if ($var->isSecret() && null !== $algo) {
                         $promise = new Promise(
-                            fn (ProjectPersistedVariable $ppv) => $ppv,
+                            fn (ProjectPersistedVariable $ppv): ProjectPersistedVariable => $ppv,
                             fn (Throwable $error) => throw $error,
                         );
 
@@ -1636,8 +1640,8 @@ trait ApiTrait
 
     #[Then('the serialized account :accountName')]
     #[Then('the serialized account :accountName for :role')]
-    #[Then('the serialized account\'s :view of :accountName')]
-    #[Then('the serialized account\'s :view of :accountName for :role')]
+    #[Then("the serialized account's :view of :accountName")]
+    #[Then("the serialized account's :view of :accountName for :role")]
     public function theSerializedAccount(string $accountName, ?string $role = null, string $view = ''): void
     {
         $account = $this->recall(Account::class);
@@ -1652,12 +1656,12 @@ trait ApiTrait
         $environments = [];
         if ('environments' === $view) {
             $environments = array_map(
-                fn (AccountEnvironment $accountEnvironment) => $accountEnvironment->resume(),
+                fn (AccountEnvironment $accountEnvironment): AccountEnvironmentResume => $accountEnvironment->resume(),
                 array_filter(
                     array_values(
                         $this->listObjects(AccountEnvironment::class),
                     ),
-                    fn (AccountEnvironment $accountEnvironment) => $accountEnvironment->getAccount() === $account,
+                    fn (AccountEnvironment $accountEnvironment): bool => $accountEnvironment->getAccount() === $account,
                 ),
             );
         }
@@ -1784,11 +1788,10 @@ trait ApiTrait
     {
         $ro = new \ReflectionObject($actual);
         $rp = $ro->getProperty('project');
-        $rp->setAccessible(true);
 
         Assert::assertSame($expectedProject, $rp->getValue($actual));
 
-        $fakeNormalizer = new class implements EastNormalizerInterface {
+        $fakeNormalizer = new class () implements EastNormalizerInterface {
             public array $data = [];
 
             public function injectData(#[SensitiveParameter] array $data): EastNormalizerInterface
@@ -1814,7 +1817,7 @@ trait ApiTrait
         Assert::assertEquals($expectedData, $actualData);
     }
 
-    #[Then('the last project\'s cluster remains unchanged')]
+    #[Then("the last project's cluster remains unchanged")]
     public function theLastProjectsClusterRemainsUnchanged(): void
     {
         $project = $this->recall(Project::class);
@@ -1831,7 +1834,7 @@ trait ApiTrait
         }
     }
 
-    #[Then('the last project\'s cluster returns to its original state from the clusters catalog')]
+    #[Then("the last project's cluster returns to its original state from the clusters catalog")]
     public function theLastProjectsClusterReturnsToItsOriginalStateFromTheClustersCatalog(): void
     {
         $account = $this->recall(Account::class);
@@ -1841,7 +1844,7 @@ trait ApiTrait
         $clusters = [];
         $project->visit(
             'clusters',
-            function ($cs) use (&$clusters) {
+            function ($cs) use (&$clusters): void {
                 $clusters = $cs;
             },
         );
@@ -1867,7 +1870,7 @@ trait ApiTrait
         }
     }
 
-    #[Then('the last project\'s cluster returns to its original state from the account cluster')]
+    #[Then("the last project's cluster returns to its original state from the account cluster")]
     public function theLastProjectsClusterReturnsToItsOriginalStateFromTheAccountCluster(): void
     {
         $account = $this->recall(Account::class);
@@ -1877,7 +1880,7 @@ trait ApiTrait
         $clusters = [];
         $project->visit(
             'clusters',
-            function ($cs) use (&$clusters) {
+            function ($cs) use (&$clusters): void {
                 $clusters = $cs;
             },
         );

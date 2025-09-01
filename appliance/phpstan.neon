@@ -1,4 +1,5 @@
 parameters:
+    treatPhpDocTypesAsCertain: false
     ignoreErrors:
         -
             message: '#mixed#'
@@ -37,6 +38,15 @@ parameters:
             message: '#runVisit\(\) is unused#'
             path:  domain/Object
         -
+            message: '#Binary operation "\." between mixed#'
+            path:   domain/
+        -
+            message: '#on left side of \?\? is unnecessary. Use -> instead#'
+            path:   domain/
+        -
+            message: '#will always evaluate to true#'
+            path:    domain/Recipe/Plan/Traits/PrepareAccountTrait.php
+        -
             message: '#CreateRegistryDeployment::insertModel\(\) expects#'
             path:  infrastructures/Kubernetes/Recipe/Step/Registry/CreateRegistryDeployment.php
         -
@@ -52,14 +62,11 @@ parameters:
             message: "#Cannot access an offset on mixed#"
             path:  infrastructures/Symfony/Form/Type/
         -
-            message: "#is not falsy#"
-            path:  infrastructures/Symfony/Form/Type/
-        -
-            message: '#Argument of an invalid type mixed supplied for foreach#'
-            path:  infrastructures/Symfony/Form/DataMapper/
-        -
             message: '#on mixed#'
             path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
+        -
+            message: "#Cannot access offset 'token' on mixed#"
+            path:   infrastructures/Kubernetes/Recipe/Step/Environment/CreateSecretServiceAccountToken.php
         -
             message: '#mixed#'
             path:   infrastructures/Twig/Extension/UpdateQueryField.php

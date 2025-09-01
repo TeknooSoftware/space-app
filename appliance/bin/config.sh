@@ -387,7 +387,6 @@ if [ "$useDockerCompose" = "y" ]; then
   fi
 
   echo ""
-  echo ">> $RED To use blackfire with Space, please update blackfire section under $DOCKER_COMPOSE_OVERRIDE_FILE $NC"
 fi
 
 echo ""

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -42,19 +42,20 @@ use Teknoo\Space\Tests\Behat\SpaceContext;
 class MemoryRepository extends DocumentRepository
 {
     public function __construct(
-        private string $className,
-        private ObjectManager $objectManager,
-        private SpaceContext $context,
+        private readonly string $className,
+        private readonly ObjectManager $objectManager,
+        private readonly SpaceContext $context,
     ) {
     }
 
-    public function register(string $id, $object): self
+    public function register(string $id, object $object): self
     {
         $this->objectManager->persist($object);
 
         return $this;
     }
 
+    #[\Override]
     public function findOneBy(array $criteria, ?array $sort = null): ?object
     {
         if (isset($criteria['id'])) {
@@ -68,16 +69,19 @@ class MemoryRepository extends DocumentRepository
         return null;
     }
 
+    #[\Override]
     public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
     {
         return $this->context->findObjectsBycriteria($this->className, $criteria);
     }
 
+    #[\Override]
     public function getClassName(): string
     {
         return $this->className;
     }
 
+    #[\Override]
     public function createQueryBuilder(): QueryBuilder
     {
         return new class ($this->context, $this->className) extends QueryBuilder {
@@ -86,8 +90,8 @@ class MemoryRepository extends DocumentRepository
             private ?int $limit = null;
 
             public function __construct(
-                private SpaceContext $context,
-                private string $className,
+                private readonly SpaceContext $context,
+                private readonly string $className,
             ) {
             }
 

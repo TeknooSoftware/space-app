@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Command\Extension;
 
 use DomainException;
+use InvalidArgumentException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\Local\LocalFilesystemAdapter;
@@ -34,6 +35,7 @@ use Teknoo\East\Foundation\Extension\ExtensionInterface;
 use function class_exists;
 use function is_a;
 use function is_array;
+use function is_string;
 use function json_decode;
 use function str_replace;
 
@@ -42,7 +44,7 @@ use const JSON_THROW_ON_ERROR;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 trait ExtensionTrait
@@ -85,6 +87,10 @@ trait ExtensionTrait
     {
         $fileName = $_ENV['TEKNOO_EAST_EXTENSION_FILE'] ?? 'extensions/enabled.json';
 
+        if (!is_string($fileName)) {
+            throw new InvalidArgumentException("The value of TEKNOO_EAST_EXTENSION_FILE must be a string.");
+        }
+
         $fileSystem = $this->getFilesystem();
         if (!$fileSystem->fileExists($fileName)) {
             throw new DomainException("The extension file $fileName doesn't exists.");
@@ -100,17 +106,28 @@ trait ExtensionTrait
     {
         $content = $this->getFileAboutEnabledExtensions();
 
-        $list = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+        $list = json_decode((string) $content, true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($list)) {
-            $list = [];
+            return [];
         }
 
+        foreach ($list as &$value) {
+            if (!is_string($value)) {
+                throw new DomainException("The extension file is invalid.");
+            }
+        }
+
+        /** @var string[] $list */
         return $list;
     }
 
     private function updateFileAboutEnabledExtensions(string $content): void
     {
         $fileName = $_ENV['TEKNOO_EAST_EXTENSION_FILE'] ?? 'extensions/enabled.json';
+
+        if (!is_string($fileName)) {
+            throw new InvalidArgumentException("The value of TEKNOO_EAST_EXTENSION_FILE must be a string.");
+        }
 
         $this->getFilesystem()->write($fileName, $content);
     }

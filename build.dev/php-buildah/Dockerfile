@@ -1,49 +1,49 @@
 FROM php:8.4-cli
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:fr
-ENV LC_ALL en_US.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
-ENV NERDCTL_VERSION 1.7.2
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:fr
+ENV LC_ALL=en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV NERDCTL_VERSION=1.7.2
 
 RUN set -eux ; \
     apt-get clean ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
-            software-properties-common  \
-            sudo  \
             apt-transport-https \
+            buildah \
             ca-certificates \
+            containerd \
             curl \
+            fuse-overlayfs \
+            git \
             gnupg-agent \
-            musl-dev \
-            tzdata  \
-            wget \
-            locales \
-            nano  \
-            libgmp10-dev \
-            libyaml-dev \
-            librabbitmq-dev \
             libbz2-dev \
             libcurl4-openssl-dev \
-            libxml2-dev \
-            zlib1g-dev \
-            libpng-dev \
+            libgmp10-dev \
+            libicu-dev \
             libonig-dev \
-            libsqlite3-dev \
+            libpng-dev \
+            librabbitmq-dev \
             libsodium-dev \
-            libtidy-dev \
-            libxslt-dev \
-            libzip-dev \
+            libsqlite3-dev \
             libssl-dev \
-            buildah \
-            ssh \
-            git \
-            fuse-overlayfs \
-            sudo \
+            libtidy-dev \
+            libxml2-dev \
+            libxslt-dev \
+            libyaml-dev \
+            libzip-dev \
+            locales \
+            musl-dev \
+            nano  \
             rootlesskit \
-            containerd \
+            ssh \
+            sudo  \
+            sudo \
+            tzdata  \
+            wget \
+            zlib1g-dev \
     ; \
     pecl install apcu ; \
     pecl install mongodb ; \
@@ -52,9 +52,9 @@ RUN set -eux ; \
     docker-php-ext-enable apcu  \
                           mongodb  \
                           yaml  \
-                          amqp \
-    ; \
-    docker-php-ext-install bcmath \
+                          amqp
+
+RUN docker-php-ext-install bcmath \
                            bz2 \
                            calendar \
                            curl \

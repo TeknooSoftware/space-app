@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -57,12 +57,12 @@ class VarsSetTypeTest extends TestCase
 
     public function testGetBlockPrefix(): void
     {
-        self::assertIsString($this->varsSetType->getBlockPrefix());
+        $this->assertIsString($this->varsSetType->getBlockPrefix());
     }
 
     public function testBuildForm(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             VarsSetType::class,
             $this->varsSetType->buildForm(
                 $this->createMock(FormBuilderInterface::class),
@@ -73,7 +73,7 @@ class VarsSetTypeTest extends TestCase
 
     public function testConfigureOptions(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             VarsSetType::class,
             $this->varsSetType->configureOptions(
                 $this->createMock(OptionsResolver::class),

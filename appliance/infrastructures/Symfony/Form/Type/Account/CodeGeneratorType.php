@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -39,13 +39,15 @@ use function is_string;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
+ *
+ * @extends AbstractType<string>
  */
 class CodeGeneratorType extends AbstractType
 {
     public function __construct(
-        private CodeGenerator $codeGenerator,
+        private readonly CodeGenerator $codeGenerator,
     ) {
     }
 
@@ -76,7 +78,7 @@ class CodeGeneratorType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
-            function (FormEvent $event) {
+            function (FormEvent $event): void {
                 /** @var array{code: string, company: string} $data */
                 $data = $event->getData();
 
@@ -86,8 +88,8 @@ class CodeGeneratorType extends AbstractType
 
                 /** @var Promise<string, string|Throwable, mixed> $promise */
                 $promise = new Promise(
-                    fn (string $code) => $code,
-                    fn (Throwable $error) => $error,
+                    fn (string $code): string => $code,
+                    fn (Throwable $error): Throwable => $error,
                 );
 
                 $this->codeGenerator->generateCode(

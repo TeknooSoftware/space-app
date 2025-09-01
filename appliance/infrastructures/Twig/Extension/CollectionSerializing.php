@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -28,8 +28,7 @@ namespace Teknoo\Space\Infrastructures\Twig\Extension;
 use Countable;
 use Symfony\Component\Serializer\SerializerInterface;
 use Traversable;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
+use Twig\Attribute\AsTwigFilter;
 
 use function array_merge;
 use function count;
@@ -38,32 +37,14 @@ use function iterator_to_array;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CollectionSerializing extends AbstractExtension
+class CollectionSerializing
 {
     public function __construct(
         private readonly SerializerInterface $serializer,
     ) {
-    }
-
-    public function getFilters(): array
-    {
-        return array(
-            new TwigFilter(
-                name: 'space_collection_serialization',
-                callable: $this->serialize(...),
-                options: [
-                    'is_safe' => ['html', 'json', 'js'],
-                ],
-            )
-        );
-    }
-
-    public function getName(): string
-    {
-        return 'space_collection_serialization';
     }
 
     /**
@@ -71,6 +52,7 @@ class CollectionSerializing extends AbstractExtension
      * @param array<string, string[]> $context
      * @param array<string, mixed> $meta
      */
+    #[AsTwigFilter(name: 'space_collection_serialization', isSafe: ['html', 'json', 'js'])]
     public function serialize(
         iterable $collection,
         int $currentPage,

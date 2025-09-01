@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -54,21 +54,21 @@ class AccountRegistryInstallTest extends TestCase
 {
     private AccountRegistryInstall $accountInstall;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private LoadAccountClusters|MockObject $loadAccountClusters;
+    private LoadAccountClusters&MockObject $loadAccountClusters;
 
-    private CreateNamespace|MockObject $createNamespace;
+    private CreateNamespace&MockObject $createNamespace;
 
-    private CreateStorage|MockObject $createStorage;
+    private CreateStorage&MockObject $createStorage;
 
-    private CreateRegistryDeployment|MockObject $createRegistryAccount;
+    private CreateRegistryDeployment&MockObject $createRegistryAccount;
 
-    private PersistRegistryCredential|MockObject $persistRegistryCredentials;
+    private PersistRegistryCredential&MockObject $persistRegistryCredentials;
 
-    private PrepareAccountErrorHandler|MockObject $errorHandler;
+    private PrepareAccountErrorHandler&MockObject $errorHandler;
 
-    private ObjectAccessControlInterface|MockObject $objectAccessControlInterface;
+    private ObjectAccessControlInterface&MockObject $objectAccessControlInterface;
 
     private string $defaultStorageSizeToClaim;
 
@@ -104,7 +104,7 @@ class AccountRegistryInstallTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountRegistryInstall::class,
             $this->accountInstall,
         );
@@ -112,7 +112,7 @@ class AccountRegistryInstallTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountInstall->train(
                 $this->createMock(ChefInterface::class),

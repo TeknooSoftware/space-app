@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -37,7 +37,7 @@ use Teknoo\Recipe\Promise\Promise;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class SetAccountNamespace
@@ -45,7 +45,7 @@ class SetAccountNamespace
     public function __construct(
         private readonly FindSlugService $findSlugService,
         private readonly AccountLoader $accountLoader,
-        private string $rootNamespace,
+        private readonly string $rootNamespace,
     ) {
     }
 
@@ -56,7 +56,11 @@ class SetAccountNamespace
         ManagerInterface $manager,
         Account $accountInstance
     ): SluggableInterface {
-        return new class ($accountInstance, $manager, $this->rootNamespace) implements
+        return new readonly class (
+            $accountInstance,
+            $manager,
+            $this->rootNamespace
+        ) implements
             SluggableInterface,
             IdentifiedObjectInterface
         {
@@ -99,10 +103,10 @@ class SetAccountNamespace
 
         /** @var Promise<string, string, string> $promise */
         $promise = new Promise(
-            static fn (string $ns) => $ns,
+            static fn (string $ns): string => $ns,
         );
-        $accountInstance->namespaceIsItDefined($promise,);
-        $accountNamespace = $promise->fetchResult((string) $accountInstance);
+        $accountInstance->namespaceIsItDefined($promise);
+        $accountNamespace = (string) $promise->fetchResult((string) $accountInstance);
 
         $this->findSlugService->process(
             $this->accountLoader,

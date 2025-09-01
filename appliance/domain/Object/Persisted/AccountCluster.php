@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        http://https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -42,6 +42,7 @@ use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
+use Teknoo\Kubernetes\Client;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Contracts\Object\AccountComponentInterface;
@@ -50,7 +51,7 @@ use Teknoo\Space\Object\Config\Cluster;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements SluggableInterface<IdentifiedObjectInterface>
@@ -61,7 +62,8 @@ class AccountCluster implements
     SluggableInterface,
     VisitableInterface,
     NormalizableInterface,
-    AccountComponentInterface
+    AccountComponentInterface,
+    \Stringable
 {
     use ObjectTrait;
     use GroupsTrait;
@@ -240,7 +242,7 @@ class AccountCluster implements
             masterAddress: $this->masterAddress,
             storageProvisioner: $this->storageProvisioner,
             dashboardAddress: $this->dashboardAddress,
-            kubernetesClient: fn() => ($clientFactory)(
+            kubernetesClient: fn (): Client => ($clientFactory)(
                 $this->masterAddress,
                 $credentials,
                 $repositoryRegistry,

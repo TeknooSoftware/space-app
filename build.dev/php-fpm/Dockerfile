@@ -1,41 +1,41 @@
 FROM php:8.4-fpm
 
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US:fr
-ENV LC_ALL en_US.UTF-8
-ENV DEBIAN_FRONTEND noninteractive
+ENV LANG=en_US.UTF-8
+ENV LANGUAGEen=_US:fr
+ENV LC_ALL=en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -eux ; \
     apt-get clean ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
-            software-properties-common  \
-            sudo  \
             apt-transport-https \
             ca-certificates \
             curl \
             gnupg-agent \
-            musl-dev \
-            tzdata  \
-            wget \
-            locales \
-            nano  \
-            libgmp10-dev \
-            libyaml-dev \
-            librabbitmq-dev \
             libbz2-dev \
             libcurl4-openssl-dev \
-            libxml2-dev \
-            zlib1g-dev \
-            libpng-dev \
+            libgmp10-dev \
+            libicu-dev \
             libonig-dev \
-            libsqlite3-dev \
+            libpng-dev \
+            librabbitmq-dev \
             libsodium-dev \
-            libtidy-dev \
-            libxslt-dev \
-            libzip-dev \
+            libsqlite3-dev \
             libssl-dev \
+            libtidy-dev \
+            libxml2-dev \
+            libxslt-dev \
+            libyaml-dev \
+            libzip-dev \
+            locales \
+            musl-dev \
+            nano  \
+            sudo  \
+            tzdata  \
+            wget \
+            zlib1g-dev \
     ; \
     locale-gen ; \
     pecl install apcu ; \
@@ -76,17 +76,9 @@ RUN set -eux ; \
                            xsl  \
                            zip \
     ; \
-    wget -O - https://packagecloud.io/gpg.key | apt-key add - ; \
-    wget -q -O - https://packages.blackfire.io/gpg.key | sudo dd of=/usr/share/keyrings/blackfire-archive-keyring.asc ; \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/blackfire-archive-keyring.asc] http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sources.list.d/blackfire.list ; \
-    apt-get update ; \
-    apt-get install -y blackfire-php \
-    ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
-    sed -i 's|blackfire.agent_socket = unix:///var/run/blackfire/agent.sock|blackfire.agent_socket = tcp://${PHP_BLACKFIRE_SERVER}:8307|' /usr/local/etc/php/conf.d/zz-blackfire.ini ; \
     mkdir -p /run/php/ ; \
-    mkdir -p /var/log/blackfire/ ; \
     cd /usr/local/bin ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \

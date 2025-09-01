@@ -2,7 +2,7 @@ Teknoo Software - Space
 =======================
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/TeknooSoftware/space-app)
-[![License](https://shields.io/badge/license-MIT-green?style=flat)](https://raw.githubusercontent.com/TeknooSoftware/space-app/main/LICENSE)
+[![License](https://shields.io/badge/license-BSD3-green?style=flat)](https://raw.githubusercontent.com/TeknooSoftware/space-app/main/LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
 Space is a `Platform as a Service` or a `Platform as a code` application, a continuous integration/delivery/deployment 
@@ -11,7 +11,7 @@ is multi-account, multi-users and multi-projects. It able to build and deploy IT
 platforms on cluster. Space supports natively `Kubernetes` cluster but it was designed to support other types of 
 clusters by writting some drivers.
 
-This is the `Standard` version of Space. It is released under MIT licence. This version includes :
+This is the `Standard` version of Space. It is released under the 3-Clause BSD license. This version includes :
 
 * `East PaaS` integration
 * Accounts and users management
@@ -98,7 +98,7 @@ sharing knowledge and skills.
 
 License
 -------
-Space is licensed under the MIT License - see the licenses folder for details.
+Space is licensed under the 3-Clause BSD License - see the licenses folder for details.
 
 Requirements
 ------------
@@ -150,8 +150,8 @@ extensions can :
     * Change the logo.
     * Add or alter assets (CSS, JS).
 
-*The `Space Enterprise Edition` is a `Space Standard Edition` (free, and under MIT LICENSE) with a commercial plugin
-`Enterprise` (under commercial LICENSE) and a commercial support.*
+*The `Space Enterprise Edition` is a `Space Standard Edition` (free, and under the 3-Clause BSD license) with a 
+commercial plugin `Enterprise` (under commercial LICENSE) and a commercial support.*
 
 Installation
 ------------

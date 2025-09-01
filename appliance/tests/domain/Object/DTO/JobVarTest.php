@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -57,7 +57,7 @@ class JobVarTest extends TestCase
 
     private bool $wasSecret;
 
-    private ProjectPersistedVariable|MockObject $persistedVar;
+    private ProjectPersistedVariable&MockObject $persistedVar;
 
     /**
      * {@inheritdoc}
@@ -97,11 +97,10 @@ class JobVarTest extends TestCase
         );
 
         $expected = '42';
-        $property = (new ReflectionClass(JobVar::class))
+        $property = new ReflectionClass(JobVar::class)
             ->getProperty('id');
-        $property->setAccessible(true);
         $property->setValue($this->jobVar, $expected);
-        self::assertEquals($expected, $this->jobVar->getId());
+        $this->assertEquals($expected, $this->jobVar->getId());
 
         $this->jobVar = new JobVar(
             id: $this->id,
@@ -114,28 +113,26 @@ class JobVarTest extends TestCase
         );
 
         $this->persistedVar
-            ->expects($this->any())
             ->method('getId')
             ->willReturn('24');
-        self::assertEquals('24', $this->jobVar->getId());
+        $this->assertEquals('24', $this->jobVar->getId());
     }
 
     public function testExport(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             JobVar::class,
             $cloned = $this->jobVar->export(),
         );
 
-        self::assertNotSame(
+        $this->assertNotSame(
             $cloned,
             $this->jobVar,
         );
 
-        $property = (new ReflectionClass(JobVar::class))
+        $property = new ReflectionClass(JobVar::class)
             ->getProperty('persistedVar');
-        $property->setAccessible(true);
-        self::assertNull(
+        $this->assertNull(
             $property->getValue($cloned)
         );
     }

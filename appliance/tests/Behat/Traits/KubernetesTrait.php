@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Behat\Traits;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Http\Adapter\Guzzle7\Client as ClientAlias;
+use Http\Discovery\Strategy\CommonClassesStrategy;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
@@ -85,7 +86,7 @@ trait KubernetesTrait
                 ) {
                     $accountClusterInstance->visit(
                         'masterAddress',
-                        static function ($address) use (&$host) {
+                        static function ($address) use (&$host): void {
                             $urlParts = parse_url($address);
 
                             if (is_array($urlParts) && isset($urlParts['host'])) {
@@ -113,6 +114,10 @@ trait KubernetesTrait
 
         if (class_exists(ClientAlias::class)) {
             HttpClientDiscovery::registerInstantiator(ClientAlias::class, MockClientInstantiator::class);
+        }
+
+        if (class_exists(CommonClassesStrategy::class)) {
+            HttpClientDiscovery::registerInstantiator(CommonClassesStrategy::class, MockClientInstantiator::class);
         }
     }
 
@@ -151,7 +156,7 @@ trait KubernetesTrait
             return;
         }
 
-        $expected = (new ManifestGenerator())->fullDeployment(
+        $expected = new ManifestGenerator()->fullDeployment(
             projectPrefix: $this->projectPrefix,
             jobId: strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '', (string) $job->getProject()))),
             hncSuffix: $this->hncSuffix,
@@ -194,7 +199,7 @@ trait KubernetesTrait
         string $cluster,
     ): void {
         $expected = trim(
-            (new ManifestGenerator())->registryCreation(
+            new ManifestGenerator()->registryCreation(
                 $namespace,
             )
         );
@@ -245,7 +250,7 @@ trait KubernetesTrait
 
         foreach ($namespacesByHosts as $host => $namespaces) {
             $expected = trim(
-                (new ManifestGenerator())->quotaRefresh(
+                new ManifestGenerator()->quotaRefresh(
                     $prNr->fetchResult(''),
                     $namespaces,
                     $prQt->fetchResult([]),
@@ -291,7 +296,7 @@ trait KubernetesTrait
         $registry = $this->recall(AccountRegistry::class);
 
         $expected = trim(
-            (new ManifestGenerator())->namespaceCreation(
+            new ManifestGenerator()->namespaceCreation(
                 $prNr->fetchResult(),
                 $namespace,
                 $prQt->fetchResult([]),

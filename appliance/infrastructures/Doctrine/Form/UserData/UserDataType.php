@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -48,13 +48,15 @@ use function iterator_to_array;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
+ *
+ * @extends AbstractType<UserData>
  */
 class UserDataType extends AbstractType
 {
     public function __construct(
-        private MediaWriter $mediaWriter,
+        private readonly MediaWriter $mediaWriter,
     ) {
     }
 
@@ -84,8 +86,8 @@ class UserDataType extends AbstractType
 
         $builder->setDataMapper(new class () implements DataMapperInterface {
             /**
-             * @param Traversable<string, FormInterface> $forms
-             * @param ?\Teknoo\Space\Object\Persisted\UserData $data
+             * @param Traversable<string, FormInterface<Media|string>> $forms
+             * @param ?UserData $data
              */
             public function mapDataToForms($data, $forms): void
             {
@@ -101,7 +103,7 @@ class UserDataType extends AbstractType
             }
 
             /**
-             * @param Traversable<string, FormInterface> $forms
+             * @param Traversable<string, FormInterface<string|Media>> $forms
              * @param ?UserData $data
              */
             public function mapFormsToData($forms, &$data): void
@@ -117,7 +119,7 @@ class UserDataType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
-            static function (FormEvent $event) {
+            static function (FormEvent $event): void {
                 /** @var array<string, array<string, string>> $data */
                 $data = $event->getData();
                 $data['picture']['name'] = 'profile-picture';
@@ -137,7 +139,7 @@ class UserDataType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
+            function (FormEvent $event): void {
                 $form = $event->getForm();
                 $userData = $form->getNormData();
                 if (!$userData instanceof UserData) {
@@ -169,8 +171,10 @@ class UserDataType extends AbstractType
                 ) {
                     /** @var Promise<Media, mixed, mixed> $promise */
                     $promise = new Promise(
-                        static fn (Media $savedMedia) => $userData->setPicture($savedMedia),
-                        static fn (Throwable $error) => $form->addError(new FormError($error->getMessage())),
+                        static fn (Media $savedMedia): UserData => $userData->setPicture($savedMedia),
+                        static fn (Throwable $error): FormInterface => $form->addError(
+                            new FormError($error->getMessage())
+                        ),
                     );
 
                     $this->mediaWriter->save(

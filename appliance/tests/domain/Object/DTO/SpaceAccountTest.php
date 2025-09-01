@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,9 +45,9 @@ class SpaceAccountTest extends TestCase
 {
     private SpaceAccount $spaceAccount;
 
-    private Account|MockObject $account;
+    private Account&MockObject $account;
 
-    private AccountData|MockObject $accountData;
+    private AccountData&MockObject $accountData;
 
     private iterable $variables;
 
@@ -71,11 +71,10 @@ class SpaceAccountTest extends TestCase
     public function testGetId(): void
     {
         $this->account
-            ->expects($this->any())
             ->method('getId')
             ->willReturn('foo');
 
-        self::assertEquals(
+        $this->assertEquals(
             'foo',
             $this->spaceAccount->getId()
         );
@@ -84,11 +83,10 @@ class SpaceAccountTest extends TestCase
     public function testToString(): void
     {
         $this->account
-            ->expects($this->any())
             ->method('__toString')
             ->willReturn('foo');
 
-        self::assertEquals(
+        $this->assertEquals(
             'foo',
             (string) $this->spaceAccount
         );

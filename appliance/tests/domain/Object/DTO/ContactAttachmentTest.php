@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -52,11 +52,11 @@ class ContactAttachmentTest extends TestCase
         $this->contactAttachment = new ContactAttachment('foo', 'bar', 123, 'message');
     }
 
-    public function testConstruct()
+    public function testConstruct(): void
     {
-        self::assertEquals('foo', $this->contactAttachment->fileName);
-        self::assertEquals('bar', $this->contactAttachment->mimeType);
-        self::assertEquals(123, $this->contactAttachment->fileLength);
-        self::assertEquals('message', $this->contactAttachment->fileContent);
+        $this->assertEquals('foo', $this->contactAttachment->fileName);
+        $this->assertEquals('bar', $this->contactAttachment->mimeType);
+        $this->assertEquals(123, $this->contactAttachment->fileLength);
+        $this->assertEquals('message', $this->contactAttachment->fileContent);
     }
 }

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -39,7 +39,7 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
  * @implements WriterInterface<SpaceUser>
@@ -50,8 +50,8 @@ class SpaceUserWriter implements WriterInterface
      * @param WriterInterface<User> $userWriter
      */
     public function __construct(
-        private WriterInterface $userWriter,
-        private UserDataWriter $dataWriter,
+        private readonly WriterInterface $userWriter,
+        private readonly UserDataWriter $dataWriter,
     ) {
     }
 
@@ -66,18 +66,9 @@ class SpaceUserWriter implements WriterInterface
             return $this;
         }
 
-        if (!$object->user instanceof User) {
-            $promise?->fail(new RuntimeException(
-                message: 'teknoo.space.error.space_user.writer.not_instantiable',
-                code: 500
-            ));
-
-            return $this;
-        }
-
         /** @var Promise<User, mixed, mixed> $persistedPromise */
         $persistedPromise = new Promise(
-            function (User $user, PromiseInterface $next) use ($object, $preferRealDateOnUpdate) {
+            function (User $user, PromiseInterface $next) use ($object, $preferRealDateOnUpdate): void {
                 if ($object->userData instanceof UserData) {
                     $data = $object->userData;
                     $data->setUser($object->user);
@@ -86,7 +77,7 @@ class SpaceUserWriter implements WriterInterface
                     $next->success($user);
                 }
             },
-            static fn (Throwable $error, ?PromiseInterface $next = null) => $next?->fail(
+            static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                 new RuntimeException(
                     message: 'teknoo.space.error.space_user.user.persisting',
                     code: $error->getCode() > 0 ? $error->getCode() : 500,
@@ -116,12 +107,10 @@ class SpaceUserWriter implements WriterInterface
         if ($object->userData instanceof UserData) {
             /** @var Promise<UserData, mixed, mixed> $removedPromise */
             $removedPromise = new Promise(
-                function (mixed $result, ?PromiseInterface $next = null) use ($object) {
-                    if ($object->user instanceof User) {
-                        $this->userWriter->remove($object->user, $next);
-                    }
+                function (mixed $result, ?PromiseInterface $next = null) use ($object): void {
+                    $this->userWriter->remove($object->user, $next);
                 },
-                static fn (Throwable $error, ?PromiseInterface $next = null) => $next?->fail(
+                static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                     new RuntimeException(
                         message: 'teknoo.space.error.space_user.user.deleting',
                         code: $error->getCode() > 0 ? $error->getCode() : 500,

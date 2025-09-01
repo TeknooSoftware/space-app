@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -90,7 +90,7 @@ return [
         $storageProvisioner = $container->get('teknoo.east.paas.default_storage_provider');
         $factory = $container->get(ClientFactoryInterface::class);
 
-        $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', $text)));
+        $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', (string) $text)));
 
         $clustersList = [];
         $aliases = [];
@@ -101,13 +101,13 @@ return [
                 throw new DomainException("Error, the cluster $name is already defined in the catalog");
             }
 
-            $caCertificate = base64_decode($definition['create_account']['ca_cert']);
+            $caCertificate = base64_decode((string) $definition['create_account']['ca_cert']);
             $credentials = new ClusterCredentials(
                 caCertificate: $caCertificate,
                 token: $definition['create_account']['token'],
             );
 
-            $clientInit = fn() => $factory(
+            $clientInit = fn () => $factory(
                 $definition['master'],
                 $credentials,
                 $container->get(RepositoryRegistry::class)

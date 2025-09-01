@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -42,7 +42,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -51,13 +51,13 @@ class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private LoadEnvironments|MockObject $loadEnvironments;
+    private LoadEnvironments&MockObject $loadEnvironments;
 
-    private DashboardFrameInterface|MockObject $dashboard;
+    private DashboardFrameInterface&MockObject $dashboard;
 
-    private RenderError|MockObject $renderError;
+    private RenderError&MockObject $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -84,7 +84,7 @@ class DashboardFrameTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             DashboardFrame::class,
             $this->dashboardFrame,
         );
@@ -92,7 +92,7 @@ class DashboardFrameTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->dashboardFrame->train(
                 $this->createMock(ChefInterface::class),

@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -50,7 +50,7 @@ use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -59,31 +59,31 @@ class AccountEnvironmentInstallTest extends TestCase
 {
     private AccountEnvironmentInstall $accountInstall;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private LoadAccountClusters|MockObject $loadAccountClusters;
+    private LoadAccountClusters&MockObject $loadAccountClusters;
 
-    private CreateNamespace|MockObject $createNamespace;
+    private CreateNamespace&MockObject $createNamespace;
 
-    private SelectClusterConfig|MockObject $selectClusterConfig;
+    private SelectClusterConfig&MockObject $selectClusterConfig;
 
-    private CreateServiceAccount|MockObject $createServiceAccount;
+    private CreateServiceAccount&MockObject $createServiceAccount;
 
-    private CreateQuota|MockObject $createQuota;
+    private CreateQuota&MockObject $createQuota;
 
-    private CreateRole|MockObject $createRole;
+    private CreateRole&MockObject $createRole;
 
-    private CreateRoleBinding|MockObject $createRoleBinding;
+    private CreateRoleBinding&MockObject $createRoleBinding;
 
-    private CreateDockerSecret|MockObject $createDockerSecret;
+    private CreateDockerSecret&MockObject $createDockerSecret;
 
-    private CreateSecretServiceAccountToken|MockObject $createSecret;
+    private CreateSecretServiceAccountToken&MockObject $createSecret;
 
-    private PersistEnvironment|MockObject $persistCredentials;
+    private PersistEnvironment&MockObject $persistCredentials;
 
-    private PrepareAccountErrorHandler|MockObject $errorHandler;
+    private PrepareAccountErrorHandler&MockObject $errorHandler;
 
-    private ObjectAccessControlInterface|MockObject $objectAccessControlInterface;
+    private ObjectAccessControlInterface&MockObject $objectAccessControlInterface;
 
     /**
      * {@inheritdoc}
@@ -125,7 +125,7 @@ class AccountEnvironmentInstallTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             AccountEnvironmentInstall::class,
             $this->accountInstall,
         );
@@ -133,7 +133,7 @@ class AccountEnvironmentInstallTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountInstall->train(
                 $this->createMock(ChefInterface::class),

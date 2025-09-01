@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -42,11 +42,14 @@ use function array_merge;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
+ *
+ * @extends AbstractType<NewJob>
  */
 class ApiNewJobType extends AbstractType implements FormApiAwareInterface
 {
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'new_job';
@@ -125,15 +128,13 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
 
         $resolver->setDefaults([
             'data_class' => NewJob::class,
-            'empty_data' => static function (FormInterface $form) {
-                return new NewJob(
-                    $form->get('newJobId')->getData(),
-                    $form->get('variables')->getData(),
-                    $form->get('projectId')->getData(),
-                    $form->get('accountId')->getData(),
-                    $form->get('envName')->getData(),
-                );
-            },
+            'empty_data' => static fn (FormInterface $form): NewJob => new NewJob(
+                $form->get('newJobId')->getData(),
+                $form->get('variables')->getData(),
+                $form->get('projectId')->getData(),
+                $form->get('accountId')->getData(),
+                $form->get('envName')->getData(),
+            ),
             'environmentsList' => [],
             'api' => null,
         ]);

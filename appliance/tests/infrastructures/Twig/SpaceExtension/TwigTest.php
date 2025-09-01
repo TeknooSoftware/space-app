@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -43,7 +43,7 @@ class TwigTest extends TestCase
 {
     private Twig $twig;
 
-    private ManagerInterface|MockObject $manager;
+    private ManagerInterface&MockObject $manager;
 
     /**
      * {@inheritdoc}
@@ -59,7 +59,7 @@ class TwigTest extends TestCase
         );
     }
 
-    public function testRun()
+    public function testRun(): void
     {
         $this->manager
             ->expects($this->once())
@@ -71,17 +71,17 @@ class TwigTest extends TestCase
             'boo'
         );
 
-        self::assertInstanceOf(Twig::class, $ext);
-        self::assertnotSame($ext, $this->twig);
+        $this->assertInstanceOf(Twig::class, $ext);
+        $this->assertnotSame($ext, $this->twig);
     }
 
-    public function testLoad()
+    public function testLoad(): void
     {
-        self::assertInstanceOf(Twig::class, $this->twig->load(fn () => null));
+        $this->assertInstanceOf(Twig::class, $this->twig->load(fn (): null => null));
     }
 
-    public function testRender()
+    public function testRender(): void
     {
-        self::assertIsString($this->twig->render());
+        $this->assertIsString($this->twig->render());
     }
 }

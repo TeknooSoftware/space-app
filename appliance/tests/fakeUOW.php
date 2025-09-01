@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\ODM\MongoDB;
 
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadata;
@@ -10,10 +12,15 @@ if (!class_exists(UnitOfWork::class, false)) {
     class UnitOfWork
     {
         public const STATE_MANAGED = 1;
+
         public const STATE_NEW = 2;
+
         public const STATE_DETACHED = 3;
+
         public const STATE_REMOVED = 4;
+
         public const DEPRECATED_WRITE_OPTIONS = ['fsync', 'safe', 'w'];
+
         public function propertyChanged($sender, $propertyName, $oldValue, $newValue)
         {
         }
@@ -55,7 +62,7 @@ if (!class_exists(UnitOfWork::class, false)) {
             return true;
         }
 
-        public function getDocumentPersister(string $className)
+        public function getDocumentPersister(string $className): object
         {
             return new class () {
                 public function addDiscriminatorToPreparedQuery(array $preparedQuery): array

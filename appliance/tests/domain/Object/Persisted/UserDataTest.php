@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -46,9 +46,9 @@ class UserDataTest extends TestCase
 {
     private UserData $userData;
 
-    private User|MockObject $user;
+    private User&MockObject $user;
 
-    private Media|MockObject $picture;
+    private Media&MockObject $picture;
 
     /**
      * {@inheritdoc}
@@ -65,46 +65,43 @@ class UserDataTest extends TestCase
     public function testSetUser(): void
     {
         $expected = $this->createMock(User::class);
-        $property = (new ReflectionClass(UserData::class))
+        $property = new ReflectionClass(UserData::class)
             ->getProperty('user');
-        $property->setAccessible(true);
         $this->userData->setUser($expected);
-        self::assertEquals($expected, $property->getValue($this->userData));
+        $this->assertEquals($expected, $property->getValue($this->userData));
     }
 
     public function testSetPicture(): void
     {
         $expected = $this->createMock(Media::class);
-        $property = (new ReflectionClass(UserData::class))
+        $property = new ReflectionClass(UserData::class)
             ->getProperty('picture');
-        $property->setAccessible(true);
         $this->userData->setPicture($expected);
-        self::assertEquals($expected, $property->getValue($this->userData));
+        $this->assertEquals($expected, $property->getValue($this->userData));
     }
 
     public function testGetPicture(): void
     {
         $expected = $this->createMock(Media::class);
-        $property = (new ReflectionClass(UserData::class))
+        $property = new ReflectionClass(UserData::class)
             ->getProperty('picture');
-        $property->setAccessible(true);
         $property->setValue($this->userData, $expected);
-        self::assertEquals($expected, $this->userData->getPicture());
+        $this->assertEquals($expected, $this->userData->getPicture());
     }
 
     public function testVisit(): void
     {
         $final = null;
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             UserData::class,
             $this->userData->visit([
-                'picture' => function ($value) use (&$final) {
+                'picture' => function ($value) use (&$final): void {
                     $final = $value;
                 },
                 'foo' => fn () => self::fail('Must be not called'),
             ]),
         );
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             expected: Media::class,
             actual: $final,
         );

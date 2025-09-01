@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -27,13 +27,14 @@ namespace Teknoo\Space\Recipe\Step\Account;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\ChefInterface;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountData;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class ExtractFromAccountDTO
@@ -48,7 +49,7 @@ class ExtractFromAccountDTO
         ]);
 
         $spaceAccount->account->namespaceIsItDefined(
-            fn ($accountNamespace) => $manager->updateWorkPlan(['accountNamespace' => $accountNamespace])
+            fn ($accountNamespace): ChefInterface => $manager->updateWorkPlan(['accountNamespace' => $accountNamespace])
         );
 
         return $this;

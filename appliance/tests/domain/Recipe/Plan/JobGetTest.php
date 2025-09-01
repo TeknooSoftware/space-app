@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -46,7 +46,7 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
@@ -55,21 +55,21 @@ class JobGetTest extends TestCase
 {
     private JobGet $jobGet;
 
-    private RecipeInterface|MockObject $recipe;
+    private RecipeInterface&MockObject $recipe;
 
-    private LoadObject|MockObject $loadObject;
+    private LoadObject&MockObject $loadObject;
 
-    private ExtractProject|MockObject $extractProject;
+    private ExtractProject&MockObject $extractProject;
 
-    private LoadProjectMetadata|MockObject $loadProjectMetadata;
+    private LoadProjectMetadata&MockObject $loadProjectMetadata;
 
-    private InjectToViewMetadata|MockObject $injectToViewMetadata;
+    private InjectToViewMetadata&MockObject $injectToViewMetadata;
 
-    private Render|MockObject $render;
+    private Render&MockObject $render;
 
-    private RenderError|MockObject $renderError;
+    private RenderError&MockObject $renderError;
 
-    private ObjectAccessControlInterface|MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&MockObject $objectAccessControl;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -104,7 +104,7 @@ class JobGetTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             JobGet::class,
             $this->jobGet,
         );
@@ -112,7 +112,7 @@ class JobGetTest extends TestCase
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->jobGet->train(
                 $this->createMock(ChefInterface::class),

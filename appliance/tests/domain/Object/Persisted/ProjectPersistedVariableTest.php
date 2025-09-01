@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -45,7 +45,7 @@ class ProjectPersistedVariableTest extends TestCase
 {
     private ProjectPersistedVariable $persistedVariable;
 
-    private Project|MockObject $project;
+    private Project&MockObject $project;
 
     private string $id;
 
@@ -91,46 +91,42 @@ class ProjectPersistedVariableTest extends TestCase
     public function testGetProject(): void
     {
         $expected = $this->createMock(Project::class);
-        $property = (new ReflectionClass(ProjectPersistedVariable::class))
+        $property = new ReflectionClass(ProjectPersistedVariable::class)
             ->getProperty('project');
-        $property->setAccessible(true);
         $property->setValue($this->persistedVariable, $expected);
-        self::assertEquals($expected, $this->persistedVariable->getProject());
+        $this->assertEquals($expected, $this->persistedVariable->getProject());
     }
 
     public function testGetName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(ProjectPersistedVariable::class))
+        $property = new ReflectionClass(ProjectPersistedVariable::class)
             ->getProperty('name');
-        $property->setAccessible(true);
         $property->setValue($this->persistedVariable, $expected);
-        self::assertEquals($expected, $this->persistedVariable->getName());
+        $this->assertEquals($expected, $this->persistedVariable->getName());
     }
 
     public function testGetValue(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(ProjectPersistedVariable::class))
+        $property = new ReflectionClass(ProjectPersistedVariable::class)
             ->getProperty('value');
-        $property->setAccessible(true);
         $property->setValue($this->persistedVariable, $expected);
-        self::assertEquals($expected, $this->persistedVariable->getValue());
+        $this->assertEquals($expected, $this->persistedVariable->getValue());
     }
 
     public function testGetEnvName(): void
     {
         $expected = '42';
-        $property = (new ReflectionClass(ProjectPersistedVariable::class))
+        $property = new ReflectionClass(ProjectPersistedVariable::class)
             ->getProperty('envName');
-        $property->setAccessible(true);
         $property->setValue($this->persistedVariable, $expected);
-        self::assertEquals($expected, $this->persistedVariable->getEnvName());
+        $this->assertEquals($expected, $this->persistedVariable->getEnvName());
     }
 
     public function testIsSecret(): void
     {
-        self::assertIsBool(
+        $this->assertIsBool(
             $this->persistedVariable->isSecret(),
         );
     }

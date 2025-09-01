@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -39,15 +39,15 @@ use Teknoo\Space\Writer\AccountRegistryWriter;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class PersistRegistryCredential
 {
     public function __construct(
-        private AccountRegistryWriter $writer,
-        private DatesService $datesService,
-        private bool $preferRealDate,
+        private readonly AccountRegistryWriter $writer,
+        private readonly DatesService $datesService,
+        private readonly bool $preferRealDate,
     ) {
     }
 
@@ -84,7 +84,7 @@ class PersistRegistryCredential
         $this->writer->save($accountRegistry);
 
         $this->datesService->passMeTheDate(
-            static function (DateTimeInterface $dateTime) use ($accountHistory) {
+            static function (DateTimeInterface $dateTime) use ($accountHistory): void {
                 $accountHistory->addToHistory(
                     'teknoo.space.text.account.kubernetes.registry_persisted',
                     $dateTime

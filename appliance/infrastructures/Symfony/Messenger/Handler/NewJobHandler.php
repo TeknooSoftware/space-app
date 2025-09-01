@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -51,30 +51,29 @@ use const JSON_THROW_ON_ERROR;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 #[AsMessageHandler]
 class NewJobHandler
 {
     public function __construct(
-        private Executor $executor,
-        private NewJobInterface $recipe,
-        private MessageFactoryInterface $messageFactory,
-        private StreamFactoryInterface $streamFactory,
-        private Client $client,
-        private LoggerInterface $logger,
-        private JobError $jobErrorNotifier,
-        private ?EncryptionInterface $encryption,
-        private SleepServiceInterface $sleepService,
-        private PersistedVariableEncryption $encryptionService,
-        private int $waitingTimeSecond = 0,
+        private readonly Executor $executor,
+        private readonly NewJobInterface $recipe,
+        private readonly MessageFactoryInterface $messageFactory,
+        private readonly StreamFactoryInterface $streamFactory,
+        private readonly Client $client,
+        private readonly LoggerInterface $logger,
+        private readonly JobError $jobErrorNotifier,
+        private readonly ?EncryptionInterface $encryption,
+        private readonly SleepServiceInterface $sleepService,
+        private readonly PersistedVariableEncryption $encryptionService,
+        private readonly int $waitingTimeSecond = 0,
     ) {
     }
 
     /**
-     * @param array<int, \Teknoo\Space\Object\DTO\JobVar> $variables
-     * @return string
+     * @param array<JobVar> $variables
      */
     private function convertToJson(array $variables): string
     {
@@ -83,7 +82,7 @@ class NewJobHandler
         /** @var Promise<EncryptableVariableInterface, mixed, mixed> $promise */
         $promise = new Promise(
             static function (JobVar $jobVar) use (&$final): void {
-                $final[(string) $jobVar->name] = (string) $jobVar->value;
+                $final[$jobVar->name] = (string) $jobVar->value;
             },
             fn (Throwable $error) => throw $error,
         );
@@ -116,7 +115,7 @@ class NewJobHandler
 
         $processMessage = function (NewJob $newJob) use ($client): void {
             $this->logger->info(
-                (string) json_encode(
+                json_encode(
                     value: [
                         'action' => 'start',
                         'class' => $newJob::class,
@@ -130,7 +129,11 @@ class NewJobHandler
             );
 
             $message = $this->messageFactory->createMessage('1.1');
-            $message = $message->withBody($this->streamFactory->createStream($this->convertToJson($newJob->variables)));
+            $message = $message->withBody(
+                $this->streamFactory->createStream(
+                    $this->convertToJson($newJob->variables)
+                )
+            );
             $message = $message->withAddedHeader('Content-Type', 'application/json');
 
             $this->executor->execute(
@@ -151,12 +154,10 @@ class NewJobHandler
         $processError = function (Throwable $error) use ($client, $currentNewJobId): void {
             $this->logger->critical($error);
 
-            if (null !== $currentNewJobId) {
-                $this->jobErrorNotifier->process(
-                    error: $error,
-                    newJobId: $currentNewJobId,
-                );
-            }
+            $this->jobErrorNotifier->process(
+                error: $error,
+                newJobId: $currentNewJobId,
+            );
 
             $client->errorInRequest(
                 new UnrecoverableMessageHandlingException(

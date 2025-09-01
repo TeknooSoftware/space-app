@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -39,17 +39,17 @@ use Throwable;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 class NewJobNotifier implements NewJobNotifierInterface
 {
     public function __construct(
-        private JobUrlPublisher $publisher,
-        private UrlGeneratorInterface $generator,
-        private string $pendingJobRoute,
-        private string $projectJobeRoute,
-        private LoggerInterface $logger,
+        private readonly JobUrlPublisher $publisher,
+        private readonly UrlGeneratorInterface $generator,
+        private readonly string $pendingJobRoute,
+        private readonly string $projectJobeRoute,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -69,7 +69,7 @@ class NewJobNotifier implements NewJobNotifierInterface
             );
         } catch (ExceptionInterface $mercureException) {
             $this->logger->critical(
-                new  UnavailableException(
+                new UnavailableException(
                     message: 'teknoo.space.error.new_job.mercure_unavailable',
                     code: $mercureException->getCode(),
                     previous: $mercureException,

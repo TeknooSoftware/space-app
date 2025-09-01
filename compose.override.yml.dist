@@ -119,9 +119,3 @@ services:
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
             - PHP_XDEBUG_HOST=172.17.0.1
-    blackfire:
-        environment:
-            - BLACKFIRE_SERVER_ID=ToChange!
-            - BLACKFIRE_SERVER_TOKEN=ToChange!
-            - BLACKFIRE_CLIENT_ID=ToChange!
-            - BLACKFIRE_CLIENT_TOKEN=ToChange!

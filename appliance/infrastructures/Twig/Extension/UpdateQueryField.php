@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -27,8 +27,7 @@ namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Twig\Extension\AbstractExtension;
-use Twig\TwigFunction;
+use Twig\Attribute\AsTwigFunction;
 
 use function array_merge;
 use function is_array;
@@ -36,31 +35,16 @@ use function is_array;
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class UpdateQueryField extends AbstractExtension
+class UpdateQueryField
 {
     public function __construct(
-        private UrlGeneratorInterface $generator,
+        private readonly UrlGeneratorInterface $generator,
     ) {
     }
-
-    public function getFunctions(): array
-    {
-        return [
-            new TwigFunction(
-                name: 'app_update_query_field',
-                callable: $this->updateQueryField(...)
-            )
-        ];
-    }
-
-    public function getName(): string
-    {
-        return 'app_update_query_field';
-    }
-
+    #[AsTwigFunction(name: 'app_update_query_field')]
     public function updateQueryField(
         Request $request,
         string $field,

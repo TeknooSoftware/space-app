@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -46,9 +46,9 @@ class SpaceProjectTest extends TestCase
 {
     private SpaceProject $spaceProject;
 
-    private Project|MockObject $project;
+    private Project&MockObject $project;
 
-    private ProjectMetadata|MockObject $projectMetadata;
+    private ProjectMetadata&MockObject $projectMetadata;
 
     private iterable $variables;
 
@@ -68,11 +68,10 @@ class SpaceProjectTest extends TestCase
     public function testGetId(): void
     {
         $this->project
-            ->expects($this->any())
             ->method('getId')
             ->willReturn('foo');
 
-        self::assertEquals(
+        $this->assertEquals(
             'foo',
             $this->spaceProject->getId()
         );
@@ -81,11 +80,10 @@ class SpaceProjectTest extends TestCase
     public function testGetAccount(): void
     {
         $this->project
-            ->expects($this->any())
             ->method('getAccount')
             ->willReturn($this->createMock(Account::class));
 
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             Account::class,
             $this->spaceProject->getAccount(),
         );
@@ -94,11 +92,10 @@ class SpaceProjectTest extends TestCase
     public function testToString(): void
     {
         $this->project
-            ->expects($this->any())
             ->method('__toString')
             ->willReturn('foo');
 
-        self::assertEquals(
+        $this->assertEquals(
             'foo',
             (string) $this->spaceProject,
         );

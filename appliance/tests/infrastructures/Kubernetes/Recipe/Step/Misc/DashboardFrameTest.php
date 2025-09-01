@@ -5,7 +5,7 @@
  *
  * LICENSE
  *
- * This source file is subject to the MIT license
+ * This source file is subject to the 3-Clause BSD license
  * it is available in LICENSE file at the root of this package
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
@@ -17,7 +17,7 @@
  *
  * @link        https://teknoo.software/applications/space Project website
  *
- * @license     https://teknoo.software/license/mit         MIT License
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
 
@@ -57,11 +57,11 @@ class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;
 
-    private HttpMethodsClientInterface|MockObject $httpMethodsClient;
+    private HttpMethodsClientInterface&MockObject $httpMethodsClient;
 
     private ClusterCatalog $clusterCatalog;
 
-    private ResponseFactoryInterface|MockObject $responseFactory;
+    private ResponseFactoryInterface&MockObject $responseFactory;
 
     /**
      * {@inheritdoc}
@@ -100,36 +100,34 @@ class DashboardFrameTest extends TestCase
     public function testInvoke(): void
     {
         $sRequest = $this->createMock(ServerRequestInterface::class);
-        $sRequest->expects($this->any())->method('getMethod')->willReturn('GET');
+        $sRequest->method('getMethod')->willReturn('GET');
 
         $finalResponse = $this->createMock(ResponseInterface::class);
-        $finalResponse->expects($this->any())->method('withBody')->willReturnSelf();
+        $finalResponse->method('withBody')->willReturnSelf();
         $this->responseFactory
-            ->expects($this->any())
             ->method('createResponse')
             ->willReturn($finalResponse);
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects($this->any())->method('getStatusCode')->willReturn(200);
-        $response->expects($this->any())->method('getReasonPhrase')->willReturn('foo');
-        $response->expects($this->any())->method('getBody')->willReturn(
+        $response->method('getStatusCode')->willReturn(200);
+        $response->method('getReasonPhrase')->willReturn('foo');
+        $response->method('getBody')->willReturn(
             $this->createMock(StreamInterface::class)
         );
 
         $this->httpMethodsClient
-            ->expects($this->any())
             ->method('send')
             ->willReturn($response);
 
         $wallet = $this->createMock(AccountWallet::class);
-        $wallet->expects($this->any())
+        $wallet
             ->method('has')
             ->willReturn(true);
-        $wallet->expects($this->any())
+        $wallet
             ->method('get')
             ->willReturn($this->createMock(AccountEnvironment::class));
 
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             DashboardFrame::class,
             ($this->dashboardFrame)(
                 manager: $this->createMock(ManagerInterface::class),
