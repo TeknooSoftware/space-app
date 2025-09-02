@@ -11426,12 +11426,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "d007f3c7dcde6a33d12051be792d8234f78fd848"
+                "reference": "3584165a6cae1eba266864f6aa5f5cbfcf755b59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/d007f3c7dcde6a33d12051be792d8234f78fd848",
-                "reference": "d007f3c7dcde6a33d12051be792d8234f78fd848",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/3584165a6cae1eba266864f6aa5f5cbfcf755b59",
+                "reference": "3584165a6cae1eba266864f6aa5f5cbfcf755b59",
                 "shasum": ""
             },
             "require": {
@@ -11443,7 +11443,7 @@
                 "psr/http-factory": "^1.1",
                 "psr/http-message": "^2",
                 "teknoo/immutable": "^3.0.21",
-                "teknoo/recipe": "^7",
+                "teknoo/recipe": "^7.1",
                 "teknoo/states": "^7"
             },
             "require-dev": {
@@ -11521,7 +11521,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-08-14T20:57:59+00:00"
+            "time": "2025-09-02T12:12:42+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
@@ -11529,12 +11529,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "9f8a396cbee5a8a63901f97c279ac8cef80bddd6"
+                "reference": "c1899640531e86db0c52b3fafbfa3c413d41dd24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/9f8a396cbee5a8a63901f97c279ac8cef80bddd6",
-                "reference": "9f8a396cbee5a8a63901f97c279ac8cef80bddd6",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/c1899640531e86db0c52b3fafbfa3c413d41dd24",
+                "reference": "c1899640531e86db0c52b3fafbfa3c413d41dd24",
                 "shasum": ""
             },
             "require": {
@@ -11552,7 +11552,7 @@
                 "teknoo/bridge-phpdi-symfony": "^7",
                 "teknoo/east-foundation": "^9",
                 "teknoo/immutable": "^3.0.21",
-                "teknoo/recipe": "^7",
+                "teknoo/recipe": "^7.1",
                 "teknoo/states": "^7"
             },
             "require-dev": {
@@ -11599,7 +11599,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-08-14T21:00:36+00:00"
+            "time": "2025-09-02T12:14:30+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -11607,12 +11607,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "6db3c007e9ce2a3b1d2af36b1570f0ff847738a0"
+                "reference": "577b9dc7df2086732e0fb3d521df1fa697dc961b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/6db3c007e9ce2a3b1d2af36b1570f0ff847738a0",
-                "reference": "6db3c007e9ce2a3b1d2af36b1570f0ff847738a0",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/577b9dc7df2086732e0fb3d521df1fa697dc961b",
+                "reference": "577b9dc7df2086732e0fb3d521df1fa697dc961b",
                 "shasum": ""
             },
             "require": {
@@ -11751,7 +11751,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-08-28T07:39:25+00:00"
+            "time": "2025-09-02T12:04:06+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",

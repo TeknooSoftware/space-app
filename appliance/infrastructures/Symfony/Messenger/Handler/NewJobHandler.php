@@ -87,6 +87,8 @@ class NewJobHandler
             fn (Throwable $error) => throw $error,
         );
 
+        $promise->allowReuse();
+
         /** @var JobVar $variable */
         foreach ($variables as $variable) {
             if (empty($variable->encryptionAlgorithm)) {

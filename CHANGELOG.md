@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-beta2] - 2025-090-02
+### Stable Release
+- Fix issue with reused promise in NewJobHandler
+
 ## [2.0.0-beta1] - 2025-08-31
 ### Stable Release
 - Drop support of PHP 8.3
