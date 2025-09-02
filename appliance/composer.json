@@ -104,7 +104,7 @@
         "teknoo/east-foundation-symfony": "^9",
         "teknoo/east-paas-symfony": "^5",
         "teknoo/immutable": "^3.0.21",
-        "teknoo/kubernetes-client": "^2",
+        "teknoo/kubernetes-client": "^2.0.1",
         "teknoo/recipe": "^7.1",
         "teknoo/states": "^7",
         "tijsverkoyen/css-to-inline-styles": "^v2.3",

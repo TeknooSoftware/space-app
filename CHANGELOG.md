@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-beta3] - 2025-090-02
+### Stable Release
+- Fix issue with Kubernetes Client Http Client discovering 
+
 ## [2.0.0-beta2] - 2025-090-02
 ### Stable Release
 - Fix issue with reused promise in NewJobHandler
