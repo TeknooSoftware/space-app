@@ -1,15 +1,36 @@
 # Teknoo Software - Space - Change Log
 
-## [2.0.0-beta3] - 2025-090-02
-### Stable Release
+## [2.0.0-RC1] - 2025-09-05
+### RC Release
+- Drop support of PHP 8.3
+- Requires PHP 8.4
+- Support Symfony 6.4.24+ or 7.3+
+  - Upgrade to last Symfony 3.1
+- Update illuminate libraries
+- Update Doctrine MongoDb libraries
+- Update to Teknoo
+  - States 7
+  - Recipe 7
+  - East Foundation 9
+  - East Common 4
+  - East PaaS 5
+- Update to PHPStan 2
+- Fix some bugs and QA issues
+- Switch license from MIT to 3-Clause BSD
+- Remove Blackfire integration (may come back later)
+- Fix issue with reused promise in NewJobHandler
 - Fix issue with Kubernetes Client Http Client discovering 
 
-## [2.0.0-beta2] - 2025-090-02
-### Stable Release
+## [2.0.0-beta3] - 2025-09-02
+### Beta Release
+- Fix issue with Kubernetes Client Http Client discovering 
+
+## [2.0.0-beta2] - 2025-09-02
+### Beta Release
 - Fix issue with reused promise in NewJobHandler
 
 ## [2.0.0-beta1] - 2025-08-31
-### Stable Release
+### Beta Release
 - Drop support of PHP 8.3
 - Requires PHP 8.4
 - Support Symfony 6.4.24+ or 7.3+

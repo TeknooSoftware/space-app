@@ -28,6 +28,8 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Count;
 use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
@@ -36,6 +38,9 @@ use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnv
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
+
+use function array_key_exists;
+use function is_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -77,6 +82,29 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
                 );
             }
 
+            $builder->addEventListener(
+                FormEvents::PRE_SUBMIT,
+                static function (FormEvent $event): void {
+                    $data = $event->getData();
+                    if (!is_array($data)) {
+                        return;
+                    }
+
+                    $form = $event->getForm();
+
+                    if (!array_key_exists('environments', $data)) {
+                        $form->remove('environments');
+
+                        return;
+                    }
+
+                    if (!is_array($data['environments'])) {
+                        $data['environments'] = [];
+                        $event->setData($data);
+                    }
+                }
+            );
+
             $builder->add(
                 'environments',
                 CollectionType::class,
@@ -84,6 +112,8 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
                     'entry_type' => AccountEnvironmentResumesType::class,
                     'allow_add' => true,
                     'allow_delete' => true,
+                    'empty_data' => [],
+                    'required' => false,
                     'prototype' => true,
                     'entry_options' => [
                         'subscriptionPlan' => $options['subscriptionPlan'],

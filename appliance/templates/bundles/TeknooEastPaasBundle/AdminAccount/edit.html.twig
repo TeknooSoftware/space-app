@@ -72,6 +72,7 @@
                     <div class="col-12">
                         <h3>{{ 'teknoo.space.title.account.environments'|trans }}</h3>
                     </div>
+                    <input name="admin_space_account[environments]" type="hidden" value="">
                     {% for resume in formView.environments %}
                         {{ form_widget(resume, {"largeRow": true}) }}
                     {% endfor %}

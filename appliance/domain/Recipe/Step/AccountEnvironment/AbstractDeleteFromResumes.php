@@ -50,7 +50,7 @@ abstract class AbstractDeleteFromResumes
         SpaceAccount $spaceAccount,
         ?ClusterCatalog $clusterCatalog = null,
     ): self {
-        if (empty($spaceAccount->environments)) {
+        if (null === $spaceAccount->environments) {
             return $this;
         }
 
