@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-RC2] - 2025-09-09
+### RC Release
+- Remove rector from dependencies, added by mistake
+
 ## [2.0.0-RC1] - 2025-09-05
 ### RC Release
 - Drop support of PHP 8.3
