@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-RC3] - 2025-09-10
+### RC Release
+- Fix account status templates
+
 ## [2.0.0-RC2] - 2025-09-09
 ### RC Release
 - Remove rector from dependencies, added by mistake
