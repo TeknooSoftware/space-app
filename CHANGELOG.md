@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-RC4] - 2025-09-11
+### RC Release
+- Fix PHPStan issues
+
 ## [2.0.0-RC3] - 2025-09-10
 ### RC Release
 - Fix account status templates

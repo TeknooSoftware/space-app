@@ -65,9 +65,6 @@ parameters:
             message: '#on mixed#'
             path:   infrastructures/Kubernetes/Transcriber/IngressTranscriber.php
         -
-            message: "#Cannot access offset 'token' on mixed#"
-            path:   infrastructures/Kubernetes/Recipe/Step/Environment/CreateSecretServiceAccountToken.php
-        -
             message: '#mixed#'
             path:   infrastructures/Twig/Extension/UpdateQueryField.php
         -

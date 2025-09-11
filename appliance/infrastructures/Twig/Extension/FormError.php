@@ -43,7 +43,7 @@ use function is_iterable;
 class FormError
 {
     /**
-     * @return array<string, string>
+     * @return iterable<string, string>
      */
     #[AsTwigFunction('space_form_errors')]
     public function getFieldErrors(FormView $view): iterable
