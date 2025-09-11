@@ -114,7 +114,7 @@
         "twig/twig": "^3.21.1"
     },
     "require-dev": {
-        "behat/behat": "^3.23.0",
+        "behat/behat": "^3.24.0",
         "dmarynicz/behat-parallel-extension": "^1.1.0",
         "friends-of-behat/symfony-extension": "^2.6.2",
         "masterminds/html5": "^2.10",
