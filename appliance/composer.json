@@ -39,7 +39,7 @@
         "doctrine/persistence": "^4.1",
         "endroid/qr-code": "^6.0.9",
         "guzzlehttp/guzzle": "^7.10.0",
-        "knpuniversity/oauth2-client-bundle": "^2.18.4",
+        "knpuniversity/oauth2-client-bundle": "^2.19.0",
         "illuminate/contracts": "^12.29.0",
         "illuminate/collections": "^12.29.0",
         "laminas/laminas-diactoros": "^3.6",
