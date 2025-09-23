@@ -121,7 +121,7 @@
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.1.28",
         "phpstan/phpstan-symfony": "^2.0.8",
-        "phpunit/phpunit": "^12.3.12",
+        "phpunit/phpunit": "^12.3.13",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^4",
         "symfony/css-selector": ">=7.3",
