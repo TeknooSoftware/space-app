@@ -1,4 +1,11 @@
 parameters:
+    level: max
+    paths:
+        - config/
+        - domain/
+        - src/
+        - infrastructures/
+        - extensions/
     treatPhpDocTypesAsCertain: false
     ignoreErrors:
         -
