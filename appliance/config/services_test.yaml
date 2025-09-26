@@ -13,6 +13,7 @@ services:
             $testTransport: '@zenstruck_messenger_test.transport_registry'
             $cacheExpiredLinks: '@security.authenticator.cache.expired_links'
             $messageLoggerListener: '@?mailer.message_logger_listener'
+            $timeoutSeconds: '%teknoo.east.paas.worker.time_limit%'
 
     Teknoo\Space\Tests\Behat\GetTokenStorageService:
         public: true

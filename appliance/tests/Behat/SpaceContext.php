@@ -74,6 +74,7 @@ use Teknoo\Space\Tests\Behat\Traits\WorkerTrait;
 use Zenstruck\Messenger\Test\Transport\TestTransport;
 use Zenstruck\Messenger\Test\Transport\TestTransportRegistry;
 
+use function ceil;
 use function file_exists;
 use function gc_collect_cycles;
 use function is_readable;
@@ -98,6 +99,8 @@ class SpaceContext implements Context
     use PersistenceOperationTrait;
     use PersistenceStepsTrait;
     use WorkerTrait;
+
+    public const int STR_REPEAT_FOR_SIMULATION = 100000;
 
     private array $cookies = [];
 
@@ -187,6 +190,8 @@ class SpaceContext implements Context
 
     private static ?self $currentInstance = null;
 
+    public readonly int $loopCountToWait;
+
     public function __construct(
         private readonly KernelInterface $kernel,
         private readonly UrlGeneratorInterface $urlGenerator,
@@ -203,11 +208,33 @@ class SpaceContext implements Context
         string $defaultClusterName,
         private readonly string $defaultClusterType,
         string $defaultClusterAddress,
+        int $timeoutSeconds,
     ) {
         $this->defaultClusterName = str_replace('Legacy ', '', $defaultClusterName);
         $this->defaultClusterAddress = str_replace('legacy-', '', $defaultClusterAddress);
 
         self::$currentInstance = $this;
+
+        $this->calibration($timeoutSeconds);
+    }
+
+    private function calibration(int $timeoutSeconds): void
+    {
+        //Calibrates the number needed to simulate operations that are too long using str_repeat. Depending on the
+        // machines, str_repeat can take more or less time and tests may fail.
+        $t0 = microtime(true);
+        for ($i = 0; $i < 100; $i++) {
+            $x = str_repeat('x', self::STR_REPEAT_FOR_SIMULATION);
+        }
+        $t1 = microtime(true);
+        $duration = ($t1 - $t0) / 100;
+
+        if (0.0 === $duration) {
+            $duration = 1;
+        }
+
+        $timeoutMicroSecond = $timeoutSeconds * 1000000;
+        $this->loopCountToWait = (int) (ceil($timeoutMicroSecond / $duration));
     }
 
     public function current(): self
@@ -533,9 +560,8 @@ class SpaceContext implements Context
             ->willReturnCallback(
                 function (): true {
                     if ($this->slowBuilder) {
-                        $expectedTime = time() + 20;
-                        while (time() < $expectedTime) {
-                            $x = str_repeat('x', 100000);
+                        for ($i = 0; $i <= $this->loopCountToWait; ++$i) {
+                            $x = str_repeat('x', self::STR_REPEAT_FOR_SIMULATION);
                         }
                     }
 
