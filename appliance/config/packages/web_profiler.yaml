@@ -15,5 +15,5 @@ when@test:
 
     framework:
         profiler:
-            collect: false
+            collect: true
             collect_serializer_data: true
