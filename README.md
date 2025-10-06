@@ -5,7 +5,7 @@ Teknoo Software - Space
 [![License](https://shields.io/badge/license-BSD3-green?style=flat)](https://raw.githubusercontent.com/TeknooSoftware/space-app/main/LICENSE)
 [![PHPStan](https://img.shields.io/badge/PHPStan-enabled-brightgreen.svg?style=flat)](https://github.com/phpstan/phpstan)
 
-Space is a `Platform as a Service` or a `Platform as a code` application, a continuous integration/delivery/deployment 
+Space is a `Platform as a Service` or a `Platform as a Code` application, a continuous integration/delivery/deployment 
 solution, built on `Teknoo East PaaS`, `Teknoo Kubernetes Client` and several `Symfony` components. The application 
 is multi-account, multi-users and multi-projects. It able to build and deploy IT projects on dedicated containerized 
 platforms on cluster. Space supports natively `Kubernetes` cluster but it was designed to support other types of 
@@ -105,7 +105,7 @@ Requirements
 
 This applications requires
 
-    * PHP 8.3+
+    * PHP 8.4+
     * A PHP autoloader (Composer is recommended)
     * A webserver (like Httpd/nginx + PHP-FPM)
     * A MongoDB server (for the web interfaces and all workers except the builder)
@@ -122,8 +122,8 @@ This application is bundled with :
     * Teknoo/East-Common
     * Teknoo/East-PaaS
     * Teknoo/Kubernetes Clent
-    * Symfony 6.4+ or 7.1+
-    * Doctrine ODM 2.9+ / MongoDB
+    * Symfony 6.4+ or 7.3+
+    * Doctrine ODM 3.5+ / MongoDB
     * FlySystem
     * Buildah
 
