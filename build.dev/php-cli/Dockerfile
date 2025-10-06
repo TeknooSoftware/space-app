@@ -1,4 +1,4 @@
-FROM php:8.4-cli
+FROM php:8.4.13-cli
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:fr
@@ -37,6 +37,12 @@ RUN set -eux ; \
             wget \
             zlib1g-dev \
     ; \
+    docker-php-source extract ; \
+    # fix bug in php 8.4.13 \
+    if [ -f /usr/src/php/ext/dom/lexbor/lexbor/selectors-adapted/selectors.c ]; then \
+        sed -i 's|#include "ext/dom/lexbor/lexbor/selectors-adapted/selectors.h"|#include "lexbor/selectors-adapted/selectors.h"|g' \
+            /usr/src/php/ext/dom/lexbor/lexbor/selectors-adapted/selectors.c ; \
+    fi ; \
     pecl install apcu ; \
     pecl install mongodb ; \
     pecl install yaml ; \
