@@ -1,6 +1,6 @@
 # Teknoo Software - Space - Change Log
 
-## [2.0.0-RC4] - 2025-09-11
+## [2.0.0-RC5] - 2025-10-06
 ### RC Release
 - Fix some issues detected from tests
 - Complete coverage on unit tests on Domain
