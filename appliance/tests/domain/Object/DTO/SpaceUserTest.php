@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\Space\Object\DTO\SpaceUser;
 use Teknoo\Space\Object\Persisted\UserData;
 
@@ -83,5 +84,51 @@ class SpaceUserTest extends TestCase
             'foo',
             (string) $this->spaceUser,
         );
+    }
+
+    public function testConstructorWithNullUserData(): void
+    {
+        $user = $this->createMock(User::class);
+        $spaceUser = new SpaceUser($user, null);
+
+        $this->assertSame($user, $spaceUser->user);
+        $this->assertInstanceOf(UserData::class, $spaceUser->userData);
+    }
+
+    public function testConstructorWithDefaultUser(): void
+    {
+        $spaceUser = new SpaceUser();
+
+        $this->assertInstanceOf(User::class, $spaceUser->user);
+        $this->assertInstanceOf(UserData::class, $spaceUser->userData);
+    }
+
+    public function testExportToMeData(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray())
+            ->willReturnSelf();
+
+        $result = $this->spaceUser->exportToMeData($normalizer);
+
+        $this->assertInstanceOf(SpaceUser::class, $result);
+        $this->assertSame($this->spaceUser, $result);
+    }
+
+    public function testExportToMeDataWithContext(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray())
+            ->willReturnSelf();
+
+        $context = ['groups' => ['api', 'crud']];
+        $result = $this->spaceUser->exportToMeData($normalizer, $context);
+
+        $this->assertInstanceOf(SpaceUser::class, $result);
+        $this->assertSame($this->spaceUser, $result);
     }
 }

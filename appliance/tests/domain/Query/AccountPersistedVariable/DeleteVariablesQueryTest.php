@@ -62,14 +62,34 @@ class DeleteVariablesQueryTest extends TestCase
         $this->deleteVariablesQuery = new DeleteVariablesQuery($this->account, $this->notIds);
     }
 
-    public function testDelete(): void
+    public function testConstruct(): void
     {
         $this->assertInstanceOf(
             DeleteVariablesQuery::class,
-            $this->deleteVariablesQuery->delete(
-                $this->createMock(QueryExecutorInterface::class),
-                $this->createMock(PromiseInterface::class),
+            $this->deleteVariablesQuery
+        );
+    }
+
+    public function testDelete(): void
+    {
+        $queryExecutor = $this->createMock(QueryExecutorInterface::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $queryExecutor->expects($this->once())
+            ->method('filterOn')
+            ->with(
+                $this->isString(),
+                $this->isArray()
             )
+            ->willReturnSelf();
+
+        $queryExecutor->expects($this->once())
+            ->method('execute')
+            ->with($promise);
+
+        $this->assertInstanceOf(
+            DeleteVariablesQuery::class,
+            $this->deleteVariablesQuery->delete($queryExecutor, $promise)
         );
     }
 }

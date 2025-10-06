@@ -31,6 +31,8 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection;
 
+use function array_key_exists;
+
 /**
  * Class PrepareRedirectionTest.
  *
@@ -57,12 +59,204 @@ class PrepareRedirectionTest extends TestCase
 
     public function testInvoke(): void
     {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return 'project-123' === $data['id']
+                        && isset($data['parameters'])
+                        && 'project-123' === $data['parameters']['id']
+                        && null === $data['parameters']['objectSaved']
+                        && !isset($data['parameters']['accountId']);
+                })
+            );
+
         $this->assertInstanceOf(
             PrepareRedirection::class,
             ($this->prepareRedirection)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(SpaceProject::class),
+                $manager,
+                $spaceProject,
                 'foo'
+            ),
+        );
+    }
+
+    public function testInvokeWithAccountId(): void
+    {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return isset($data['parameters']['accountId'])
+                        && 'account-456' === $data['parameters']['accountId'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                $manager,
+                $spaceProject,
+                'foo',
+                null,
+                [],
+                'account-456'
+            ),
+        );
+    }
+
+    public function testInvokeWithAdminRoute(): void
+    {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return array_key_exists('accountId', $data['parameters'])
+                        && null === $data['parameters']['accountId'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                $manager,
+                $spaceProject,
+                'route_admin_foo',
+                null,
+                [],
+                null
+            ),
+        );
+    }
+
+    public function testInvokeWithObjectSaved(): void
+    {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return 'saved-object' === $data['parameters']['objectSaved'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                $manager,
+                $spaceProject,
+                'foo',
+                'saved-object',
+            ),
+        );
+    }
+
+    public function testInvokeWithBoolObjectSaved(): void
+    {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return true === $data['parameters']['objectSaved'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                $manager,
+                $spaceProject,
+                'foo',
+                true,
+            ),
+        );
+    }
+
+    public function testInvokeWithExistingParameters(): void
+    {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return 'project-123' === $data['parameters']['id']
+                        && 'bar' === $data['parameters']['foo']
+                        && 'qux' === $data['parameters']['baz'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                $manager,
+                $spaceProject,
+                'foo',
+                null,
+                ['foo' => 'bar', 'baz' => 'qux']
+            ),
+        );
+    }
+
+    public function testInvokeWithAccountIdAndAdminRoute(): void
+    {
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->exactly(2))
+            ->method('getId')
+            ->willReturn('project-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return isset($data['parameters']['accountId'])
+                        && 'account-789' === $data['parameters']['accountId'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                $manager,
+                $spaceProject,
+                'some_admin_route',
+                null,
+                [],
+                'account-789'
             ),
         );
     }

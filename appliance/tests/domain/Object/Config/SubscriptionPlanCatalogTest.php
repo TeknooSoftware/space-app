@@ -64,4 +64,25 @@ class SubscriptionPlanCatalogTest extends TestCase
             iterator_to_array($this->catalog)['Foo'],
         );
     }
+
+    public function testGetSubscriptionPlan(): void
+    {
+        $plan = $this->createMock(SubscriptionPlan::class);
+        $catalog = new SubscriptionPlanCatalog(
+            ['TestPlan' => $plan],
+        );
+
+        $this->assertSame($plan, $catalog->getSubscriptionPlan('TestPlan'));
+    }
+
+    public function testGetSubscriptionPlanThrowsException(): void
+    {
+        $catalog = new SubscriptionPlanCatalog(
+            ['TestPlan' => $this->createMock(SubscriptionPlan::class)],
+        );
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Subscription Plan NonExistent is not available in the catalog');
+        $catalog->getSubscriptionPlan('NonExistent');
+    }
 }

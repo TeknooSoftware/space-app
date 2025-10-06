@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -57,8 +58,44 @@ class ReloadEnvironementTest extends TestCase
         $this->assertInstanceOf(
             ReloadEnvironement::class,
             ($this->reloadEnvironement)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(AccountEnvironment::class),
+                manager: $this->createMock(ManagerInterface::class),
+                environment: $this->createMock(AccountEnvironment::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithUpdateWorkPlan(): void
+    {
+        $environment = $this->createMock(AccountEnvironment::class);
+        $environment->expects($this->once())
+            ->method('getEnvName')
+            ->willReturn('test-env');
+        $environment->expects($this->once())
+            ->method('getClusterName')
+            ->willReturn('test-cluster');
+        $environment->expects($this->once())
+            ->method('getNamespace')
+            ->willReturn('test-namespace');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['envName'])
+                        && 'test-env' === $workplan['envName']
+                        && isset($workplan['clusterName'])
+                        && 'test-cluster' === $workplan['clusterName']
+                        && isset($workplan['kubeNamespace'])
+                        && 'test-namespace' === $workplan['kubeNamespace'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            ReloadEnvironement::class,
+            ($this->reloadEnvironement)(
+                manager: $manager,
+                environment: $environment,
             ),
         );
     }

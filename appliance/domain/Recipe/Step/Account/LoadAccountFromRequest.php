@@ -72,7 +72,7 @@ class LoadAccountFromRequest
     public function __invoke(
         ManagerInterface $manager,
         ?User $user = null,
-        ?Account $account = null,
+        ?SpaceAccount $account = null,
         ?string $accountId = null,
         array $parameters = [],
     ): self {

@@ -28,7 +28,6 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Teknoo\East\Common\Object\Media;
 use Teknoo\East\Common\Object\User;
 use Teknoo\Space\Object\Persisted\UserData;
@@ -64,29 +63,45 @@ class UserDataTest extends TestCase
 
     public function testSetUser(): void
     {
-        $expected = $this->createMock(User::class);
-        $property = new ReflectionClass(UserData::class)
-            ->getProperty('user');
-        $this->userData->setUser($expected);
-        $this->assertEquals($expected, $property->getValue($this->userData));
+        $newUser = $this->createMock(User::class);
+        $result = $this->userData->setUser($newUser);
+
+        $this->assertInstanceOf(UserData::class, $result);
     }
 
     public function testSetPicture(): void
     {
-        $expected = $this->createMock(Media::class);
-        $property = new ReflectionClass(UserData::class)
-            ->getProperty('picture');
-        $this->userData->setPicture($expected);
-        $this->assertEquals($expected, $property->getValue($this->userData));
+        $newPicture = $this->createMock(Media::class);
+        $result = $this->userData->setPicture($newPicture);
+
+        $this->assertInstanceOf(UserData::class, $result);
+    }
+
+    public function testSetPictureWithNull(): void
+    {
+        $result = $this->userData->setPicture(null);
+
+        $this->assertInstanceOf(UserData::class, $result);
+        $this->assertNull($this->userData->getPicture());
     }
 
     public function testGetPicture(): void
     {
-        $expected = $this->createMock(Media::class);
-        $property = new ReflectionClass(UserData::class)
-            ->getProperty('picture');
-        $property->setValue($this->userData, $expected);
-        $this->assertEquals($expected, $this->userData->getPicture());
+        $this->assertSame($this->picture, $this->userData->getPicture());
+    }
+
+    public function testGetPictureWithNull(): void
+    {
+        $userData = new UserData($this->user, null);
+
+        $this->assertNull($userData->getPicture());
+    }
+
+    public function testConstructorWithNullPicture(): void
+    {
+        $userData = new UserData($this->user);
+
+        $this->assertNull($userData->getPicture());
     }
 
     public function testVisit(): void

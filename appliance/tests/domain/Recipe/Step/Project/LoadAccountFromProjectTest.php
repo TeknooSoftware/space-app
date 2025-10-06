@@ -59,12 +59,188 @@ class LoadAccountFromProjectTest extends TestCase
 
     public function testInvoke(): void
     {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->isArray());
+
         $this->assertInstanceOf(
             LoadAccountFromProject::class,
             ($this->loadAccountFromProject)(
                 new SpaceProject($this->createMock(Project::class)),
-                $this->createMock(ManagerInterface::class),
+                $manager,
                 $this->createMock(Account::class),
+            )
+        );
+    }
+
+    public function testInvokeWithProject(): void
+    {
+        $account = $this->createMock(Account::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($account) {
+                    return isset($data[Account::class])
+                        && $data[Account::class] === $account
+                        && isset($data['parameters'])
+                        && is_array($data['parameters']);
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountFromProject::class,
+            ($this->loadAccountFromProject)(
+                $this->createMock(Project::class),
+                $manager,
+                $account,
+            )
+        );
+    }
+
+    public function testInvokeWithAccountFromProject(): void
+    {
+        $account = $this->createMock(Account::class);
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('getAccount')
+            ->willReturn($account);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($account) {
+                    return $data[Account::class] === $account;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountFromProject::class,
+            ($this->loadAccountFromProject)(
+                new SpaceProject($project),
+                $manager,
+                null,
+            )
+        );
+    }
+
+    public function testInvokeWithAccountIdMatching(): void
+    {
+        $accountId = 'account-123';
+
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn($accountId);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($account, $accountId) {
+                    return $data[Account::class] === $account
+                        && isset($data['parameters']['accountId'])
+                        && $data['parameters']['accountId'] === $accountId;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountFromProject::class,
+            ($this->loadAccountFromProject)(
+                $this->createMock(Project::class),
+                $manager,
+                $account,
+                $accountId,
+            )
+        );
+    }
+
+    public function testInvokeWithAccountIdMismatch(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn('account-123');
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('teknoo.space.error.space_account.account.fetching');
+        $this->expectExceptionCode(404);
+
+        ($this->loadAccountFromProject)(
+            $this->createMock(Project::class),
+            $this->createMock(ManagerInterface::class),
+            $account,
+            'account-456',
+        );
+    }
+
+    public function testInvokeWithExistingParameters(): void
+    {
+        $accountId = 'account-123';
+        $existingParams = ['foo' => 'bar', 'baz' => 'qux'];
+
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn($accountId);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($account, $accountId, $existingParams) {
+                    return $data[Account::class] === $account
+                        && $data['parameters']['accountId'] === $accountId
+                        && 'bar' === $data['parameters']['foo']
+                        && 'qux' === $data['parameters']['baz'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountFromProject::class,
+            ($this->loadAccountFromProject)(
+                $this->createMock(Project::class),
+                $manager,
+                $account,
+                $accountId,
+                $existingParams,
+            )
+        );
+    }
+
+    public function testInvokeWithSpaceProjectAndAccountIdMatching(): void
+    {
+        $accountId = 'account-123';
+
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn($accountId);
+
+        $project = $this->createMock(Project::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($account, $accountId) {
+                    return $data[Account::class] === $account
+                        && isset($data['parameters']['accountId'])
+                        && $data['parameters']['accountId'] === $accountId;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountFromProject::class,
+            ($this->loadAccountFromProject)(
+                new SpaceProject($project),
+                $manager,
+                $account,
+                $accountId,
             )
         );
     }

@@ -15,7 +15,7 @@
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  *
- * @link        http://https://teknoo.software/applications/space Project website
+ * @link        https://teknoo.software/applications/space Project website
  *
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>

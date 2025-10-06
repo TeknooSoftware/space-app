@@ -30,9 +30,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
+
+use function array_key_exists;
 
 /**
  * Class setSubscriptionPlanTest.
@@ -71,6 +75,138 @@ class SetSubscriptionPlanTest extends TestCase
                 $this->createMock(ManagerInterface::class),
                 new SpaceAccount($this->createMock(Account::class)),
                 'foo',
+            ),
+        );
+    }
+
+    public function testInvokeThrowsExceptionWhenAccountDataIsNull(): void
+    {
+        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
+        $spaceAccount->accountData = null;
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Missing Space Account data');
+
+        ($this->setSubscriptionPlan)(
+            manager: $this->createMock(ManagerInterface::class),
+            spaceAccount: $spaceAccount,
+        );
+    }
+
+    public function testInvokeWithSubscriptionPlanId(): void
+    {
+        $accountData = $this->createMock(AccountData::class);
+        $accountData->expects($this->once())
+            ->method('setSubscriptionPlan')
+            ->with('plan-123');
+
+        $accountData->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($field, $promise) use ($accountData) {
+                $this->assertEquals('subscriptionPlan', $field);
+                $promise->success('plan-123');
+                return $accountData;
+            });
+
+        $plan = $this->createMock(SubscriptionPlan::class);
+        $this->subscriptionPlanCatalog->expects($this->once())
+            ->method('getSubscriptionPlan')
+            ->with('plan-123')
+            ->willReturn($plan);
+
+        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
+        $spaceAccount->accountData = $accountData;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($plan) {
+                    return isset($workplan[SubscriptionPlan::class])
+                        && $workplan[SubscriptionPlan::class] === $plan;
+                })
+            );
+
+        $this->assertInstanceOf(
+            SetSubscriptionPlan::class,
+            ($this->setSubscriptionPlan)(
+                manager: $manager,
+                spaceAccount: $spaceAccount,
+                subscriptionPlanId: 'plan-123',
+            ),
+        );
+    }
+
+    public function testInvokeWithoutSubscriptionPlanId(): void
+    {
+        $accountData = $this->createMock(AccountData::class);
+        $accountData->expects($this->never())
+            ->method('setSubscriptionPlan');
+
+        $accountData->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($field, $promise) use ($accountData) {
+                $this->assertEquals('subscriptionPlan', $field);
+                $promise->success('existing-plan');
+                return $accountData;
+            });
+
+        $plan = $this->createMock(SubscriptionPlan::class);
+        $this->subscriptionPlanCatalog->expects($this->once())
+            ->method('getSubscriptionPlan')
+            ->with('existing-plan')
+            ->willReturn($plan);
+
+        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
+        $spaceAccount->accountData = $accountData;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan');
+
+        $this->assertInstanceOf(
+            SetSubscriptionPlan::class,
+            ($this->setSubscriptionPlan)(
+                manager: $manager,
+                spaceAccount: $spaceAccount,
+                subscriptionPlanId: null,
+            ),
+        );
+    }
+
+    public function testInvokeWithEmptyPlanId(): void
+    {
+        $accountData = $this->createMock(AccountData::class);
+
+        $accountData->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($field, $promise) use ($accountData) {
+                $this->assertEquals('subscriptionPlan', $field);
+                $promise->success('');
+                return $accountData;
+            });
+
+        $this->subscriptionPlanCatalog->expects($this->never())
+            ->method('getSubscriptionPlan');
+
+        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
+        $spaceAccount->accountData = $accountData;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return array_key_exists(SubscriptionPlan::class, $workplan)
+                        && null === $workplan[SubscriptionPlan::class];
+                })
+            );
+
+        $this->assertInstanceOf(
+            SetSubscriptionPlan::class,
+            ($this->setSubscriptionPlan)(
+                manager: $manager,
+                spaceAccount: $spaceAccount,
             ),
         );
     }

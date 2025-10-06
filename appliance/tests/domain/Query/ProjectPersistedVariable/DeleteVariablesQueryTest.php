@@ -23,31 +23,32 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Query\AccountPersistedVariable;
+namespace Teknoo\Space\Tests\Unit\Query\ProjectPersistedVariable;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
-use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
-use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Common\Contracts\DBSource\QueryExecutorInterface;
+use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Query\AccountPersistedVariable\LoadFromAccountQuery;
+use Teknoo\Space\Query\ProjectPersistedVariable\DeleteVariablesQuery;
 
 /**
- * Class LoadFromAccountQueryTest.
+ * Class DeleteVariablesQueryTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(LoadFromAccountQuery::class)]
-class LoadFromAccountQueryTest extends TestCase
+#[CoversClass(DeleteVariablesQuery::class)]
+class DeleteVariablesQueryTest extends TestCase
 {
-    private LoadFromAccountQuery $loadFromAccountQuery;
+    private DeleteVariablesQuery $deleteVariablesQuery;
 
-    private Account&MockObject $account;
+    private Project&MockObject $project;
+
+    private array $notIds;
 
     /**
      * {@inheritdoc}
@@ -56,36 +57,39 @@ class LoadFromAccountQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->account = $this->createMock(Account::class);
-        $this->loadFromAccountQuery = new LoadFromAccountQuery($this->account);
+        $this->project = $this->createMock(Project::class);
+        $this->notIds = [];
+        $this->deleteVariablesQuery = new DeleteVariablesQuery($this->project, $this->notIds);
     }
 
     public function testConstruct(): void
     {
         $this->assertInstanceOf(
-            LoadFromAccountQuery::class,
-            $this->loadFromAccountQuery
+            DeleteVariablesQuery::class,
+            $this->deleteVariablesQuery
         );
     }
 
-    public function testExecute(): void
+    public function testDelete(): void
     {
-        $loader = $this->createMock(LoaderInterface::class);
-        $repository = $this->createMock(RepositoryInterface::class);
+        $queryExecutor = $this->createMock(QueryExecutorInterface::class);
         $promise = $this->createMock(PromiseInterface::class);
 
-        $repository->expects($this->once())
-            ->method('findBy')
+        $queryExecutor->expects($this->once())
+            ->method('filterOn')
             ->with(
-                $this->callback(
-                    static fn (array $criteria): bool => isset($criteria['account']),
-                ),
-                $promise
-            );
+                $this->isString(),
+                $this->isArray()
+            )
+            ->willReturnSelf();
+
+        $queryExecutor->expects($this->once())
+            ->method('execute')
+            ->with($promise);
 
         $this->assertInstanceOf(
-            LoadFromAccountQuery::class,
-            $this->loadFromAccountQuery->execute($loader, $repository, $promise)
+            DeleteVariablesQuery::class,
+            $this->deleteVariablesQuery->delete($queryExecutor, $promise)
         );
     }
 }

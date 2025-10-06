@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 
@@ -60,6 +61,43 @@ class SetQuotaTest extends TestCase
             SetQuota::class,
             ($this->setQuota)(
                 new SpaceAccount($this->createMock(Account::class)),
+            ),
+        );
+    }
+
+    public function testInvokeWithPlan(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('setQuotas')
+            ->with(['cpu' => '1', 'memory' => '128Mi']);
+
+        $plan = $this->createMock(SubscriptionPlan::class);
+        $plan->expects($this->once())
+            ->method('getQuotas')
+            ->willReturn(['cpu' => '1', 'memory' => '128Mi']);
+
+        $this->assertInstanceOf(
+            SetQuota::class,
+            ($this->setQuota)(
+                spaceAccount: new SpaceAccount($account),
+                plan: $plan,
+            ),
+        );
+    }
+
+    public function testInvokeWithNullPlan(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('setQuotas')
+            ->with(null);
+
+        $this->assertInstanceOf(
+            SetQuota::class,
+            ($this->setQuota)(
+                spaceAccount: new SpaceAccount($account),
+                plan: null,
             ),
         );
     }

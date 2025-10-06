@@ -28,8 +28,10 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 /**
@@ -106,83 +108,117 @@ class AccountEnvironmentTest extends TestCase
 
     public function testGetAccount(): void
     {
-        $expected = $this->createMock(Account::class);
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('account');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getAccount());
+        $this->assertSame($this->account, $this->accountEnvironment->getAccount());
+    }
+
+    public function testGetClusterName(): void
+    {
+        $this->assertEquals($this->clusterName, $this->accountEnvironment->getClusterName());
+    }
+
+    public function testGetEnvName(): void
+    {
+        $this->assertEquals($this->envName, $this->accountEnvironment->getEnvName());
+    }
+
+    public function testGetNamespace(): void
+    {
+        $this->assertEquals($this->namespace, $this->accountEnvironment->getNamespace());
     }
 
     public function testGetServiceAccountName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('serviceAccountName');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getServiceAccountName());
+        $this->assertEquals($this->serviceAccountName, $this->accountEnvironment->getServiceAccountName());
     }
 
     public function testGetRoleName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('roleName');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getRoleName());
+        $this->assertEquals($this->roleName, $this->accountEnvironment->getRoleName());
     }
 
     public function testGetRoleBindingName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('roleBindingName');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getRoleBindingName());
+        $this->assertEquals($this->roleBindingName, $this->accountEnvironment->getRoleBindingName());
     }
 
     public function testGetCaCertificate(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('caCertificate');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getCaCertificate());
+        $this->assertEquals($this->caCertificate, $this->accountEnvironment->getCaCertificate());
     }
 
     public function testGetClientCertificate(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('clientCertificate');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getClientCertificate());
+        $this->assertEquals($this->clientCertificate, $this->accountEnvironment->getClientCertificate());
     }
 
     public function testGetClientKey(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('clientKey');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getClientKey());
+        $this->assertEquals($this->clientKey, $this->accountEnvironment->getClientKey());
     }
 
     public function testGetToken(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('token');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getToken());
+        $this->assertEquals($this->token, $this->accountEnvironment->getToken());
     }
 
     public function testGetAllMetaData(): void
     {
-        $expected = ['foo' => 'bar'];
-        $property = new ReflectionClass(AccountEnvironment::class)
-            ->getProperty('metadata');
-        $property->setValue($this->accountEnvironment, $expected);
-        $this->assertEquals($expected, $this->accountEnvironment->getAllMetaData());
+        $this->assertEquals($this->metadata, $this->accountEnvironment->getAllMetaData());
+    }
+
+    public function testGetAllMetaDataWithNull(): void
+    {
+        $accountEnvironment = new AccountEnvironment(
+            $this->account,
+            $this->clusterName,
+            $this->envName,
+            $this->namespace,
+            $this->serviceAccountName,
+            $this->roleName,
+            $this->roleBindingName,
+            $this->caCertificate,
+            $this->clientCertificate,
+            $this->clientKey,
+            $this->token,
+            null,
+        );
+
+        $this->assertNull($accountEnvironment->getAllMetaData());
+    }
+
+    public function testGetMetaDataWithExistingKey(): void
+    {
         $this->assertEquals('bar', $this->accountEnvironment->getMetaData('foo'));
+    }
+
+    public function testGetMetaDataWithMissingKeyAndDefault(): void
+    {
+        $this->assertEquals('default', $this->accountEnvironment->getMetaData('missing', 'default'));
+    }
+
+    public function testGetMetaDataWithMissingKeyAndNoDefault(): void
+    {
+        $this->assertNull($this->accountEnvironment->getMetaData('missing'));
+    }
+
+    public function testVerifyAccessToUser(): void
+    {
+        $user = $this->createMock(User::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $this->account->expects($this->once())
+            ->method('__call')
+            ->with('verifyAccessToUser');
+
+        $result = $this->accountEnvironment->verifyAccessToUser($user, $promise);
+
+        $this->assertInstanceOf(AccountEnvironment::class, $result);
+    }
+
+    public function testResume(): void
+    {
+        $result = $this->accountEnvironment->resume();
+
+        $this->assertInstanceOf(AccountEnvironmentResume::class, $result);
     }
 }

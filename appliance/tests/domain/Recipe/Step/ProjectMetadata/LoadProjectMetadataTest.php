@@ -31,7 +31,10 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
+use Teknoo\Space\Object\Persisted\ProjectMetadata;
+use Teknoo\Space\Query\ProjectMetadata\LoadFromProjectQuery;
 use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 
 /**
@@ -62,12 +65,54 @@ class LoadProjectMetadataTest extends TestCase
 
     public function testInvoke(): void
     {
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->with(
+                $this->isInstanceOf(LoadFromProjectQuery::class),
+                $this->isInstanceOf(Promise::class)
+            );
+
         $this->assertInstanceOf(
             LoadProjectMetadata::class,
             ($this->loadProjectMetadata)(
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(Project::class),
                 $this->createMock(ParametersBag::class),
+            )
+        );
+    }
+
+    public function testInvokeWithPromiseSuccess(): void
+    {
+        $metadata = $this->createMock(ProjectMetadata::class);
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('projectMetadata', $this->identicalTo($metadata));
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(function ($data) use ($metadata) {
+                return isset($data[ProjectMetadata::class])
+                    && $data[ProjectMetadata::class] === $metadata;
+            }));
+
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($metadata) {
+                $promise->success($metadata);
+
+                return $this->loader;
+            });
+
+        $this->assertInstanceOf(
+            LoadProjectMetadata::class,
+            ($this->loadProjectMetadata)(
+                $manager,
+                $this->createMock(Project::class),
+                $bag,
             )
         );
     }

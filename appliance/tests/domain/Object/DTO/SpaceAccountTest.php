@@ -28,9 +28,12 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountData;
+use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 
 /**
  * Class SpaceAccountTest.
@@ -88,7 +91,93 @@ class SpaceAccountTest extends TestCase
 
         $this->assertEquals(
             'foo',
-            (string) $this->spaceAccount
+            (string)$this->spaceAccount
         );
+    }
+
+    public function testConstructWithNullAccountData(): void
+    {
+        $account = $this->createMock(Account::class);
+
+        $spaceAccount = new SpaceAccount(
+            account: $account,
+            accountData: null
+        );
+
+        $this->assertInstanceOf(AccountData::class, $spaceAccount->accountData);
+    }
+
+    public function testConstructWithProvidedAccountData(): void
+    {
+        $account = $this->createMock(Account::class);
+        $accountData = $this->createMock(AccountData::class);
+
+        $spaceAccount = new SpaceAccount(
+            account: $account,
+            accountData: $accountData
+        );
+
+        $this->assertSame($accountData, $spaceAccount->accountData);
+    }
+
+    public function testConstructWithVariablesAndEnvironments(): void
+    {
+        $account = $this->createMock(Account::class);
+        $variable = $this->createMock(AccountPersistedVariable::class);
+        $environment = new AccountEnvironmentResume('cluster1', 'env1');
+
+        $spaceAccount = new SpaceAccount(
+            account: $account,
+            accountData: null,
+            variables: [$variable],
+            environments: [$environment]
+        );
+
+        $this->assertSame([$variable], iterator_to_array($spaceAccount->variables));
+        $this->assertEquals([$environment], $spaceAccount->environments);
+    }
+
+    public function testExportToMeDataWithDefaultGroups(): void
+    {
+        $account = $this->createMock(Account::class);
+        $accountData = $this->createMock(AccountData::class);
+
+        $spaceAccount = new SpaceAccount(
+            account: $account,
+            accountData: $accountData
+        );
+
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray());
+
+        $result = $spaceAccount->exportToMeData($normalizer);
+
+        $this->assertSame($spaceAccount, $result);
+    }
+
+    public function testExportToMeDataWithCustomGroups(): void
+    {
+        $account = $this->createMock(Account::class);
+        $accountData = $this->createMock(AccountData::class);
+        $variable = $this->createMock(AccountPersistedVariable::class);
+        $environment = new AccountEnvironmentResume('cluster1', 'env1');
+
+        $spaceAccount = new SpaceAccount(
+            account: $account,
+            accountData: $accountData,
+            variables: [$variable],
+            environments: [$environment]
+        );
+
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray());
+
+        $result = $spaceAccount->exportToMeData($normalizer, ['groups' => ['crud']]);
+
+        $this->assertSame($spaceAccount, $result);
     }
 }

@@ -66,7 +66,7 @@ class LoadSpaceAccountFromAccount
 
         if (null === $accountInstance) {
             $manager->error(
-                throw new BadMethodCallException(message: "An account is mandatory to create a project", code: 404)
+                new BadMethodCallException(message: "An account is mandatory to create a project", code: 404)
             );
 
             return $this;
@@ -74,7 +74,7 @@ class LoadSpaceAccountFromAccount
 
         if (!in_array('ROLE_ADMIN', (array) $user?->getRoles())) {
             $manager->error(
-                throw new BadMethodCallException(message: "Account is mandatory for non admin user", code: 403)
+                new BadMethodCallException(message: "Account is mandatory for non admin user", code: 403)
             );
 
             return $this;

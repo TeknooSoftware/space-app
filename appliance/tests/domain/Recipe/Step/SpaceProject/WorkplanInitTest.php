@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\SpaceProject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
@@ -59,13 +60,262 @@ class WorkplanInitTest extends TestCase
 
     public function testInvoke(): void
     {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->isArray());
+
         $this->assertInstanceOf(
             WorkplanInit::class,
             ($this->workplanInit)(
-                $this->createMock(ManagerInterface::class),
+                $manager,
                 $this->createMock(SpaceProject::class),
                 $this->createMock(Project::class),
                 $this->createMock(ProjectMetadata::class),
+                false,
+            )
+        );
+    }
+
+    public function testInvokeWithProjectFromSpaceProject(): void
+    {
+        $project = $this->createMock(Project::class);
+        $metadata = $this->createMock(ProjectMetadata::class);
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->project = $project;
+        $spaceProject->projectMetadata = $metadata;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($project, $metadata) {
+                    return $data[Project::class] === $project
+                        && $data[ProjectMetadata::class] === $metadata;
+                })
+            );
+
+        $this->assertInstanceOf(
+            WorkplanInit::class,
+            ($this->workplanInit)(
+                $manager,
+                $spaceProject,
+            )
+        );
+    }
+
+    public function testInvokeWithProjectFromParameters(): void
+    {
+        $project = $this->createMock(Project::class);
+        $metadata = $this->createMock(ProjectMetadata::class);
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->project = $project;
+        $spaceProject->projectMetadata = null;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) use ($project, $metadata) {
+                    return $data[Project::class] === $project
+                        && $data[ProjectMetadata::class] === $metadata;
+                })
+            );
+
+        $this->assertInstanceOf(
+            WorkplanInit::class,
+            ($this->workplanInit)(
+                $manager,
+                $spaceProject,
+                $project,
+                $metadata,
+            )
+        );
+    }
+
+    public function testInvokeWithPopulateFormOptions(): void
+    {
+        $environment = $this->createMock(Environment::class);
+        $environment->expects($this->any())
+            ->method('__toString')
+            ->willReturn('prod');
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('isInState')
+            ->willReturnCallback(function ($states, $callback) use ($project) {
+                $callback();
+                return $project;
+            });
+        $project->expects($this->once())
+            ->method('__call')
+            ->with('listMeYourEnvironments')
+            ->willReturnCallback(function ($name, array $callback) use ($environment, $project) {
+                $callback[0]($environment);
+                return $project;
+            });
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->project = $project;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return isset($data['formOptions'])
+                        && isset($data['formOptions']['environmentsList'])
+                        && 'prod' === $data['formOptions']['environmentsList']['prod'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            WorkplanInit::class,
+            ($this->workplanInit)(
+                $manager,
+                $spaceProject,
+                null,
+                null,
+                true,
+            )
+        );
+    }
+
+    public function testInvokeWithPopulateFormOptionsAndExistingOptions(): void
+    {
+        $environment = $this->createMock(Environment::class);
+        $environment->expects($this->any())
+            ->method('__toString')
+            ->willReturn('staging');
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('isInState')
+            ->willReturnCallback(function ($states, $callback) use ($project) {
+                $callback();
+                return $project;
+            });
+
+        $project->expects($this->once())
+            ->method('__call')
+            ->with('listMeYourEnvironments')
+            ->willReturnCallback(function ($name, array $callback) use ($environment, $project) {
+                $callback[0]($environment);
+                return $project;
+            });
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->project = $project;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return isset($data['formOptions'])
+                        && 'bar' === $data['formOptions']['foo']
+                        && isset($data['formOptions']['environmentsList'])
+                        && 'staging' === $data['formOptions']['environmentsList']['staging'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            WorkplanInit::class,
+            ($this->workplanInit)(
+                manager: $manager,
+                spaceProject: $spaceProject,
+                projectObject: null,
+                metadata: null,
+                populateFormOptions: true,
+                formOptions: ['foo' => 'bar'],
+            )
+        );
+    }
+
+    public function testInvokeWithPopulateFormOptionsFalse(): void
+    {
+        $project = $this->createMock(Project::class);
+        $project->expects($this->never())
+            ->method('isInState');
+        $project->expects($this->never())
+            ->method('__call')
+            ->with('listMeYourEnvironments');
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->project = $project;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return !isset($data['formOptions']);
+                })
+            );
+
+        $this->assertInstanceOf(
+            WorkplanInit::class,
+            ($this->workplanInit)(
+                $manager,
+                $spaceProject,
+                null,
+                null,
+                false,
+            )
+        );
+    }
+
+    public function testInvokeWithMultipleEnvironments(): void
+    {
+        $env1 = $this->createMock(Environment::class);
+        $env1->expects($this->any())
+            ->method('__toString')
+            ->willReturn('dev');
+
+        $env2 = $this->createMock(Environment::class);
+        $env2->expects($this->any())
+            ->method('__toString')
+            ->willReturn('prod');
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('isInState')
+            ->willReturnCallback(function ($states, $callback) use ($project) {
+                $callback();
+                return $project;
+            });
+        $project->expects($this->once())
+            ->method('__call')
+            ->with('listMeYourEnvironments')
+            ->willReturnCallback(function ($name, $callback) use ($env1, $env2, $project) {
+                $callback[0]($env1);
+                $callback[0]($env2);
+                return $project;
+            });
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->project = $project;
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($data) {
+                    return isset($data['formOptions']['environmentsList'])
+                        && 'dev' === $data['formOptions']['environmentsList']['dev']
+                        && 'prod' === $data['formOptions']['environmentsList']['prod'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            WorkplanInit::class,
+            ($this->workplanInit)(
+                $manager,
+                $spaceProject,
+                null,
+                null,
                 true,
             )
         );

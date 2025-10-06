@@ -82,4 +82,176 @@ class LoadSpaceAccountFromAccountTest extends TestCase
             )
         );
     }
+
+    public function testInvokeWithNullAccount(): void
+    {
+        $user = $this->createMock(User::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($exception) {
+                    return $exception instanceof \BadMethodCallException
+                        && 'An account is mandatory to create a project' === $exception->getMessage()
+                        && 404 === $exception->getCode();
+                })
+            );
+
+        $this->spaceAccountLoader->expects($this->never())
+            ->method('load');
+
+        $result = ($this->loadSpaceAccountFromAccount)(
+            manager: $manager,
+            accountInstance: null,
+            spaceAccount: null,
+            user: $user,
+        );
+
+        $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
+    }
+
+    public function testInvokeWithNonAdminUser(): void
+    {
+        $account = $this->createMock(Account::class);
+
+        $user = $this->createMock(User::class);
+        $user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_USER']);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($exception) {
+                    return $exception instanceof \BadMethodCallException
+                        && 'Account is mandatory for non admin user' === $exception->getMessage()
+                        && 403 === $exception->getCode();
+                })
+            );
+
+        $this->spaceAccountLoader->expects($this->never())
+            ->method('load');
+
+        $result = ($this->loadSpaceAccountFromAccount)(
+            manager: $manager,
+            accountInstance: $account,
+            spaceAccount: null,
+            user: $user,
+        );
+
+        $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
+    }
+
+    public function testInvokeWithAdminUserLoadingAccount(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-123');
+
+        $user = $this->createMock(User::class);
+        $user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_ADMIN']);
+
+        $spaceAccount = $this->createMock(SpaceAccount::class);
+
+        $this->spaceAccountLoader->expects($this->once())
+            ->method('load')
+            ->with('account-123', $this->anything())
+            ->willReturnCallback(function ($id, $promise) use ($spaceAccount) {
+                $promise->success($spaceAccount);
+                return $this->spaceAccountLoader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($spaceAccount) {
+                    return isset($workplan[SpaceAccount::class])
+                        && $workplan[SpaceAccount::class] === $spaceAccount;
+                })
+            );
+
+        $result = ($this->loadSpaceAccountFromAccount)(
+            manager: $manager,
+            accountInstance: $account,
+            spaceAccount: null,
+            user: $user,
+        );
+
+        $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
+    }
+
+    public function testInvokeWithPromiseFailure(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-456');
+
+        $user = $this->createMock(User::class);
+        $user->expects($this->any())
+            ->method('getRoles')
+            ->willReturn(['ROLE_ADMIN']);
+
+        $this->spaceAccountLoader->expects($this->once())
+            ->method('load')
+            ->with('account-456', $this->anything())
+            ->willReturnCallback(function ($id, $promise) {
+                $promise->fail(new \RuntimeException('Failed to load account'));
+                return $this->spaceAccountLoader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Failed to load account');
+
+        ($this->loadSpaceAccountFromAccount)(
+            manager: $manager,
+            accountInstance: $account,
+            spaceAccount: null,
+            user: $user,
+        );
+    }
+
+    public function testInvokeWithMatchingSpaceAccountAndAccountInstance(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-789');
+
+        $accountInSpaceAccount = $this->createMock(Account::class);
+        $accountInSpaceAccount->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-789');
+
+        $spaceAccount = new SpaceAccount($accountInSpaceAccount);
+
+        $user = $this->createMock(User::class);
+
+        // Loader should not be called when IDs match (early return)
+        $this->spaceAccountLoader->expects($this->never())
+            ->method('load');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
+        $manager->expects($this->never())
+            ->method('error');
+
+        $result = ($this->loadSpaceAccountFromAccount)(
+            manager: $manager,
+            accountInstance: $account,
+            spaceAccount: $spaceAccount,
+            user: $user,
+        );
+
+        $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
+    }
 }

@@ -31,7 +31,9 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
 use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
@@ -82,6 +84,150 @@ class ProjectPersistedVariableWriterTest extends TestCase
             ProjectPersistedVariableWriter::class,
             $this->persistedVariableWriter->save(
                 $this->createMock(ObjectInterface::class),
+                $this->createMock(PromiseInterface::class),
+                true,
+            ),
+        );
+    }
+
+    public function testSaveEncryptableVarNotEncrypted(): void
+    {
+        $encryptedVar = new class implements ObjectInterface, EncryptableVariableInterface {
+            public function isSecret(): bool
+            {
+                return false;
+            }
+
+            public function isEncrypted(): bool
+            {
+                return false;
+            }
+
+            public function mustEncrypt(): bool
+            {
+                return false;
+            }
+
+            public function getContent(): string
+            {
+                return 'foo';
+            }
+
+            public function getEncryptionAlgorithm(): ?string
+            {
+                return null;
+            }
+
+            public function cloneWith(
+                #[SensitiveParameter] string $content,
+                ?string $encryptionAlgorithm,
+            ): SensitiveContentInterface {
+                $that = clone $this;
+
+                return $that;
+            }
+        };
+
+        $this->assertInstanceOf(
+            ProjectPersistedVariableWriter::class,
+            $this->persistedVariableWriter->save(
+                $encryptedVar,
+                $this->createMock(PromiseInterface::class),
+                true,
+            ),
+        );
+    }
+
+    public function testSaveEncryptableVarSecretEncrypted(): void
+    {
+        $encryptedVar = new class implements ObjectInterface, EncryptableVariableInterface {
+            public function isSecret(): bool
+            {
+                return true;
+            }
+
+            public function isEncrypted(): bool
+            {
+                return true;
+            }
+
+            public function mustEncrypt(): bool
+            {
+                return false;
+            }
+
+            public function getContent(): string
+            {
+                return 'foo';
+            }
+
+            public function getEncryptionAlgorithm(): ?string
+            {
+                return 'rsa';
+            }
+
+            public function cloneWith(
+                #[SensitiveParameter] string $content,
+                ?string $encryptionAlgorithm,
+            ): SensitiveContentInterface {
+                $that = clone $this;
+
+                return $that;
+            }
+        };
+
+        $this->assertInstanceOf(
+            ProjectPersistedVariableWriter::class,
+            $this->persistedVariableWriter->save(
+                $encryptedVar,
+                $this->createMock(PromiseInterface::class),
+                true,
+            ),
+        );
+    }
+
+    public function testSaveEncryptableVarSecretNotEncrypted(): void
+    {
+        $encryptedVar = new class implements ObjectInterface, EncryptableVariableInterface {
+            public function isSecret(): bool
+            {
+                return true;
+            }
+
+            public function isEncrypted(): bool
+            {
+                return false;
+            }
+
+            public function mustEncrypt(): bool
+            {
+                return true;
+            }
+
+            public function getContent(): string
+            {
+                return 'foo';
+            }
+
+            public function getEncryptionAlgorithm(): ?string
+            {
+                return 'rsa';
+            }
+
+            public function cloneWith(
+                #[SensitiveParameter] string $content,
+                ?string $encryptionAlgorithm,
+            ): SensitiveContentInterface {
+                $that = clone $this;
+
+                return $that;
+            }
+        };
+
+        $this->assertInstanceOf(
+            ProjectPersistedVariableWriter::class,
+            $this->persistedVariableWriter->save(
+                $encryptedVar,
                 $this->createMock(PromiseInterface::class),
                 true,
             ),

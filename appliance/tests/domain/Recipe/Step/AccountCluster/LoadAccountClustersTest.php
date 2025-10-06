@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountCluster;
 
+use Kubernetes\Client;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -33,7 +34,9 @@ use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Loader\AccountClusterLoader;
+use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 
 /**
@@ -80,6 +83,204 @@ class LoadAccountClustersTest extends TestCase
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(ClusterCatalog::class),
                 $this->createMock(Account::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithNullAccount(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('updateWorkPlan');
+
+        $this->loader->expects($this->never())->method('query');
+
+        $this->assertInstanceOf(
+            LoadAccountClusters::class,
+            ($this->loadAccountClusters)(
+                manager: $manager,
+                clusterCatalog: $this->createMock(ClusterCatalog::class),
+                accountInstance: null,
+            ),
+        );
+    }
+
+    public function testInvokeWithClusterCatalogHavingParent(): void
+    {
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('hasParentCatalog')
+            ->willReturn(true);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('updateWorkPlan');
+
+        $this->loader->expects($this->never())->method('query');
+
+        $this->assertInstanceOf(
+            LoadAccountClusters::class,
+            ($this->loadAccountClusters)(
+                manager: $manager,
+                clusterCatalog: $clusterCatalog,
+                accountInstance: $this->createMock(Account::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithClusters(): void
+    {
+        $accountCluster = $this->createMock(AccountCluster::class);
+        $configCluster = new Cluster(
+            name: 'cluster-name',
+            sluggyName: 'cluster-slug',
+            type: 'kubernetes',
+            masterAddress: 'https://master',
+            storageProvisioner: 'provisioner',
+            dashboardAddress: 'https://dashboard',
+            kubernetesClient: fn () => $this->createMock(Client::class),
+            token: 'token',
+            supportRegistry: true,
+            useHnc: false,
+            isExternal: false,
+        );
+
+        $accountCluster->expects($this->once())
+            ->method('convertToConfigCluster')
+            ->with($this->clientFactory, $this->repositoryRegistry)
+            ->willReturn($configCluster);
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('hasParentCatalog')
+            ->willReturn(false);
+
+        $this->loader->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) use ($accountCluster) {
+                $promise->success([$accountCluster]);
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan[ClusterCatalog::class])
+                        && $workplan[ClusterCatalog::class] instanceof ClusterCatalog
+                        && isset($workplan['clusterCatalog'])
+                        && $workplan['clusterCatalog'] instanceof ClusterCatalog;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountClusters::class,
+            ($this->loadAccountClusters)(
+                manager: $manager,
+                clusterCatalog: $clusterCatalog,
+                accountInstance: $this->createMock(Account::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithEmptyClusters(): void
+    {
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('hasParentCatalog')
+            ->willReturn(false);
+
+        $this->loader->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success([]);
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($clusterCatalog) {
+                    return isset($workplan[ClusterCatalog::class])
+                        && $workplan[ClusterCatalog::class] === $clusterCatalog;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountClusters::class,
+            ($this->loadAccountClusters)(
+                manager: $manager,
+                clusterCatalog: $clusterCatalog,
+                accountInstance: $this->createMock(Account::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithError(): void
+    {
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('hasParentCatalog')
+            ->willReturn(false);
+
+        $this->loader->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->fail(new \Exception('Test error', 500));
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($exception) {
+                    return $exception instanceof \DomainException
+                        && 'teknoo.space.error.space_account.account_environment.fetching' === $exception->getMessage()
+                        && 500 === $exception->getCode();
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountClusters::class,
+            ($this->loadAccountClusters)(
+                manager: $manager,
+                clusterCatalog: $clusterCatalog,
+                accountInstance: $this->createMock(Account::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithErrorCodeZero(): void
+    {
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('hasParentCatalog')
+            ->willReturn(false);
+
+        $this->loader->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->fail(new \Exception('Test error', 0));
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($exception) {
+                    return $exception instanceof \DomainException
+                        && $exception->getCode() === 404;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadAccountClusters::class,
+            ($this->loadAccountClusters)(
+                manager: $manager,
+                clusterCatalog: $clusterCatalog,
+                accountInstance: $this->createMock(Account::class),
             ),
         );
     }

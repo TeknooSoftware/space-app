@@ -28,8 +28,8 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 
@@ -62,22 +62,55 @@ class ProjectMetadataTest extends TestCase
         $this->projectMetadata = new ProjectMetadata($this->project, $this->projectUrl);
     }
 
+    public function testConstructorWithProject(): void
+    {
+        $project = $this->createMock(Project::class);
+        $projectUrl = 'https://example.com';
+        $metadata = new ProjectMetadata($project, $projectUrl);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $metadata);
+    }
+
+    public function testConstructorWithNullProject(): void
+    {
+        $projectUrl = 'https://example.com';
+        $metadata = new ProjectMetadata(null, $projectUrl);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $metadata);
+    }
+
+    public function testConstructorWithNullProjectUrl(): void
+    {
+        $project = $this->createMock(Project::class);
+        $metadata = new ProjectMetadata($project, null);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $metadata);
+    }
+
     public function testSetProject(): void
     {
-        $expected = $this->createMock(Project::class);
-        $property = new ReflectionClass(ProjectMetadata::class)
-            ->getProperty('project');
-        $this->projectMetadata->setProject($expected);
-        $this->assertEquals($expected, $property->getValue($this->projectMetadata));
+        $newProject = $this->createMock(Project::class);
+        $result = $this->projectMetadata->setProject($newProject);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $result);
+        $this->assertSame($this->projectMetadata, $result);
     }
 
     public function testSetProjectUrl(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(ProjectMetadata::class)
-            ->getProperty('projectUrl');
-        $this->projectMetadata->setProjectUrl($expected);
-        $this->assertEquals($expected, $property->getValue($this->projectMetadata));
+        $newUrl = 'https://new-url.com';
+        $result = $this->projectMetadata->setProjectUrl($newUrl);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $result);
+        $this->assertSame($this->projectMetadata, $result);
+    }
+
+    public function testSetProjectUrlWithNull(): void
+    {
+        $result = $this->projectMetadata->setProjectUrl(null);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $result);
+        $this->assertSame($this->projectMetadata, $result);
     }
 
     public function testVisit(): void
@@ -103,11 +136,53 @@ class ProjectMetadataTest extends TestCase
         $bag = $this->createMock(ParametersBag::class);
         $bag->expects($this->once())
             ->method('set')
-            ->with('projectUrl', 42);
+            ->with('projectUrl', '42');
 
         $this->assertInstanceOf(
             ProjectMetadata::class,
             $this->projectMetadata->export($bag)
         );
+    }
+
+    public function testExportToMeData(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with(
+                $this->callback(function ($data) {
+                    $this->assertIsArray($data);
+                    $this->assertArrayHasKey('@class', $data);
+                    // projectUrl is only in 'crud' group, not in 'default'
+                    return true;
+                })
+            );
+
+        $result = $this->projectMetadata->exportToMeData($normalizer, []);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $result);
+        $this->assertSame($this->projectMetadata, $result);
+    }
+
+    public function testExportToMeDataWithCrudGroup(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with(
+                $this->callback(function ($data) {
+                    $this->assertIsArray($data);
+                    $this->assertArrayHasKey('@class', $data);
+                    $this->assertArrayHasKey('projectUrl', $data);
+                    $this->assertEquals('42', $data['projectUrl']);
+                    return true;
+                })
+            );
+
+        $result = $this->projectMetadata->exportToMeData($normalizer, ['groups' => ['crud']]);
+
+        $this->assertInstanceOf(ProjectMetadata::class, $result);
     }
 }

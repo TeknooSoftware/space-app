@@ -28,8 +28,9 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
 /**
@@ -86,68 +87,73 @@ class AccountRegistryTest extends TestCase
 
     public function testGetAccount(): void
     {
-        $expected = $this->createMock(Account::class);
-        $property = new ReflectionClass(AccountRegistry::class)
-            ->getProperty('account');
-        $property->setValue($this->accountRegistry, $expected);
-        $this->assertEquals($expected, $this->accountRegistry->getAccount());
+        $this->assertSame($this->account, $this->accountRegistry->getAccount());
+    }
+
+    public function testGetRegistryNamespace(): void
+    {
+        $this->assertEquals($this->registryNamespace, $this->accountRegistry->getRegistryNamespace());
     }
 
     public function testGetRegistryUrl(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountRegistry::class)
-            ->getProperty('registryUrl');
-        $property->setValue($this->accountRegistry, $expected);
-        $this->assertEquals($expected, $this->accountRegistry->getRegistryUrl());
+        $this->assertEquals($this->registryUrl, $this->accountRegistry->getRegistryUrl());
     }
 
     public function testGetRegistryConfigName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountRegistry::class)
-            ->getProperty('registryConfigName');
-        $property->setValue($this->accountRegistry, $expected);
-        $this->assertEquals($expected, $this->accountRegistry->getRegistryConfigName());
+        $this->assertEquals($this->registryConfigName, $this->accountRegistry->getRegistryConfigName());
     }
 
     public function testGetRegistryAccountName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountRegistry::class)
-            ->getProperty('registryAccountName');
-        $property->setValue($this->accountRegistry, $expected);
-        $this->assertEquals($expected, $this->accountRegistry->getRegistryAccountName());
+        $this->assertEquals($this->registryAccountName, $this->accountRegistry->getRegistryAccountName());
     }
 
     public function testGetRegistryPassword(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountRegistry::class)
-            ->getProperty('registryPassword');
-        $property->setValue($this->accountRegistry, $expected);
-        $this->assertEquals($expected, $this->accountRegistry->getRegistryPassword());
+        $this->assertEquals($this->registryPassword, $this->accountRegistry->getRegistryPassword());
     }
 
     public function testGetPersistentVolumeClaimName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountRegistry::class)
-            ->getProperty('persistentVolumeClaimName');
-        $property->setValue($this->accountRegistry, $expected);
-        $this->assertEquals($expected, $this->accountRegistry->getPersistentVolumeClaimName());
+        $this->assertEquals($this->persistentVolumeClaimName, $this->accountRegistry->getPersistentVolumeClaimName());
     }
 
     public function testUpdateRegistry(): void
     {
         $this->assertInstanceOf(
             AccountRegistry::class,
-            $new = $this->accountRegistry->updateRegistry('foo', 'bar', 'foo'),
+            $new = $this->accountRegistry->updateRegistry('foo', 'bar', 'baz'),
         );
 
         $this->assertNotSame(
             $new,
             $this->accountRegistry,
         );
+
+        // Verify updated values
+        $this->assertEquals('foo', $new->getRegistryUrl());
+        $this->assertEquals('bar', $new->getRegistryAccountName());
+        $this->assertEquals('baz', $new->getRegistryPassword());
+
+        // Verify original unchanged
+        $this->assertEquals($this->registryUrl, $this->accountRegistry->getRegistryUrl());
+        $this->assertEquals($this->registryAccountName, $this->accountRegistry->getRegistryAccountName());
+        $this->assertEquals($this->registryPassword, $this->accountRegistry->getRegistryPassword());
+    }
+
+    public function testVerifyAccessToUser(): void
+    {
+        $user = $this->createMock(User::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $this->account->expects($this->once())
+            ->method('__call')
+            ->with('verifyAccessToUser');
+
+        $result = $this->accountRegistry->verifyAccessToUser($user, $promise);
+
+        $this->assertInstanceOf(AccountRegistry::class, $result);
     }
 }

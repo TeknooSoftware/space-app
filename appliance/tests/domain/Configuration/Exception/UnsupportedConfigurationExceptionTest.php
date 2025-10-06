@@ -23,46 +23,39 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Loader;
+namespace Teknoo\Space\Tests\Unit\Configuration\Exception;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\Space\Contracts\DbSource\Repository\AccountClusterRepositoryInterface;
-use Teknoo\Space\Loader\AccountClusterLoader;
+use RuntimeException;
+use Teknoo\Space\Configuration\Exception\UnsupportedConfigurationException;
 
 /**
- * Class AccountClusterLoaderTest.
+ * Class UnsupportedConfigurationExceptionTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
- * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(AccountClusterLoader::class)]
-class AccountClusterLoaderTest extends TestCase
+#[CoversClass(UnsupportedConfigurationException::class)]
+class UnsupportedConfigurationExceptionTest extends TestCase
 {
-    private AccountClusterLoader $accountClusterLoader;
-
-    private AccountClusterRepositoryInterface&MockObject $repository;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->repository = $this->createMock(AccountClusterRepositoryInterface::class);
-        $this->accountClusterLoader = new AccountClusterLoader($this->repository);
-    }
-
     public function testConstruct(): void
     {
-        $this->assertInstanceOf(
-            AccountClusterLoader::class,
-            $this->accountClusterLoader,
-        );
+        $exception = new UnsupportedConfigurationException('test message', 123);
+
+        $this->assertInstanceOf(UnsupportedConfigurationException::class, $exception);
+        $this->assertInstanceOf(RuntimeException::class, $exception);
+        $this->assertEquals('test message', $exception->getMessage());
+        $this->assertEquals(123, $exception->getCode());
+    }
+
+    public function testThrow(): void
+    {
+        $this->expectException(UnsupportedConfigurationException::class);
+        $this->expectExceptionMessage('test exception');
+
+        throw new UnsupportedConfigurationException('test exception');
     }
 }

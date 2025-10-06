@@ -28,11 +28,16 @@ namespace Teknoo\Space\Tests\Unit\Writer\Meta;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Common\Contracts\Writer\WriterInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Writer\Meta\SpaceUserWriter;
 use Teknoo\Space\Writer\UserDataWriter;
+use Throwable;
 
 /**
  * Class SpaceUserWriterTest.
@@ -63,25 +68,324 @@ class SpaceUserWriterTest extends TestCase
         $this->spaceUserWriter = new SpaceUserWriter($this->userWriter, $this->dataWriter);
     }
 
-    public function testSave(): void
+    public function testSaveWithWrongObject(): void
     {
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof RuntimeException
+                    && str_contains($error->getMessage(), 'is not supported by this writer')
+                    && $error->getCode() === 500;
+            }));
+
         $this->assertInstanceOf(
             SpaceUserWriter::class,
             $this->spaceUserWriter->save(
                 $this->createMock(ObjectInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $promise,
                 true,
             ),
         );
     }
 
-    public function testRemove(): void
+    public function testSaveWithNullPromise(): void
     {
+        $this->userWriter->expects($this->never())
+            ->method('save');
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->save(
+                $this->createMock(ObjectInterface::class),
+                null,
+                true,
+            ),
+        );
+    }
+
+    public function testSaveWithUserData(): void
+    {
+        $user = $this->createMock(User::class);
+        $userData = $this->createMock(UserData::class);
+        $userData->expects($this->once())
+            ->method('setUser')
+            ->with($user);
+
+        $spaceUser = new SpaceUser($user, $userData);
+
+        $this->userWriter->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(
+                function ($obj, PromiseInterface $promise, $preferReal) use ($user) {
+                    $promise->success($user);
+                    return $this->userWriter;
+                }
+            );
+
+        $this->dataWriter->expects($this->once())
+            ->method('save')
+            ->with($userData, null, true);
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($user);
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->save(
+                $spaceUser,
+                $promise,
+                true,
+            ),
+        );
+    }
+
+
+    public function testSaveWithUserError(): void
+    {
+        $user = $this->createMock(User::class);
+        $spaceUser = new SpaceUser($user, null);
+
+        $this->userWriter->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(
+                function ($obj, PromiseInterface $promise) {
+                    $promise->fail(new RuntimeException('error', 500));
+                    return $this->userWriter;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof RuntimeException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.persisting'
+                    && $error->getCode() === 500;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->save(
+                $spaceUser,
+                $promise,
+                true,
+            ),
+        );
+    }
+
+    public function testSaveWithUserErrorDefaultCode(): void
+    {
+        $user = $this->createMock(User::class);
+        $spaceUser = new SpaceUser($user, null);
+
+        $this->userWriter->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(
+                function ($obj, PromiseInterface $promise) {
+                    $promise->fail(new RuntimeException('error', 0));
+                    return $this->userWriter;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof RuntimeException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.persisting'
+                    && $error->getCode() === 500;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->save(
+                $spaceUser,
+                $promise,
+                true,
+            ),
+        );
+    }
+
+    public function testSaveWithUserErrorWithoutPromise(): void
+    {
+        $user = $this->createMock(User::class);
+        $spaceUser = new SpaceUser($user, null);
+
+        $this->userWriter->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(
+                function ($obj, PromiseInterface $promise) {
+                    $promise->fail(new RuntimeException('error', 500));
+                    return $this->userWriter;
+                }
+            );
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->save(
+                $spaceUser,
+                null,
+                true,
+            ),
+        );
+    }
+
+    public function testRemoveWithWrongObject(): void
+    {
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof RuntimeException
+                    && str_contains($error->getMessage(), 'is not supported by this writer')
+                    && $error->getCode() === 500;
+            }));
+
         $this->assertInstanceOf(
             SpaceUserWriter::class,
             $this->spaceUserWriter->remove(
                 $this->createMock(ObjectInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testRemoveWithNullPromise(): void
+    {
+        $this->userWriter->expects($this->never())
+            ->method('remove');
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->remove(
+                $this->createMock(ObjectInterface::class),
+                null,
+            ),
+        );
+    }
+
+    public function testRemoveWithUserData(): void
+    {
+        $user = $this->createMock(User::class);
+        $userData = $this->createMock(UserData::class);
+        $spaceUser = new SpaceUser($user, $userData);
+
+        $this->dataWriter->expects($this->once())
+            ->method('remove')
+            ->willReturnCallback(
+                function ($data, PromiseInterface $promise) {
+                    $promise->success($data);
+                    return $this->dataWriter;
+                }
+            );
+
+        $this->userWriter->expects($this->once())
+            ->method('remove')
+            ->with($user, $this->isInstanceOf(PromiseInterface::class));
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success');
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->remove(
+                $spaceUser,
+                $promise,
+            ),
+        );
+    }
+
+
+    public function testRemoveWithDataError(): void
+    {
+        $user = $this->createMock(User::class);
+        $userData = $this->createMock(UserData::class);
+        $spaceUser = new SpaceUser($user, $userData);
+
+        $this->dataWriter->expects($this->once())
+            ->method('remove')
+            ->willReturnCallback(
+                function ($data, PromiseInterface $promise) {
+                    $promise->fail(new RuntimeException('error', 403));
+                    return $this->dataWriter;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof RuntimeException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.deleting'
+                    && $error->getCode() === 403;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->remove(
+                $spaceUser,
+                $promise,
+            ),
+        );
+    }
+
+    public function testRemoveWithDataErrorDefaultCode(): void
+    {
+        $user = $this->createMock(User::class);
+        $userData = $this->createMock(UserData::class);
+        $spaceUser = new SpaceUser($user, $userData);
+
+        $this->dataWriter->expects($this->once())
+            ->method('remove')
+            ->willReturnCallback(
+                function ($data, PromiseInterface $promise) {
+                    $promise->fail(new RuntimeException('error', 0));
+                    return $this->dataWriter;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof RuntimeException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.deleting'
+                    && $error->getCode() === 500;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->remove(
+                $spaceUser,
+                $promise,
+            ),
+        );
+    }
+
+    public function testRemoveWithDataErrorWithoutPromise(): void
+    {
+        $user = $this->createMock(User::class);
+        $userData = $this->createMock(UserData::class);
+        $spaceUser = new SpaceUser($user, $userData);
+
+        $this->dataWriter->expects($this->once())
+            ->method('remove')
+            ->willReturnCallback(
+                function ($data, PromiseInterface $promise) {
+                    $promise->fail(new RuntimeException('error', 500));
+                    return $this->dataWriter;
+                }
+            );
+
+        $this->assertInstanceOf(
+            SpaceUserWriter::class,
+            $this->spaceUserWriter->remove(
+                $spaceUser,
+                null,
             ),
         );
     }

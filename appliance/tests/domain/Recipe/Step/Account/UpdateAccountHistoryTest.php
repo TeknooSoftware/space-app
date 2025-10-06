@@ -67,4 +67,20 @@ class UpdateAccountHistoryTest extends TestCase
             ),
         );
     }
+
+    public function testInvokeCallsWriterSave(): void
+    {
+        $accountHistory = $this->createMock(AccountHistory::class);
+
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->with($this->identicalTo($accountHistory));
+
+        $this->assertInstanceOf(
+            UpdateAccountHistory::class,
+            ($this->updateAccountHistory)(
+                accountHistory: $accountHistory,
+            ),
+        );
+    }
 }

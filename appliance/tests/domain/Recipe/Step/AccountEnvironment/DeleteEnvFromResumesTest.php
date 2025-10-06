@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -76,6 +77,210 @@ class DeleteEnvFromResumesTest extends TestCase
                     environments: []
                 ),
                 new ClusterCatalog(['Foo' => $this->createMock(Cluster::class)], ['Foo' => 'foo']),
+            ),
+        );
+    }
+
+    public function testInvokeWithNullEnvironments(): void
+    {
+        $this->accountEnvironmentWriter->expects($this->never())->method('remove');
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$this->createMock(AccountEnvironment::class)]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: null
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEnvironmentToDelete(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-123');
+
+        $this->accountEnvironmentWriter->expects($this->once())
+            ->method('remove')
+            ->with($env);
+
+        $resume = new AccountEnvironmentResume(
+            accountEnvironmentId: 'env-456',
+            clusterName: 'cluster1',
+            envName: 'env1',
+        );
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$env]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [$resume]
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEnvironmentInResumes(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-123');
+
+        $this->accountEnvironmentWriter->expects($this->never())->method('remove');
+
+        $resume = new AccountEnvironmentResume(
+            accountEnvironmentId: 'env-123',
+            clusterName: 'cluster1',
+            envName: 'env1',
+        );
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$env]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [$resume]
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEmptyEnvironmentId(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getId')
+            ->willReturn('');
+
+        $this->accountEnvironmentWriter->expects($this->never())->method('remove');
+
+        $resume = new AccountEnvironmentResume(
+            accountEnvironmentId: 'env-123',
+            clusterName: 'cluster1',
+            envName: 'env1',
+        );
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$env]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [$resume]
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEmptyResumeId(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-123');
+
+        $this->accountEnvironmentWriter->expects($this->once())
+            ->method('remove')
+            ->with($env);
+
+        $resume = new AccountEnvironmentResume(
+            accountEnvironmentId: '',
+            clusterName: 'cluster1',
+            envName: 'env1',
+        );
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$env]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [$resume]
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithMultipleEnvironments(): void
+    {
+        $env1 = $this->createMock(AccountEnvironment::class);
+        $env1->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-1');
+
+        $env2 = $this->createMock(AccountEnvironment::class);
+        $env2->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-2');
+
+        $env3 = $this->createMock(AccountEnvironment::class);
+        $env3->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-3');
+
+        // Only env2 should be removed (not in resumes)
+        $this->accountEnvironmentWriter->expects($this->once())
+            ->method('remove')
+            ->with($env2);
+
+        $resume1 = new AccountEnvironmentResume(
+            accountEnvironmentId: 'env-1',
+            clusterName: 'cluster1',
+            envName: 'env1',
+        );
+
+        $resume3 = new AccountEnvironmentResume(
+            accountEnvironmentId: 'env-3',
+            clusterName: 'cluster2',
+            envName: 'env3',
+        );
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$env1, $env2, $env3]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [$resume1, $resume3]
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithNullClusterCatalog(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getId')
+            ->willReturn('env-123');
+
+        $this->accountEnvironmentWriter->expects($this->once())
+            ->method('remove')
+            ->with($env);
+
+        $resume = new AccountEnvironmentResume(
+            accountEnvironmentId: 'env-456',
+            clusterName: 'cluster1',
+            envName: 'env1',
+        );
+
+        $this->assertInstanceOf(
+            DeleteEnvFromResumes::class,
+            ($this->deleteEnvFromResumes)(
+                new AccountWallet([$env]),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [$resume]
+                ),
+                null,
             ),
         );
     }

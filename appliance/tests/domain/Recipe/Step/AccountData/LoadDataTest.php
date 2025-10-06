@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Loader\AccountDataLoader;
+use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData;
 
 /**
@@ -67,6 +68,119 @@ class LoadDataTest extends TestCase
                 $this->createMock(ManagerInterface::class),
                 $this->createMock(Account::class),
                 true,
+            )
+        );
+    }
+
+    public function testInvokeWithSuccessCallback(): void
+    {
+        $accountData = $this->createMock(AccountData::class);
+
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($accountData) {
+                $promise->success($accountData);
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($accountData) {
+                    return isset($workplan[AccountData::class])
+                        && $workplan[AccountData::class] === $accountData;
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadData::class,
+            ($this->loadData)(
+                manager: $manager,
+                accountInstance: $this->createMock(Account::class),
+                allowEmptyDatas: true,
+            )
+        );
+    }
+
+    public function testInvokeWithErrorAndAllowEmptyDatasFalse(): void
+    {
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->fail(new \Exception('Test error', 500));
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($exception) {
+                    return $exception instanceof \DomainException
+                        && 'teknoo.space.error.space_account.account_data.fetching' === $exception->getMessage()
+                        && 500 === $exception->getCode();
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadData::class,
+            ($this->loadData)(
+                manager: $manager,
+                accountInstance: $this->createMock(Account::class),
+                allowEmptyDatas: false,
+            )
+        );
+    }
+
+    public function testInvokeWithErrorCodeZeroAndAllowEmptyDatasFalse(): void
+    {
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->fail(new \Exception('Test error', 0));
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($exception) {
+                    return $exception instanceof \DomainException
+                        && 404 === $exception->getCode();
+                })
+            );
+
+        $this->assertInstanceOf(
+            LoadData::class,
+            ($this->loadData)(
+                manager: $manager,
+                accountInstance: $this->createMock(Account::class),
+                allowEmptyDatas: false,
+            )
+        );
+    }
+
+    public function testInvokeWithErrorAndAllowEmptyDatasTrue(): void
+    {
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->fail(new \Exception('Test error', 500));
+                return $this->loader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+
+        $this->assertInstanceOf(
+            LoadData::class,
+            ($this->loadData)(
+                manager: $manager,
+                accountInstance: $this->createMock(Account::class),
+                allowEmptyDatas: true,
             )
         );
     }

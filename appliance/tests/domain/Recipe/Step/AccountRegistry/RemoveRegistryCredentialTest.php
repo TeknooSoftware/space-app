@@ -63,8 +63,35 @@ class RemoveRegistryCredentialTest extends TestCase
         $this->assertInstanceOf(
             RemoveRegistryCredential::class,
             ($this->removeRegistryCredential)(
-                $this->createMock(AccountRegistry::class),
+                registry: $this->createMock(AccountRegistry::class),
             ),
         );
+    }
+
+    public function testInvokeWithNullRegistry(): void
+    {
+        $this->writer->expects($this->never())->method('remove');
+
+        $result = ($this->removeRegistryCredential)(
+            registry: null,
+        );
+
+        $this->assertInstanceOf(RemoveRegistryCredential::class, $result);
+    }
+
+    public function testInvokeWithAccountRegistry(): void
+    {
+        $registry = $this->createMock(AccountRegistry::class);
+
+        $this->writer->expects($this->once())
+            ->method('remove')
+            ->with($registry)
+            ->willReturnSelf();
+
+        $result = ($this->removeRegistryCredential)(
+            registry: $registry,
+        );
+
+        $this->assertInstanceOf(RemoveRegistryCredential::class, $result);
     }
 }

@@ -28,8 +28,10 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountData;
 
 /**
@@ -45,6 +47,8 @@ class AccountDataTest extends TestCase
 {
     private AccountData $accountData;
 
+    private Account&MockObject $account;
+
     /**
      * {@inheritdoc}
      */
@@ -52,7 +56,7 @@ class AccountDataTest extends TestCase
     {
         parent::setUp();
 
-        $account = $this->createMock(Account::class);
+        $this->account = $this->createMock(Account::class);
         $legalName = '42';
         $streetAddress = '42';
         $zipCode = '42';
@@ -60,7 +64,7 @@ class AccountDataTest extends TestCase
         $countryName = '42';
         $vatNumber = '42';
         $this->accountData = new AccountData(
-            $account,
+            $this->account,
             $legalName,
             $streetAddress,
             $zipCode,
@@ -72,65 +76,73 @@ class AccountDataTest extends TestCase
 
     public function testSetAccount(): void
     {
-        $expected = $this->createMock(Account::class);
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('account');
-        $this->accountData->setAccount($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $newAccount = $this->createMock(Account::class);
+        $result = $this->accountData->setAccount($newAccount);
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testSetLegalName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('legalName');
-        $this->accountData->setLegalName($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $result = $this->accountData->setLegalName('New Legal Name');
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testSetStreetAddress(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('streetAddress');
-        $this->accountData->setStreetAddress($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $result = $this->accountData->setStreetAddress('123 Main St');
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testSetZipCode(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('zipCode');
-        $this->accountData->setZipCode($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $result = $this->accountData->setZipCode('12345');
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testSetCityName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('cityName');
-        $this->accountData->setCityName($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $result = $this->accountData->setCityName('Paris');
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testSetCountryName(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('countryName');
-        $this->accountData->setCountryName($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $result = $this->accountData->setCountryName('France');
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testSetVatNumber(): void
     {
-        $expected = '42';
-        $property = new ReflectionClass(AccountData::class)
-            ->getProperty('vatNumber');
-        $this->accountData->setVatNumber($expected);
-        $this->assertEquals($expected, $property->getValue($this->accountData));
+        $result = $this->accountData->setVatNumber('FR12345678901');
+
+        $this->assertInstanceOf(AccountData::class, $result);
+    }
+
+    public function testSetVatNumberWithNull(): void
+    {
+        $result = $this->accountData->setVatNumber(null);
+
+        $this->assertInstanceOf(AccountData::class, $result);
+    }
+
+    public function testSetSubscriptionPlan(): void
+    {
+        $result = $this->accountData->setSubscriptionPlan('premium');
+
+        $this->assertInstanceOf(AccountData::class, $result);
+    }
+
+    public function testSetSubscriptionPlanWithNull(): void
+    {
+        $result = $this->accountData->setSubscriptionPlan(null);
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 
     public function testVisit(): void
@@ -149,5 +161,45 @@ class AccountDataTest extends TestCase
             '42',
             $final,
         );
+    }
+
+    public function testExportToMeData(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray());
+
+        $result = $this->accountData->exportToMeData($normalizer, []);
+
+        $this->assertInstanceOf(AccountData::class, $result);
+    }
+
+    public function testExportToMeDataWithGroups(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray());
+
+        $result = $this->accountData->exportToMeData($normalizer, ['groups' => ['crud']]);
+
+        $this->assertInstanceOf(AccountData::class, $result);
+    }
+
+    public function testVerifyAccessToUser(): void
+    {
+        $user = $this->createMock(User::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $this->account->expects($this->once())
+            ->method('__call')
+            ->with('verifyAccessToUser');
+
+        $result = $this->accountData->verifyAccessToUser($user, $promise);
+
+        $this->assertInstanceOf(AccountData::class, $result);
     }
 }

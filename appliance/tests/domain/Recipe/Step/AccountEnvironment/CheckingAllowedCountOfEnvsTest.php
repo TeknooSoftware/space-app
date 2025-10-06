@@ -79,4 +79,152 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ),
         );
     }
+
+    public function testInvokeWithNullPlan(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfEnvs::class,
+            ($this->checkingAllowedCountOfEnvs)(
+                manager: $manager,
+                spaceAccount: new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                plan: null,
+            ),
+        );
+    }
+
+    public function testInvokeWithOverflow(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($error) {
+                    return $error instanceof \OverflowException
+                        && str_contains($error->getMessage(), 'Test Plan')
+                        && str_contains($error->getMessage(), 'accepts only 1 environments')
+                        && 400 === $error->getCode();
+                })
+            );
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfEnvs::class,
+            ($this->checkingAllowedCountOfEnvs)(
+                manager: $manager,
+                spaceAccount: new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [
+                        (object)['id' => '1'],
+                        (object)['id' => '2'],
+                    ]
+                ),
+                plan: new SubscriptionPlan(
+                    id: 'test',
+                    name: 'Test Plan',
+                    quotas: [],
+                    envsCountAllowed: 1
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithNullPlanAndEnvironments(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfEnvs::class,
+            ($this->checkingAllowedCountOfEnvs)(
+                manager: $manager,
+                spaceAccount: new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [
+                        (object)['id' => '1'],
+                        (object)['id' => '2'],
+                    ]
+                ),
+                plan: null,
+            ),
+        );
+    }
+
+    public function testInvokeWithZeroEnvsAllowed(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfEnvs::class,
+            ($this->checkingAllowedCountOfEnvs)(
+                manager: $manager,
+                spaceAccount: new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [
+                        (object)['id' => '1'],
+                        (object)['id' => '2'],
+                    ]
+                ),
+                plan: new SubscriptionPlan(
+                    id: 'test',
+                    name: 'Test Plan',
+                    quotas: [],
+                    envsCountAllowed: 0
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEmptyEnvironments(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfEnvs::class,
+            ($this->checkingAllowedCountOfEnvs)(
+                manager: $manager,
+                spaceAccount: new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                plan: new SubscriptionPlan(
+                    id: 'test',
+                    name: 'Test Plan',
+                    quotas: [],
+                    envsCountAllowed: 1
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEqualLimit(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfEnvs::class,
+            ($this->checkingAllowedCountOfEnvs)(
+                manager: $manager,
+                spaceAccount: new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: [
+                        (object)['id' => '1'],
+                    ]
+                ),
+                plan: new SubscriptionPlan(
+                    id: 'test',
+                    name: 'Test Plan',
+                    quotas: [],
+                    envsCountAllowed: 1
+                ),
+            ),
+        );
+    }
 }

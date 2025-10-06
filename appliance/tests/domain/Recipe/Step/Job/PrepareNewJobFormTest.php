@@ -33,6 +33,7 @@ use Teknoo\East\Paas\Contracts\Object\ImageRegistryInterface;
 use Teknoo\East\Paas\Contracts\Object\SourceRepositoryInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\Cluster;
+use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
@@ -79,5 +80,204 @@ class PrepareNewJobFormTest extends TestCase
                 'foo',
             ),
         );
+    }
+
+    public function testInvokeWithDirectProject(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())->method('getId')->willReturn('account-123');
+
+        $project = new Project($account);
+        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+            ->setClusters([$this->createMock(Cluster::class)])
+            ->setId('project-123');
+
+        $newJob = $this->createMock(NewJob::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['formOptions'])
+                        && isset($workplan['formOptions']['environmentsList'])
+                        && is_array($workplan['formOptions']['environmentsList']);
+                })
+            );
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('project', $project);
+
+        $result = ($this->prepareNewJobForm)(
+            $manager,
+            $project,
+            $newJob,
+            $bag,
+        );
+
+        $this->assertInstanceOf(PrepareNewJobForm::class, $result);
+    }
+
+    public function testInvokeWithFormActionRoute(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())->method('getId')->willReturn('account-123');
+
+        $project = new Project($account);
+        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+            ->setClusters([$this->createMock(Cluster::class)])
+            ->setId('project-456');
+
+        $newJob = $this->createMock(NewJob::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())->method('updateWorkPlan');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->exactly(3))
+            ->method('set')
+            ->willReturnCallback(function ($key, $value) use ($project, $bag) {
+                match ($key) {
+                    'project' => $this->assertSame($project, $value),
+                    'formActionRoute' => $this->assertSame('my_route', $value),
+                    'formActionRouteParams' => $this->assertSame(['projectId' => 'project-456'], $value),
+                    default => $this->fail("Unexpected key: $key"),
+                };
+                return $bag;
+            });
+
+        $result = ($this->prepareNewJobForm)(
+            $manager,
+            $project,
+            $newJob,
+            $bag,
+            'my_route',
+        );
+
+        $this->assertInstanceOf(PrepareNewJobForm::class, $result);
+    }
+
+    public function testInvokeWithFormOptionsAndEnv(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())->method('getId')->willReturn('account-123');
+
+        $project = new Project($account);
+        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+            ->setClusters([new Cluster(project: $project, environment: new Environment('prod'))])
+            ->setId('project-789');
+
+        $newJob = $this->createMock(NewJob::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['formOptions'])
+                        && isset($workplan['formOptions']['environmentsList'])
+                        && ['prod' => 'prod'] === $workplan['formOptions']['environmentsList']
+                        && isset($workplan['formOptions']['customOption'])
+                        && 'customValue' === $workplan['formOptions']['customOption'];
+                })
+            );
+
+        $bag = $this->createMock(ParametersBag::class);
+
+        $result = ($this->prepareNewJobForm)(
+            $manager,
+            $project,
+            $newJob,
+            $bag,
+            null,
+            ['customOption' => 'customValue'],
+        );
+
+        $this->assertInstanceOf(PrepareNewJobForm::class, $result);
+    }
+
+    public function testInvokeWithNonRunnableProject(): void
+    {
+        $project = new Project($this->createMock(Account::class));
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Project is not fully configured');
+
+        ($this->prepareNewJobForm)(
+            $this->createMock(ManagerInterface::class),
+            $project,
+            $this->createMock(NewJob::class),
+            $this->createMock(ParametersBag::class),
+        );
+    }
+
+    public function testInvokeWithSpaceProjectWrapper(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())->method('getId')->willReturn('account-999');
+
+        $project = new Project($account);
+        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+            ->setClusters([$this->createMock(Cluster::class)])
+            ->setId('project-999');
+
+        $spaceProject = new SpaceProject($project);
+
+        $newJob = $this->createMock(NewJob::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())->method('updateWorkPlan');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('project', $project);
+
+        $result = ($this->prepareNewJobForm)(
+            $manager,
+            $spaceProject,
+            $newJob,
+            $bag,
+        );
+
+        $this->assertInstanceOf(PrepareNewJobForm::class, $result);
+    }
+
+    public function testInvokeWithEmptyFormActionRoute(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())->method('getId')->willReturn('account-empty');
+
+        $project = new Project($account);
+        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+            ->setClusters([$this->createMock(Cluster::class)])
+            ->setId('project-empty');
+
+        $newJob = $this->createMock(NewJob::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())->method('updateWorkPlan');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('project', $project);
+
+        $result = ($this->prepareNewJobForm)(
+            $manager,
+            $project,
+            $newJob,
+            $bag,
+            '',
+        );
+
+        $this->assertInstanceOf(PrepareNewJobForm::class, $result);
     }
 }

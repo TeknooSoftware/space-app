@@ -25,9 +25,12 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Middleware;
 
+use Laminas\Diactoros\Response\RedirectResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UriInterface;
 use Teknoo\East\Foundation\Http\ClientInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Middleware\HostnameRedirectionMiddleware;
@@ -66,6 +69,226 @@ class HostnameRedirectionMiddlewareTest extends TestCase
                 $this->createMock(ClientInterface::class),
                 $this->createMock(MessageInterface::class),
                 $this->createMock(ManagerInterface::class),
+            ),
+        );
+    }
+
+    public function testExecuteWithAllowedHostExactMatch(): void
+    {
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn($this->allowedHost);
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())
+            ->method('acceptResponse');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
+            ),
+        );
+    }
+
+    public function testExecuteWithAllowedHostCaseInsensitive(): void
+    {
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn(strtoupper($this->allowedHost));
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())
+            ->method('acceptResponse');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
+            ),
+        );
+    }
+
+    public function testExecuteWithPrivateIp10(): void
+    {
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn('10.0.0.1');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())
+            ->method('acceptResponse');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
+            ),
+        );
+    }
+
+    public function testExecuteWithPrivateIp172(): void
+    {
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn('172.16.0.1');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())
+            ->method('acceptResponse');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
+            ),
+        );
+    }
+
+    public function testExecuteWithPrivateIp127(): void
+    {
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn('127.0.0.1');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())
+            ->method('acceptResponse');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
+            ),
+        );
+    }
+
+    public function testExecuteWithPrivateIp192(): void
+    {
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn('192.168.1.1');
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->never())
+            ->method('acceptResponse');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
+            ),
+        );
+    }
+
+    public function testExecuteWithRedirection(): void
+    {
+        $newUri = $this->createMock(UriInterface::class);
+
+        $uri = $this->createMock(UriInterface::class);
+        $uri->expects($this->once())
+            ->method('getHost')
+            ->willReturn('example.com');
+        $uri->expects($this->once())
+            ->method('withHost')
+            ->with($this->allowedHost)
+            ->willReturn($newUri);
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())
+            ->method('getUri')
+            ->willReturn($uri);
+
+        $client = $this->createMock(ClientInterface::class);
+        $client->expects($this->once())
+            ->method('acceptResponse')
+            ->with($this->callback(function ($response) {
+                return $response instanceof RedirectResponse
+                    && $response->getStatusCode() === 302;
+            }));
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('stop');
+
+        $this->assertInstanceOf(
+            HostnameRedirectionMiddleware::class,
+            $this->hostnameRedirectionMiddleware->execute(
+                $client,
+                $request,
+                $manager,
             ),
         );
     }

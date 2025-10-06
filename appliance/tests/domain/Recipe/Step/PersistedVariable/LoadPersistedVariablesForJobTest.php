@@ -29,11 +29,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Loader\AccountPersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
+use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
+use Teknoo\Space\Object\Persisted\ProjectMetadata;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Recipe\Step\PersistedVariable\LoadPersistedVariablesForJob;
 
 /**
@@ -75,5 +79,232 @@ class LoadPersistedVariablesForJobTest extends TestCase
                 $this->createMock(NewJob::class),
             )
         );
+    }
+
+    public function testInvokeWithAccountPersistedVariables(): void
+    {
+        $account = $this->createMock(Account::class);
+        $project = $this->createMock(Project::class);
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->any())
+            ->method('getAccount')
+            ->willReturn($account);
+        $spaceProject->project = $project;
+        $spaceProject->projectMetadata = null;
+
+        $newJob = new NewJob();
+
+        $apv1 = $this->createMock(AccountPersistedVariable::class);
+        $apv1->expects($this->any())->method('getId')->willReturn('apv1-id');
+        $apv1->expects($this->any())->method('getName')->willReturn('APV_VAR1');
+        $apv1->expects($this->any())->method('getValue')->willReturn('apv-value1');
+        $apv1->expects($this->any())->method('getEnvName')->willReturn('prod');
+        $apv1->expects($this->any())->method('isSecret')->willReturn(false);
+        $apv1->expects($this->any())->method('getEncryptionAlgorithm')->willReturn(null);
+
+        $apv2 = $this->createMock(AccountPersistedVariable::class);
+        $apv2->expects($this->any())->method('getId')->willReturn('apv2-id');
+        $apv2->expects($this->any())->method('getName')->willReturn('APV_SECRET');
+        $apv2->expects($this->any())->method('getValue')->willReturn('secret-value');
+        $apv2->expects($this->any())->method('getEnvName')->willReturn('prod');
+        $apv2->expects($this->any())->method('isSecret')->willReturn(true);
+        $apv2->expects($this->any())->method('getEncryptionAlgorithm')->willReturn('aes-256');
+
+        $this->loaderAccountPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) use ($apv1, $apv2) {
+                $promise->success([$apv1, $apv2]);
+                return $this->loaderAccountPV;
+            });
+
+        $this->loaderPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success([]);
+                return $this->loaderPV;
+            });
+
+        $result = ($this->loadPersistedVariablesForJob)(
+            $this->createMock(ManagerInterface::class),
+            $spaceProject,
+            $newJob,
+        );
+
+        $this->assertInstanceOf(LoadPersistedVariablesForJob::class, $result);
+        $this->assertEquals('prod', $newJob->envName);
+        $this->assertArrayHasKey('APV_VAR1', $newJob->variables);
+        $this->assertArrayHasKey('APV_SECRET', $newJob->variables);
+        $this->assertEquals('apv-value1', $newJob->variables['APV_VAR1']->value);
+        $this->assertFalse($newJob->variables['APV_VAR1']->secret);
+        $this->assertFalse($newJob->variables['APV_VAR1']->canPersist);
+        $this->assertTrue($newJob->variables['APV_SECRET']->secret);
+        $this->assertEquals('aes-256', $newJob->variables['APV_SECRET']->encryptionAlgorithm);
+    }
+
+    public function testInvokeWithProjectPersistedVariables(): void
+    {
+        $account = $this->createMock(Account::class);
+        $project = $this->createMock(Project::class);
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->any())
+            ->method('getAccount')
+            ->willReturn($account);
+        $spaceProject->project = $project;
+        $spaceProject->projectMetadata = null;
+
+        $newJob = new NewJob();
+
+        $ppv1 = $this->createMock(ProjectPersistedVariable::class);
+        $ppv1->expects($this->any())->method('getId')->willReturn('ppv1-id');
+        $ppv1->expects($this->any())->method('getName')->willReturn('PPV_VAR1');
+        $ppv1->expects($this->any())->method('getValue')->willReturn('ppv-value1');
+        $ppv1->expects($this->any())->method('getEnvName')->willReturn('staging');
+        $ppv1->expects($this->any())->method('isSecret')->willReturn(false);
+        $ppv1->expects($this->any())->method('getEncryptionAlgorithm')->willReturn(null);
+
+        $this->loaderAccountPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success([]);
+                return $this->loaderAccountPV;
+            });
+
+        $this->loaderPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) use ($ppv1) {
+                $promise->success([$ppv1]);
+                return $this->loaderPV;
+            });
+
+        $result = ($this->loadPersistedVariablesForJob)(
+            $this->createMock(ManagerInterface::class),
+            $spaceProject,
+            $newJob,
+        );
+
+        $this->assertInstanceOf(LoadPersistedVariablesForJob::class, $result);
+        $this->assertEquals('staging', $newJob->envName);
+        $this->assertArrayHasKey('PPV_VAR1', $newJob->variables);
+        $this->assertEquals('ppv-value1', $newJob->variables['PPV_VAR1']->value);
+        $this->assertTrue($newJob->variables['PPV_VAR1']->canPersist);
+    }
+
+    public function testInvokeWithProjectMetadataAndProjectUrl(): void
+    {
+        $account = $this->createMock(Account::class);
+        $project = $this->createMock(Project::class);
+
+        $projectMetadata = $this->createMock(ProjectMetadata::class);
+        $projectMetadata->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($callbacks) use ($projectMetadata) {
+                if (isset($callbacks['projectUrl'])) {
+                    $callbacks['projectUrl']('https://example.com/project');
+                }
+                return $projectMetadata;
+            });
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->any())
+            ->method('getAccount')
+            ->willReturn($account);
+        $spaceProject->project = $project;
+        $spaceProject->projectMetadata = $projectMetadata;
+
+        $newJob = new NewJob();
+
+        $this->loaderAccountPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success([]);
+                return $this->loaderAccountPV;
+            });
+
+        $this->loaderPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success([]);
+                return $this->loaderPV;
+            });
+
+        $result = ($this->loadPersistedVariablesForJob)(
+            $this->createMock(ManagerInterface::class),
+            $spaceProject,
+            $newJob,
+        );
+
+        $this->assertInstanceOf(LoadPersistedVariablesForJob::class, $result);
+        $this->assertArrayHasKey('PROJECT_URL', $newJob->variables);
+        $this->assertEquals('https://example.com/project', $newJob->variables['PROJECT_URL']->value);
+        $this->assertFalse($newJob->variables['PROJECT_URL']->persisted);
+    }
+
+    public function testInvokeWithMixedVariables(): void
+    {
+        $account = $this->createMock(Account::class);
+        $project = $this->createMock(Project::class);
+
+        $projectMetadata = $this->createMock(ProjectMetadata::class);
+        $projectMetadata->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($callbacks) use ($projectMetadata) {
+                if (isset($callbacks['projectUrl'])) {
+                    $callbacks['projectUrl']('https://example.com/mixed');
+                }
+                return $projectMetadata;
+            });
+
+        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject->expects($this->any())
+            ->method('getAccount')
+            ->willReturn($account);
+        $spaceProject->project = $project;
+        $spaceProject->projectMetadata = $projectMetadata;
+
+        $newJob = new NewJob();
+
+        $apv = $this->createMock(AccountPersistedVariable::class);
+        $apv->expects($this->any())->method('getId')->willReturn('apv-id');
+        $apv->expects($this->any())->method('getName')->willReturn('ACCOUNT_VAR');
+        $apv->expects($this->any())->method('getValue')->willReturn('account-val');
+        $apv->expects($this->any())->method('getEnvName')->willReturn('dev');
+        $apv->expects($this->any())->method('isSecret')->willReturn(true);
+        $apv->expects($this->any())->method('getEncryptionAlgorithm')->willReturn('rsa');
+
+        $ppv = $this->createMock(ProjectPersistedVariable::class);
+        $ppv->expects($this->any())->method('getId')->willReturn('ppv-id');
+        $ppv->expects($this->any())->method('getName')->willReturn('PROJECT_VAR');
+        $ppv->expects($this->any())->method('getValue')->willReturn('project-val');
+        $ppv->expects($this->any())->method('getEnvName')->willReturn('dev');
+        $ppv->expects($this->any())->method('isSecret')->willReturn(false);
+        $ppv->expects($this->any())->method('getEncryptionAlgorithm')->willReturn(null);
+
+        $this->loaderAccountPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) use ($apv) {
+                $promise->success([$apv]);
+                return $this->loaderAccountPV;
+            });
+
+        $this->loaderPV->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(function ($query, $promise) use ($ppv) {
+                $promise->success([$ppv]);
+                return $this->loaderPV;
+            });
+
+        $result = ($this->loadPersistedVariablesForJob)(
+            $this->createMock(ManagerInterface::class),
+            $spaceProject,
+            $newJob,
+        );
+
+        $this->assertInstanceOf(LoadPersistedVariablesForJob::class, $result);
+        $this->assertEquals('dev', $newJob->envName);
+        $this->assertArrayHasKey('ACCOUNT_VAR', $newJob->variables);
+        $this->assertArrayHasKey('PROJECT_VAR', $newJob->variables);
+        $this->assertArrayHasKey('PROJECT_URL', $newJob->variables);
+        $this->assertFalse($newJob->variables['ACCOUNT_VAR']->canPersist);
+        $this->assertTrue($newJob->variables['PROJECT_VAR']->canPersist);
     }
 }
