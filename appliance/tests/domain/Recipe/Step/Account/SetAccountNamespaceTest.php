@@ -28,10 +28,13 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Common\Contracts\Object\SluggableInterface;
 use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
 
 /**
@@ -70,11 +73,76 @@ class SetAccountNamespaceTest extends TestCase
 
     public function testInvoke(): void
     {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-999');
+
+        $account->expects($this->any())
+            ->method('namespaceIsItDefined')
+            ->willReturnCallback(
+                function (PromiseInterface $promise) use ($account) {
+                    $promise->success('foo');
+
+                    return $account;
+                }
+            );
+
+        $account->expects($this->once())
+            ->method('setNamespace')
+            ->with('foo-1')
+            ->willReturnSelf();
+
+        $this->findSlugService
+            ->expects($this->once())
+            ->method('process')
+            ->willReturnCallback(
+                function (
+                    LoaderInterface $loader,
+                    string $slugField,
+                    SluggableInterface $sluggable,
+                    array $parts,
+                    string $glue = '-'
+                ) {
+                    $this->assertInstanceOf(AccountLoader::class, $loader);
+                    $this->assertEquals('namespace', $slugField);
+
+                    $this->assertEquals(
+                        ['foo'],
+                        $parts,
+                    );
+
+                    $this->assertEquals(
+                        'account-999',
+                        $sluggable->getId(),
+                    );
+
+                    $this->assertSame(
+                        $sluggable,
+                        $sluggable->prepareSlugNear(
+                            $loader,
+                            $this->findSlugService,
+                            'namespace'
+                        )
+                    );
+
+                    $sluggable->setSlug('foo-1');
+
+                    return $this->findSlugService;
+                }
+            );
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['accountNamespace' => 'foo-1'])
+            ->willReturnSelf();
+
         $this->assertInstanceOf(
             SetAccountNamespace::class,
             ($this->setAccountNamespace)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $manager,
+                $account,
             ),
         );
     }

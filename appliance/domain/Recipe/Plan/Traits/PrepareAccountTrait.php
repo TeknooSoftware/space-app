@@ -30,7 +30,6 @@ use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
 use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\Stop;
-use Teknoo\Recipe\Bowl\BowlInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Recipe\Value;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
@@ -39,8 +38,6 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
-
-use function is_callable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -84,10 +81,6 @@ trait PrepareAccountTrait
 
         if (isset($this->loadAccountClusters) && $this->loadAccountClusters instanceof LoadAccountClusters) {
             $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 60);
-        }
-
-        if (!isset($this->jumpIf) || !isset($this->render)) {
-            return $recipe;
         }
 
         $recipe = $recipe->cook(

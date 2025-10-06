@@ -25,13 +25,17 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountHistory;
 
+use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\History;
 use Teknoo\Space\Loader\AccountHistoryLoader;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 
@@ -69,10 +73,143 @@ class LoadHistoryTest extends TestCase
         $this->assertInstanceOf(
             LoadHistory::class,
             ($this->loadHistory)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
-                $this->createMock(ParametersBag::class),
+                manager: $this->createMock(ManagerInterface::class),
+                accountInstance: $this->createMock(Account::class),
+                bag: $this->createMock(ParametersBag::class),
             ),
         );
+    }
+
+    public function testInvokeWithSuccessfulLoad(): void
+    {
+        $account = $this->createMock(Account::class);
+        $history = $this->createMock(History::class);
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('passMeYouHistory')
+            ->willReturnCallback(function ($callback) use ($history, $accountHistory) {
+                $callback($history);
+                return $accountHistory;
+            });
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->exactly(2))
+            ->method('set')
+            ->willReturnCallback(function ($key, $value) use ($accountHistory, $history, $bag) {
+                $this->assertContains($key, ['accountHistory', 'accountHistoryRoot']);
+                if ($key === 'accountHistory') {
+                    $this->assertSame($accountHistory, $value);
+                } elseif ($key === 'accountHistoryRoot') {
+                    $this->assertSame($history, $value);
+                }
+                return $bag;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($accountHistory) {
+                    return isset($workplan[AccountHistory::class])
+                        && $workplan[AccountHistory::class] === $accountHistory;
+                })
+            );
+
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($accountHistory) {
+                $promise->success($accountHistory);
+                return $this->loader;
+            });
+
+        $this->writer->expects($this->never())
+            ->method('save');
+
+        $result = ($this->loadHistory)(
+            manager: $manager,
+            accountInstance: $account,
+            bag: $bag,
+        );
+
+        $this->assertInstanceOf(LoadHistory::class, $result);
+    }
+
+    public function testInvokeWithNonDomainExceptionPassesErrorToManager(): void
+    {
+        $account = $this->createMock(Account::class);
+        $exception = new RuntimeException('Some error');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->never())
+            ->method('set');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($exception);
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
+
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($exception) {
+                $promise->fail($exception);
+                return $this->loader;
+            });
+
+        $this->writer->expects($this->never())
+            ->method('save');
+
+        $result = ($this->loadHistory)(
+            manager: $manager,
+            accountInstance: $account,
+            bag: $bag,
+        );
+
+        $this->assertInstanceOf(LoadHistory::class, $result);
+    }
+
+    public function testInvokeWithDomainExceptionCreatesNewHistory(): void
+    {
+        $account = $this->createMock(Account::class);
+        $exception = new DomainException('Account history not found');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('accountHistory', $this->isInstanceOf(AccountHistory::class))
+            ->willReturn($bag);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan[AccountHistory::class])
+                        && $workplan[AccountHistory::class] instanceof AccountHistory;
+                })
+            );
+
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($exception) {
+                $promise->fail($exception);
+                return $this->loader;
+            });
+
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->with($this->isInstanceOf(AccountHistory::class))
+            ->willReturn($this->writer);
+
+        $result = ($this->loadHistory)(
+            manager: $manager,
+            accountInstance: $account,
+            bag: $bag,
+        );
+
+        $this->assertInstanceOf(LoadHistory::class, $result);
     }
 }

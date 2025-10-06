@@ -28,10 +28,12 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 
 /**
  * Class SpaceProjectTest.
@@ -99,5 +101,60 @@ class SpaceProjectTest extends TestCase
             'foo',
             (string) $this->spaceProject,
         );
+    }
+
+    public function testConstructorWithAccount(): void
+    {
+        $account = $this->createMock(Account::class);
+        $spaceProject = new SpaceProject($account);
+
+        $this->assertInstanceOf(Project::class, $spaceProject->project);
+    }
+
+    public function testConstructorWithAllParameters(): void
+    {
+        $variables = [$this->createMock(ProjectPersistedVariable::class)];
+        $spaceProject = new SpaceProject(
+            $this->project,
+            $this->projectMetadata,
+            $variables,
+            'clusterName',
+            'clusterEnv'
+        );
+
+        $this->assertSame($this->project, $spaceProject->project);
+        $this->assertSame($this->projectMetadata, $spaceProject->projectMetadata);
+        $this->assertSame($variables, $spaceProject->variables);
+        $this->assertEquals('clusterName', $spaceProject->addClusterName);
+        $this->assertEquals('clusterEnv', $spaceProject->addClusterEnv);
+    }
+
+    public function testExportToMeData(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray())
+            ->willReturnSelf();
+
+        $result = $this->spaceProject->exportToMeData($normalizer);
+
+        $this->assertInstanceOf(SpaceProject::class, $result);
+        $this->assertSame($this->spaceProject, $result);
+    }
+
+    public function testExportToMeDataWithContext(): void
+    {
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with($this->isArray())
+            ->willReturnSelf();
+
+        $context = ['groups' => ['api', 'crud']];
+        $result = $this->spaceProject->exportToMeData($normalizer, $context);
+
+        $this->assertInstanceOf(SpaceProject::class, $result);
+        $this->assertSame($this->spaceProject, $result);
     }
 }

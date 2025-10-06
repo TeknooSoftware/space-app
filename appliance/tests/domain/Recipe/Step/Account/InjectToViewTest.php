@@ -69,4 +69,150 @@ class InjectToViewTest extends TestCase
             )
         );
     }
+
+    public function testInvokeWithSpaceAccountOnly(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn('account-123');
+
+        $spaceAccount = new SpaceAccount($account);
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('spaceAccount', $spaceAccount);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('updateWorkPlan');
+
+        $this->assertInstanceOf(
+            InjectToView::class,
+            ($this->InjectToView)(
+                manager: $manager,
+                bag: $bag,
+                spaceAccount: $spaceAccount,
+            )
+        );
+    }
+
+    public function testInvokeWithAccountOnly(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn('account-456');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('account', $account);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('updateWorkPlan');
+
+        $this->assertInstanceOf(
+            InjectToView::class,
+            ($this->InjectToView)(
+                manager: $manager,
+                bag: $bag,
+                account: $account,
+            )
+        );
+    }
+
+    public function testInvokeWithNullAccounts(): void
+    {
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->never())->method('set');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('updateWorkPlan');
+
+        $this->assertInstanceOf(
+            InjectToView::class,
+            ($this->InjectToView)(
+                manager: $manager,
+                bag: $bag,
+                spaceAccount: null,
+                account: null,
+            )
+        );
+    }
+
+    public function testInvokeWithAllowAccountSelection(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-789');
+
+        $spaceAccount = new SpaceAccount($account);
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->exactly(2))
+            ->method('set')
+            ->willReturnCallback(function ($key, $value) use ($spaceAccount, $account, $bag) {
+                $this->assertTrue(
+                    ('spaceAccount' === $key && $value === $spaceAccount) ||
+                    ('account' === $key && $value === $account)
+                );
+                return $bag;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['parameters'])
+                        && isset($workplan['parameters']['accountId'])
+                        && 'account-789' === $workplan['parameters']['accountId'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            InjectToView::class,
+            ($this->InjectToView)(
+                manager: $manager,
+                bag: $bag,
+                spaceAccount: $spaceAccount,
+                account: $account,
+                allowAccountSelection: true,
+            )
+        );
+    }
+
+    public function testInvokeWithCustomParameters(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-999');
+
+        $bag = $this->createMock(ParametersBag::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['parameters'])
+                        && 'account-999' === $workplan['parameters']['accountId']
+                        && 'value' === $workplan['parameters']['custom'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            InjectToView::class,
+            ($this->InjectToView)(
+                manager: $manager,
+                bag: $bag,
+                account: $account,
+                allowAccountSelection: true,
+                parameters: ['custom' => 'value'],
+            )
+        );
+    }
 }

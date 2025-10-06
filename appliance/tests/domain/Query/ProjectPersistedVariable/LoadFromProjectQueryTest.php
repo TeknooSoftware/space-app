@@ -23,28 +23,31 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
+namespace Teknoo\Space\Tests\Unit\Query\ProjectPersistedVariable;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Recipe\Step\Job\ExtractProject;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery;
 
 /**
- * Class ExtractProjectTest.
+ * Class LoadFromProjectQueryTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(ExtractProject::class)]
-class ExtractProjectTest extends TestCase
+#[CoversClass(LoadFromProjectQuery::class)]
+class LoadFromProjectQueryTest extends TestCase
 {
-    private ExtractProject $extractProject;
+    private LoadFromProjectQuery $loadFromProjectQuery;
+
+    private Project&MockObject $project;
 
     /**
      * {@inheritdoc}
@@ -53,45 +56,36 @@ class ExtractProjectTest extends TestCase
     {
         parent::setUp();
 
-
-        $this->extractProject = new ExtractProject();
+        $this->project = $this->createMock(Project::class);
+        $this->loadFromProjectQuery = new LoadFromProjectQuery($this->project);
     }
 
-    public function testInvoke(): void
+    public function testConstruct(): void
     {
         $this->assertInstanceOf(
-            ExtractProject::class,
-            ($this->extractProject)(
-                manager: $this->createMock(ManagerInterface::class),
-                job: $this->createMock(Job::class),
-            )
+            LoadFromProjectQuery::class,
+            $this->loadFromProjectQuery
         );
     }
 
-    public function testInvokeWithProjectExtraction(): void
+    public function testExecute(): void
     {
-        $project = $this->createMock(Project::class);
+        $loader = $this->createMock(LoaderInterface::class);
+        $repository = $this->createMock(RepositoryInterface::class);
+        $promise = $this->createMock(PromiseInterface::class);
 
-        $job = $this->createMock(Job::class);
-        $job->expects($this->once())
-            ->method('getProject')
-            ->willReturn($project);
-
-        $manager = $this->createMock(ManagerInterface::class);
-        $manager->expects($this->once())
-            ->method('updateWorkPlan')
+        $repository->expects($this->once())
+            ->method('findBy')
             ->with(
-                $this->callback(function ($workplan) use ($project) {
-                    return isset($workplan[Project::class])
-                        && $workplan[Project::class] === $project;
-                })
+                $this->callback(
+                    static fn (array $criteria) => isset($criteria['project']),
+                ),
+                $promise
             );
 
-        $result = ($this->extractProject)(
-            manager: $manager,
-            job: $job,
+        $this->assertInstanceOf(
+            LoadFromProjectQuery::class,
+            $this->loadFromProjectQuery->execute($loader, $repository, $promise)
         );
-
-        $this->assertInstanceOf(ExtractProject::class, $result);
     }
 }

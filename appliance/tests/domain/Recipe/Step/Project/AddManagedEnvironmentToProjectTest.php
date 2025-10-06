@@ -29,6 +29,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\Kubernetes\Client;
+use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
@@ -72,6 +74,271 @@ class AddManagedEnvironmentToProjectTest extends TestCase
                 new SpaceProject($this->createMock(Project::class)),
                 $wallet,
                 $this->createMock(ClusterCatalog::class),
+            )
+        );
+    }
+
+    public function testInvokeWithOnlyClusterName(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($this->callback(fn ($e) => $e instanceof \LogicException));
+
+        $wallet = new AccountWallet([]);
+        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject->addClusterName = 'cluster1';
+
+        $this->assertInstanceOf(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $manager,
+                $spaceProject,
+                $wallet,
+                $this->createMock(ClusterCatalog::class),
+            )
+        );
+    }
+
+    public function testInvokeWithOnlyClusterEnv(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($this->callback(fn ($e) => $e instanceof \LogicException));
+
+        $wallet = new AccountWallet([]);
+        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject->addClusterEnv = 'prod';
+
+        $this->assertInstanceOf(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $manager,
+                $spaceProject,
+                $wallet,
+                $this->createMock(ClusterCatalog::class),
+            )
+        );
+    }
+
+    public function testInvokeWithAccountEnvNotFound(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($this->callback(fn ($e) => $e instanceof \DomainException));
+
+        $wallet = new AccountWallet([]);
+        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject->addClusterName = 'cluster1';
+        $spaceProject->addClusterEnv = 'prod';
+
+        $this->assertInstanceOf(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $manager,
+                $spaceProject,
+                $wallet,
+                $this->createMock(ClusterCatalog::class),
+            )
+        );
+    }
+
+    public function testInvokeWithClusterAdditionSuccess(): void
+    {
+        $accountEnv = $this->createMock(AccountEnvironment::class);
+        $accountEnv->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+        $accountEnv->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $accountEnv->expects($this->any())
+            ->method('getNamespace')
+            ->willReturn('namespace1');
+        $accountEnv->expects($this->any())
+            ->method('getCaCertificate')
+            ->willReturn('ca-cert');
+        $accountEnv->expects($this->any())
+            ->method('getClientCertificate')
+            ->willReturn('client-cert');
+        $accountEnv->expects($this->any())
+            ->method('getClientKey')
+            ->willReturn('client-key');
+        $accountEnv->expects($this->any())
+            ->method('getToken')
+            ->willReturn('token');
+
+        $wallet = new AccountWallet([$accountEnv]);
+
+        $clusterConfig = new Cluster(
+            name: 'cluster1',
+            sluggyName: 'cluster1',
+            type: 'kubernetes',
+            masterAddress: 'https://cluster.example.com',
+            storageProvisioner: 'standard',
+            dashboardAddress: '',
+            kubernetesClient: fn () => $this->createMock(Client::class),
+            token: '',
+            supportRegistry: false,
+            useHnc: false,
+            isExternal: false,
+        );
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with('cluster1')
+            ->willReturn($clusterConfig);
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('visit')
+            ->with('clusters', $this->isCallable())
+            ->willReturnCallback(
+                function ($visitors, $callable) use ($project) {
+                    $callable([]);
+
+                    return $project;
+                }
+            );
+        $project->expects($this->once())
+            ->method('setClusters')
+            ->with($this->isArray());
+
+        $spaceProject = new SpaceProject($project);
+        $spaceProject->addClusterName = 'cluster1';
+        $spaceProject->addClusterEnv = 'prod';
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+
+        $this->assertInstanceOf(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $manager,
+                $spaceProject,
+                $wallet,
+                $clusterCatalog,
+            )
+        );
+    }
+
+    public function testInvokeWithClusterAdditionSuccessWithIterator(): void
+    {
+        $accountEnv = $this->createMock(AccountEnvironment::class);
+        $accountEnv->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+        $accountEnv->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $accountEnv->expects($this->any())
+            ->method('getNamespace')
+            ->willReturn('namespace1');
+        $accountEnv->expects($this->any())
+            ->method('getCaCertificate')
+            ->willReturn('ca-cert');
+        $accountEnv->expects($this->any())
+            ->method('getClientCertificate')
+            ->willReturn('client-cert');
+        $accountEnv->expects($this->any())
+            ->method('getClientKey')
+            ->willReturn('client-key');
+        $accountEnv->expects($this->any())
+            ->method('getToken')
+            ->willReturn('token');
+
+        $wallet = new AccountWallet([$accountEnv]);
+
+        $clusterConfig = new Cluster(
+            name: 'cluster1',
+            sluggyName: 'cluster1',
+            type: 'kubernetes',
+            masterAddress: 'https://cluster.example.com',
+            storageProvisioner: 'standard',
+            dashboardAddress: '',
+            kubernetesClient: fn () => $this->createMock(Client::class),
+            token: '',
+            supportRegistry: false,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with('cluster1')
+            ->willReturn($clusterConfig);
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('visit')
+            ->with('clusters', $this->isCallable())
+            ->willReturnCallback(function ($visitors, $callable) use ($project) {
+                $callable(new \ArrayIterator([]));
+
+                return $project;
+            });
+        $project->expects($this->once())
+            ->method('setClusters')
+            ->with($this->isArray());
+
+        $spaceProject = new SpaceProject($project);
+        $spaceProject->addClusterName = 'cluster1';
+        $spaceProject->addClusterEnv = 'prod';
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+
+        $this->assertInstanceOf(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $manager,
+                $spaceProject,
+                $wallet,
+                $clusterCatalog,
+            )
+        );
+    }
+
+    public function testInvokeWithException(): void
+    {
+        $accountEnv = $this->createMock(AccountEnvironment::class);
+        $accountEnv->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+        $accountEnv->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+
+        $wallet = new AccountWallet([$accountEnv]);
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with('cluster1')
+            ->willThrowException(new \RuntimeException('Test error'));
+
+        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject->addClusterName = 'cluster1';
+        $spaceProject->addClusterEnv = 'prod';
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($this->isInstanceOf(\Throwable::class));
+
+        $this->assertInstanceOf(
+            AddManagedEnvironmentToProject::class,
+            ($this->addManagedEnvironmentToProject)(
+                $manager,
+                $spaceProject,
+                $wallet,
+                $clusterCatalog,
             )
         );
     }

@@ -2,6 +2,12 @@
 
 ## [2.0.0-RC4] - 2025-09-11
 ### RC Release
+- Fix some issues detected from tests
+- Complete coverage on unit tests on Domain
+- Update libs and Symfony
+
+## [2.0.0-RC4] - 2025-09-11
+### RC Release
 - Fix PHPStan issues
 
 ## [2.0.0-RC3] - 2025-09-10

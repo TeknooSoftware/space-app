@@ -65,5 +65,16 @@ class JobVarsSetTest extends TestCase
             JobVarsSet::class,
             $this->jobVarsSet,
         );
+
+        $this->assertEquals('42', $this->jobVarsSet->envName);
+        $this->assertEquals([], $this->jobVarsSet->variables);
+    }
+
+    public function testConstructWithDefaultValues(): void
+    {
+        $jobVarsSet = new JobVarsSet();
+        $this->assertInstanceOf(JobVarsSet::class, $jobVarsSet);
+        $this->assertEquals('', $jobVarsSet->envName);
+        $this->assertEquals([], $jobVarsSet->variables);
     }
 }

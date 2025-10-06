@@ -28,6 +28,8 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\GitRepository;
+use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\Project\PrepareProject;
@@ -57,12 +59,34 @@ class PrepareProjectTest extends TestCase
 
     public function testInvoke(): void
     {
+        $accountRegistry = $this->createMock(AccountRegistry::class);
+        $accountRegistry->expects($this->any())
+            ->method('getRegistryUrl')
+            ->willReturn('https://registry.example.com');
+        $accountRegistry->expects($this->once())
+            ->method('getRegistryAccountName')
+            ->willReturn('account-name');
+        $accountRegistry->expects($this->once())
+            ->method('getRegistryPassword')
+            ->willReturn('password');
+        $accountRegistry->expects($this->once())
+            ->method('getRegistryConfigName')
+            ->willReturn('config-name');
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('setSourceRepository')
+            ->with($this->isInstanceOf(GitRepository::class));
+        $project->expects($this->once())
+            ->method('setImagesRegistry')
+            ->with($this->isInstanceOf(ImageRegistry::class));
+
         $this->assertInstanceOf(
             PrepareProject::class,
             ($this->prepareProject)(
                 manager: $this->createMock(ManagerInterface::class),
-                projectInstance: $this->createMock(Project::class),
-                accountRegistry: $this->createMock(AccountRegistry::class),
+                projectInstance: $project,
+                accountRegistry: $accountRegistry,
             ),
         );
     }

@@ -60,15 +60,53 @@ class LoadFromAccountQueryTest extends TestCase
         $this->loadFromAccountQuery = new LoadFromAccountQuery($this->account);
     }
 
-    public function testFetch(): void
+    public function testConstruct(): void
     {
         $this->assertInstanceOf(
             LoadFromAccountQuery::class,
-            $this->loadFromAccountQuery->fetch(
-                $this->createMock(LoaderInterface::class),
-                $this->createMock(RepositoryInterface::class),
-                $this->createMock(PromiseInterface::class),
-            )
+            $this->loadFromAccountQuery
+        );
+    }
+
+    public function testFetch(): void
+    {
+        $loader = $this->createMock(LoaderInterface::class);
+        $repository = $this->createMock(RepositoryInterface::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $repository->expects($this->once())
+            ->method('findOneBy')
+            ->with(
+                $this->callback(
+                    static fn (array $criteria): bool => isset($criteria['account']),
+                ),
+                $promise
+            );
+
+        $this->assertInstanceOf(
+            LoadFromAccountQuery::class,
+            $this->loadFromAccountQuery->fetch($loader, $repository, $promise)
+        );
+    }
+
+    public function testExecute(): void
+    {
+        $loader = $this->createMock(LoaderInterface::class);
+        $repository = $this->createMock(RepositoryInterface::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $repository->expects($this->once())
+            ->method('findBy')
+            ->with(
+                $this->callback(
+                    static fn (array $criteria): bool => isset($criteria['account']),
+                ),
+                $promise
+            );
+
+        $this->assertInstanceOf(
+            LoadFromAccountQuery::class,
+            $this->loadFromAccountQuery->execute($loader, $repository, $promise)
         );
     }
 }

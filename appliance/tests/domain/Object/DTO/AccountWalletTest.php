@@ -27,6 +27,8 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Paas\Object\Cluster;
+use Teknoo\East\Paas\Object\Environment;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
@@ -60,5 +62,128 @@ class AccountWalletTest extends TestCase
             AccountWallet::class,
             $this->accountWallet,
         );
+    }
+
+    public function testGetIterator(): void
+    {
+        $env1 = $this->createMock(AccountEnvironment::class);
+        $env2 = $this->createMock(AccountEnvironment::class);
+
+        $wallet = new AccountWallet([$env1, $env2]);
+
+        $result = iterator_to_array($wallet);
+        $this->assertCount(2, $result);
+        $this->assertSame($env1, $result[0]);
+        $this->assertSame($env2, $result[1]);
+    }
+
+    public function testGetWithStringFound(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $env->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+
+        $wallet = new AccountWallet([$env]);
+
+        $this->assertSame($env, $wallet->get('cluster1', 'prod'));
+    }
+
+    public function testGetWithObjectsFound(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $env->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+
+        $cluster = $this->createMock(Cluster::class);
+        $cluster->expects($this->any())
+            ->method('__toString')
+            ->willReturn('cluster1');
+
+        $environment = $this->createMock(Environment::class);
+        $environment->expects($this->any())
+            ->method('__toString')
+            ->willReturn('prod');
+
+        $wallet = new AccountWallet([$env]);
+
+        $this->assertSame($env, $wallet->get($cluster, $environment));
+    }
+
+    public function testGetNotFound(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $env->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+
+        $wallet = new AccountWallet([$env]);
+
+        $this->assertNull($wallet->get('cluster2', 'dev'));
+    }
+
+    public function testHasFound(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $env->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+
+        $wallet = new AccountWallet([$env]);
+
+        $this->assertTrue($wallet->has('cluster1', 'prod'));
+    }
+
+    public function testHasNotFound(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $env->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+
+        $wallet = new AccountWallet([$env]);
+
+        $this->assertFalse($wallet->has('cluster2', 'dev'));
+    }
+
+    public function testHasWithObjects(): void
+    {
+        $env = $this->createMock(AccountEnvironment::class);
+        $env->expects($this->any())
+            ->method('getClusterName')
+            ->willReturn('cluster1');
+        $env->expects($this->any())
+            ->method('getEnvName')
+            ->willReturn('prod');
+
+        $cluster = $this->createMock(Cluster::class);
+        $cluster->expects($this->any())
+            ->method('__toString')
+            ->willReturn('cluster1');
+
+        $environment = $this->createMock(Environment::class);
+        $environment->expects($this->any())
+            ->method('__toString')
+            ->willReturn('prod');
+
+        $wallet = new AccountWallet([$env]);
+
+        $this->assertTrue($wallet->has($cluster, $environment));
     }
 }

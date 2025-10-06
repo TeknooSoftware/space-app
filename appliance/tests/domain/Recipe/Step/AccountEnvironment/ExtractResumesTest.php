@@ -32,6 +32,8 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ExtractResumes;
 
+use function array_key_exists;
+
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -59,6 +61,80 @@ class ExtractResumesTest extends TestCase
             ExtractResumes::class,
             ($this->extractResumes)(
                 $this->createMock(ManagerInterface::class),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithUpdateWorkPlan(): void
+    {
+        $environments = [(object)['id' => '1'], (object)['id' => '2']];
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($environments) {
+                    return isset($workplan['accountEnvsResumes'])
+                        && $workplan['accountEnvsResumes'] === $environments;
+                })
+            );
+
+        $this->assertInstanceOf(
+            ExtractResumes::class,
+            ($this->extractResumes)(
+                $manager,
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: $environments
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithNullEnvironments(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return array_key_exists('accountEnvsResumes', $workplan)
+                        && null === $workplan['accountEnvsResumes'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            ExtractResumes::class,
+            ($this->extractResumes)(
+                $manager,
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: null
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithEmptyEnvironments(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['accountEnvsResumes'])
+                        && [] === $workplan['accountEnvsResumes'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            ExtractResumes::class,
+            ($this->extractResumes)(
+                $manager,
                 new SpaceAccount(
                     account: $this->createMock(Account::class),
                     environments: []

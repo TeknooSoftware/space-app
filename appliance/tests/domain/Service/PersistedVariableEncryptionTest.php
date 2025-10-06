@@ -92,4 +92,144 @@ class PersistedVariableEncryptionTest extends TestCase
             ),
         );
     }
+
+    public function testConstructWithNullService(): void
+    {
+        $service = new PersistedVariableEncryption(null, false);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $service);
+    }
+
+    public function testEncryptWithNoService(): void
+    {
+        $service = new PersistedVariableEncryption(null, false);
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($variable);
+
+        $result = $service->encrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testEncryptWhenAlreadyEncrypted(): void
+    {
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable->expects($this->once())
+            ->method('isEncrypted')
+            ->willReturn(true);
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($variable);
+
+        $result = $this->persistedVariableEncryption->encrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testEncryptInAgentMode(): void
+    {
+        $this->persistedVariableEncryption->setAgentMode(true);
+
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable->expects($this->once())
+            ->method('isEncrypted')
+            ->willReturn(false);
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->isInstanceOf(\RuntimeException::class));
+
+        $result = $this->persistedVariableEncryption->encrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testEncryptCallsService(): void
+    {
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable->expects($this->once())
+            ->method('isEncrypted')
+            ->willReturn(false);
+
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $this->encryptionInterface->expects($this->once())
+            ->method('encrypt')
+            ->with($variable, $promise, true);
+
+        $result = $this->persistedVariableEncryption->encrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testDecryptWithNoService(): void
+    {
+        $service = new PersistedVariableEncryption(null, true);
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($variable);
+
+        $result = $service->decrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testDecryptWhenMustEncrypt(): void
+    {
+        $this->persistedVariableEncryption->setAgentMode(true);
+
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable->expects($this->once())
+            ->method('mustEncrypt')
+            ->willReturn(true);
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($variable);
+
+        $result = $this->persistedVariableEncryption->decrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testDecryptWhenNotInAgentMode(): void
+    {
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable->expects($this->once())
+            ->method('mustEncrypt')
+            ->willReturn(false);
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->never())
+            ->method('success');
+
+        $this->encryptionInterface->expects($this->never())
+            ->method('decrypt');
+
+        $result = $this->persistedVariableEncryption->decrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
+
+    public function testDecryptCallsService(): void
+    {
+        $this->persistedVariableEncryption->setAgentMode(true);
+
+        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable->expects($this->once())
+            ->method('mustEncrypt')
+            ->willReturn(false);
+
+        $promise = $this->createMock(PromiseInterface::class);
+
+        $this->encryptionInterface->expects($this->once())
+            ->method('decrypt')
+            ->with($variable, $promise, true);
+
+        $result = $this->persistedVariableEncryption->decrypt($variable, $promise);
+        $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
+    }
 }

@@ -85,4 +85,234 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
             ),
         );
     }
+
+    public function testInvokeWithNullAccount(): void
+    {
+        $this->projectLoader->expects($this->never())
+            ->method('fetch');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $this->createMock(ManagerInterface::class),
+                null,
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 5
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithNullPlan(): void
+    {
+        $this->projectLoader->expects($this->never())
+            ->method('fetch');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $this->createMock(ManagerInterface::class),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                null,
+            ),
+        );
+    }
+
+    public function testInvokeWithZeroProjectsAllowed(): void
+    {
+        $this->projectLoader->expects($this->never())
+            ->method('fetch');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $this->createMock(ManagerInterface::class),
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 0
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithAccountDirectly(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success(2);
+
+                return $this->projectLoader;
+            });
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $this->createMock(ManagerInterface::class),
+                $this->createMock(Account::class),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 5
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithSpaceAccountAndProjectsCountBelowLimit(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success(2);
+
+                return $this->projectLoader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $manager,
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 5
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithProjectsCountAtLimit(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success(5);
+
+                return $this->projectLoader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($e) {
+                    return $e instanceof \OverflowException
+                        && 'The plan Foo accepts only 5 projects' === $e->getMessage()
+                        && 400 === $e->getCode();
+                })
+            );
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $manager,
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 5
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithProjectsCountAboveLimit(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) {
+                $promise->success(10);
+
+                return $this->projectLoader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with(
+                $this->callback(function ($e) {
+                    return $e instanceof \OverflowException
+                        && 'The plan Foo accepts only 5 projects' === $e->getMessage();
+                })
+            );
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $manager,
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 5
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithPromiseFailure(): void
+    {
+        $exception = new \RuntimeException('Test error');
+
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($exception) {
+                $promise->fail($exception);
+
+                return $this->projectLoader;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($this->identicalTo($exception));
+
+        $this->assertInstanceOf(
+            CheckingAllowedCountOfProjects::class,
+            ($this->checkingAllowedCountOfProjects)(
+                $manager,
+                new SpaceAccount(
+                    account: $this->createMock(Account::class),
+                    environments: []
+                ),
+                new SubscriptionPlan(
+                    id: 'foo',
+                    name: 'Foo',
+                    quotas: [],
+                    projectsCountAllowed: 5
+                ),
+            ),
+        );
+    }
 }

@@ -29,7 +29,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
+
+use function array_key_exists;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -57,10 +60,69 @@ class FindEnvironmentInWalletTest extends TestCase
         $this->assertInstanceOf(
             FindEnvironmentInWallet::class,
             ($this->extractResumes)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(AccountWallet::class),
-                'foo',
-                'bar',
+                manager: $this->createMock(ManagerInterface::class),
+                wallet: $this->createMock(AccountWallet::class),
+                envName: 'foo',
+                clusterName: 'bar',
+            ),
+        );
+    }
+
+    public function testInvokeWithWalletGetAndUpdateWorkPlan(): void
+    {
+        $environment = $this->createMock(AccountEnvironment::class);
+        $wallet = $this->createMock(AccountWallet::class);
+        $wallet->expects($this->once())
+            ->method('get')
+            ->with('cluster-name', 'env-name')
+            ->willReturn($environment);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) use ($environment) {
+                    return isset($workplan[AccountEnvironment::class])
+                        && $workplan[AccountEnvironment::class] === $environment;
+                })
+            );
+
+        $this->assertInstanceOf(
+            FindEnvironmentInWallet::class,
+            ($this->extractResumes)(
+                manager: $manager,
+                wallet: $wallet,
+                envName: 'env-name',
+                clusterName: 'cluster-name',
+            ),
+        );
+    }
+
+    public function testInvokeWithNullEnvironment(): void
+    {
+        $wallet = $this->createMock(AccountWallet::class);
+        $wallet->expects($this->once())
+            ->method('get')
+            ->with('test-cluster', 'test-env')
+            ->willReturn(null);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return array_key_exists(AccountEnvironment::class, $workplan)
+                        && null === $workplan[AccountEnvironment::class];
+                })
+            );
+
+        $this->assertInstanceOf(
+            FindEnvironmentInWallet::class,
+            ($this->extractResumes)(
+                manager: $manager,
+                wallet: $wallet,
+                envName: 'test-env',
+                clusterName: 'test-cluster',
             ),
         );
     }

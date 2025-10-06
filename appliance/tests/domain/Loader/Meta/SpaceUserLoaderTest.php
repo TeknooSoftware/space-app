@@ -25,15 +25,20 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Loader\Meta;
 
+use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
 use Teknoo\East\Common\Loader\UserLoader;
+use Teknoo\East\Common\Object\User;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Loader\Meta\SpaceUserLoader;
 use Teknoo\Space\Loader\UserDataLoader;
+use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\Persisted\UserData;
+use Throwable;
 
 /**
  * Class SpaceUserLoaderTest.
@@ -69,33 +74,263 @@ class SpaceUserLoaderTest extends TestCase
 
     public function testLoad(): void
     {
+        $this->userLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->success($this->createMock(User::class));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $this->dataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->success($this->createMock(UserData::class));
+
+                    return $this->dataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->isInstanceOf(SpaceUser::class));
+
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->load(
                 'foo',
-                $this->createMock(PromiseInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithUserError(): void
+    {
+        $this->userLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 500));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.fetching'
+                    && $error->getCode() === 500;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserLoader::class,
+            $this->spaceUserLoader->load(
+                'foo',
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithUserErrorDefaultCode(): void
+    {
+        $this->userLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 0));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.fetching'
+                    && $error->getCode() === 404;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserLoader::class,
+            $this->spaceUserLoader->load(
+                'foo',
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithDataError(): void
+    {
+        $this->userLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->success($this->createMock(User::class));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $this->dataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('data error'));
+
+                    return $this->dataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->callback(function (SpaceUser $spaceUser) {
+                return $spaceUser->userData instanceof UserData;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserLoader::class,
+            $this->spaceUserLoader->load(
+                'foo',
+                $promise,
             ),
         );
     }
 
     public function testQuery(): void
     {
+        $user1 = $this->createMock(User::class);
+        $user2 = $this->createMock(User::class);
+
+        $this->userLoader->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) use ($user1, $user2) {
+                    $promise->success([$user1, $user2]);
+
+                    return $this->userLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->callback(function (array $result) {
+                return count($result) === 2
+                    && $result[0] instanceof SpaceUser
+                    && $result[1] instanceof SpaceUser;
+            }));
+
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->query(
                 $this->createMock(QueryCollectionInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $promise,
             ),
         );
     }
 
     public function testFetch(): void
     {
+        $this->userLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->success($this->createMock(User::class));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $this->dataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->success($this->createMock(UserData::class));
+
+                    return $this->dataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->isInstanceOf(SpaceUser::class));
+
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->fetch(
                 $this->createMock(QueryElementInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testFetchWithUserError(): void
+    {
+        $this->userLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 403));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.fetching'
+                    && $error->getCode() === 403;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserLoader::class,
+            $this->spaceUserLoader->fetch(
+                $this->createMock(QueryElementInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testFetchWithUserErrorDefaultCode(): void
+    {
+        $this->userLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 0));
+
+                    return $this->userLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_user.user.fetching'
+                    && $error->getCode() === 404;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceUserLoader::class,
+            $this->spaceUserLoader->fetch(
+                $this->createMock(QueryElementInterface::class),
+                $promise,
             ),
         );
     }

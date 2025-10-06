@@ -65,4 +65,33 @@ class PrepareRedirectionTest extends TestCase
             )
         );
     }
+
+    public function testInvokeWithWorkPlanUpdate(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn('account-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan['id'])
+                        && 'account-123' === $workplan['id']
+                        && isset($workplan['parameters'])
+                        && isset($workplan['parameters']['id'])
+                        && 'account-123' === $workplan['parameters']['id'];
+                })
+            );
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                manager: $manager,
+                accountInstance: $account,
+            )
+        );
+    }
 }

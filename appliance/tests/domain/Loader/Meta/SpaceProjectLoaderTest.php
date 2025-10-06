@@ -25,16 +25,21 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Loader\Meta;
 
+use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
 use Teknoo\East\Paas\Loader\ProjectLoader;
+use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Loader\Meta\SpaceProjectLoader;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
+use Teknoo\Space\Object\DTO\SpaceProject;
+use Teknoo\Space\Object\Persisted\ProjectMetadata;
+use Throwable;
 
 /**
  * Class SpaceProjectLoaderTest.
@@ -74,33 +79,305 @@ class SpaceProjectLoaderTest extends TestCase
 
     public function testLoad(): void
     {
+        $this->projectLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->success($this->createMock(Project::class));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $this->metadataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->success($this->createMock(ProjectMetadata::class));
+
+                    return $this->metadataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->isInstanceOf(SpaceProject::class));
+
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->load(
                 'foo',
-                $this->createMock(PromiseInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithProjectError(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 500));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_project.project.fetching'
+                    && $error->getCode() === 500;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceProjectLoader::class,
+            $this->spaceProjectLoader->load(
+                'foo',
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithProjectErrorDefaultCode(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 0));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_project.project.fetching'
+                    && $error->getCode() === 404;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceProjectLoader::class,
+            $this->spaceProjectLoader->load(
+                'foo',
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithMetadataError(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->success($this->createMock(Project::class));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $this->metadataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('metadata error', 500));
+
+                    return $this->metadataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
+                    && $error->getCode() === 500;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceProjectLoader::class,
+            $this->spaceProjectLoader->load(
+                'foo',
+                $promise,
+            ),
+        );
+    }
+
+    public function testLoadWithMetadataErrorDefaultCode(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) {
+                    $promise->success($this->createMock(Project::class));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $this->metadataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('metadata error', 0));
+
+                    return $this->metadataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
+                    && $error->getCode() === 404;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceProjectLoader::class,
+            $this->spaceProjectLoader->load(
+                'foo',
+                $promise,
             ),
         );
     }
 
     public function testQuery(): void
     {
+        $project1 = $this->createMock(Project::class);
+        $project2 = $this->createMock(Project::class);
+
+        $this->projectLoader->expects($this->once())
+            ->method('query')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) use ($project1, $project2) {
+                    $promise->success([$project1, $project2]);
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->callback(function (array $result) {
+                return count($result) === 2
+                    && $result[0] instanceof SpaceProject
+                    && $result[1] instanceof SpaceProject;
+            }));
+
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->query(
                 $this->createMock(QueryCollectionInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $promise,
             ),
         );
     }
 
     public function testFetch(): void
     {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->success($this->createMock(Project::class));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $this->metadataLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->success($this->createMock(ProjectMetadata::class));
+
+                    return $this->metadataLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->isInstanceOf(SpaceProject::class));
+
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->fetch(
                 $this->createMock(QueryElementInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testFetchWithProjectError(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 403));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
+                    && $error->getCode() === 403;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceProjectLoader::class,
+            $this->spaceProjectLoader->fetch(
+                $this->createMock(QueryElementInterface::class),
+                $promise,
+            ),
+        );
+    }
+
+    public function testFetchWithProjectErrorDefaultCode(): void
+    {
+        $this->projectLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function ($query, PromiseInterface $promise) {
+                    $promise->fail(new DomainException('error', 0));
+
+                    return $this->projectLoader;
+                }
+            );
+
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('fail')
+            ->with($this->callback(function (Throwable $error) {
+                return $error instanceof DomainException
+                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
+                    && $error->getCode() === 404;
+            }));
+
+        $this->assertInstanceOf(
+            SpaceProjectLoader::class,
+            $this->spaceProjectLoader->fetch(
+                $this->createMock(QueryElementInterface::class),
+                $promise,
             ),
         );
     }

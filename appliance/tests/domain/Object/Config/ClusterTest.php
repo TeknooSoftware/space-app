@@ -72,4 +72,122 @@ class ClusterTest extends TestCase
             $this->cluster->getKubernetesClient(),
         );
     }
+
+    public function testConstructWithCallable(): void
+    {
+        $client = $this->createMock(Client::class);
+        $callable = fn () => $client;
+
+        $cluster = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'bar',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $callable,
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $this->assertInstanceOf(Client::class, $cluster->getKubernetesClient());
+        $this->assertSame($client, $cluster->getKubernetesClient());
+    }
+
+    public function testConstructWithCallableAndNoRegistrySupport(): void
+    {
+        $client = $this->createMock(Client::class);
+        $callable = fn () => $client;
+
+        $cluster = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'bar',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $callable,
+            token: 'foo',
+            supportRegistry: false,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $this->assertInstanceOf(Client::class, $cluster->getKubernetesClient());
+    }
+
+    public function testGetKubernetesClientThrowsExceptionWhenNotInitialized(): void
+    {
+        $cluster = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'bar',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: fn () => null,
+            token: 'foo',
+            supportRegistry: false,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Error during kubernetes client's initializing");
+        $cluster->getKubernetesClient();
+    }
+
+    public function testGetKubernetesRegistryClient(): void
+    {
+        $this->assertInstanceOf(
+            Client::class,
+            $this->cluster->getKubernetesRegistryClient(),
+        );
+    }
+
+    public function testGetKubernetesRegistryClientThrowsExceptionWhenNotSupported(): void
+    {
+        $cluster = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'bar',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createMock(Client::class),
+            token: 'foo',
+            supportRegistry: false,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Error this cluster does not support OCI registry');
+        $cluster->getKubernetesRegistryClient();
+    }
+
+    public function testGetKubernetesRegistryClientWithCallableInitialization(): void
+    {
+        $client = $this->createMock(Client::class);
+        $callable = fn () => $client;
+
+        $cluster = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'bar',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $callable,
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $registryClient = $cluster->getKubernetesRegistryClient();
+        $this->assertInstanceOf(Client::class, $registryClient);
+    }
 }

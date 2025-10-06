@@ -25,13 +25,17 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountRegistry;
 
+use DateTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountHistory;
+use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Writer\AccountRegistryWriter;
 
@@ -76,8 +80,8 @@ class PersistRegistryCredentialTest extends TestCase
         $this->assertInstanceOf(
             PersistRegistryCredential::class,
             ($this->persistRegistryCredential)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ObjectInterface::class),
+                manager: $this->createMock(ManagerInterface::class),
+                object: $this->createMock(ObjectInterface::class),
                 kubeNamespace: 'foo',
                 registryUrl: 'foo',
                 registryAccountName: 'foo',
@@ -87,5 +91,200 @@ class PersistRegistryCredentialTest extends TestCase
                 accountHistory: $this->createMock(AccountHistory::class),
             ),
         );
+    }
+
+    public function testInvokeWithNonAccountObject(): void
+    {
+        $object = $this->createMock(ObjectInterface::class);
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('updateWorkPlan');
+        $manager->expects($this->never())->method('cleanWorkPlan');
+
+        $this->writer->expects($this->never())->method('save');
+        $this->datesService->expects($this->never())->method('passMeTheDate');
+
+        $result = ($this->persistRegistryCredential)(
+            manager: $manager,
+            object: $object,
+            kubeNamespace: 'test-namespace',
+            registryUrl: 'https://registry.example.com',
+            registryAccountName: 'user123',
+            registryConfigName: 'config123',
+            registryPassword: 'secret',
+            persistentVolumeClaimName: 'pvc-123',
+            accountHistory: $this->createMock(AccountHistory::class),
+        );
+
+        $this->assertInstanceOf(PersistRegistryCredential::class, $result);
+    }
+
+    public function testInvokeWithAccountObject(): void
+    {
+        $account = $this->createMock(Account::class);
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $dateTime = new DateTime('2025-10-02');
+
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with(
+                'teknoo.space.text.account.kubernetes.registry_persisted',
+                $dateTime
+            );
+
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->with($this->isInstanceOf(AccountRegistry::class))
+            ->willReturnSelf();
+
+        $this->datesService->expects($this->once())
+            ->method('passMeTheDate')
+            ->willReturnCallback(function ($callback, $preferRealDate) use ($dateTime) {
+                $this->assertTrue($preferRealDate);
+                $callback($dateTime);
+                return $this->datesService;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan[AccountRegistry::class])
+                        && $workplan[AccountRegistry::class] instanceof AccountRegistry;
+                })
+            );
+        $manager->expects($this->once())
+            ->method('cleanWorkPlan')
+            ->with('registryAccountName', 'registryPassword');
+
+        $result = ($this->persistRegistryCredential)(
+            manager: $manager,
+            object: $account,
+            kubeNamespace: 'test-namespace',
+            registryUrl: 'https://registry.example.com',
+            registryAccountName: 'user123',
+            registryConfigName: 'config123',
+            registryPassword: 'secret',
+            persistentVolumeClaimName: 'pvc-123',
+            accountHistory: $accountHistory,
+        );
+
+        $this->assertInstanceOf(PersistRegistryCredential::class, $result);
+    }
+
+    public function testInvokeWithSpaceAccountObject(): void
+    {
+        $account = $this->createMock(Account::class);
+        $spaceAccount = $this->createMock(SpaceAccount::class);
+        $spaceAccount->account = $account;
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $dateTime = new DateTime('2025-10-02');
+
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with(
+                'teknoo.space.text.account.kubernetes.registry_persisted',
+                $dateTime
+            );
+
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->with($this->isInstanceOf(AccountRegistry::class))
+            ->willReturnSelf();
+
+        $this->datesService->expects($this->once())
+            ->method('passMeTheDate')
+            ->willReturnCallback(function ($callback, $preferRealDate) use ($dateTime) {
+                $this->assertTrue($preferRealDate);
+                $callback($dateTime);
+                return $this->datesService;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan[AccountRegistry::class])
+                        && $workplan[AccountRegistry::class] instanceof AccountRegistry;
+                })
+            );
+        $manager->expects($this->once())
+            ->method('cleanWorkPlan')
+            ->with('registryAccountName', 'registryPassword');
+
+        $result = ($this->persistRegistryCredential)(
+            manager: $manager,
+            object: $spaceAccount,
+            kubeNamespace: 'test-namespace',
+            registryUrl: 'https://registry.example.com',
+            registryAccountName: 'user123',
+            registryConfigName: 'config123',
+            registryPassword: 'secret',
+            persistentVolumeClaimName: 'pvc-123',
+            accountHistory: $accountHistory,
+        );
+
+        $this->assertInstanceOf(PersistRegistryCredential::class, $result);
+    }
+
+    public function testInvokeWithPreferRealDateFalse(): void
+    {
+        $this->persistRegistryCredential = new PersistRegistryCredential(
+            $this->writer,
+            $this->datesService,
+            false,
+        );
+
+        $account = $this->createMock(Account::class);
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $dateTime = new DateTime('2025-10-02');
+
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with(
+                'teknoo.space.text.account.kubernetes.registry_persisted',
+                $dateTime
+            );
+
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->with($this->isInstanceOf(AccountRegistry::class))
+            ->willReturnSelf();
+
+        $this->datesService->expects($this->once())
+            ->method('passMeTheDate')
+            ->willReturnCallback(function ($callback, $preferRealDate) use ($dateTime) {
+                $this->assertFalse($preferRealDate);
+                $callback($dateTime);
+                return $this->datesService;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(
+                $this->callback(function ($workplan) {
+                    return isset($workplan[AccountRegistry::class])
+                        && $workplan[AccountRegistry::class] instanceof AccountRegistry;
+                })
+            );
+        $manager->expects($this->once())
+            ->method('cleanWorkPlan')
+            ->with('registryAccountName', 'registryPassword');
+
+        $result = ($this->persistRegistryCredential)(
+            manager: $manager,
+            object: $account,
+            kubeNamespace: 'test-namespace',
+            registryUrl: 'https://registry.example.com',
+            registryAccountName: 'user123',
+            registryConfigName: 'config123',
+            registryPassword: 'secret',
+            persistentVolumeClaimName: 'pvc-123',
+            accountHistory: $accountHistory,
+        );
+
+        $this->assertInstanceOf(PersistRegistryCredential::class, $result);
     }
 }

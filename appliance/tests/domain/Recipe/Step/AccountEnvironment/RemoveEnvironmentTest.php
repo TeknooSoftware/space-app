@@ -63,7 +63,36 @@ class RemoveEnvironmentTest extends TestCase
         $this->assertInstanceOf(
             RemoveEnvironment::class,
             ($this->removeCredentials)(
-                $this->createMock(AccountEnvironment::class),
+                accountEnvironment: $this->createMock(AccountEnvironment::class),
+            ),
+        );
+    }
+
+    public function testInvokeWithEnvironmentRemoval(): void
+    {
+        $environment = $this->createMock(AccountEnvironment::class);
+
+        $this->writer->expects($this->once())
+            ->method('remove')
+            ->with($environment);
+
+        $this->assertInstanceOf(
+            RemoveEnvironment::class,
+            ($this->removeCredentials)(
+                accountEnvironment: $environment,
+            ),
+        );
+    }
+
+    public function testInvokeWithNullEnvironment(): void
+    {
+        $this->writer->expects($this->never())
+            ->method('remove');
+
+        $this->assertInstanceOf(
+            RemoveEnvironment::class,
+            ($this->removeCredentials)(
+                accountEnvironment: null,
             ),
         );
     }

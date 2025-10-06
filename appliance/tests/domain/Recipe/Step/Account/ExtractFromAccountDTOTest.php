@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
 
 /**
@@ -63,6 +64,81 @@ class ExtractFromAccountDTOTest extends TestCase
             ($this->extractFromAccountDTO)(
                 $this->createMock(ManagerInterface::class),
                 new SpaceAccount($this->createMock(Account::class)),
+            )
+        );
+    }
+
+    public function testInvokeWithWorkPlanUpdate(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('namespaceIsItDefined')
+            ->willReturnCallback(function ($callback) use ($account) {
+                $this->assertIsCallable($callback);
+                return $account;
+            });
+
+        $spaceAccount = new SpaceAccount($account);
+        $spaceAccount->accountData = $this->createMock(AccountData::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(function ($workplan) use ($account, $spaceAccount) {
+                return isset($workplan[Account::class])
+                    && $account === $workplan[Account::class]
+                    && isset($workplan[AccountData::class])
+                    && $spaceAccount->accountData === $workplan[AccountData::class];
+            }));
+
+        $this->assertInstanceOf(
+            ExtractFromAccountDTO::class,
+            ($this->extractFromAccountDTO)(
+                manager: $manager,
+                spaceAccount: $spaceAccount,
+            )
+        );
+    }
+
+    public function testInvokeWithNamespaceCallback(): void
+    {
+        $account = $this->createMock(Account::class);
+        $account->expects($this->once())
+            ->method('namespaceIsItDefined')
+            ->willReturnCallback(function ($callback) use ($account) {
+                // Execute the callback to test it
+                $callback('test-namespace');
+                return $account;
+            });
+
+        $spaceAccount = new SpaceAccount($account);
+        $spaceAccount->accountData = $this->createMock(AccountData::class);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->exactly(2))
+            ->method('updateWorkPlan')
+            ->willReturnCallback(function ($workplan) use ($manager) {
+                static $callCount = 0;
+                $callCount++;
+
+                if (1 === $callCount) {
+                    // First call with Account and AccountData
+                    $this->assertArrayHasKey(Account::class, $workplan);
+                    $this->assertArrayHasKey(AccountData::class, $workplan);
+                } elseif (2 === $callCount) {
+                    // Second call from namespaceIsItDefined callback
+                    $this->assertArrayHasKey('accountNamespace', $workplan);
+                    $this->assertEquals('test-namespace', $workplan['accountNamespace']);
+                }
+
+                return $manager;
+            });
+
+        $this->assertInstanceOf(
+            ExtractFromAccountDTO::class,
+            ($this->extractFromAccountDTO)(
+                manager: $manager,
+                spaceAccount: $spaceAccount,
             )
         );
     }

@@ -64,4 +64,37 @@ class AccountEnvironmentResumeTest extends TestCase
             $this->accountEnvironmentResume->envName,
         );
     }
+
+    public function testConstructWithAccountEnvironmentId(): void
+    {
+        $resume = new AccountEnvironmentResume('cluster', 'env', 'id123');
+
+        $this->assertEquals('cluster', $resume->clusterName);
+        $this->assertEquals('env', $resume->envName);
+        $this->assertEquals('id123', $resume->accountEnvironmentId);
+    }
+
+    public function testJsonSerialize(): void
+    {
+        $resume = new AccountEnvironmentResume('cluster', 'env', 'id456');
+
+        $expected = [
+            'clusterName' => 'cluster',
+            'envName' => 'env',
+            'accountEnvironmentId' => 'id456',
+        ];
+
+        $this->assertEquals($expected, $resume->jsonSerialize());
+    }
+
+    public function testJsonSerializeWithoutId(): void
+    {
+        $expected = [
+            'clusterName' => 'foo',
+            'envName' => 'bar',
+            'accountEnvironmentId' => null,
+        ];
+
+        $this->assertEquals($expected, $this->accountEnvironmentResume->jsonSerialize());
+    }
 }

@@ -71,4 +71,69 @@ class SubscriptionPlanTest extends TestCase
             $this->plan->getQuotas()['cpu'],
         );
     }
+
+    public function testGetClustersWithDefaultEmptyArray(): void
+    {
+        $this->assertSame([], $this->plan->getClusters());
+    }
+
+    public function testConstructWithStringCluster(): void
+    {
+        $plan = new SubscriptionPlan(
+            id: 'foo',
+            name: 'Foo',
+            quotas: [
+                [
+                    'category' => 'compute',
+                    'type' => 'cpu',
+                    'capacity' => '5',
+                    'require' => '2',
+                ]
+            ],
+            clusters: 'cluster1'
+        );
+
+        $this->assertSame(['cluster1'], $plan->getClusters());
+    }
+
+    public function testConstructWithArrayClusters(): void
+    {
+        $plan = new SubscriptionPlan(
+            id: 'foo',
+            name: 'Foo',
+            quotas: [
+                [
+                    'category' => 'compute',
+                    'type' => 'cpu',
+                    'capacity' => '5',
+                    'require' => '2',
+                ]
+            ],
+            clusters: ['cluster1', 'cluster2']
+        );
+
+        $this->assertSame(['cluster1', 'cluster2'], $plan->getClusters());
+    }
+
+    public function testConstructWithCustomCountsAllowed(): void
+    {
+        $plan = new SubscriptionPlan(
+            id: 'foo',
+            name: 'Foo',
+            quotas: [
+                [
+                    'category' => 'compute',
+                    'type' => 'cpu',
+                    'capacity' => '5',
+                    'require' => '2',
+                ]
+            ],
+            envsCountAllowed: 5,
+            projectsCountAllowed: 10,
+            clusters: []
+        );
+
+        $this->assertSame(5, $plan->envsCountAllowed);
+        $this->assertSame(10, $plan->projectsCountAllowed);
+    }
 }
