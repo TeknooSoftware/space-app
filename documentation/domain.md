@@ -1,4 +1,4 @@
-w# Domain Model
+# Domain Model
 
 ## Overview
 
