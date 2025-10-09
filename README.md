@@ -250,10 +250,7 @@ Environnements variables configuration
         * `MESSENGER_NEW_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment
           request.
     * Mailer.
-        * `MAILER_TRANSPORT` : (string) mailer protocol. `smtp` by default. *Optional*
-        * `MAILER_HOST` : (string) mail server. *Optional*
-        * `MAILER_USER` : (string) username to access to the mail server. *Optional*
-        * `MAILER_PASSWORD` : (string) password to access to the mail server. *Optional*
+        * `MAILER_DNS` : (string) mEmail transport configuration. *Optional*
     * Mercure :
         * `SPACE_MERCURE_PUBLISHING_ENABLED` : (int/bool) to enable or not mercure protocol to allow redirection of user
           to
