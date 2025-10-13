@@ -111,7 +111,7 @@ sudo apt-get install -y \
     php8.4-cli php8.4-fpm \
     php8.4-mongodb php8.4-curl php8.4-mbstring \
     php8.4-xml php8.4-zip php8.4-gd \
-    php8.4-intl php8.4-bcmath php8.4-sodium
+    php8.4-intl php8.4-bcmath
 
 # Install system tools
 sudo apt-get install -y \
@@ -157,9 +157,13 @@ sudo mv composer.phar /usr/local/bin/composer
 
 ```bash
 # Ubuntu/Debian
-wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | sudo apt-key add -
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse" \
-      | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+sudo apt-get install gnupg curl
+# Ajouter la clé GPG de MongoDB (méthode moderne)
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | \
+   sudo gpg --dearmor -o /usr/share/keyrings/mongodb-server-7.0.gpg
+# Ajouter le dépôt MongoDB (Debian 12 Bookworm est compatible)
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | \
+   sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
 sudo apt-get update
 sudo apt-get install -y mongodb-org
 
@@ -251,6 +255,13 @@ cd /opt/space
 git clone https://github.com/TeknooSoftware/space-app.git .
 ```
 
+### 2.4. Configure 
+
+```bash
+cd /opt/space/appliance
+./space.sh configure
+```
+
 ### 2.5. Install Space Dependencies
 
 ```bash
@@ -260,77 +271,7 @@ cd /opt/space
 
 This installs all PHP dependencies via Composer.
 
-### 2.6. Configure Environment Variables
-
-Create or edit the `.env.local` file:
-
-```bash
-cd /opt/space/appliance
-nano .env.local
-```
-
-Add the following configuration (adjust values):
-
-```bash
-###> symfony/framework-bundle ###
-APP_ENV=prod
-APP_SECRET=YourRandomSecretHere
-###< symfony/framework-bundle ###
-
-###> doctrine/mongodb-odm-bundle ###
-MONGODB_SERVER=mongodb://space_user:SecurePassword456@localhost:27017
-MONGODB_NAME=space
-###< doctrine/mongodb-odm-bundle ###
-
-###> symfony/messenger ###
-MESSENGER_NEW_JOB_DSN=amqp://space_user:SecurePassword789@localhost:5672/%2f/new_job
-MESSENGER_EXECUTE_JOB_DSN=amqp://space_user:SecurePassword789@localhost:5672/%2f/execute_job
-MESSENGER_HISTORY_SENT_DSN=amqp://space_user:SecurePassword789@localhost:5672/%2f/history_sent
-MESSENGER_JOB_DONE_DSN=amqp://space_user:SecurePassword789@localhost:5672/%2f/job_done
-###< symfony/messenger ###
-
-###> symfony/mailer ###
-MAILER_DSN=smtp://localhost:25
-###< symfony/mailer ###
-
-###> space configuration ###
-SPACE_HOSTNAME=https://space.example.com
-SPACE_KUBERNETES_MASTER=https://kubernetes.example.com:6443
-SPACE_KUBERNETES_CREATE_TOKEN=your-service-account-token
-SPACE_CLUSTER_NAME=production
-APP_REMEMBER_SECRET=AnotherRandomSecretHere
-###< space configuration ###
-```
-
-For complete configuration options, see [configuration.md](configuration.md).
-
-### 2.7. Generate Encryption Keys (Optional but Recommended)
-
-For secure variable encryption:
-
-```bash
-# Generate RSA keys
-openssl genrsa -out /opt/space/config/secrets/private.pem 4096
-openssl rsa -in /opt/space/config/secrets/private.pem -outform PEM -pubout -out /opt/space/config/secrets/public.pem
-
-# Set permissions
-chmod 600 /opt/space/config/secrets/private.pem
-chmod 644 /opt/space/config/secrets/public.pem
-```
-
-Add to `.env.local`:
-
-```bash
-TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
-TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/opt/space/config/secrets/private.pem
-TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/opt/space/config/secrets/public.pem
-
-SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
-SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/opt/space/config/secrets/private.pem
-SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/opt/space/config/secrets/public.pem
-```
-
-### 2.8. Configure Web Server
+### 2.6. Configure Web Server
 
 #### Nginx Configuration
 
@@ -460,7 +401,7 @@ After=network.target rabbitmq-server.service mongodb.service
 Type=simple
 User=www-data
 WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job --time-limit=3600
+ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
 Restart=always
 RestartSec=10
 
@@ -479,7 +420,7 @@ After=network.target rabbitmq-server.service mongodb.service
 Type=simple
 User=www-data
 WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job --time-limit=3600
+ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
 Restart=always
 RestartSec=10
 
@@ -498,7 +439,7 @@ After=network.target rabbitmq-server.service mongodb.service
 Type=simple
 User=www-data
 WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent --time-limit=3600
+ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent
 Restart=always
 RestartSec=10
 
@@ -517,7 +458,7 @@ After=network.target rabbitmq-server.service mongodb.service
 Type=simple
 User=www-data
 WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done --time-limit=3600
+ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done
 Restart=always
 RestartSec=10
 

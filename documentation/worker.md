@@ -196,7 +196,7 @@ Common options for `messenger:consume`:
 - Prevents memory leaks
 
 ```bash
-bin/console messenger:consume execute_job --time-limit=3600
+bin/console messenger:consume execute_job
 ```
 
 **--memory-limit=LIMIT**
@@ -579,7 +579,7 @@ buildah images
 bin/console messenger:consume execute_job --memory-limit=512M
 
 # Set time limit (forces restart)
-bin/console messenger:consume execute_job --time-limit=3600
+bin/console messenger:consume execute_job
 
 # Monitor memory
 ps aux | grep messenger:consume
