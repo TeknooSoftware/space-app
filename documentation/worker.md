@@ -256,7 +256,7 @@ Type=simple
 User=www-data
 Group=www-data
 WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job --time-limit=3600 --memory-limit=512M
+ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -306,7 +306,7 @@ File: `/etc/supervisor/conf.d/space-workers.conf`
 
 ```ini
 [program:space-worker-new-job]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job --time-limit=3600
+command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
 directory=/opt/space/appliance
 user=www-data
 numprocs=2
@@ -319,7 +319,7 @@ stdout_logfile=/var/log/space/worker-new-job.log
 stderr_logfile=/var/log/space/worker-new-job-error.log
 
 [program:space-worker-execute-job]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job --time-limit=3600 --memory-limit=512M
+command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
 directory=/opt/space/appliance
 user=www-data
 numprocs=4
@@ -332,7 +332,7 @@ stdout_logfile=/var/log/space/worker-execute-job.log
 stderr_logfile=/var/log/space/worker-execute-job-error.log
 
 [program:space-worker-history]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent --time-limit=3600
+command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent
 directory=/opt/space/appliance
 user=www-data
 numprocs=2
@@ -345,7 +345,7 @@ stdout_logfile=/var/log/space/worker-history.log
 stderr_logfile=/var/log/space/worker-history-error.log
 
 [program:space-worker-job-done]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done --time-limit=3600
+command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done
 directory=/opt/space/appliance
 user=www-data
 numprocs=2

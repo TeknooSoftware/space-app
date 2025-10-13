@@ -430,13 +430,13 @@ Variables are merged with the following precedence (highest to lowest):
 1. User creates job
 2. Job enters pending state
 3. Worker picks up job
-2. Job enters executing state
-4. Git repository cloned
-5. Hooks executed (optional)
-6. OCI images built
-7. Kubernetes resources deployed
-8. History events recorded
-9. Job marked as complete/failed
+4. Job enters executing state
+5. Git repository cloned
+6. Hooks executed (optional)
+7. OCI images built
+8. Kubernetes resources deployed
+9. History events recorded
+10. Job marked as complete/failed
 
 ### Resource Management
 - Quotas defined at subscription plan level
