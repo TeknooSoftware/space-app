@@ -137,6 +137,7 @@ dockerPrivateRegistryUrl=$(readAMandatoryResponse "Docker Private Registry Url")
 mFAProvider=$(readAMandatoryResponse "2FA Provider [google_authenticator/generic]" "google_authenticator")
 mailerDSN=$(readAMandatoryResponse "Mailer DSN" "null://null")
 mailerSenderAddress=$(readAMandatoryResponse "Mailer sender adress")
+jwtMaxAgeDelay=$(readAMandatoryResponse "JWT: Max days to live")
 oauthEnabled=$(readForYesOrNoToBool "OAuth Enabled [y/n]")
 redisEnabled=$(readForYesOrNoToBool "Redis Enabled [y/n]")
 enableExtensions=$(readForYesOrNoToBool "Enable extension [y/n]")
@@ -312,6 +313,7 @@ updateFile "$ENV_LOCAL_FILE" "OAUTH_ENABLED" "$oauthEnabled"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
 updateFile "$ENV_LOCAL_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
+updateFile "$ENV_LOCAL_FILE" "SPACE_JWT_MAX_DAYS_TO_TIVE" "jwtMaxAgeDelay"
 if [ "$useCatalog" = "0" ]; then
   updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
   updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
@@ -354,6 +356,7 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_JWT_MAX_DAYS_TO_TIVE" "jwtMaxAgeDelay"
   if [ "$useCatalog" = "0" ]; then
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"

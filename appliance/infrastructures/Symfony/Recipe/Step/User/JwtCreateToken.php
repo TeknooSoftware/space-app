@@ -25,11 +25,13 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User;
 
+use DateTimeInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
 use Teknoo\Space\Object\DTO\JWTConfiguration;
 
@@ -41,9 +43,13 @@ use Teknoo\Space\Object\DTO\JWTConfiguration;
  */
 class JwtCreateToken implements JwtCreateTokenInterface
 {
+    private const int SECONDS_PER_DAY = 24 * 60 * 60;
+
     public function __construct(
         private readonly JWTTokenManagerInterface $jwtManager,
         private readonly TokenStorageInterface $tokenStorage,
+        private readonly DatesService $datesService,
+        private readonly int $maxDaysToLive = 1,
     ) {
     }
 
@@ -61,14 +67,24 @@ class JwtCreateToken implements JwtCreateTokenInterface
             return $this;
         }
 
-        $token = $this->jwtManager->createFromPayload(
-            user: $symfonyUser,
-            payload: [
-                'exp' => $configuration->expirationDate?->getTimestamp(),
-            ],
-        );
+        $this->datesService->passMeTheDate(
+            function (DateTimeInterface $date) use ($symfonyUser, $configuration, $viewParameterBag): void {
+                $now = $date->getTimestamp();
 
-        $viewParameterBag->set('jwtToken', $token);
+                $maxExpiration = $now + ($this->maxDaysToLive * self::SECONDS_PER_DAY);
+                $requestedExp = $configuration->expirationDate?->getTimestamp() ?? $maxExpiration;
+                $exp = min($requestedExp, $maxExpiration);
+
+                $token = $this->jwtManager->createFromPayload(
+                    user: $symfonyUser,
+                    payload: [
+                        'exp' => $exp,
+                    ],
+                );
+
+                $viewParameterBag->set('jwtToken', $token);
+            }
+        );
 
         return $this;
     }

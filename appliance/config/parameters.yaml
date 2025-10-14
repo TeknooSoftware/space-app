@@ -36,17 +36,18 @@ parameters:
     }
 
     teknoo.space.default.code.subscription.required: true
+    teknoo.space.default.jwt.max-days-to-tive: 30
     teknoo.space.default.mailer.forbidden_words: ''
     teknoo.space.default.mailer.sender_address: ''
     teknoo.space.default.mailer.sender_name: ''
     teknoo.space.default.mercure.publishing_enabled: true
     teknoo.space.default.messenger.dsn: 'in-memory://'
     teknoo.space.default.new_job.waiting_time: 5
-    teknoo.space.default.support.contact: ''
-    teknoo.space.default.user.2fa.provider: 'google'
     teknoo.space.default.redis.host: ''
     teknoo.space.default.redis.port: 6379
     teknoo.space.default.subscription.plan_default: ''
+    teknoo.space.default.support.contact: ''
+    teknoo.space.default.user.2fa.provider: 'google'
 
     teknoo.east.common.admin.rendering.clean_html: true
     teknoo.east.common.rendering.clean_html: true
@@ -60,6 +61,7 @@ parameters:
     teknoo.space.assets.version: '2025.03.05'
 
     teknoo.space.jwt.enable_in-query: '%env(bool:SPACE_JWT_ENABLE_IN_QUERY)%'
+    teknoo.space.jwt.max-days-to-tive: '%env(default:teknoo.space.default.jwt.max-days-to-tive:SPACE_JWT_MAX_DAYS_TO_TIVE)%'
 
     teknoo.space.mercure.publishing_enabled: '%env(default:teknoo.space.default.mercure.publishing_enabled:SPACE_MERCURE_PUBLISHING_ENABLED)%'
 

@@ -130,6 +130,10 @@ trait PersistedVariableTrait
             $value = $this->getValue();
         }
 
+        if ($this->isEncrypted()) {
+            $value = null;
+        }
+
         $data = [
             '@class' => self::class,
             'id' => $this->getId(),

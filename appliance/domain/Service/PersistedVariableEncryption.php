@@ -66,6 +66,8 @@ class PersistedVariableEncryption
             $promise->fail(
                 new RuntimeException('PersistedVariableEncryption::encrypt() is not available in agent mode')
             );
+
+            return $this;
         }
 
         $this->service->encrypt(
@@ -89,6 +91,10 @@ class PersistedVariableEncryption
         }
 
         if (!$this->isAgent) {
+            $promise->fail(
+                new RuntimeException('PersistedVariableEncryption::decrypt() is only available in agent mode')
+            );
+
             return $this;
         }
 

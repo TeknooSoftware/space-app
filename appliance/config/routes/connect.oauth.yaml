@@ -3,7 +3,7 @@ space_connect_oauth_login:
     defaults:
         _controller: 'Teknoo\East\CommonBundle\EndPoint\ConnectEndPoint'
 
-space_connect_oauh_check:
+space_connect_oauth_check:
     path: '/account/oauth/check'
     defaults:
         _controller: 'teknoo.east.common.endpoint.static'

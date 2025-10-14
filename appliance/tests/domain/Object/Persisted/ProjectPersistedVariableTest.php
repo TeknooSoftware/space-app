@@ -270,8 +270,8 @@ class ProjectPersistedVariableTest extends TestCase
             value: 'testValue',
             envName: $this->envName,
             secret: false,
-            encryptionAlgorithm: $this->encryptionAlgorithm,
-            needEncryption: $this->needEncryption,
+            encryptionAlgorithm: null,
+            needEncryption: false,
         );
 
         $normalizer = $this->createMock(EastNormalizerInterface::class);

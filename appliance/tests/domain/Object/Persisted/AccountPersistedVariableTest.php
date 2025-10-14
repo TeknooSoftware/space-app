@@ -323,7 +323,7 @@ class AccountPersistedVariableTest extends TestCase
             $this->value,
             $this->envName,
             false,
-            $this->encryptionAlgorithm,
+            null,
             $this->needEncryption,
         );
 

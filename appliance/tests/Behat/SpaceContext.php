@@ -364,7 +364,9 @@ class SpaceContext implements Context
         $this->kernel->boot();
         $this->sfContainer = $this->kernel->getContainer();
 
-        $this->setDateTime(new DateTime('2018-10-01 02:03:04', new \DateTimeZone('UTC')));
+        $now = new DateTime('now', new \DateTimeZone('UTC'));
+        $now->modify('1 year')->setDate((int) $now->format('Y'), 10, 01)->setTime(2, 3, 4);
+        $this->setDateTime($now);
         $counter = 0;
         $this->setSerialGenerator(
             function () use (&$counter): int {

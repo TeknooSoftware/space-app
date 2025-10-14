@@ -31,6 +31,7 @@ use Teknoo\Space\Configuration\Exception\UnsupportedConfigurationException;
 
 use function DI\factory;
 use function array_merge;
+use function file_get_contents;
 use function is_array;
 use function is_file;
 use function json_decode;
@@ -71,7 +72,13 @@ $loadFromEnv = static function (
         !empty($_ENV[$fileKey])
         && is_file($file = $_ENV[$fileKey])
     ) {
-        $value = require $file;
+        $jsonValue = file_get_contents($file);
+
+        $value = json_decode(
+            json: (string) $jsonValue,
+            associative: true,
+            flags: JSON_THROW_ON_ERROR,
+        );
     }
 
     if (!empty($valuesFromContainer)) {

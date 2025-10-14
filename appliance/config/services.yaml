@@ -116,6 +116,8 @@ services:
         arguments:
             - '@lexik_jwt_authentication.jwt_manager'
             - '@security.token_storage'
+            - '@Teknoo\East\Foundation\Time\DatesService'
+            - '%teknoo.space.jwt.max-days-to-tive%'
 
     ###################
     # Generic

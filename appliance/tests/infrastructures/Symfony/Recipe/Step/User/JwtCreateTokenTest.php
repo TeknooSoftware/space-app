@@ -31,9 +31,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\JwtCreateToken;
-use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\JWTConfiguration;
 
 /**
@@ -53,6 +52,8 @@ class JwtCreateTokenTest extends TestCase
 
     private JWTTokenManagerInterface&MockObject $jWTTokenManagerInterface;
 
+    private DatesService&MockObject $datesService;
+
     /**
      * {@inheritdoc}
      */
@@ -62,9 +63,12 @@ class JwtCreateTokenTest extends TestCase
 
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->jWTTokenManagerInterface = $this->createMock(JWTTokenManagerInterface::class);
+        $this->datesService = $this->createMock(DatesService::class);
         $this->jwtCreateToken = new JwtCreateToken(
             $this->jWTTokenManagerInterface,
             $this->tokenStorage,
+            $this->datesService,
+            30,
         );
     }
 

@@ -99,7 +99,7 @@ return [
             return new Encryption(
                 publicKey: $publicKey,
                 privateKey: $privateKey,
-                alogirthm: $algo->value,
+                algorithm: $algo->value,
             );
         } catch (Throwable $error) {
             throw new DIException(
@@ -113,11 +113,11 @@ return [
     PersistedVariableEncryption::class => static function (
         ContainerInterface $container
     ): PersistedVariableEncryption {
-        $isAgent = !empty($_ENV['SPACE_PERSISTED_VAR_AGENT_MODE'] ?? (PHP_SAPI === 'cli'));
+        $isAgent = $_ENV['SPACE_PERSISTED_VAR_AGENT_MODE'] ?? (PHP_SAPI === 'cli');
 
         return new PersistedVariableEncryption(
             $container->get('teknoo.space.pvars.encryption.service'),
-            $isAgent,
+            !empty($isAgent),
         );
     }
 ];

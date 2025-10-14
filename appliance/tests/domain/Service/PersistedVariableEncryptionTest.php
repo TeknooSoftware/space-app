@@ -206,6 +206,8 @@ class PersistedVariableEncryptionTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->never())
             ->method('success');
+        $promise->expects($this->once())
+            ->method('fail');
 
         $this->encryptionInterface->expects($this->never())
             ->method('decrypt');

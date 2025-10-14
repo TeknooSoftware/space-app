@@ -252,7 +252,7 @@ SPACE_CLUSTER_CATALOG_JSON='[{
 
 #### SPACE_CLUSTER_CATALOG_FILE
 - **Type**: String (file path)
-- **Description**: PHP file returning cluster array
+- **Description**: JSON file returning cluster array
 
 ```bash
 SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.php
@@ -399,7 +399,7 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON='{"nginx.ingress.kubernetes.io
 
 #### SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE
 - **Type**: String (file path)
-- **Description**: PHP file returning annotations array
+- **Description**: JSON file returning annotations array
 
 ```bash
 SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE=/opt/space/config/ingress-annotations.php
@@ -665,7 +665,7 @@ SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON='[{
 
 #### SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE
 - **Type**: String (file path)
-- **Description**: PHP file returning plans array
+- **Description**: JSON file returning plans array
 
 ```bash
 SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.php
@@ -824,7 +824,7 @@ SPACE_HOOKS_COLLECTION_JSON='[{
 
 #### SPACE_HOOKS_COLLECTION_FILE
 - **Type**: String (file path)
-- **Description**: PHP file returning hooks array
+- **Description**: JSON file returning hooks array
 
 ```bash
 SPACE_HOOKS_COLLECTION_FILE=/opt/space/config/hooks.php
@@ -871,7 +871,7 @@ Use **one** of these options:
 
 #### SPACE_PAAS_IMAGE_LIBRARY_FILE
 - **Type**: String (file path)
-- **Description**: PHP file returning image library
+- **Description**: Json file returning image library
 
 ## Mercure Configuration
 

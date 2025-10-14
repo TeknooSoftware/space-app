@@ -138,12 +138,12 @@ extensions can :
         * including :   
             * Add more Recipe's steps, decorate bundled EditabledPlan and add more Plan.
             * Add/Complete `Teknoo East PaaS` compiler. (By decorating `CompilerCollectionInterface`).
-            * Update the hooks collection, like `SPACE_HOOKS_COLLECTION_FILE/JSON`.
-            * Update the containers libraries, like `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE/JSON`.
-            * Update the pods libraries, like `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE/JSON`.
-            * Update the services libraries, like `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE/JSON`.
-            * Update the ingresses libraries, like `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE/JSON`.
-            * Update the `globals`, like `SPACE_PAAS_GLOBAL_VARIABLES_FILE/JSON`.
+            * Update the hooks collection, like `SPACE_HOOKS_COLLECTION_JSON`.
+            * Update the containers libraries, like `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON`.
+            * Update the pods libraries, like `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON`.
+            * Update the services libraries, like `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON`.
+            * Update the ingresses libraries, like `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON`.
+            * Update the `globals`, like `SPACE_PAAS_GLOBAL_VARIABLES_JSON`.
             * Update other configuration editable from environments variables.
     * Add more routes and templates.
     * Add entries to twig menus (top left menu and the main left menu).
@@ -257,6 +257,8 @@ Environnements variables configuration
           the final job page when it is started. *Optional*
         * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+    * JWT :
+      * `SPACE_JWT_MAX_DAYS_TO_TIVE`: (string) Maximum life in days for JWT token
     * OCI images building :
         * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
         * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
@@ -308,8 +310,7 @@ Environnements variables configuration
           * `SPACE_CLUSTER_TYPE` : (string) type of cluster in the project's form.
                 `kubernetes` by default. *Optional*
         * Several clusters : 
-          * `SPACE_CLUSTER_CATALOG_JSON` : (json string).
-          * `SPACE_CLUSTER_CATALOG_FILE` : (php file returning an array).
+          * `SPACE_CLUSTER_CATALOG_JSON` : (json array).
           * Dictionary's structure (`.` represent a subarray) :
             * `master` : (string) Default URL of Kubernetes API server.
             * `dashboard` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
@@ -331,8 +332,7 @@ Environnements variables configuration
         * `SPACE_CODE_GENERATOR_SALT` : (string) salt used to compute the code with the account's name. *Optional*
         * `SPACE_SUBSCRIPTION_DEFAULT_PLAN` : (string) *Optional* Defaut plan to apply when a new account is created
         * Plan (to apply quota) *Optional*
-          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` : (json string).
-          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` : (php file returning an array).
+          * `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` : (json array).
           * Dictionary's structure (`[].` represent a collection of subarray) :
               * `id` : (string) Plan identifier.
               * `name` : (string) Humain readable plan name
@@ -382,11 +382,9 @@ Environnements variables configuration
           Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*
         * PaaS Compilation :
             * Embedded OCI library with Dockerfile **(Only one of these options)** *Optional* :
-                * `SPACE_PAAS_IMAGE_LIBRARY_JSON` : (json string).
-                * `SPACE_PAAS_IMAGE_LIBRARY_FILE` : (php file returning an array).
+                * `SPACE_PAAS_IMAGE_LIBRARY_JSON` : (json array).
             * Global variables availables for all jobs **(Only one of these options)** *Optional* :
-                * `SPACE_PAAS_GLOBAL_VARIABLES_JSON` : (json string).
-                * `SPACE_PAAS_GLOBAL_VARIABLES_FILE` : (php file returning an array).
+                * `SPACE_PAAS_GLOBAL_VARIABLES_JSON` : (json array).
 
             * Compilation extensions (to be use with `extends` instruction in the `.paas.yaml`) :
                 * Pods **(Only one of these options)** *Optional* :
@@ -403,8 +401,7 @@ Environnements variables configuration
                     * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
 
         * Hooks : To define hooks usable in Space (Composer, NPM, PIP, Make, etc..)
-          * `SPACE_HOOKS_COLLECTION_JSON` : (json string).
-          * `SPACE_HOOKS_COLLECTION_FILE` : (php file returning an array).
+          * `SPACE_HOOKS_COLLECTION_JSON` : (json array).
           * Dictionary's structure (`.` represent a subarray) :
             * `name` : (string) Default URL of Kubernetes API server.
             * `type` : (string) "composer", "npm", "pip", "make", "symfony_console", or a class name implementing the
