@@ -29,10 +29,12 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Then;
 use Behat\Step\When;
 use DomainException;
+use DateTimeInterface;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
+use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
@@ -2214,5 +2216,52 @@ trait ApiTrait
         Assert::assertArrayHasKey('projects', $unserialized['data']);
         Assert::assertArrayHasKey('exceeding', $unserialized['data']['projects']);
         Assert::assertTrue($unserialized['data']['projects']['exceeding']);
+    }
+
+    #[When('the API is called to get a new JWT token')]
+    #[When('the API is called to get a new JWT token with a :format body')]
+    public function theApiIsCalledToGetANewJwtToken(string $format = 'default'): void
+    {
+        $this->executeRequest(
+            method: 'post',
+            url: $this->getPathFromRoute('space_api_v1_jwt_generate_token'),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[Then('a new token is returned')]
+    public function aNewTokenIsReturned(): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertArrayHasKey('data', $unserialized);
+        $data = $unserialized['data'];
+        Assert::assertArrayHasKey('token', $data);
+        Assert::assertNotEmpty($data['token']);
+
+        $this->nextJwtToken = $data['token'];
+    }
+
+    #[When('the time passes by :count days')]
+    public function theTimePassesByDays(int $count): void
+    {
+        $this->datesService?->passMeTheDate(
+            function (DateTimeInterface $date) use ($count): void {
+                $date = $date->modify('+' . $count . ' days');
+                $this->datesService?->setCurrentDate($date);
+                $this->currentDate = $date;
+            }
+        );
+    }
+
+    #[When('the API client switch to new JWT token')]
+    public function theApiClientSwitchToNewJwtToken(): void
+    {
+        $this->jwtToken = $this->nextJwtToken;
+        $this->nextJwtToken = null;
     }
 }

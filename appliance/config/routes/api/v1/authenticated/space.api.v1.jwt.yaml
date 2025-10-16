@@ -1,0 +1,13 @@
+space_api_v1_jwt_generate_token:
+    path: '/jwt/create-token'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.my_settings.jwt_token'
+        api: 'json'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\JWTConfigurationType'
+        objectClass: 'Teknoo\Space\Object\DTO\JWTConfiguration'
+        template: '@@TeknooSpace/api/Jwt/jwt.form.json.twig'
+        tokenTemplate: '@@TeknooSpace/api/Jwt/jwt.token.json.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"

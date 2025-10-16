@@ -168,6 +168,12 @@ class SpaceContext implements Context
 
     private ?string $jwtToken = null;
 
+    private ?string $nextJwtToken = null;
+
+    private ?DatesService $datesService = null;
+
+    private ?DateTimeInterface $currentDate = null;
+
     private ?int $itemsPerPages = null;
 
     private ?HooksCollectionInterface $hookCollection = null;
@@ -268,10 +274,13 @@ class SpaceContext implements Context
         $this->manifests = [];
         $this->deletedManifests = [];
         $this->projectPrefix = null;
+        $this->datesService = null;
+        $this->currentDate = null;
         Query::$testsContext = $this;
         Query::$testsObjecttManager = null;
         $this->hookCollection = null;
         $this->jwtToken = null;
+        $this->nextJwtToken = null;
         $this->itemsPerPages = null;
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->apiPendingJobUrl = null;
@@ -348,8 +357,8 @@ class SpaceContext implements Context
 
     public function setDateTime(DateTimeInterface $dateTime): void
     {
-        $this->sfContainer?->get(DatesService::class)
-            ->setCurrentDate($dateTime);
+        $this->datesService = $this->sfContainer?->get(DatesService::class);
+        $this->datesService->setCurrentDate($dateTime);
     }
 
     public function setSerialGenerator(callable $generator): void
@@ -364,8 +373,13 @@ class SpaceContext implements Context
         $this->kernel->boot();
         $this->sfContainer = $this->kernel->getContainer();
 
-        $now = new DateTime('now', new \DateTimeZone('UTC'));
-        $now->modify('1 year')->setDate((int) $now->format('Y'), 10, 01)->setTime(2, 3, 4);
+        $now = $this->currentDate;
+
+        if (null === $now) {
+            $now = new DateTime('now', new \DateTimeZone('UTC'));
+            $now->modify('1 year')->setDate((int)$now->format('Y'), 10, 01)->setTime(2, 3, 4);
+        }
+
         $this->setDateTime($now);
         $counter = 0;
         $this->setSerialGenerator(
