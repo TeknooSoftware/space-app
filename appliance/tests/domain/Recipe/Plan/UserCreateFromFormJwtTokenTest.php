@@ -40,7 +40,7 @@ use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
-use Teknoo\Space\Recipe\Plan\UserGetJwtToken;
+use Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken;
 
 /**
  * Class UserGetJwtTokenTest.
@@ -51,10 +51,10 @@ use Teknoo\Space\Recipe\Plan\UserGetJwtToken;
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(UserGetJwtToken::class)]
-class UserGetJwtTokenTest extends TestCase
+#[CoversClass(UserCreateFromFormJwtToken::class)]
+class UserCreateFromFormJwtTokenTest extends TestCase
 {
-    private UserGetJwtToken $userGetJwtToken;
+    private UserCreateFromFormJwtToken $userGetJwtToken;
 
     private RecipeInterface&MockObject $recipe;
 
@@ -94,7 +94,7 @@ class UserGetJwtTokenTest extends TestCase
         $this->renderError = $this->createMock(RenderError::class);
         $this->defaultErrorTemplate = '42';
 
-        $this->userGetJwtToken = new UserGetJwtToken(
+        $this->userGetJwtToken = new UserCreateFromFormJwtToken(
             recipe: $this->recipe,
             createObject: $this->createObject,
             formHandling: $this->formHandling,
@@ -111,7 +111,7 @@ class UserGetJwtTokenTest extends TestCase
     public function testConstruct(): void
     {
         $this->assertInstanceOf(
-            UserGetJwtToken::class,
+            UserCreateFromFormJwtToken::class,
             $this->userGetJwtToken,
         );
     }

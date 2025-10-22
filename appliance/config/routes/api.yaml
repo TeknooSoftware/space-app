@@ -1,3 +1,7 @@
+prefix_space_api_v1_unauthenticated:
+    resource: 'api/v1/unauthenticated/*.yaml'
+    prefix: '/api/v1'
+
 prefix_space_api_v1_authenticated:
     resource: 'api/v1/authenticated/*.yaml'
     prefix: '/api/v1'

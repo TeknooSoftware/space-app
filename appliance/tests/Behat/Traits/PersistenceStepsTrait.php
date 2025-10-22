@@ -29,13 +29,14 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use Behat\Step\When;
+use DateTimeInterface;
 use LogicException;
 use PHPUnit\Framework\Assert;
+use Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser;
 use Teknoo\East\Common\Doctrine\Object\Media as MediaODM;
 use Teknoo\East\Common\Object\StoredPassword;
 use Teknoo\East\Common\Object\TOTPAuth;
 use Teknoo\East\Common\Object\User;
-use Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser;
 use Teknoo\East\Paas\Contracts\Recipe\Step\Job\DispatchResultInterface;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
@@ -54,15 +55,18 @@ use Teknoo\East\Paas\Object\SshIdentity;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Infrastructures\Symfony\Object\ApiKeysAuthUser;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
-use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
+use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
-use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
+use Teknoo\Space\Object\Persisted\ApiKeyToken;
+use Teknoo\Space\Object\Persisted\ApiKeysAuth;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
@@ -220,6 +224,44 @@ trait PersistenceStepsTrait
 
         $this->persistAndRegister($userData);
     }
+
+    #[Given('a token :name with the value :token')]
+    public function aTokenWithTheValue(string $name, string $token): void
+    {
+        $this->datesService?->passMeTheDate(
+            function (DateTimeInterface $now) use ($name, $token): void {
+                /** @var User $user */
+                $user = $this->recall(User::class);
+
+                $apiToken = new ApiKeyToken(
+                    name: $name,
+                    token: $token,
+                    tokenHash: '',
+                    isExpired: false,
+                    createdAt: $now,
+                    expiresAt: (clone $now)->modify('+30 day'),
+                );
+
+                $apiToken->setTokenHash(
+                    $this->passwordHasher->hashPassword(
+                        new ApiKeysAuthUser(
+                            $user,
+                            $apiToken,
+                        ),
+                        $token
+                    )
+                );
+
+                /** @var ApiKeysAuth $apiKeys */
+                $apiKeys = $user->getOneAuthData(ApiKeysAuth::class) ?? new ApiKeysAuth();
+                $apiKeys->addToken($apiToken);
+                $user->addAuthData($apiKeys);
+
+                $this->register($apiToken);
+            }
+        );
+    }
+
 
     #[Given('the 2FA authentication enable for last user')]
     public function theFaAuthenticationEnableForLastUser(): void

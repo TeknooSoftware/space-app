@@ -64,7 +64,28 @@ services:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
-            - '@Teknoo\Space\Recipe\Plan\UserGetJwtToken'
+            - '@Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken'
+            - '@service_container'
+
+    teknoo.space.endpoint.my_settings.user_manage_api_tokens:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\UserManageApiTokens'
+            - '@service_container'
+
+    teknoo.space.endpoint.my_settings.user_delete_api_token:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\UserDeleteApiToken'
+            - '@service_container'
+
+    teknoo.space.endpoint.login.jwt_token:
+        class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
+        public: true
+        arguments:
+            - '@Teknoo\Space\Recipe\Plan\UserCreateJwtToken'
             - '@service_container'
 
     teknoo.space.endpoint.account.settings:

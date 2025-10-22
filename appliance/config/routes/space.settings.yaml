@@ -26,7 +26,7 @@ space_update_password:
         writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
-space_my_settings_token:
+space_my_settings_jwt_token:
     path: '/my-settings/jwt-token'
     methods: ['GET', 'POST']
     schemes: ['https']
@@ -38,3 +38,27 @@ space_my_settings_token:
         template: '@@TeknooSpace/User/jwt.form.html.twig'
         tokenTemplate: '@@TeknooSpace/User/jwt.token.html.twig'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
+
+space_my_settings_list_api_keys:
+    path: '/my-settings/api-keys'
+    methods: ['GET', 'POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.my_settings.user_manage_api_tokens'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\ApiKeysAuthType'
+        loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'
+        objectClass: 'Teknoo\Space\Object\Persisted\ApiKeyToken'
+        template: '@@TeknooSpace/User/api-keys.form.html.twig'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
+space_my_settings_remove_api_keys:
+    path: '/my-settings/api-keys/delete/{tokenName}'
+    methods: ['GET', 'DELETE']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.my_settings.user_delete_api_token'
+        route: 'space_my_settings_list_api_keys'
+        writer: '@Teknoo\Space\Writer\Meta\SpaceUserWriter'
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'

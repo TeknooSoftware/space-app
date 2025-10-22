@@ -278,6 +278,15 @@ services:
         tags:
             - {name: form.type}
 
+    Teknoo\Space\Infrastructures\Symfony\Form\Type\User\ApiKeysAuthType:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\User\ApiKeysAuthType'
+        arguments:
+            - '@Teknoo\East\Foundation\Time\DatesService'
+            - '@security.token_storage'
+            - '@security.user_password_hasher'
+        tags:
+            - {name: form.type}
+
     #####################
     # Login
     Teknoo\East\CommonBundle\EndPoint\ConnectEndPoint:
@@ -293,3 +302,9 @@ services:
 
     Teknoo\East\CommonBundle\Contracts\Security\Authenticator\UserConverterInterface:
         class: 'Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\UserConverter'
+
+    Teknoo\Space\Infrastructures\Symfony\Security\Provider\ApiKeysAuthenticatedUserProvider:
+        class: '%teknoo.space.api_key_authenticated_user_provider.class%'
+        arguments:
+            - '@Teknoo\East\Common\Loader\UserLoader'
+            - '@Teknoo\East\Foundation\Time\DatesService'
