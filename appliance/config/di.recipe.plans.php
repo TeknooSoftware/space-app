@@ -119,7 +119,10 @@ use Teknoo\Space\Recipe\Plan\ProjectList;
 use Teknoo\Space\Recipe\Plan\ProjectNew;
 use Teknoo\Space\Recipe\Plan\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Plan\Subscription;
-use Teknoo\Space\Recipe\Plan\UserGetJwtToken;
+use Teknoo\Space\Recipe\Plan\UserCreateJwtToken;
+use Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken;
+use Teknoo\Space\Recipe\Plan\UserDeleteApiToken;
+use Teknoo\Space\Recipe\Plan\UserManageApiTokens;
 use Teknoo\Space\Recipe\Plan\UserMySettings;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
@@ -146,6 +149,7 @@ use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
+use Teknoo\Space\Recipe\Step\ApiKey\RemoveKey;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
@@ -626,7 +630,29 @@ return [
             diGet('teknoo.east.common.get_default_error_template'),
         ),
 
-    UserGetJwtToken::class => create()
+    UserManageApiTokens::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(CreateObject::class),
+            diGet(FormHandlingInterface::class),
+            diGet(FormProcessingInterface::class),
+            diGet(SaveObject::class),
+            diGet(RenderFormInterface::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    UserDeleteApiToken::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(RemoveKey::class),
+            diGet(SaveObject::class),
+            diGet(RedirectClientInterface::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    UserCreateFromFormJwtToken::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(CreateObject::class),
@@ -636,6 +662,16 @@ return [
             diGet(Render::class),
             diGet(Stop::class),
             diGet(RenderFormInterface::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    UserCreateJwtToken::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(CreateObject::class),
+            diGet(JwtCreateTokenInterface::class),
+            diGet(Render::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
         ),

@@ -1,0 +1,86 @@
+{# templates/TeknooSpace/User/api-keys.form.html.twig #}
+
+{% extends '@TeknooSpace/dashboard.form.html.twig' %}
+
+{% block title %}{{ 'teknoo.space.title.user.api-keys'|trans }} - {% endblock %}
+
+{% block instanceMainTitle %}<i class="uil uil-user"></i> {{ 'teknoo.space.title.user.api-keys'|trans }}{% endblock %}
+
+{% block breadcrumbListLink %}{{ path('space_my_settings_list_api_keys') }}{% endblock %}
+{% block breadcrumbFormTitle %}{{ 'teknoo.space.title.user.api-keys'|trans }}{% endblock %}
+{% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
+
+{% block crudFormFields %}
+    <div class="row">
+        <div class="col-12">
+            <h3>{{ 'teknoo.space.title.user.api-keys.new'|trans }}</h3>
+        </div>
+        {{ form_row(formView.name) }}
+        {{ form_row(formView.expiresAt) }}
+    </div>
+    {% if objectInstance.token is not empty %}
+    <div class="row">
+        <div class="col-12">
+            <label class="form-label" for="new-token">{{ 'teknoo.space.text.user.api-keys.generated'|trans }}</label>
+            <input type="text"
+                   name="new-token"
+                   value="{{ objectInstance.token }}"
+                   class="form-control api-token-value" readonly>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block crudSecondaryForm %}
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <h3>{{ 'teknoo.space.title.user.api-keys.list'|trans }}</h3>
+                </div>
+                <div class="col-12 mb-4">
+                    <table class="table mb-0 table-center">
+                        <thead class="bg-light">
+                        <tr>
+                            <th>{{ 'teknoo.space.text.user.api-keys.name'|trans }}</th>
+                            <th>{{ 'teknoo.space.text.user.api-keys.created_at'|trans }}</th>
+                            <th>{{ 'teknoo.space.text.user.api-keys.expire_at'|trans }}</th>
+                            <th>{{ 'teknoo.space.text.user.api-keys.is_expired'|trans }}</th>
+                            <th>{{ 'teknoo.space.text.user.api-keys.to_delete'|trans }}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% set tokens = space.user.user.getOneAuthData('Teknoo\\Space\\Object\\Persisted\\ApiKeysAuth') %}
+                            {% if tokens is empty %}
+                                <tr class="table-row-even">
+                                    <td colspan="4">{{ 'teknoo.space.text.user.api-keys.empty'|trans }}</td>
+                                </tr>
+                            {% else %}
+                                {% for token in tokens.getTokens() %}
+                                    <tr {% if loop.index0 is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
+                                        <td>{{ token.name }}</td>
+                                        <td>{{ token.createdAt|date('Y M d H:i:s') }}</td>
+                                        <td>{{ token.expiresAt|date('Y M d H:i:s') }}</td>
+                                        {% if token.expired %}
+                                            <td>{{ 'teknoo.space.text.user.api-keys.yes'|trans }}</td>
+                                        {% else %}
+                                            <td>{{ 'teknoo.space.text.user.api-keys.no'|trans }}</td>
+                                        {% endif %}
+                                        <td>
+                                            <a class="text-primary"
+                                               onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
+                                               href="{{ path('space_my_settings_remove_api_keys', {'tokenName':token.name}) }}"
+                                               title="Delete this entry">
+                                                <span class="mdi mdi-trash-can"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                        {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

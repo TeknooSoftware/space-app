@@ -53,6 +53,8 @@ use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
+use Teknoo\Space\Object\Persisted\ApiKeysAuth;
+use Teknoo\Space\Object\Persisted\ApiKeyToken;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
@@ -1136,8 +1138,8 @@ trait ApiTrait
     #[Then('get a JSON reponse')]
     public function getAJsonReponse(): void
     {
-        Assert::assertEquals(
-            'application/json; charset=utf-8',
+        Assert::assertStringStartsWith(
+            'application/json',
             $this->response->headers->get('Content-Type'),
         );
     }
@@ -1166,7 +1168,8 @@ trait ApiTrait
     }
 
     #[When('an :arg1 error')]
-    public function anError(int $code): void
+    #[When('an :arg1 error about :message')]
+    public function anError(int $code, ?string $message = null): void
     {
         Assert::assertEquals(
             $code,
@@ -1176,10 +1179,34 @@ trait ApiTrait
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
 
-        Assert::assertEquals(
-            $code,
-            $unserialized['data']['code'],
-        );
+        if (null !== $message) {
+            if (isset($unserialized['code'])) {
+                Assert::assertEquals(
+                    $code,
+                    $unserialized['code'],
+                );
+            }
+
+            if (isset($unserialized['message'])) {
+                Assert::assertEquals(
+                    $message,
+                    $unserialized['message'],
+                );
+            }
+
+
+            if (isset($unserialized['error'])) {
+                Assert::assertEquals(
+                    $message,
+                    $unserialized['error'],
+                );
+            }
+        } else {
+            Assert::assertEquals(
+                $code,
+                $unserialized['data']['code'],
+            );
+        }
     }
 
     #[Then('a pending job id')]
@@ -2232,9 +2259,11 @@ trait ApiTrait
         );
     }
 
-    #[Then('a new token is returned')]
-    public function aNewTokenIsReturned(): void
+    #[Then('a new JWT token is returned')]
+    public function aNewJwtTokenIsReturned(): void
     {
+        $this->isAFinalResponse();
+
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
 
@@ -2243,7 +2272,23 @@ trait ApiTrait
         Assert::assertArrayHasKey('token', $data);
         Assert::assertNotEmpty($data['token']);
 
-        $this->nextJwtToken = $data['token'];
+        if (null === $this->jwtToken) {
+            $this->jwtToken = $data['token'];
+        } else {
+            $this->nextJwtToken = $data['token'];
+        }
+    }
+
+    #[When('the time goes back :count days')]
+    public function theTimeGoesBackDays(int $count): void
+    {
+        $this->datesService?->passMeTheDate(
+            function (DateTimeInterface $date) use ($count): void {
+                $date = $date->modify('-' . $count . ' days');
+                $this->datesService?->setCurrentDate($date);
+                $this->currentDate = $date;
+            }
+        );
     }
 
     #[When('the time passes by :count days')]
@@ -2263,5 +2308,70 @@ trait ApiTrait
     {
         $this->jwtToken = $this->nextJwtToken;
         $this->nextJwtToken = null;
+    }
+
+    #[When('create api key :name')]
+    public function createApiKeys(string $name): void
+    {
+        $this->findUrlFromRouteInPageAndOpenIt(
+            crawler: $this->createCrawler(),
+            routeName: 'space_my_settings_list_api_keys',
+        );
+
+        $dateInFuture = $this->datesService->now();
+        $dateInFuture = $dateInFuture->modify('+30 days');
+
+        $values = $this->createForm('api_keys_auth')->getPhpValues();
+        $values['api_keys_auth']['name'] = $name;
+        $values['api_keys_auth']['expiresAt'] = $dateInFuture->format('Y-m-d');
+
+        $this->executeRequest(
+            method: 'POST',
+            url: $this->getPathFromRoute('space_my_settings_list_api_keys'),
+            params: $values
+        );
+
+        $node = $this->createCrawler()->filter('.api-token-value');
+        $tokenString = trim((string) $node->getNode(0)?->attributes->getNamedItem('value')->textContent);
+
+        Assert::assertNotEmpty($tokenString);
+
+        /** @var User $user */
+        $user = $this->recall(User::class);
+        $apiKeyAuth = $user->getOneAuthData(ApiKeysAuth::class);
+
+        Assert::assertInstanceOf(ApiKeysAuth::class, $apiKeyAuth);
+
+        $token = $apiKeyAuth->getToken($name);
+        Assert::assertInstanceOf(ApiKeyToken::class, $token);
+
+        Assert::assertEquals($tokenString, $token->getToken());
+
+        $this->register($token);
+    }
+
+    #[When('the user sign on API in with :email and the previous token')]
+    public function theUserSignOnApiInWithAndThePassword(string $email): void
+    {
+        /** @var ApiKeyToken $token */
+        $token = $this->recall(ApiKeyToken::class);
+
+        $this->executeRequest(
+            method: 'post',
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_login_check',
+            ),
+            params: [],
+            noCookies: true,
+            headers: [
+                'CONTENT_TYPE' => 'application/json',
+            ],
+            content: json_encode(
+                [
+                    'username' => ($token?->getName() ?? '') . ':' . $email,
+                    'token' => $token?->getToken() ?? '',
+                ]
+            ),
+        );
     }
 }

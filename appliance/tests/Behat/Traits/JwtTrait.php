@@ -38,8 +38,7 @@ use function trim;
  */
 trait JwtTrait
 {
-    /**
-     *
+    /**     *
      * @throws \DateMalformedStringException
      */
     #[When('get a JWT token for the user')]
@@ -47,7 +46,7 @@ trait JwtTrait
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
-            routeName: 'space_my_settings_token',
+            routeName: 'space_my_settings_jwt_token',
         );
 
         $dateInFuture = new DateTime('now'); //Use now, because JWT Bundle does not use DatesService
@@ -58,7 +57,7 @@ trait JwtTrait
 
         $this->executeRequest(
             method: 'POST',
-            url: $this->getPathFromRoute('space_my_settings_token'),
+            url: $this->getPathFromRoute('space_my_settings_jwt_token'),
             params: $values
         );
 

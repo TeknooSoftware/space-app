@@ -1,0 +1,11 @@
+space_api_v1_login_check:
+    path: '/login'
+    schemes: ['https']
+    methods: ['POST']
+    defaults:
+        _controller: 'teknoo.space.endpoint.login.jwt_token'
+        api: 'json'
+        objectClass: 'Teknoo\Space\Object\DTO\JWTConfiguration'
+        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
+        tokenTemplate: '@@TeknooSpace/api/Jwt/jwt.token.json.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"

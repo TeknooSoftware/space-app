@@ -137,11 +137,19 @@
                                                             </a>
                                                             <a class="dropdown-item text-dark"
                                                                hreflang="{{ locale }}"
-                                                               href="{{ path('space_my_settings_token') }}">
+                                                               href="{{ path('space_my_settings_jwt_token') }}">
                                                                 <span class="mb-0 d-inline-block me-1">
                                                                     <i class="ti ti-settings"></i>
                                                                 </span>
                                                                 {{ 'teknoo.space.action.jwt'|trans }}
+                                                            </a>
+                                                            <a class="dropdown-item text-dark"
+                                                               hreflang="{{ locale }}"
+                                                               href="{{ path('space_my_settings_list_api_keys') }}">
+                                                                <span class="mb-0 d-inline-block me-1">
+                                                                    <i class="ti ti-settings"></i>
+                                                                </span>
+                                                                {{ 'teknoo.space.action.api-keys'|trans }}
                                                             </a>
                                                             {% if space.account is defined and space.account is not empty %}
                                                                 <a class="dropdown-item text-dark"

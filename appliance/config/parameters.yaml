@@ -96,3 +96,5 @@ parameters:
             disable: '_teknoo_common_2fa_totp_disable'
             qrcode: '_teknoo_common_2fa_totp_qrcode'
             validate: '_teknoo_common_2fa_totp_validate'
+
+    teknoo.space.api_key_authenticated_user_provider.class: 'Teknoo\Space\Infrastructures\Symfony\Security\Provider\ApiKeysAuthenticatedUserProvider'

@@ -6,6 +6,8 @@ security:
     providers:
         with_password:
             id: 'Teknoo\East\CommonBundle\Provider\PasswordAuthenticatedUserProvider'
+        with_api_key:
+            id: 'Teknoo\Space\Infrastructures\Symfony\Security\Provider\ApiKeysAuthenticatedUserProvider'
         from_third_party:
             id: 'Teknoo\East\CommonBundle\Provider\ThirdPartyAuthenticatedUserProvider'
         with_recovery_access:
@@ -16,8 +18,11 @@ security:
         loginlinks_providers:
             chain:
                 providers: ['with_recovery_access', 'with_password']
+
     password_hashers:
         Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser:
+            algorithm: 'sodium'
+        Teknoo\Space\Infrastructures\Symfony\Object\ApiKeysAuthUser:
             algorithm: 'sodium'
 
     firewalls:
@@ -40,6 +45,11 @@ security:
             pattern: '^/api'
             stateless: true
             jwt: ~
+            json_login:
+                provider: 'with_api_key'
+                check_path: 'space_api_v1_login_check'
+                username_path: 'username'
+                password_path: 'token'
 
         #require admin role for all others pages
         account_area:

@@ -26,20 +26,20 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Plan;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormProcessingInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RenderFormInterface;
+use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
-use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
-use Teknoo\East\Common\Recipe\Step\Stop;
+use Teknoo\East\Common\Recipe\Step\SaveObject;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
-use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
+use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
+use Stringable;
+use Teknoo\Space\Object\DTO\SpaceUser;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -47,7 +47,7 @@ use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class UserGetJwtToken implements EditablePlanInterface
+class UserManageApiTokens implements EditablePlanInterface
 {
     use EditablePlanTrait;
 
@@ -56,9 +56,7 @@ class UserGetJwtToken implements EditablePlanInterface
         private readonly CreateObject $createObject,
         private readonly FormHandlingInterface $formHandling,
         private readonly FormProcessingInterface $formProcessing,
-        private readonly JwtCreateTokenInterface $jwtCreateToken,
-        private readonly Render $render,
-        private readonly Stop $stop,
+        private readonly SaveObject $saveObject,
         private readonly RenderFormInterface $renderForm,
         private readonly RenderError $renderError,
         private readonly string|Stringable $defaultErrorTemplate,
@@ -69,7 +67,8 @@ class UserGetJwtToken implements EditablePlanInterface
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
         $recipe = $recipe->require(new Ingredient(requiredType: ServerRequestInterface::class, name: 'request'));
-        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'objectClass'));
+        $recipe = $recipe->require(new Ingredient(requiredType: WriterInterface::class, name: 'writer'));
+        $recipe = $recipe->require(new Ingredient(requiredType: SpaceUser::class));
         $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'formClass'));
         $recipe = $recipe->require(
             new Ingredient(
@@ -80,34 +79,24 @@ class UserGetJwtToken implements EditablePlanInterface
             )
         );
         $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'template'));
-        $recipe = $recipe->require(new Ingredient(requiredType: 'string', name: 'tokenTemplate'));
 
         $recipe = $recipe->cook($this->createObject, CreateObject::class, [], 10);
 
-        $recipe = $recipe->cook($this->formHandling, FormHandlingInterface::class, [], 20);
+        $recipe = $recipe->cook($this->formHandling, FormHandlingInterface::class, [], 30);
 
-        $recipe = $recipe->cook($this->formProcessing, FormProcessingInterface::class, [], 30);
+        $recipe = $recipe->cook($this->formProcessing, FormProcessingInterface::class, [], 40);
 
-        $recipe = $recipe->cook($this->jwtCreateToken, JwtCreateTokenInterface::class, [], 40);
+        $recipe = $recipe->cook($this->saveObject, SaveObject::class, ['object' => SpaceUser::class], 60);
 
-        $recipe = $recipe->cook(
-            $this->render,
-            Render::class,
-            [
-                'template' => 'tokenTemplate',
-            ],
-            50,
-        );
-
-        $recipe = $recipe->cook($this->stop, Stop::class, [], 60);
+        $recipe = $recipe->cook($this->formHandling, FormHandlingInterface::class . ':refresh', [], 69);
 
         $recipe = $recipe->cook($this->renderForm, RenderFormInterface::class, [], 70);
 
         $recipe = $recipe->onError(new Bowl($this->renderError, []));
 
-        $this->addToWorkplan('nextStep', RenderFormInterface::class);
-
         $this->addToWorkplan('errorTemplate', (string) $this->defaultErrorTemplate);
+
+        $this->addToWorkplan('nextStep', RenderFormInterface::class);
 
         return $recipe;
     }
