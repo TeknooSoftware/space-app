@@ -158,7 +158,7 @@ redisHost=""
 redisPort=""
 
 if [ "$oauthEnabled" = "1" ]; then
-  oauthServerType=$(readAMandatoryResponse "OAuth Server Type [digital_ocean/github/gitlab/google/jira/microsoft]")
+  oauthServerType=$(readAMandatoryResponse "OAuth Server Type [digital_ocean/github/gitlab/google/jira/microsoft/generic]")
   if [ "$oauthServerType" = "gitlab" ]; then
     oauthServerUrl=$(readAMandatoryResponse "OAuth Gitlab server")
   fi
@@ -261,8 +261,34 @@ if [ "$useSfSeret" = "y" ]; then
   updateSecret "MESSENGER_JOB_DONE_DSN" "$MESSENGER_JOB_DONE_DSN"
   updateSecret "MESSENGER_NEW_JOB_DSN" "$MESSENGER_NEW_JOB_DSN"
   updateSecret "MONGODB_SERVER" "$mongoDbDSN"
-  updateSecret "OAUTH_CLIENT_ID" "$oauthClientId"
-  updateSecret "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
+  if [ "$oauthServerType" = "digital_ocean" ]; then
+    updateSecret "OAUTH_DO_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_DO_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "generic" ]; then
+    updateSecret "OAUTH_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "github" ]; then
+    updateSecret "OAUTH_GH_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_GH_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "gitlab" ]; then
+    updateSecret "OAUTH_GITLAB_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_GITLAB_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "google" ]; then
+    updateSecret "OAUTH_GOOGLE_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_GOOGLE_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "jira" ]; then
+    updateSecret "OAUTH_JIRA_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_JIRA_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "microsoft" ]; then
+    updateSecret "OAUTH_MS_CLIENT_ID" "$oauthClientId"
+    updateSecret "OAUTH_MS_CLIENT_SECRET" "$oauthClientSecret"
+  fi
   if [ "$useCatalog" = "0" ]; then
     updateSecret "SPACE_KUBERNETES_CA_VALUE" "$(cat "$kubernetesCAFile")"
     updateSecret "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
@@ -276,8 +302,34 @@ else
   updateFile "$ENV_LOCAL_FILE" "MESSENGER_JOB_DONE_DSN" "$MESSENGER_JOB_DONE_DSN"
   updateFile "$ENV_LOCAL_FILE" "MESSENGER_NEW_JOB_DSN" "$MESSENGER_NEW_JOB_DSN"
   updateFile "$ENV_LOCAL_FILE" "MONGODB_SERVER" "$mongoDbDSN"
-  updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
-  updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
+  if [ "$oauthServerType" = "digital_ocean" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_DO_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_DO_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "generic" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "github" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_GH_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_GH_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "gitlab" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_GITLAB_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_GITLAB_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "google" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_GOOGLE_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_GOOGLE_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "jira" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_JIRA_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_JIRA_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "microsoft" ]; then
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_MS_CLIENT_ID" "$oauthClientId"
+    updateFile "$ENV_LOCAL_FILE" "OAUTH_MS_CLIENT_SECRET" "$oauthClientSecret"
+  fi
   if [ "$useCatalog" = "0" ]; then
     updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CA_VALUE" "$(cat "$kubernetesCAFile")"
     updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
@@ -295,8 +347,34 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MESSENGER_JOB_DONE_DSN" "$MESSENGER_JOB_DONE_DSN"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MESSENGER_NEW_JOB_DSN" "$MESSENGER_NEW_JOB_DSN"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MONGODB_SERVER" "$mongoDbDSN"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
+  if [ "$oauthServerType" = "digital_ocean" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_DO_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_DO_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "generic" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "github" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GH_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GH_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "gitlab" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GITLAB_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GITLAB_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "google" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GOOGLE_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GOOGLE_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "jira" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_JIRA_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_JIRA_CLIENT_SECRET" "$oauthClientSecret"
+  fi
+  if [ "$oauthServerType" = "microsoft" ]; then
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_MS_CLIENT_ID" "$oauthClientId"
+    updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_MS_CLIENT_SECRET" "$oauthClientSecret"
+  fi
   if [ "$useCatalog" = "0" ]; then
     updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_CA_VALUE" "$(cat "$kubernetesCAFile")"
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_CREATE_TOKEN" "$kubernetesToken"
@@ -311,7 +389,7 @@ updateFile "$ENV_LOCAL_FILE" "MERCURE_PUBLISH_URL" "$mercurePublishUrl"
 updateFile "$ENV_LOCAL_FILE" "MERCURE_SUBSCRIBER_URL" "$mercureSubscribeUrl"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_ENABLED" "$oauthEnabled"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
-updateFile "$ENV_LOCAL_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
+updateFile "$ENV_LOCAL_FILE" "OAUTH_GITLAB_SERVER_URL" "$oauthServerUrl"
 updateFile "$ENV_LOCAL_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
 updateFile "$ENV_LOCAL_FILE" "SPACE_JWT_MAX_DAYS_TO_TIVE" "jwtMaxAgeDelay"
 if [ "$useCatalog" = "0" ]; then
@@ -354,7 +432,7 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MERCURE_SUBSCRIBER_URL" "$mercureSubscribeUrl"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_ENABLED" "$oauthEnabled"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_URL" "$oauthServerUrl"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_GITLAB_SERVER_URL" "$oauthServerUrl"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_JWT_MAX_DAYS_TO_TIVE" "jwtMaxAgeDelay"
   if [ "$useCatalog" = "0" ]; then

@@ -2,11 +2,11 @@ knpu_oauth2_client:
     clients:
         digital_ocean:
             type: 'digital_ocean'
-            client_id: '%env(OAUTH_CLIENT_ID)%'
-            client_secret: '%env(OAUTH_CLIENT_SECRET)%'
+            client_id: '%env(OAUTH_DO_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_DO_CLIENT_SECRET)%'
             redirect_route: space_connect_oauth_check
             redirect_params: {}
-#       generic:
+#        generic:
 #           type: 'generic'
 #           client_id: '%env(OAUTH_CLIENT_ID)%'
 #           client_secret: '%env(OAUTH_CLIENT_SECRET)%'
@@ -15,32 +15,32 @@ knpu_oauth2_client:
 #           provider_class: '%teknoo.space.oauth.provider.class%'
         github:
             type: 'github'
-            client_id: '%env(OAUTH_CLIENT_ID)%'
-            client_secret: '%env(OAUTH_CLIENT_SECRET)%'
+            client_id: '%env(OAUTH_GH_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_GH_CLIENT_SECRET)%'
             redirect_route: space_connect_oauth_check
             redirect_params: {}
         gitlab:
             type: 'gitlab'
-            client_id: '%env(OAUTH_CLIENT_ID)%'
-            client_secret: '%env(OAUTH_CLIENT_SECRET)%'
+            client_id: '%env(OAUTH_GITLAB_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_GITLAB_CLIENT_SECRET)%'
             redirect_route: space_connect_oauth_check
             redirect_params: {}
-            domain: '%env(OAUTH_SERVER_URL)%'
+            domain: '%env(OAUTH_GITLAB_SERVER_URL)%'
         google:
             type: 'google'
-            client_id: '%env(OAUTH_CLIENT_ID)%'
-            client_secret: '%env(OAUTH_CLIENT_SECRET)%'
+            client_id: '%env(OAUTH_GOOGLE_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_GOOGLE_CLIENT_SECRET)%'
             redirect_route: space_connect_oauth_check
             redirect_params: {}
         jira:
             type: 'jira'
-            client_id: '%env(OAUTH_CLIENT_ID)%'
-            client_secret: '%env(OAUTH_CLIENT_SECRET)%'
+            client_id: '%env(OAUTH_JIRA_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_JIRA_CLIENT_SECRET)%'
             redirect_route: space_connect_oauth_check
             redirect_params: {}
         microsoft:
             type: 'microsoft'
-            client_id: '%env(OAUTH_CLIENT_ID)%'
-            client_secret: '%env(OAUTH_CLIENT_SECRET)%'
+            client_id: '%env(OAUTH_MS_CLIENT_ID)%'
+            client_secret: '%env(OAUTH_MS_CLIENT_SECRET)%'
             redirect_route: space_connect_oauth_check
             redirect_params: {}
