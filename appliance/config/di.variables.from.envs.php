@@ -54,6 +54,18 @@ $loadFromEnv = static function (
         );
     }
 
+    if (!empty($_ENV[$jsonKey]) && !is_string($_ENV[$jsonKey])) {
+        throw new UnsupportedConfigurationException(
+            "Env var `{$jsonKey}` is not a string",
+        );
+    }
+
+    if (!empty($_ENV[$fileKey]) && !is_string($_ENV[$fileKey])) {
+        throw new UnsupportedConfigurationException(
+            "Env var `{$fileKey}` is not a string",
+        );
+    }
+
     $valuesFromContainer = [];
     if (
         !empty($parameterName)

@@ -36,9 +36,9 @@ use Teknoo\East\Paas\Infrastructures\PhpSecLib\Security\Encryption;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
 
-use function php_sapi_name;
 use function file_get_contents;
 use function is_readable;
+use function is_string;
 
 return [
     'teknoo.space.pvars.encryption.algorithm.env_key' => 'SPACE_PERSISTED_VAR_SECURITY_ALGORITHM',
@@ -68,7 +68,11 @@ return [
             $algo = Algorithm::from($algoValue);
 
             $privateKey = null;
-            if (!empty($_ENV[$privateKeyEnvKey]) && is_readable($_ENV[$privateKeyEnvKey])) {
+            if (
+                !empty($_ENV[$privateKeyEnvKey])
+                && is_string($_ENV[$privateKeyEnvKey])
+                && is_readable($_ENV[$privateKeyEnvKey])
+            ) {
                 $privateKContent = (string) file_get_contents($_ENV[$privateKeyEnvKey]);
 
                 $privateKey = match ($algo) {
@@ -83,7 +87,11 @@ return [
                 };
             }
 
-            if (empty($_ENV[$publicKeyEnvKey]) || !is_readable($_ENV[$publicKeyEnvKey])) {
+            if (
+                empty($_ENV[$publicKeyEnvKey])
+                || !is_string($_ENV[$publicKeyEnvKey])
+                || !is_readable($_ENV[$publicKeyEnvKey])
+            ) {
                 throw new InvalidConfigurationException(
                     "The public key defined for encryptions of variables is not readable"
                 );
