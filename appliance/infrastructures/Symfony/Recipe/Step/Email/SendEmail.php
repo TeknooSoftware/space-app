@@ -56,6 +56,7 @@ class SendEmail implements SendEmailInterface
 
     /**
      * @param array<string, string> $addresses
+     * @param string[] $mailAllowedMimesTypes
      */
     public function __construct(
         private readonly MailerInterface $mailer,
@@ -99,11 +100,12 @@ class SendEmail implements SendEmailInterface
 
         $email->text($contact->message);
 
-        if ($this->mailMaxAttachments < count($contact->attachments)) {
-            throw new InvalidArgumentException('teknoo.space.error.contact.too_many_attachments');
-        }
-
+        $attachmentCount = 0;
         foreach ($contact->attachments as $attachment) {
+            if ($this->mailMaxAttachments < $attachmentCount) {
+                throw new InvalidArgumentException('teknoo.space.error.contact.too_many_attachments');
+            }
+
             if ($this->mailMaxFileSize < $attachment->fileLength) {
                 throw new InvalidArgumentException('teknoo.space.error.contact.file_too_large');
             }
@@ -118,6 +120,8 @@ class SendEmail implements SendEmailInterface
                 name: $attachment->fileName,
                 contentType: $attachment->mimeType,
             );
+
+            $attachmentCount++;
         }
 
         return $email;

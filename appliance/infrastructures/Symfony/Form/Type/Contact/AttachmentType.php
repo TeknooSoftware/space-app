@@ -45,6 +45,9 @@ use Teknoo\Space\Object\DTO\ContactAttachment;
  */
 class AttachmentType extends AbstractType
 {
+    /**
+     * @param string[] $mailAllowedMimesTypes
+     */
     public function __construct(
         private readonly int $mailMaxFileSize = 204800,
         private readonly array $mailAllowedMimesTypes = ['text/plain', 'image/jpeg', 'image/png', 'image/gif'],
