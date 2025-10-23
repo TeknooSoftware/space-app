@@ -34,6 +34,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\DTO\Contact;
 
@@ -47,6 +48,11 @@ use Teknoo\Space\Object\DTO\Contact;
  */
 class SupportType extends AbstractType
 {
+    public function __construct(
+        private readonly int $mailMaxAttachments = 5,
+    ) {
+    }
+
     protected static function onSubmit(Contact $contact, ManagerInterface $manager): void
     {
         $manager->updateWorkPlan([
@@ -105,6 +111,9 @@ class SupportType extends AbstractType
                 'prototype' => true,
                 'prototype_name' => '__name__',
                 'label' => 'teknoo.space.form.contact.support.attachment',
+                'constraints' => [
+                    new Count(['max' => $this->mailMaxAttachments])
+                ],
             ],
         );
 

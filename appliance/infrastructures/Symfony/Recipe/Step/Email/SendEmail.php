@@ -35,7 +35,10 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Email\Exception\InvalidArgu
 use Teknoo\Space\Object\DTO\Contact;
 use Throwable;
 
+use function count;
 use function explode;
+use function filter_var;
+use function preg_replace;
 use function str_contains;
 
 /**
@@ -59,7 +62,10 @@ class SendEmail implements SendEmailInterface
         private readonly string $senderName,
         private readonly string $senderAddress,
         string $forbiddenWords = '',
-        private array $addresses = [],
+        private readonly array $addresses = [],
+        private readonly int $mailMaxAttachments = 5,
+        private readonly int $mailMaxFileSize = 204800,
+        private readonly array $mailAllowedMimesTypes = ['text/plain', 'image/jpeg', 'image/png', 'image/gif'],
     ) {
         $this->forbiddenWords = explode(',', $forbiddenWords);
     }
@@ -78,6 +84,13 @@ class SendEmail implements SendEmailInterface
 
     private function createEmail(string $receiverAddress, Contact $contact): Email
     {
+        if (!filter_var($contact->fromEmail, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException('teknoo.space.error.contact.invalid_email');
+        }
+
+        $contact->fromName = (string) preg_replace('/[\r\n]+/', '', $contact->fromName);
+        $contact->subject = (string) preg_replace('/[\r\n]+/', '', $contact->subject);
+
         $email = new Email();
         $email->subject($contact->subject);
         $email->from(new Address($this->senderAddress, $this->senderName));
@@ -86,7 +99,20 @@ class SendEmail implements SendEmailInterface
 
         $email->text($contact->message);
 
+        if ($this->mailMaxAttachments < count($contact->attachments)) {
+            throw new InvalidArgumentException('teknoo.space.error.contact.too_many_attachments');
+        }
+
         foreach ($contact->attachments as $attachment) {
+            if ($this->mailMaxFileSize < $attachment->fileLength) {
+                throw new InvalidArgumentException('teknoo.space.error.contact.file_too_large');
+            }
+
+            // Check file type
+            if (!in_array($attachment->mimeType, $this->mailAllowedMimesTypes)) {
+                throw new InvalidArgumentException('teknoo.space.error.contact.invalid_file_type');
+            }
+
             $email->attach(
                 body: $attachment->fileContent,
                 name: $attachment->fileName,

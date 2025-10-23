@@ -120,6 +120,8 @@ teknoo.space.error.500.title: 'Server error!'
 teknoo.space.error.500.upper: 'Oh no!'
 teknoo.space.error.code_not_accepted: "Subscription code is not accepted"
 teknoo.space.error.contact.bot_forbidden: "Ungranted bot"
+teknoo.space.error.contact.file_too_large: 'File too large, max size is 200k'
+teknoo.space.error.contact.invalid_file_type: 'Invalid file type, accepts only texte file and images'
 teknoo.space.error.contact.missing.receiver: "Receiver address is not defined"
 teknoo.space.error.messenger.handler.message-can-not-decrypted: "Configuration error, agent can not decrypt messages"
 teknoo.space.error.space_account.account.deleting: "Can not delete the account"
@@ -347,6 +349,7 @@ teknoo.space.text.user.api-keys.generated: 'Generated token. Please copy it and 
 teknoo.space.text.user.api-keys.is_expired: 'Is Expired'
 teknoo.space.text.user.api-keys.name: 'Name'
 teknoo.space.text.user.api-keys.no: 'No'
+teknoo.space.text.user.api-keys.to_delete: 'To delete'
 teknoo.space.text.user.api-keys.yes: 'Yes'
 teknoo.space.text.user_status: 'Status'
 teknoo.space.text.variables: 'Variables'
@@ -426,4 +429,3 @@ teknoo.space.title.user.jwt: 'JWT Token'
 teknoo.space.title.user.settings: 'My Settings'
 teknoo.space.title.user.update_password: 'Update my password'
 teknoo.space.title.variables: 'Variables'
-teknoo.space.text.user.api-keys.to_delete: 'To delete'

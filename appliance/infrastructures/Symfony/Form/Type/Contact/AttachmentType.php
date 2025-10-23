@@ -32,6 +32,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
 use Teknoo\Space\Object\DTO\ContactAttachment;
 
 /**
@@ -44,6 +45,12 @@ use Teknoo\Space\Object\DTO\ContactAttachment;
  */
 class AttachmentType extends AbstractType
 {
+    public function __construct(
+        private readonly int $mailMaxFileSize = 204800,
+        private readonly array $mailAllowedMimesTypes = ['text/plain', 'image/jpeg', 'image/png', 'image/gif'],
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): self
     {
         parent::buildForm($builder, $options);
@@ -55,6 +62,14 @@ class AttachmentType extends AbstractType
                 'required' => false,
                 'label' => false,
                 'mapped' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => $this->mailMaxFileSize,
+                        'mimeTypes' => $this->mailAllowedMimesTypes,
+                        'mimeTypesMessage' => 'teknoo.space.error.contact.invalid_file_type',
+                        'maxSizeMessage' => 'teknoo.space.error.contact.file_too_large',
+                    ])
+                ]
             ],
         );
 

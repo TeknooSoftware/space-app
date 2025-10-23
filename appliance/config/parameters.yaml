@@ -37,6 +37,8 @@ parameters:
 
     teknoo.space.default.code.subscription.required: true
     teknoo.space.default.jwt.max-days-to-tive: 30
+    teknoo.space.default.mail.constraints.max_attachments: 5
+    teknoo.space.default.mail.constraints.max_file_size: 204800
     teknoo.space.default.mailer.forbidden_words: ''
     teknoo.space.default.mailer.sender_address: ''
     teknoo.space.default.mailer.sender_name: ''
@@ -61,7 +63,11 @@ parameters:
     teknoo.space.assets.version: '2025.03.05'
 
     teknoo.space.jwt.enable_in-query: '%env(bool:SPACE_JWT_ENABLE_IN_QUERY)%'
-    teknoo.space.jwt.max-days-to-tive: '%env(default:teknoo.space.default.jwt.max-days-to-tive:SPACE_JWT_MAX_DAYS_TO_TIVE)%'
+    teknoo.space.jwt.max-days-to-tive: '%env(int:default:teknoo.space.default.jwt.max-days-to-tive:SPACE_JWT_MAX_DAYS_TO_TIVE)%'
+
+    teknoo.space.mail.constraints.allowed_mime_types: ['text/plain', 'image/jpeg', 'image/png', 'image/gif']
+    teknoo.space.mail.constraints.max_attachments: '%env(int:default:teknoo.space.default.mail.constraints.max_attachments:SPACE_MAIL_MAX_ATTACHMENTS)%'
+    teknoo.space.mail.constraints.max_file_size: '%env(int:default:teknoo.space.default.mail.constraints.max_file_size:SPACE_MAIL_MAX_FILE_SIZE)%'
 
     teknoo.space.mercure.publishing_enabled: '%env(default:teknoo.space.default.mercure.publishing_enabled:SPACE_MERCURE_PUBLISHING_ENABLED)%'
 

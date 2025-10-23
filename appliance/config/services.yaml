@@ -18,6 +18,9 @@ services:
             $routesFor2FAByProviders: '%teknoo.space.user.2fa.routes%'
             $planCatalog : '@teknoo.space.subscription_plan_catalog'
             $clusterCatalog: '@teknoo.space.clusters_catalog'
+            $mailMaxAttachments: '%teknoo.space.mail.constraints.max_attachments%'
+            $mailMaxFileSize: '%teknoo.space.mail.constraints.max_file_size%'
+            $mailAllowedMimesTypes: '%teknoo.space.mail.constraints.allowed_mime_types%'
 
     ###################
     # Generic
