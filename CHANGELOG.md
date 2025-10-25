@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-RC8] - 2025-10-25
+### RC Release
+- Fix icons in right menus
+- Improve AOauth connect with different ENV Key name per provider
+- Prevent Env var errors
+- Prevent issue with malformed mail
+- Update Dockerfile for FPM for dev environment
+- Update doctrine/mongodb-odm
+- Update doctrine collection
+
 ## [2.0.0-RC7] - 2025-10-22
 ### RC Release
 - Add API `/api/v1/jwt/create-token` to regenerate new JWT token before its expiration.  
