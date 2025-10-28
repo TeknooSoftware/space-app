@@ -166,6 +166,258 @@ MAILER_DSN=sendmail://default
 MAILER_DSN=null://null
 ```
 
+#### MAILER_SENDER_ADDRESS
+- **Type**: String (email)
+- **Optional**: Yes
+- **Description**: Default sender email address used by the application
+
+```bash
+MAILER_SENDER_ADDRESS=no-reply@space.example.com
+```
+
+#### MAILER_SENDER_NAME
+- **Type**: String
+- **Optional**: Yes
+- **Description**: Default sender display name
+
+```bash
+MAILER_SENDER_NAME=Space Platform
+```
+
+#### MAILER_FORBIDDEN_WORDS
+- **Type**: String (comma-separated)
+- **Optional**: Yes
+- **Description**: Comma-separated forbidden words to filter emails content
+
+```bash
+MAILER_FORBIDDEN_WORDS=spam,viagra,lottery
+```
+
+#### SPACE_MAIL_MAX_ATTACHMENTS
+- **Type**: Integer
+- **Optional**: Yes
+- **Default**: `5`
+- **Description**: Maximum number of attachments allowed per email
+
+```bash
+SPACE_MAIL_MAX_ATTACHMENTS=5
+```
+
+#### SPACE_MAIL_MAX_FILE_SIZE
+- **Type**: Integer (bytes)
+- **Optional**: Yes
+- **Default**: `204800`
+- **Description**: Maximum file size per attachment in bytes
+
+```bash
+SPACE_MAIL_MAX_FILE_SIZE=204800
+```
+
+## User and UI Configuration
+
+### Support Contact
+
+#### SPACE_SUPPORT_CONTACT
+- **Type**: String (email or URL)
+- **Optional**: Yes
+- **Description**: Contact email address or URI for support displayed in the UI
+
+```bash
+SPACE_SUPPORT_CONTACT=support@space.example.com
+```
+
+### Two-Factor Authentication (2FA)
+
+#### SPACE_2FA_PROVIDER
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `google`
+- **Values**: `google`, `generic`
+- **Description**: Two factor provider to use
+
+```bash
+SPACE_2FA_PROVIDER=google
+```
+
+## Session Storage
+
+### Redis (sessions)
+
+#### SPACE_REDIS_HOST
+- **Type**: String (hostname)
+- **Optional**: Yes
+- **Description**: Redis host used for sessions
+
+```bash
+SPACE_REDIS_HOST=redis
+```
+
+#### SPACE_REDIS_PORT
+- **Type**: Integer
+- **Optional**: Yes
+- **Default**: `6379`
+- **Description**: Redis port used for sessions
+
+```bash
+SPACE_REDIS_PORT=6379
+```
+
+## Authentication
+
+### JWT Configuration
+
+#### SPACE_JWT_SECRET_KEY
+- **Type**: String (file path)
+- **Required**: Yes (if JWT enabled)
+- **Description**: Path to the private key used to sign JWT tokens
+
+```bash
+SPACE_JWT_SECRET_KEY=/opt/space/jwt/private.pem
+```
+
+#### SPACE_JWT_PUBLIC_KEY
+- **Type**: String (file path)
+- **Required**: Yes (if JWT enabled)
+- **Description**: Path to the public key used to verify JWT tokens
+
+```bash
+SPACE_JWT_PUBLIC_KEY=/opt/space/jwt/public.pem
+```
+
+#### SPACE_JWT_PASSPHRASE
+- **Type**: String
+- **Optional**: Yes (if private key is protected)
+- **Description**: Passphrase to unlock the private key
+
+```bash
+SPACE_JWT_PASSPHRASE=change_this_passphrase
+```
+
+#### SPACE_JWT_TTL
+- **Type**: Integer (seconds)
+- **Required**: Yes
+- **Description**: Token time-to-live in seconds
+
+```bash
+SPACE_JWT_TTL=3600
+```
+
+#### SPACE_JWT_ENABLE_IN_QUERY
+- **Type**: Boolean (0/1)
+- **Optional**: Yes
+- **Description**: Allow JWT token to be passed via query string
+
+```bash
+SPACE_JWT_ENABLE_IN_QUERY=0
+```
+
+#### SPACE_JWT_MAX_DAYS_TO_TIVE
+- **Type**: Integer (days)
+- **Optional**: Yes
+- **Default**: `30`
+- **Description**: Maximum life in days for JWT token
+
+```bash
+SPACE_JWT_MAX_DAYS_TO_TIVE=30
+```
+
+### OAuth Providers
+
+#### OAUTH_ENABLED
+- **Type**: Boolean (0/1)
+- **Optional**: Yes
+- **Description**: Enable or disable OAuth login buttons in the UI
+
+```bash
+OAUTH_ENABLED=1
+```
+
+#### OAUTH_SERVER_TYPE
+- **Type**: String
+- **Optional**: Yes
+- **Description**: Provider type when using a generic/custom server
+
+```bash
+OAUTH_SERVER_TYPE=gitlab
+```
+
+#### DigitalOcean
+
+##### OAUTH_DO_CLIENT_ID
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client id for DigitalOcean
+
+##### OAUTH_DO_CLIENT_SECRET
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client secret for DigitalOcean
+
+#### GitHub
+
+##### OAUTH_GH_CLIENT_ID
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client id for GitHub
+
+##### OAUTH_GH_CLIENT_SECRET
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client secret for GitHub
+
+#### GitLab
+
+##### OAUTH_GITLAB_CLIENT_ID
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client id for GitLab
+
+##### OAUTH_GITLAB_CLIENT_SECRET
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client secret for GitLab
+
+##### OAUTH_GITLAB_SERVER_URL
+- **Type**: String (URL)
+- **Optional**: Yes
+- **Description**: Base URL of your GitLab instance (for self-hosted)
+
+#### Google
+
+##### OAUTH_GOOGLE_CLIENT_ID
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client id for Google
+
+##### OAUTH_GOOGLE_CLIENT_SECRET
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client secret for Google
+
+#### Jira
+
+##### OAUTH_JIRA_CLIENT_ID
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client id for Jira
+
+##### OAUTH_JIRA_CLIENT_SECRET
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client secret for Jira
+
+#### Microsoft
+
+##### OAUTH_MS_CLIENT_ID
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client id for Microsoft
+
+##### OAUTH_MS_CLIENT_SECRET
+- **Type**: String
+- **Optional**: Yes
+- **Description**: OAuth client secret for Microsoft
+
 ## Kubernetes Configuration
 
 ### Single Cluster Configuration (Legacy)

@@ -1,0 +1,42 @@
+# FrankenPHP + Caddy configuration for Teknoo Space (development)
+
+# HTTP: redirect all traffic to HTTPS
+:80 {
+  redir https://{host}{uri} 301
+}
+
+# HTTPS server with self-signed certificate for local development
+:443 {
+  tls internal
+
+  root * /var/www/space/public
+
+  # Static files first
+  encode zstd gzip
+  file_server
+
+  # Proxy Mercure hub (SSE)
+  route /hub* {
+    reverse_proxy http://mercure:8181
+    header Content-Type "text/event-stream"
+    header Cache-Control "no-cache, no-store, must-revalidate"
+    header X-Accel-Buffering "no"
+    header Connection "keep-alive"
+    header Expire "0"
+    header Pragma "no-cache"
+  }
+
+  # Security / CORS headers
+  header {
+    X-Frame-Options "SAMEORIGIN"
+    X-Content-Type-Options "nosniff"
+    Strict-Transport-Security "max-age=3600"
+    Access-Control-Allow-Origin "*"
+  }
+
+  # PHP front controller using FrankenPHP
+  php_server {
+    root /var/www/space/public
+    index index.php
+  }
+}

@@ -249,8 +249,20 @@ Environnements variables configuration
         * `APP_REMEMBER_SECRET` : (string) `remember_me.secret` value in Symfony firewall.
         * `MESSENGER_NEW_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment
           request.
+    * Support
+        * `SPACE_SUPPORT_CONTACT` : (string) Email address (or URI) for support contact displayed in the UI. *Optional*
+    * 2FA
+        * `SPACE_2FA_PROVIDER` : (string) Two factor provider to use (e.g. `google` or `generic`). `google` by default. *Optional*
+    * Redis (sessions)
+        * `SPACE_REDIS_HOST` : (string) Redis host used for sessions. *Optional*
+        * `SPACE_REDIS_PORT` : (int) Redis port used for sessions. `6379` by default. *Optional*
     * Mailer.
-        * `MAILER_DNS` : (string) mEmail transport configuration. *Optional*
+        * `MAILER_DSN` : (string) Email transport configuration (Symfony Mailer DSN). *Optional*
+        * `MAILER_SENDER_ADDRESS` : (string) Default sender email address. *Optional*
+        * `MAILER_SENDER_NAME` : (string) Default sender display name. *Optional*
+        * `MAILER_FORBIDDEN_WORDS` : (string) Comma-separated forbidden words to filter emails. *Optional*
+        * `SPACE_MAIL_MAX_ATTACHMENTS` : (int) Maximum number of attachments allowed per email. *Optional*
+        * `SPACE_MAIL_MAX_FILE_SIZE` : (int) Maximum file size per attachment in bytes. *Optional*
     * Mercure :
         * `SPACE_MERCURE_PUBLISHING_ENABLED` : (int/bool) to enable or not mercure protocol to allow redirection of user
           to
@@ -258,7 +270,34 @@ Environnements variables configuration
         * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
     * JWT :
+      * `SPACE_JWT_SECRET_KEY` : (string) Path to the private key used to sign JWT tokens.
+      * `SPACE_JWT_PUBLIC_KEY` : (string) Path to the public key used to verify JWT tokens.
+      * `SPACE_JWT_PASSPHRASE` : (string) Passphrase to unlock the private key.
+      * `SPACE_JWT_TTL` : (int) Token time-to-live in seconds.
+      * `SPACE_JWT_ENABLE_IN_QUERY` : (int/bool) Allow JWT token to be passed via query string. *Optional*
       * `SPACE_JWT_MAX_DAYS_TO_TIVE`: (string) Maximum life in days for JWT token
+    * OAuth :
+      * `OAUTH_ENABLED` : (int/bool) Enable or disable OAuth login buttons in UI. *Optional*
+      * `OAUTH_SERVER_TYPE` : (string) Provider type when using a generic/custom server. *Optional*
+      * DigitalOcean:
+        * `OAUTH_DO_CLIENT_ID` : (string) OAuth client id for DigitalOcean.
+        * `OAUTH_DO_CLIENT_SECRET` : (string) OAuth client secret for DigitalOcean.
+      * GitHub:
+        * `OAUTH_GH_CLIENT_ID` : (string) OAuth client id for GitHub.
+        * `OAUTH_GH_CLIENT_SECRET` : (string) OAuth client secret for GitHub.
+      * GitLab:
+        * `OAUTH_GITLAB_CLIENT_ID` : (string) OAuth client id for GitLab.
+        * `OAUTH_GITLAB_CLIENT_SECRET` : (string) OAuth client secret for GitLab.
+        * `OAUTH_GITLAB_SERVER_URL` : (string) Base URL of your GitLab instance (for self‑hosted).
+      * Google:
+        * `OAUTH_GOOGLE_CLIENT_ID` : (string) OAuth client id for Google.
+        * `OAUTH_GOOGLE_CLIENT_SECRET` : (string) OAuth client secret for Google.
+      * Jira:
+        * `OAUTH_JIRA_CLIENT_ID` : (string) OAuth client id for Jira.
+        * `OAUTH_JIRA_CLIENT_SECRET` : (string) OAuth client secret for Jira.
+      * Microsoft:
+        * `OAUTH_MS_CLIENT_ID` : (string) OAuth client id for Microsoft.
+        * `OAUTH_MS_CLIENT_SECRET` : (string) OAuth client secret for Microsoft.
     * OCI images building :
         * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
         * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*

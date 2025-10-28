@@ -4,7 +4,7 @@ FROM mongo:$MONGO_VERSION
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN set -eux ; \
+RUN set -ux ; \
     apt-get update ; \
     apt-get dist-upgrade -y ; \
     apt-get install -y netcat

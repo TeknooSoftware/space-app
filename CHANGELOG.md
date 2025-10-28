@@ -1,5 +1,14 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-RC9] - 2025-10-28
+### RC Release
+- Update to Symfony 7.3.5
+- Update last Illuminates libraries
+- Update Mongodb ODM
+- Fix documentations
+- Switch to FrankenPHP instead of PHP-FPM
+  - PHP CLI still used for worker, because pcntl is not available in worker mode in FrankenPHP. (Used only for signals)
+
 ## [2.0.0-RC8] - 2025-10-25
 ### RC Release
 - Fix icons in right menus

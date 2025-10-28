@@ -1,4 +1,5 @@
 /compose.override.yml
+/compose.legacy.override.yml
 /var/
 !/var/.gitkeep
 /var/mongo/

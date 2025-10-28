@@ -63,12 +63,11 @@ services:
             retries: 5
             start_period: 240s
             timeout: 1s
-    web:
+    fpm:
         build:
-            context: build.dev/frankenphp-web
-        ports:
-            - 80:80
-            - 443:443
+            context: build.dev/php-fpm
+        expose:
+            - 9000
         networks:
             - bdd
             - backend
@@ -111,7 +110,7 @@ services:
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
             - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
-            test: ["CMD", "curl", "-fk", "https://localhost:443", "||", "exit", "1"]
+            test: ["CMD", "sh", "-c", "nc -z localhost 9000 || exit 1"]
             interval: 30s
             retries: 5
             start_period: 240s
@@ -261,6 +260,16 @@ services:
                 condition: service_healthy
             amqp:
                 condition: service_healthy
+    httpd:
+        build:
+            context: build.dev/httpd
+        ports:
+            - 80:80
+            - 443:443
+        networks:
+            - backend
+        volumes:
+            - ./appliance/public:/var/www/space/public
     redis:
         build:
             context: build.dev/redis
