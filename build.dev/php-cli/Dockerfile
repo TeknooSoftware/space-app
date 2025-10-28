@@ -50,9 +50,8 @@ RUN set -eux ; \
     docker-php-ext-enable apcu  \
                           mongodb  \
                           yaml  \
-                          amqp
-
-RUN docker-php-ext-install bcmath \
+                          amqp ; \
+    docker-php-ext-install bcmath \
                            bz2 \
                            calendar \
                            curl \
@@ -81,7 +80,6 @@ RUN docker-php-ext-install bcmath \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
     locale-gen ; \
     mkdir -p /run/php/ ; \
-    cd /usr/local/bin ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \

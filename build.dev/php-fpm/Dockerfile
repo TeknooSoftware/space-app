@@ -1,7 +1,7 @@
 FROM php:8.4.13-fpm
 
 ENV LANG=en_US.UTF-8
-ENV LANGUAGEen=_US:fr
+ENV LANGUAGE=en_US:fr
 ENV LC_ALL=en_US.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -85,7 +85,6 @@ RUN set -eux ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
     mkdir -p /run/php/ ; \
-    cd /usr/local/bin ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \

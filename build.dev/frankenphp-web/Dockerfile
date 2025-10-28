@@ -1,23 +1,24 @@
-FROM php:8.4.13-cli
+# FrankenPHP web image replacing httpd + php-fpm for development
+FROM dunglas/frankenphp:1.9-php8.4.14
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:fr
 ENV LC_ALL=en_US.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
-ENV NERDCTL_VERSION=1.7.2
 
+ENV XDG_DATA_HOME=/var/www/.local/share
+ENV XDG_CONFIG_HOME=/var/www/.config
+ENV CADDY_HOME=/var/www/.local/share/caddy
+
+# Install required libs and PHP extensions similar to php-fpm image
 RUN set -eux ; \
     apt-get clean ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
             apt-transport-https \
-            buildah \
             ca-certificates \
-            containerd \
             curl \
-            fuse-overlayfs \
-            git \
             gnupg-agent \
             libbz2-dev \
             libcurl4-openssl-dev \
@@ -37,10 +38,7 @@ RUN set -eux ; \
             locales \
             musl-dev \
             nano  \
-            rootlesskit \
-            ssh \
             sudo  \
-            sudo \
             tzdata  \
             wget \
             zlib1g-dev \
@@ -51,14 +49,20 @@ RUN set -eux ; \
         sed -i 's|#include "ext/dom/lexbor/lexbor/selectors-adapted/selectors.h"|#include "lexbor/selectors-adapted/selectors.h"|g' \
             /usr/src/php/ext/dom/lexbor/lexbor/selectors-adapted/selectors.c ; \
     fi ; \
+    locale-gen ; \
     pecl install apcu ; \
     pecl install mongodb ; \
     pecl install yaml ; \
+    pecl install xdebug ; \
     pecl install -o -f amqp ; \
+    pecl install -o -f redis ; \
     docker-php-ext-enable apcu  \
                           mongodb  \
                           yaml  \
-                          amqp ; \
+                          amqp \
+                          xdebug \
+                          redis \
+    ; \
     docker-php-ext-install bcmath \
                            bz2 \
                            calendar \
@@ -85,17 +89,23 @@ RUN set -eux ; \
                            zip \
     ; \
     apt-get clean ; \
-    ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
-    locale-gen ; \
+    ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 || true ; \
     mkdir -p /run/php/ ; \
-    cd /usr/local/bin ; \
-    wget -q "https://github.com/containerd/nerdctl/releases/download/v${NERDCTL_VERSION}/nerdctl-full-${NERDCTL_VERSION}-linux-amd64.tar.gz" -O /tmp/nerdctl.tar.gz ; \
-    tar -C . -xzf /tmp/nerdctl.tar.gz --strip-components 1 bin/nerdctl ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
-    chown spaceuser:spacegroup /var/www
+    chown -R spaceuser:spacegroup /var/www ; \
+    mkdir -p /etc/caddy ; \
+    mkdir -p /var/www/.local/share/caddy /var/www/.config/caddy ; \
+    chown -R spaceuser:spacegroup /var/www/.local /var/www/.config
 
+# PHP configuration
 ADD 99-space.ini /usr/local/etc/php/conf.d/
+COPY --chown=spaceuser:spacegroup Caddyfile /etc/caddy/Caddyfile
 
 USER spaceuser:spacegroup
+
+WORKDIR /var/www/space
+
+EXPOSE 80
+EXPOSE 443

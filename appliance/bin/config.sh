@@ -16,7 +16,12 @@ else
 fi
 
 ENV_LOCAL_FILE='.env.local'
+DOCKER_COMPOSE_FPM_OVERRIDE_FILE='../compose.fpm.override.yml'
+DOCKER_COMPOSE_FPM_FILE='../compose.fpm.yml'
+DOCKER_COMPOSE_FRANKENPHP_OVERRIDE_FILE='../compose.frankenphp.override.yml'
+DOCKER_COMPOSE_FRANKENPHP_FILE='../compose.frankenphp.yml'
 DOCKER_COMPOSE_OVERRIDE_FILE='../compose.override.yml'
+DOCKER_COMPOSE_FILE='../compose.yml'
 SESSION_FILE='config/packages/framework.session.backend.yaml'
 FILE_SESSION_FILE='config/packages/framework.session.backend.file.yaml.dist'
 REDIS_SESSION_FILE='config/packages/framework.session.backend.redis.yaml.dist'
@@ -107,6 +112,8 @@ useSfSeret=$(readForYesOrNo "Use Symfony Secrets [y/n]")
 useDockerCompose=$(readForYesOrNo "Configure to use with a local Docker Compose [y/n]")
 
 if [ "$useDockerCompose" = "y" ]; then
+  useDockerComposeFranken=$(readForYesOrNo "Prefere use FrankenPHP instead PHP FPM [y/n]")
+
   mongoDbDSN="mongodb://space_user:space_pwd@db/space"
   amqpDSN="amqp://space:space_pwd@amqp:5672/"
   mercurePublishUrl="http://mercure:8181/"
@@ -184,12 +191,28 @@ if [ "$useSfSeret" = "y" ]; then
 fi
 
 if [ "$useDockerCompose" = "y" ]; then
+  if [ -f "$DOCKER_COMPOSE_FILE" ]; then
+    echo "Backup existant $DOCKER_COMPOSE_FILE to $DOCKER_COMPOSE_FILE.bkp"
+    cp "$DOCKER_COMPOSE_FILE" "$DOCKER_COMPOSE_FILE.bck"
+  fi
+
   if [ -f "$DOCKER_COMPOSE_OVERRIDE_FILE" ]; then
     echo "Backup existant $DOCKER_COMPOSE_OVERRIDE_FILE to $DOCKER_COMPOSE_OVERRIDE_FILE.bkp"
     cp "$DOCKER_COMPOSE_OVERRIDE_FILE" "$DOCKER_COMPOSE_OVERRIDE_FILE.bck"
   else
     echo "Creating new $DOCKER_COMPOSE_OVERRIDE_FILE file"
-    cp "$DOCKER_COMPOSE_OVERRIDE_FILE.dist" "$DOCKER_COMPOSE_OVERRIDE_FILE"
+
+    if [ "$useDockerComposeFranken" = "y" ]; then
+      cp "$DOCKER_COMPOSE_FRANKENPHP_OVERRIDE_FILE" "$DOCKER_COMPOSE_OVERRIDE_FILE"
+    else
+      cp "$DOCKER_COMPOSE_FPM_OVERRIDE_FILE" "$DOCKER_COMPOSE_OVERRIDE_FILE"
+    fi
+  fi
+
+  if [ "$useDockerComposeFranken" = "y" ]; then
+    cp "$DOCKER_COMPOSE_FRANKENPHP_FILE" "$DOCKER_COMPOSE_FILE"
+  else
+    cp "$DOCKER_COMPOSE_FPM_FILE" "$DOCKER_COMPOSE_FILE"
   fi
 fi
 
