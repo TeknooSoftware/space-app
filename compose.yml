@@ -111,7 +111,7 @@ services:
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
             - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
-            test: ["CMD", "curl", "-fk", "https://localhost:443", "||", "exit", "1"]
+            test: ["CMD-SHELL", "curl -fk https://localhost:443 || exit 1"]
             interval: 30s
             retries: 5
             start_period: 240s
