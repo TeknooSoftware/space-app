@@ -94,10 +94,11 @@ RUN set -eux ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
+    mkdir -p /data/caddy/ ; \
     chown -R spaceuser:spacegroup /var/www ; \
     mkdir -p /etc/caddy ; \
     mkdir -p /var/www/.local/share/caddy /var/www/.config/caddy ; \
-    chown -R spaceuser:spacegroup /var/www/.local /var/www/.config
+    chown -R spaceuser:spacegroup /var/www/.local /var/www/.config /data/caddy/
 
 # PHP configuration
 ADD 99-space.ini /usr/local/etc/php/conf.d/
