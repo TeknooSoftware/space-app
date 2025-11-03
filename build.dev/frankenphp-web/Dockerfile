@@ -90,7 +90,6 @@ RUN set -eux ; \
     ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 || true ; \
-    mkdir -p /run/php/ ; \
     addgroup --gid 1000 spacegroup ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
