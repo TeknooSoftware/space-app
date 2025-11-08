@@ -21,6 +21,11 @@ if (!class_exists(UnitOfWork::class, false)) {
 
         public const DEPRECATED_WRITE_OPTIONS = ['fsync', 'safe', 'w'];
 
+        public function clear(?string $documentName = null): void
+        {
+
+        }
+
         public function propertyChanged($sender, $propertyName, $oldValue, $newValue)
         {
         }
