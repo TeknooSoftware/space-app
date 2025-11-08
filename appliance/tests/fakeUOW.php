@@ -23,7 +23,6 @@ if (!class_exists(UnitOfWork::class, false)) {
 
         public function clear(?string $documentName = null): void
         {
-
         }
 
         public function propertyChanged($sender, $propertyName, $oldValue, $newValue)
