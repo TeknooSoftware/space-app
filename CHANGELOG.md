@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.0-RC10] - 2025-11-09
+### RC Release
+- Update to Symfony 7.3.6
+- Update to State 7.1
+- Update to Recipe 7.2
+- Update zenstruck/messenger-test
+- Last RC before stable
+
 ## [2.0.0-RC9] - 2025-10-28
 ### RC Release
 - Update to Symfony 7.3.5
