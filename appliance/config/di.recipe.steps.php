@@ -457,6 +457,8 @@ return [
         return new DashboardFrame(
             httpMethodsClient: $httpMethodsClient,
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
+            streamFactory: $container->get(StreamFactoryInterface::class),
+            urlGenerator: $container->get('router'),
         );
     },
 

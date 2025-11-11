@@ -32,7 +32,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -63,6 +65,10 @@ class DashboardFrameTest extends TestCase
 
     private ResponseFactoryInterface&MockObject $responseFactory;
 
+    private StreamFactoryInterface&MockObject $streamFactory;
+
+    private UrlGeneratorInterface&MockObject $urlGenerator;
+
     /**
      * {@inheritdoc}
      */
@@ -72,6 +78,9 @@ class DashboardFrameTest extends TestCase
 
         $this->httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
         $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
+        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+
         $clusterConfig = new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
@@ -94,6 +103,8 @@ class DashboardFrameTest extends TestCase
         $this->dashboardFrame = new DashboardFrame(
             $this->httpMethodsClient,
             $this->responseFactory,
+            $this->streamFactory,
+            $this->urlGenerator,
         );
     }
 
