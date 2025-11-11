@@ -27,8 +27,11 @@ namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use BadMethodCallException;
 use Http\Client\Common\HttpMethodsClientInterface;
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -41,6 +44,7 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
 use function http_build_query;
 use function in_array;
+use function preg_replace;
 use function str_contains;
 
 /**
@@ -54,12 +58,18 @@ class DashboardFrame implements DashboardFrameInterface
     public function __construct(
         private readonly HttpMethodsClientInterface $httpMethodsClient,
         private readonly ResponseFactoryInterface $responseFactory,
+        private readonly StreamFactoryInterface $streamFactory,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
     private function getDashboardUrl(ClusterConfig $cluster, ?AccountEnvironment $env, string $wildcard): string
     {
         if (!str_contains($wildcard, '#')) {
+            if ('config/config.json' === $wildcard) {
+                $wildcard = 'assets/' . $wildcard;
+            }
+
             return $cluster->dashboardAddress . $wildcard;
         }
 
@@ -88,6 +98,13 @@ class DashboardFrame implements DashboardFrameInterface
     ): DashboardFrameInterface {
         if (empty($wildcard)) {
             $wildcard = '#/workloads';
+        }
+
+        //Hack because last version of dashboard does not respect base uri
+        if ('assets' === $clusterName && 'config.json' === $wildcard) {
+            $client->acceptResponse(new Response($this->streamFactory->createStream('Not found'), 404));
+
+            return $this;
         }
 
         $clusterConfig = $clusterCatalog->getCluster($clusterName);
@@ -150,8 +167,25 @@ class DashboardFrame implements DashboardFrameInterface
             );
         }
 
+        $body = (string) $responseDashboard->getBody();
+
+        $baseTag = '<base href="' . $this->urlGenerator->generate(
+            'space_dashboard_frame',
+            [
+                'clusterName' => $clusterName,
+                'envName' => $envName,
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        ) . '">';
+
+        $body = preg_replace(
+            '/<html([^>]*)>.*?<head>/is',
+            '<html$1><head>' . $baseTag,
+            $body,
+        ) ?? $body;
+
         $response = $response->withBody(
-            $responseDashboard->getBody(),
+            $this->streamFactory->createStream((string) $body),
         );
 
         $client->acceptResponse($response);
