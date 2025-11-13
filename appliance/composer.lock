@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c3218af86f650bf299f406d942e415e",
+    "content-hash": "210fda1d9da8a011fe15f95a6378e9e9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1633,7 +1633,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v12.38.0",
+            "version": "v12.38.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1692,7 +1692,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v12.38.0",
+            "version": "v12.38.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1738,7 +1738,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v12.38.0",
+            "version": "v12.38.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1786,7 +1786,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v12.38.0",
+            "version": "v12.38.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -13757,16 +13757,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.4.2",
+            "version": "12.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a94ea4d26d865875803b23aaf78c3c2c670ea2ea"
+                "reference": "d8f644d8d9bb904867f7a0aeb1bd306e0d966949"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a94ea4d26d865875803b23aaf78c3c2c670ea2ea",
-                "reference": "a94ea4d26d865875803b23aaf78c3c2c670ea2ea",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d8f644d8d9bb904867f7a0aeb1bd306e0d966949",
+                "reference": "d8f644d8d9bb904867f7a0aeb1bd306e0d966949",
                 "shasum": ""
             },
             "require": {
@@ -13834,7 +13834,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.4.2"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.4.3"
             },
             "funding": [
                 {
@@ -13858,7 +13858,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-10-30T08:41:39+00:00"
+            "time": "2025-11-13T07:20:26+00:00"
         },
         {
             "name": "roave/security-advisories",
