@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "210fda1d9da8a011fe15f95a6378e9e9",
+    "content-hash": "2622a05b8c5be0086c7a84866d6189e1",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -908,16 +908,16 @@
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
-            "version": "5.4.3",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineMongoDBBundle.git",
-                "reference": "2d040dd7abafd70c8b7932a0c7b107dc4ff552f2"
+                "reference": "da3bfe0aa2ce995569baf8e3affbf76a5bf01a00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/2d040dd7abafd70c8b7932a0c7b107dc4ff552f2",
-                "reference": "2d040dd7abafd70c8b7932a0c7b107dc4ff552f2",
+                "url": "https://api.github.com/repos/doctrine/DoctrineMongoDBBundle/zipball/da3bfe0aa2ce995569baf8e3affbf76a5bf01a00",
+                "reference": "da3bfe0aa2ce995569baf8e3affbf76a5bf01a00",
                 "shasum": ""
             },
             "require": {
@@ -927,30 +927,32 @@
                 "ext-mongodb": "^1.21 || ^2",
                 "php": "^8.1",
                 "psr/log": "^1.0 || ^2.0 || ^3.0",
-                "symfony/config": "^6.4 || ^7.0",
-                "symfony/console": "^6.4 || ^7.0",
-                "symfony/dependency-injection": "^6.4 || ^7.0",
-                "symfony/doctrine-bridge": "^6.4 || ^7.0",
-                "symfony/framework-bundle": "^6.4 || ^7.0",
-                "symfony/http-kernel": "^6.4 || ^7.0",
-                "symfony/options-resolver": "^6.4 || ^7.0"
+                "symfony/config": "^6.4 || ^7.0 || ^8.0",
+                "symfony/console": "^6.4 || ^7.0 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.0 || ^8.0",
+                "symfony/doctrine-bridge": "^6.4 || ^7.0 || ^8.0",
+                "symfony/framework-bundle": "^6.4 || ^7.0 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.0 || ^8.0",
+                "symfony/options-resolver": "^6.4 || ^7.0 || ^8.0"
             },
             "conflict": {
                 "doctrine/data-fixtures": "<1.8 || >=3"
             },
             "require-dev": {
                 "composer/semver": "^3.4",
-                "doctrine/coding-standard": "^11.0",
+                "doctrine/coding-standard": "^14.0",
                 "doctrine/data-fixtures": "^1.8 || ^2.0",
                 "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.5",
-                "symfony/browser-kit": "^6.4 || ^7.0",
-                "symfony/form": "^6.4 || ^7.0",
+                "squizlabs/php_codesniffer": "^4",
+                "symfony/browser-kit": "^6.4 || ^7.0 || ^8.0",
+                "symfony/form": "^6.4 || ^7.0 || ^8.0",
+                "symfony/messenger": "^6.4 || ^7.0 || ^8.0",
                 "symfony/phpunit-bridge": "^6.4.1 || ^7.0.1",
-                "symfony/security-bundle": "^6.4 || ^7.0",
-                "symfony/stopwatch": "^6.4 || ^7.0",
-                "symfony/validator": "^6.4 || ^7.0",
-                "symfony/yaml": "^6.4 || ^7.0"
+                "symfony/security-bundle": "^6.4 || ^7.0 || ^8.0",
+                "symfony/stopwatch": "^6.4 || ^7.0 || ^8.0",
+                "symfony/validator": "^6.4 || ^7.0 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.0 || ^8.0"
             },
             "suggest": {
                 "doctrine/data-fixtures": "Load data fixtures"
@@ -988,9 +990,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineMongoDBBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.4.3"
+                "source": "https://github.com/doctrine/DoctrineMongoDBBundle/tree/5.5.0"
             },
-            "time": "2025-11-05T15:09:42+00:00"
+            "time": "2025-11-14T17:10:15+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -2966,16 +2968,16 @@
         },
         {
             "name": "mongodb/mongodb",
-            "version": "2.1.1",
+            "version": "2.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mongodb/mongo-php-library.git",
-                "reference": "f399d24905dd42f97dfe0af9706129743ef247ac"
+                "reference": "0a2472ba9cbb932f7e43a8770aedb2fc30612a67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/f399d24905dd42f97dfe0af9706129743ef247ac",
-                "reference": "f399d24905dd42f97dfe0af9706129743ef247ac",
+                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/0a2472ba9cbb932f7e43a8770aedb2fc30612a67",
+                "reference": "0a2472ba9cbb932f7e43a8770aedb2fc30612a67",
                 "shasum": ""
             },
             "require": {
@@ -2991,7 +2993,7 @@
             "require-dev": {
                 "doctrine/coding-standard": "^12.0",
                 "phpunit/phpunit": "^10.5.35",
-                "rector/rector": "^1.2",
+                "rector/rector": "^2.1.4",
                 "squizlabs/php_codesniffer": "^3.7",
                 "vimeo/psalm": "6.5.*"
             },
@@ -3037,9 +3039,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mongodb/mongo-php-library/issues",
-                "source": "https://github.com/mongodb/mongo-php-library/tree/2.1.1"
+                "source": "https://github.com/mongodb/mongo-php-library/tree/2.1.2"
             },
-            "time": "2025-08-13T20:50:05+00:00"
+            "time": "2025-10-06T12:12:40+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -13866,12 +13868,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ccc4996aff4ff810b514472932f677753ee5d8a4"
+                "reference": "6c7e6e7ebf679f9228c82ec3f7a432b4e8df538e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ccc4996aff4ff810b514472932f677753ee5d8a4",
-                "reference": "ccc4996aff4ff810b514472932f677753ee5d8a4",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6c7e6e7ebf679f9228c82ec3f7a432b4e8df538e",
+                "reference": "6c7e6e7ebf679f9228c82ec3f7a432b4e8df538e",
                 "shasum": ""
             },
             "conflict": {
@@ -13987,6 +13989,7 @@
                 "codeigniter4/shield": "<1.0.0.0-beta8",
                 "codiad/codiad": "<=2.8.4",
                 "codingms/additional-tca": ">=1.7,<1.15.17|>=1.16,<1.16.9",
+                "codingms/modules": "<4.3.11|>=5,<5.7.4|>=6,<6.4.2|>=7,<7.5.5",
                 "commerceteam/commerce": ">=0.9.6,<0.9.9",
                 "components/jquery": ">=1.0.3,<3.5",
                 "composer/composer": "<1.10.27|>=2,<2.2.24|>=2.3,<2.7.7",
@@ -14475,7 +14478,7 @@
                 "prestashop/ps_emailsubscription": "<2.6.1",
                 "prestashop/ps_facetedsearch": "<3.4.1",
                 "prestashop/ps_linklist": "<3.1",
-                "privatebin/privatebin": "<1.4|>=1.5,<1.7.4|>=1.7.7,<2.0.2",
+                "privatebin/privatebin": "<1.4|>=1.5,<1.7.4|>=1.7.7,<2.0.3",
                 "processwire/processwire": "<=3.0.246",
                 "propel/propel": ">=2.0.0.0-alpha1,<=2.0.0.0-alpha7",
                 "propel/propel1": ">=1,<=1.7.1",
@@ -14519,7 +14522,7 @@
                 "setasign/fpdi": "<2.6.4",
                 "sfroemken/url_redirect": "<=1.2.1",
                 "sheng/yiicms": "<1.2.1",
-                "shopware/core": "<6.6.10.7-dev|>=6.7,<6.7.3.1-dev",
+                "shopware/core": "<6.6.10.9-dev|>=6.7,<6.7.4.1-dev",
                 "shopware/platform": "<6.6.10.7-dev|>=6.7,<6.7.3.1-dev",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<=5.7.17|>=6.7,<6.7.2.1-dev",
@@ -14849,7 +14852,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-12T14:06:11+00:00"
+            "time": "2025-11-14T21:05:13+00:00"
         },
         {
             "name": "sebastian/cli-parser",

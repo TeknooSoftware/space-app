@@ -6,7 +6,7 @@ doctrine_mongodb:
     default_database: '%env(MONGODB_NAME)%'
     auto-generate-hydrator-classes: true
     auto-generate-proxy-classes: true
-    enable_lazy_ghost_objects: false #todo test with php 8.4 and lazy object
+    enable_lazy_ghost_objects: true
     document_managers:
         default:
             auto_mapping: true

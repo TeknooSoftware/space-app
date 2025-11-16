@@ -35,7 +35,7 @@
         "chrishemmings/oauth2-digitalocean": "^2.0.2",
         "doctrine/common": "^3.5",
         "doctrine/mongodb-odm": "^2.15.0",
-        "doctrine/mongodb-odm-bundle": "^5.4.3",
+        "doctrine/mongodb-odm-bundle": "^5.5.0",
         "doctrine/persistence": "^4.1.1",
         "endroid/qr-code": "^6.0.9",
         "guzzlehttp/guzzle": "^7.10.0",
