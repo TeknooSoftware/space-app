@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ee8dba4bc4071b0969a6fbd47a23923",
+    "content-hash": "df2fdb5b0f9493249a7678fdd2813723",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1636,7 +1636,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v12.38.1",
+            "version": "v12.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1695,7 +1695,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v12.38.1",
+            "version": "v12.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1741,7 +1741,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v12.38.1",
+            "version": "v12.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1789,7 +1789,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v12.38.1",
+            "version": "v12.39.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -13870,12 +13870,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "78c716e0d0b6c32de522e299c42b977977d21cb3"
+                "reference": "7198b46ca38444224efa2445a2d3a13840440c34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/78c716e0d0b6c32de522e299c42b977977d21cb3",
-                "reference": "78c716e0d0b6c32de522e299c42b977977d21cb3",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7198b46ca38444224efa2445a2d3a13840440c34",
+                "reference": "7198b46ca38444224efa2445a2d3a13840440c34",
                 "shasum": ""
             },
             "conflict": {
@@ -14165,7 +14165,7 @@
                 "geshi/geshi": "<=1.0.9.1",
                 "getformwork/formwork": "<1.13.1|>=2.0.0.0-beta1,<2.0.0.0-beta4",
                 "getgrav/grav": "<1.7.46",
-                "getkirby/cms": "<3.9.8.3-dev|>=3.10,<3.10.1.2-dev|>=4,<4.7.1",
+                "getkirby/cms": "<3.9.8.3-dev|>=3.10,<3.10.1.2-dev|>=4,<4.7.1|>=5,<5.1.4",
                 "getkirby/kirby": "<3.9.8.3-dev|>=3.10,<3.10.1.2-dev|>=4,<4.7.1",
                 "getkirby/panel": "<2.5.14",
                 "getkirby/starterkit": "<=3.7.0.2",
@@ -14854,7 +14854,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-11-17T18:06:55+00:00"
+            "time": "2025-11-18T18:07:44+00:00"
         },
         {
             "name": "sebastian/cli-parser",
