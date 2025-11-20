@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5d66c3786ae2884cdc54451f7291f268",
+    "content-hash": "5bd41a473f90881eaac5f84887d75bc9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4529,20 +4529,20 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v7.11.0",
+            "version": "v7.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
-                "reference": "62c6099b179903db5ab03b8059068cdb28659294"
+                "reference": "35f1ace4be7be2c10158d2bb8284208499111db8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/62c6099b179903db5ab03b8059068cdb28659294",
-                "reference": "62c6099b179903db5ab03b8059068cdb28659294",
+                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/35f1ace4be7be2c10158d2bb8284208499111db8",
+                "reference": "35f1ace4be7be2c10158d2bb8284208499111db8",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "scheb/2fa-bundle": "self.version"
             },
             "type": "library",
@@ -4572,27 +4572,27 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.11.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v7.12.0"
             },
-            "time": "2025-04-20T08:27:40+00:00"
+            "time": "2025-11-20T13:35:24+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v7.11.0",
+            "version": "v7.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "06a343d14dad8cdd1670157d384738f9cfba29e5"
+                "reference": "7a8e6f87f91414e655d951ae774cb6398f25c2c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/06a343d14dad8cdd1670157d384738f9cfba29e5",
-                "reference": "06a343d14dad8cdd1670157d384738f9cfba29e5",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/7a8e6f87f91414e655d951ae774cb6398f25c2c1",
+                "reference": "7a8e6f87f91414e655d951ae774cb6398f25c2c1",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "symfony/config": "^6.4 || ^7.0",
                 "symfony/dependency-injection": "^6.4 || ^7.0",
                 "symfony/event-dispatcher": "^6.4 || ^7.0",
@@ -4640,26 +4640,26 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v7.11.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.12.0"
             },
-            "time": "2025-06-27T12:14:20+00:00"
+            "time": "2025-11-20T13:35:24+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v7.11.0",
+            "version": "v7.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
-                "reference": "01a446eb68a76c3d0528a190029afa5e6ce5c384"
+                "reference": "230cf3404d56f3311a6b2da0c161db33941dba2f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/01a446eb68a76c3d0528a190029afa5e6ce5c384",
-                "reference": "01a446eb68a76c3d0528a190029afa5e6ce5c384",
+                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/230cf3404d56f3311a6b2da0c161db33941dba2f",
+                "reference": "230cf3404d56f3311a6b2da0c161db33941dba2f",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "scheb/2fa-bundle": "self.version",
                 "spomky-labs/otphp": "^11.0"
             },
@@ -4690,26 +4690,26 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.11.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v7.12.0"
             },
-            "time": "2025-04-20T08:38:44+00:00"
+            "time": "2025-11-20T13:35:24+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v7.11.0",
+            "version": "v7.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
-                "reference": "cfc7b00eb4a068d8adac71d3f2727b8a24a4f27d"
+                "reference": "63c4b16db4bab5d99936aecf899bd96615088e87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/cfc7b00eb4a068d8adac71d3f2727b8a24a4f27d",
-                "reference": "cfc7b00eb4a068d8adac71d3f2727b8a24a4f27d",
+                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/63c4b16db4bab5d99936aecf899bd96615088e87",
+                "reference": "63c4b16db4bab5d99936aecf899bd96615088e87",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
                 "scheb/2fa-bundle": "self.version",
                 "spomky-labs/otphp": "^11.0"
             },
@@ -4740,9 +4740,9 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v7.11.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v7.12.0"
             },
-            "time": "2025-04-20T08:38:44+00:00"
+            "time": "2025-11-20T13:35:24+00:00"
         },
         {
             "name": "spomky-labs/otphp",
