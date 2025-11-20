@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Teknoo\Space\Infrastructures\Twig\Extension\FormError;
 
@@ -60,5 +61,13 @@ class FormErrorTest extends TestCase
                 $this->createMock(FormView::class),
             ),
         );
+    }
+
+    public function testGetFormErrorEmptyWhenNoErrorsVar(): void
+    {
+        $formView = new FormView();
+        // No 'errors' key or not iterable -> should return empty array
+        $result = $this->formError->getFieldErrors($formView);
+        $this->assertSame([], is_array($result) ? $result : iterator_to_array($result));
     }
 }
