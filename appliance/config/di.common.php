@@ -129,6 +129,7 @@ return [
             'libs/bootstrap/js/bootstrap.bundle.min.js',
             'libs/feather-icons/feather.min.js',
             'libs/simplebar/simplebar.min.js',
+            'js/clipboard.min.js',
             'js/app.js',
             'js/space.js',
         ],

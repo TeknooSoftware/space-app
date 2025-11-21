@@ -2,6 +2,13 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
+{% block javascript_additonals %}
+    {{ parent() }}
+    <script nonce="{{ space_nonce() }}">
+      new ClipboardJS('.copy-button');
+    </script>
+{% endblock %}
+
 {% block title %}{{ 'teknoo.space.title.user.jwt'|trans }} - {% endblock %}
 
 {% block instanceMainTitle %}<i class="ti ti-target"></i> {{ 'teknoo.space.title.user.jwt'|trans }}{% endblock %}
@@ -39,8 +46,15 @@
                         <tbody>
                         <tr>
                             <th class="col-2" scope="row">Token</th>
-                            <td class="col-10">
+                            <td class="col-8">
                                 <span class="jwt-token-value">{{ jwtToken }}</span>
+                            </td>
+                            <td class="col-2 text-center">
+                                <button class="btn btn-sm btn-primary ms-2 copy-button"
+                                        data-clipboard-text="{{ jwtToken }}">
+                                    <i class="ti ti-copy"></i>
+                                    {{ 'teknoo.space.action.copy'|trans }}
+                                </button>
                             </td>
                         </tr>
                         </tbody>

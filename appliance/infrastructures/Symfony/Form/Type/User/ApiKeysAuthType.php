@@ -36,7 +36,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Constraints\Regex;
+use Symfony\Component\Validator\Context\ExecutionContext;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Space\Infrastructures\Symfony\Object\ApiKeysAuthUser;
@@ -75,6 +78,7 @@ class ApiKeysAuthType extends AbstractType
             return $this;
         }
 
+        $user = $symfonyUser->getWrappedUser();
 
         $builder->add(
             'name',
@@ -91,6 +95,16 @@ class ApiKeysAuthType extends AbstractType
                             'pattern' => '/^[a-z][a-z0-9\_\-]{3,}$/',
                             'message' => 'teknoo.space.form.user.api_key.name.regex_error',
                         ]
+                    ),
+                    new Callback(
+                        callback: function (string $name, ExecutionContext $context, User $payload) {
+                            /** @var ?ApiKeysAuth $apiKeys */
+                            $apiKeys = $payload->getOneAuthData(ApiKeysAuth::class);
+                            if ($apiKeys?->getToken($name)) {
+                                $context->addViolation('teknoo.space.error.space_user.api_key_already_exists');
+                            }
+                        },
+                        payload: $user,
                     )
                 ],
             ],
@@ -109,7 +123,7 @@ class ApiKeysAuthType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($symfonyUser): void {
+            function (FormEvent $event) use ($user): void {
                 if (!$event->getForm()->isValid()) {
                     return;
                 }
@@ -120,14 +134,13 @@ class ApiKeysAuthType extends AbstractType
                 }
 
                 $this->datesService->passMeTheDate(
-                    function (DateTimeInterface $now) use ($symfonyUser, $data): void {
+                    function (DateTimeInterface $now) use ($user, $data): void {
                         $token = 'sp_' . bin2hex(random_bytes(32));
 
                         $data->setToken($token);
                         $data->setCreatedAt($now);
                         $data->setExpired(false);
 
-                        $user = $symfonyUser->getWrappedUser();
                         $data->setTokenHash(
                             $this->passwordHasher->hashPassword(
                                 new ApiKeysAuthUser(

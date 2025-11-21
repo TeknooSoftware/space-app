@@ -10,6 +10,13 @@
 {% block breadcrumbFormTitle %}{{ 'teknoo.space.title.user.api-keys'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
 
+{% block javascript_additonals %}
+    {{ parent() }}
+    <script nonce="{{ space_nonce() }}">
+      new ClipboardJS('.copy-button');
+    </script>
+{% endblock %}
+
 {% block crudFormFields %}
     <div class="row">
         <div class="col-12">
@@ -20,12 +27,20 @@
     </div>
     {% if objectInstance.token is not empty %}
     <div class="row">
-        <div class="col-12">
+        <div class="col-10">
             <label class="form-label" for="new-token">{{ 'teknoo.space.text.user.api-keys.generated'|trans }}</label>
             <input type="text"
                    name="new-token"
                    value="{{ objectInstance.token }}"
                    class="form-control api-token-value" readonly>
+        </div>
+        <div class="col-2 text-center align-self-end pb-2">
+            <button class="btn btn-sm btn-primary ms-2 copy-button"
+                    data-clipboard-text="{{ objectInstance.token }}"
+                    onclick="return false;">
+                <i class="ti ti-copy"></i>
+                {{ 'teknoo.space.action.copy'|trans }}
+            </button>
         </div>
     </div>
     {% endif %}
