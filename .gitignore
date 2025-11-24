@@ -1,6 +1,7 @@
 /compose.override.yml
 /compose.frankenphp.override.yml
 /compose.legacy.override.yml
+/compose.frankenphp.override.yml
 /var/
 !/var/.gitkeep
 /var/mongo/

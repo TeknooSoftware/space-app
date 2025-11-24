@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fc97e8eb29903fba195a2fb3595c31a",
+    "content-hash": "1910d87a9f0258943ff6ad8584cfe794",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3202,37 +3202,37 @@
         },
         {
             "name": "omines/oauth2-gitlab",
-            "version": "3.7.0",
+            "version": "3.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/omines/oauth2-gitlab.git",
-                "reference": "3dee862326d999b0517da4dd83b169e08f5ddf0a"
+                "reference": "4453c78bb7406a32b7abcae6146178e29fd7d53e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/omines/oauth2-gitlab/zipball/3dee862326d999b0517da4dd83b169e08f5ddf0a",
-                "reference": "3dee862326d999b0517da4dd83b169e08f5ddf0a",
+                "url": "https://api.github.com/repos/omines/oauth2-gitlab/zipball/4453c78bb7406a32b7abcae6146178e29fd7d53e",
+                "reference": "4453c78bb7406a32b7abcae6146178e29fd7d53e",
                 "shasum": ""
             },
             "require": {
                 "ext-intl": "*",
                 "ext-mbstring": "*",
                 "league/oauth2-client": "^2.4.1",
-                "php": ">=8.1"
+                "php": ">=8.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.65.0",
-                "guzzlehttp/psr7": "^2.7.0",
+                "friendsofphp/php-cs-fixer": "^3.90.0",
+                "guzzlehttp/psr7": "^2.8.0",
                 "http-interop/http-factory-guzzle": "^1.2",
-                "infection/infection": "^0.27.11",
-                "m4tthumphrey/php-gitlab-api": "^11.14",
+                "infection/infection": "^0.31.9",
+                "m4tthumphrey/php-gitlab-api": "^11.14|^12.0",
                 "mockery/mockery": "^1.6.12",
                 "php-http/guzzle7-adapter": "^1.1.0",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.0.4",
+                "phpstan/phpstan": "^2.1.32",
                 "phpstan/phpstan-mockery": "^2.0.0",
-                "phpstan/phpstan-phpunit": "^2.0.3",
-                "phpunit/phpunit": "^10.5.39"
+                "phpstan/phpstan-phpunit": "^2.0.8",
+                "phpunit/phpunit": "^12.4.4"
             },
             "suggest": {
                 "m4tthumphrey/php-gitlab-api": "For further API usage using the acquired OAuth2 token"
@@ -3270,9 +3270,9 @@
             ],
             "support": {
                 "issues": "https://github.com/omines/oauth2-gitlab/issues",
-                "source": "https://github.com/omines/oauth2-gitlab/tree/3.7.0"
+                "source": "https://github.com/omines/oauth2-gitlab/tree/3.8.0"
             },
-            "time": "2024-12-20T15:42:03+00:00"
+            "time": "2025-11-22T22:05:41+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -12232,16 +12232,16 @@
     "packages-dev": [
         {
             "name": "behat/behat",
-            "version": "v3.26.0",
+            "version": "v3.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Behat.git",
-                "reference": "1b6b08efa995fe4135901b862d112adc7e95ecbb"
+                "reference": "3282ad774358e4eaf533855e9a1f48559894d1b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Behat/zipball/1b6b08efa995fe4135901b862d112adc7e95ecbb",
-                "reference": "1b6b08efa995fe4135901b862d112adc7e95ecbb",
+                "url": "https://api.github.com/repos/Behat/Behat/zipball/3282ad774358e4eaf533855e9a1f48559894d1b5",
+                "reference": "3282ad774358e4eaf533855e9a1f48559894d1b5",
                 "shasum": ""
             },
             "require": {
@@ -12250,7 +12250,7 @@
                 "composer/xdebug-handler": "^1.4 || ^2.0 || ^3.0",
                 "ext-mbstring": "*",
                 "nikic/php-parser": "^4.19.2 || ^5.2",
-                "php": ">=8.1 <8.5",
+                "php": ">=8.1 <8.6",
                 "psr/container": "^1.0 || ^2.0",
                 "symfony/config": "^5.4 || ^6.4 || ^7.0",
                 "symfony/console": "^5.4 || ^6.4 || ^7.0",
@@ -12321,9 +12321,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Behat/issues",
-                "source": "https://github.com/Behat/Behat/tree/v3.26.0"
+                "source": "https://github.com/Behat/Behat/tree/v3.27.0"
             },
-            "time": "2025-10-29T09:46:14+00:00"
+            "time": "2025-11-23T12:12:41+00:00"
         },
         {
             "name": "behat/gherkin",
