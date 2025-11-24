@@ -1,6 +1,6 @@
 # HTTP: redirect all traffic to HTTPS
 {
-        #skip_install_trust
+        skip_install_trust
 
         {$CADDY_GLOBAL_OPTIONS}
 
