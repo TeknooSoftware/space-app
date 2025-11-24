@@ -4,8 +4,6 @@ networks:
     amqp: ~
     redis: ~
 volumes:
-    caddy_data:
-    caddy_config:
     mongo_data:
 services:
     db:
@@ -68,6 +66,7 @@ services:
             - MERCURE_SUBSCRIBER_JWT_ALG=HS256
             - MONGODB_NAME=teknoo_space
             - PHP_XDEBUG_HOST=172.17.0.1
+            - SERVER_NAME="localhost"
             - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
             - SPACE_HOSTNAME=localhost

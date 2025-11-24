@@ -24,6 +24,7 @@ RUN set -eux ; \
             libcurl4-openssl-dev \
             libgmp10-dev \
             libicu-dev \
+            libnss3-tools \
             libonig-dev \
             libpng-dev \
             librabbitmq-dev \
@@ -94,14 +95,13 @@ RUN set -eux ; \
     adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
     mkdir -p /var/www ; \
     mkdir -p /data/caddy/ ; \
-    chown -R spaceuser:spacegroup /var/www ; \
     mkdir -p /etc/caddy ; \
-    mkdir -p /var/www/.local/share/caddy /var/www/.config/caddy ; \
-    chown -R spaceuser:spacegroup /var/www/.local /var/www/.config /data/caddy/
+    mkdir -p /var/www/.local/share/caddy/pki /var/www/.config/caddy ; \
+    chown -R spaceuser:spacegroup /var/www /data/caddy/
 
 # PHP configuration
 ADD 99-space.ini /usr/local/etc/php/conf.d/
-COPY --chown=spaceuser:spacegroup Caddyfile /etc/caddy/Caddyfile
+COPY --chown=spaceuser:spacegroup Caddyfile /etc/frankenphp/Caddyfile
 
 USER spaceuser:spacegroup
 
