@@ -2,7 +2,7 @@ services:
     db:
         build:
             args:
-                MONGO_VERSION: 4
+                MONGO_VERSION: 7
     web:
         environment:
             - APP_ENV=dev

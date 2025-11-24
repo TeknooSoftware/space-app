@@ -14,15 +14,10 @@
   # Static files first
   encode zstd gzipp
 
-  # Proxy Mercure hub (SSE)
-  route /hub/.well-known/mercure {
-    reverse_proxy http://mercure:8181
-    header Content-Type "text/event-stream"
-    header Cache-Control "no-cache, no-store, must-revalidate"
-    header X-Accel-Buffering "no"
-    header Connection "keep-alive"
-    header Expire "0"
-    header Pragma "no-cache"
+  handle /hub/* {
+    mercure {
+      anonymous
+    }
   }
 
   # Security / CORS headers
