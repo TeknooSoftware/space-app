@@ -116,8 +116,8 @@ if [ "$useDockerCompose" = "y" ]; then
 
   mongoDbDSN="mongodb://space_user:space_pwd@db/space"
   amqpDSN="amqp://space:space_pwd@amqp:5672/"
-  mercurePublishUrl="http://mercure:8181/"
-  mercureSubscribeUrl="https://localhost/hub/"
+  mercurePublishUrl="https://localhost/"
+  mercureSubscribeUrl="https://localhost/"
 else
   mongoDbDSN=$(readAMandatoryResponse "MongoDB DSN")
   amqpDSN=$(readAMandatoryResponse "AMQP DSN")

@@ -35,6 +35,7 @@ use Symfony\Component\HttpClient\EventSourceHttpClient;
 use Symfony\Component\HttpClient\Response\ResponseStream;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\HubRegistry;
+use Symfony\Component\Mercure\Jwt\TokenFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -72,7 +73,12 @@ class FetchJobIdFromPendingTest extends TestCase
     {
         parent::setUp();
 
-        $this->hub = new HubRegistry($this->createMock(HubInterface::class));
+        $hubMock = $this->createMock(HubInterface::class);
+        $tokenFactory = $this->createMock(TokenFactoryInterface::class);
+        $tokenFactory->method('create')->willReturn('mock-jwt-token');
+        $hubMock->method('getFactory')->willReturn($tokenFactory);
+
+        $this->hub = new HubRegistry($hubMock);
         $this->generator = $this->createMock(UrlGeneratorInterface::class);
         $this->sseClient = new EventSourceHttpClient(
             $httpClient = $this->createMock(HttpClientInterface::class),

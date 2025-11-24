@@ -62,7 +62,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
         HubInterface $hub,
         string $newJobId,
     ): string {
-        $url = $hub->getUrl();
+        $url = $hub->getPublicUrl();
 
         $url .= '?topic=' . rawurlencode(
             $this->urlGenerator->generate(
@@ -99,7 +99,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
 
         $hub = $this->hubRegistry->getHub();
         $url = $this->getMercureUrl($hub, $newJobId);
-        $jwt = $hub->getProvider()->getJwt();
+        $jwt = $hub->getFactory()?->create();
 
         $this->sseClient->reset();
         $source = $this->sseClient->connect(
