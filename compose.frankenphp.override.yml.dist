@@ -1,0 +1,111 @@
+services:
+    db:
+        build:
+            args:
+                MONGO_VERSION: 4
+    web:
+        environment:
+            - APP_ENV=dev
+            - APP_REMEMBER_SECRET=ToChange!
+            - APP_SECRET=ToChange!
+            - MAILER_DSN=ToChange!
+            - MAILER_REPLY_TO_ADDRESS=ToChange!
+            - MAILER_SENDER_ADDRESS=ToChange!
+            - MERCURE_JWT_TOKEN=ToChange!
+            - MERCURE_PUBLISHER_JWT_KEY=ToChange!
+            - MERCURE_PUBLISH_URL=ToChange!
+            - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
+            - MERCURE_SUBSCRIBER_URL=ToChange!
+            - MESSENGER_NEW_JOB_DSN=ToChange!
+            - MONGODB_SERVER=ToChange!
+            - OAUTH_CLIENT_ID=ToChange!
+            - OAUTH_CLIENT_SECRET=ToChange!
+            - OAUTH_DO_CLIENT_ID=ToChange!
+            - OAUTH_DO_CLIENT_SECRET=ToChange!
+            - OAUTH_ENABLED=1ToChange!
+            - OAUTH_GH_CLIENT_ID=ToChange!
+            - OAUTH_GH_CLIENT_SECRET=ToChange!
+            - OAUTH_GITLAB_CLIENT_ID=ToChange!
+            - OAUTH_GITLAB_CLIENT_SECRET=ToChange!
+            - OAUTH_GITLAB_SERVER_URL=ToChange!
+            - OAUTH_GOOGLE_CLIENT_ID=ToChange!
+            - OAUTH_GOOGLE_CLIENT_SECRET=ToChange!
+            - OAUTH_JIRA_CLIENT_ID=ToChange!
+            - OAUTH_JIRA_CLIENT_SECRET=ToChange!
+            - OAUTH_MS_CLIENT_ID=ToChange!
+            - OAUTH_MS_CLIENT_SECRET=ToChange!
+            - OAUTH_SERVER_TYPE=ToChange!
+            - SPACE_2FA_PROVIDER=ToChange!
+            - SPACE_CODE_GENERATOR_SALT=ToChange!
+            - SPACE_JWT_ENABLE_IN_QUERY=ToChange!
+            - SPACE_JWT_MAX_DAYS_TO_TIVE=ToChange!
+            - SPACE_JWT_PASSPHRASE=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
+            - SPACE_OCI_REGISTRY_URL=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=ToChange!
+            - SPACE_SUBSCRIPTION_DEFAULT_PLAN=ToChange!
+            - SPACE_SUPPORT_CONTACT=ToChange!
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
+            - PHP_XDEBUG_HOST=ToChange!
+              SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON=ToChange!
+            - SPACE_CLUSTER_CATALOG_JSON=ToChange!
+    cli_new_job:
+        environment:
+            - APP_ENV=dev
+            - APP_SECRET=ToChange!
+            - MERCURE_JWT_TOKEN=ToChange!
+            - MERCURE_PUBLISH_URL=ToChange!
+            - MERCURE_SUBSCRIBER_URL=ToChange!
+            - MESSENGER_EXECUTE_JOB_DSN=ToChange!
+            - MESSENGER_HISTORY_SENT_DSN=ToChange!
+            - MONGODB_SERVER=ToChange!
+            - SPACE_JWT_PASSPHRASE=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=ToChange!
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=ToChange!
+            - PHP_XDEBUG_HOST=ToChange!
+    cli_job_done:
+        environment:
+            - APP_ENV=dev
+            - APP_SECRET=ToChange!
+            - MESSENGER_JOB_DONE_DSN=ToChange!
+            - MONGODB_SERVER=ToChange!
+            - SPACE_JWT_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=ToChange!
+            - PHP_XDEBUG_HOST=ToChange!
+    cli_history_sent:
+        environment:
+            - APP_ENV=dev
+            - APP_SECRET=ToChange!
+            - MESSENGER_HISTORY_SENT_DSN=ToChange!
+            - MONGODB_SERVER=ToChange!
+            - SPACE_JWT_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=ToChange!
+            - PHP_XDEBUG_HOST=ToChange!
+    cli_execute:
+        environment:
+            - APP_ENV=dev
+            - APP_SECRET=ToChange!
+            - MESSENGER_EXECUTE_JOB_DSN=ToChange!
+            - MESSENGER_HISTORY_SENT_DSN=ToChange!
+            - MESSENGER_JOB_DONE_DSN=ToChange!
+            - SPACE_JWT_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=ToChange!
+            - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
+            - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=ToChange!
+            - PHP_XDEBUG_HOST=ToChange!
