@@ -4,29 +4,8 @@ networks:
     amqp: ~
     redis: ~
 volumes:
-    caddy_data:
-    caddy_config:
     mongo_data:
 services:
-    mercure:
-        image: dunglas/mercure:latest
-        ports:
-            - 8181:8181
-        environment:
-            SERVER_NAME: ':8181'
-            MERCURE_PUBLISHER_JWT_ALG: 'HS256'
-            MERCURE_SUBSCRIBER_JWT_ALG: 'HS256'
-            PUBLISH_ALLOWED_ORIGINS: '*'
-            ALLOW_ANONYMOUS: 1
-            MERCURE_EXTRA_DIRECTIVES: |
-                cors_origins https://localhost
-                anonymous
-            CORS_ALLOWED_ORIGINS: '*'
-        volumes:
-            - caddy_data:/data
-            - caddy_config:/config
-        networks:
-            - backend
     db:
         build:
             context: ./build.dev/mongo
@@ -80,11 +59,14 @@ services:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
         environment:
-            - TEKNOO_EAST_EXTENSION_FILE=/var/www/space/extensions/enabled.json
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - MAILER_REPLY_TO_NAME=Teknoo Space - Support
             - MAILER_SENDER_NAME=Teknoo Space App
+            - MERCURE_PUBLISHER_JWT_ALG=HS256
+            - MERCURE_SUBSCRIBER_JWT_ALG=HS256
             - MONGODB_NAME=teknoo_space
+            - PHP_XDEBUG_HOST=172.17.0.1
+            - SERVER_NAME="localhost"
             - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_CODE_SUBSCRIPTION_REQUIRED=1
             - SPACE_HOSTNAME=localhost
@@ -95,21 +77,21 @@ services:
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
             - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
-            - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
             - SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE=space-registry-
-            - SPACE_OCI_REGISTRY_LIMITS_CPU=100m
-            - SPACE_OCI_REGISTRY_LIMITS_MEMORY=256Mi
-            - SPACE_OCI_REGISTRY_REQUESTS_CPU=10m
-            - SPACE_OCI_REGISTRY_REQUESTS_MEMORY=32Mi
+            - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
             - SPACE_OCI_GLOBAL_REGISTRY_USERNAME=spaceuser
             - SPACE_OCI_REGISTRY_IMAGE=registry:latest
+            - SPACE_OCI_REGISTRY_LIMITS_CPU=100m
+            - SPACE_OCI_REGISTRY_LIMITS_MEMORY=256Mi
             - SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
+            - SPACE_OCI_REGISTRY_REQUESTS_CPU=10m
+            - SPACE_OCI_REGISTRY_REQUESTS_MEMORY=32Mi
             - SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
+            - SPACE_PERSISTED_VAR_AGENT_MODE=0
             - SPACE_REDIS_HOST=redis
             - SPACE_REDIS_PORT=6379
             - SPACE_STORAGE_CLASS=nfs.csi.k8s.io
-            - SPACE_PERSISTED_VAR_AGENT_MODE=0
-            - PHP_XDEBUG_HOST=172.17.0.1
+            - TEKNOO_EAST_EXTENSION_FILE=/var/www/space/extensions/enabled.json
         healthcheck:
             test: ["CMD-SHELL", "curl -fk https://localhost:443 || exit 1"]
             interval: 30s
@@ -121,8 +103,6 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_healthy
-            mercure:
-                condition: service_started
     cli_new_job:
         build:
             context: build.dev/php-cli
@@ -158,8 +138,6 @@ services:
                 condition: service_healthy
             amqp:
                 condition: service_healthy
-            mercure:
-                condition: service_started
     cli_job_done:
         build:
             context: build.dev/php-cli
