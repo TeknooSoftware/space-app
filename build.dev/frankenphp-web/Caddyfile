@@ -12,11 +12,10 @@
   root * /var/www/space/public
 
   # Static files first
-  encode zstd gzip
-  file_server
+  encode zstd gzipp
 
   # Proxy Mercure hub (SSE)
-  route /hub* {
+  route /hub/.well-known/mercure {
     reverse_proxy http://mercure:8181
     header Content-Type "text/event-stream"
     header Cache-Control "no-cache, no-store, must-revalidate"
@@ -35,8 +34,5 @@
   }
 
   # PHP front controller using FrankenPHP
-  php_server {
-    root /var/www/space/public
-    index index.php
-  }
+  php_server
 }
