@@ -1,4 +1,4 @@
-FROM php:8.4.13-cli
+FROM php:8.5.0-cli
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:fr
