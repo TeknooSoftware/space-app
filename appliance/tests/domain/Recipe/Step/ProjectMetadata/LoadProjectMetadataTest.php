@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\ProjectMetadata;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -75,16 +76,16 @@ class LoadProjectMetadataTest extends TestCase
         $this->assertInstanceOf(
             LoadProjectMetadata::class,
             ($this->loadProjectMetadata)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Project::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Project::class),
+                $this->createStub(ParametersBag::class),
             )
         );
     }
 
     public function testInvokeWithPromiseSuccess(): void
     {
-        $metadata = $this->createMock(ProjectMetadata::class);
+        $metadata = $this->createStub(ProjectMetadata::class);
 
         $bag = $this->createMock(ParametersBag::class);
         $bag->expects($this->once())
@@ -111,7 +112,7 @@ class LoadProjectMetadataTest extends TestCase
             LoadProjectMetadata::class,
             ($this->loadProjectMetadata)(
                 $manager,
-                $this->createMock(Project::class),
+                $this->createStub(Project::class),
                 $bag,
             )
         );

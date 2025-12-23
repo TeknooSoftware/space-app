@@ -69,9 +69,9 @@ class WorkplanInitTest extends TestCase
             WorkplanInit::class,
             ($this->workplanInit)(
                 $manager,
-                $this->createMock(SpaceProject::class),
-                $this->createMock(Project::class),
-                $this->createMock(ProjectMetadata::class),
+                $this->createStub(SpaceProject::class),
+                $this->createStub(Project::class),
+                $this->createStub(ProjectMetadata::class),
                 false,
             )
         );
@@ -79,10 +79,10 @@ class WorkplanInitTest extends TestCase
 
     public function testInvokeWithProjectFromSpaceProject(): void
     {
-        $project = $this->createMock(Project::class);
-        $metadata = $this->createMock(ProjectMetadata::class);
+        $project = $this->createStub(Project::class);
+        $metadata = $this->createStub(ProjectMetadata::class);
 
-        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject = $this->createStub(SpaceProject::class);
         $spaceProject->project = $project;
         $spaceProject->projectMetadata = $metadata;
 
@@ -107,10 +107,10 @@ class WorkplanInitTest extends TestCase
 
     public function testInvokeWithProjectFromParameters(): void
     {
-        $project = $this->createMock(Project::class);
-        $metadata = $this->createMock(ProjectMetadata::class);
+        $project = $this->createStub(Project::class);
+        $metadata = $this->createStub(ProjectMetadata::class);
 
-        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject = $this->createStub(SpaceProject::class);
         $spaceProject->project = $project;
         $spaceProject->projectMetadata = null;
 
@@ -137,8 +137,8 @@ class WorkplanInitTest extends TestCase
 
     public function testInvokeWithPopulateFormOptions(): void
     {
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->any())
+        $environment = $this->createStub(Environment::class);
+        $environment
             ->method('__toString')
             ->willReturn('prod');
 
@@ -157,7 +157,7 @@ class WorkplanInitTest extends TestCase
                 return $project;
             });
 
-        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject = $this->createStub(SpaceProject::class);
         $spaceProject->project = $project;
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -185,8 +185,8 @@ class WorkplanInitTest extends TestCase
 
     public function testInvokeWithPopulateFormOptionsAndExistingOptions(): void
     {
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->any())
+        $environment = $this->createStub(Environment::class);
+        $environment
             ->method('__toString')
             ->willReturn('staging');
 
@@ -206,7 +206,7 @@ class WorkplanInitTest extends TestCase
                 return $project;
             });
 
-        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject = $this->createStub(SpaceProject::class);
         $spaceProject->project = $project;
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -243,7 +243,7 @@ class WorkplanInitTest extends TestCase
             ->method('__call')
             ->with('listMeYourEnvironments');
 
-        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject = $this->createStub(SpaceProject::class);
         $spaceProject->project = $project;
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -269,13 +269,13 @@ class WorkplanInitTest extends TestCase
 
     public function testInvokeWithMultipleEnvironments(): void
     {
-        $env1 = $this->createMock(Environment::class);
-        $env1->expects($this->any())
+        $env1 = $this->createStub(Environment::class);
+        $env1
             ->method('__toString')
             ->willReturn('dev');
 
-        $env2 = $this->createMock(Environment::class);
-        $env2->expects($this->any())
+        $env2 = $this->createStub(Environment::class);
+        $env2
             ->method('__toString')
             ->willReturn('prod');
 
@@ -295,7 +295,7 @@ class WorkplanInitTest extends TestCase
                 return $project;
             });
 
-        $spaceProject = $this->createMock(SpaceProject::class);
+        $spaceProject = $this->createStub(SpaceProject::class);
         $spaceProject->project = $project;
 
         $manager = $this->createMock(ManagerInterface::class);

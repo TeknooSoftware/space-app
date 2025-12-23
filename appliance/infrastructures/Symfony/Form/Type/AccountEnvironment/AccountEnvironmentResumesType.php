@@ -53,7 +53,7 @@ use function in_array;
  */
 class AccountEnvironmentResumesType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (
             empty($options['subscriptionPlan'])
@@ -137,11 +137,9 @@ class AccountEnvironmentResumesType extends AbstractType
                 }
             }
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -152,7 +150,5 @@ class AccountEnvironmentResumesType extends AbstractType
         $resolver->setRequired(['subscriptionPlan', 'clusterCatalog']);
         $resolver->setAllowedTypes('clusterCatalog', ClusterCatalog::class);
         $resolver->setAllowedTypes('subscriptionPlan', SubscriptionPlan::class);
-
-        return $this;
     }
 }

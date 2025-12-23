@@ -62,22 +62,18 @@ class AccountClusterSearchTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            AccountClusterSearchType::class,
-            $this->accountClusterSearchType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->accountClusterSearchType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            AccountClusterSearchType::class,
-            $this->accountClusterSearchType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->accountClusterSearchType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

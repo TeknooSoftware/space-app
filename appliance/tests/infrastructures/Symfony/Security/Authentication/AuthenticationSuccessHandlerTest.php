@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Authenticatio
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +48,7 @@ class AuthenticationSuccessHandlerTest extends TestCase
 {
     private AuthenticationSuccessHandler $handler;
 
-    private UrlGeneratorInterface&MockObject $urlGenerator;
+    private UrlGeneratorInterface&Stub $urlGenerator;
 
     /**
      * {@inheritdoc}
@@ -56,8 +57,8 @@ class AuthenticationSuccessHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
-        $this->urlGenerator->expects($this->any())
+        $this->urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $this->urlGenerator
             ->method('generate')
             ->willReturn('/foo');
 
@@ -73,8 +74,8 @@ class AuthenticationSuccessHandlerTest extends TestCase
         $this->assertInstanceOf(
             RedirectResponse::class,
             $this->handler->onAuthenticationSuccess(
-                $this->createMock(Request::class),
-                $this->createMock(TokenInterface::class),
+                $this->createStub(Request::class),
+                $this->createStub(TokenInterface::class),
             )
         );
     }

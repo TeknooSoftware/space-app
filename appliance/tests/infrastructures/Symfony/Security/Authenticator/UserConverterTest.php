@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Authenticator
 use League\OAuth2\Client\Provider\GenericResourceOwner;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\UserConverter;
@@ -45,9 +46,9 @@ class UserConverterTest extends TestCase
 {
     private UserConverter $userConverter;
 
-    private GenericResourceOwner&MockObject $owner;
+    private GenericResourceOwner&Stub $owner;
 
-    private PromiseInterface&MockObject $promise;
+    private PromiseInterface&Stub $promise;
 
     /**
      * {@inheritdoc}
@@ -58,14 +59,14 @@ class UserConverterTest extends TestCase
 
         $this->userConverter = new UserConverter();
 
-        $this->owner = $this->createMock(GenericResourceOwner::class);
+        $this->owner = $this->createStub(GenericResourceOwner::class);
         $this->owner->method('toArray')->willReturn([
             'email' => 'foo@bar',
             'lastname' => 'foo',
             'firstname' => 'bar',
         ]);
 
-        $this->promise = $this->createMock(PromiseInterface::class);
+        $this->promise = $this->createStub(PromiseInterface::class);
     }
 
     public function testExtractEmail(): void

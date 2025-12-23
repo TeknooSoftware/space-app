@@ -64,15 +64,15 @@ class AccountVarsMapperTest extends TestCase
     {
         $account = new SpaceAccount();
         $account->variables = [
-            $this->createMock(AccountPersistedVariable::class),
-            $this->createMock(AccountPersistedVariable::class),
+            $this->createStub(AccountPersistedVariable::class),
+            $this->createStub(AccountPersistedVariable::class),
         ];
 
         $this->accountVarsType->mapDataToForms(
             $account,
             new ArrayIterator(
                 [
-                    'sets' => $this->createMock(FormInterface::class),
+                    'sets' => $this->createStub(FormInterface::class),
                 ]
             ),
         );
@@ -84,11 +84,11 @@ class AccountVarsMapperTest extends TestCase
     {
         $account = new SpaceAccount();
         $account->variables = [
-            $this->createMock(AccountPersistedVariable::class),
-            $this->createMock(AccountPersistedVariable::class),
+            $this->createStub(AccountPersistedVariable::class),
+            $this->createStub(AccountPersistedVariable::class),
         ];
 
-        $form = $this->createMock(FormInterface::class);
+        $form = $this->createStub(FormInterface::class);
         $form
             ->method('getData')
             ->willReturn(
@@ -104,7 +104,7 @@ class AccountVarsMapperTest extends TestCase
                                 secret: true,
                                 wasSecret: true,
                                 encryptionAlgorithm: 'rsa',
-                                persistedVar: $this->createMock(AccountPersistedVariable::class),
+                                persistedVar: $this->createStub(AccountPersistedVariable::class),
                             ),
                             new JobVar(
                                 id: null,
@@ -114,7 +114,7 @@ class AccountVarsMapperTest extends TestCase
                                 secret: true,
                                 wasSecret: false,
                                 encryptionAlgorithm: 'rsa',
-                                persistedVar: $this->createMock(AccountPersistedVariable::class)
+                                persistedVar: $this->createStub(AccountPersistedVariable::class)
                             ),
                         ]
                     )

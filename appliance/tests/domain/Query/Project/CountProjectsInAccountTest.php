@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Query\Project;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
@@ -47,7 +48,7 @@ class CountProjectsInAccountTest extends TestCase
 {
     private CountProjectsInAccount $countProjectsInAccount;
 
-    private Account&MockObject $account;
+    private Account&Stub $account;
 
     /**
      * {@inheritdoc}
@@ -56,7 +57,7 @@ class CountProjectsInAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->account = $this->createMock(Account::class);
+        $this->account = $this->createStub(Account::class);
         $this->countProjectsInAccount = new CountProjectsInAccount($this->account);
     }
 
@@ -65,9 +66,9 @@ class CountProjectsInAccountTest extends TestCase
         $this->assertInstanceOf(
             CountProjectsInAccount::class,
             $this->countProjectsInAccount->fetch(
-                $this->createMock(LoaderInterface::class),
-                $this->createMock(RepositoryInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(LoaderInterface::class),
+                $this->createStub(RepositoryInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }

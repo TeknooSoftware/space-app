@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Object\User;
@@ -38,6 +39,7 @@ use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Persisted\AccountCluster;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class AccountClusterTest.
@@ -111,20 +113,23 @@ class AccountClusterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetAccount(): void
     {
         $this->assertInstanceOf(Account::class, $this->accountCluster->getAccount());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetAccount(): void
     {
-        $newAccount = $this->createMock(Account::class);
+        $newAccount = $this->createStub(Account::class);
         $result = $this->accountCluster->setAccount($newAccount);
 
         $this->assertInstanceOf(AccountCluster::class, $result);
         $this->assertSame($newAccount, $this->accountCluster->getAccount());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetCaCertificate(): void
     {
         $newCert = 'newCertificate';
@@ -133,6 +138,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetDashboardAddress(): void
     {
         $newAddress = 'https://dashboard.example.com';
@@ -141,6 +147,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetMasterAddress(): void
     {
         $newAddress = 'https://master.example.com';
@@ -149,6 +156,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetName(): void
     {
         $newName = 'New Cluster Name';
@@ -158,11 +166,13 @@ class AccountClusterTest extends TestCase
         $this->assertEquals($newName, (string) $this->accountCluster);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testToString(): void
     {
         $this->assertEquals($this->name, (string) $this->accountCluster);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetRegistryUrl(): void
     {
         $newUrl = 'https://registry.example.com';
@@ -171,6 +181,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetRegistryUrlWithNull(): void
     {
         $result = $this->accountCluster->setRegistryUrl(null);
@@ -178,6 +189,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetStorageProvisioner(): void
     {
         $newProvisioner = 'kubernetes.io/aws-ebs';
@@ -186,6 +198,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetSupportRegistry(): void
     {
         $result = $this->accountCluster->setSupportRegistry(false);
@@ -193,6 +206,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetToken(): void
     {
         $newToken = 'newToken123';
@@ -201,6 +215,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetTokenWithEmptyString(): void
     {
         $result = $this->accountCluster->setToken('');
@@ -208,6 +223,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetTokenWithNull(): void
     {
         $result = $this->accountCluster->setToken(null);
@@ -215,6 +231,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetType(): void
     {
         $newType = 'production';
@@ -223,6 +240,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetUseHnc(): void
     {
         $result = $this->accountCluster->setUseHnc(true);
@@ -230,9 +248,10 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testPrepareSlugNearWithExistingSlug(): void
     {
-        $loader = $this->createMock(LoaderInterface::class);
+        $loader = $this->createStub(LoaderInterface::class);
         $findSlugService = $this->createMock(FindSlugService::class);
 
         $findSlugService->expects($this->once())
@@ -249,6 +268,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testPrepareSlugNearWithEmptySlug(): void
     {
         $accountCluster = new AccountCluster(
@@ -266,7 +286,7 @@ class AccountClusterTest extends TestCase
             $this->useHnc,
         );
 
-        $loader = $this->createMock(LoaderInterface::class);
+        $loader = $this->createStub(LoaderInterface::class);
         $findSlugService = $this->createMock(FindSlugService::class);
 
         $findSlugService->expects($this->once())
@@ -283,6 +303,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetSlug(): void
     {
         $newSlug = 'new-slug';
@@ -291,16 +312,18 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConvertToConfigCluster(): void
     {
-        $clientFactory = $this->createMock(ClientFactoryInterface::class);
-        $repositoryRegistry = $this->createMock(RepositoryRegistry::class);
+        $clientFactory = $this->createStub(ClientFactoryInterface::class);
+        $repositoryRegistry = $this->createStub(RepositoryRegistry::class);
 
         $result = $this->accountCluster->convertToConfigCluster($clientFactory, $repositoryRegistry);
 
         $this->assertInstanceOf(Cluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeData(): void
     {
         $normalizer = $this->createMock(EastNormalizerInterface::class);
@@ -314,6 +337,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeDataWithGroups(): void
     {
         $normalizer = $this->createMock(EastNormalizerInterface::class);
@@ -329,8 +353,8 @@ class AccountClusterTest extends TestCase
 
     public function testVerifyAccessToUser(): void
     {
-        $user = $this->createMock(User::class);
-        $promise = $this->createMock(PromiseInterface::class);
+        $user = $this->createStub(User::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $this->account->expects($this->once())
             ->method('__call')
@@ -341,6 +365,7 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVisit(): void
     {
         $masterAddressValue = null;
@@ -386,6 +411,7 @@ class AccountClusterTest extends TestCase
         $this->assertEquals($this->name, $nameValue);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVisitWithSnakeCaseMapping(): void
     {
         $masterAddressValue = null;

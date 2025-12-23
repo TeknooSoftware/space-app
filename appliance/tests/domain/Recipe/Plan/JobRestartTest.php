@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -56,23 +57,23 @@ class JobRestartTest extends TestCase
 {
     private JobRestart $jobRestart;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
-    private CreateObject&MockObject $createObject;
+    private CreateObject&Stub $createObject;
 
-    private LoadPersistedVariablesForJob&MockObject $loadPersistedVariablesForJob;
+    private LoadPersistedVariablesForJob&Stub $loadPersistedVariablesForJob;
 
-    private PrepareNewJobForm&MockObject $prepareNewJobForm;
+    private PrepareNewJobForm&Stub $prepareNewJobForm;
 
-    private FormHandlingInterface&MockObject $formHandling;
+    private FormHandlingInterface&Stub $formHandling;
 
-    private RenderFormInterface&MockObject $renderForm;
+    private RenderFormInterface&Stub $renderForm;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -83,15 +84,15 @@ class JobRestartTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
-        $this->createObject = $this->createMock(CreateObject::class);
-        $this->loadPersistedVariablesForJob = $this->createMock(LoadPersistedVariablesForJob::class);
-        $this->prepareNewJobForm = $this->createMock(PrepareNewJobForm::class);
-        $this->formHandling = $this->createMock(FormHandlingInterface::class);
-        $this->renderForm = $this->createMock(RenderFormInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
+        $this->createObject = $this->createStub(CreateObject::class);
+        $this->loadPersistedVariablesForJob = $this->createStub(LoadPersistedVariablesForJob::class);
+        $this->prepareNewJobForm = $this->createStub(PrepareNewJobForm::class);
+        $this->formHandling = $this->createStub(FormHandlingInterface::class);
+        $this->renderForm = $this->createStub(RenderFormInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->jobRestart = new JobRestart(
             recipe: $this->recipe,
@@ -120,7 +121,7 @@ class JobRestartTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->jobRestart->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

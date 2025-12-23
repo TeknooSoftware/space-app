@@ -62,9 +62,9 @@ class InjectToViewTest extends TestCase
         $this->assertInstanceOf(
             InjectToView::class,
             ($this->InjectToView)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ParametersBag::class),
-                new SpaceAccount($account = $this->createMock(Account::class)),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ParametersBag::class),
+                new SpaceAccount($account = $this->createStub(Account::class)),
                 $account,
             )
         );
@@ -143,9 +143,8 @@ class InjectToViewTest extends TestCase
 
     public function testInvokeWithAllowAccountSelection(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $account->method('getId')
             ->willReturn('account-789');
 
         $spaceAccount = new SpaceAccount($account);
@@ -186,12 +185,11 @@ class InjectToViewTest extends TestCase
 
     public function testInvokeWithCustomParameters(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $account->method('getId')
             ->willReturn('account-999');
 
-        $bag = $this->createMock(ParametersBag::class);
+        $bag = $this->createStub(ParametersBag::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())

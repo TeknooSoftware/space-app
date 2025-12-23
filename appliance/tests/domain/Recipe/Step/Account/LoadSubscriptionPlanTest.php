@@ -35,6 +35,7 @@ use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 use function array_key_exists;
 
@@ -67,24 +68,26 @@ class LoadSubscriptionPlanTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
-        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
-        $spaceAccount->accountData = $this->createMock(AccountData::class);
+        $spaceAccount = new SpaceAccount($this->createStub(Account::class));
+        $spaceAccount->accountData = $this->createStub(AccountData::class);
 
         $this->assertInstanceOf(
             LoadSubscriptionPlan::class,
             ($this->loadSubscriptionPlan)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 $spaceAccount,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithMissingAccountData(): void
     {
         $spaceAccount = new SpaceAccount(
-            account: $this->createMock(Account::class),
+            account: $this->createStub(Account::class),
             accountData: null,
         );
         $spaceAccount->accountData = null;
@@ -94,7 +97,7 @@ class LoadSubscriptionPlanTest extends TestCase
         $this->expectExceptionMessage('Missing Space Account data');
 
         ($this->loadSubscriptionPlan)(
-            $this->createMock(ManagerInterface::class),
+            $this->createStub(ManagerInterface::class),
             $spaceAccount,
         );
     }
@@ -110,7 +113,7 @@ class LoadSubscriptionPlanTest extends TestCase
                 return $accountData;
             });
 
-        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
+        $spaceAccount = new SpaceAccount($this->createStub(Account::class));
         $spaceAccount->accountData = $accountData;
 
         $this->subscriptionPlanCatalog->expects($this->never())
@@ -137,7 +140,7 @@ class LoadSubscriptionPlanTest extends TestCase
 
     public function testInvokeWithValidPlanId(): void
     {
-        $plan = $this->createMock(SubscriptionPlan::class);
+        $plan = $this->createStub(SubscriptionPlan::class);
 
         $accountData = $this->createMock(AccountData::class);
         $accountData->expects($this->once())
@@ -148,7 +151,7 @@ class LoadSubscriptionPlanTest extends TestCase
                 return $accountData;
             });
 
-        $spaceAccount = new SpaceAccount($this->createMock(Account::class));
+        $spaceAccount = new SpaceAccount($this->createStub(Account::class));
         $spaceAccount->accountData = $accountData;
 
         $this->subscriptionPlanCatalog->expects($this->once())

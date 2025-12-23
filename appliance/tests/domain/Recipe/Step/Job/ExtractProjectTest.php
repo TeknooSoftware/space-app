@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Job;
@@ -62,15 +63,15 @@ class ExtractProjectTest extends TestCase
         $this->assertInstanceOf(
             ExtractProject::class,
             ($this->extractProject)(
-                manager: $this->createMock(ManagerInterface::class),
-                job: $this->createMock(Job::class),
+                manager: $this->createStub(ManagerInterface::class),
+                job: $this->createStub(Job::class),
             )
         );
     }
 
     public function testInvokeWithProjectExtraction(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
 
         $job = $this->createMock(Job::class);
         $job->expects($this->once())

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Query\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
@@ -47,7 +48,7 @@ class FetchAccountFromUserTest extends TestCase
 {
     private FetchAccountFromUser $fetchAccountFromUser;
 
-    private User&MockObject $user;
+    private User&Stub $user;
 
     /**
      * {@inheritdoc}
@@ -56,7 +57,7 @@ class FetchAccountFromUserTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = $this->createMock(User::class);
+        $this->user = $this->createStub(User::class);
         $this->fetchAccountFromUser = new FetchAccountFromUser($this->user);
     }
 
@@ -65,9 +66,9 @@ class FetchAccountFromUserTest extends TestCase
         $this->assertInstanceOf(
             FetchAccountFromUser::class,
             $this->fetchAccountFromUser->fetch(
-                $this->createMock(LoaderInterface::class),
-                $this->createMock(RepositoryInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(LoaderInterface::class),
+                $this->createStub(RepositoryInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }

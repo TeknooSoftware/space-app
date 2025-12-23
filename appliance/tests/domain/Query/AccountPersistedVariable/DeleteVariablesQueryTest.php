@@ -27,11 +27,13 @@ namespace Teknoo\Space\Tests\Unit\Query\AccountPersistedVariable;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\QueryExecutorInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Query\AccountPersistedVariable\DeleteVariablesQuery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class DeleteVariablesQueryTest.
@@ -46,7 +48,7 @@ class DeleteVariablesQueryTest extends TestCase
 {
     private DeleteVariablesQuery $deleteVariablesQuery;
 
-    private Account&MockObject $account;
+    private Account&Stub $account;
 
     private array $notIds;
 
@@ -57,7 +59,7 @@ class DeleteVariablesQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->account = $this->createMock(Account::class);
+        $this->account = $this->createStub(Account::class);
         $this->notIds = [];
         $this->deleteVariablesQuery = new DeleteVariablesQuery($this->account, $this->notIds);
     }
@@ -70,6 +72,7 @@ class DeleteVariablesQueryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testDelete(): void
     {
         $queryExecutor = $this->createMock(QueryExecutorInterface::class);

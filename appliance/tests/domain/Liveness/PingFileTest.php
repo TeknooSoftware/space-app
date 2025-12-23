@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Liveness;
 use DateTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Space\Liveness\PingFile;
@@ -48,7 +49,7 @@ class PingFileTest extends TestCase
 {
     private PingFile $pingFile;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     private string $pingFilePath;
 
@@ -59,7 +60,7 @@ class PingFileTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->pingFilePath = tempnam(sys_get_temp_dir(), 'pinh');
         $this->pingFile = new PingFile($this->datesService, $this->pingFilePath);
     }
@@ -69,7 +70,7 @@ class PingFileTest extends TestCase
         $this->datesService
             ->method('passMeTheDate')
             ->willReturnCallback(
-                function (callable $callback): DatesService&MockObject {
+                function (callable $callback): DatesService&Stub {
                     $callback(new DateTime('2023-03-15'));
                     return $this->datesService;
                 }

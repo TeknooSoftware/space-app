@@ -58,7 +58,7 @@ class FormErrorTest extends TestCase
     {
         $this->assertIsIterable(
             $this->formError->getFieldErrors(
-                $this->createMock(FormView::class),
+                $this->createStub(FormView::class),
             ),
         );
     }

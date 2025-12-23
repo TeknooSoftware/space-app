@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountDataRepositoryInterface;
 use Teknoo\Space\Loader\AccountDataLoader;
@@ -45,7 +46,7 @@ class AccountDataLoaderTest extends TestCase
 {
     private AccountDataLoader $accountDataLoader;
 
-    private AccountDataRepositoryInterface&MockObject $repository;
+    private AccountDataRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class AccountDataLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(AccountDataRepositoryInterface::class);
+        $this->repository = $this->createStub(AccountDataRepositoryInterface::class);
         $this->accountDataLoader = new AccountDataLoader($this->repository);
     }
 

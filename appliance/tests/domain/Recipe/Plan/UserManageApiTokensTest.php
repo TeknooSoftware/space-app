@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -51,19 +52,19 @@ class UserManageApiTokensTest extends TestCase
 {
     private UserManageApiTokens $plan;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private CreateObject&MockObject $createObject;
+    private CreateObject&Stub $createObject;
 
-    private FormHandlingInterface&MockObject $formHandling;
+    private FormHandlingInterface&Stub $formHandling;
 
-    private FormProcessingInterface&MockObject $formProcessing;
+    private FormProcessingInterface&Stub $formProcessing;
 
-    private SaveObject&MockObject $saveObject;
+    private SaveObject&Stub $saveObject;
 
-    private RenderFormInterface&MockObject $renderForm;
+    private RenderFormInterface&Stub $renderForm;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -71,13 +72,13 @@ class UserManageApiTokensTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->createObject = $this->createMock(CreateObject::class);
-        $this->formHandling = $this->createMock(FormHandlingInterface::class);
-        $this->formProcessing = $this->createMock(FormProcessingInterface::class);
-        $this->saveObject = $this->createMock(SaveObject::class);
-        $this->renderForm = $this->createMock(RenderFormInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->createObject = $this->createStub(CreateObject::class);
+        $this->formHandling = $this->createStub(FormHandlingInterface::class);
+        $this->formProcessing = $this->createStub(FormProcessingInterface::class);
+        $this->saveObject = $this->createStub(SaveObject::class);
+        $this->renderForm = $this->createStub(RenderFormInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = 'tpl';
 
         $this->plan = new UserManageApiTokens(
@@ -101,7 +102,7 @@ class UserManageApiTokensTest extends TestCase
     {
         self::assertInstanceOf(
             EditablePlanInterface::class,
-            $this->plan->train($this->createMock(ChefInterface::class))
+            $this->plan->train($this->createStub(ChefInterface::class))
         );
     }
 }

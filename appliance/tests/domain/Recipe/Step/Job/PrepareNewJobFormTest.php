@@ -65,18 +65,18 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvoke(): void
     {
-        $project = new Project($this->createMock(Account::class));
-        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
-            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
-            ->setClusters([$this->createMock(Cluster::class)]);
+        $project = new Project($this->createStub(Account::class));
+        $project->setSourceRepository($this->createStub(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createStub(ImageRegistryInterface::class))
+            ->setClusters([$this->createStub(Cluster::class)]);
 
         $this->assertInstanceOf(
             PrepareNewJobForm::class,
             ($this->prepareNewJobForm)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 new SpaceProject($project),
-                $this->createMock(NewJob::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(NewJob::class),
+                $this->createStub(ParametersBag::class),
                 'foo',
             ),
         );
@@ -84,16 +84,16 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvokeWithDirectProject(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())->method('getId')->willReturn('account-123');
+        $account = $this->createStub(Account::class);
+        $account->method('getId')->willReturn('account-123');
 
         $project = new Project($account);
-        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
-            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
-            ->setClusters([$this->createMock(Cluster::class)])
+        $project->setSourceRepository($this->createStub(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createStub(ImageRegistryInterface::class))
+            ->setClusters([$this->createStub(Cluster::class)])
             ->setId('project-123');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -123,16 +123,16 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvokeWithFormActionRoute(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())->method('getId')->willReturn('account-123');
+        $account = $this->createStub(Account::class);
+        $account->method('getId')->willReturn('account-123');
 
         $project = new Project($account);
-        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
-            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
-            ->setClusters([$this->createMock(Cluster::class)])
+        $project->setSourceRepository($this->createStub(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createStub(ImageRegistryInterface::class))
+            ->setClusters([$this->createStub(Cluster::class)])
             ->setId('project-456');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())->method('updateWorkPlan');
@@ -163,16 +163,16 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvokeWithFormOptionsAndEnv(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())->method('getId')->willReturn('account-123');
+        $account = $this->createStub(Account::class);
+        $account->method('getId')->willReturn('account-123');
 
         $project = new Project($account);
-        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
-            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
+        $project->setSourceRepository($this->createStub(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createStub(ImageRegistryInterface::class))
             ->setClusters([new Cluster(project: $project, environment: new Environment('prod'))])
             ->setId('project-789');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -187,7 +187,7 @@ class PrepareNewJobFormTest extends TestCase
                 })
             );
 
-        $bag = $this->createMock(ParametersBag::class);
+        $bag = $this->createStub(ParametersBag::class);
 
         $result = ($this->prepareNewJobForm)(
             $manager,
@@ -203,33 +203,33 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvokeWithNonRunnableProject(): void
     {
-        $project = new Project($this->createMock(Account::class));
+        $project = new Project($this->createStub(Account::class));
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Project is not fully configured');
 
         ($this->prepareNewJobForm)(
-            $this->createMock(ManagerInterface::class),
+            $this->createStub(ManagerInterface::class),
             $project,
-            $this->createMock(NewJob::class),
-            $this->createMock(ParametersBag::class),
+            $this->createStub(NewJob::class),
+            $this->createStub(ParametersBag::class),
         );
     }
 
     public function testInvokeWithSpaceProjectWrapper(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())->method('getId')->willReturn('account-999');
+        $account = $this->createStub(Account::class);
+        $account->method('getId')->willReturn('account-999');
 
         $project = new Project($account);
-        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
-            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
-            ->setClusters([$this->createMock(Cluster::class)])
+        $project->setSourceRepository($this->createStub(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createStub(ImageRegistryInterface::class))
+            ->setClusters([$this->createStub(Cluster::class)])
             ->setId('project-999');
 
         $spaceProject = new SpaceProject($project);
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())->method('updateWorkPlan');
@@ -251,16 +251,16 @@ class PrepareNewJobFormTest extends TestCase
 
     public function testInvokeWithEmptyFormActionRoute(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())->method('getId')->willReturn('account-empty');
+        $account = $this->createStub(Account::class);
+        $account->method('getId')->willReturn('account-empty');
 
         $project = new Project($account);
-        $project->setSourceRepository($this->createMock(SourceRepositoryInterface::class))
-            ->setImagesRegistry($this->createMock(ImageRegistryInterface::class))
-            ->setClusters([$this->createMock(Cluster::class)])
+        $project->setSourceRepository($this->createStub(SourceRepositoryInterface::class))
+            ->setImagesRegistry($this->createStub(ImageRegistryInterface::class))
+            ->setClusters([$this->createStub(Cluster::class)])
             ->setId('project-empty');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())->method('updateWorkPlan');

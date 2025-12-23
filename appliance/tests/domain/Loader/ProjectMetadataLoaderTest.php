@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\ProjectMetadataRepositoryInterface;
 use Teknoo\Space\Loader\ProjectMetadataLoader;
@@ -45,7 +46,7 @@ class ProjectMetadataLoaderTest extends TestCase
 {
     private ProjectMetadataLoader $projectMetadataLoader;
 
-    private ProjectMetadataRepositoryInterface&MockObject $repository;
+    private ProjectMetadataRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class ProjectMetadataLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(ProjectMetadataRepositoryInterface::class);
+        $this->repository = $this->createStub(ProjectMetadataRepositoryInterface::class);
         $this->projectMetadataLoader = new ProjectMetadataLoader($this->repository);
     }
 

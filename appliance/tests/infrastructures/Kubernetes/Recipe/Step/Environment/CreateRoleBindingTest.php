@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environ
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -48,7 +49,7 @@ class CreateRoleBindingTest extends TestCase
 {
     private CreateRoleBinding $createRoleBinding;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     private bool $preferRealDate;
 
@@ -59,7 +60,7 @@ class CreateRoleBindingTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDate = true;
         $this->createRoleBinding = new CreateRoleBinding(
             $this->datesService,
@@ -76,7 +77,7 @@ class CreateRoleBindingTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -86,13 +87,13 @@ class CreateRoleBindingTest extends TestCase
         $this->assertInstanceOf(
             CreateRoleBinding::class,
             ($this->createRoleBinding)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
                 serviceName: 'foo',
                 roleName: 'foo',
                 clusterRoleName: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )
         );

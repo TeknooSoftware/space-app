@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountRegistry;
 use DateTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -38,6 +39,7 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Writer\AccountRegistryWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class PersistRegistrysTest.
@@ -75,27 +77,28 @@ class PersistRegistryCredentialTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             PersistRegistryCredential::class,
             ($this->persistRegistryCredential)(
-                manager: $this->createMock(ManagerInterface::class),
-                object: $this->createMock(ObjectInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
+                object: $this->createStub(ObjectInterface::class),
                 kubeNamespace: 'foo',
                 registryUrl: 'foo',
                 registryAccountName: 'foo',
                 registryConfigName: 'foo',
                 registryPassword: 'foo',
                 persistentVolumeClaimName: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
             ),
         );
     }
 
     public function testInvokeWithNonAccountObject(): void
     {
-        $object = $this->createMock(ObjectInterface::class);
+        $object = $this->createStub(ObjectInterface::class);
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->never())->method('updateWorkPlan');
         $manager->expects($this->never())->method('cleanWorkPlan');
@@ -112,7 +115,7 @@ class PersistRegistryCredentialTest extends TestCase
             registryConfigName: 'config123',
             registryPassword: 'secret',
             persistentVolumeClaimName: 'pvc-123',
-            accountHistory: $this->createMock(AccountHistory::class),
+            accountHistory: $this->createStub(AccountHistory::class),
         );
 
         $this->assertInstanceOf(PersistRegistryCredential::class, $result);
@@ -120,7 +123,7 @@ class PersistRegistryCredentialTest extends TestCase
 
     public function testInvokeWithAccountObject(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $accountHistory = $this->createMock(AccountHistory::class);
         $dateTime = new DateTime('2025-10-02');
 
@@ -174,8 +177,8 @@ class PersistRegistryCredentialTest extends TestCase
 
     public function testInvokeWithSpaceAccountObject(): void
     {
-        $account = $this->createMock(Account::class);
-        $spaceAccount = $this->createMock(SpaceAccount::class);
+        $account = $this->createStub(Account::class);
+        $spaceAccount = $this->createStub(SpaceAccount::class);
         $spaceAccount->account = $account;
         $accountHistory = $this->createMock(AccountHistory::class);
         $dateTime = new DateTime('2025-10-02');
@@ -236,7 +239,7 @@ class PersistRegistryCredentialTest extends TestCase
             false,
         );
 
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $accountHistory = $this->createMock(AccountHistory::class);
         $dateTime = new DateTime('2025-10-02');
 

@@ -53,7 +53,7 @@ class ContactTest extends TestCase
     {
         parent::setUp();
 
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $user->method('getFirstName')->willReturn('foo1');
         $user->method('getLastName')->willReturn('bar1');
         $user->method('getEmail')->willReturn('foo1@bar');

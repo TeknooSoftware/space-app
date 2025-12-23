@@ -43,7 +43,7 @@ trait DefaultSearchTrait
 {
     abstract protected static function onSubmit(Search $search, ManagerInterface $manager): void;
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -57,7 +57,7 @@ trait DefaultSearchTrait
         );
 
         if (empty($options['manager']) || !$options['manager'] instanceof ManagerInterface) {
-            return $this;
+            return;
         }
 
         $manager = $options['manager'];
@@ -70,11 +70,9 @@ trait DefaultSearchTrait
                 self::onSubmit($data, $manager);
             }
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -85,7 +83,5 @@ trait DefaultSearchTrait
         ]);
 
         $resolver->setAllowedTypes('manager', [ManagerInterface::class, 'null']);
-
-        return $this;
     }
 }

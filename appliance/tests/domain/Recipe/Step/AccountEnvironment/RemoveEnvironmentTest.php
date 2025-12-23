@@ -27,10 +27,12 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class RemoveCredentialTest.
@@ -58,16 +60,18 @@ class RemoveEnvironmentTest extends TestCase
         $this->removeCredentials = new RemoveEnvironment($this->writer);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             RemoveEnvironment::class,
             ($this->removeCredentials)(
-                accountEnvironment: $this->createMock(AccountEnvironment::class),
+                accountEnvironment: $this->createStub(AccountEnvironment::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithEnvironmentRemoval(): void
     {
         $environment = $this->createMock(AccountEnvironment::class);

@@ -57,22 +57,18 @@ class SpaceUserTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            SpaceUserType::class,
-            $this->spaceUserType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar'],
-            ),
+        $this->spaceUserType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar'],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            SpaceUserType::class,
-            $this->spaceUserType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->spaceUserType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

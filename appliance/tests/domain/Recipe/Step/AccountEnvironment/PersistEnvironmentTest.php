@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -41,6 +42,7 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class PersistCredentialsTest.
@@ -81,13 +83,14 @@ class PersistEnvironmentTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             PersistEnvironment::class,
             actual: ($this->persistCredentials)(
-                manager: $this->createMock(ManagerInterface::class),
-                spaceAccount: new SpaceAccount($this->createMock(Account::class)),
+                manager: $this->createStub(ManagerInterface::class),
+                spaceAccount: new SpaceAccount($this->createStub(Account::class)),
                 envName: 'foo',
                 kubeNamespace: 'foo',
                 serviceName: 'foo',
@@ -95,7 +98,7 @@ class PersistEnvironmentTest extends TestCase
                 roleBindingName: 'foo',
                 caCertificate: 'foo',
                 token: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: new ClusterConfig(
                     name: 'foo',
                     sluggyName: 'bar',
@@ -103,7 +106,7 @@ class PersistEnvironmentTest extends TestCase
                     masterAddress: 'foo',
                     storageProvisioner: 'foo',
                     dashboardAddress: 'foo',
-                    kubernetesClient: $this->createMock(Client::class),
+                    kubernetesClient: $this->createStub(Client::class),
                     token: 'foo',
                     supportRegistry: true,
                     useHnc: true,
@@ -116,7 +119,7 @@ class PersistEnvironmentTest extends TestCase
 
     public function testInvokeWithAccountDirectly(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $this->writer->expects($this->once())
             ->method('save')
@@ -160,7 +163,7 @@ class PersistEnvironmentTest extends TestCase
                 roleBindingName: 'test-rb',
                 caCertificate: 'test-ca',
                 token: 'test-token',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: new ClusterConfig(
                     name: 'test-cluster',
                     sluggyName: 'test',
@@ -168,7 +171,7 @@ class PersistEnvironmentTest extends TestCase
                     masterAddress: 'https://test',
                     storageProvisioner: 'test',
                     dashboardAddress: 'https://dashboard',
-                    kubernetesClient: $this->createMock(Client::class),
+                    kubernetesClient: $this->createStub(Client::class),
                     token: 'cluster-token',
                     supportRegistry: true,
                     useHnc: false,
@@ -214,7 +217,7 @@ class PersistEnvironmentTest extends TestCase
             PersistEnvironment::class,
             ($this->persistCredentials)(
                 manager: $manager,
-                spaceAccount: new SpaceAccount($this->createMock(Account::class)),
+                spaceAccount: new SpaceAccount($this->createStub(Account::class)),
                 envName: 'test-env',
                 kubeNamespace: 'test-ns',
                 serviceName: 'test-svc',
@@ -222,7 +225,7 @@ class PersistEnvironmentTest extends TestCase
                 roleBindingName: 'test-rb',
                 caCertificate: 'test-ca',
                 token: 'test-token',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: new ClusterConfig(
                     name: 'test-cluster',
                     sluggyName: 'test',
@@ -230,7 +233,7 @@ class PersistEnvironmentTest extends TestCase
                     masterAddress: 'https://test',
                     storageProvisioner: 'test',
                     dashboardAddress: 'https://dashboard',
-                    kubernetesClient: $this->createMock(Client::class),
+                    kubernetesClient: $this->createStub(Client::class),
                     token: 'cluster-token',
                     supportRegistry: true,
                     useHnc: false,
@@ -269,7 +272,7 @@ class PersistEnvironmentTest extends TestCase
             PersistEnvironment::class,
             ($persistEnvironment)(
                 manager: $manager,
-                spaceAccount: $this->createMock(Account::class),
+                spaceAccount: $this->createStub(Account::class),
                 envName: 'test-env',
                 kubeNamespace: 'test-ns',
                 serviceName: 'test-svc',
@@ -277,7 +280,7 @@ class PersistEnvironmentTest extends TestCase
                 roleBindingName: 'test-rb',
                 caCertificate: 'test-ca',
                 token: 'test-token',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: new ClusterConfig(
                     name: 'test-cluster',
                     sluggyName: 'test',
@@ -285,7 +288,7 @@ class PersistEnvironmentTest extends TestCase
                     masterAddress: 'https://test',
                     storageProvisioner: 'test',
                     dashboardAddress: 'https://dashboard',
-                    kubernetesClient: $this->createMock(Client::class),
+                    kubernetesClient: $this->createStub(Client::class),
                     token: 'cluster-token',
                     supportRegistry: true,
                     useHnc: false,
@@ -322,7 +325,7 @@ class PersistEnvironmentTest extends TestCase
             PersistEnvironment::class,
             ($this->persistCredentials)(
                 manager: $manager,
-                spaceAccount: $this->createMock(Account::class),
+                spaceAccount: $this->createStub(Account::class),
                 envName: 'test-env',
                 kubeNamespace: 'test-ns',
                 serviceName: 'test-svc',
@@ -338,7 +341,7 @@ class PersistEnvironmentTest extends TestCase
                     masterAddress: 'https://test',
                     storageProvisioner: 'test',
                     dashboardAddress: 'https://dashboard',
-                    kubernetesClient: $this->createMock(Client::class),
+                    kubernetesClient: $this->createStub(Client::class),
                     token: 'cluster-token',
                     supportRegistry: true,
                     useHnc: false,
@@ -374,7 +377,7 @@ class PersistEnvironmentTest extends TestCase
             PersistEnvironment::class,
             ($this->persistCredentials)(
                 manager: $manager,
-                spaceAccount: $this->createMock(Account::class),
+                spaceAccount: $this->createStub(Account::class),
                 envName: 'test-env',
                 kubeNamespace: 'test-ns',
                 serviceName: 'test-svc',
@@ -382,7 +385,7 @@ class PersistEnvironmentTest extends TestCase
                 roleBindingName: 'test-rb',
                 caCertificate: 'test-ca',
                 token: 'test-token',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: new ClusterConfig(
                     name: 'test-cluster',
                     sluggyName: 'test',
@@ -390,7 +393,7 @@ class PersistEnvironmentTest extends TestCase
                     masterAddress: 'https://test',
                     storageProvisioner: 'test',
                     dashboardAddress: 'https://dashboard',
-                    kubernetesClient: $this->createMock(Client::class),
+                    kubernetesClient: $this->createStub(Client::class),
                     token: 'cluster-token',
                     supportRegistry: true,
                     useHnc: false,

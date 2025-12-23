@@ -56,7 +56,7 @@ class JobVarType extends AbstractType
         return 'env_var';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -207,11 +207,9 @@ class JobVarType extends AbstractType
                 }
             );
         }
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -230,7 +228,5 @@ class JobVarType extends AbstractType
 
         $resolver->setAllowedTypes('usePasswordForSecret', ['bool']);
         $resolver->setRequired(['usePasswordForSecret']);
-
-        return $this;
     }
 }

@@ -49,7 +49,7 @@ class VarsSetType extends AbstractType
         return 'env_vars_set';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -73,11 +73,9 @@ class VarsSetType extends AbstractType
                 'prototype' => true,
             ]
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -87,7 +85,5 @@ class VarsSetType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('environmentsList', ['array']);
-
-        return $this;
     }
 }

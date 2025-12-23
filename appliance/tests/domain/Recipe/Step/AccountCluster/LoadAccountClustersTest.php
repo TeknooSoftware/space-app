@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountCluster;
 use Kubernetes\Client;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
@@ -38,6 +39,7 @@ use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class loadAccountClustersTest.
@@ -54,9 +56,9 @@ class LoadAccountClustersTest extends TestCase
 
     private AccountClusterLoader&MockObject $loader;
 
-    private readonly ClientFactoryInterface&MockObject $clientFactory;
+    private readonly ClientFactoryInterface&Stub $clientFactory;
 
-    private readonly RepositoryRegistry&MockObject $repositoryRegistry;
+    private readonly RepositoryRegistry&Stub $repositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -66,8 +68,8 @@ class LoadAccountClustersTest extends TestCase
         parent::setUp();
 
         $this->loader = $this->createMock(AccountClusterLoader::class);
-        $this->clientFactory = $this->createMock(ClientFactoryInterface::class);
-        $this->repositoryRegistry = $this->createMock(RepositoryRegistry::class);
+        $this->clientFactory = $this->createStub(ClientFactoryInterface::class);
+        $this->repositoryRegistry = $this->createStub(RepositoryRegistry::class);
         $this->loadAccountClusters = new LoadAccountClusters(
             loader: $this->loader,
             clientFactory: $this->clientFactory,
@@ -75,14 +77,15 @@ class LoadAccountClustersTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadAccountClusters::class,
             ($this->loadAccountClusters)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClusterCatalog::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ClusterCatalog::class),
+                $this->createStub(Account::class),
             ),
         );
     }
@@ -98,7 +101,7 @@ class LoadAccountClustersTest extends TestCase
             LoadAccountClusters::class,
             ($this->loadAccountClusters)(
                 manager: $manager,
-                clusterCatalog: $this->createMock(ClusterCatalog::class),
+                clusterCatalog: $this->createStub(ClusterCatalog::class),
                 accountInstance: null,
             ),
         );
@@ -121,7 +124,7 @@ class LoadAccountClustersTest extends TestCase
             ($this->loadAccountClusters)(
                 manager: $manager,
                 clusterCatalog: $clusterCatalog,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
             ),
         );
     }
@@ -136,7 +139,7 @@ class LoadAccountClustersTest extends TestCase
             masterAddress: 'https://master',
             storageProvisioner: 'provisioner',
             dashboardAddress: 'https://dashboard',
-            kubernetesClient: fn () => $this->createMock(Client::class),
+            kubernetesClient: fn () => $this->createStub(Client::class),
             token: 'token',
             supportRegistry: true,
             useHnc: false,
@@ -177,7 +180,7 @@ class LoadAccountClustersTest extends TestCase
             ($this->loadAccountClusters)(
                 manager: $manager,
                 clusterCatalog: $clusterCatalog,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
             ),
         );
     }
@@ -211,7 +214,7 @@ class LoadAccountClustersTest extends TestCase
             ($this->loadAccountClusters)(
                 manager: $manager,
                 clusterCatalog: $clusterCatalog,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
             ),
         );
     }
@@ -246,7 +249,7 @@ class LoadAccountClustersTest extends TestCase
             ($this->loadAccountClusters)(
                 manager: $manager,
                 clusterCatalog: $clusterCatalog,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
             ),
         );
     }
@@ -280,7 +283,7 @@ class LoadAccountClustersTest extends TestCase
             ($this->loadAccountClusters)(
                 manager: $manager,
                 clusterCatalog: $clusterCatalog,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
             ),
         );
     }

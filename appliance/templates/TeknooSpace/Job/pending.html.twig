@@ -19,14 +19,15 @@
                             {{ 'teknoo.space.title.project.edit'|trans }}
                         </a>
                     </li>
-                    {% if app.request.get('projectId', 0) > 0 %}
+                    {% set requestProjectId = app.request.request.get('projectId', app.request.query.get('projectId', 0)) %}
+                    {% if requestProjectId > 0 %}
                         <li class="breadcrumb-item text-capitalize">
                             {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': app.request.get('projectId')}) }}">
+                            <a href="{{ path('_teknoo_paas_admin_project_edit', {'id': requestProjectId}) }}">
                             {% else %}
-                            <a href="{{ path('space_project_edit', {'id': app.request.get('projectId')}) }}">
+                            <a href="{{ path('space_project_edit', {'id': requestProjectId}) }}">
                             {% endif %}
-                                {{ app.request.get('projectName') }}
+                                {{ app.request.request.get('projectName', app.request.query.get('projectName')) }}
                             </a>
                         </li>
                     {% endif %}

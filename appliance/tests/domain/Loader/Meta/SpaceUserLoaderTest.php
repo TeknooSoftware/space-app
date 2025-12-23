@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Loader\Meta;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
@@ -39,6 +40,7 @@ use Teknoo\Space\Loader\UserDataLoader;
 use Teknoo\Space\Object\DTO\SpaceUser;
 use Teknoo\Space\Object\Persisted\UserData;
 use Throwable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class SpaceUserLoaderTest.
@@ -78,7 +80,7 @@ class SpaceUserLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(User::class));
+                    $promise->success($this->createStub(User::class));
 
                     return $this->userLoader;
                 }
@@ -88,7 +90,7 @@ class SpaceUserLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(UserData::class));
+                    $promise->success($this->createStub(UserData::class));
 
                     return $this->dataLoader;
                 }
@@ -108,6 +110,7 @@ class SpaceUserLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoadWithUserError(): void
     {
         $this->userLoader->expects($this->once())
@@ -138,6 +141,7 @@ class SpaceUserLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoadWithUserErrorDefaultCode(): void
     {
         $this->userLoader->expects($this->once())
@@ -174,7 +178,7 @@ class SpaceUserLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(User::class));
+                    $promise->success($this->createStub(User::class));
 
                     return $this->userLoader;
                 }
@@ -206,10 +210,11 @@ class SpaceUserLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testQuery(): void
     {
-        $user1 = $this->createMock(User::class);
-        $user2 = $this->createMock(User::class);
+        $user1 = $this->createStub(User::class);
+        $user2 = $this->createStub(User::class);
 
         $this->userLoader->expects($this->once())
             ->method('query')
@@ -233,7 +238,7 @@ class SpaceUserLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->query(
-                $this->createMock(QueryCollectionInterface::class),
+                $this->createStub(QueryCollectionInterface::class),
                 $promise,
             ),
         );
@@ -245,7 +250,7 @@ class SpaceUserLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(User::class));
+                    $promise->success($this->createStub(User::class));
 
                     return $this->userLoader;
                 }
@@ -255,7 +260,7 @@ class SpaceUserLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(UserData::class));
+                    $promise->success($this->createStub(UserData::class));
 
                     return $this->dataLoader;
                 }
@@ -269,12 +274,13 @@ class SpaceUserLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetchWithUserError(): void
     {
         $this->userLoader->expects($this->once())
@@ -299,12 +305,13 @@ class SpaceUserLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetchWithUserErrorDefaultCode(): void
     {
         $this->userLoader->expects($this->once())
@@ -329,7 +336,7 @@ class SpaceUserLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserLoader::class,
             $this->spaceUserLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );

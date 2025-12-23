@@ -45,7 +45,7 @@ class JWTConfigurationType extends AbstractType
      * @param FormBuilderInterface<JWTConfiguration|null> $builder
      * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'expirationDate',
@@ -57,18 +57,14 @@ class JWTConfigurationType extends AbstractType
                 'label' => 'teknoo.space.form.user.jwt.expiration',
             ],
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
             'data_class' => JWTConfiguration::class,
         ]);
-
-        return $this;
     }
 }

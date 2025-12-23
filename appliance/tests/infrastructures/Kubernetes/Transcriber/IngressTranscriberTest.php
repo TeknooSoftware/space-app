@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Transcriber;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\Ingress;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\IngressPath;
@@ -120,7 +121,7 @@ class IngressTranscriberTest extends TestCase
                 compiledDeployment: $cd,
                 client: $kubeClient,
                 promise: $promise,
-                defaultsBag: $this->createMock(DefaultsBag::class),
+                defaultsBag: $this->createStub(DefaultsBag::class),
                 namespace: 'default_namespace',
                 useHierarchicalNamespaces: false,
             )
@@ -129,7 +130,7 @@ class IngressTranscriberTest extends TestCase
 
     public function testError(): void
     {
-        $kubeClient = $this->createMock(KubeClient::class);
+        $kubeClient = $this->createStub(KubeClient::class);
         $cd = $this->createMock(CompiledDeploymentInterface::class);
 
         $cd->expects($this->once())
@@ -194,7 +195,7 @@ class IngressTranscriberTest extends TestCase
                 compiledDeployment: $cd,
                 client: $kubeClient,
                 promise: $promise,
-                defaultsBag: $this->createMock(DefaultsBag::class),
+                defaultsBag: $this->createStub(DefaultsBag::class),
                 namespace: 'foo',
                 useHierarchicalNamespaces: false,
             )

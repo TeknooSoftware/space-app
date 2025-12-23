@@ -27,11 +27,13 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class AccountRegistryTest.
@@ -85,41 +87,49 @@ class AccountRegistryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetAccount(): void
     {
         $this->assertSame($this->account, $this->accountRegistry->getAccount());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRegistryNamespace(): void
     {
         $this->assertEquals($this->registryNamespace, $this->accountRegistry->getRegistryNamespace());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRegistryUrl(): void
     {
         $this->assertEquals($this->registryUrl, $this->accountRegistry->getRegistryUrl());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRegistryConfigName(): void
     {
         $this->assertEquals($this->registryConfigName, $this->accountRegistry->getRegistryConfigName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRegistryAccountName(): void
     {
         $this->assertEquals($this->registryAccountName, $this->accountRegistry->getRegistryAccountName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRegistryPassword(): void
     {
         $this->assertEquals($this->registryPassword, $this->accountRegistry->getRegistryPassword());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetPersistentVolumeClaimName(): void
     {
         $this->assertEquals($this->persistentVolumeClaimName, $this->accountRegistry->getPersistentVolumeClaimName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testUpdateRegistry(): void
     {
         $this->assertInstanceOf(
@@ -143,9 +153,10 @@ class AccountRegistryTest extends TestCase
         $this->assertEquals($this->registryPassword, $this->accountRegistry->getRegistryPassword());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVerifyAccessToUser(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $promise = $this->createMock(PromiseInterface::class);
 
         $this->account->expects($this->once())

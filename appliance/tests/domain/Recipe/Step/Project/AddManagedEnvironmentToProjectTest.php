@@ -64,16 +64,16 @@ class AddManagedEnvironmentToProjectTest extends TestCase
     public function testInvoke(): void
     {
         $wallet = new AccountWallet(
-            [$this->createMock(AccountEnvironment::class)]
+            [$this->createStub(AccountEnvironment::class)]
         );
 
         $this->assertInstanceOf(
             AddManagedEnvironmentToProject::class,
             ($this->addManagedEnvironmentToProject)(
-                $this->createMock(ManagerInterface::class),
-                new SpaceProject($this->createMock(Project::class)),
+                $this->createStub(ManagerInterface::class),
+                new SpaceProject($this->createStub(Project::class)),
                 $wallet,
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -86,7 +86,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             ->with($this->callback(fn ($e) => $e instanceof \LogicException));
 
         $wallet = new AccountWallet([]);
-        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject = new SpaceProject($this->createStub(Project::class));
         $spaceProject->addClusterName = 'cluster1';
 
         $this->assertInstanceOf(
@@ -95,7 +95,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
                 $manager,
                 $spaceProject,
                 $wallet,
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -108,7 +108,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             ->with($this->callback(fn ($e) => $e instanceof \LogicException));
 
         $wallet = new AccountWallet([]);
-        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject = new SpaceProject($this->createStub(Project::class));
         $spaceProject->addClusterEnv = 'prod';
 
         $this->assertInstanceOf(
@@ -117,7 +117,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
                 $manager,
                 $spaceProject,
                 $wallet,
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -130,7 +130,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             ->with($this->callback(fn ($e) => $e instanceof \DomainException));
 
         $wallet = new AccountWallet([]);
-        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject = new SpaceProject($this->createStub(Project::class));
         $spaceProject->addClusterName = 'cluster1';
         $spaceProject->addClusterEnv = 'prod';
 
@@ -140,33 +140,33 @@ class AddManagedEnvironmentToProjectTest extends TestCase
                 $manager,
                 $spaceProject,
                 $wallet,
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
 
     public function testInvokeWithClusterAdditionSuccess(): void
     {
-        $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('prod');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('cluster1');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getNamespace')
             ->willReturn('namespace1');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getCaCertificate')
             ->willReturn('ca-cert');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClientCertificate')
             ->willReturn('client-cert');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClientKey')
             ->willReturn('client-key');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getToken')
             ->willReturn('token');
 
@@ -179,7 +179,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             masterAddress: 'https://cluster.example.com',
             storageProvisioner: 'standard',
             dashboardAddress: '',
-            kubernetesClient: fn () => $this->createMock(Client::class),
+            kubernetesClient: fn () => $this->createStub(Client::class),
             token: '',
             supportRegistry: false,
             useHnc: false,
@@ -228,26 +228,26 @@ class AddManagedEnvironmentToProjectTest extends TestCase
 
     public function testInvokeWithClusterAdditionSuccessWithIterator(): void
     {
-        $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('prod');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('cluster1');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getNamespace')
             ->willReturn('namespace1');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getCaCertificate')
             ->willReturn('ca-cert');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClientCertificate')
             ->willReturn('client-cert');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClientKey')
             ->willReturn('client-key');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getToken')
             ->willReturn('token');
 
@@ -260,7 +260,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             masterAddress: 'https://cluster.example.com',
             storageProvisioner: 'standard',
             dashboardAddress: '',
-            kubernetesClient: fn () => $this->createMock(Client::class),
+            kubernetesClient: fn () => $this->createStub(Client::class),
             token: '',
             supportRegistry: false,
             useHnc: true,
@@ -307,11 +307,11 @@ class AddManagedEnvironmentToProjectTest extends TestCase
 
     public function testInvokeWithException(): void
     {
-        $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('prod');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('cluster1');
 
@@ -323,7 +323,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             ->with('cluster1')
             ->willThrowException(new \RuntimeException('Test error'));
 
-        $spaceProject = new SpaceProject($this->createMock(Project::class));
+        $spaceProject = new SpaceProject($this->createStub(Project::class));
         $spaceProject->addClusterName = 'cluster1';
         $spaceProject->addClusterEnv = 'prod';
 

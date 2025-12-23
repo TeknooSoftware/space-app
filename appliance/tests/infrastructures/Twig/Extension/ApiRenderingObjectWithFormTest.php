@@ -35,6 +35,7 @@ use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\ApiRenderingObjectWithForm;
 use Teknoo\Space\Infrastructures\Twig\Extension\FormError;
 use Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 #[CoversClass(ApiRenderingObjectWithForm::class)]
 class ApiRenderingObjectWithFormTest extends TestCase
@@ -57,7 +58,7 @@ class ApiRenderingObjectWithFormTest extends TestCase
     public function testRenderingWithErrors(): void
     {
         $formView = new FormView();
-        $formInterface = $this->createMock(FormInterface::class);
+        $formInterface = $this->createStub(FormInterface::class);
         $formView->vars['errors'] = new FormErrorIterator($formInterface, [new SfFormError('err')]);
 
         $this->formError
@@ -81,6 +82,7 @@ class ApiRenderingObjectWithFormTest extends TestCase
         $this->assertSame('serialized-errors', $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRenderingWithoutErrors(): void
     {
         $formView = new FormView();
@@ -90,7 +92,7 @@ class ApiRenderingObjectWithFormTest extends TestCase
         $context = ['groups' => ['a']];
         $format = 'jsonld';
         $meta = ['custom' => true];
-        $parent = $this->createMock(IdentifiedObjectInterface::class);
+        $parent = $this->createStub(IdentifiedObjectInterface::class);
 
         $this->objectSerializing
             ->expects($this->once())

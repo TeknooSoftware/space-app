@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
@@ -48,9 +49,9 @@ class SpaceProjectTest extends TestCase
 {
     private SpaceProject $spaceProject;
 
-    private Project&MockObject $project;
+    private Project&Stub $project;
 
-    private ProjectMetadata&MockObject $projectMetadata;
+    private ProjectMetadata&Stub $projectMetadata;
 
     private iterable $variables;
 
@@ -61,8 +62,8 @@ class SpaceProjectTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = $this->createMock(Project::class);
-        $this->projectMetadata = $this->createMock(ProjectMetadata::class);
+        $this->project = $this->createStub(Project::class);
+        $this->projectMetadata = $this->createStub(ProjectMetadata::class);
         $this->variables = [];
         $this->spaceProject = new SpaceProject($this->project, $this->projectMetadata, $this->variables);
     }
@@ -83,7 +84,7 @@ class SpaceProjectTest extends TestCase
     {
         $this->project
             ->method('getAccount')
-            ->willReturn($this->createMock(Account::class));
+            ->willReturn($this->createStub(Account::class));
 
         $this->assertInstanceOf(
             Account::class,
@@ -105,7 +106,7 @@ class SpaceProjectTest extends TestCase
 
     public function testConstructorWithAccount(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $spaceProject = new SpaceProject($account);
 
         $this->assertInstanceOf(Project::class, $spaceProject->project);
@@ -113,7 +114,7 @@ class SpaceProjectTest extends TestCase
 
     public function testConstructorWithAllParameters(): void
     {
-        $variables = [$this->createMock(ProjectPersistedVariable::class)];
+        $variables = [$this->createStub(ProjectPersistedVariable::class)];
         $spaceProject = new SpaceProject(
             $this->project,
             $this->projectMetadata,

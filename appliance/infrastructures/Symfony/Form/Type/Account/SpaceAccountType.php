@@ -52,7 +52,7 @@ use function is_array;
  */
 class SpaceAccountType extends AbstractType implements FormApiAwareInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (empty($options['api']) || empty($options['enableEnvManagement'])) {
             $builder->add(
@@ -123,11 +123,9 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
                 ],
             );
         }
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -144,7 +142,5 @@ class SpaceAccountType extends AbstractType implements FormApiAwareInterface
         $resolver->setAllowedTypes('clusterCatalog', [ClusterCatalog::class, 'null']);
         $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, 'null']);
         $resolver->setAllowedTypes('enableEnvManagement', ['null', 'bool']);
-
-        return $this;
     }
 }

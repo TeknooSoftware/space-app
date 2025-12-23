@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Writer\Meta;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Teknoo\East\Common\Contracts\DBSource\BatchManipulationManagerInterface;
@@ -47,6 +48,7 @@ use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountPersistedVariableWriter;
 use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
 use Throwable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class SpaceAccountWriterTest.
@@ -69,9 +71,9 @@ class SpaceAccountWriterTest extends TestCase
 
     private AccountHistoryLoader&MockObject $historyLoader;
 
-    private AccountEnvironmentWriter&MockObject $credentialWriter;
+    private AccountEnvironmentWriter&Stub $credentialWriter;
 
-    private AccountHistoryWriter&MockObject $historyWriter;
+    private AccountHistoryWriter&Stub $historyWriter;
 
     private AccountPersistedVariableWriter&MockObject $accountPersistedVariableWriter;
 
@@ -88,8 +90,8 @@ class SpaceAccountWriterTest extends TestCase
         $this->dataWriter = $this->createMock(AccountDataWriter::class);
         $this->credentialLoader = $this->createMock(AccountEnvironmentLoader::class);
         $this->historyLoader = $this->createMock(AccountHistoryLoader::class);
-        $this->credentialWriter = $this->createMock(AccountEnvironmentWriter::class);
-        $this->historyWriter = $this->createMock(AccountHistoryWriter::class);
+        $this->credentialWriter = $this->createStub(AccountEnvironmentWriter::class);
+        $this->historyWriter = $this->createStub(AccountHistoryWriter::class);
         $this->accountPersistedVariableWriter = $this->createMock(AccountPersistedVariableWriter::class);
         $this->batchManipulationManager = $this->createMock(BatchManipulationManagerInterface::class);
         $this->spaceAccountWriter = new SpaceAccountWriter(
@@ -104,6 +106,7 @@ class SpaceAccountWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithWrongObject(): void
     {
         $promise = $this->createMock(PromiseInterface::class);
@@ -118,13 +121,14 @@ class SpaceAccountWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountWriter::class,
             $this->spaceAccountWriter->save(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 $promise,
                 true,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithNullPromise(): void
     {
         $this->accountWriter->expects($this->never())
@@ -133,16 +137,17 @@ class SpaceAccountWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountWriter::class,
             $this->spaceAccountWriter->save(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 null,
                 true,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithAccountData(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $accountData = $this->createMock(AccountData::class);
         $accountData->expects($this->once())
             ->method('setAccount')
@@ -200,9 +205,10 @@ class SpaceAccountWriterTest extends TestCase
     }
 
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithAccountError(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $spaceAccount = new SpaceAccount($account, null, []);
 
         $this->accountWriter->expects($this->once())
@@ -233,9 +239,10 @@ class SpaceAccountWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithAccountErrorDefaultCode(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $spaceAccount = new SpaceAccount($account, null, []);
 
         $this->accountWriter->expects($this->once())
@@ -266,9 +273,10 @@ class SpaceAccountWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithAccountErrorWithoutPromise(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $spaceAccount = new SpaceAccount($account, null, []);
 
         $this->accountWriter->expects($this->once())
@@ -290,6 +298,7 @@ class SpaceAccountWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithWrongObject(): void
     {
         $promise = $this->createMock(PromiseInterface::class);
@@ -304,12 +313,13 @@ class SpaceAccountWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountWriter::class,
             $this->spaceAccountWriter->remove(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithNullPromise(): void
     {
         $this->accountWriter->expects($this->never())
@@ -318,19 +328,20 @@ class SpaceAccountWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountWriter::class,
             $this->spaceAccountWriter->remove(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 null,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithAccountData(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
 
-        $var1 = $this->createMock(AccountPersistedVariable::class);
-        $var2 = $this->createMock(AccountPersistedVariable::class);
+        $var1 = $this->createStub(AccountPersistedVariable::class);
+        $var2 = $this->createStub(AccountPersistedVariable::class);
 
         $spaceAccount = new SpaceAccount($account, $accountData, [$var1, $var2]);
 
@@ -383,10 +394,11 @@ class SpaceAccountWriterTest extends TestCase
     }
 
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithDataError(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
         $spaceAccount = new SpaceAccount($account, $accountData, []);
 
         $this->dataWriter->expects($this->once())
@@ -416,10 +428,11 @@ class SpaceAccountWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithDataErrorDefaultCode(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
         $spaceAccount = new SpaceAccount($account, $accountData, []);
 
         $this->dataWriter->expects($this->once())
@@ -449,10 +462,11 @@ class SpaceAccountWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithDataErrorWithoutPromise(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
         $spaceAccount = new SpaceAccount($account, $accountData, []);
 
         $this->dataWriter->expects($this->once())

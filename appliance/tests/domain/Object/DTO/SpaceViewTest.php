@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
@@ -46,9 +47,9 @@ class SpaceViewTest extends TestCase
 {
     private SpaceView $spaceView;
 
-    private SpaceUser&MockObject $user;
+    private SpaceUser&Stub $user;
 
-    private SpaceAccount&MockObject $account;
+    private SpaceAccount&Stub $account;
 
     /**
      * {@inheritdoc}
@@ -57,8 +58,8 @@ class SpaceViewTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = $this->createMock(SpaceUser::class);
-        $this->account = $this->createMock(SpaceAccount::class);
+        $this->user = $this->createStub(SpaceUser::class);
+        $this->account = $this->createStub(SpaceAccount::class);
         $this->spaceView = new SpaceView($this->user, $this->account);
     }
 

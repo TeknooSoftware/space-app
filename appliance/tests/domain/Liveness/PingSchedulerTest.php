@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Liveness;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Liveness\PingService;
 use Teknoo\East\Foundation\Time\TimerService;
@@ -48,7 +49,7 @@ class PingSchedulerTest extends TestCase
 
     private PingService&MockObject $pingService;
 
-    private PingFile&MockObject $pingFile;
+    private PingFile&Stub $pingFile;
 
     private TimerService&MockObject $timerService;
 
@@ -62,7 +63,7 @@ class PingSchedulerTest extends TestCase
         parent::setUp();
 
         $this->pingService = $this->createMock(PingService::class);
-        $this->pingFile = $this->createMock(PingFile::class);
+        $this->pingFile = $this->createStub(PingFile::class);
         $this->timerService = $this->createMock(TimerService::class);
         $this->timerSeconds = 42;
         $this->pingScheduler = new PingScheduler(

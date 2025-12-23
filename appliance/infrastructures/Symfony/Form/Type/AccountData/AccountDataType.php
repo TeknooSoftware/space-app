@@ -54,7 +54,7 @@ class AccountDataType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'legalName',
@@ -173,11 +173,9 @@ class AccountDataType extends AbstractType
                 }
             }
         });
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -188,7 +186,5 @@ class AccountDataType extends AbstractType
 
         $resolver->setRequired(['canUpdateSubscription']);
         $resolver->setAllowedTypes('canUpdateSubscription', ['bool']);
-
-        return $this;
     }
 }

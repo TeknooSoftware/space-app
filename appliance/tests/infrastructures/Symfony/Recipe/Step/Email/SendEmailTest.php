@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Email;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -46,7 +47,7 @@ class SendEmailTest extends TestCase
 {
     private SendEmail $sendEmail;
 
-    private MailerInterface&MockObject $mailer;
+    private MailerInterface&Stub $mailer;
 
     private string $senderName;
 
@@ -61,7 +62,7 @@ class SendEmailTest extends TestCase
     {
         parent::setUp();
 
-        $this->mailer = $this->createMock(MailerInterface::class);
+        $this->mailer = $this->createStub(MailerInterface::class);
 
         $this->sendEmail = new SendEmail(
             $this->mailer,
@@ -73,7 +74,7 @@ class SendEmailTest extends TestCase
 
     public function testInvoke(): void
     {
-        $response = $this->createMock(ResponseInterface::class);
+        $response = $this->createStub(ResponseInterface::class);
         $response
             ->method('withHeader')
             ->willReturnSelf();
@@ -81,8 +82,8 @@ class SendEmailTest extends TestCase
         $this->assertInstanceOf(
             SendEmail::class,
             ($this->sendEmail)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Contact::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Contact::class),
                 'foo@bar',
             )
         );

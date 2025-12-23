@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Teknoo\East\Common\View\ParametersBag;
@@ -48,11 +49,11 @@ class JwtCreateTokenTest extends TestCase
 {
     private JwtCreateToken $jwtCreateToken;
 
-    private TokenStorageInterface&MockObject $tokenStorage;
+    private TokenStorageInterface&Stub $tokenStorage;
 
-    private JWTTokenManagerInterface&MockObject $jWTTokenManagerInterface;
+    private JWTTokenManagerInterface&Stub $jWTTokenManagerInterface;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     /**
      * {@inheritdoc}
@@ -61,9 +62,9 @@ class JwtCreateTokenTest extends TestCase
     {
         parent::setUp();
 
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->jWTTokenManagerInterface = $this->createMock(JWTTokenManagerInterface::class);
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->tokenStorage = $this->createStub(TokenStorageInterface::class);
+        $this->jWTTokenManagerInterface = $this->createStub(JWTTokenManagerInterface::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->jwtCreateToken = new JwtCreateToken(
             $this->jWTTokenManagerInterface,
             $this->tokenStorage,
@@ -77,8 +78,8 @@ class JwtCreateTokenTest extends TestCase
         $this->assertInstanceOf(
             JwtCreateToken::class,
             ($this->jwtCreateToken)(
-                $this->createMock(ParametersBag::class),
-                $this->createMock(JWTConfiguration::class),
+                $this->createStub(ParametersBag::class),
+                $this->createStub(JWTConfiguration::class),
             )
         );
     }

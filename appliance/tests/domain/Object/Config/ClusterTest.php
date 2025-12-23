@@ -57,7 +57,7 @@ class ClusterTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: true,
@@ -75,7 +75,7 @@ class ClusterTest extends TestCase
 
     public function testConstructWithCallable(): void
     {
-        $client = $this->createMock(Client::class);
+        $client = $this->createStub(Client::class);
         $callable = fn () => $client;
 
         $cluster = new ClusterConfig(
@@ -98,7 +98,7 @@ class ClusterTest extends TestCase
 
     public function testConstructWithCallableAndNoRegistrySupport(): void
     {
-        $client = $this->createMock(Client::class);
+        $client = $this->createStub(Client::class);
         $callable = fn () => $client;
 
         $cluster = new ClusterConfig(
@@ -156,7 +156,7 @@ class ClusterTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: false,
             useHnc: true,
@@ -170,7 +170,7 @@ class ClusterTest extends TestCase
 
     public function testGetKubernetesRegistryClientWithCallableInitialization(): void
     {
-        $client = $this->createMock(Client::class);
+        $client = $this->createStub(Client::class);
         $callable = fn () => $client;
 
         $cluster = new ClusterConfig(

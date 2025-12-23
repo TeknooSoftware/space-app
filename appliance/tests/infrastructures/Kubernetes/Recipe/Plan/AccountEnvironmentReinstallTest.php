@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Recipe\Step\JumpIf;
@@ -62,37 +63,37 @@ class AccountEnvironmentReinstallTest extends TestCase
 {
     private AccountEnvironmentReinstall $accountReinstall;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private PrepareRedirection&MockObject $prepareRedirection;
+    private PrepareRedirection&Stub $prepareRedirection;
 
-    private SetRedirectClientAtEnd&MockObject $redirectClient;
+    private SetRedirectClientAtEnd&Stub $redirectClient;
 
-    private LoadHistory&MockObject $loadHistory;
+    private LoadHistory&Stub $loadHistory;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private LoadRegistryCredential&MockObject $loadRegistryCredential;
+    private LoadRegistryCredential&Stub $loadRegistryCredential;
 
-    private ReloadNamespace&MockObject $reloadNamespace;
+    private ReloadNamespace&Stub $reloadNamespace;
 
-    private FindEnvironmentInWallet&MockObject $findEnvironmentInWallet;
+    private FindEnvironmentInWallet&Stub $findEnvironmentInWallet;
 
-    private RemoveEnvironment&MockObject $removeCredentials;
+    private RemoveEnvironment&Stub $removeCredentials;
 
-    private AccountEnvironmentInstall&MockObject $accountEnvironmentInstall;
+    private AccountEnvironmentInstall&Stub $accountEnvironmentInstall;
 
-    private UpdateAccountHistory&MockObject $updateAccountHistory;
+    private UpdateAccountHistory&Stub $updateAccountHistory;
 
-    private JumpIf&MockObject $jumpIf;
+    private JumpIf&Stub $jumpIf;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private ReinstallAccountErrorHandler&MockObject $errorHandler;
+    private ReinstallAccountErrorHandler&Stub $errorHandler;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
     /**
      * {@inheritdoc}
@@ -101,22 +102,22 @@ class AccountEnvironmentReinstallTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->prepareRedirection = $this->createMock(PrepareRedirection::class);
-        $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
-        $this->loadHistory = $this->createMock(LoadHistory::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
-        $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
-        $this->findEnvironmentInWallet = $this->createMock(FindEnvironmentInWallet::class);
-        $this->removeCredentials = $this->createMock(RemoveEnvironment::class);
-        $this->accountEnvironmentInstall = $this->createMock(AccountEnvironmentInstall::class);
-        $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
-        $this->jumpIf = $this->createMock(JumpIf::class);
-        $this->render = $this->createMock(Render::class);
-        $this->errorHandler = $this->createMock(ReinstallAccountErrorHandler::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->prepareRedirection = $this->createStub(PrepareRedirection::class);
+        $this->redirectClient = $this->createStub(SetRedirectClientAtEnd::class);
+        $this->loadHistory = $this->createStub(LoadHistory::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->loadRegistryCredential = $this->createStub(LoadRegistryCredential::class);
+        $this->reloadNamespace = $this->createStub(ReloadNamespace::class);
+        $this->findEnvironmentInWallet = $this->createStub(FindEnvironmentInWallet::class);
+        $this->removeCredentials = $this->createStub(RemoveEnvironment::class);
+        $this->accountEnvironmentInstall = $this->createStub(AccountEnvironmentInstall::class);
+        $this->updateAccountHistory = $this->createStub(UpdateAccountHistory::class);
+        $this->jumpIf = $this->createStub(JumpIf::class);
+        $this->render = $this->createStub(Render::class);
+        $this->errorHandler = $this->createStub(ReinstallAccountErrorHandler::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
 
         $this->accountReinstall = new AccountEnvironmentReinstall(
             recipe: $this->recipe,
@@ -151,7 +152,7 @@ class AccountEnvironmentReinstallTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountReinstall->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

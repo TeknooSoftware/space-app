@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Writer\Meta;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Teknoo\East\Common\Contracts\DBSource\BatchManipulationManagerInterface;
@@ -41,6 +42,7 @@ use Teknoo\Space\Writer\Meta\SpaceProjectWriter;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 use Teknoo\Space\Writer\ProjectMetadataWriter;
 use Throwable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class SpaceProjectWriterTest.
@@ -82,6 +84,7 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithWrongObject(): void
     {
         $promise = $this->createMock(PromiseInterface::class);
@@ -96,13 +99,14 @@ class SpaceProjectWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectWriter::class,
             $this->spaceProjectWriter->save(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 $promise,
                 true,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithNullPromise(): void
     {
         $this->projectWriter->expects($this->never())
@@ -111,7 +115,7 @@ class SpaceProjectWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectWriter::class,
             $this->spaceProjectWriter->save(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 null,
                 true,
             ),
@@ -120,7 +124,7 @@ class SpaceProjectWriterTest extends TestCase
 
     public function testSaveWithProjectMetadata(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $projectMetadata = $this->createMock(ProjectMetadata::class);
         $projectMetadata->expects($this->once())
             ->method('setProject')
@@ -179,9 +183,10 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithoutProjectMetadata(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = new SpaceProject($project, null, []);
 
         $this->projectWriter->expects($this->once())
@@ -213,9 +218,10 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithProjectError(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = new SpaceProject($project, null, []);
 
         $this->projectWriter->expects($this->once())
@@ -246,9 +252,10 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithProjectErrorDefaultCode(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = new SpaceProject($project, null, []);
 
         $this->projectWriter->expects($this->once())
@@ -279,9 +286,10 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithProjectErrorWithoutPromise(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = new SpaceProject($project, null, []);
 
         $this->projectWriter->expects($this->once())
@@ -303,6 +311,7 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithWrongObject(): void
     {
         $promise = $this->createMock(PromiseInterface::class);
@@ -317,12 +326,13 @@ class SpaceProjectWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectWriter::class,
             $this->spaceProjectWriter->remove(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithNullPromise(): void
     {
         $this->projectWriter->expects($this->never())
@@ -331,19 +341,20 @@ class SpaceProjectWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectWriter::class,
             $this->spaceProjectWriter->remove(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 null,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithProjectMetadata(): void
     {
-        $project = $this->createMock(Project::class);
-        $projectMetadata = $this->createMock(ProjectMetadata::class);
+        $project = $this->createStub(Project::class);
+        $projectMetadata = $this->createStub(ProjectMetadata::class);
 
-        $var1 = $this->createMock(ProjectPersistedVariable::class);
-        $var2 = $this->createMock(ProjectPersistedVariable::class);
+        $var1 = $this->createStub(ProjectPersistedVariable::class);
+        $var2 = $this->createStub(ProjectPersistedVariable::class);
 
         $spaceProject = new SpaceProject($project, $projectMetadata, [$var1, $var2]);
 
@@ -379,9 +390,10 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithoutProjectMetadata(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = new SpaceProject($project, null, []);
 
         $this->metadataWriter->expects($this->never())
@@ -391,15 +403,16 @@ class SpaceProjectWriterTest extends TestCase
             SpaceProjectWriter::class,
             $this->spaceProjectWriter->remove(
                 $spaceProject,
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(PromiseInterface::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithMetadataError(): void
     {
-        $project = $this->createMock(Project::class);
-        $projectMetadata = $this->createMock(ProjectMetadata::class);
+        $project = $this->createStub(Project::class);
+        $projectMetadata = $this->createStub(ProjectMetadata::class);
         $spaceProject = new SpaceProject($project, $projectMetadata, []);
 
         $this->metadataWriter->expects($this->once())
@@ -429,10 +442,11 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithMetadataErrorDefaultCode(): void
     {
-        $project = $this->createMock(Project::class);
-        $projectMetadata = $this->createMock(ProjectMetadata::class);
+        $project = $this->createStub(Project::class);
+        $projectMetadata = $this->createStub(ProjectMetadata::class);
         $spaceProject = new SpaceProject($project, $projectMetadata, []);
 
         $this->metadataWriter->expects($this->once())
@@ -462,10 +476,11 @@ class SpaceProjectWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithMetadataErrorWithoutPromise(): void
     {
-        $project = $this->createMock(Project::class);
-        $projectMetadata = $this->createMock(ProjectMetadata::class);
+        $project = $this->createStub(Project::class);
+        $projectMetadata = $this->createStub(ProjectMetadata::class);
         $spaceProject = new SpaceProject($project, $projectMetadata, []);
 
         $this->metadataWriter->expects($this->once())

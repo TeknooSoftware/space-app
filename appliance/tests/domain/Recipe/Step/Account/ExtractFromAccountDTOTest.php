@@ -62,8 +62,8 @@ class ExtractFromAccountDTOTest extends TestCase
         $this->assertInstanceOf(
             ExtractFromAccountDTO::class,
             ($this->extractFromAccountDTO)(
-                $this->createMock(ManagerInterface::class),
-                new SpaceAccount($this->createMock(Account::class)),
+                $this->createStub(ManagerInterface::class),
+                new SpaceAccount($this->createStub(Account::class)),
             )
         );
     }
@@ -79,7 +79,7 @@ class ExtractFromAccountDTOTest extends TestCase
             });
 
         $spaceAccount = new SpaceAccount($account);
-        $spaceAccount->accountData = $this->createMock(AccountData::class);
+        $spaceAccount->accountData = $this->createStub(AccountData::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -112,7 +112,7 @@ class ExtractFromAccountDTOTest extends TestCase
             });
 
         $spaceAccount = new SpaceAccount($account);
-        $spaceAccount->accountData = $this->createMock(AccountData::class);
+        $spaceAccount->accountData = $this->createStub(AccountData::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->exactly(2))

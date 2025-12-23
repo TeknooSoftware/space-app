@@ -56,22 +56,18 @@ class ProjectMetadataTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            ProjectMetadataType::class,
-            $this->projectMetadataType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->projectMetadataType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            ProjectMetadataType::class,
-            $this->projectMetadataType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->projectMetadataType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

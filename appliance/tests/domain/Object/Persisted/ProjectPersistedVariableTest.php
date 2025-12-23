@@ -29,6 +29,7 @@ use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Project;
@@ -49,7 +50,7 @@ class ProjectPersistedVariableTest extends TestCase
 {
     private ProjectPersistedVariable $persistedVariable;
 
-    private Project&MockObject $project;
+    private Project&Stub $project;
 
     private string $id;
 
@@ -72,7 +73,7 @@ class ProjectPersistedVariableTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = $this->createMock(Project::class);
+        $this->project = $this->createStub(Project::class);
         $this->id = '42';
         $this->name = '42';
         $this->value = '42';

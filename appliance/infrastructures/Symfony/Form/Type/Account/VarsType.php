@@ -48,7 +48,7 @@ class VarsType extends AbstractType
         return 'account_vars';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -65,18 +65,14 @@ class VarsType extends AbstractType
         );
 
         $builder->setDataMapper(new AccountVarsMapper());
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
             'data_class' => SpaceAccount::class,
         ]);
-
-        return $this;
     }
 }

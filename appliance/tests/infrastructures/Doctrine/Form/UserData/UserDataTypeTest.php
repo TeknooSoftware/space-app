@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Doctrine\Form\UserData;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -46,7 +47,7 @@ class UserDataTypeTest extends TestCase
 {
     private UserDataType $userDataType;
 
-    private MediaWriter&MockObject $mediaWriter;
+    private MediaWriter&Stub $mediaWriter;
 
     /**
      * {@inheritdoc}
@@ -55,7 +56,7 @@ class UserDataTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->mediaWriter = $this->createMock(MediaWriter::class);
+        $this->mediaWriter = $this->createStub(MediaWriter::class);
 
         $this->userDataType = new UserDataType(
             $this->mediaWriter,
@@ -64,22 +65,18 @@ class UserDataTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            UserDataType::class,
-            $this->userDataType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['environmentsList' => ['bar']],
-            ),
+        $this->userDataType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['environmentsList' => ['bar']],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            UserDataType::class,
-            $this->userDataType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->userDataType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

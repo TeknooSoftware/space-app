@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Recipe\Step\RenderError;
@@ -51,13 +52,13 @@ class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private DashboardFrameInterface&MockObject $dashboard;
+    private DashboardFrameInterface&Stub $dashboard;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -68,10 +69,10 @@ class DashboardFrameTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->dashboard = $this->createMock(DashboardFrameInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->dashboard = $this->createStub(DashboardFrameInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->dashboardFrame = new DashboardFrame(
             recipe: $this->recipe,
@@ -95,7 +96,7 @@ class DashboardFrameTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->dashboardFrame->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
@@ -55,21 +56,21 @@ class AdminAccountStatusTest extends TestCase
 {
     private AdminAccountStatus $adminAccountStatus;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private LoadSubscriptionPlan&MockObject $loadSubscriptionPlan;
+    private LoadSubscriptionPlan&Stub $loadSubscriptionPlan;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private CreateResumes&MockObject $createResumes;
+    private CreateResumes&Stub $createResumes;
 
-    private InjectStatus&MockObject $injectStatus;
+    private InjectStatus&Stub $injectStatus;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -80,14 +81,14 @@ class AdminAccountStatusTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->loadSubscriptionPlan = $this->createMock(LoadSubscriptionPlan::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->createResumes = $this->createMock(CreateResumes::class);
-        $this->injectStatus = $this->createMock(InjectStatus::class);
-        $this->render = $this->createMock(Render::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->loadSubscriptionPlan = $this->createStub(LoadSubscriptionPlan::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->createResumes = $this->createStub(CreateResumes::class);
+        $this->injectStatus = $this->createStub(InjectStatus::class);
+        $this->render = $this->createStub(Render::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
 
         $this->adminAccountStatus = new AdminAccountStatus(
@@ -116,7 +117,7 @@ class AdminAccountStatusTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->adminAccountStatus->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

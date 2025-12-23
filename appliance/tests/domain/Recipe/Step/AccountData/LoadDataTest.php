@@ -27,12 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountData;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Loader\AccountDataLoader;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadDataTest.
@@ -60,13 +62,14 @@ class LoadDataTest extends TestCase
         $this->loadData = new LoadData($this->loader);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadData::class,
             ($this->loadData)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Account::class),
                 true,
             )
         );
@@ -74,7 +77,7 @@ class LoadDataTest extends TestCase
 
     public function testInvokeWithSuccessCallback(): void
     {
-        $accountData = $this->createMock(AccountData::class);
+        $accountData = $this->createStub(AccountData::class);
 
         $this->loader->expects($this->once())
             ->method('fetch')
@@ -97,7 +100,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
                 allowEmptyDatas: true,
             )
         );
@@ -127,7 +130,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
                 allowEmptyDatas: false,
             )
         );
@@ -156,7 +159,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
                 allowEmptyDatas: false,
             )
         );
@@ -179,7 +182,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
                 allowEmptyDatas: true,
             )
         );

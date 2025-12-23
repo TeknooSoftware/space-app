@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountHistoryRepositoryInterface;
 use Teknoo\Space\Loader\AccountHistoryLoader;
@@ -45,7 +46,7 @@ class AccountHistoryLoaderTest extends TestCase
 {
     private AccountHistoryLoader $accountHistoryLoader;
 
-    private AccountHistoryRepositoryInterface&MockObject $repository;
+    private AccountHistoryRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class AccountHistoryLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(AccountHistoryRepositoryInterface::class);
+        $this->repository = $this->createStub(AccountHistoryRepositoryInterface::class);
         $this->accountHistoryLoader = new AccountHistoryLoader($this->repository);
     }
 

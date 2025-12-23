@@ -61,22 +61,18 @@ class MediaSearchTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            MediaSearchType::class,
-            $this->mediaSearchType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->mediaSearchType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            MediaSearchType::class,
-            $this->mediaSearchType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->mediaSearchType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

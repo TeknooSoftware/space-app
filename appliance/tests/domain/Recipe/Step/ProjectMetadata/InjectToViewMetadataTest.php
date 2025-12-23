@@ -57,7 +57,7 @@ class InjectToViewMetadataTest extends TestCase
 
     public function testInvoke(): void
     {
-        $bag = $this->createMock(ParametersBag::class);
+        $bag = $this->createStub(ParametersBag::class);
 
         $projectMetadata = $this->createMock(ProjectMetadata::class);
         $projectMetadata->expects($this->once())
@@ -75,7 +75,7 @@ class InjectToViewMetadataTest extends TestCase
 
     public function testInvokeWithNullMetadata(): void
     {
-        $bag = $this->createMock(ParametersBag::class);
+        $bag = $this->createStub(ParametersBag::class);
 
         $this->assertInstanceOf(
             InjectToViewMetadata::class,

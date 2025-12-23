@@ -28,12 +28,14 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use DateTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\History;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountHistory;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class AccountHistoryTest.
@@ -61,6 +63,7 @@ class AccountHistoryTest extends TestCase
         $this->accountHistory = new AccountHistory($this->account);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testAddToHistory(): void
     {
         $this->assertInstanceOf(
@@ -69,6 +72,7 @@ class AccountHistoryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testAddToHistoryWithIsFinal(): void
     {
         $this->assertInstanceOf(
@@ -77,6 +81,7 @@ class AccountHistoryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testAddToHistoryWithExtra(): void
     {
         $extra = ['key' => 'value', 'another' => 'data'];
@@ -86,6 +91,7 @@ class AccountHistoryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testAddToHistoryWithAllParameters(): void
     {
         $extra = ['key' => 'value'];
@@ -95,6 +101,7 @@ class AccountHistoryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetHistory(): void
     {
         $history = $this->createMock(History::class);
@@ -108,6 +115,7 @@ class AccountHistoryTest extends TestCase
         $this->assertInstanceOf(AccountHistory::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetHistoryWithNull(): void
     {
         $result = $this->accountHistory->setHistory(null);
@@ -115,12 +123,13 @@ class AccountHistoryTest extends TestCase
         $this->assertInstanceOf(AccountHistory::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testPassMeYouHistory(): void
     {
         $final = null;
         $this->assertInstanceOf(
             AccountHistory::class,
-            $this->accountHistory->setHistory($this->createMock(History::class))->passMeYouHistory(
+            $this->accountHistory->setHistory($this->createStub(History::class))->passMeYouHistory(
                 function ($value) use (&$final): void {
                     $final = $value;
                 }
@@ -133,6 +142,7 @@ class AccountHistoryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testPassMeYouHistoryWithNullHistory(): void
     {
         $called = false;
@@ -146,9 +156,10 @@ class AccountHistoryTest extends TestCase
         $this->assertFalse($called, 'Callback should not be called when history is null');
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVerifyAccessToUser(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $promise = $this->createMock(PromiseInterface::class);
 
         $this->account->expects($this->once())

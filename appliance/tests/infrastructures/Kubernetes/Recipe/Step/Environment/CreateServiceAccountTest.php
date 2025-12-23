@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environ
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -48,7 +49,7 @@ class CreateServiceAccountTest extends TestCase
 {
     private CreateServiceAccount $createServiceAccount;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     private bool $preferRealDate;
 
@@ -59,7 +60,7 @@ class CreateServiceAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDate = true;
         $this->createServiceAccount = new CreateServiceAccount(
             $this->datesService,
@@ -76,7 +77,7 @@ class CreateServiceAccountTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -86,10 +87,10 @@ class CreateServiceAccountTest extends TestCase
         $this->assertInstanceOf(
             CreateServiceAccount::class,
             ($this->createServiceAccount)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )
         );

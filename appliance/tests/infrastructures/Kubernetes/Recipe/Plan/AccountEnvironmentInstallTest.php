@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
@@ -59,31 +60,31 @@ class AccountEnvironmentInstallTest extends TestCase
 {
     private AccountEnvironmentInstall $accountInstall;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadAccountClusters&MockObject $loadAccountClusters;
+    private LoadAccountClusters&Stub $loadAccountClusters;
 
-    private CreateNamespace&MockObject $createNamespace;
+    private CreateNamespace&Stub $createNamespace;
 
-    private SelectClusterConfig&MockObject $selectClusterConfig;
+    private SelectClusterConfig&Stub $selectClusterConfig;
 
-    private CreateServiceAccount&MockObject $createServiceAccount;
+    private CreateServiceAccount&Stub $createServiceAccount;
 
-    private CreateQuota&MockObject $createQuota;
+    private CreateQuota&Stub $createQuota;
 
-    private CreateRole&MockObject $createRole;
+    private CreateRole&Stub $createRole;
 
-    private CreateRoleBinding&MockObject $createRoleBinding;
+    private CreateRoleBinding&Stub $createRoleBinding;
 
-    private CreateDockerSecret&MockObject $createDockerSecret;
+    private CreateDockerSecret&Stub $createDockerSecret;
 
-    private CreateSecretServiceAccountToken&MockObject $createSecret;
+    private CreateSecretServiceAccountToken&Stub $createSecret;
 
-    private PersistEnvironment&MockObject $persistCredentials;
+    private PersistEnvironment&Stub $persistCredentials;
 
-    private PrepareAccountErrorHandler&MockObject $errorHandler;
+    private PrepareAccountErrorHandler&Stub $errorHandler;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControlInterface;
+    private ObjectAccessControlInterface&Stub $objectAccessControlInterface;
 
     /**
      * {@inheritdoc}
@@ -92,19 +93,19 @@ class AccountEnvironmentInstallTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
-        $this->createNamespace = $this->createMock(CreateNamespace::class);
-        $this->selectClusterConfig = $this->createMock(SelectClusterConfig::class);
-        $this->createServiceAccount = $this->createMock(CreateServiceAccount::class);
-        $this->createQuota = $this->createMock(CreateQuota::class);
-        $this->createRole = $this->createMock(CreateRole::class);
-        $this->createRoleBinding = $this->createMock(CreateRoleBinding::class);
-        $this->createDockerSecret = $this->createMock(CreateDockerSecret::class);
-        $this->createSecret = $this->createMock(CreateSecretServiceAccountToken::class);
-        $this->persistCredentials = $this->createMock(PersistEnvironment::class);
-        $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
-        $this->objectAccessControlInterface = $this->createMock(ObjectAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadAccountClusters = $this->createStub(LoadAccountClusters::class);
+        $this->createNamespace = $this->createStub(CreateNamespace::class);
+        $this->selectClusterConfig = $this->createStub(SelectClusterConfig::class);
+        $this->createServiceAccount = $this->createStub(CreateServiceAccount::class);
+        $this->createQuota = $this->createStub(CreateQuota::class);
+        $this->createRole = $this->createStub(CreateRole::class);
+        $this->createRoleBinding = $this->createStub(CreateRoleBinding::class);
+        $this->createDockerSecret = $this->createStub(CreateDockerSecret::class);
+        $this->createSecret = $this->createStub(CreateSecretServiceAccountToken::class);
+        $this->persistCredentials = $this->createStub(PersistEnvironment::class);
+        $this->errorHandler = $this->createStub(PrepareAccountErrorHandler::class);
+        $this->objectAccessControlInterface = $this->createStub(ObjectAccessControlInterface::class);
 
         $this->accountInstall = new AccountEnvironmentInstall(
             recipe: $this->recipe,
@@ -136,7 +137,7 @@ class AccountEnvironmentInstallTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountInstall->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

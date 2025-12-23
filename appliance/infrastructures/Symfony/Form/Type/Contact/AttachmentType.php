@@ -46,6 +46,7 @@ use Teknoo\Space\Object\DTO\ContactAttachment;
 class AttachmentType extends AbstractType
 {
     /**
+     * @param int<1, max> $mailMaxFileSize
      * @param string[] $mailAllowedMimesTypes
      */
     public function __construct(
@@ -54,7 +55,7 @@ class AttachmentType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -66,12 +67,12 @@ class AttachmentType extends AbstractType
                 'label' => false,
                 'mapped' => false,
                 'constraints' => [
-                    new File([
-                        'maxSize' => $this->mailMaxFileSize,
-                        'mimeTypes' => $this->mailAllowedMimesTypes,
-                        'mimeTypesMessage' => 'teknoo.space.error.contact.invalid_file_type',
-                        'maxSizeMessage' => 'teknoo.space.error.contact.file_too_large',
-                    ])
+                    new File(
+                        maxSize: $this->mailMaxFileSize,
+                        mimeTypes: $this->mailAllowedMimesTypes,
+                        mimeTypesMessage: 'teknoo.space.error.contact.invalid_file_type',
+                        maxSizeMessage: 'teknoo.space.error.contact.file_too_large',
+                    )
                 ]
             ],
         );
@@ -98,11 +99,9 @@ class AttachmentType extends AbstractType
                 $data->fileContent = $file->getContent();
             }
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -110,7 +109,5 @@ class AttachmentType extends AbstractType
             'data_class' => ContactAttachment::class,
             'empty_data' => new ContactAttachment(),
         ]);
-
-        return $this;
     }
 }

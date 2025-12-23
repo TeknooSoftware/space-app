@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Query\PersistedVariable;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
@@ -47,7 +48,7 @@ class LoadFromProjectQueryTest extends TestCase
 {
     private LoadFromProjectQuery $loadFromProjectQuery;
 
-    private Project&MockObject $project;
+    private Project&Stub $project;
 
     /**
      * {@inheritdoc}
@@ -56,7 +57,7 @@ class LoadFromProjectQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = $this->createMock(Project::class);
+        $this->project = $this->createStub(Project::class);
         $this->loadFromProjectQuery = new LoadFromProjectQuery($this->project);
     }
 
@@ -65,9 +66,9 @@ class LoadFromProjectQueryTest extends TestCase
         $this->assertInstanceOf(
             LoadFromProjectQuery::class,
             $this->loadFromProjectQuery->execute(
-                $this->createMock(LoaderInterface::class),
-                $this->createMock(RepositoryInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(LoaderInterface::class),
+                $this->createStub(RepositoryInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }

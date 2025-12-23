@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Cluster;
@@ -63,10 +64,10 @@ class JobSetDefaultsTest extends TestCase
         $this->assertInstanceOf(
             JobSetDefaults::class,
             ($this->jobSetDefaults)(
-                manager: $this->createMock(ManagerInterface::class),
-                job: $this->createMock(Job::class),
-                accountRegistry: $this->createMock(AccountRegistry::class),
-                newJob: $this->createMock(NewJob::class),
+                manager: $this->createStub(ManagerInterface::class),
+                job: $this->createStub(Job::class),
+                accountRegistry: $this->createStub(AccountRegistry::class),
+                newJob: $this->createStub(NewJob::class),
             ),
         );
     }
@@ -97,10 +98,10 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
-            newJob: $this->createMock(NewJob::class),
+            newJob: $this->createStub(NewJob::class),
         );
 
         $this->assertInstanceOf(JobSetDefaults::class, $result);
@@ -121,7 +122,7 @@ class JobSetDefaultsTest extends TestCase
             ->method('__toString')
             ->willReturn('cluster-1');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
         $newJob->storageProvisionerPerCluster = [
             'cluster-1' => 'provisioner-1',
         ];
@@ -146,7 +147,7 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
             newJob: $newJob,
@@ -170,7 +171,7 @@ class JobSetDefaultsTest extends TestCase
             ->method('__toString')
             ->willReturn('cluster-2');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
         $newJob->storageProvisionerPerCluster = [];
 
         $job = $this->createMock(Job::class);
@@ -192,7 +193,7 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
             newJob: $newJob,
@@ -215,7 +216,7 @@ class JobSetDefaultsTest extends TestCase
         $cluster->expects($this->never())
             ->method('__toString');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
         $newJob->storageProvisionerPerCluster = [
             'cluster-3' => 'provisioner-3',
         ];
@@ -239,7 +240,7 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
             newJob: $newJob,
@@ -271,7 +272,7 @@ class JobSetDefaultsTest extends TestCase
             ->method('__toString')
             ->willReturn('cluster-2');
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
         $newJob->storageProvisionerPerCluster = [
             'cluster-1' => 'provisioner-1',
             'cluster-2' => 'provisioner-2',
@@ -299,7 +300,7 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
             newJob: $newJob,
@@ -336,10 +337,10 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
-            newJob: $this->createMock(NewJob::class),
+            newJob: $this->createStub(NewJob::class),
         );
 
         $this->assertInstanceOf(JobSetDefaults::class, $result);
@@ -362,7 +363,7 @@ class JobSetDefaultsTest extends TestCase
 
         $nonClusterObject = new \stdClass();
 
-        $newJob = $this->createMock(NewJob::class);
+        $newJob = $this->createStub(NewJob::class);
         $newJob->storageProvisionerPerCluster = [
             'cluster-valid' => 'provisioner-valid',
         ];
@@ -388,7 +389,7 @@ class JobSetDefaultsTest extends TestCase
             );
 
         $result = ($this->jobSetDefaults)(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             job: $job,
             accountRegistry: $accountRegistry,
             newJob: $newJob,

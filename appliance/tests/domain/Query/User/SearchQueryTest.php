@@ -63,9 +63,9 @@ class SearchQueryTest extends TestCase
         $this->assertInstanceOf(
             SearchQuery::class,
             $this->searchQuery->fetch(
-                $this->createMock(LoaderInterface::class),
-                $this->createMock(RepositoryInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(LoaderInterface::class),
+                $this->createStub(RepositoryInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }

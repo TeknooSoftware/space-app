@@ -27,9 +27,11 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class NewJobTest.
@@ -81,12 +83,14 @@ class NewJobTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConstructWithProvidedId(): void
     {
         $newJob = new NewJob(newJobId: 'custom-id');
         $this->assertEquals('custom-id', $newJob->newJobId);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConstructWithEmptyId(): void
     {
         $newJob = new NewJob();
@@ -94,9 +98,10 @@ class NewJobTest extends TestCase
         $this->assertEquals(48, strlen($newJob->newJobId)); // bin2hex(random_bytes(24)) = 48 chars
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConstructWithAllParameters(): void
     {
-        $variables = [$this->createMock(JobVar::class)];
+        $variables = [$this->createStub(JobVar::class)];
         $storageProvisioner = ['cluster1' => 'provisioner1'];
 
         $newJob = new NewJob(
@@ -136,6 +141,7 @@ class NewJobTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetMessageWithoutEncryption(): void
     {
         $var1 = new JobVar(name: 'var1', value: 'value1');
@@ -154,6 +160,7 @@ class NewJobTest extends TestCase
         $this->assertCount(2, $decoded);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetMessageWithEncryption(): void
     {
         $var1 = new JobVar(name: 'var1', value: 'value1');
@@ -170,6 +177,7 @@ class NewJobTest extends TestCase
         $this->assertEquals('encrypted-content', $message);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetContent(): void
     {
         $var1 = new JobVar(name: 'var1', value: 'value1');
@@ -184,6 +192,7 @@ class NewJobTest extends TestCase
         $this->assertEquals($newJob->getMessage(), $content);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetEncryptionAlgorithm(): void
     {
         $newJob = new NewJob(newJobId: 'test-id');
@@ -194,6 +203,7 @@ class NewJobTest extends TestCase
         $this->assertEquals('aes-256', $encrypted->getEncryptionAlgorithm());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testCloneWithEncryption(): void
     {
         $var1 = new JobVar(name: 'var1', value: 'value1');
@@ -212,6 +222,7 @@ class NewJobTest extends TestCase
         $this->assertEmpty($encrypted->variables);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testCloneWithoutEncryption(): void
     {
         $var1 = new JobVar(id: 'id1', name: 'var1', value: 'value1', persisted: false, secret: false);

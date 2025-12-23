@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
@@ -34,6 +35,7 @@ use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class ReloadNamespaceTest.
@@ -48,7 +50,7 @@ class ReloadNamespaceTest extends TestCase
 {
     private ReloadNamespace $reloadNamespace;
 
-    private Client&MockObject $client;
+    private Client&Stub $client;
 
     /**
      * {@inheritdoc}
@@ -57,7 +59,7 @@ class ReloadNamespaceTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
+        $this->client = $this->createStub(Client::class);
         $catalog = $this->createMock(ClusterCatalog::class);
         $catalog->expects($this->any())
             ->method('getCluster')
@@ -80,13 +82,14 @@ class ReloadNamespaceTest extends TestCase
         $this->reloadNamespace = new ReloadNamespace();
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             ReloadNamespace::class,
             ($this->reloadNamespace)(
-                manager: $this->createMock(ManagerInterface::class),
-                account: $this->createMock(Account::class),
+                manager: $this->createStub(ManagerInterface::class),
+                account: $this->createStub(Account::class),
             ),
         );
     }

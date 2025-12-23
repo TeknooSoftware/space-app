@@ -62,7 +62,7 @@ class ClustersInfoTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -82,8 +82,8 @@ class ClustersInfoTest extends TestCase
         $this->assertInstanceOf(
             ClustersInfo::class,
             ($this->clustersInfo)(
-                $this->createMock(ParametersBag::class),
-                $this->createMock(AccountWallet::class),
+                $this->createStub(ParametersBag::class),
+                $this->createStub(AccountWallet::class),
             )
         );
     }

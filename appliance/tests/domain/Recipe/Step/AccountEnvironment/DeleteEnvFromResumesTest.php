@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\Cluster;
@@ -38,6 +39,7 @@ use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -66,17 +68,18 @@ class DeleteEnvFromResumesTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             DeleteEnvFromResumes::class,
             ($this->deleteEnvFromResumes)(
-                new AccountWallet([$this->createMock(AccountEnvironment::class)]),
+                new AccountWallet([$this->createStub(AccountEnvironment::class)]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
-                new ClusterCatalog(['Foo' => $this->createMock(Cluster::class)], ['Foo' => 'foo']),
+                new ClusterCatalog(['Foo' => $this->createStub(Cluster::class)], ['Foo' => 'foo']),
             ),
         );
     }
@@ -88,9 +91,9 @@ class DeleteEnvFromResumesTest extends TestCase
         $this->assertInstanceOf(
             DeleteEnvFromResumes::class,
             ($this->deleteEnvFromResumes)(
-                new AccountWallet([$this->createMock(AccountEnvironment::class)]),
+                new AccountWallet([$this->createStub(AccountEnvironment::class)]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: null
                 ),
             ),
@@ -99,9 +102,8 @@ class DeleteEnvFromResumesTest extends TestCase
 
     public function testInvokeWithEnvironmentToDelete(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getId')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getId')
             ->willReturn('env-123');
 
         $this->accountEnvironmentWriter->expects($this->once())
@@ -119,7 +121,7 @@ class DeleteEnvFromResumesTest extends TestCase
             ($this->deleteEnvFromResumes)(
                 new AccountWallet([$env]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [$resume]
                 ),
             ),
@@ -128,9 +130,8 @@ class DeleteEnvFromResumesTest extends TestCase
 
     public function testInvokeWithEnvironmentInResumes(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getId')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getId')
             ->willReturn('env-123');
 
         $this->accountEnvironmentWriter->expects($this->never())->method('remove');
@@ -146,7 +147,7 @@ class DeleteEnvFromResumesTest extends TestCase
             ($this->deleteEnvFromResumes)(
                 new AccountWallet([$env]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [$resume]
                 ),
             ),
@@ -155,9 +156,8 @@ class DeleteEnvFromResumesTest extends TestCase
 
     public function testInvokeWithEmptyEnvironmentId(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getId')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getId')
             ->willReturn('');
 
         $this->accountEnvironmentWriter->expects($this->never())->method('remove');
@@ -173,7 +173,7 @@ class DeleteEnvFromResumesTest extends TestCase
             ($this->deleteEnvFromResumes)(
                 new AccountWallet([$env]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [$resume]
                 ),
             ),
@@ -182,9 +182,8 @@ class DeleteEnvFromResumesTest extends TestCase
 
     public function testInvokeWithEmptyResumeId(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getId')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getId')
             ->willReturn('env-123');
 
         $this->accountEnvironmentWriter->expects($this->once())
@@ -202,7 +201,7 @@ class DeleteEnvFromResumesTest extends TestCase
             ($this->deleteEnvFromResumes)(
                 new AccountWallet([$env]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [$resume]
                 ),
             ),
@@ -211,19 +210,16 @@ class DeleteEnvFromResumesTest extends TestCase
 
     public function testInvokeWithMultipleEnvironments(): void
     {
-        $env1 = $this->createMock(AccountEnvironment::class);
-        $env1->expects($this->any())
-            ->method('getId')
+        $env1 = $this->createStub(AccountEnvironment::class);
+        $env1->method('getId')
             ->willReturn('env-1');
 
-        $env2 = $this->createMock(AccountEnvironment::class);
-        $env2->expects($this->any())
-            ->method('getId')
+        $env2 = $this->createStub(AccountEnvironment::class);
+        $env2->method('getId')
             ->willReturn('env-2');
 
-        $env3 = $this->createMock(AccountEnvironment::class);
-        $env3->expects($this->any())
-            ->method('getId')
+        $env3 = $this->createStub(AccountEnvironment::class);
+        $env3->method('getId')
             ->willReturn('env-3');
 
         // Only env2 should be removed (not in resumes)
@@ -248,7 +244,7 @@ class DeleteEnvFromResumesTest extends TestCase
             ($this->deleteEnvFromResumes)(
                 new AccountWallet([$env1, $env2, $env3]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [$resume1, $resume3]
                 ),
             ),
@@ -257,9 +253,8 @@ class DeleteEnvFromResumesTest extends TestCase
 
     public function testInvokeWithNullClusterCatalog(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getId')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getId')
             ->willReturn('env-123');
 
         $this->accountEnvironmentWriter->expects($this->once())
@@ -277,7 +272,7 @@ class DeleteEnvFromResumesTest extends TestCase
             ($this->deleteEnvFromResumes)(
                 new AccountWallet([$env]),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [$resume]
                 ),
                 null,

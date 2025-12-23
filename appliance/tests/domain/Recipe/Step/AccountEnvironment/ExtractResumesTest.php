@@ -60,9 +60,9 @@ class ExtractResumesTest extends TestCase
         $this->assertInstanceOf(
             ExtractResumes::class,
             ($this->extractResumes)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
             ),
@@ -88,7 +88,7 @@ class ExtractResumesTest extends TestCase
             ($this->extractResumes)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: $environments
                 ),
             ),
@@ -112,7 +112,7 @@ class ExtractResumesTest extends TestCase
             ($this->extractResumes)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: null
                 ),
             ),
@@ -136,7 +136,7 @@ class ExtractResumesTest extends TestCase
             ($this->extractResumes)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
             ),

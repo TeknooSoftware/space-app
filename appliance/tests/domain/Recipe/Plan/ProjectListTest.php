@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
@@ -61,33 +62,33 @@ class ProjectListTest extends TestCase
 {
     private ProjectList $projectList;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private ExtractPage&MockObject $extractPage;
+    private ExtractPage&Stub $extractPage;
 
-    private ExtractOrder&MockObject $extractOrder;
+    private ExtractOrder&Stub $extractOrder;
 
-    private LoadAccountFromRequest&MockObject $loadAccountFromRequest;
+    private LoadAccountFromRequest&Stub $loadAccountFromRequest;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private LoadSubscriptionPlan&MockObject $loadSubscriptionPlan;
+    private LoadSubscriptionPlan&Stub $loadSubscriptionPlan;
 
-    private CreateResumes&MockObject $createResumes;
+    private CreateResumes&Stub $createResumes;
 
-    private PrepareCriteria&MockObject $prepareCriteria;
+    private PrepareCriteria&Stub $prepareCriteria;
 
-    private InjectStatus&MockObject $injectStatus;
+    private InjectStatus&Stub $injectStatus;
 
-    private LoadListObjects&MockObject $loadListObjects;
+    private LoadListObjects&Stub $loadListObjects;
 
-    private RenderList&MockObject $renderList;
+    private RenderList&Stub $renderList;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
-    private SearchFormLoaderInterface&MockObject $searchFormLoader;
+    private SearchFormLoaderInterface&Stub $searchFormLoader;
 
-    private ListObjectsAccessControlInterface&MockObject $listObjectsAccessControl;
+    private ListObjectsAccessControlInterface&Stub $listObjectsAccessControl;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -100,20 +101,20 @@ class ProjectListTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->extractPage = $this->createMock(ExtractPage::class);
-        $this->extractOrder = $this->createMock(ExtractOrder::class);
-        $this->loadAccountFromRequest = $this->createMock(LoadAccountFromRequest::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->loadSubscriptionPlan = $this->createMock(LoadSubscriptionPlan::class);
-        $this->createResumes = $this->createMock(CreateResumes::class);
-        $this->prepareCriteria = $this->createMock(PrepareCriteria::class);
-        $this->injectStatus = $this->createMock(InjectStatus::class);
-        $this->loadListObjects = $this->createMock(LoadListObjects::class);
-        $this->renderList = $this->createMock(RenderList::class);
-        $this->renderError = $this->createMock(RenderError::class);
-        $this->searchFormLoader = $this->createMock(SearchFormLoaderInterface::class);
-        $this->listObjectsAccessControl = $this->createMock(ListObjectsAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->extractPage = $this->createStub(ExtractPage::class);
+        $this->extractOrder = $this->createStub(ExtractOrder::class);
+        $this->loadAccountFromRequest = $this->createStub(LoadAccountFromRequest::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->loadSubscriptionPlan = $this->createStub(LoadSubscriptionPlan::class);
+        $this->createResumes = $this->createStub(CreateResumes::class);
+        $this->prepareCriteria = $this->createStub(PrepareCriteria::class);
+        $this->injectStatus = $this->createStub(InjectStatus::class);
+        $this->loadListObjects = $this->createStub(LoadListObjects::class);
+        $this->renderList = $this->createStub(RenderList::class);
+        $this->renderError = $this->createStub(RenderError::class);
+        $this->searchFormLoader = $this->createStub(SearchFormLoaderInterface::class);
+        $this->listObjectsAccessControl = $this->createStub(ListObjectsAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->loadListObjectsWiths = [];
         $this->projectList = new ProjectList(
@@ -149,7 +150,7 @@ class ProjectListTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->projectList->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

@@ -9,7 +9,7 @@
 {% block topHeader '' %}
 
 {% block pageWrapper %}
-    {% set formAction = formAction|default(app.request.getPathInfo() ~ "?locale=" ~ app.request.get('locale')) %}
+    {% set formAction = formAction|default(app.request.getPathInfo() ~ "?locale=" ~ app.request.query.get('locale', 'en')) %}
     {#  Hero Start  #}
     <section class="bg-home bg-circle-gradiant d-flex align-items-center">
     <div class="bg-overlay bg-overlay-white"></div>

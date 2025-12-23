@@ -37,7 +37,7 @@ use Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType;
 class SpaceUserType extends SpacePasswordType
 {
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'user',
@@ -51,7 +51,5 @@ class SpaceUserType extends SpacePasswordType
             'userData',
             UserDataType::class,
         );
-
-        return $this;
     }
 }

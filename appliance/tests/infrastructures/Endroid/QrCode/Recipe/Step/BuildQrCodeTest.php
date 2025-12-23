@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Endroid\QrCode\Recipe\Step;
 use Endroid\QrCode\Writer\PngWriter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamFactoryInterface;
 use Teknoo\East\Foundation\Client\ClientInterface;
@@ -49,7 +50,7 @@ class BuildQrCodeTest extends TestCase
 
     private PngWriter $pngWriter;
 
-    private StreamFactoryInterface&MockObject $streamFactory;
+    private StreamFactoryInterface&Stub $streamFactory;
 
     /**
      * {@inheritdoc}
@@ -59,7 +60,7 @@ class BuildQrCodeTest extends TestCase
         parent::setUp();
 
         $this->pngWriter = new PngWriter();
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $this->streamFactory = $this->createStub(StreamFactoryInterface::class);
         $this->buildQrCode = new BuildQrCode($this->pngWriter, $this->streamFactory);
     }
 
@@ -68,8 +69,8 @@ class BuildQrCodeTest extends TestCase
         $this->assertInstanceOf(
             BuildQrCode::class,
             ($this->buildQrCode)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClientInterface::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ClientInterface::class),
                 'foo',
             ),
         );

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -57,23 +58,23 @@ class SubscriptionTest extends TestCase
 {
     private Subscription $subscription;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private CreateObject&MockObject $createObject;
+    private CreateObject&Stub $createObject;
 
-    private FormHandlingInterface&MockObject $formHandling;
+    private FormHandlingInterface&Stub $formHandling;
 
-    private FormProcessingInterface&MockObject $formProcessing;
+    private FormProcessingInterface&Stub $formProcessing;
 
-    private CreateUserInterface&MockObject $createUser;
+    private CreateUserInterface&Stub $createUser;
 
-    private CreateAccountInterface&MockObject $createAccount;
+    private CreateAccountInterface&Stub $createAccount;
 
-    private LoginUserInterface&MockObject $loginUser;
+    private LoginUserInterface&Stub $loginUser;
 
-    private RenderFormInterface&MockObject $renderForm;
+    private RenderFormInterface&Stub $renderForm;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -84,15 +85,15 @@ class SubscriptionTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->createObject = $this->createMock(CreateObject::class);
-        $this->formHandling = $this->createMock(FormHandlingInterface::class);
-        $this->formProcessing = $this->createMock(FormProcessingInterface::class);
-        $this->createUser = $this->createMock(CreateUserInterface::class);
-        $this->createAccount = $this->createMock(CreateAccountInterface::class);
-        $this->loginUser = $this->createMock(LoginUserInterface::class);
-        $this->renderForm = $this->createMock(RenderFormInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->createObject = $this->createStub(CreateObject::class);
+        $this->formHandling = $this->createStub(FormHandlingInterface::class);
+        $this->formProcessing = $this->createStub(FormProcessingInterface::class);
+        $this->createUser = $this->createStub(CreateUserInterface::class);
+        $this->createAccount = $this->createStub(CreateAccountInterface::class);
+        $this->loginUser = $this->createStub(LoginUserInterface::class);
+        $this->renderForm = $this->createStub(RenderFormInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->subscription = new Subscription(
             recipe: $this->recipe,
@@ -121,7 +122,7 @@ class SubscriptionTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->subscription->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

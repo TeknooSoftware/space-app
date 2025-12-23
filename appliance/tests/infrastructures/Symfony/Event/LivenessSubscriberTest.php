@@ -27,10 +27,12 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Event;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Event\ConsoleEvent;
 use Teknoo\Space\Infrastructures\Symfony\Event\LivenessSubscriber;
 use Teknoo\Space\Liveness\PingScheduler;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LivenessSubscriberTest.
@@ -58,6 +60,7 @@ class LivenessSubscriberTest extends TestCase
         $this->livenessSubscriber = new LivenessSubscriber($this->pingScheduler);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetSubscribedEvents(): void
     {
         $this->assertIsArray(
@@ -75,7 +78,7 @@ class LivenessSubscriberTest extends TestCase
         $this->assertInstanceOf(
             LivenessSubscriber::class,
             $this->livenessSubscriber->configurePing(
-                $this->createMock(ConsoleEvent::class),
+                $this->createStub(ConsoleEvent::class),
             ),
         );
     }

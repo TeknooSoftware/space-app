@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Subscripti
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -52,11 +53,11 @@ class LoginUserTest extends TestCase
 {
     private LoginUser $loginUser;
 
-    private LoginLinkHandlerInterface&MockObject $loginLinkHandler;
+    private LoginLinkHandlerInterface&Stub $loginLinkHandler;
 
-    private Security&MockObject $security;
+    private Security&Stub $security;
 
-    private ResponseFactoryInterface&MockObject $responseFactory;
+    private ResponseFactoryInterface&Stub $responseFactory;
 
     /**
      * {@inheritdoc}
@@ -65,21 +66,21 @@ class LoginUserTest extends TestCase
     {
         parent::setUp();
 
-        $this->loginLinkHandler = $this->createMock(LoginLinkHandlerInterface::class);
-        $this->security = $this->createMock(Security::class);
+        $this->loginLinkHandler = $this->createStub(LoginLinkHandlerInterface::class);
+        $this->security = $this->createStub(Security::class);
         $this->loginUser = new LoginUser(
             $this->loginLinkHandler,
             $this->security,
         );
-        $this->loginUser->setRouter($this->createMock(UrlGeneratorInterface::class));
+        $this->loginUser->setRouter($this->createStub(UrlGeneratorInterface::class));
         $this->loginUser->setResponseFactory(
-            $this->responseFactory = $this->createMock(ResponseFactoryInterface::class)
+            $this->responseFactory = $this->createStub(ResponseFactoryInterface::class)
         );
     }
 
     public function testInvoke(): void
     {
-        $response = $this->createMock(ResponseInterface::class);
+        $response = $this->createStub(ResponseInterface::class);
         $response
             ->method('withHeader')
             ->willReturnSelf();
@@ -88,19 +89,19 @@ class LoginUserTest extends TestCase
             ->method('createResponse')
             ->willReturn($response);
 
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $user
             ->method('getAuthData')
             ->willReturn([
-                $this->createMock(StoredPassword::class),
+                $this->createStub(StoredPassword::class),
             ]);
 
         $this->assertInstanceOf(
             LoginUser::class,
             ($this->loginUser)(
                 $user,
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClientInterface::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ClientInterface::class),
             )
         );
     }

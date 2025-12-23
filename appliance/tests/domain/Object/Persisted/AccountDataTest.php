@@ -27,12 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountData;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class AccountDataTest.
@@ -74,14 +76,16 @@ class AccountDataTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetAccount(): void
     {
-        $newAccount = $this->createMock(Account::class);
+        $newAccount = $this->createStub(Account::class);
         $result = $this->accountData->setAccount($newAccount);
 
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetLegalName(): void
     {
         $result = $this->accountData->setLegalName('New Legal Name');
@@ -89,6 +93,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetStreetAddress(): void
     {
         $result = $this->accountData->setStreetAddress('123 Main St');
@@ -96,6 +101,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetZipCode(): void
     {
         $result = $this->accountData->setZipCode('12345');
@@ -103,6 +109,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetCityName(): void
     {
         $result = $this->accountData->setCityName('Paris');
@@ -110,6 +117,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetCountryName(): void
     {
         $result = $this->accountData->setCountryName('France');
@@ -117,6 +125,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetVatNumber(): void
     {
         $result = $this->accountData->setVatNumber('FR12345678901');
@@ -124,6 +133,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetVatNumberWithNull(): void
     {
         $result = $this->accountData->setVatNumber(null);
@@ -131,6 +141,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetSubscriptionPlan(): void
     {
         $result = $this->accountData->setSubscriptionPlan('premium');
@@ -138,6 +149,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetSubscriptionPlanWithNull(): void
     {
         $result = $this->accountData->setSubscriptionPlan(null);
@@ -145,6 +157,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVisit(): void
     {
         $final = null;
@@ -163,6 +176,7 @@ class AccountDataTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeData(): void
     {
         $normalizer = $this->createMock(EastNormalizerInterface::class);
@@ -176,6 +190,7 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeDataWithGroups(): void
     {
         $normalizer = $this->createMock(EastNormalizerInterface::class);
@@ -189,9 +204,10 @@ class AccountDataTest extends TestCase
         $this->assertInstanceOf(AccountData::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVerifyAccessToUser(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $promise = $this->createMock(PromiseInterface::class);
 
         $this->account->expects($this->once())

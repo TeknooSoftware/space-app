@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
@@ -46,7 +47,7 @@ class ProjectMetadataTest extends TestCase
 {
     private ProjectMetadata $projectMetadata;
 
-    private Project&MockObject $project;
+    private Project&Stub $project;
 
     private string $projectUrl;
 
@@ -57,14 +58,14 @@ class ProjectMetadataTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = $this->createMock(Project::class);
+        $this->project = $this->createStub(Project::class);
         $this->projectUrl = '42';
         $this->projectMetadata = new ProjectMetadata($this->project, $this->projectUrl);
     }
 
     public function testConstructorWithProject(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $projectUrl = 'https://example.com';
         $metadata = new ProjectMetadata($project, $projectUrl);
 
@@ -81,7 +82,7 @@ class ProjectMetadataTest extends TestCase
 
     public function testConstructorWithNullProjectUrl(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $metadata = new ProjectMetadata($project, null);
 
         $this->assertInstanceOf(ProjectMetadata::class, $metadata);
@@ -89,7 +90,7 @@ class ProjectMetadataTest extends TestCase
 
     public function testSetProject(): void
     {
-        $newProject = $this->createMock(Project::class);
+        $newProject = $this->createStub(Project::class);
         $result = $this->projectMetadata->setProject($newProject);
 
         $this->assertInstanceOf(ProjectMetadata::class, $result);

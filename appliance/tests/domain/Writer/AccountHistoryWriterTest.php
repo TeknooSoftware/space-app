@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Writer;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
@@ -47,9 +48,9 @@ class AccountHistoryWriterTest extends TestCase
 {
     private AccountHistoryWriter $accountHistoryWriter;
 
-    private ManagerInterface&MockObject $manager;
+    private ManagerInterface&Stub $manager;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     protected bool $preferRealDateOnUpdate = false;
 
@@ -60,8 +61,8 @@ class AccountHistoryWriterTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = $this->createMock(ManagerInterface::class);
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->manager = $this->createStub(ManagerInterface::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDateOnUpdate = true;
 
         $this->accountHistoryWriter = new AccountHistoryWriter(
@@ -76,8 +77,8 @@ class AccountHistoryWriterTest extends TestCase
         $this->assertInstanceOf(
             AccountHistoryWriter::class,
             $this->accountHistoryWriter->save(
-                $this->createMock(ObjectInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(ObjectInterface::class),
+                $this->createStub(PromiseInterface::class),
                 true,
             ),
         );

@@ -60,7 +60,7 @@ class SetQuotaTest extends TestCase
         $this->assertInstanceOf(
             SetQuota::class,
             ($this->setQuota)(
-                new SpaceAccount($this->createMock(Account::class)),
+                new SpaceAccount($this->createStub(Account::class)),
             ),
         );
     }

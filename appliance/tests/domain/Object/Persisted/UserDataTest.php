@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\Media;
 use Teknoo\East\Common\Object\User;
@@ -45,9 +46,9 @@ class UserDataTest extends TestCase
 {
     private UserData $userData;
 
-    private User&MockObject $user;
+    private User&Stub $user;
 
-    private Media&MockObject $picture;
+    private Media&Stub $picture;
 
     /**
      * {@inheritdoc}
@@ -56,14 +57,14 @@ class UserDataTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = $this->createMock(User::class);
-        $this->picture = $this->createMock(Media::class);
+        $this->user = $this->createStub(User::class);
+        $this->picture = $this->createStub(Media::class);
         $this->userData = new UserData($this->user, $this->picture);
     }
 
     public function testSetUser(): void
     {
-        $newUser = $this->createMock(User::class);
+        $newUser = $this->createStub(User::class);
         $result = $this->userData->setUser($newUser);
 
         $this->assertInstanceOf(UserData::class, $result);
@@ -71,7 +72,7 @@ class UserDataTest extends TestCase
 
     public function testSetPicture(): void
     {
-        $newPicture = $this->createMock(Media::class);
+        $newPicture = $this->createStub(Media::class);
         $result = $this->userData->setPicture($newPicture);
 
         $this->assertInstanceOf(UserData::class, $result);

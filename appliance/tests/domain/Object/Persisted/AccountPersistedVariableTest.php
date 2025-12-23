@@ -27,12 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class AccountPersistedVariableTest.
@@ -90,27 +92,32 @@ class AccountPersistedVariableTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetAccount(): void
     {
         $this->assertInstanceOf(Account::class, $this->accountPersistedVariable->getAccount());
         $this->assertSame($this->account, $this->accountPersistedVariable->getAccount());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetName(): void
     {
         $this->assertEquals($this->name, $this->accountPersistedVariable->getName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetValue(): void
     {
         $this->assertEquals($this->value, $this->accountPersistedVariable->getValue());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetEnvName(): void
     {
         $this->assertEquals($this->envName, $this->accountPersistedVariable->getEnvName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIsSecret(): void
     {
         $this->assertTrue($this->accountPersistedVariable->isSecret());
@@ -128,6 +135,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertFalse($variable->isSecret());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetValue(): void
     {
         $newValue = 'newValue123';
@@ -137,6 +145,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertEquals($newValue, $this->accountPersistedVariable->getValue());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testIsEncrypted(): void
     {
         // encryptionAlgorithm='rsa', needEncryption=false -> should be encrypted
@@ -169,6 +178,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertFalse($variable2->isEncrypted());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testMustEncrypt(): void
     {
         $this->assertFalse($this->accountPersistedVariable->mustEncrypt());
@@ -186,6 +196,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertTrue($variable->mustEncrypt());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetEncryptedValue(): void
     {
         $variable = new AccountPersistedVariable(
@@ -209,6 +220,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertTrue($variable->isEncrypted());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetEncryptedValueWhenNotNeeded(): void
     {
         $this->expectException(\LogicException::class);
@@ -217,11 +229,13 @@ class AccountPersistedVariableTest extends TestCase
         $this->accountPersistedVariable->setEncryptedValue('aes256', 'encrypted');
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetContent(): void
     {
         $this->assertEquals($this->value, $this->accountPersistedVariable->getContent());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetEncryptionAlgorithm(): void
     {
         $this->assertEquals($this->encryptionAlgorithm, $this->accountPersistedVariable->getEncryptionAlgorithm());
@@ -239,6 +253,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertNull($variable->getEncryptionAlgorithm());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testCloneWithEncryption(): void
     {
         $variable = new AccountPersistedVariable(
@@ -261,6 +276,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertTrue($variable->isEncrypted());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testCloneWithoutEncryption(): void
     {
         $newContent = 'new_content';
@@ -271,6 +287,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertEquals($this->value, $this->accountPersistedVariable->getValue());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeDataWithSecretVariable(): void
     {
         $normalizer = $this->createMock(EastNormalizerInterface::class);
@@ -293,6 +310,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertInstanceOf(AccountPersistedVariable::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeDataWithDefaultGroup(): void
     {
         $normalizer = $this->createMock(EastNormalizerInterface::class);
@@ -314,6 +332,7 @@ class AccountPersistedVariableTest extends TestCase
         $this->assertInstanceOf(AccountPersistedVariable::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExportToMeDataWithNonSecretVariable(): void
     {
         $variable = new AccountPersistedVariable(
@@ -347,8 +366,8 @@ class AccountPersistedVariableTest extends TestCase
 
     public function testVerifyAccessToUser(): void
     {
-        $user = $this->createMock(User::class);
-        $promise = $this->createMock(PromiseInterface::class);
+        $user = $this->createStub(User::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $this->account->expects($this->once())
             ->method('__call')

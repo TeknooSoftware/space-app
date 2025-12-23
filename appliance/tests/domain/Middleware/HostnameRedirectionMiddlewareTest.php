@@ -66,9 +66,9 @@ class HostnameRedirectionMiddlewareTest extends TestCase
         $this->assertInstanceOf(
             HostnameRedirectionMiddleware::class,
             $this->hostnameRedirectionMiddleware->execute(
-                $this->createMock(ClientInterface::class),
-                $this->createMock(MessageInterface::class),
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ClientInterface::class),
+                $this->createStub(MessageInterface::class),
+                $this->createStub(ManagerInterface::class),
             ),
         );
     }
@@ -255,7 +255,7 @@ class HostnameRedirectionMiddlewareTest extends TestCase
 
     public function testExecuteWithRedirection(): void
     {
-        $newUri = $this->createMock(UriInterface::class);
+        $newUri = $this->createStub(UriInterface::class);
 
         $uri = $this->createMock(UriInterface::class);
         $uri->expects($this->once())

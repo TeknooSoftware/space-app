@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Query\PersistedVariable;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\QueryExecutorInterface;
 use Teknoo\East\Paas\Object\Project;
@@ -46,7 +47,7 @@ class DeleteVariablesQueryTest extends TestCase
 {
     private DeleteVariablesQuery $deleteVariablesQuery;
 
-    private Project&MockObject $project;
+    private Project&Stub $project;
 
     private array $notIds;
 
@@ -57,7 +58,7 @@ class DeleteVariablesQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = $this->createMock(Project::class);
+        $this->project = $this->createStub(Project::class);
         $this->notIds = [];
         $this->deleteVariablesQuery = new DeleteVariablesQuery($this->project, $this->notIds);
     }
@@ -67,8 +68,8 @@ class DeleteVariablesQueryTest extends TestCase
         $this->assertInstanceOf(
             DeleteVariablesQuery::class,
             $this->deleteVariablesQuery->delete(
-                $this->createMock(QueryExecutorInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(QueryExecutorInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }

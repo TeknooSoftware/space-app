@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -65,42 +66,42 @@ class JobStartTest extends TestCase
 {
     private JobStart $jobStart;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
-    private LoadAccountFromProject&MockObject $loadAccountFromProject;
+    private LoadAccountFromProject&Stub $loadAccountFromProject;
 
-    private CreateObject&MockObject $createObject;
+    private CreateObject&Stub $createObject;
 
-    private PrepareNewJobForm&MockObject $prepareNewJobForm;
+    private PrepareNewJobForm&Stub $prepareNewJobForm;
 
-    private LoadPersistedVariablesForJob&MockObject $loadPersistedVariablesForJob;
+    private LoadPersistedVariablesForJob&Stub $loadPersistedVariablesForJob;
 
-    private LoadAccountClusters&MockObject $loadAccountClusters;
+    private LoadAccountClusters&Stub $loadAccountClusters;
 
-    private FormHandlingInterface&MockObject $formHandling;
+    private FormHandlingInterface&Stub $formHandling;
 
-    private FormProcessingInterface&MockObject $formProcessing;
+    private FormProcessingInterface&Stub $formProcessing;
 
-    private NewJobSetDefaults&MockObject $newJobSetDefaults;
+    private NewJobSetDefaults&Stub $newJobSetDefaults;
 
-    private NewJobNotifierInterface&MockObject $newJobNotifier;
+    private NewJobNotifierInterface&Stub $newJobNotifier;
 
 
-    private JumpIf&MockObject $jumpIf;
+    private JumpIf&Stub $jumpIf;
 
-    private CallNewJobInterface&MockObject $callNewJob;
+    private CallNewJobInterface&Stub $callNewJob;
 
-    private PersistJobVar&MockObject $persistJobVar;
+    private PersistJobVar&Stub $persistJobVar;
 
-    private RedirectClientInterface&MockObject $redirectClient;
+    private RedirectClientInterface&Stub $redirectClient;
 
-    private RenderFormInterface&MockObject $renderForm;
+    private RenderFormInterface&Stub $renderForm;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -111,24 +112,24 @@ class JobStartTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
-        $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
-        $this->createObject = $this->createMock(CreateObject::class);
-        $this->prepareNewJobForm = $this->createMock(PrepareNewJobForm::class);
-        $this->loadPersistedVariablesForJob = $this->createMock(LoadPersistedVariablesForJob::class);
-        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
-        $this->formHandling = $this->createMock(FormHandlingInterface::class);
-        $this->formProcessing = $this->createMock(FormProcessingInterface::class);
-        $this->newJobSetDefaults = $this->createMock(NewJobSetDefaults::class);
-        $this->newJobNotifier = $this->createMock(NewJobNotifierInterface::class);
-        $this->jumpIf = $this->createMock(JumpIf::class);
-        $this->callNewJob = $this->createMock(CallNewJobInterface::class);
-        $this->persistJobVar = $this->createMock(PersistJobVar::class);
-        $this->redirectClient = $this->createMock(RedirectClientInterface::class);
-        $this->renderForm = $this->createMock(RenderFormInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
+        $this->loadAccountFromProject = $this->createStub(LoadAccountFromProject::class);
+        $this->createObject = $this->createStub(CreateObject::class);
+        $this->prepareNewJobForm = $this->createStub(PrepareNewJobForm::class);
+        $this->loadPersistedVariablesForJob = $this->createStub(LoadPersistedVariablesForJob::class);
+        $this->loadAccountClusters = $this->createStub(LoadAccountClusters::class);
+        $this->formHandling = $this->createStub(FormHandlingInterface::class);
+        $this->formProcessing = $this->createStub(FormProcessingInterface::class);
+        $this->newJobSetDefaults = $this->createStub(NewJobSetDefaults::class);
+        $this->newJobNotifier = $this->createStub(NewJobNotifierInterface::class);
+        $this->jumpIf = $this->createStub(JumpIf::class);
+        $this->callNewJob = $this->createStub(CallNewJobInterface::class);
+        $this->persistJobVar = $this->createStub(PersistJobVar::class);
+        $this->redirectClient = $this->createStub(RedirectClientInterface::class);
+        $this->renderForm = $this->createStub(RenderFormInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->jobStart = new JobStart(
             recipe: $this->recipe,
@@ -166,7 +167,7 @@ class JobStartTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->jobStart->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

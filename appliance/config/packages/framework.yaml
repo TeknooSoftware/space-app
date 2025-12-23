@@ -19,8 +19,6 @@ framework:
     fragments: ~
     http_method_override: true
     handle_all_throwables: true
-    annotations:
-        enabled: false
     php_errors:
         log: true
 

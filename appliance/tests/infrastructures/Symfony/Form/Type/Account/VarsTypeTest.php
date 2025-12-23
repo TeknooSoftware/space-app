@@ -62,22 +62,18 @@ class VarsTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            VarsType::class,
-            $this->varsType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['environmentsList' => ['bar']],
-            ),
+        $this->varsType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['environmentsList' => ['bar']],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            VarsType::class,
-            $this->varsType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->varsType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

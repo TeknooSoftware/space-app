@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -47,9 +48,9 @@ class PrepareAccountErrorHandlerTest extends TestCase
 {
     private PrepareAccountErrorHandler $prepareAccountErrorHandler;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
-    private AccountHistoryWriter&MockObject $writer;
+    private AccountHistoryWriter&Stub $writer;
 
     private bool $preferRealDate;
 
@@ -60,8 +61,8 @@ class PrepareAccountErrorHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createMock(DatesService::class);
-        $this->writer = $this->createMock(AccountHistoryWriter::class);
+        $this->datesService = $this->createStub(DatesService::class);
+        $this->writer = $this->createStub(AccountHistoryWriter::class);
         $this->preferRealDate = true;
         $this->prepareAccountErrorHandler = new PrepareAccountErrorHandler(
             $this->datesService,
@@ -76,8 +77,8 @@ class PrepareAccountErrorHandlerTest extends TestCase
             PrepareAccountErrorHandler::class,
             ($this->prepareAccountErrorHandler)(
                 new \Exception('foo'),
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(AccountHistory::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(AccountHistory::class),
             )
         );
     }

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Mercure;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\Chunk\FirstChunk;
 use Symfony\Component\HttpClient\Chunk\LastChunk;
@@ -60,7 +61,7 @@ class FetchJobIdFromPendingTest extends TestCase
 
     private HubRegistry $hub;
 
-    private UrlGeneratorInterface&MockObject $generator;
+    private UrlGeneratorInterface&Stub $generator;
 
     private EventSourceHttpClient $sseClient;
 
@@ -73,18 +74,18 @@ class FetchJobIdFromPendingTest extends TestCase
     {
         parent::setUp();
 
-        $hubMock = $this->createMock(HubInterface::class);
-        $tokenFactory = $this->createMock(TokenFactoryInterface::class);
+        $hubMock = $this->createStub(HubInterface::class);
+        $tokenFactory = $this->createStub(TokenFactoryInterface::class);
         $tokenFactory->method('create')->willReturn('mock-jwt-token');
         $hubMock->method('getFactory')->willReturn($tokenFactory);
 
         $this->hub = new HubRegistry($hubMock);
-        $this->generator = $this->createMock(UrlGeneratorInterface::class);
+        $this->generator = $this->createStub(UrlGeneratorInterface::class);
         $this->sseClient = new EventSourceHttpClient(
-            $httpClient = $this->createMock(HttpClientInterface::class),
+            $httpClient = $this->createStub(HttpClientInterface::class),
         );
 
-        $response = $this->createMock(ResponseInterface::class);
+        $response = $this->createStub(ResponseInterface::class);
         $response
             ->method('getInfo')
             ->willReturnCallback(
@@ -138,8 +139,8 @@ class FetchJobIdFromPendingTest extends TestCase
         $this->assertInstanceOf(
             FetchJobIdFromPending::class,
             ($this->fetchJobIdFromPending)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ParametersBag::class),
                 'foo',
             )
         );

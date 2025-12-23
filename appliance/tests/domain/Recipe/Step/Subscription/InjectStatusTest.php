@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Subscription;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -47,7 +48,7 @@ class InjectStatusTest extends TestCase
 {
     private InjectStatus $injectStatus;
 
-    private ProjectLoader&MockObject $projectLoader;
+    private ProjectLoader&Stub $projectLoader;
 
     /**
      * {@inheritdoc}
@@ -57,7 +58,7 @@ class InjectStatusTest extends TestCase
         parent::setUp();
 
         $this->injectStatus = new InjectStatus(
-            projectLoader: $this->projectLoader = $this->createMock(ProjectLoader::class),
+            projectLoader: $this->projectLoader = $this->createStub(ProjectLoader::class),
         );
     }
 
@@ -66,10 +67,10 @@ class InjectStatusTest extends TestCase
         $this->assertInstanceOf(
             InjectStatus::class,
             ($this->injectStatus)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ParametersBag::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(

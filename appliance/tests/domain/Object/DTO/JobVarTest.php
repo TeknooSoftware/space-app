@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
@@ -56,7 +57,7 @@ class JobVarTest extends TestCase
 
     private bool $wasSecret;
 
-    private ProjectPersistedVariable&MockObject $persistedVar;
+    private ProjectPersistedVariable&Stub $persistedVar;
 
     /**
      * {@inheritdoc}
@@ -71,7 +72,7 @@ class JobVarTest extends TestCase
         $this->persisted = true;
         $this->secret = true;
         $this->wasSecret = true;
-        $this->persistedVar = $this->createMock(ProjectPersistedVariable::class);
+        $this->persistedVar = $this->createStub(ProjectPersistedVariable::class);
         $this->jobVar = new JobVar(
             id: $this->id,
             name: $this->name,
@@ -99,7 +100,7 @@ class JobVarTest extends TestCase
         $this->assertEquals('42', $jobVar->getId());
 
         // Test with persistedVar - should return id from persistedVar
-        $persistedVar = $this->createMock(ProjectPersistedVariable::class);
+        $persistedVar = $this->createStub(ProjectPersistedVariable::class);
         $persistedVar
             ->method('getId')
             ->willReturn('24');
@@ -120,7 +121,7 @@ class JobVarTest extends TestCase
     public function testExport(): void
     {
         // Create a JobVar with persistedVar that has an ID
-        $persistedVar = $this->createMock(ProjectPersistedVariable::class);
+        $persistedVar = $this->createStub(ProjectPersistedVariable::class);
         $persistedVar->method('getId')->willReturn('persisted-id');
 
         $jobVar = new JobVar(

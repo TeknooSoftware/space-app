@@ -68,7 +68,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     public function testInvoke(): void
     {
         $wallet = new AccountWallet(
-            [$this->createMock(AccountEnvironment::class)]
+            [$this->createStub(AccountEnvironment::class)]
         );
 
         $project = $this->createMock(Project::class);
@@ -81,8 +81,8 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ($this->updateProjectCredentialsFromAccount)(
                 new SpaceProject($project),
                 $wallet,
-                $this->createMock(AccountRegistry::class),
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(AccountRegistry::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -90,7 +90,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     public function testInvokeWithImageRegistryUpdate(): void
     {
         $accountRegistry = $this->createMock(AccountRegistry::class);
-        $accountRegistry->expects($this->any())
+        $accountRegistry
             ->method('getRegistryUrl')
             ->willReturn('https://registry.example.com');
         $accountRegistry->expects($this->once())
@@ -103,7 +103,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->method('getRegistryConfigName')
             ->willReturn('config-name');
 
-        $imageRegistry = $this->createMock(ImageRegistry::class);
+        $imageRegistry = $this->createStub(ImageRegistry::class);
 
         $project = $this->createMock(Project::class);
         $project->expects($this->once())
@@ -131,7 +131,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
                 new SpaceProject($project),
                 $wallet,
                 $accountRegistry,
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -142,7 +142,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
         $accountRegistry->expects($this->never())
             ->method('getRegistryUrl');
 
-        $nonImageRegistry = $this->createMock(ImageRegistryInterface::class);
+        $nonImageRegistry = $this->createStub(ImageRegistryInterface::class);
 
         $project = $this->createMock(Project::class);
         $project->expects($this->once())
@@ -169,7 +169,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
                 new SpaceProject($project),
                 $wallet,
                 $accountRegistry,
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -177,10 +177,10 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     public function testInvokeWithClusterUpdate(): void
     {
         $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('cluster1');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('prod');
         $accountEnv->expects($this->once())
@@ -208,7 +208,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             masterAddress: 'https://cluster.example.com',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: false,
             useHnc: true,
@@ -221,13 +221,13 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->with('cluster1')
             ->willReturn($clusterConfig);
 
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->any())
+        $environment = $this->createStub(Environment::class);
+        $environment
             ->method('__toString')
             ->willReturn('prod');
 
         $cluster = $this->createMock(Cluster::class);
-        $cluster->expects($this->any())
+        $cluster
             ->method('__toString')
             ->willReturn('cluster1');
         $cluster->expects($this->once())
@@ -261,7 +261,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->method('visit')
             ->willReturnCallback(function ($visitors) use ($project, $cluster) {
                 if (isset($visitors['imagesRegistry'])) {
-                    $visitors['imagesRegistry']($this->createMock(ImageRegistryInterface::class));
+                    $visitors['imagesRegistry']($this->createStub(ImageRegistryInterface::class));
                 }
 
                 if (isset($visitors['clusters'])) {
@@ -276,7 +276,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ($this->updateProjectCredentialsFromAccount)(
                 new SpaceProject($project),
                 $wallet,
-                $this->createMock(AccountRegistry::class),
+                $this->createStub(AccountRegistry::class),
                 $clusterCatalog,
             )
         );
@@ -286,13 +286,13 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
     {
         $wallet = new AccountWallet([]);
 
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->any())
+        $environment = $this->createStub(Environment::class);
+        $environment
             ->method('__toString')
             ->willReturn('prod');
 
         $cluster = $this->createMock(Cluster::class);
-        $cluster->expects($this->any())
+        $cluster
             ->method('__toString')
             ->willReturn('cluster1');
         $cluster->expects($this->once())
@@ -312,7 +312,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->method('visit')
             ->willReturnCallback(function ($visitors) use ($project, $cluster) {
                 if (isset($visitors['imagesRegistry'])) {
-                    $visitors['imagesRegistry']($this->createMock(ImageRegistryInterface::class));
+                    $visitors['imagesRegistry']($this->createStub(ImageRegistryInterface::class));
                 }
 
                 if (isset($visitors['clusters'])) {
@@ -327,8 +327,8 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ($this->updateProjectCredentialsFromAccount)(
                 new SpaceProject($project),
                 $wallet,
-                $this->createMock(AccountRegistry::class),
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(AccountRegistry::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }
@@ -344,7 +344,7 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->method('visit')
             ->willReturnCallback(function ($visitors) use ($project, $notACluster) {
                 if (isset($visitors['imagesRegistry'])) {
-                    $visitors['imagesRegistry']($this->createMock(ImageRegistryInterface::class));
+                    $visitors['imagesRegistry']($this->createStub(ImageRegistryInterface::class));
                 }
 
                 if (isset($visitors['clusters'])) {
@@ -359,8 +359,8 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ($this->updateProjectCredentialsFromAccount)(
                 new SpaceProject($project),
                 $wallet,
-                $this->createMock(AccountRegistry::class),
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(AccountRegistry::class),
+                $this->createStub(ClusterCatalog::class),
             )
         );
     }

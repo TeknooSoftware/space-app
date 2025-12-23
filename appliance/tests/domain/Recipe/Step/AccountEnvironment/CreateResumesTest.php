@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Paas\Object\Account;
@@ -35,6 +36,7 @@ use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -62,12 +64,13 @@ class CreateResumesTest extends TestCase
         $this->assertInstanceOf(
             CreateResumes::class,
             ($this->createResumes)(
-                wallet: new AccountWallet([$this->createMock(AccountEnvironment::class)]),
-                parametersBag: $this->createMock(ParametersBag::class),
+                wallet: new AccountWallet([$this->createStub(AccountEnvironment::class)]),
+                parametersBag: $this->createStub(ParametersBag::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithParametersBagVerification(): void
     {
         $env = $this->createMock(AccountEnvironment::class);
@@ -95,6 +98,7 @@ class CreateResumesTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithSpaceAccount(): void
     {
         $env = $this->createMock(AccountEnvironment::class);
@@ -109,7 +113,7 @@ class CreateResumesTest extends TestCase
             ->with('accountEnvsResumes', $this->isArray());
 
         $spaceAccount = new SpaceAccount(
-            account: $this->createMock(Account::class),
+            account: $this->createStub(Account::class),
         );
 
         $this->assertInstanceOf(
@@ -147,6 +151,7 @@ class CreateResumesTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithMultipleEnvironments(): void
     {
         $env1 = $this->createMock(AccountEnvironment::class);
@@ -156,7 +161,7 @@ class CreateResumesTest extends TestCase
             ->willReturn($resume1);
 
         $env2 = $this->createMock(AccountEnvironment::class);
-        $resume2 = $this->createMock(AccountEnvironmentResume::class);
+        $resume2 = $this->createStub(AccountEnvironmentResume::class);
         $env2->expects($this->once())
             ->method('resume')
             ->willReturn($resume2);
@@ -175,7 +180,7 @@ class CreateResumesTest extends TestCase
             );
 
         $spaceAccount = new SpaceAccount(
-            account: $this->createMock(Account::class),
+            account: $this->createStub(Account::class),
         );
 
         $this->assertInstanceOf(

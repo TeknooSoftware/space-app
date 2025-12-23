@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\ApiKey;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -50,7 +51,7 @@ class RemoveKeyTest extends TestCase
             ->with('to-remove')
             ->willReturnSelf();
 
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $user->method('getOneAuthData')
             ->with(ApiKeysAuth::class)
             ->willReturn($apiKeys);
@@ -59,7 +60,7 @@ class RemoveKeyTest extends TestCase
         $step = new RemoveKey();
 
         $result = $step(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             user: $spaceUser,
             tokenName: 'to-remove',
         );
@@ -69,7 +70,7 @@ class RemoveKeyTest extends TestCase
 
     public function testInvokeWithoutExistingApiKeysAuth(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $user->method('getOneAuthData')
             ->with(ApiKeysAuth::class)
             ->willReturn(null);
@@ -79,7 +80,7 @@ class RemoveKeyTest extends TestCase
 
         // Just ensure it does not error and returns itself when there is no ApiKeysAuth yet
         $result = $step(
-            manager: $this->createMock(ManagerInterface::class),
+            manager: $this->createStub(ManagerInterface::class),
             user: $spaceUser,
             tokenName: 'whatever',
         );

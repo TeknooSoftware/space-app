@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\CodeGeneratorType;
@@ -45,7 +46,7 @@ class CodeGeneratorTypeTest extends TestCase
 {
     private CodeGeneratorType $codeGeneratorType;
 
-    private CodeGenerator&MockObject $codeGenerator;
+    private CodeGenerator&Stub $codeGenerator;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class CodeGeneratorTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->codeGenerator = $this->createMock(CodeGenerator::class);
+        $this->codeGenerator = $this->createStub(CodeGenerator::class);
         $this->codeGeneratorType = new CodeGeneratorType($this->codeGenerator);
     }
 
@@ -62,12 +63,10 @@ class CodeGeneratorTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            CodeGeneratorType::class,
-            $this->codeGeneratorType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar'],
-            ),
+        $this->codeGeneratorType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar'],
         );
+        $this->assertTrue(true);
     }
 }

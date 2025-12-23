@@ -27,11 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\UserData;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Loader\UserDataLoader;
+use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Recipe\Step\UserData\LoadData;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadDataTest.
@@ -59,13 +62,14 @@ class LoadDataTest extends TestCase
         $this->loadData = new LoadData($this->loader);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadData::class,
             ($this->loadData)(
-                manager: $this->createMock(ManagerInterface::class),
-                userInstance: $this->createMock(User::class),
+                manager: $this->createStub(ManagerInterface::class),
+                userInstance: $this->createStub(User::class),
                 allowEmptyDatas: true,
             )
         );
@@ -73,7 +77,7 @@ class LoadDataTest extends TestCase
 
     public function testInvokeWithSuccessCallback(): void
     {
-        $userData = $this->createMock(\Teknoo\Space\Object\Persisted\UserData::class);
+        $userData = $this->createStub(UserData::class);
 
         $this->loader->expects($this->once())
             ->method('fetch')
@@ -87,8 +91,8 @@ class LoadDataTest extends TestCase
             ->method('updateWorkPlan')
             ->with(
                 $this->callback(function ($workplan) use ($userData) {
-                    return isset($workplan[\Teknoo\Space\Object\Persisted\UserData::class])
-                        && $workplan[\Teknoo\Space\Object\Persisted\UserData::class] === $userData;
+                    return isset($workplan[UserData::class])
+                        && $workplan[UserData::class] === $userData;
                 })
             );
 
@@ -96,7 +100,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                userInstance: $this->createMock(User::class),
+                userInstance: $this->createStub(User::class),
                 allowEmptyDatas: true,
             )
         );
@@ -126,7 +130,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                userInstance: $this->createMock(User::class),
+                userInstance: $this->createStub(User::class),
                 allowEmptyDatas: false,
             )
         );
@@ -155,7 +159,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                userInstance: $this->createMock(User::class),
+                userInstance: $this->createStub(User::class),
                 allowEmptyDatas: false,
             )
         );
@@ -178,7 +182,7 @@ class LoadDataTest extends TestCase
             LoadData::class,
             ($this->loadData)(
                 manager: $manager,
-                userInstance: $this->createMock(User::class),
+                userInstance: $this->createStub(User::class),
                 allowEmptyDatas: true,
             )
         );

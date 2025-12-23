@@ -27,12 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Query\ProjectPersistedVariable;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Query\ProjectPersistedVariable\LoadFromProjectQuery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadFromProjectQueryTest.
@@ -47,7 +49,7 @@ class LoadFromProjectQueryTest extends TestCase
 {
     private LoadFromProjectQuery $loadFromProjectQuery;
 
-    private Project&MockObject $project;
+    private Project&Stub $project;
 
     /**
      * {@inheritdoc}
@@ -56,7 +58,7 @@ class LoadFromProjectQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->project = $this->createMock(Project::class);
+        $this->project = $this->createStub(Project::class);
         $this->loadFromProjectQuery = new LoadFromProjectQuery($this->project);
     }
 
@@ -68,9 +70,10 @@ class LoadFromProjectQueryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testExecute(): void
     {
-        $loader = $this->createMock(LoaderInterface::class);
+        $loader = $this->createStub(LoaderInterface::class);
         $repository = $this->createMock(RepositoryInterface::class);
         $promise = $this->createMock(PromiseInterface::class);
 

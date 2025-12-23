@@ -64,9 +64,9 @@ class NewJobSetDefaultsTest extends TestCase
         $this->assertInstanceOf(
             NewJobSetDefaults::class,
             ($this->newJobSetDefaults)(
-                project: new SpaceProject($this->createMock(Project::class)),
-                newJob: $this->createMock(NewJob::class),
-                clusterCatalog: $this->createMock(ClusterCatalog::class),
+                project: new SpaceProject($this->createStub(Project::class)),
+                newJob: $this->createStub(NewJob::class),
+                clusterCatalog: $this->createStub(ClusterCatalog::class),
             ),
         );
     }
@@ -83,7 +83,7 @@ class NewJobSetDefaultsTest extends TestCase
             ->method('isLocked')
             ->willReturn(true);
 
-        $kubeClient = $this->createMock(Client::class);
+        $kubeClient = $this->createStub(Client::class);
 
         $config1 = new Cluster(
             name: 'cluster1',
@@ -195,7 +195,7 @@ class NewJobSetDefaultsTest extends TestCase
             ->method('isLocked')
             ->willReturn(false);
 
-        $kubeClient = $this->createMock(Client::class);
+        $kubeClient = $this->createStub(Client::class);
 
         $config = new Cluster(
             name: 'locked-cluster',

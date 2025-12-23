@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Loader\Meta;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
@@ -40,6 +41,7 @@ use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Throwable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class SpaceAccountLoaderTest.
@@ -58,7 +60,7 @@ class SpaceAccountLoaderTest extends TestCase
 
     private AccountDataLoader&MockObject $dataLoader;
 
-    private AccountPersistedVariableLoader&MockObject $accountPersistedVariableLoader;
+    private AccountPersistedVariableLoader&Stub $accountPersistedVariableLoader;
 
     /**
      * {@inheritdoc}
@@ -69,7 +71,7 @@ class SpaceAccountLoaderTest extends TestCase
 
         $this->accountLoader = $this->createMock(AccountLoader::class);
         $this->dataLoader = $this->createMock(AccountDataLoader::class);
-        $this->accountPersistedVariableLoader = $this->createMock(AccountPersistedVariableLoader::class);
+        $this->accountPersistedVariableLoader = $this->createStub(AccountPersistedVariableLoader::class);
         $this->spaceAccountLoader = new SpaceAccountLoader(
             accountLoader: $this->accountLoader,
             dataLoader: $this->dataLoader,
@@ -83,7 +85,7 @@ class SpaceAccountLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Account::class));
+                    $promise->success($this->createStub(Account::class));
 
                     return $this->accountLoader;
                 }
@@ -93,7 +95,7 @@ class SpaceAccountLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(AccountData::class));
+                    $promise->success($this->createStub(AccountData::class));
 
                     return $this->dataLoader;
                 }
@@ -113,6 +115,7 @@ class SpaceAccountLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoadWithAccountError(): void
     {
         $this->accountLoader->expects($this->once())
@@ -143,6 +146,7 @@ class SpaceAccountLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoadWithAccountErrorDefaultCode(): void
     {
         $this->accountLoader->expects($this->once())
@@ -179,7 +183,7 @@ class SpaceAccountLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Account::class));
+                    $promise->success($this->createStub(Account::class));
 
                     return $this->accountLoader;
                 }
@@ -211,10 +215,11 @@ class SpaceAccountLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testQuery(): void
     {
-        $account1 = $this->createMock(Account::class);
-        $account2 = $this->createMock(Account::class);
+        $account1 = $this->createStub(Account::class);
+        $account2 = $this->createStub(Account::class);
 
         $this->accountLoader->expects($this->once())
             ->method('query')
@@ -238,7 +243,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountLoader::class,
             $this->spaceAccountLoader->query(
-                $this->createMock(QueryCollectionInterface::class),
+                $this->createStub(QueryCollectionInterface::class),
                 $promise,
             ),
         );
@@ -250,7 +255,7 @@ class SpaceAccountLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Account::class));
+                    $promise->success($this->createStub(Account::class));
 
                     return $this->accountLoader;
                 }
@@ -260,7 +265,7 @@ class SpaceAccountLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(AccountData::class));
+                    $promise->success($this->createStub(AccountData::class));
 
                     return $this->dataLoader;
                 }
@@ -274,12 +279,13 @@ class SpaceAccountLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountLoader::class,
             $this->spaceAccountLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetchWithAccountError(): void
     {
         $this->accountLoader->expects($this->once())
@@ -304,12 +310,13 @@ class SpaceAccountLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountLoader::class,
             $this->spaceAccountLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetchWithAccountErrorDefaultCode(): void
     {
         $this->accountLoader->expects($this->once())
@@ -334,7 +341,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceAccountLoader::class,
             $this->spaceAccountLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
