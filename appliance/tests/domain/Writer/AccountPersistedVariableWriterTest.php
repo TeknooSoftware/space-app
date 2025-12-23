@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Writer;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\ManagerInterface;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
@@ -50,11 +51,11 @@ class AccountPersistedVariableWriterTest extends TestCase
 {
     private AccountPersistedVariableWriter $accountPersistedVariableWriter;
 
-    private ManagerInterface&MockObject $manager;
+    private ManagerInterface&Stub $manager;
 
-    private PersistedVariableEncryption&MockObject $persistedVariableEncryption;
+    private PersistedVariableEncryption&Stub $persistedVariableEncryption;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     protected bool $preferRealDateOnUpdate = false;
 
@@ -65,9 +66,9 @@ class AccountPersistedVariableWriterTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = $this->createMock(ManagerInterface::class);
-        $this->persistedVariableEncryption = $this->createMock(PersistedVariableEncryption::class);
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->manager = $this->createStub(ManagerInterface::class);
+        $this->persistedVariableEncryption = $this->createStub(PersistedVariableEncryption::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDateOnUpdate = true;
 
         $this->accountPersistedVariableWriter = new AccountPersistedVariableWriter(
@@ -83,8 +84,8 @@ class AccountPersistedVariableWriterTest extends TestCase
         $this->assertInstanceOf(
             AccountPersistedVariableWriter::class,
             $this->accountPersistedVariableWriter->save(
-                $this->createMock(ObjectInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(ObjectInterface::class),
+                $this->createStub(PromiseInterface::class),
                 true,
             ),
         );
@@ -131,7 +132,7 @@ class AccountPersistedVariableWriterTest extends TestCase
             AccountPersistedVariableWriter::class,
             $this->accountPersistedVariableWriter->save(
                 $encryptedVar,
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(PromiseInterface::class),
                 true,
             ),
         );
@@ -179,7 +180,7 @@ class AccountPersistedVariableWriterTest extends TestCase
             AccountPersistedVariableWriter::class,
             $this->accountPersistedVariableWriter->save(
                 $encryptedVar,
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(PromiseInterface::class),
                 true,
             ),
         );
@@ -227,7 +228,7 @@ class AccountPersistedVariableWriterTest extends TestCase
             AccountPersistedVariableWriter::class,
             $this->accountPersistedVariableWriter->save(
                 $encryptedVar,
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(PromiseInterface::class),
                 true,
             ),
         );

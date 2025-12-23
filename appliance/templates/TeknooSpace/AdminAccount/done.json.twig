@@ -1,2 +1,2 @@
 {# templates/TeknooSpace/AdminAccount/done.json.twig #}
-{{ {'meta': {'id': app.request.get('id'), '@class': 'Teknoo\\Space\\Object\\DTO\\SpaceAccount'}, 'success': true}|json_encode|raw }}
+{{ {'meta': {'id': app.request.attributes.get('id'), '@class': 'Teknoo\\Space\\Object\\DTO\\SpaceAccount'}, 'success': true}|json_encode|raw }}

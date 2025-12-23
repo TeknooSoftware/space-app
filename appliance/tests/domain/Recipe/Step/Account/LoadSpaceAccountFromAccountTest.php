@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -34,6 +35,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadSpaceAccountFromAccountTest.
@@ -62,12 +64,13 @@ class LoadSpaceAccountFromAccountTest extends TestCase
         $this->loadSpaceAccountFromAccount = new LoadSpaceAccountFromAccount($this->spaceAccountLoader);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $account->method('getId')->willReturn('fooo');
 
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $user->method('getRoles')->willReturn(['ROLE_ADMIN']);
 
         $spaceAccount = new SpaceAccount($account);
@@ -75,7 +78,7 @@ class LoadSpaceAccountFromAccountTest extends TestCase
         $this->assertInstanceOf(
             LoadSpaceAccountFromAccount::class,
             ($this->loadSpaceAccountFromAccount)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 $account,
                 $spaceAccount,
                 $user,
@@ -85,7 +88,7 @@ class LoadSpaceAccountFromAccountTest extends TestCase
 
     public function testInvokeWithNullAccount(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -113,11 +116,10 @@ class LoadSpaceAccountFromAccountTest extends TestCase
 
     public function testInvokeWithNonAdminUser(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_USER']);
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -146,17 +148,15 @@ class LoadSpaceAccountFromAccountTest extends TestCase
 
     public function testInvokeWithAdminUserLoadingAccount(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $account->method('getId')
             ->willReturn('account-123');
 
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_ADMIN']);
 
-        $spaceAccount = $this->createMock(SpaceAccount::class);
+        $spaceAccount = $this->createStub(SpaceAccount::class);
 
         $this->spaceAccountLoader->expects($this->once())
             ->method('load')
@@ -188,14 +188,12 @@ class LoadSpaceAccountFromAccountTest extends TestCase
 
     public function testInvokeWithPromiseFailure(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $account->method('getId')
             ->willReturn('account-456');
 
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_ADMIN']);
 
         $this->spaceAccountLoader->expects($this->once())
@@ -206,7 +204,7 @@ class LoadSpaceAccountFromAccountTest extends TestCase
                 return $this->spaceAccountLoader;
             });
 
-        $manager = $this->createMock(ManagerInterface::class);
+        $manager = $this->createStub(ManagerInterface::class);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Failed to load account');
@@ -221,19 +219,17 @@ class LoadSpaceAccountFromAccountTest extends TestCase
 
     public function testInvokeWithMatchingSpaceAccountAndAccountInstance(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $account->method('getId')
             ->willReturn('account-789');
 
-        $accountInSpaceAccount = $this->createMock(Account::class);
-        $accountInSpaceAccount->expects($this->any())
-            ->method('getId')
+        $accountInSpaceAccount = $this->createStub(Account::class);
+        $accountInSpaceAccount->method('getId')
             ->willReturn('account-789');
 
         $spaceAccount = new SpaceAccount($accountInSpaceAccount);
 
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
 
         // Loader should not be called when IDs match (early return)
         $this->spaceAccountLoader->expects($this->never())

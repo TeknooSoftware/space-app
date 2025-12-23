@@ -51,7 +51,7 @@ class CodeGeneratorType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'company',
@@ -103,8 +103,5 @@ class CodeGeneratorType extends AbstractType
                 }
             }
         );
-
-
-        return $this;
     }
 }

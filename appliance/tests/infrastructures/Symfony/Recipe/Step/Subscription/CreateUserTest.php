@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Subscripti
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\SecurityBundle\Security;
 use Teknoo\East\Common\Object\User;
@@ -51,9 +52,9 @@ class CreateUserTest extends TestCase
 {
     private CreateUser $createUser;
 
-    private SpaceUserWriter&MockObject $userWriter;
+    private SpaceUserWriter&Stub $userWriter;
 
-    private Security&MockObject $security;
+    private Security&Stub $security;
 
     /**
      * {@inheritdoc}
@@ -62,8 +63,8 @@ class CreateUserTest extends TestCase
     {
         parent::setUp();
 
-        $this->userWriter = $this->createMock(SpaceUserWriter::class);
-        $this->security = $this->createMock(Security::class);
+        $this->userWriter = $this->createStub(SpaceUserWriter::class);
+        $this->security = $this->createStub(Security::class);
         $this->createUser = new CreateUser(
             $this->userWriter,
             $this->security,
@@ -72,16 +73,16 @@ class CreateUserTest extends TestCase
 
     public function testInvoke(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $subscription = new SpaceSubscription(
             new SpaceUser($user),
-            new SpaceAccount($this->createMock(Account::class))
+            new SpaceAccount($this->createStub(Account::class))
         );
         $this->assertInstanceOf(
             CreateUser::class,
             ($this->createUser)(
                 $subscription,
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
             )
         );
     }

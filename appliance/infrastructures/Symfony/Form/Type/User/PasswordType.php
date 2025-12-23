@@ -50,10 +50,10 @@ class PasswordType extends AbstractType implements FormApiAwareInterface
      * @param FormBuilderInterface<PasswordAuthenticatedUser|null> $builder
      * @param array<string, mixed> $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!empty($options['api'])) {
-            return $this;
+            return;
         }
 
         $builder->add(
@@ -87,11 +87,9 @@ class PasswordType extends AbstractType implements FormApiAwareInterface
                 $user->addAuthData($authData);
             }
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -99,7 +97,5 @@ class PasswordType extends AbstractType implements FormApiAwareInterface
             'data_class' => User::class,
             'api' => null,
         ]);
-
-        return $this;
     }
 }

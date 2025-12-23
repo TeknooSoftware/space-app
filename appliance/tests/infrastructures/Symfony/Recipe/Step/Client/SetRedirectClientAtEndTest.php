@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Client;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -47,9 +48,9 @@ class SetRedirectClientAtEndTest extends TestCase
 {
     private SetRedirectClientAtEnd $setRedirectClientAtEnd;
 
-    private ResponseFactoryInterface&MockObject $responseFactory;
+    private ResponseFactoryInterface&Stub $responseFactory;
 
-    private UrlGeneratorInterface&MockObject $router;
+    private UrlGeneratorInterface&Stub $router;
 
     /**
      * {@inheritdoc}
@@ -58,14 +59,14 @@ class SetRedirectClientAtEndTest extends TestCase
     {
         parent::setUp();
 
-        $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
-        $this->router = $this->createMock(UrlGeneratorInterface::class);
+        $this->responseFactory = $this->createStub(ResponseFactoryInterface::class);
+        $this->router = $this->createStub(UrlGeneratorInterface::class);
         $this->setRedirectClientAtEnd = new SetRedirectClientAtEnd($this->responseFactory, $this->router);
     }
 
     public function testInvoke(): void
     {
-        $response = $this->createMock(ResponseInterface::class);
+        $response = $this->createStub(ResponseInterface::class);
         $response
             ->method('withHeader')
             ->willReturnSelf();
@@ -77,8 +78,8 @@ class SetRedirectClientAtEndTest extends TestCase
         $this->assertInstanceOf(
             SetRedirectClientAtEnd::class,
             ($this->setRedirectClientAtEnd)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClientInterface::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ClientInterface::class),
                 'foo',
                 123
             )

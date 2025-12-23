@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environ
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -50,11 +51,11 @@ class CreateSecretServiceAccountTokenTest extends TestCase
 {
     private CreateSecretServiceAccountToken $createSecret;
 
-    private Client&MockObject $client;
+    private Client&Stub $client;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
-    private SleepServiceInterface&MockObject $sleepService;
+    private SleepServiceInterface&Stub $sleepService;
 
     private int $secretWaitingTime;
 
@@ -67,17 +68,17 @@ class CreateSecretServiceAccountTokenTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createMock(Client::class);
+        $this->client = $this->createStub(Client::class);
         $this->client
             ->method('__call')
             ->willReturnCallback(
-                fn (string $name): MockObject => match ($name) {
-                    'secrets' => $this->createMock(SecretRepository::class),
+                fn (string $name): Stub => match ($name) {
+                    'secrets' => $this->createStub(SecretRepository::class),
                 }
             );
 
-        $this->datesService = $this->createMock(DatesService::class);
-        $this->sleepService = $this->createMock(SleepServiceInterface::class);
+        $this->datesService = $this->createStub(DatesService::class);
+        $this->sleepService = $this->createStub(SleepServiceInterface::class);
         $this->secretWaitingTime = 42;
         $this->preferRealDate = true;
         $this->createSecret = new CreateSecretServiceAccountToken(
@@ -107,11 +108,11 @@ class CreateSecretServiceAccountTokenTest extends TestCase
         $this->assertInstanceOf(
             CreateSecretServiceAccountToken::class,
             ($this->createSecret)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
                 serviceName: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )
         );

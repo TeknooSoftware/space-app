@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountRegistry;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -35,6 +36,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Loader\AccountRegistryLoader;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadRegistrysTest.
@@ -62,13 +64,14 @@ class LoadRegistryCredentialTest extends TestCase
         $this->loadRegistryCredential = new LoadRegistryCredential($this->loader);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadRegistryCredential::class,
             ($this->loadRegistryCredential)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Account::class),
                 true,
             ),
         );
@@ -119,7 +122,7 @@ class LoadRegistryCredentialTest extends TestCase
 
     public function testInvokeWithSuccessfulLoad(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $registry = $this->createMock(AccountRegistry::class);
         $registry->expects($this->once())
             ->method('getRegistryNamespace')
@@ -156,7 +159,7 @@ class LoadRegistryCredentialTest extends TestCase
 
     public function testInvokeWithErrorOnLoad(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $originalException = new RuntimeException('Fetch failed', 500);
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -190,7 +193,7 @@ class LoadRegistryCredentialTest extends TestCase
 
     public function testInvokeWithErrorOnLoadAndZeroCode(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $originalException = new RuntimeException('Fetch failed', 0);
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -224,7 +227,7 @@ class LoadRegistryCredentialTest extends TestCase
 
     public function testInvokeWithAllowEmptyCredentialsAndAccount(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $registry = $this->createMock(AccountRegistry::class);
         $registry->expects($this->once())
             ->method('getRegistryNamespace')

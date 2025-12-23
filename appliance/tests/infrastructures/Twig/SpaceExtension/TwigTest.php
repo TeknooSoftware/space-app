@@ -27,10 +27,12 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\SpaceExtension;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Extension\ManagerInterface;
 use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig;
 use Twig\Environment;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -67,7 +69,7 @@ class TwigTest extends TestCase
             ->willReturnSelf();
 
         $ext = $this->twig->run(
-            $this->createMock(Environment::class),
+            $this->createStub(Environment::class),
             'boo'
         );
 
@@ -75,11 +77,13 @@ class TwigTest extends TestCase
         $this->assertnotSame($ext, $this->twig);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoad(): void
     {
         $this->assertInstanceOf(Twig::class, $this->twig->load(fn (): null => null));
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRender(): void
     {
         $this->assertIsString($this->twig->render());

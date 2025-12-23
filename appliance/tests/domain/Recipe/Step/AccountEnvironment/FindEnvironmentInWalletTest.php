@@ -60,8 +60,8 @@ class FindEnvironmentInWalletTest extends TestCase
         $this->assertInstanceOf(
             FindEnvironmentInWallet::class,
             ($this->extractResumes)(
-                manager: $this->createMock(ManagerInterface::class),
-                wallet: $this->createMock(AccountWallet::class),
+                manager: $this->createStub(ManagerInterface::class),
+                wallet: $this->createStub(AccountWallet::class),
                 envName: 'foo',
                 clusterName: 'bar',
             ),
@@ -70,7 +70,7 @@ class FindEnvironmentInWalletTest extends TestCase
 
     public function testInvokeWithWalletGetAndUpdateWorkPlan(): void
     {
-        $environment = $this->createMock(AccountEnvironment::class);
+        $environment = $this->createStub(AccountEnvironment::class);
         $wallet = $this->createMock(AccountWallet::class);
         $wallet->expects($this->once())
             ->method('get')

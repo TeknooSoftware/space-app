@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Infrastructures\Twig\Extension\SpaceExtension;
 use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig as TwigExtension;
@@ -43,7 +44,7 @@ class SpaceExtensionTest extends TestCase
 {
     private SpaceExtension $spaceExtension;
 
-    private TwigExtension&MockObject $twig;
+    private TwigExtension&Stub $twig;
 
     /**
      * {@inheritdoc}
@@ -52,7 +53,7 @@ class SpaceExtensionTest extends TestCase
     {
         parent::setUp();
 
-        $this->twig = $this->createMock(TwigExtension::class);
+        $this->twig = $this->createStub(TwigExtension::class);
 
         $this->spaceExtension = new SpaceExtension(
             $this->twig
@@ -63,7 +64,7 @@ class SpaceExtensionTest extends TestCase
     {
         $this->assertIsString(
             $this->spaceExtension->runExtension(
-                $this->createMock(Environment::class),
+                $this->createStub(Environment::class),
                 'foo'
             )
         );

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountEnvironmentRepositoryInterface;
 use Teknoo\Space\Loader\AccountEnvironmentLoader;
@@ -45,7 +46,7 @@ class AccountEnvironmentLoaderTest extends TestCase
 {
     private AccountEnvironmentLoader $accountEnvironmentLoader;
 
-    private AccountEnvironmentRepositoryInterface&MockObject $repository;
+    private AccountEnvironmentRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class AccountEnvironmentLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(AccountEnvironmentRepositoryInterface::class);
+        $this->repository = $this->createStub(AccountEnvironmentRepositoryInterface::class);
         $this->accountEnvironmentLoader = new AccountEnvironmentLoader($this->repository);
     }
 

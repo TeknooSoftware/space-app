@@ -63,17 +63,17 @@ class ProjectVarsMapperTest extends TestCase
 
     public function testMapDataToForms(): void
     {
-        $project = new SpaceProject($this->createMock(Project::class));
+        $project = new SpaceProject($this->createStub(Project::class));
         $project->variables = [
-            $this->createMock(ProjectPersistedVariable::class),
-            $this->createMock(ProjectPersistedVariable::class),
+            $this->createStub(ProjectPersistedVariable::class),
+            $this->createStub(ProjectPersistedVariable::class),
         ];
 
         $this->projectVarsType->mapDataToForms(
             $project,
             new ArrayIterator(
                 [
-                    'sets' => $this->createMock(FormInterface::class),
+                    'sets' => $this->createStub(FormInterface::class),
                 ]
             ),
         );
@@ -83,13 +83,13 @@ class ProjectVarsMapperTest extends TestCase
 
     public function testMapFormsToData(): void
     {
-        $project = new SpaceProject($this->createMock(Project::class));
+        $project = new SpaceProject($this->createStub(Project::class));
         $project->variables = [
-            $this->createMock(ProjectPersistedVariable::class),
-            $this->createMock(ProjectPersistedVariable::class),
+            $this->createStub(ProjectPersistedVariable::class),
+            $this->createStub(ProjectPersistedVariable::class),
         ];
 
-        $form = $this->createMock(FormInterface::class);
+        $form = $this->createStub(FormInterface::class);
         $form
             ->method('getData')
             ->willReturn(
@@ -105,7 +105,7 @@ class ProjectVarsMapperTest extends TestCase
                                 secret: true,
                                 wasSecret: true,
                                 encryptionAlgorithm: 'rsa',
-                                persistedVar: $this->createMock(ProjectPersistedVariable::class),
+                                persistedVar: $this->createStub(ProjectPersistedVariable::class),
                             ),
                             new JobVar(
                                 id: null,
@@ -114,7 +114,7 @@ class ProjectVarsMapperTest extends TestCase
                                 persisted: true,
                                 secret: true,
                                 wasSecret: false,
-                                persistedVar: $this->createMock(ProjectPersistedVariable::class),
+                                persistedVar: $this->createStub(ProjectPersistedVariable::class),
                             ),
                         ]
                     )

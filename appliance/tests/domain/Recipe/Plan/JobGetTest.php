@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -55,21 +56,21 @@ class JobGetTest extends TestCase
 {
     private JobGet $jobGet;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private ExtractProject&MockObject $extractProject;
+    private ExtractProject&Stub $extractProject;
 
-    private LoadProjectMetadata&MockObject $loadProjectMetadata;
+    private LoadProjectMetadata&Stub $loadProjectMetadata;
 
-    private InjectToViewMetadata&MockObject $injectToViewMetadata;
+    private InjectToViewMetadata&Stub $injectToViewMetadata;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -80,14 +81,14 @@ class JobGetTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->extractProject = $this->createMock(ExtractProject::class);
-        $this->loadProjectMetadata = $this->createMock(LoadProjectMetadata::class);
-        $this->injectToViewMetadata = $this->createMock(InjectToViewMetadata::class);
-        $this->render = $this->createMock(Render::class);
-        $this->renderError = $this->createMock(RenderError::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->extractProject = $this->createStub(ExtractProject::class);
+        $this->loadProjectMetadata = $this->createStub(LoadProjectMetadata::class);
+        $this->injectToViewMetadata = $this->createStub(InjectToViewMetadata::class);
+        $this->render = $this->createStub(Render::class);
+        $this->renderError = $this->createStub(RenderError::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->jobGet = new JobGet(
             recipe: $this->recipe,
@@ -115,7 +116,7 @@ class JobGetTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->jobGet->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

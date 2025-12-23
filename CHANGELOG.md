@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.1] - 2025-12-23
+### Stable Release
+- Support Symfony 7.4 and 8+
+  - Drop support of Symfony 7.3 (EOL)
+- Migrate in Symfony Bundle config files from Resources/config to config.
+- Fix methods signatures about Dependency Injection in Symfony Bundle
+- Fix bc break introduced into patch of phpstan and phpunit
+- Support PHPStan 2.1.33+
+- Support PHPUnit 12.5.3+
+
 ## [2.0.0] - 2025-11-12
 ### Stable Release
 - Drop support of PHP 8.3

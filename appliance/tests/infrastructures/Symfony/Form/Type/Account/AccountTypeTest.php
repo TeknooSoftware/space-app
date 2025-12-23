@@ -56,22 +56,18 @@ class AccountTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            AccountType::class,
-            $this->accountType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->accountType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            AccountType::class,
-            $this->accountType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->accountType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

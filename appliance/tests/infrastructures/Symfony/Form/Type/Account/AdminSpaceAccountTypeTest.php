@@ -57,22 +57,18 @@ class AdminSpaceAccountTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            AdminSpaceAccountType::class,
-            $this->adminSpaceAccountType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar', 'doctrine_type' => 'odm', 'namespaceIsReadonly' => true,],
-            ),
+        $this->adminSpaceAccountType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar', 'doctrine_type' => 'odm', 'namespaceIsReadonly' => true,],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            AdminSpaceAccountType::class,
-            $this->adminSpaceAccountType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->adminSpaceAccountType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

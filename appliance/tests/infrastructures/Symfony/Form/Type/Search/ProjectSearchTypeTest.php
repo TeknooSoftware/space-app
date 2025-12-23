@@ -61,22 +61,18 @@ class ProjectSearchTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            ProjectSearchType::class,
-            $this->projectSearchType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->projectSearchType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            ProjectSearchType::class,
-            $this->projectSearchType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->projectSearchType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

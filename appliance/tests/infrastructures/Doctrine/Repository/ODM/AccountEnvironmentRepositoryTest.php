@@ -25,9 +25,11 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Doctrine\Repository\ODM;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Doctrine\Repository\ODM\AccountEnvironmentRepository;
 use Teknoo\Tests\East\Common\Doctrine\DBSource\ODM\RepositoryTestTrait;
 
@@ -50,5 +52,65 @@ class AccountEnvironmentRepositoryTest extends TestCase
     public function buildRepository(): RepositoryInterface
     {
         return new AccountEnvironmentRepository($this->getDoctrineObjectRepositoryMock());
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindBadId(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->find(new \stdClass(), $this->createStub(PromiseInterface::class));
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindBadPromise(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->find('abc', new \stdClass());
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindAllBadPromise(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->findAll(new \stdClass());
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindByBadCriteria(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->findBy(new \stdClass(), $this->createStub(PromiseInterface::class));
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindByBadPromise(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->findBy(['foo' => 'bar'], new \stdClass());
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindByBadOrder(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->findBy(
+            ['foo' => 'bar'],
+            $this->createStub(PromiseInterface::class),
+            new \stdClass()
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindOneByBadCriteria(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->findOneBy(new \stdClass(), $this->createStub(PromiseInterface::class));
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testFindOneByBadPromise(): void
+    {
+        $this->expectException(\TypeError::class);
+        $this->buildRepository()->findOneBy(['foo' => 'bar'], new \stdClass());
     }
 }

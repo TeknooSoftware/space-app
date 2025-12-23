@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
@@ -48,7 +49,7 @@ class PrepareFormTest extends TestCase
 {
     private PrepareForm $prepareForm;
 
-    private SubscriptionPlanCatalog&MockObject $subscriptionPlanCatalog;
+    private SubscriptionPlanCatalog&Stub $subscriptionPlanCatalog;
 
     /**
      * {@inheritdoc}
@@ -57,7 +58,7 @@ class PrepareFormTest extends TestCase
     {
         parent::setUp();
 
-        $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
+        $this->subscriptionPlanCatalog = $this->createStub(SubscriptionPlanCatalog::class);
 
         $this->prepareForm = new PrepareForm(
             $this->subscriptionPlanCatalog,
@@ -69,10 +70,10 @@ class PrepareFormTest extends TestCase
         $this->assertInstanceOf(
             PrepareForm::class,
             ($this->prepareForm)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ClusterCatalog::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ClusterCatalog::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 [],

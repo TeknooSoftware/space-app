@@ -1,20 +1,20 @@
 prefix_east_common_admin:
-    resource: '@TeknooEastCommonBundle/Resources/config/admin_routing.yaml'
+    resource: '@TeknooEastCommonBundle/config/admin_routing.yaml'
     prefix: '/admin'
 
 prefix_east_common_2fa:
-    resource: '@TeknooEastCommonBundle/Resources/config/2fa_routing.yaml'
+    resource: '@TeknooEastCommonBundle/config/2fa_routing.yaml'
     prefix: '/'
 
 prefix_east_common_routing:
-    resource: '@TeknooEastCommonBundle/Resources/config/assets_routing.yaml'
+    resource: '@TeknooEastCommonBundle/config/assets_routing.yaml'
     prefix: '/build'
 
 prefix_east_common_user_recovery:
-    resource: '@TeknooEastCommonBundle/Resources/config/user_recovery_routing.yaml'
+    resource: '@TeknooEastCommonBundle/config/user_recovery_routing.yaml'
     prefix: '/account'
 
 prefix_east_common:
-    resource: '@TeknooEastCommonBundle/Resources/config/routing.yaml'
+    resource: '@TeknooEastCommonBundle/config/routing.yaml'
     prefix: '/'
 

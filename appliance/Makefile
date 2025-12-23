@@ -113,7 +113,7 @@ phpstan: 	## To run code analyze with PHPStan to prevent bugs
 	${PHP} -d memory_limit=256M vendor/bin/phpstan analyse
 
 phpcs: 		## To check if the code follow the PSR 12
-	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=config/secrets domain/ src/ infrastructures/ tests/ config/ extensions/
+	${PHP} vendor/bin/phpcs --standard=PSR12 --extensions=php --ignore=config/secrets,config/reference.php domain/ src/ infrastructures/ tests/ config/ extensions/
 
 audit: 		## Run an audit on vendors to detect CVE and deprecated libraries
 	${COMPOSER} audit

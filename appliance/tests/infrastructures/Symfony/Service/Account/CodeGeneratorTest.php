@@ -63,7 +63,7 @@ class CodeGeneratorTest extends TestCase
             $this->codeGenerator->verify(
                 'foo',
                 'bar',
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }
@@ -74,7 +74,7 @@ class CodeGeneratorTest extends TestCase
             CodeGenerator::class,
             $this->codeGenerator->generateCode(
                 'foo',
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(PromiseInterface::class),
             )
         );
     }

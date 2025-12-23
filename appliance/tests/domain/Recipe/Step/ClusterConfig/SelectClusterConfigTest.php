@@ -60,8 +60,8 @@ class SelectClusterConfigTest extends TestCase
         $this->assertInstanceOf(
             SelectClusterConfig::class,
             ($this->selectClusterConfig)(
-                $this->createMock(ManagerInterface::class),
-                new ClusterCatalog(['foo' => $this->createMock(Cluster::class)], []),
+                $this->createStub(ManagerInterface::class),
+                new ClusterCatalog(['foo' => $this->createStub(Cluster::class)], []),
                 'foo',
             ),
         );

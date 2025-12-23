@@ -60,8 +60,8 @@ class PrepareCriteriaTest extends TestCase
         $this->assertInstanceOf(
             PrepareCriteria::class,
             ($this->prepareCriteria)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Account::class),
                 ['foo' => 'bar'],
             )
         );

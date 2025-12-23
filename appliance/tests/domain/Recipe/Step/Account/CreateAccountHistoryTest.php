@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -34,6 +35,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Writer\AccountHistoryWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class CreateAccountHistoryTest.
@@ -71,22 +73,23 @@ class CreateAccountHistoryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             CreateAccountHistory::class,
             ($this->createAccountHistory)(
-                manager: $this->createMock(ManagerInterface::class),
-                accountInstance: $this->createMock(Account::class),
+                manager: $this->createStub(ManagerInterface::class),
+                accountInstance: $this->createStub(Account::class),
                 accountNamespace: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
             ),
         );
     }
 
     public function testInvokeWithExistingAccountHistory(): void
     {
-        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory = $this->createStub(AccountHistory::class);
 
         $this->writer->expects($this->never())->method('save');
         $this->datesService->expects($this->never())->method('passMeTheDate');
@@ -98,7 +101,7 @@ class CreateAccountHistoryTest extends TestCase
             CreateAccountHistory::class,
             ($this->createAccountHistory)(
                 manager: $manager,
-                accountInstance: $this->createMock(Account::class),
+                accountInstance: $this->createStub(Account::class),
                 accountNamespace: 'test-namespace',
                 accountHistory: $accountHistory,
             ),
@@ -107,7 +110,7 @@ class CreateAccountHistoryTest extends TestCase
 
     public function testInvokeWithNullAccountHistory(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $this->datesService->expects($this->once())
             ->method('passMeTheDate')
@@ -150,7 +153,7 @@ class CreateAccountHistoryTest extends TestCase
             false
         );
 
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $this->datesService->expects($this->once())
             ->method('passMeTheDate')

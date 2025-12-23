@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -39,6 +40,7 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class loadEnvironmentsTest.
@@ -66,13 +68,14 @@ class LoadEnvironmentsTest extends TestCase
         $this->loadEnvironments = new LoadEnvironments($this->loader);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadEnvironments::class,
             ($this->loadEnvironments)(
-                manager: $this->createMock(ManagerInterface::class),
-                accountInstance: $this->createMock(Account::class),
+                manager: $this->createStub(ManagerInterface::class),
+                accountInstance: $this->createStub(Account::class),
                 allowEmptyCredentials: true,
             ),
         );
@@ -80,7 +83,7 @@ class LoadEnvironmentsTest extends TestCase
 
     public function testInvokeWithSpaceAccount(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $spaceAccount = new SpaceAccount($account);
 
         $this->loader->expects($this->once())
@@ -95,7 +98,7 @@ class LoadEnvironmentsTest extends TestCase
         $this->assertInstanceOf(
             LoadEnvironments::class,
             ($this->loadEnvironments)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 accountInstance: $spaceAccount,
                 allowEmptyCredentials: false,
             ),
@@ -146,9 +149,9 @@ class LoadEnvironmentsTest extends TestCase
 
     public function testInvokeWithSuccessPromise(): void
     {
-        $account = $this->createMock(Account::class);
-        $env1 = $this->createMock(AccountEnvironment::class);
-        $env2 = $this->createMock(AccountEnvironment::class);
+        $account = $this->createStub(Account::class);
+        $env1 = $this->createStub(AccountEnvironment::class);
+        $env2 = $this->createStub(AccountEnvironment::class);
         $environments = [$env1, $env2];
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -183,7 +186,7 @@ class LoadEnvironmentsTest extends TestCase
 
     public function testInvokeWithErrorPromiseAndAllowEmptyCredentials(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -218,7 +221,7 @@ class LoadEnvironmentsTest extends TestCase
 
     public function testInvokeWithErrorPromiseAndNoAllowEmptyCredentials(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->never())->method('updateWorkPlan');
@@ -255,7 +258,7 @@ class LoadEnvironmentsTest extends TestCase
 
     public function testInvokeWithErrorPromiseWithErrorCode(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -289,7 +292,7 @@ class LoadEnvironmentsTest extends TestCase
 
     public function testInvokeWithEmptyCredentialsArray(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())

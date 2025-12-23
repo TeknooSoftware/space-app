@@ -53,7 +53,7 @@ class SubscriptionPlanCatalogTest extends TestCase
         parent::setUp();
 
         $this->catalog = new SubscriptionPlanCatalog(
-            ['Foo' => $this->createMock(SubscriptionPlan::class)],
+            ['Foo' => $this->createStub(SubscriptionPlan::class)],
         );
     }
 
@@ -67,7 +67,7 @@ class SubscriptionPlanCatalogTest extends TestCase
 
     public function testGetSubscriptionPlan(): void
     {
-        $plan = $this->createMock(SubscriptionPlan::class);
+        $plan = $this->createStub(SubscriptionPlan::class);
         $catalog = new SubscriptionPlanCatalog(
             ['TestPlan' => $plan],
         );
@@ -78,7 +78,7 @@ class SubscriptionPlanCatalogTest extends TestCase
     public function testGetSubscriptionPlanThrowsException(): void
     {
         $catalog = new SubscriptionPlanCatalog(
-            ['TestPlan' => $this->createMock(SubscriptionPlan::class)],
+            ['TestPlan' => $this->createStub(SubscriptionPlan::class)],
         );
 
         $this->expectException(\DomainException::class);

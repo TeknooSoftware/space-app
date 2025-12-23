@@ -60,7 +60,7 @@ class PrepareProjectTest extends TestCase
     public function testInvoke(): void
     {
         $accountRegistry = $this->createMock(AccountRegistry::class);
-        $accountRegistry->expects($this->any())
+        $accountRegistry
             ->method('getRegistryUrl')
             ->willReturn('https://registry.example.com');
         $accountRegistry->expects($this->once())
@@ -84,7 +84,7 @@ class PrepareProjectTest extends TestCase
         $this->assertInstanceOf(
             PrepareProject::class,
             ($this->prepareProject)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 projectInstance: $project,
                 accountRegistry: $accountRegistry,
             ),

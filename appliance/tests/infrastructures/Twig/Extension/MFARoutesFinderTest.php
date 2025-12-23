@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder;
@@ -42,7 +43,7 @@ use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder;
 #[CoversClass(MFARoutesFinder::class)]
 class MFARoutesFinderTest extends TestCase
 {
-    private UserInterface&MockObject $user;
+    private UserInterface&Stub $user;
 
     private MFARoutesFinder $mFARoutesFinder;
 
@@ -53,7 +54,7 @@ class MFARoutesFinderTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = $this->createMock(UserInterface::class);
+        $this->user = $this->createStub(UserInterface::class);
         $this->mFARoutesFinder = new MFARoutesFinder(
             'generic',
             [

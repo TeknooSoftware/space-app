@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -52,9 +53,9 @@ class CallNewJobTest extends TestCase
 {
     private CallNewJob $callNewJob;
 
-    private MessageBusInterface&MockObject $messageBus;
+    private MessageBusInterface&Stub $messageBus;
 
-    private EncryptionInterface&MockObject $encryption;
+    private EncryptionInterface&Stub $encryption;
 
     /**
      * {@inheritdoc}
@@ -63,8 +64,8 @@ class CallNewJobTest extends TestCase
     {
         parent::setUp();
 
-        $this->messageBus = $this->createMock(MessageBusInterface::class);
-        $this->encryption = $this->createMock(EncryptionInterface::class);
+        $this->messageBus = $this->createStub(MessageBusInterface::class);
+        $this->encryption = $this->createStub(EncryptionInterface::class);
         $this->callNewJob = new CallNewJob(
             $this->messageBus,
             $this->encryption,
@@ -87,10 +88,10 @@ class CallNewJobTest extends TestCase
         $this->assertInstanceOf(
             CallNewJob::class,
             ($this->callNewJob)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 $newJob,
-                new SpaceProject($this->createMock(Project::class)),
-                $this->createMock(ParametersBag::class),
+                new SpaceProject($this->createStub(Project::class)),
+                $this->createStub(ParametersBag::class),
             )
         );
     }

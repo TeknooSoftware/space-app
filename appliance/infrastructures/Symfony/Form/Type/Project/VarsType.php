@@ -48,7 +48,7 @@ class VarsType extends AbstractType
         return 'project_vars';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -68,11 +68,9 @@ class VarsType extends AbstractType
         );
 
         $builder->setDataMapper(new ProjectVarsMapper());
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -82,7 +80,5 @@ class VarsType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('environmentsList', ['array']);
-
-        return $this;
     }
 }

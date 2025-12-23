@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Query\Expr\ObjectReference;
 use Teknoo\East\Common\View\ParametersBag;
@@ -34,6 +35,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Recipe\Step\Job\PrepareCriteria;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class PrepareCriteriaTest.
@@ -64,13 +66,14 @@ class PrepareCriteriaTest extends TestCase
         $this->assertInstanceOf(
             PrepareCriteria::class,
             ($this->prepareCriteria)(
-                project: new SpaceProject($this->createMock(Project::class)),
-                manager: $this->createMock(ManagerInterface::class),
-                bag: $this->createMock(ParametersBag::class),
+                project: new SpaceProject($this->createStub(Project::class)),
+                manager: $this->createStub(ManagerInterface::class),
+                bag: $this->createStub(ParametersBag::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithEmptyCriteria(): void
     {
         $project = $this->createMock(Project::class);
@@ -117,7 +120,7 @@ class PrepareCriteriaTest extends TestCase
 
     public function testInvokeWithExistingCriteria(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = $this->createMock(SpaceProject::class);
         $spaceProject->project = $project;
         $spaceProject->expects($this->once())
@@ -165,7 +168,7 @@ class PrepareCriteriaTest extends TestCase
 
     public function testInvokeWithCriteriaContainingProject(): void
     {
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
         $spaceProject = $this->createMock(SpaceProject::class);
         $spaceProject->project = $project;
         $spaceProject->expects($this->once())

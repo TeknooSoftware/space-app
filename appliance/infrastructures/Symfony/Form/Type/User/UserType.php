@@ -43,7 +43,7 @@ class UserType extends PasswordType
      * @param array<string, mixed> $options
      */
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'firstName',
@@ -73,7 +73,5 @@ class UserType extends PasswordType
         );
 
         parent::buildForm($builder, $options);
-
-        return $this;
     }
 }

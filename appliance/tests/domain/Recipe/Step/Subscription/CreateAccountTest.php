@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Subscription;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -50,7 +51,7 @@ class CreateAccountTest extends TestCase
 {
     private CreateAccount $createAccount;
 
-    private SpaceAccountWriter&MockObject $accountWriter;
+    private SpaceAccountWriter&Stub $accountWriter;
 
     /**
      * {@inheritdoc}
@@ -59,23 +60,23 @@ class CreateAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountWriter = $this->createMock(SpaceAccountWriter::class);
+        $this->accountWriter = $this->createStub(SpaceAccountWriter::class);
         $this->createAccount = new CreateAccount($this->accountWriter);
     }
 
     public function testInvoke(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $subscription = new SpaceSubscription(
             new SpaceUser($user),
-            new SpaceAccount($this->createMock(Account::class))
+            new SpaceAccount($this->createStub(Account::class))
         );
         $this->assertInstanceOf(
             CreateAccount::class,
             ($this->createAccount)(
                 $subscription,
                 $user,
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
             ),
         );
     }

@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Mercure;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mercure\HubInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
@@ -45,7 +46,7 @@ class JobErrorPublisherTest extends TestCase
 {
     private JobErrorPublisher $jobErrorPublisher;
 
-    private HubInterface&MockObject $hub;
+    private HubInterface&Stub $hub;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class JobErrorPublisherTest extends TestCase
     {
         parent::setUp();
 
-        $this->hub = $this->createMock(HubInterface::class);
+        $this->hub = $this->createStub(HubInterface::class);
         $this->jobErrorPublisher = new JobErrorPublisher($this->hub);
     }
 

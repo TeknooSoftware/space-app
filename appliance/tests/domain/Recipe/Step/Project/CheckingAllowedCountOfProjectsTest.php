@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Loader\ProjectLoader;
@@ -34,6 +35,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Project\CheckingAllowedCountOfProjects;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -60,14 +62,15 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             CheckingAllowedCountOfProjects::class,
             ($this->checkingAllowedCountOfProjects)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(
@@ -94,7 +97,7 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
         $this->assertInstanceOf(
             CheckingAllowedCountOfProjects::class,
             ($this->checkingAllowedCountOfProjects)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 null,
                 new SubscriptionPlan(
                     id: 'foo',
@@ -114,9 +117,9 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
         $this->assertInstanceOf(
             CheckingAllowedCountOfProjects::class,
             ($this->checkingAllowedCountOfProjects)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 null,
@@ -132,9 +135,9 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
         $this->assertInstanceOf(
             CheckingAllowedCountOfProjects::class,
             ($this->checkingAllowedCountOfProjects)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(
@@ -160,8 +163,8 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
         $this->assertInstanceOf(
             CheckingAllowedCountOfProjects::class,
             ($this->checkingAllowedCountOfProjects)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Account::class),
                 new SubscriptionPlan(
                     id: 'foo',
                     name: 'Foo',
@@ -191,7 +194,7 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
             ($this->checkingAllowedCountOfProjects)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(
@@ -230,7 +233,7 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
             ($this->checkingAllowedCountOfProjects)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(
@@ -268,7 +271,7 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
             ($this->checkingAllowedCountOfProjects)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(
@@ -303,7 +306,7 @@ class CheckingAllowedCountOfProjectsTest extends TestCase
             ($this->checkingAllowedCountOfProjects)(
                 $manager,
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(

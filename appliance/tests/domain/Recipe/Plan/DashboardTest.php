@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Recipe\Step\Render;
@@ -54,19 +55,19 @@ class DashboardTest extends TestCase
 {
     private Dashboard $dashboard;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private HealthInterface&MockObject $health;
+    private HealthInterface&Stub $health;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private ClustersInfoInterface&MockObject $clustersInfo;
+    private ClustersInfoInterface&Stub $clustersInfo;
 
-    private ClusterAndEnvSelection&MockObject $clusterAndEnvSelection;
+    private ClusterAndEnvSelection&Stub $clusterAndEnvSelection;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -77,13 +78,13 @@ class DashboardTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->health = $this->createMock(HealthInterface::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->clustersInfo = $this->createMock(ClustersInfoInterface::class);
-        $this->clusterAndEnvSelection = $this->createMock(ClusterAndEnvSelection::class);
-        $this->render = $this->createMock(Render::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->health = $this->createStub(HealthInterface::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->clustersInfo = $this->createStub(ClustersInfoInterface::class);
+        $this->clusterAndEnvSelection = $this->createStub(ClusterAndEnvSelection::class);
+        $this->render = $this->createStub(Render::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->dashboard = new Dashboard(
             recipe: $this->recipe,
@@ -110,7 +111,7 @@ class DashboardTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->dashboard->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

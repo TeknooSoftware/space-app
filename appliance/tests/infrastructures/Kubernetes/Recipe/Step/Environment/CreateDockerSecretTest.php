@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environ
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
@@ -49,7 +50,7 @@ class CreateDockerSecretTest extends TestCase
 {
     private CreateDockerSecret $createDockerSecret;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     private bool $preferRealDate;
 
@@ -60,7 +61,7 @@ class CreateDockerSecretTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDate = true;
         $this->createDockerSecret = new CreateDockerSecret(
             $this->datesService,
@@ -80,7 +81,7 @@ class CreateDockerSecretTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -90,12 +91,12 @@ class CreateDockerSecretTest extends TestCase
         $this->assertInstanceOf(
             CreateDockerSecret::class,
             ($this->createDockerSecret)(
-                $this->createMock(Account::class),
-                $this->createMock(AccountHistory::class),
-                $this->createMock(AccountRegistry::class),
+                $this->createStub(Account::class),
+                $this->createStub(AccountHistory::class),
+                $this->createStub(AccountRegistry::class),
                 'foo',
                 'foo',
-                $this->createMock(ClusterConfig::class),
+                $this->createStub(ClusterConfig::class),
             )
         );
     }

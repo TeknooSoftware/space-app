@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -59,29 +60,29 @@ class RefreshProjectCredentialsTest extends TestCase
 {
     private RefreshProjectCredentials $refreshProjectCredentials;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
-    private LoadAccountFromProject&MockObject $loadAccountFromProject;
+    private LoadAccountFromProject&Stub $loadAccountFromProject;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private LoadAccountClusters&MockObject $loadAccountClusters;
+    private LoadAccountClusters&Stub $loadAccountClusters;
 
-    private LoadRegistryCredential&MockObject $loadRegistryCredential;
+    private LoadRegistryCredential&Stub $loadRegistryCredential;
 
-    private UpdateProjectCredentialsFromAccount&MockObject $updateProjectCredentialsFromAccount;
+    private UpdateProjectCredentialsFromAccount&Stub $updateProjectCredentialsFromAccount;
 
-    private SaveObject&MockObject $saveObject;
+    private SaveObject&Stub $saveObject;
 
-    private PrepareRedirection&MockObject $spaceProjectPrepareRedirection;
+    private PrepareRedirection&Stub $spaceProjectPrepareRedirection;
 
-    private RedirectClientInterface&MockObject $redirectClient;
+    private RedirectClientInterface&Stub $redirectClient;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -92,18 +93,18 @@ class RefreshProjectCredentialsTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
-        $this->loadAccountFromProject = $this->createMock(LoadAccountFromProject::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
-        $this->loadRegistryCredential = $this->createMock(LoadRegistryCredential::class);
-        $this->updateProjectCredentialsFromAccount = $this->createMock(UpdateProjectCredentialsFromAccount::class);
-        $this->saveObject = $this->createMock(SaveObject::class);
-        $this->spaceProjectPrepareRedirection = $this->createMock(PrepareRedirection::class);
-        $this->redirectClient = $this->createMock(RedirectClientInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
+        $this->loadAccountFromProject = $this->createStub(LoadAccountFromProject::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->loadAccountClusters = $this->createStub(LoadAccountClusters::class);
+        $this->loadRegistryCredential = $this->createStub(LoadRegistryCredential::class);
+        $this->updateProjectCredentialsFromAccount = $this->createStub(UpdateProjectCredentialsFromAccount::class);
+        $this->saveObject = $this->createStub(SaveObject::class);
+        $this->spaceProjectPrepareRedirection = $this->createStub(PrepareRedirection::class);
+        $this->redirectClient = $this->createStub(RedirectClientInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
         $this->refreshProjectCredentials = new RefreshProjectCredentials(
             recipe: $this->recipe,
@@ -135,7 +136,7 @@ class RefreshProjectCredentialsTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->refreshProjectCredentials->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

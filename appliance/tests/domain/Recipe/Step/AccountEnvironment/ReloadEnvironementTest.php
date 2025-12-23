@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -58,8 +59,8 @@ class ReloadEnvironementTest extends TestCase
         $this->assertInstanceOf(
             ReloadEnvironement::class,
             ($this->reloadEnvironement)(
-                manager: $this->createMock(ManagerInterface::class),
-                environment: $this->createMock(AccountEnvironment::class),
+                manager: $this->createStub(ManagerInterface::class),
+                environment: $this->createStub(AccountEnvironment::class),
             ),
         );
     }

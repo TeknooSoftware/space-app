@@ -60,7 +60,7 @@ class UserDataType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'picture',
@@ -184,18 +184,14 @@ class UserDataType extends AbstractType
                 }
             }
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
             'data_class' => UserData::class,
         ]);
-
-        return $this;
     }
 }

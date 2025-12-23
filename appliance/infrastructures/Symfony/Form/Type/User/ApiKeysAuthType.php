@@ -66,16 +66,16 @@ class ApiKeysAuthType extends AbstractType
     ) {
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $sfToken = $this->tokenStorage->getToken();
         if (!$sfToken instanceof TokenInterface) {
-            return $this;
+            return;
         }
 
         $symfonyUser = $sfToken->getUser();
         if (!$symfonyUser instanceof AbstractUser) {
-            return $this;
+            return;
         }
 
         $user = $symfonyUser->getWrappedUser();
@@ -91,10 +91,8 @@ class ApiKeysAuthType extends AbstractType
                 ],
                 'constraints' => [
                     new Regex(
-                        [
-                            'pattern' => '/^[a-z][a-z0-9\_\-]{3,}$/',
-                            'message' => 'teknoo.space.form.user.api_key.name.regex_error',
-                        ]
+                        pattern: '/^[a-z][a-z0-9\_\-]{3,}$/',
+                        message: 'teknoo.space.form.user.api_key.name.regex_error',
                     ),
                     new Callback(
                         callback: function (string $name, ExecutionContext $context, User $payload) {
@@ -159,19 +157,14 @@ class ApiKeysAuthType extends AbstractType
                 );
             }
         );
-
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
             'data_class' => ApiKeyToken::class,
         ]);
-
-        return $this;
     }
 }

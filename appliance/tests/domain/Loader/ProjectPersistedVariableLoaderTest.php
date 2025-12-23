@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\PersistedVariableRepositoryInterface;
 use Teknoo\Space\Loader\ProjectPersistedVariableLoader;
@@ -46,9 +47,9 @@ class ProjectPersistedVariableLoaderTest extends TestCase
 {
     private ProjectPersistedVariableLoader $persistedVariableLoader;
 
-    private PersistedVariableRepositoryInterface&MockObject $repository;
+    private PersistedVariableRepositoryInterface&Stub $repository;
 
-    private PersistedVariableEncryption&MockObject $persistedVariableEncryption;
+    private PersistedVariableEncryption&Stub $persistedVariableEncryption;
 
     /**
      * {@inheritdoc}
@@ -57,8 +58,8 @@ class ProjectPersistedVariableLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(PersistedVariableRepositoryInterface::class);
-        $this->persistedVariableEncryption = $this->createMock(PersistedVariableEncryption::class);
+        $this->repository = $this->createStub(PersistedVariableRepositoryInterface::class);
+        $this->persistedVariableEncryption = $this->createStub(PersistedVariableEncryption::class);
         $this->persistedVariableLoader = new ProjectPersistedVariableLoader(
             $this->repository,
             $this->persistedVariableEncryption,

@@ -57,22 +57,18 @@ class PasswordTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            PasswordType::class,
-            $this->passwordType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar'],
-            ),
+        $this->passwordType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar'],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            PasswordType::class,
-            $this->passwordType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->passwordType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

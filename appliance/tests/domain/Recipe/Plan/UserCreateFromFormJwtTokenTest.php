@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
@@ -56,23 +57,23 @@ class UserCreateFromFormJwtTokenTest extends TestCase
 {
     private UserCreateFromFormJwtToken $userGetJwtToken;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private CreateObject&MockObject $createObject;
+    private CreateObject&Stub $createObject;
 
-    private FormHandlingInterface&MockObject $formHandling;
+    private FormHandlingInterface&Stub $formHandling;
 
-    private FormProcessingInterface&MockObject $formProcessing;
+    private FormProcessingInterface&Stub $formProcessing;
 
-    private JwtCreateTokenInterface&MockObject $jwtCreateToken;
+    private JwtCreateTokenInterface&Stub $jwtCreateToken;
 
-    private Stop&MockObject $stop;
+    private Stop&Stub $stop;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private RenderFormInterface&MockObject $renderForm;
+    private RenderFormInterface&Stub $renderForm;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -83,15 +84,15 @@ class UserCreateFromFormJwtTokenTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->createObject = $this->createMock(CreateObject::class);
-        $this->formHandling = $this->createMock(FormHandlingInterface::class);
-        $this->formProcessing = $this->createMock(FormProcessingInterface::class);
-        $this->jwtCreateToken = $this->createMock(JwtCreateTokenInterface::class);
-        $this->stop = $this->createMock(Stop::class);
-        $this->render = $this->createMock(Render::class);
-        $this->renderForm = $this->createMock(RenderFormInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->createObject = $this->createStub(CreateObject::class);
+        $this->formHandling = $this->createStub(FormHandlingInterface::class);
+        $this->formProcessing = $this->createStub(FormProcessingInterface::class);
+        $this->jwtCreateToken = $this->createStub(JwtCreateTokenInterface::class);
+        $this->stop = $this->createStub(Stop::class);
+        $this->render = $this->createStub(Render::class);
+        $this->renderForm = $this->createStub(RenderFormInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
 
         $this->userGetJwtToken = new UserCreateFromFormJwtToken(
@@ -121,7 +122,7 @@ class UserCreateFromFormJwtTokenTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->userGetJwtToken->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

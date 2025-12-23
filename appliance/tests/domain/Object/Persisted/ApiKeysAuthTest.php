@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Object\Persisted;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\Persisted\ApiKeyToken;
 use Teknoo\Space\Object\Persisted\ApiKeysAuth;
@@ -40,9 +41,9 @@ use Teknoo\Space\Object\Persisted\ApiKeysAuth;
 #[CoversClass(ApiKeysAuth::class)]
 class ApiKeysAuthTest extends TestCase
 {
-    private function createToken(string $name): ApiKeyToken&MockObject
+    private function createToken(string $name): ApiKeyToken&Stub
     {
-        $t = $this->createMock(ApiKeyToken::class);
+        $t = $this->createStub(ApiKeyToken::class);
         $t->method('getName')->willReturn($name);
 
         return $t;

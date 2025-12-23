@@ -72,8 +72,8 @@ class ListCommandTest extends TestCase
     {
         $this->assertIsInt(
             $this->listCommand->run(
-                $this->createMock(InputInterface::class),
-                $this->createMock(OutputInterface::class),
+                $this->createStub(InputInterface::class),
+                $this->createStub(OutputInterface::class),
             )
         );
     }

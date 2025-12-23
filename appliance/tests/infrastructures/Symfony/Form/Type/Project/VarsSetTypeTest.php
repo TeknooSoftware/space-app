@@ -64,22 +64,18 @@ class VarsSetTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            VarsSetType::class,
-            $this->varsSetType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar', 'environmentsList' => ['prod']],
-            ),
+        $this->varsSetType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar', 'environmentsList' => ['prod']],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            VarsSetType::class,
-            $this->varsSetType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->varsSetType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

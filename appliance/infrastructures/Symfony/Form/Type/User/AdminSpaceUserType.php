@@ -43,7 +43,7 @@ use Teknoo\Space\Object\DTO\SpaceUser;
  */
 class AdminSpaceUserType extends AbstractType implements FormApiAwareInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
             'user',
@@ -57,11 +57,9 @@ class AdminSpaceUserType extends AbstractType implements FormApiAwareInterface
             'userData',
             UserDataType::class,
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -71,7 +69,5 @@ class AdminSpaceUserType extends AbstractType implements FormApiAwareInterface
         ]);
 
         $resolver->setAllowedTypes('api', ['null', 'string']);
-
-        return $this;
     }
 }

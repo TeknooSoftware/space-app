@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\AccessCont
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\MessageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -50,9 +51,9 @@ class ListObjectsAccessControlTest extends TestCase
 {
     private ListObjectsAccessControl $listObjectsAccessControl;
 
-    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private AuthorizationCheckerInterface&Stub $authorizationChecker;
 
-    private TokenStorageInterface&MockObject $tokenStorage;
+    private TokenStorageInterface&Stub $tokenStorage;
 
     /**
      * {@inheritdoc}
@@ -61,8 +62,8 @@ class ListObjectsAccessControlTest extends TestCase
     {
         parent::setUp();
 
-        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
+        $this->authorizationChecker = $this->createStub(AuthorizationCheckerInterface::class);
+        $this->tokenStorage = $this->createStub(TokenStorageInterface::class);
 
         $this->listObjectsAccessControl = new ListObjectsAccessControl(
             $this->authorizationChecker,
@@ -79,9 +80,9 @@ class ListObjectsAccessControlTest extends TestCase
         $this->assertInstanceOf(
             ListObjectsAccessControl::class,
             ($this->listObjectsAccessControl)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(MessageInterface::class),
-                [$this->createMock(ObjectInterface::class)],
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(MessageInterface::class),
+                [$this->createStub(ObjectInterface::class)],
             )
         );
     }

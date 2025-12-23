@@ -61,22 +61,18 @@ class JobSearchTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            JobSearchType::class,
-            $this->jobSearchType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->jobSearchType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            JobSearchType::class,
-            $this->jobSearchType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->jobSearchType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

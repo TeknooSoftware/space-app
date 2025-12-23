@@ -37,12 +37,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 class NewJobType extends ApiNewJobType
 {
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
         if (!empty($options['api'])) {
-            return $this;
+            return;
         }
 
         $builder->add(
@@ -60,7 +60,5 @@ class NewJobType extends ApiNewJobType
                 'required' => true,
             ],
         );
-
-        return $this;
     }
 }

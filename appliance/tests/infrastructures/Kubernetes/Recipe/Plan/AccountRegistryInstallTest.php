@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
@@ -54,21 +55,21 @@ class AccountRegistryInstallTest extends TestCase
 {
     private AccountRegistryInstall $accountInstall;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadAccountClusters&MockObject $loadAccountClusters;
+    private LoadAccountClusters&Stub $loadAccountClusters;
 
-    private CreateNamespace&MockObject $createNamespace;
+    private CreateNamespace&Stub $createNamespace;
 
-    private CreateStorage&MockObject $createStorage;
+    private CreateStorage&Stub $createStorage;
 
-    private CreateRegistryDeployment&MockObject $createRegistryAccount;
+    private CreateRegistryDeployment&Stub $createRegistryAccount;
 
-    private PersistRegistryCredential&MockObject $persistRegistryCredentials;
+    private PersistRegistryCredential&Stub $persistRegistryCredentials;
 
-    private PrepareAccountErrorHandler&MockObject $errorHandler;
+    private PrepareAccountErrorHandler&Stub $errorHandler;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControlInterface;
+    private ObjectAccessControlInterface&Stub $objectAccessControlInterface;
 
     private string $defaultStorageSizeToClaim;
 
@@ -79,14 +80,14 @@ class AccountRegistryInstallTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
-        $this->createNamespace = $this->createMock(CreateNamespace::class);
-        $this->createStorage = $this->createMock(CreateStorage::class);
-        $this->createRegistryAccount = $this->createMock(CreateRegistryDeployment::class);
-        $this->persistRegistryCredentials = $this->createMock(PersistRegistryCredential::class);
-        $this->errorHandler = $this->createMock(PrepareAccountErrorHandler::class);
-        $this->objectAccessControlInterface = $this->createMock(ObjectAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadAccountClusters = $this->createStub(LoadAccountClusters::class);
+        $this->createNamespace = $this->createStub(CreateNamespace::class);
+        $this->createStorage = $this->createStub(CreateStorage::class);
+        $this->createRegistryAccount = $this->createStub(CreateRegistryDeployment::class);
+        $this->persistRegistryCredentials = $this->createStub(PersistRegistryCredential::class);
+        $this->errorHandler = $this->createStub(PrepareAccountErrorHandler::class);
+        $this->objectAccessControlInterface = $this->createStub(ObjectAccessControlInterface::class);
         $this->defaultStorageSizeToClaim = '42';
 
         $this->accountInstall = new AccountRegistryInstall(
@@ -115,7 +116,7 @@ class AccountRegistryInstallTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountInstall->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

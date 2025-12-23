@@ -32,6 +32,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Recipe\Step\Misc\PrepareCriteria;
 use Teknoo\Space\Recipe\Step\Project\Exception\RuntimeException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -59,8 +60,8 @@ class PrepareCriteriaTest extends TestCase
         $this->assertInstanceOf(
             PrepareCriteria::class,
             ($this->prepareCriteria)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Account::class),
                 [],
             ),
         );
@@ -71,12 +72,13 @@ class PrepareCriteriaTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         ($this->prepareCriteria)(
-            $this->createMock(ManagerInterface::class),
+            $this->createStub(ManagerInterface::class),
             null,
             [],
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithEmptyCriteria(): void
     {
         $account = $this->createMock(Account::class);
@@ -105,7 +107,7 @@ class PrepareCriteriaTest extends TestCase
 
     public function testInvokeWithExistingCriteria(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -135,7 +137,7 @@ class PrepareCriteriaTest extends TestCase
 
     public function testInvokeWithCriteriaContainingAccount(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -167,7 +169,7 @@ class PrepareCriteriaTest extends TestCase
         $this->expectExceptionCode(403);
 
         ($this->prepareCriteria)(
-            $this->createMock(ManagerInterface::class),
+            $this->createStub(ManagerInterface::class),
             null,
         );
     }

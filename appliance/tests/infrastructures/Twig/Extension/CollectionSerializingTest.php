@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Twig\Extension;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing;
@@ -44,7 +45,7 @@ class CollectionSerializingTest extends TestCase
 {
     private CollectionSerializing $collectionSerializing;
 
-    private SerializerInterface&MockObject $serializer;
+    private SerializerInterface&Stub $serializer;
 
     /**
      * {@inheritdoc}
@@ -53,7 +54,7 @@ class CollectionSerializingTest extends TestCase
     {
         parent::setUp();
 
-        $this->serializer = $this->createMock(SerializerInterface::class);
+        $this->serializer = $this->createStub(SerializerInterface::class);
 
         $this->collectionSerializing = new CollectionSerializing(
             $this->serializer,

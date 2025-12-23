@@ -27,10 +27,12 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
 use Teknoo\Space\Writer\AccountHistoryWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class UpdateAccountHistoryTest.
@@ -58,16 +60,18 @@ class UpdateAccountHistoryTest extends TestCase
         $this->updateAccountHistory = new UpdateAccountHistory($this->writer);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             UpdateAccountHistory::class,
             ($this->updateAccountHistory)(
-                $this->createMock(AccountHistory::class),
+                $this->createStub(AccountHistory::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeCallsWriterSave(): void
     {
         $accountHistory = $this->createMock(AccountHistory::class);

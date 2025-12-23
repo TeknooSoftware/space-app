@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -34,6 +35,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadAccountFromRequest;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadAccountFromRequestTest.
@@ -62,16 +64,18 @@ class LoadAccountFromRequestTest extends TestCase
         $this->loadAccountFromRequest = new LoadAccountFromRequest($this->accountLoader);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadAccountFromRequest::class,
             ($this->loadAccountFromRequest)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
             )
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithoutAccountId(): void
     {
         $manager = $this->createMock(ManagerInterface::class);
@@ -85,6 +89,7 @@ class LoadAccountFromRequestTest extends TestCase
         $this->assertInstanceOf(LoadAccountFromRequest::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithEmptyAccountId(): void
     {
         $manager = $this->createMock(ManagerInterface::class);
@@ -98,11 +103,11 @@ class LoadAccountFromRequestTest extends TestCase
         $this->assertInstanceOf(LoadAccountFromRequest::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithoutAdminRole(): void
     {
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_USER']);
 
         $manager = $this->createMock(ManagerInterface::class);
@@ -117,6 +122,7 @@ class LoadAccountFromRequestTest extends TestCase
         $this->assertInstanceOf(LoadAccountFromRequest::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvokeWithNullUser(): void
     {
         $manager = $this->createMock(ManagerInterface::class);
@@ -133,15 +139,13 @@ class LoadAccountFromRequestTest extends TestCase
 
     public function testInvokeWithAdminRoleLoadingAccountFromLoader(): void
     {
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_ADMIN']);
 
-        $account = $this->createMock(Account::class);
-        $spaceAccount = $this->createMock(SpaceAccount::class);
-        $spaceAccount->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $spaceAccount = $this->createStub(SpaceAccount::class);
+        $spaceAccount->method('getId')
             ->willReturn('account-456');
         $spaceAccount->account = $account;
 
@@ -175,15 +179,13 @@ class LoadAccountFromRequestTest extends TestCase
 
     public function testInvokeWithAdminRoleAndAccountAlreadyProvided(): void
     {
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_ADMIN']);
 
-        $account = $this->createMock(Account::class);
-        $spaceAccount = $this->createMock(SpaceAccount::class);
-        $spaceAccount->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $spaceAccount = $this->createStub(SpaceAccount::class);
+        $spaceAccount->method('getId')
             ->willReturn('account-789');
         $spaceAccount->account = $account;
 
@@ -215,14 +217,13 @@ class LoadAccountFromRequestTest extends TestCase
 
     public function testInvokeWithMismatchedAccountId(): void
     {
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_ADMIN']);
 
-        $account = $this->createMock(Account::class);
-        $spaceAccount = $this->createMock(SpaceAccount::class);
-        $spaceAccount->expects($this->any())
+        $account = $this->createStub(Account::class);
+        $spaceAccount = $this->createStub(SpaceAccount::class);
+        $spaceAccount
             ->method('getId')
             ->willReturn('account-999');
         $spaceAccount->account = $account;
@@ -234,7 +235,7 @@ class LoadAccountFromRequestTest extends TestCase
                 return $this->accountLoader;
             });
 
-        $manager = $this->createMock(ManagerInterface::class);
+        $manager = $this->createStub(ManagerInterface::class);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage('teknoo.space.error.space_account.account.fetching');
@@ -249,15 +250,13 @@ class LoadAccountFromRequestTest extends TestCase
 
     public function testInvokeWithCustomParameters(): void
     {
-        $user = $this->createMock(User::class);
-        $user->expects($this->any())
-            ->method('getRoles')
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')
             ->willReturn(['ROLE_ADMIN']);
 
-        $account = $this->createMock(Account::class);
-        $spaceAccount = $this->createMock(SpaceAccount::class);
-        $spaceAccount->expects($this->any())
-            ->method('getId')
+        $account = $this->createStub(Account::class);
+        $spaceAccount = $this->createStub(SpaceAccount::class);
+        $spaceAccount->method('getId')
             ->willReturn('account-555');
         $spaceAccount->account = $account;
 

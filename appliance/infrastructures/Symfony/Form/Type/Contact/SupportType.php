@@ -48,6 +48,9 @@ use Teknoo\Space\Object\DTO\Contact;
  */
 class SupportType extends AbstractType
 {
+    /**
+     * @param int<1, max> $mailMaxAttachments
+     */
     public function __construct(
         private readonly int $mailMaxAttachments = 5,
     ) {
@@ -60,7 +63,7 @@ class SupportType extends AbstractType
         ]);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -112,13 +115,13 @@ class SupportType extends AbstractType
                 'prototype_name' => '__name__',
                 'label' => 'teknoo.space.form.contact.support.attachment',
                 'constraints' => [
-                    new Count(['max' => $this->mailMaxAttachments])
+                    new Count(max: $this->mailMaxAttachments)
                 ],
             ],
         );
 
         if (empty($options['manager']) || !$options['manager'] instanceof ManagerInterface) {
-            return $this;
+            return;
         }
 
         $manager = $options['manager'];
@@ -131,11 +134,9 @@ class SupportType extends AbstractType
                 self::onSubmit($data, $manager);
             }
         );
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -146,7 +147,5 @@ class SupportType extends AbstractType
         ]);
 
         $resolver->setAllowedTypes('manager', [ManagerInterface::class, 'null']);
-
-        return $this;
     }
 }

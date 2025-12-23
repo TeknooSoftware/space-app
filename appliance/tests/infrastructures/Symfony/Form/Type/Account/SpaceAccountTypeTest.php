@@ -57,22 +57,18 @@ class SpaceAccountTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            SpaceAccountType::class,
-            $this->spaceAccountType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar'],
-            ),
+        $this->spaceAccountType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar'],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            SpaceAccountType::class,
-            $this->spaceAccountType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->spaceAccountType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Messenger\Handler;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -54,25 +55,25 @@ class NewJobHandlerTest extends TestCase
 {
     private NewJobHandler $newJobHandler;
 
-    private Executor&MockObject $executor;
+    private Executor&Stub $executor;
 
-    private NewJobInterface&MockObject $recipe;
+    private NewJobInterface&Stub $recipe;
 
-    private MessageFactoryInterface&MockObject $messageFactory;
+    private MessageFactoryInterface&Stub $messageFactory;
 
-    private StreamFactoryInterface&MockObject $streamFactory;
+    private StreamFactoryInterface&Stub $streamFactory;
 
-    private Client&MockObject $client;
+    private Client&Stub $client;
 
-    private LoggerInterface&MockObject $logger;
+    private LoggerInterface&Stub $logger;
 
-    private JobError&MockObject $jobError;
+    private JobError&Stub $jobError;
 
-    private EncryptionInterface&MockObject $encryption;
+    private EncryptionInterface&Stub $encryption;
 
-    private SleepServiceInterface&MockObject $sleepService;
+    private SleepServiceInterface&Stub $sleepService;
 
-    private PersistedVariableEncryption&MockObject $persistedVariableEncryption;
+    private PersistedVariableEncryption&Stub $persistedVariableEncryption;
 
     private int $waitingTimeSecond;
 
@@ -83,16 +84,16 @@ class NewJobHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->executor = $this->createMock(Executor::class);
-        $this->recipe = $this->createMock(NewJobInterface::class);
-        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->client = $this->createMock(Client::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->jobError = $this->createMock(JobError::class);
-        $this->encryption = $this->createMock(EncryptionInterface::class);
-        $this->sleepService = $this->createMock(SleepServiceInterface::class);
-        $this->persistedVariableEncryption = $this->createMock(PersistedVariableEncryption::class);
+        $this->executor = $this->createStub(Executor::class);
+        $this->recipe = $this->createStub(NewJobInterface::class);
+        $this->messageFactory = $this->createStub(MessageFactoryInterface::class);
+        $this->streamFactory = $this->createStub(StreamFactoryInterface::class);
+        $this->client = $this->createStub(Client::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->jobError = $this->createStub(JobError::class);
+        $this->encryption = $this->createStub(EncryptionInterface::class);
+        $this->sleepService = $this->createStub(SleepServiceInterface::class);
+        $this->persistedVariableEncryption = $this->createStub(PersistedVariableEncryption::class);
         $this->waitingTimeSecond = 1;
         $this->newJobHandler = new NewJobHandler(
             $this->executor,

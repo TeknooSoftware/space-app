@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
@@ -47,7 +48,7 @@ class JobErrorNotifierTest extends TestCase
 {
     private JobErrorNotifier $jobErrorNotifier;
 
-    private JobError&MockObject $jobError;
+    private JobError&Stub $jobError;
 
     /**
      * {@inheritdoc}
@@ -56,7 +57,7 @@ class JobErrorNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->jobError = $this->createMock(JobError::class);
+        $this->jobError = $this->createStub(JobError::class);
         $this->jobErrorNotifier = new JobErrorNotifier($this->jobError);
     }
 

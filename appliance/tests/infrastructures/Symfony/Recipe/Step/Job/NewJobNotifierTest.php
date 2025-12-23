@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -49,11 +50,11 @@ class NewJobNotifierTest extends TestCase
 {
     private NewJobNotifier $newJobNotifier;
 
-    private JobUrlPublisher&MockObject $publisher;
+    private JobUrlPublisher&Stub $publisher;
 
-    private UrlGeneratorInterface&MockObject $generator;
+    private UrlGeneratorInterface&Stub $generator;
 
-    private LoggerInterface&MockObject $logger;
+    private LoggerInterface&Stub $logger;
 
     private string $pendingJobRoute;
 
@@ -66,9 +67,9 @@ class NewJobNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createMock(JobUrlPublisher::class);
-        $this->generator = $this->createMock(UrlGeneratorInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->publisher = $this->createStub(JobUrlPublisher::class);
+        $this->generator = $this->createStub(UrlGeneratorInterface::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
         $this->pendingJobRoute = '42';
         $this->listJobRoute = '42';
         $this->newJobNotifier = new NewJobNotifier(
@@ -93,7 +94,7 @@ class NewJobNotifierTest extends TestCase
             NewJobNotifier::class,
             ($this->newJobNotifier)(
                 $newJob,
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
             )
         );
     }

@@ -53,7 +53,7 @@ class AccountWalletTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountWallet = new AccountWallet([$this->createMock(AccountEnvironment::class)]);
+        $this->accountWallet = new AccountWallet([$this->createStub(AccountEnvironment::class)]);
     }
 
     public function testConstruct(): void
@@ -66,8 +66,8 @@ class AccountWalletTest extends TestCase
 
     public function testGetIterator(): void
     {
-        $env1 = $this->createMock(AccountEnvironment::class);
-        $env2 = $this->createMock(AccountEnvironment::class);
+        $env1 = $this->createStub(AccountEnvironment::class);
+        $env2 = $this->createStub(AccountEnvironment::class);
 
         $wallet = new AccountWallet([$env1, $env2]);
 
@@ -79,11 +79,11 @@ class AccountWalletTest extends TestCase
 
     public function testGetWithStringFound(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
+        $env = $this->createStub(AccountEnvironment::class);
+        $env
             ->method('getClusterName')
             ->willReturn('cluster1');
-        $env->expects($this->any())
+        $env
             ->method('getEnvName')
             ->willReturn('prod');
 
@@ -94,22 +94,18 @@ class AccountWalletTest extends TestCase
 
     public function testGetWithObjectsFound(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getClusterName')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getClusterName')
             ->willReturn('cluster1');
-        $env->expects($this->any())
-            ->method('getEnvName')
+        $env->method('getEnvName')
             ->willReturn('prod');
 
-        $cluster = $this->createMock(Cluster::class);
-        $cluster->expects($this->any())
-            ->method('__toString')
+        $cluster = $this->createStub(Cluster::class);
+        $cluster->method('__toString')
             ->willReturn('cluster1');
 
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->any())
-            ->method('__toString')
+        $environment = $this->createStub(Environment::class);
+        $environment->method('__toString')
             ->willReturn('prod');
 
         $wallet = new AccountWallet([$env]);
@@ -119,12 +115,10 @@ class AccountWalletTest extends TestCase
 
     public function testGetNotFound(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getClusterName')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getClusterName')
             ->willReturn('cluster1');
-        $env->expects($this->any())
-            ->method('getEnvName')
+        $env->method('getEnvName')
             ->willReturn('prod');
 
         $wallet = new AccountWallet([$env]);
@@ -134,12 +128,10 @@ class AccountWalletTest extends TestCase
 
     public function testHasFound(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getClusterName')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getClusterName')
             ->willReturn('cluster1');
-        $env->expects($this->any())
-            ->method('getEnvName')
+        $env->method('getEnvName')
             ->willReturn('prod');
 
         $wallet = new AccountWallet([$env]);
@@ -149,12 +141,10 @@ class AccountWalletTest extends TestCase
 
     public function testHasNotFound(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getClusterName')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getClusterName')
             ->willReturn('cluster1');
-        $env->expects($this->any())
-            ->method('getEnvName')
+        $env->method('getEnvName')
             ->willReturn('prod');
 
         $wallet = new AccountWallet([$env]);
@@ -164,22 +154,18 @@ class AccountWalletTest extends TestCase
 
     public function testHasWithObjects(): void
     {
-        $env = $this->createMock(AccountEnvironment::class);
-        $env->expects($this->any())
-            ->method('getClusterName')
+        $env = $this->createStub(AccountEnvironment::class);
+        $env->method('getClusterName')
             ->willReturn('cluster1');
-        $env->expects($this->any())
-            ->method('getEnvName')
+        $env->method('getEnvName')
             ->willReturn('prod');
 
-        $cluster = $this->createMock(Cluster::class);
-        $cluster->expects($this->any())
-            ->method('__toString')
+        $cluster = $this->createStub(Cluster::class);
+        $cluster->method('__toString')
             ->willReturn('cluster1');
 
-        $environment = $this->createMock(Environment::class);
-        $environment->expects($this->any())
-            ->method('__toString')
+        $environment = $this->createStub(Environment::class);
+        $environment->method('__toString')
             ->willReturn('prod');
 
         $wallet = new AccountWallet([$env]);

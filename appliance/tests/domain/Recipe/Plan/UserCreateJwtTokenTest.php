@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Recipe\Step\CreateObject;
@@ -52,15 +53,15 @@ class UserCreateJwtTokenTest extends TestCase
 {
     private UserCreateJwtToken $UserCreateJwtToken;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private CreateObject&MockObject $createObject;
+    private CreateObject&Stub $createObject;
 
-    private JwtCreateTokenInterface&MockObject $jwtCreateToken;
+    private JwtCreateTokenInterface&Stub $jwtCreateToken;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -71,11 +72,11 @@ class UserCreateJwtTokenTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->createObject = $this->createMock(CreateObject::class);
-        $this->jwtCreateToken = $this->createMock(JwtCreateTokenInterface::class);
-        $this->render = $this->createMock(Render::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->createObject = $this->createStub(CreateObject::class);
+        $this->jwtCreateToken = $this->createStub(JwtCreateTokenInterface::class);
+        $this->render = $this->createStub(Render::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = '42';
 
         $this->UserCreateJwtToken = new UserCreateJwtToken(
@@ -101,7 +102,7 @@ class UserCreateJwtTokenTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->UserCreateJwtToken->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

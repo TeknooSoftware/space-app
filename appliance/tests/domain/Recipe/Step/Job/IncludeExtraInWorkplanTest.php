@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
@@ -60,7 +61,7 @@ class IncludeExtraInWorkplanTest extends TestCase
         $this->assertInstanceOf(
             IncludeExtraInWorkplan::class,
             ($this->includeExtraInWorkplan)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 extra: ['foo' => 'bar'],
             )
         );

@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Mercure\Notifier;
 use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
@@ -46,9 +47,9 @@ class JobErrorTest extends TestCase
 {
     private JobError $jobErrorNotifier;
 
-    private JobErrorPublisher&MockObject $publisher;
+    private JobErrorPublisher&Stub $publisher;
 
-    private UrlGeneratorInterface&MockObject $generator;
+    private UrlGeneratorInterface&Stub $generator;
 
     private string $pendingJobRoute;
 
@@ -59,8 +60,8 @@ class JobErrorTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createMock(JobErrorPublisher::class);
-        $this->generator = $this->createMock(UrlGeneratorInterface::class);
+        $this->publisher = $this->createStub(JobErrorPublisher::class);
+        $this->generator = $this->createStub(UrlGeneratorInterface::class);
         $this->pendingJobRoute = '42';
         $this->jobErrorNotifier = new JobError($this->publisher, $this->generator, $this->pendingJobRoute);
     }

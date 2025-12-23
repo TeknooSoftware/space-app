@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -54,7 +55,7 @@ class CreateNamespaceTest extends TestCase
 
     private string $registryRootNamespace;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     private bool $preferRealDate;
 
@@ -67,7 +68,7 @@ class CreateNamespaceTest extends TestCase
 
         $this->rootNamespace = '42';
         $this->registryRootNamespace = '42';
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDate = true;
 
         $this->createNamespace = new CreateNamespace(
@@ -87,7 +88,7 @@ class CreateNamespaceTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -97,9 +98,9 @@ class CreateNamespaceTest extends TestCase
         $this->assertInstanceOf(
             CreateNamespace::class,
             ($this->createNamespace)(
-                manager: $this->createMock(ManagerInterface::class),
-                accountInstance: $this->createMock(Account::class),
-                accountHistory: $this->createMock(AccountHistory::class),
+                manager: $this->createStub(ManagerInterface::class),
+                accountInstance: $this->createStub(Account::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 accountNamespace: 'foo',
                 clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
                 forRegistry: true,

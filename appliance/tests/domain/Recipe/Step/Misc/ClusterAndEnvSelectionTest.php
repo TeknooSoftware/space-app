@@ -69,7 +69,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -89,9 +89,9 @@ class ClusterAndEnvSelectionTest extends TestCase
         $this->assertInstanceOf(
             ClusterAndEnvSelection::class,
             ($this->clusterAndEnvSelection)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ServerRequestInterface::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ServerRequestInterface::class),
+                $this->createStub(ParametersBag::class),
             )
         );
     }
@@ -101,10 +101,10 @@ class ClusterAndEnvSelectionTest extends TestCase
         $this->assertInstanceOf(
             ClusterAndEnvSelection::class,
             ($this->clusterAndEnvSelection)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ServerRequestInterface::class),
-                $this->createMock(ParametersBag::class),
-                $this->createMock(AccountWallet::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ServerRequestInterface::class),
+                $this->createStub(ParametersBag::class),
+                $this->createStub(AccountWallet::class),
             )
         );
     }
@@ -221,10 +221,10 @@ class ClusterAndEnvSelectionTest extends TestCase
     public function testInvokeWithAccountWalletAndMatchingCluster(): void
     {
         $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('clusterName');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('staging');
         $accountEnv->expects($this->once())
@@ -277,11 +277,11 @@ class ClusterAndEnvSelectionTest extends TestCase
 
     public function testInvokeWithAccountWalletWithoutMatchingCluster(): void
     {
-        $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('clusterName');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('staging');
 
@@ -316,10 +316,10 @@ class ClusterAndEnvSelectionTest extends TestCase
     public function testInvokeWithAccountWalletAndEmptySelection(): void
     {
         $accountEnv = $this->createMock(AccountEnvironment::class);
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getClusterName')
             ->willReturn('clusterName');
-        $accountEnv->expects($this->any())
+        $accountEnv
             ->method('getEnvName')
             ->willReturn('production');
         $accountEnv->expects($this->once())

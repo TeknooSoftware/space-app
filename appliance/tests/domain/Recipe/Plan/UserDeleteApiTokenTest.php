@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
@@ -49,15 +50,15 @@ class UserDeleteApiTokenTest extends TestCase
 {
     private UserDeleteApiToken $plan;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private RemoveKey&MockObject $removeKey;
+    private RemoveKey&Stub $removeKey;
 
-    private SaveObject&MockObject $saveObject;
+    private SaveObject&Stub $saveObject;
 
-    private RedirectClientInterface&MockObject $redirectClient;
+    private RedirectClientInterface&Stub $redirectClient;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -65,11 +66,11 @@ class UserDeleteApiTokenTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->removeKey = $this->createMock(RemoveKey::class);
-        $this->saveObject = $this->createMock(SaveObject::class);
-        $this->redirectClient = $this->createMock(RedirectClientInterface::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->removeKey = $this->createStub(RemoveKey::class);
+        $this->saveObject = $this->createStub(SaveObject::class);
+        $this->redirectClient = $this->createStub(RedirectClientInterface::class);
+        $this->renderError = $this->createStub(RenderError::class);
         $this->defaultErrorTemplate = 'tpl';
 
         $this->plan = new UserDeleteApiToken(
@@ -91,7 +92,7 @@ class UserDeleteApiTokenTest extends TestCase
     {
         self::assertInstanceOf(
             EditablePlanInterface::class,
-            $this->plan->train($this->createMock(ChefInterface::class))
+            $this->plan->train($this->createStub(ChefInterface::class))
         );
     }
 }

@@ -33,6 +33,7 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class AccountEnvironmentTest.
@@ -106,66 +107,79 @@ class AccountEnvironmentTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetAccount(): void
     {
         $this->assertSame($this->account, $this->accountEnvironment->getAccount());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetClusterName(): void
     {
         $this->assertEquals($this->clusterName, $this->accountEnvironment->getClusterName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetEnvName(): void
     {
         $this->assertEquals($this->envName, $this->accountEnvironment->getEnvName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetNamespace(): void
     {
         $this->assertEquals($this->namespace, $this->accountEnvironment->getNamespace());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetServiceAccountName(): void
     {
         $this->assertEquals($this->serviceAccountName, $this->accountEnvironment->getServiceAccountName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRoleName(): void
     {
         $this->assertEquals($this->roleName, $this->accountEnvironment->getRoleName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetRoleBindingName(): void
     {
         $this->assertEquals($this->roleBindingName, $this->accountEnvironment->getRoleBindingName());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetCaCertificate(): void
     {
         $this->assertEquals($this->caCertificate, $this->accountEnvironment->getCaCertificate());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetClientCertificate(): void
     {
         $this->assertEquals($this->clientCertificate, $this->accountEnvironment->getClientCertificate());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetClientKey(): void
     {
         $this->assertEquals($this->clientKey, $this->accountEnvironment->getClientKey());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetToken(): void
     {
         $this->assertEquals($this->token, $this->accountEnvironment->getToken());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetAllMetaData(): void
     {
         $this->assertEquals($this->metadata, $this->accountEnvironment->getAllMetaData());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetAllMetaDataWithNull(): void
     {
         $accountEnvironment = new AccountEnvironment(
@@ -186,24 +200,28 @@ class AccountEnvironmentTest extends TestCase
         $this->assertNull($accountEnvironment->getAllMetaData());
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetMetaDataWithExistingKey(): void
     {
         $this->assertEquals('bar', $this->accountEnvironment->getMetaData('foo'));
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetMetaDataWithMissingKeyAndDefault(): void
     {
         $this->assertEquals('default', $this->accountEnvironment->getMetaData('missing', 'default'));
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testGetMetaDataWithMissingKeyAndNoDefault(): void
     {
         $this->assertNull($this->accountEnvironment->getMetaData('missing'));
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testVerifyAccessToUser(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $promise = $this->createMock(PromiseInterface::class);
 
         $this->account->expects($this->once())
@@ -215,6 +233,7 @@ class AccountEnvironmentTest extends TestCase
         $this->assertInstanceOf(AccountEnvironment::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testResume(): void
     {
         $result = $this->accountEnvironment->resume();

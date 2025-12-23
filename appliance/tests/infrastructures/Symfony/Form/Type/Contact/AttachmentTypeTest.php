@@ -56,22 +56,18 @@ class AttachmentTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            AttachmentType::class,
-            $this->attachmentType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                [],
-            ),
+        $this->attachmentType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            AttachmentType::class,
-            $this->attachmentType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->attachmentType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

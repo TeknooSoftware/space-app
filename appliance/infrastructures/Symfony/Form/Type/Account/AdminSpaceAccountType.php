@@ -53,7 +53,7 @@ use function is_array;
  */
 class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterface
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (empty($options['api']) || empty($options['enableEnvManagement'])) {
             $builder->add(
@@ -126,11 +126,9 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
                 ],
             );
         }
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -149,7 +147,5 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
         $resolver->setAllowedTypes('subscriptionPlan', [SubscriptionPlan::class, 'null']);
         $resolver->setAllowedTypes('namespaceIsReadonly', 'bool');
         $resolver->setAllowedTypes('enableEnvManagement', ['null', 'bool']);
-
-        return $this;
     }
 }

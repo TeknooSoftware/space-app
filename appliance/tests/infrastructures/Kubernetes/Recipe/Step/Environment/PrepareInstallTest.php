@@ -59,7 +59,7 @@ class PrepareInstallTest extends TestCase
         $this->assertInstanceOf(
             PrepareInstall::class,
             ($this->prepareInstall)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 resume: new AccountEnvironmentResume('foo', 'foo', 'foo'),
             ),
         );

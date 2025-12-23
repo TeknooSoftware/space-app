@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\Config;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Paas\Object\Cluster as ClusterPaaS;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
@@ -54,7 +55,7 @@ class ClusterCatalogTest extends TestCase
         parent::setUp();
 
         $this->clusterCatalog = new ClusterCatalog(
-            ['Foo' => $this->createMock(Cluster::class)],
+            ['Foo' => $this->createStub(Cluster::class)],
             ['foo' => 'Foo'],
         );
     }
@@ -81,7 +82,7 @@ class ClusterCatalogTest extends TestCase
             'https://test',
             'test',
             'https://test',
-            $this->createMock(Client::class),
+            $this->createStub(Client::class),
             'token',
             true,
             false,
@@ -105,7 +106,7 @@ class ClusterCatalogTest extends TestCase
             'https://test',
             'test',
             'https://test',
-            $this->createMock(Client::class),
+            $this->createStub(Client::class),
             'token',
             true,
             false,
@@ -124,7 +125,7 @@ class ClusterCatalogTest extends TestCase
             'https://test',
             'test',
             'https://test',
-            $this->createMock(Client::class),
+            $this->createStub(Client::class),
             'token',
             false,
             false,
@@ -151,7 +152,7 @@ class ClusterCatalogTest extends TestCase
             'https://test',
             'test',
             'https://test',
-            $this->createMock(Client::class),
+            $this->createStub(Client::class),
             'token',
             false,
             false,
@@ -170,7 +171,7 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetDefaultClusterName(): void
     {
-        $cluster = $this->createMock(Cluster::class);
+        $cluster = $this->createStub(Cluster::class);
 
         $catalog = new ClusterCatalog(
             ['DefaultCluster' => $cluster],
@@ -182,7 +183,7 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetDefaultClusterNameWithEmptyClustersThrowsExceptionEvenWithParent(): void
     {
-        $parentCluster = $this->createMock(Cluster::class);
+        $parentCluster = $this->createStub(Cluster::class);
         $parentCatalog = new ClusterCatalog(
             ['ParentCluster' => $parentCluster],
             [],
@@ -213,9 +214,9 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetClusterWithEastCluster(): void
     {
-        $cluster = $this->createMock(Cluster::class);
-        $eastCluster = $this->createMock(\Teknoo\East\Paas\Object\Cluster::class);
-        $eastCluster->expects($this->any())
+        $cluster = $this->createStub(Cluster::class);
+        $eastCluster = $this->createStub(ClusterPaaS::class);
+        $eastCluster
             ->method('__toString')
             ->willReturn('TestCluster');
 
@@ -229,7 +230,7 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetClusterDirectName(): void
     {
-        $cluster = $this->createMock(Cluster::class);
+        $cluster = $this->createStub(Cluster::class);
 
         $catalog = new ClusterCatalog(
             ['DirectCluster' => $cluster],
@@ -241,14 +242,14 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetClusterWithParent(): void
     {
-        $parentCluster = $this->createMock(Cluster::class);
+        $parentCluster = $this->createStub(Cluster::class);
         $parentCatalog = new ClusterCatalog(
             ['ParentCluster' => $parentCluster],
             [],
         );
 
         $catalog = new ClusterCatalog(
-            ['ChildCluster' => $this->createMock(Cluster::class)],
+            ['ChildCluster' => $this->createStub(Cluster::class)],
             [],
             $parentCatalog,
         );
@@ -259,7 +260,7 @@ class ClusterCatalogTest extends TestCase
     public function testGetClusterThrowsException(): void
     {
         $catalog = new ClusterCatalog(
-            ['TestCluster' => $this->createMock(Cluster::class)],
+            ['TestCluster' => $this->createStub(Cluster::class)],
             [],
         );
 
@@ -270,13 +271,13 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetIteratorWithParent(): void
     {
-        $parentCluster = $this->createMock(Cluster::class);
+        $parentCluster = $this->createStub(Cluster::class);
         $parentCatalog = new ClusterCatalog(
             ['ParentCluster' => $parentCluster],
             [],
         );
 
-        $childCluster = $this->createMock(Cluster::class);
+        $childCluster = $this->createStub(Cluster::class);
         $catalog = new ClusterCatalog(
             ['ChildCluster' => $childCluster],
             [],

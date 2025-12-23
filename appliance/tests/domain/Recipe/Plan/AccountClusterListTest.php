@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
@@ -60,31 +61,31 @@ class AccountClusterListTest extends TestCase
 {
     private AccountClusterList $AccountClusterList;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private JumpIfNot&MockObject $jumpIfNot;
+    private JumpIfNot&Stub $jumpIfNot;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
-    private ExtractPage&MockObject $extractPage;
+    private ExtractPage&Stub $extractPage;
 
-    private ExtractOrder&MockObject $extractOrder;
+    private ExtractOrder&Stub $extractOrder;
 
-    private PrepareCriteria&MockObject $prepareCriteria;
+    private PrepareCriteria&Stub $prepareCriteria;
 
-    private LoadListObjects&MockObject $loadListObjects;
+    private LoadListObjects&Stub $loadListObjects;
 
-    private InjectToView&MockObject $injectToView;
+    private InjectToView&Stub $injectToView;
 
-    private RenderList&MockObject $renderList;
+    private RenderList&Stub $renderList;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
-    private SearchFormLoaderInterface&MockObject $searchFormLoader;
+    private SearchFormLoaderInterface&Stub $searchFormLoader;
 
-    private ListObjectsAccessControlInterface&MockObject $listObjectsAccessControl;
+    private ListObjectsAccessControlInterface&Stub $listObjectsAccessControl;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -97,19 +98,19 @@ class AccountClusterListTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->extractPage = $this->createMock(ExtractPage::class);
-        $this->extractOrder = $this->createMock(ExtractOrder::class);
-        $this->jumpIfNot = $this->createMock(JumpIfNot::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
-        $this->prepareCriteria = $this->createMock(PrepareCriteria::class);
-        $this->loadListObjects = $this->createMock(LoadListObjects::class);
-        $this->injectToView = $this->createMock(InjectToView::class);
-        $this->renderList = $this->createMock(RenderList::class);
-        $this->renderError = $this->createMock(RenderError::class);
-        $this->searchFormLoader = $this->createMock(SearchFormLoaderInterface::class);
-        $this->listObjectsAccessControl = $this->createMock(ListObjectsAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->extractPage = $this->createStub(ExtractPage::class);
+        $this->extractOrder = $this->createStub(ExtractOrder::class);
+        $this->jumpIfNot = $this->createStub(JumpIfNot::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
+        $this->prepareCriteria = $this->createStub(PrepareCriteria::class);
+        $this->loadListObjects = $this->createStub(LoadListObjects::class);
+        $this->injectToView = $this->createStub(InjectToView::class);
+        $this->renderList = $this->createStub(RenderList::class);
+        $this->renderError = $this->createStub(RenderError::class);
+        $this->searchFormLoader = $this->createStub(SearchFormLoaderInterface::class);
+        $this->listObjectsAccessControl = $this->createStub(ListObjectsAccessControlInterface::class);
         $this->defaultErrorTemplate = '42';
         $this->loadListObjectsWiths = [];
 
@@ -145,7 +146,7 @@ class AccountClusterListTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->AccountClusterList->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

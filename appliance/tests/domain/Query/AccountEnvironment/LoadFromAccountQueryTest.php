@@ -27,12 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Query\AccountEnvironment;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\RepositoryInterface;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadFromAccountQueryTest.
@@ -47,7 +49,7 @@ class LoadFromAccountQueryTest extends TestCase
 {
     private LoadFromAccountQuery $loadFromAccountQuery;
 
-    private Account&MockObject $account;
+    private Account&Stub $account;
 
     /**
      * {@inheritdoc}
@@ -56,7 +58,7 @@ class LoadFromAccountQueryTest extends TestCase
     {
         parent::setUp();
 
-        $this->account = $this->createMock(Account::class);
+        $this->account = $this->createStub(Account::class);
         $this->loadFromAccountQuery = new LoadFromAccountQuery($this->account);
     }
 
@@ -68,9 +70,10 @@ class LoadFromAccountQueryTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetch(): void
     {
-        $loader = $this->createMock(LoaderInterface::class);
+        $loader = $this->createStub(LoaderInterface::class);
         $repository = $this->createMock(RepositoryInterface::class);
         $promise = $this->createMock(PromiseInterface::class);
 
@@ -91,9 +94,9 @@ class LoadFromAccountQueryTest extends TestCase
 
     public function testExecute(): void
     {
-        $loader = $this->createMock(LoaderInterface::class);
+        $loader = $this->createStub(LoaderInterface::class);
         $repository = $this->createMock(RepositoryInterface::class);
-        $promise = $this->createMock(PromiseInterface::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $repository->expects($this->once())
             ->method('findBy')

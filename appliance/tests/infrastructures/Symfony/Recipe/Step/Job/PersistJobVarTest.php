@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\ManagerInterface as DbSourceManager;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
@@ -50,9 +51,9 @@ class PersistJobVarTest extends TestCase
 {
     private PersistJobVar $persistJobVar;
 
-    private DbSourceManager&MockObject $manager;
+    private DbSourceManager&Stub $manager;
 
-    private ProjectPersistedVariableWriter&MockObject $writer;
+    private ProjectPersistedVariableWriter&Stub $writer;
 
     /**
      * {@inheritdoc}
@@ -61,8 +62,8 @@ class PersistJobVarTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = $this->createMock(DbSourceManager::class);
-        $this->writer = $this->createMock(ProjectPersistedVariableWriter::class);
+        $this->manager = $this->createStub(DbSourceManager::class);
+        $this->writer = $this->createStub(ProjectPersistedVariableWriter::class);
         $this->persistJobVar = new PersistJobVar(
             $this->writer,
             $this->manager,
@@ -79,9 +80,9 @@ class PersistJobVarTest extends TestCase
         $this->assertInstanceOf(
             PersistJobVar::class,
             ($this->persistJobVar)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 $newJob,
-                new SpaceProject($this->createMock(Project::class)),
+                new SpaceProject($this->createStub(Project::class)),
             )
         );
     }

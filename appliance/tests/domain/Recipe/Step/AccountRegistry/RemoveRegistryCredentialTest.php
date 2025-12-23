@@ -27,10 +27,12 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountRegistry;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Writer\AccountRegistryWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class RemoveRegistrysTest.
@@ -58,12 +60,13 @@ class RemoveRegistryCredentialTest extends TestCase
         $this->removeRegistryCredential = new RemoveRegistryCredential($this->writer);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             RemoveRegistryCredential::class,
             ($this->removeRegistryCredential)(
-                registry: $this->createMock(AccountRegistry::class),
+                registry: $this->createStub(AccountRegistry::class),
             ),
         );
     }
@@ -81,7 +84,7 @@ class RemoveRegistryCredentialTest extends TestCase
 
     public function testInvokeWithAccountRegistry(): void
     {
-        $registry = $this->createMock(AccountRegistry::class);
+        $registry = $this->createStub(AccountRegistry::class);
 
         $this->writer->expects($this->once())
             ->method('remove')

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Writer\Meta;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
@@ -38,6 +39,7 @@ use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Writer\Meta\SpaceUserWriter;
 use Teknoo\Space\Writer\UserDataWriter;
 use Throwable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class SpaceUserWriterTest.
@@ -68,6 +70,7 @@ class SpaceUserWriterTest extends TestCase
         $this->spaceUserWriter = new SpaceUserWriter($this->userWriter, $this->dataWriter);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithWrongObject(): void
     {
         $promise = $this->createMock(PromiseInterface::class);
@@ -82,13 +85,14 @@ class SpaceUserWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserWriter::class,
             $this->spaceUserWriter->save(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 $promise,
                 true,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithNullPromise(): void
     {
         $this->userWriter->expects($this->never())
@@ -97,7 +101,7 @@ class SpaceUserWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserWriter::class,
             $this->spaceUserWriter->save(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 null,
                 true,
             ),
@@ -106,7 +110,7 @@ class SpaceUserWriterTest extends TestCase
 
     public function testSaveWithUserData(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $userData = $this->createMock(UserData::class);
         $userData->expects($this->once())
             ->method('setUser')
@@ -143,9 +147,10 @@ class SpaceUserWriterTest extends TestCase
     }
 
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithUserError(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $spaceUser = new SpaceUser($user, null);
 
         $this->userWriter->expects($this->once())
@@ -176,9 +181,10 @@ class SpaceUserWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithUserErrorDefaultCode(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $spaceUser = new SpaceUser($user, null);
 
         $this->userWriter->expects($this->once())
@@ -209,9 +215,10 @@ class SpaceUserWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSaveWithUserErrorWithoutPromise(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $spaceUser = new SpaceUser($user, null);
 
         $this->userWriter->expects($this->once())
@@ -233,6 +240,7 @@ class SpaceUserWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithWrongObject(): void
     {
         $promise = $this->createMock(PromiseInterface::class);
@@ -247,12 +255,13 @@ class SpaceUserWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserWriter::class,
             $this->spaceUserWriter->remove(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithNullPromise(): void
     {
         $this->userWriter->expects($this->never())
@@ -261,7 +270,7 @@ class SpaceUserWriterTest extends TestCase
         $this->assertInstanceOf(
             SpaceUserWriter::class,
             $this->spaceUserWriter->remove(
-                $this->createMock(ObjectInterface::class),
+                $this->createStub(ObjectInterface::class),
                 null,
             ),
         );
@@ -269,8 +278,8 @@ class SpaceUserWriterTest extends TestCase
 
     public function testRemoveWithUserData(): void
     {
-        $user = $this->createMock(User::class);
-        $userData = $this->createMock(UserData::class);
+        $user = $this->createStub(User::class);
+        $userData = $this->createStub(UserData::class);
         $spaceUser = new SpaceUser($user, $userData);
 
         $this->dataWriter->expects($this->once())
@@ -300,10 +309,11 @@ class SpaceUserWriterTest extends TestCase
     }
 
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithDataError(): void
     {
-        $user = $this->createMock(User::class);
-        $userData = $this->createMock(UserData::class);
+        $user = $this->createStub(User::class);
+        $userData = $this->createStub(UserData::class);
         $spaceUser = new SpaceUser($user, $userData);
 
         $this->dataWriter->expects($this->once())
@@ -333,10 +343,11 @@ class SpaceUserWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithDataErrorDefaultCode(): void
     {
-        $user = $this->createMock(User::class);
-        $userData = $this->createMock(UserData::class);
+        $user = $this->createStub(User::class);
+        $userData = $this->createStub(UserData::class);
         $spaceUser = new SpaceUser($user, $userData);
 
         $this->dataWriter->expects($this->once())
@@ -366,10 +377,11 @@ class SpaceUserWriterTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testRemoveWithDataErrorWithoutPromise(): void
     {
-        $user = $this->createMock(User::class);
-        $userData = $this->createMock(UserData::class);
+        $user = $this->createStub(User::class);
+        $userData = $this->createStub(UserData::class);
         $spaceUser = new SpaceUser($user, $userData);
 
         $this->dataWriter->expects($this->once())

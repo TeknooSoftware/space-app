@@ -57,7 +57,7 @@ class AccountVoterTest extends TestCase
     {
         $this->assertIsInt(
             $this->accountVoter->vote(
-                $this->createMock(TokenInterface::class),
+                $this->createStub(TokenInterface::class),
                 'foo',
                 ['foo' => 'bar'],
             )

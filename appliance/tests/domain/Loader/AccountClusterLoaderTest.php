@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountClusterRepositoryInterface;
 use Teknoo\Space\Loader\AccountClusterLoader;
@@ -45,7 +46,7 @@ class AccountClusterLoaderTest extends TestCase
 {
     private AccountClusterLoader $accountClusterLoader;
 
-    private AccountClusterRepositoryInterface&MockObject $repository;
+    private AccountClusterRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class AccountClusterLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(AccountClusterRepositoryInterface::class);
+        $this->repository = $this->createStub(AccountClusterRepositoryInterface::class);
         $this->accountClusterLoader = new AccountClusterLoader($this->repository);
     }
 

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\AccountRegistryRepositoryInterface;
 use Teknoo\Space\Loader\AccountRegistryLoader;
@@ -45,7 +46,7 @@ class AccountRegistryLoaderTest extends TestCase
 {
     private AccountRegistryLoader $accountRegistryLoader;
 
-    private AccountRegistryRepositoryInterface&MockObject $repository;
+    private AccountRegistryRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class AccountRegistryLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(AccountRegistryRepositoryInterface::class);
+        $this->repository = $this->createStub(AccountRegistryRepositoryInterface::class);
         $this->accountRegistryLoader = new AccountRegistryLoader($this->repository);
     }
 

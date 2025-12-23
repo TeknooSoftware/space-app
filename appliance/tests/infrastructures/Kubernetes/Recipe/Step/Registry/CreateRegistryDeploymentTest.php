@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Registr
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -92,7 +93,7 @@ class CreateRegistryDeploymentTest extends TestCase
         $this->tlsSecretName = '42';
         $this->registryUrl = '42';
         $this->clusterIssuer = '42';
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDate = true;
         $this->ingressClass = '42';
         $this->spaceRegistryUrl = '42';
@@ -125,7 +126,7 @@ class CreateRegistryDeploymentTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -135,10 +136,10 @@ class CreateRegistryDeploymentTest extends TestCase
         $this->assertInstanceOf(
             CreateRegistryDeployment::class,
             ($this->createRegistryAccount)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'bar',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 persistentVolumeClaimName: 'foo',
                 clusterCatalog: new ClusterCatalog(['defaults' => $clusterConfig], []),
             ),

@@ -27,11 +27,13 @@ namespace Teknoo\Space\Tests\Unit\Service;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
 use Teknoo\Space\Service\PersistedVariableEncryption;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class PersistedVariableEncryptionTest.
@@ -63,6 +65,7 @@ class PersistedVariableEncryptionTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetAgentMode(): void
     {
         $this->assertInstanceOf(
@@ -71,38 +74,42 @@ class PersistedVariableEncryptionTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testEncrypt(): void
     {
         $this->assertInstanceOf(
             PersistedVariableEncryption::class,
             $this->persistedVariableEncryption->encrypt(
-                $this->createMock(EncryptableVariableInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(EncryptableVariableInterface::class),
+                $this->createStub(PromiseInterface::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testDecrypt(): void
     {
         $this->assertInstanceOf(
             PersistedVariableEncryption::class,
             $this->persistedVariableEncryption->decrypt(
-                $this->createMock(EncryptableVariableInterface::class),
-                $this->createMock(PromiseInterface::class),
+                $this->createStub(EncryptableVariableInterface::class),
+                $this->createStub(PromiseInterface::class),
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testConstructWithNullService(): void
     {
         $service = new PersistedVariableEncryption(null, false);
         $this->assertInstanceOf(PersistedVariableEncryption::class, $service);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testEncryptWithNoService(): void
     {
         $service = new PersistedVariableEncryption(null, false);
-        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable = $this->createStub(EncryptableVariableInterface::class);
         $promise = $this->createMock(PromiseInterface::class);
 
         $promise->expects($this->once())
@@ -113,6 +120,7 @@ class PersistedVariableEncryptionTest extends TestCase
         $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testEncryptWhenAlreadyEncrypted(): void
     {
         $variable = $this->createMock(EncryptableVariableInterface::class);
@@ -129,6 +137,7 @@ class PersistedVariableEncryptionTest extends TestCase
         $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testEncryptInAgentMode(): void
     {
         $this->persistedVariableEncryption->setAgentMode(true);
@@ -154,7 +163,7 @@ class PersistedVariableEncryptionTest extends TestCase
             ->method('isEncrypted')
             ->willReturn(false);
 
-        $promise = $this->createMock(PromiseInterface::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $this->encryptionInterface->expects($this->once())
             ->method('encrypt')
@@ -164,10 +173,11 @@ class PersistedVariableEncryptionTest extends TestCase
         $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testDecryptWithNoService(): void
     {
         $service = new PersistedVariableEncryption(null, true);
-        $variable = $this->createMock(EncryptableVariableInterface::class);
+        $variable = $this->createStub(EncryptableVariableInterface::class);
         $promise = $this->createMock(PromiseInterface::class);
 
         $promise->expects($this->once())
@@ -178,6 +188,7 @@ class PersistedVariableEncryptionTest extends TestCase
         $this->assertInstanceOf(PersistedVariableEncryption::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testDecryptWhenMustEncrypt(): void
     {
         $this->persistedVariableEncryption->setAgentMode(true);
@@ -225,7 +236,7 @@ class PersistedVariableEncryptionTest extends TestCase
             ->method('mustEncrypt')
             ->willReturn(false);
 
-        $promise = $this->createMock(PromiseInterface::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $this->encryptionInterface->expects($this->once())
             ->method('decrypt')

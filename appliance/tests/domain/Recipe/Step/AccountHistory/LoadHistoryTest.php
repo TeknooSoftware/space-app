@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\AccountHistory;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use Teknoo\East\Common\View\ParametersBag;
@@ -38,6 +39,7 @@ use Teknoo\Space\Loader\AccountHistoryLoader;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Writer\AccountHistoryWriter;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadHistoryTest.
@@ -68,22 +70,23 @@ class LoadHistoryTest extends TestCase
         $this->loadHistory = new LoadHistory($this->loader, $this->writer);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
             LoadHistory::class,
             ($this->loadHistory)(
-                manager: $this->createMock(ManagerInterface::class),
-                accountInstance: $this->createMock(Account::class),
-                bag: $this->createMock(ParametersBag::class),
+                manager: $this->createStub(ManagerInterface::class),
+                accountInstance: $this->createStub(Account::class),
+                bag: $this->createStub(ParametersBag::class),
             ),
         );
     }
 
     public function testInvokeWithSuccessfulLoad(): void
     {
-        $account = $this->createMock(Account::class);
-        $history = $this->createMock(History::class);
+        $account = $this->createStub(Account::class);
+        $history = $this->createStub(History::class);
         $accountHistory = $this->createMock(AccountHistory::class);
         $accountHistory->expects($this->once())
             ->method('passMeYouHistory')
@@ -136,7 +139,7 @@ class LoadHistoryTest extends TestCase
 
     public function testInvokeWithNonDomainExceptionPassesErrorToManager(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $exception = new RuntimeException('Some error');
 
         $bag = $this->createMock(ParametersBag::class);
@@ -171,7 +174,7 @@ class LoadHistoryTest extends TestCase
 
     public function testInvokeWithDomainExceptionCreatesNewHistory(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
         $exception = new DomainException('Account history not found');
 
         $bag = $this->createMock(ParametersBag::class);

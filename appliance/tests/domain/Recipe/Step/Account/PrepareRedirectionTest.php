@@ -60,16 +60,16 @@ class PrepareRedirectionTest extends TestCase
         $this->assertInstanceOf(
             PrepareRedirection::class,
             ($this->prepareRedirection)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(Account::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(Account::class),
             )
         );
     }
 
     public function testInvokeWithWorkPlanUpdate(): void
     {
-        $account = $this->createMock(Account::class);
-        $account->expects($this->any())
+        $account = $this->createStub(Account::class);
+        $account
             ->method('getId')
             ->willReturn('account-123');
 

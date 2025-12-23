@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Paas\Object\Job;
@@ -47,9 +48,9 @@ class JobUpdaterNotifierTest extends TestCase
 {
     private JobUpdaterNotifier $jobUpdaterNotifier;
 
-    private JobUrlPublisher&MockObject $publisher;
+    private JobUrlPublisher&Stub $publisher;
 
-    private UrlGeneratorInterface&MockObject $generator;
+    private UrlGeneratorInterface&Stub $generator;
 
     private string $pendingJobRoute;
 
@@ -62,8 +63,8 @@ class JobUpdaterNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createMock(JobUrlPublisher::class);
-        $this->generator = $this->createMock(UrlGeneratorInterface::class);
+        $this->publisher = $this->createStub(JobUrlPublisher::class);
+        $this->generator = $this->createStub(UrlGeneratorInterface::class);
         $this->pendingJobRoute = '42';
         $this->getJobRoute = '42';
         $this->jobUpdaterNotifier = new JobUpdaterNotifier(
@@ -79,8 +80,8 @@ class JobUpdaterNotifierTest extends TestCase
         $this->assertInstanceOf(
             JobUpdaterNotifier::class,
             ($this->jobUpdaterNotifier)(
-                project: $this->createMock(Project::class),
-                job: $this->createMock(Job::class),
+                project: $this->createStub(Project::class),
+                job: $this->createStub(Job::class),
                 newJobId: 'foo',
             )
         );

@@ -57,22 +57,18 @@ class SpacePasswordTypeTest extends TestCase
 
     public function testBuildForm(): void
     {
-        $this->assertInstanceOf(
-            SpacePasswordType::class,
-            $this->spacePasswordType->buildForm(
-                $this->createMock(FormBuilderInterface::class),
-                ['foo' => 'bar'],
-            ),
+        $this->spacePasswordType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            ['foo' => 'bar'],
         );
+        $this->assertTrue(true);
     }
 
     public function testConfigureOptions(): void
     {
-        $this->assertInstanceOf(
-            SpacePasswordType::class,
-            $this->spacePasswordType->configureOptions(
-                $this->createMock(OptionsResolver::class),
-            ),
+        $this->spacePasswordType->configureOptions(
+            $this->createStub(OptionsResolver::class),
         );
+        $this->assertTrue(true);
     }
 }

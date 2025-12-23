@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Loader\Meta;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Query\QueryCollectionInterface;
 use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
@@ -40,6 +41,7 @@ use Teknoo\Space\Loader\ProjectMetadataLoader;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Throwable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class SpaceProjectLoaderTest.
@@ -58,7 +60,7 @@ class SpaceProjectLoaderTest extends TestCase
 
     private ProjectMetadataLoader&MockObject $metadataLoader;
 
-    private ProjectPersistedVariableLoader&MockObject $persistedVariableLoader;
+    private ProjectPersistedVariableLoader&Stub $persistedVariableLoader;
 
     /**
      * {@inheritdoc}
@@ -69,7 +71,7 @@ class SpaceProjectLoaderTest extends TestCase
 
         $this->projectLoader = $this->createMock(ProjectLoader::class);
         $this->metadataLoader = $this->createMock(ProjectMetadataLoader::class);
-        $this->persistedVariableLoader = $this->createMock(ProjectPersistedVariableLoader::class);
+        $this->persistedVariableLoader = $this->createStub(ProjectPersistedVariableLoader::class);
         $this->spaceProjectLoader = new SpaceProjectLoader(
             projectLoader: $this->projectLoader,
             metadataLoader: $this->metadataLoader,
@@ -83,7 +85,7 @@ class SpaceProjectLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Project::class));
+                    $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
                 }
@@ -93,7 +95,7 @@ class SpaceProjectLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(ProjectMetadata::class));
+                    $promise->success($this->createStub(ProjectMetadata::class));
 
                     return $this->metadataLoader;
                 }
@@ -113,6 +115,7 @@ class SpaceProjectLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoadWithProjectError(): void
     {
         $this->projectLoader->expects($this->once())
@@ -143,6 +146,7 @@ class SpaceProjectLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testLoadWithProjectErrorDefaultCode(): void
     {
         $this->projectLoader->expects($this->once())
@@ -179,7 +183,7 @@ class SpaceProjectLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Project::class));
+                    $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
                 }
@@ -219,7 +223,7 @@ class SpaceProjectLoaderTest extends TestCase
             ->method('load')
             ->willReturnCallback(
                 function (string $id, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Project::class));
+                    $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
                 }
@@ -253,10 +257,11 @@ class SpaceProjectLoaderTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testQuery(): void
     {
-        $project1 = $this->createMock(Project::class);
-        $project2 = $this->createMock(Project::class);
+        $project1 = $this->createStub(Project::class);
+        $project2 = $this->createStub(Project::class);
 
         $this->projectLoader->expects($this->once())
             ->method('query')
@@ -280,7 +285,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->query(
-                $this->createMock(QueryCollectionInterface::class),
+                $this->createStub(QueryCollectionInterface::class),
                 $promise,
             ),
         );
@@ -292,7 +297,7 @@ class SpaceProjectLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(Project::class));
+                    $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
                 }
@@ -302,7 +307,7 @@ class SpaceProjectLoaderTest extends TestCase
             ->method('fetch')
             ->willReturnCallback(
                 function ($query, PromiseInterface $promise) {
-                    $promise->success($this->createMock(ProjectMetadata::class));
+                    $promise->success($this->createStub(ProjectMetadata::class));
 
                     return $this->metadataLoader;
                 }
@@ -316,12 +321,13 @@ class SpaceProjectLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetchWithProjectError(): void
     {
         $this->projectLoader->expects($this->once())
@@ -346,12 +352,13 @@ class SpaceProjectLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testFetchWithProjectErrorDefaultCode(): void
     {
         $this->projectLoader->expects($this->once())
@@ -376,7 +383,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->assertInstanceOf(
             SpaceProjectLoader::class,
             $this->spaceProjectLoader->fetch(
-                $this->createMock(QueryElementInterface::class),
+                $this->createStub(QueryElementInterface::class),
                 $promise,
             ),
         );

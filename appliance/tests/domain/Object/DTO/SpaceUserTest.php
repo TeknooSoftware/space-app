@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
@@ -46,9 +47,9 @@ class SpaceUserTest extends TestCase
 {
     private SpaceUser $spaceUser;
 
-    private User&MockObject $user;
+    private User&Stub $user;
 
-    private UserData&MockObject $userData;
+    private UserData&Stub $userData;
 
     /**
      * {@inheritdoc}
@@ -57,8 +58,8 @@ class SpaceUserTest extends TestCase
     {
         parent::setUp();
 
-        $this->user = $this->createMock(User::class);
-        $this->userData = $this->createMock(UserData::class);
+        $this->user = $this->createStub(User::class);
+        $this->userData = $this->createStub(UserData::class);
         $this->spaceUser = new SpaceUser($this->user, $this->userData);
     }
 
@@ -88,7 +89,7 @@ class SpaceUserTest extends TestCase
 
     public function testConstructorWithNullUserData(): void
     {
-        $user = $this->createMock(User::class);
+        $user = $this->createStub(User::class);
         $spaceUser = new SpaceUser($user, null);
 
         $this->assertSame($user, $spaceUser->user);

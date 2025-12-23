@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Loader;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Space\Contracts\DbSource\Repository\UserDataRepositoryInterface;
 use Teknoo\Space\Loader\UserDataLoader;
@@ -45,7 +46,7 @@ class UserDataLoaderTest extends TestCase
 {
     private UserDataLoader $userDataLoader;
 
-    private UserDataRepositoryInterface&MockObject $repository;
+    private UserDataRepositoryInterface&Stub $repository;
 
     /**
      * {@inheritdoc}
@@ -54,7 +55,7 @@ class UserDataLoaderTest extends TestCase
     {
         parent::setUp();
 
-        $this->repository = $this->createMock(UserDataRepositoryInterface::class);
+        $this->repository = $this->createStub(UserDataRepositoryInterface::class);
         $this->userDataLoader = new UserDataLoader($this->repository);
     }
 

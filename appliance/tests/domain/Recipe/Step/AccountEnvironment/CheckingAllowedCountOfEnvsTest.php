@@ -59,9 +59,9 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
         $this->assertInstanceOf(
             CheckingAllowedCountOfEnvs::class,
             ($this->checkingAllowedCountOfEnvs)(
-                $this->createMock(ManagerInterface::class),
+                $this->createStub(ManagerInterface::class),
                 new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 new SubscriptionPlan(
@@ -90,7 +90,7 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ($this->checkingAllowedCountOfEnvs)(
                 manager: $manager,
                 spaceAccount: new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 plan: null,
@@ -117,7 +117,7 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ($this->checkingAllowedCountOfEnvs)(
                 manager: $manager,
                 spaceAccount: new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [
                         (object)['id' => '1'],
                         (object)['id' => '2'],
@@ -143,7 +143,7 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ($this->checkingAllowedCountOfEnvs)(
                 manager: $manager,
                 spaceAccount: new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [
                         (object)['id' => '1'],
                         (object)['id' => '2'],
@@ -164,7 +164,7 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ($this->checkingAllowedCountOfEnvs)(
                 manager: $manager,
                 spaceAccount: new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [
                         (object)['id' => '1'],
                         (object)['id' => '2'],
@@ -190,7 +190,7 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ($this->checkingAllowedCountOfEnvs)(
                 manager: $manager,
                 spaceAccount: new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: []
                 ),
                 plan: new SubscriptionPlan(
@@ -213,7 +213,7 @@ class CheckingAllowedCountOfEnvsTest extends TestCase
             ($this->checkingAllowedCountOfEnvs)(
                 manager: $manager,
                 spaceAccount: new SpaceAccount(
-                    account: $this->createMock(Account::class),
+                    account: $this->createStub(Account::class),
                     environments: [
                         (object)['id' => '1'],
                     ]

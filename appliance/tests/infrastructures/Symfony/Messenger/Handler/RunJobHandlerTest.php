@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Messenger\Handler;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
@@ -51,19 +52,19 @@ class RunJobHandlerTest extends TestCase
 {
     private RunJobHandler $runJobHandler;
 
-    private Executor&MockObject $executor;
+    private Executor&Stub $executor;
 
-    private BaseRecipeInterface&MockObject $recipe;
+    private BaseRecipeInterface&Stub $recipe;
 
-    private MessageFactoryInterface&MockObject $messageFactory;
+    private MessageFactoryInterface&Stub $messageFactory;
 
-    private StreamFactoryInterface&MockObject $streamFactory;
+    private StreamFactoryInterface&Stub $streamFactory;
 
-    private Client&MockObject $client;
+    private Client&Stub $client;
 
-    private LoggerInterface&MockObject $logger;
+    private LoggerInterface&Stub $logger;
 
-    private EncryptionInterface&MockObject $encryption;
+    private EncryptionInterface&Stub $encryption;
 
     /**
      * {@inheritdoc}
@@ -72,13 +73,13 @@ class RunJobHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->executor = $this->createMock(Executor::class);
-        $this->recipe = $this->createMock(BaseRecipeInterface::class);
-        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->client = $this->createMock(Client::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->encryption = $this->createMock(EncryptionInterface::class);
+        $this->executor = $this->createStub(Executor::class);
+        $this->recipe = $this->createStub(BaseRecipeInterface::class);
+        $this->messageFactory = $this->createStub(MessageFactoryInterface::class);
+        $this->streamFactory = $this->createStub(StreamFactoryInterface::class);
+        $this->client = $this->createStub(Client::class);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->encryption = $this->createStub(EncryptionInterface::class);
 
         $this->runJobHandler = new RunJobHandler(
             $this->executor,
@@ -96,7 +97,7 @@ class RunJobHandlerTest extends TestCase
         $this->assertInstanceOf(
             RunJobHandler::class,
             ($this->runJobHandler)(
-                $this->createMock(MessageJob::class),
+                $this->createStub(MessageJob::class),
             )
         );
     }

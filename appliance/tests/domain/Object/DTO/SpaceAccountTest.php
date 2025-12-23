@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Object\DTO;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Paas\Object\Account;
@@ -48,9 +49,9 @@ class SpaceAccountTest extends TestCase
 {
     private SpaceAccount $spaceAccount;
 
-    private Account&MockObject $account;
+    private Account&Stub $account;
 
-    private AccountData&MockObject $accountData;
+    private AccountData&Stub $accountData;
 
     private iterable $variables;
 
@@ -61,8 +62,8 @@ class SpaceAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->account = $this->createMock(Account::class);
-        $this->accountData = $this->createMock(AccountData::class);
+        $this->account = $this->createStub(Account::class);
+        $this->accountData = $this->createStub(AccountData::class);
         $this->variables = [];
         $this->spaceAccount = new SpaceAccount(
             account: $this->account,
@@ -97,7 +98,7 @@ class SpaceAccountTest extends TestCase
 
     public function testConstructWithNullAccountData(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $spaceAccount = new SpaceAccount(
             account: $account,
@@ -109,8 +110,8 @@ class SpaceAccountTest extends TestCase
 
     public function testConstructWithProvidedAccountData(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
 
         $spaceAccount = new SpaceAccount(
             account: $account,
@@ -122,8 +123,8 @@ class SpaceAccountTest extends TestCase
 
     public function testConstructWithVariablesAndEnvironments(): void
     {
-        $account = $this->createMock(Account::class);
-        $variable = $this->createMock(AccountPersistedVariable::class);
+        $account = $this->createStub(Account::class);
+        $variable = $this->createStub(AccountPersistedVariable::class);
         $environment = new AccountEnvironmentResume('cluster1', 'env1');
 
         $spaceAccount = new SpaceAccount(
@@ -139,8 +140,8 @@ class SpaceAccountTest extends TestCase
 
     public function testExportToMeDataWithDefaultGroups(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
 
         $spaceAccount = new SpaceAccount(
             account: $account,
@@ -159,9 +160,9 @@ class SpaceAccountTest extends TestCase
 
     public function testExportToMeDataWithCustomGroups(): void
     {
-        $account = $this->createMock(Account::class);
-        $accountData = $this->createMock(AccountData::class);
-        $variable = $this->createMock(AccountPersistedVariable::class);
+        $account = $this->createStub(Account::class);
+        $accountData = $this->createStub(AccountData::class);
+        $variable = $this->createStub(AccountPersistedVariable::class);
         $environment = new AccountEnvironmentResume('cluster1', 'env1');
 
         $spaceAccount = new SpaceAccount(

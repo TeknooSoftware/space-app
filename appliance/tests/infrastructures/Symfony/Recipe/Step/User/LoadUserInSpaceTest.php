@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\User;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Teknoo\East\Common\View\ParametersBag;
@@ -48,11 +49,11 @@ class LoadUserInSpaceTest extends TestCase
 {
     private LoadUserInSpace $loadUserInSpace;
 
-    private TokenStorageInterface&MockObject $tokenStorage;
+    private TokenStorageInterface&Stub $tokenStorage;
 
-    private SpaceUserLoader&MockObject $spaceUserLoader;
+    private SpaceUserLoader&Stub $spaceUserLoader;
 
-    private SpaceAccountLoader&MockObject $spaceAccountLoader;
+    private SpaceAccountLoader&Stub $spaceAccountLoader;
 
     /**
      * {@inheritdoc}
@@ -61,9 +62,9 @@ class LoadUserInSpaceTest extends TestCase
     {
         parent::setUp();
 
-        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->spaceUserLoader = $this->createMock(SpaceUserLoader::class);
-        $this->spaceAccountLoader = $this->createMock(SpaceAccountLoader::class);
+        $this->tokenStorage = $this->createStub(TokenStorageInterface::class);
+        $this->spaceUserLoader = $this->createStub(SpaceUserLoader::class);
+        $this->spaceAccountLoader = $this->createStub(SpaceAccountLoader::class);
         $this->loadUserInSpace = new LoadUserInSpace(
             $this->tokenStorage,
             $this->spaceUserLoader,
@@ -76,8 +77,8 @@ class LoadUserInSpaceTest extends TestCase
         $this->assertInstanceOf(
             LoadUserInSpace::class,
             ($this->loadUserInSpace)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ParametersBag::class),
             )
         );
     }

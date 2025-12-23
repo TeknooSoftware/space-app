@@ -53,7 +53,7 @@ class HealthTest extends TestCase
     {
         parent::setUp();
 
-        $this->health = new Health($this->createMock(ClusterCatalog::class));
+        $this->health = new Health($this->createStub(ClusterCatalog::class));
     }
 
     public function testInvoke(): void
@@ -61,8 +61,8 @@ class HealthTest extends TestCase
         $this->assertInstanceOf(
             Health::class,
             ($this->health)(
-                $this->createMock(ManagerInterface::class),
-                $this->createMock(ParametersBag::class),
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ParametersBag::class),
             )
         );
     }

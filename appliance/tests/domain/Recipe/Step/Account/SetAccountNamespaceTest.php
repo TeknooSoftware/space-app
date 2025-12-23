@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Contracts\Object\SluggableInterface;
@@ -52,7 +53,7 @@ class SetAccountNamespaceTest extends TestCase
 
     private FindSlugService&MockObject $findSlugService;
 
-    private AccountLoader&MockObject $accountLoader;
+    private AccountLoader&Stub $accountLoader;
 
     /**
      * {@inheritdoc}
@@ -62,7 +63,7 @@ class SetAccountNamespaceTest extends TestCase
         parent::setUp();
 
         $this->findSlugService = $this->createMock(FindSlugService::class);
-        $this->accountLoader = $this->createMock(AccountLoader::class);
+        $this->accountLoader = $this->createStub(AccountLoader::class);
 
         $this->setAccountNamespace = new SetAccountNamespace(
             $this->findSlugService,
@@ -74,12 +75,10 @@ class SetAccountNamespaceTest extends TestCase
     public function testInvoke(): void
     {
         $account = $this->createMock(Account::class);
-        $account->expects($this->any())
-            ->method('getId')
+        $account->method('getId')
             ->willReturn('account-999');
 
-        $account->expects($this->any())
-            ->method('namespaceIsItDefined')
+        $account->method('namespaceIsItDefined')
             ->willReturnCallback(
                 function (PromiseInterface $promise) use ($account) {
                     $promise->success('foo');

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Registr
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -50,7 +51,7 @@ class CreateStorageTest extends TestCase
 {
     private CreateStorage $createStorage;
 
-    private DatesService&MockObject $datesService;
+    private DatesService&Stub $datesService;
 
     private bool $preferRealDate;
 
@@ -61,7 +62,7 @@ class CreateStorageTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createMock(DatesService::class);
+        $this->datesService = $this->createStub(DatesService::class);
         $this->preferRealDate = true;
         $this->createStorage = new CreateStorage(
             $this->datesService,
@@ -78,7 +79,7 @@ class CreateStorageTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -88,13 +89,13 @@ class CreateStorageTest extends TestCase
         $this->assertInstanceOf(
             CreateStorage::class,
             ($this->createStorage)(
-                manager: $this->createMock(ManagerInterface::class),
+                manager: $this->createStub(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
-                accountHistory: $this->createMock(AccountHistory::class),
+                accountHistory: $this->createStub(AccountHistory::class),
                 storageSizeToClaim: 'foo',
                 clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
-                accountRegistry: $this->createMock(AccountRegistry::class),
+                accountRegistry: $this->createStub(AccountRegistry::class),
             )
         );
     }

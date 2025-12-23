@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environ
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
@@ -49,7 +50,7 @@ use Teknoo\Space\Writer\AccountEnvironmentWriter;
 #[CoversClass(AbstractDeleteFromResumes::class)]
 class DeleteNamespaceFromResumesTest extends TestCase
 {
-    private AccountEnvironmentWriter&MockObject $accountEnvironmentWriter;
+    private AccountEnvironmentWriter&Stub $accountEnvironmentWriter;
 
     private DeleteNamespaceFromResumes $deleteNamespaceFromResumes;
 
@@ -60,7 +61,7 @@ class DeleteNamespaceFromResumesTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountEnvironmentWriter = $this->createMock(AccountEnvironmentWriter::class);
+        $this->accountEnvironmentWriter = $this->createStub(AccountEnvironmentWriter::class);
 
         $this->deleteNamespaceFromResumes = new DeleteNamespaceFromResumes(
             $this->accountEnvironmentWriter,
@@ -69,7 +70,7 @@ class DeleteNamespaceFromResumesTest extends TestCase
 
     public function testInvoke(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $this->assertInstanceOf(
             DeleteNamespaceFromResumes::class,
@@ -100,7 +101,7 @@ class DeleteNamespaceFromResumesTest extends TestCase
                         )
                     ]
                 ),
-                new ClusterCatalog(['foo' => $this->createMock(Cluster::class)], ['Foo' => 'foo']),
+                new ClusterCatalog(['foo' => $this->createStub(Cluster::class)], ['Foo' => 'foo']),
             ),
         );
     }

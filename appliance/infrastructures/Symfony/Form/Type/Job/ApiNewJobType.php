@@ -55,7 +55,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
         return 'new_job';
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options): self
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
 
@@ -118,11 +118,9 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                 }
             );
         }
-
-        return $this;
     }
 
-    public function configureOptions(OptionsResolver $resolver): self
+    public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
@@ -141,7 +139,5 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
 
         $resolver->setAllowedTypes('api', ['null', 'string']);
         $resolver->setAllowedTypes('environmentsList', ['array']);
-
-        return $this;
     }
 }

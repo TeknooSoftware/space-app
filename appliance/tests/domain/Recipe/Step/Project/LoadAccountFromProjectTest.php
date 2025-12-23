@@ -67,16 +67,16 @@ class LoadAccountFromProjectTest extends TestCase
         $this->assertInstanceOf(
             LoadAccountFromProject::class,
             ($this->loadAccountFromProject)(
-                new SpaceProject($this->createMock(Project::class)),
+                new SpaceProject($this->createStub(Project::class)),
                 $manager,
-                $this->createMock(Account::class),
+                $this->createStub(Account::class),
             )
         );
     }
 
     public function testInvokeWithProject(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
@@ -93,7 +93,7 @@ class LoadAccountFromProjectTest extends TestCase
         $this->assertInstanceOf(
             LoadAccountFromProject::class,
             ($this->loadAccountFromProject)(
-                $this->createMock(Project::class),
+                $this->createStub(Project::class),
                 $manager,
                 $account,
             )
@@ -102,7 +102,7 @@ class LoadAccountFromProjectTest extends TestCase
 
     public function testInvokeWithAccountFromProject(): void
     {
-        $account = $this->createMock(Account::class);
+        $account = $this->createStub(Account::class);
 
         $project = $this->createMock(Project::class);
         $project->expects($this->once())
@@ -151,7 +151,7 @@ class LoadAccountFromProjectTest extends TestCase
         $this->assertInstanceOf(
             LoadAccountFromProject::class,
             ($this->loadAccountFromProject)(
-                $this->createMock(Project::class),
+                $this->createStub(Project::class),
                 $manager,
                 $account,
                 $accountId,
@@ -171,8 +171,8 @@ class LoadAccountFromProjectTest extends TestCase
         $this->expectExceptionCode(404);
 
         ($this->loadAccountFromProject)(
-            $this->createMock(Project::class),
-            $this->createMock(ManagerInterface::class),
+            $this->createStub(Project::class),
+            $this->createStub(ManagerInterface::class),
             $account,
             'account-456',
         );
@@ -203,7 +203,7 @@ class LoadAccountFromProjectTest extends TestCase
         $this->assertInstanceOf(
             LoadAccountFromProject::class,
             ($this->loadAccountFromProject)(
-                $this->createMock(Project::class),
+                $this->createStub(Project::class),
                 $manager,
                 $account,
                 $accountId,
@@ -221,7 +221,7 @@ class LoadAccountFromProjectTest extends TestCase
             ->method('getId')
             ->willReturn($accountId);
 
-        $project = $this->createMock(Project::class);
+        $project = $this->createStub(Project::class);
 
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())

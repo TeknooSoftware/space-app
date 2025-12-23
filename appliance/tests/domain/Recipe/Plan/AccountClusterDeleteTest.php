@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
@@ -57,25 +58,25 @@ class AccountClusterDeleteTest extends TestCase
 {
     private AccountClusterDelete $AccountClusterDelete;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private JumpIfNot&MockObject $jumpIfNot;
+    private JumpIfNot&Stub $jumpIfNot;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private InjectToView&MockObject $injectToView;
+    private InjectToView&Stub $injectToView;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
-    private DeleteObject&MockObject $deleteObject;
+    private DeleteObject&Stub $deleteObject;
 
-    private JumpIf&MockObject $jumpIf;
+    private JumpIf&Stub $jumpIf;
 
-    private RedirectClientInterface&MockObject $redirectClient;
+    private RedirectClientInterface&Stub $redirectClient;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private RenderError&MockObject $renderError;
+    private RenderError&Stub $renderError;
 
     private string|Stringable $defaultErrorTemplate;
 
@@ -86,16 +87,16 @@ class AccountClusterDeleteTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->jumpIfNot = $this->createMock(JumpIfNot::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
-        $this->deleteObject = $this->createMock(DeleteObject::class);
-        $this->jumpIf = $this->createMock(JumpIf::class);
-        $this->redirectClient = $this->createMock(RedirectClientInterface::class);
-        $this->injectToView = $this->createMock(InjectToView::class);
-        $this->render = $this->createMock(Render::class);
-        $this->renderError = $this->createMock(RenderError::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->jumpIfNot = $this->createStub(JumpIfNot::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
+        $this->deleteObject = $this->createStub(DeleteObject::class);
+        $this->jumpIf = $this->createStub(JumpIf::class);
+        $this->redirectClient = $this->createStub(RedirectClientInterface::class);
+        $this->injectToView = $this->createStub(InjectToView::class);
+        $this->render = $this->createStub(Render::class);
+        $this->renderError = $this->createStub(RenderError::class);
 
         $this->defaultErrorTemplate = '42';
 
@@ -127,7 +128,7 @@ class AccountClusterDeleteTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->AccountClusterDelete->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

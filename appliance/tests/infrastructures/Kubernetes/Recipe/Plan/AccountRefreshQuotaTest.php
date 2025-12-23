@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Recipe\Step\JumpIf;
@@ -62,37 +63,37 @@ class AccountRefreshQuotaTest extends TestCase
 {
     private AccountRefreshQuota $accountRefreshQuota;
 
-    private RecipeInterface&MockObject $recipe;
+    private RecipeInterface&Stub $recipe;
 
-    private LoadObject&MockObject $loadObject;
+    private LoadObject&Stub $loadObject;
 
-    private PrepareRedirection&MockObject $prepareRedirection;
+    private PrepareRedirection&Stub $prepareRedirection;
 
-    private SetRedirectClientAtEnd&MockObject $redirectClient;
+    private SetRedirectClientAtEnd&Stub $redirectClient;
 
-    private LoadHistory&MockObject $loadHistory;
+    private LoadHistory&Stub $loadHistory;
 
-    private LoadEnvironments&MockObject $loadEnvironments;
+    private LoadEnvironments&Stub $loadEnvironments;
 
-    private LoadAccountClusters&MockObject $loadAccountClusters;
+    private LoadAccountClusters&Stub $loadAccountClusters;
 
-    private ReloadNamespace&MockObject $reloadNamespace;
+    private ReloadNamespace&Stub $reloadNamespace;
 
-    private ReloadEnvironement&MockObject $reloadEnvironement;
+    private ReloadEnvironement&Stub $reloadEnvironement;
 
-    private SelectClusterConfig&MockObject $selectClusterConfig;
+    private SelectClusterConfig&Stub $selectClusterConfig;
 
-    private CreateQuota&MockObject $createQuota;
+    private CreateQuota&Stub $createQuota;
 
-    private UpdateAccountHistory&MockObject $updateAccountHistory;
+    private UpdateAccountHistory&Stub $updateAccountHistory;
 
-    private JumpIf&MockObject $jumpIf;
+    private JumpIf&Stub $jumpIf;
 
-    private Render&MockObject $render;
+    private Render&Stub $render;
 
-    private ReinstallAccountErrorHandler&MockObject $errorHandler;
+    private ReinstallAccountErrorHandler&Stub $errorHandler;
 
-    private ObjectAccessControlInterface&MockObject $objectAccessControl;
+    private ObjectAccessControlInterface&Stub $objectAccessControl;
 
     /**
      * {@inheritdoc}
@@ -101,22 +102,22 @@ class AccountRefreshQuotaTest extends TestCase
     {
         parent::setUp();
 
-        $this->recipe = $this->createMock(RecipeInterface::class);
-        $this->loadObject = $this->createMock(LoadObject::class);
-        $this->prepareRedirection = $this->createMock(PrepareRedirection::class);
-        $this->redirectClient = $this->createMock(SetRedirectClientAtEnd::class);
-        $this->loadHistory = $this->createMock(LoadHistory::class);
-        $this->loadEnvironments = $this->createMock(LoadEnvironments::class);
-        $this->reloadNamespace = $this->createMock(ReloadNamespace::class);
-        $this->reloadEnvironement = $this->createMock(ReloadEnvironement::class);
-        $this->loadAccountClusters = $this->createMock(LoadAccountClusters::class);
-        $this->selectClusterConfig = $this->createMock(SelectClusterConfig::class);
-        $this->createQuota = $this->createMock(CreateQuota::class);
-        $this->updateAccountHistory = $this->createMock(UpdateAccountHistory::class);
-        $this->jumpIf = $this->createMock(JumpIf::class);
-        $this->render = $this->createMock(Render::class);
-        $this->errorHandler = $this->createMock(ReinstallAccountErrorHandler::class);
-        $this->objectAccessControl = $this->createMock(ObjectAccessControlInterface::class);
+        $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadObject = $this->createStub(LoadObject::class);
+        $this->prepareRedirection = $this->createStub(PrepareRedirection::class);
+        $this->redirectClient = $this->createStub(SetRedirectClientAtEnd::class);
+        $this->loadHistory = $this->createStub(LoadHistory::class);
+        $this->loadEnvironments = $this->createStub(LoadEnvironments::class);
+        $this->reloadNamespace = $this->createStub(ReloadNamespace::class);
+        $this->reloadEnvironement = $this->createStub(ReloadEnvironement::class);
+        $this->loadAccountClusters = $this->createStub(LoadAccountClusters::class);
+        $this->selectClusterConfig = $this->createStub(SelectClusterConfig::class);
+        $this->createQuota = $this->createStub(CreateQuota::class);
+        $this->updateAccountHistory = $this->createStub(UpdateAccountHistory::class);
+        $this->jumpIf = $this->createStub(JumpIf::class);
+        $this->render = $this->createStub(Render::class);
+        $this->errorHandler = $this->createStub(ReinstallAccountErrorHandler::class);
+        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
         $this->accountRefreshQuota = new AccountRefreshQuota(
             recipe: $this->recipe,
             loadObject: $this->loadObject,
@@ -150,7 +151,7 @@ class AccountRefreshQuotaTest extends TestCase
         $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->accountRefreshQuota->train(
-                $this->createMock(ChefInterface::class),
+                $this->createStub(ChefInterface::class),
             )
         );
     }

@@ -28,6 +28,7 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 use Http\Client\Common\HttpMethodsClientInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -59,15 +60,15 @@ class DashboardFrameTest extends TestCase
 {
     private DashboardFrame $dashboardFrame;
 
-    private HttpMethodsClientInterface&MockObject $httpMethodsClient;
+    private HttpMethodsClientInterface&Stub $httpMethodsClient;
 
     private ClusterCatalog $clusterCatalog;
 
-    private ResponseFactoryInterface&MockObject $responseFactory;
+    private ResponseFactoryInterface&Stub $responseFactory;
 
-    private StreamFactoryInterface&MockObject $streamFactory;
+    private StreamFactoryInterface&Stub $streamFactory;
 
-    private UrlGeneratorInterface&MockObject $urlGenerator;
+    private UrlGeneratorInterface&Stub $urlGenerator;
 
     /**
      * {@inheritdoc}
@@ -76,10 +77,10 @@ class DashboardFrameTest extends TestCase
     {
         parent::setUp();
 
-        $this->httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
-        $this->responseFactory = $this->createMock(ResponseFactoryInterface::class);
-        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
-        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $this->httpMethodsClient = $this->createStub(HttpMethodsClientInterface::class);
+        $this->responseFactory = $this->createStub(ResponseFactoryInterface::class);
+        $this->streamFactory = $this->createStub(StreamFactoryInterface::class);
+        $this->urlGenerator = $this->createStub(UrlGeneratorInterface::class);
 
         $clusterConfig = new ClusterConfig(
             name: 'foo',
@@ -88,7 +89,7 @@ class DashboardFrameTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createMock(Client::class),
+            kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
@@ -110,45 +111,45 @@ class DashboardFrameTest extends TestCase
 
     public function testInvoke(): void
     {
-        $sRequest = $this->createMock(ServerRequestInterface::class);
+        $sRequest = $this->createStub(ServerRequestInterface::class);
         $sRequest->method('getMethod')->willReturn('GET');
 
-        $finalResponse = $this->createMock(ResponseInterface::class);
+        $finalResponse = $this->createStub(ResponseInterface::class);
         $finalResponse->method('withBody')->willReturnSelf();
         $this->responseFactory
             ->method('createResponse')
             ->willReturn($finalResponse);
 
-        $response = $this->createMock(ResponseInterface::class);
+        $response = $this->createStub(ResponseInterface::class);
         $response->method('getStatusCode')->willReturn(200);
         $response->method('getReasonPhrase')->willReturn('foo');
         $response->method('getBody')->willReturn(
-            $this->createMock(StreamInterface::class)
+            $this->createStub(StreamInterface::class)
         );
 
         $this->httpMethodsClient
             ->method('send')
             ->willReturn($response);
 
-        $wallet = $this->createMock(AccountWallet::class);
+        $wallet = $this->createStub(AccountWallet::class);
         $wallet
             ->method('has')
             ->willReturn(true);
         $wallet
             ->method('get')
-            ->willReturn($this->createMock(AccountEnvironment::class));
+            ->willReturn($this->createStub(AccountEnvironment::class));
 
         $this->assertInstanceOf(
             DashboardFrame::class,
             ($this->dashboardFrame)(
-                manager: $this->createMock(ManagerInterface::class),
-                client: $this->createMock(EastClient::class),
+                manager: $this->createStub(ManagerInterface::class),
+                client: $this->createStub(EastClient::class),
                 serverRequest: $sRequest,
-                user: $this->createMock(User::class),
+                user: $this->createStub(User::class),
                 clusterCatalog: $this->clusterCatalog,
                 clusterName: 'clusterName',
                 wildcard: '*',
-                account: $this->createMock(Account::class),
+                account: $this->createStub(Account::class),
                 accountWallet: $wallet,
                 envName: 'prod',
             )
