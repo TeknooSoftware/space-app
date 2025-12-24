@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.2] - 2025-12-24
+### Stable Release
+- Fix issue with uninitialized lazy object with doctrine and native proxy
+
 ## [2.0.1] - 2025-12-23
 ### Stable Release
 - Support Symfony 7.4 and 8+
