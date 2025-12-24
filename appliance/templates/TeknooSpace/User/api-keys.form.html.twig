@@ -68,7 +68,7 @@
                             {% set tokens = space.user.user.getOneAuthData('Teknoo\\Space\\Object\\Persisted\\ApiKeysAuth') %}
                             {% if tokens is empty %}
                                 <tr class="table-row-even">
-                                    <td colspan="4">{{ 'teknoo.space.text.user.api-keys.empty'|trans }}</td>
+                                    <td colspan="5">{{ 'teknoo.space.text.user.api-keys.empty'|trans }}</td>
                                 </tr>
                             {% else %}
                                 {% for token in tokens.getTokens() %}
