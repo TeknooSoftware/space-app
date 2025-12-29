@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cbc47a5917afd688d21191183980673",
+    "content-hash": "2dd184f42f8a7775e664f0a1e2f4fa5c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4529,7 +4529,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v8.0.1",
+            "version": "v8.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -4572,22 +4572,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.0.1"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.1.0"
             },
             "time": "2025-12-04T16:10:41+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v8.0.1",
+            "version": "v8.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "676b4056c9d89e99bf1b42261341bed7cf80a2bb"
+                "reference": "487417b4424bbeb4f858f97b80e8f5cb31676d73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/676b4056c9d89e99bf1b42261341bed7cf80a2bb",
-                "reference": "676b4056c9d89e99bf1b42261341bed7cf80a2bb",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/487417b4424bbeb4f858f97b80e8f5cb31676d73",
+                "reference": "487417b4424bbeb4f858f97b80e8f5cb31676d73",
                 "shasum": ""
             },
             "require": {
@@ -4640,13 +4640,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v8.0.1"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v8.1.0"
             },
-            "time": "2025-12-18T14:59:59+00:00"
+            "time": "2025-12-28T17:41:25+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v8.0.1",
+            "version": "v8.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
@@ -4693,13 +4693,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.0.1"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.1.0"
             },
             "time": "2025-12-04T16:37:52+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v8.0.1",
+            "version": "v8.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
@@ -4746,7 +4746,7 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v8.0.1"
+                "source": "https://github.com/scheb/2fa-totp/tree/v8.1.0"
             },
             "time": "2025-12-04T16:37:52+00:00"
         },
