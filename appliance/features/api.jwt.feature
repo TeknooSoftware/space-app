@@ -5,7 +5,7 @@ Feature: API endpoints to create and refresh new JWT token
 
   Scenario: From the API, generate a jwt token in the past and test to connect with expired token
     Given A Space app instance
-    And the time goes back 400 days
+    And the time goes back 800 days
     And A memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
@@ -16,7 +16,7 @@ Feature: API endpoints to create and refresh new JWT token
     When the user enter a valid TOTP code
     And get a JWT token for the user
     And the user logs out
-    When the time passes by 400 days
+    When the time passes by 800 days
     When the API is called to get user's settings
     Then get a JSON reponse
     And an 401 error about "Expired JWT Token"
