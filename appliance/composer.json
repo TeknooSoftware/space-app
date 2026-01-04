@@ -64,7 +64,7 @@
         "scheb/2fa-bundle": "^8.1.0",
         "scheb/2fa-google-authenticator": "^8.1.0",
         "scheb/2fa-totp": "^8.1.0",
-        "spomky-labs/otphp": "^11.3",
+        "spomky-labs/otphp": "^11.4",
         "stevenmaguire/oauth2-microsoft": "^2.2",
         "symfony/amqp-messenger": ">=8.0.3",
         "symfony/console": ">=7.4.3",

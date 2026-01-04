@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32e56a926987b888de6a791dd838c5af",
+    "content-hash": "ed6b424b697d1c7d05579427855d0343",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4752,16 +4752,16 @@
         },
         {
             "name": "spomky-labs/otphp",
-            "version": "11.3.0",
+            "version": "11.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Spomky-Labs/otphp.git",
-                "reference": "2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33"
+                "reference": "ec5ff751e87e67daca2b73a35cae0d0e1d20ad45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33",
-                "reference": "2d8ccb5fc992b9cc65ef321fa4f00fefdb3f4b33",
+                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/ec5ff751e87e67daca2b73a35cae0d0e1d20ad45",
+                "reference": "ec5ff751e87e67daca2b73a35cae0d0e1d20ad45",
                 "shasum": ""
             },
             "require": {
@@ -4772,18 +4772,7 @@
                 "symfony/deprecation-contracts": "^3.2"
             },
             "require-dev": {
-                "ekino/phpstan-banned-code": "^1.0",
-                "infection/infection": "^0.26|^0.27|^0.28|^0.29",
-                "php-parallel-lint/php-parallel-lint": "^1.3",
-                "phpstan/phpstan": "^1.0",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0",
-                "phpstan/phpstan-strict-rules": "^1.0",
-                "phpunit/phpunit": "^9.5.26|^10.0|^11.0",
-                "qossmic/deptrac-shim": "^1.0",
-                "rector/rector": "^1.0",
-                "symfony/phpunit-bridge": "^6.1|^7.0",
-                "symplify/easy-coding-standard": "^12.0"
+                "symfony/error-handler": "^6.4|^7.0|^8.0"
             },
             "type": "library",
             "autoload": {
@@ -4818,7 +4807,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Spomky-Labs/otphp/issues",
-                "source": "https://github.com/Spomky-Labs/otphp/tree/11.3.0"
+                "source": "https://github.com/Spomky-Labs/otphp/tree/11.4.0"
             },
             "funding": [
                 {
@@ -4830,7 +4819,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2024-06-12T11:22:32+00:00"
+            "time": "2026-01-03T13:16:55+00:00"
         },
         {
             "name": "stevenmaguire/oauth2-microsoft",
@@ -13504,12 +13493,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "412d91dc6342787fd733523797d9c9faf2ad3ea5"
+                "reference": "5ba14c800ff89c74333c22d56ca1c1f35c424805"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/412d91dc6342787fd733523797d9c9faf2ad3ea5",
-                "reference": "412d91dc6342787fd733523797d9c9faf2ad3ea5",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5ba14c800ff89c74333c22d56ca1c1f35c424805",
+                "reference": "5ba14c800ff89c74333c22d56ca1c1f35c424805",
                 "shasum": ""
             },
             "conflict": {
@@ -13570,7 +13559,7 @@
                 "backpack/filemanager": "<2.0.2|>=3,<3.0.9",
                 "bacula-web/bacula-web": "<9.7.1",
                 "badaso/core": "<=2.9.11",
-                "bagisto/bagisto": "<=2.3.7",
+                "bagisto/bagisto": "<2.3.10",
                 "barrelstrength/sprout-base-email": "<1.2.7",
                 "barrelstrength/sprout-forms": "<3.9",
                 "barryvdh/laravel-translation-manager": "<0.6.8",
@@ -14503,7 +14492,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-30T23:05:26+00:00"
+            "time": "2026-01-02T22:05:49+00:00"
         },
         {
             "name": "sebastian/cli-parser",
