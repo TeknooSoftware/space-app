@@ -40,8 +40,8 @@
         "endroid/qr-code": "^6.1.0",
         "guzzlehttp/guzzle": "^7.10.0",
         "knpuniversity/oauth2-client-bundle": "^2.20.1",
-        "illuminate/contracts": "^12.45.0",
-        "illuminate/collections": "^12.45.0",
+        "illuminate/contracts": "^12.45.2",
+        "illuminate/collections": "^12.45.2",
         "laminas/laminas-diactoros": "^3.8",
         "laravel/serializable-closure": "^1.3.7||^2.0.7",
         "lcobucci/clock": "^3.5.0",
@@ -130,7 +130,7 @@
         "symfony/stopwatch": ">=8",
         "symfony/var-dumper": "^6.4||^7.4.3",
         "symfony/web-profiler-bundle": ">=8.0.3",
-        "webmozart/assert": "^2",
+        "webmozart/assert": "^2.1.1",
         "zenstruck/messenger-test": "^1.13.0"
     },
     "config": {
