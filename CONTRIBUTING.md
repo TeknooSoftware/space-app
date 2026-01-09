@@ -1,9 +1,10 @@
 # Contributing
 
- * Coding standard for the project is [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)
- * Any contribution must provide tests for additional introduced conditions
- * Any un-confirmed issue needs a failing test case before being accepted
- * Pull requests must be sent from a new hotfix/feature branch, not from `master`.
+* Coding standard for the project
+  is [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)
+* Any contribution must provide tests for additional introduced conditions
+* Any un-confirmed issue needs a failing test case before being accepted
+* Pull requests must be sent from a new hotfix/feature branch, not from `master`.
 
 ## Installation
 
@@ -36,6 +37,7 @@ For any questions, contact me : [richard@teknoo.software](richard@teknoo.softwar
 
 ## Support this project
 
-This project is free and will remain free, but it is developed on my personal time. 
-If you like it and help me maintain it and evolve it, don't hesitate to support me on [Patreon](https://patreon.com/teknoo_software).
+This project is free and will remain free, but it is developed on my personal time.
+If you like it and help me maintain it and evolve it, don't hesitate to support me
+on [Patreon](https://patreon.com/teknoo_software).
 Thanks :) Richard. 

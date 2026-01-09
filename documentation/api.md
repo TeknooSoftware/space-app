@@ -27,33 +27,38 @@ To authenticate with the API, you need to exchange your API token for a JWT toke
 **Endpoint:** `POST /api/v1/login`
 
 **Headers:**
+
 ```
 Content-Type: application/json
 Accept: application/json
 ```
 
 **Request Body:**
+
 ```json
 {
-  "username": "<API_TOKEN_NAME>:<USER_EMAIL>",
-  "token": "<API_TOKEN_VALUE>"
+    "username": "<API_TOKEN_NAME>:<USER_EMAIL>",
+    "token": "<API_TOKEN_VALUE>"
 }
 ```
 
 **Parameters:**
+
 - `username`: Combination of your API token name and user email, separated by a colon (`:`)
 - `token`: The API token value generated from the UI
 
 **Response:**
+
 ```json
 {
-  "data": {
-    "token": "<JWT_TOKEN>"
-  }
+    "data": {
+        "token": "<JWT_TOKEN>"
+    }
 }
 ```
 
 **Example using cURL:**
+
 ```bash
 # Set your credentials
 SPACE_API_TOKEN_NAME="my-token"
@@ -80,6 +85,7 @@ Authorization: Bearer <JWT_TOKEN>
 ```
 
 **Example API Request:**
+
 ```bash
 # Create a new job
 curl -X POST \
@@ -108,29 +114,35 @@ The API is organized into authenticated user endpoints and admin endpoints.
 ### User Settings
 
 **Get/Update User Settings**
+
 - `GET /api/v1/my-settings`
 - `POST /api/v1/my-settings`
 - `PUT /api/v1/my-settings`
 
 **Generate JWT Token** *(for programmatic token generation)*
+
 - `POST /api/v1/jwt/create-token`
 
 ### Account Management
 
 **Get/Update Account Settings**
+
 - `GET /api/v1/account/settings`
 - `POST /api/v1/account/settings`
 - `PUT /api/v1/account/settings`
 
 **Get Account Status**
+
 - `GET /api/v1/account/status`
 
 **Manage Account Environments**
+
 - `GET /api/v1/account/environments`
 - `POST /api/v1/account/environments`
 - `PUT /api/v1/account/environments`
 
 **Manage Account Variables**
+
 - `GET /api/v1/account/variables`
 - `POST /api/v1/account/variables`
 - `PUT /api/v1/account/variables`
@@ -138,68 +150,84 @@ The API is organized into authenticated user endpoints and admin endpoints.
 ### Account Cluster Management
 
 **List Account Clusters**
+
 - `GET /api/v1/account/clusters`
 
 **Create Account Cluster**
+
 - `POST /api/v1/account/cluster/new`
 - `PUT /api/v1/account/cluster/new`
 
 **Get/Update Account Cluster**
+
 - `GET /api/v1/account/cluster/{id}`
 - `POST /api/v1/account/cluster/{id}`
 - `PUT /api/v1/account/cluster/{id}`
 
 **Delete Account Cluster**
+
 - `POST /api/v1/account/cluster/{id}/delete`
 - `DELETE /api/v1/account/cluster/{id}/delete`
 
 ### Project Management
 
 **List Projects**
+
 - `GET /api/v1/projects`
 - `POST /api/v1/projects` *(with search/filter)*
 
 **Create Project**
+
 - `POST /api/v1/project/new`
 - `PUT /api/v1/project/new`
 
 **Get/Update Project**
+
 - `GET /api/v1/project/{id}`
 - `POST /api/v1/project/{id}`
 - `PUT /api/v1/project/{id}`
 
 **Manage Project Variables**
+
 - `GET /api/v1/project/{id}/variables`
 - `POST /api/v1/project/{id}/variables`
 - `PUT /api/v1/project/{id}/variables`
 
 **Refresh Project Credentials**
+
 - `POST /api/v1/project/{id}/refresh-credentials`
 
 **Delete Project**
+
 - `POST /api/v1/project/{id}/delete`
 - `DELETE /api/v1/project/{id}/delete`
 
 ### Job Management
 
 **Create New Job**
+
 - `POST /api/v1/project/{projectId}/job/new`
 - `PUT /api/v1/project/{projectId}/job/new`
 
 **Get Pending Job Status**
+
 - `GET /api/v1/project/{projectId}/job/pending/{newJobId}`
 
 **List Jobs for Project**
+
 - `GET /api/v1/project/{projectId}/jobs`
 - `POST /api/v1/project/{projectId}/jobs` *(with search/filter)*
 
 **Get Job Details**
+
 - `GET /api/v1/project/{projectId}/job/{id}`
 
 **Restart Job**
+
 - `POST /api/v1/project/{projectId}/job/{jobId}/restart`
 
 **Delete Job**
+
 - `POST /api/v1/project/{projectId}/job/{id}/delete`
 - `DELETE /api/v1/project/{projectId}/job/{id}/delete`
 
@@ -210,132 +238,163 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 #### Admin - Account Management
 
 **List All Accounts**
+
 - `GET /api/v1/admin/accounts`
 - `POST /api/v1/admin/accounts` *(with search/filter)*
 
 **Create Account**
+
 - `POST /api/v1/admin/account/new`
 - `PUT /api/v1/admin/account/new`
 
 **Get/Update Account**
+
 - `GET /api/v1/admin/account/{id}`
 - `POST /api/v1/admin/account/{id}`
 - `PUT /api/v1/admin/account/{id}`
 
 **Get Account Status**
+
 - `GET /api/v1/admin/account/{id}/status`
 
 **Manage Account Environments**
+
 - `GET /api/v1/admin/account/{id}/environments`
 - `POST /api/v1/admin/account/{id}/environments`
 - `PUT /api/v1/admin/account/{id}/environments`
 
 **Manage Account Variables**
+
 - `GET /api/v1/admin/account/{id}/variables`
 - `POST /api/v1/admin/account/{id}/variables`
 - `PUT /api/v1/admin/account/{id}/variables`
 
 **Delete Account**
+
 - `POST /api/v1/admin/account/{id}/delete`
 - `DELETE /api/v1/admin/account/{id}/delete`
 
 **Reinstall Account Registry**
+
 - `POST /api/v1/admin/account/{id}/registry/reinstall`
 
 **Refresh Account Quota**
+
 - `POST /api/v1/admin/account/{id}/quota/refresh`
 
 **Reinstall Account Environment**
+
 - `POST /api/v1/admin/account/{id}/environment/{envName}/{clusterName}/reinstall`
 
 #### Admin - Account Cluster Management
 
 **List Account Clusters**
+
 - `GET /api/v1/admin/account/{accountId}/clusters`
 
 **Create Account Cluster**
+
 - `POST /api/v1/admin/account/{accountId}/cluster/new`
 - `PUT /api/v1/admin/account/{accountId}/cluster/new`
 
 **Get/Update Account Cluster**
+
 - `GET /api/v1/admin/account/{accountId}/cluster/{id}`
 - `POST /api/v1/admin/account/{accountId}/cluster/{id}`
 - `PUT /api/v1/admin/account/{accountId}/cluster/{id}`
 
 **Delete Account Cluster**
+
 - `POST /api/v1/admin/account/{accountId}/cluster/{id}/delete`
 - `DELETE /api/v1/admin/account/{accountId}/cluster/{id}/delete`
 
 #### Admin - User Management
 
 **List All Users**
+
 - `GET /api/v1/admin/users`
 - `POST /api/v1/admin/users` *(with search/filter)*
 
 **Create User**
+
 - `POST /api/v1/admin/user/new`
 - `PUT /api/v1/admin/user/new`
 
 **Get/Update User**
+
 - `GET /api/v1/admin/user/{id}`
 - `POST /api/v1/admin/user/{id}`
 - `PUT /api/v1/admin/user/{id}`
 
 **Delete User**
+
 - `POST /api/v1/admin/user/{id}/delete`
 - `DELETE /api/v1/admin/user/{id}/delete`
 
 #### Admin - Project Management
 
 **List All Projects**
+
 - `GET /api/v1/admin/projects`
 - `POST /api/v1/admin/projects` *(with search/filter)*
 
 **List Projects for Account**
+
 - `GET /api/v1/admin/account/{accountId}/projects`
 - `POST /api/v1/admin/account/{accountId}/projects` *(with search/filter)*
 
 **Create Project**
+
 - `POST /api/v1/admin/account/{accountId}/project/new`
 - `PUT /api/v1/admin/account/{accountId}/project/new`
 
 **Get/Update Project**
+
 - `GET /api/v1/admin/account/{accountId}/project/{id}`
 - `POST /api/v1/admin/account/{accountId}/project/{id}`
 - `PUT /api/v1/admin/account/{accountId}/project/{id}`
 
 **Manage Project Variables**
+
 - `GET /api/v1/admin/account/{accountId}/project/{id}/variables`
 - `POST /api/v1/admin/account/{accountId}/project/{id}/variables`
 - `PUT /api/v1/admin/account/{accountId}/project/{id}/variables`
 
 **Refresh Project Credentials**
+
 - `POST /api/v1/admin/account/{accountId}/project/{id}/refresh-credentials`
 
 **Delete Project**
+
 - `POST /api/v1/admin/account/{accountId}/project/{id}/delete`
 - `DELETE /api/v1/admin/account/{accountId}/project/{id}/delete`
 
 #### Admin - Job Management
 
 **Create New Job**
+
 - `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/new`
 - `PUT /api/v1/admin/account/{accountId}/project/{projectId}/job/new`
 
 **Get Pending Job Status**
+
 - `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/pending/{newJobId}`
 
 **List Jobs for Project**
+
 - `GET /api/v1/admin/account/{accountId}/project/{projectId}/jobs`
 - `POST /api/v1/admin/account/{accountId}/project/{projectId}/jobs` *(with search/filter)*
 
 **Get Job Details**
+
 - `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/{id}`
 
 **Restart Job**
+
 - `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/{jobId}/restart`
 
 **Delete Job**
+
 - `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/{id}/delete`
 - `DELETE /api/v1/admin/account/{accountId}/project/{projectId}/job/{id}/delete`
 
@@ -344,21 +403,23 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 All API responses follow a consistent JSON format:
 
 **Success Response:**
+
 ```json
 {
-  "data": {
-    // Response data
-  }
+    "data": {
+        // Response data
+    }
 }
 ```
 
 **Error Response:**
+
 ```json
 {
-  "error": {
-    "message": "Error description",
-    "code": "ERROR_CODE"
-  }
+    "error": {
+        "message": "Error description",
+        "code": "ERROR_CODE"
+    }
 }
 ```
 
@@ -389,7 +450,8 @@ The API uses standard HTTP status codes:
 
 4. **Minimize Token Scope**: Generate separate API tokens for different applications or use cases.
 
-5. **Handle Token Expiration**: JWT tokens expire based on the configured TTL. Implement token refresh logic in your applications.
+5. **Handle Token Expiration**: JWT tokens expire based on the configured TTL. Implement token refresh logic in your
+   applications.
 
 6. **Use HTTPS**: Always use HTTPS when communicating with the Space API.
 
@@ -472,21 +534,21 @@ deploy:
 ## Security Considerations
 
 1. **API Token Security**:
-   - API tokens provide full access to your account
-   - Never commit tokens to version control
-   - Use separate tokens for different environments (CI/CD, development, production)
+    - API tokens provide full access to your account
+    - Never commit tokens to version control
+    - Use separate tokens for different environments (CI/CD, development, production)
 
 2. **JWT Token Handling**:
-   - JWT tokens are short-lived (configurable via `SPACE_JWT_TTL`)
-   - Store tokens securely in memory, not on disk
-   - Clear tokens after use
+    - JWT tokens are short-lived (configurable via `SPACE_JWT_TTL`)
+    - Store tokens securely in memory, not on disk
+    - Clear tokens after use
 
 3. **Network Security**:
-   - Always use HTTPS/TLS for API communication
-   - Validate SSL certificates
-   - Use secure network connections
+    - Always use HTTPS/TLS for API communication
+    - Validate SSL certificates
+    - Use secure network connections
 
 4. **Access Control**:
-   - API tokens inherit the permissions of the user who created them
-   - Use service accounts with minimal required permissions for automation
-   - Regularly audit API token usage
+    - API tokens inherit the permissions of the user who created them
+    - Use service accounts with minimal required permissions for automation
+    - Regularly audit API token usage

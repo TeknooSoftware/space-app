@@ -34,14 +34,14 @@ components, it supports multi-account, multi-user, and multi-project deployments
 
 ### Quick Start
 
-| For | See Section |
-|-----|-------------|
-| **Understanding the architecture** | [Architecture](#architecture) |
-| **Writing code** | [Coding Standards](#coding-standards) |
-| **Running tests** | [Testing](#testing) |
-| **Using the CLI** | [CLI Tool](#cli-tool-spacesh) |
-| **Building extensions** | [Extension System](#extension-system) |
-| **Code examples** | [Code Examples](#code-examples) |
+| For                                | See Section                           |
+|------------------------------------|---------------------------------------|
+| **Understanding the architecture** | [Architecture](#architecture)         |
+| **Writing code**                   | [Coding Standards](#coding-standards) |
+| **Running tests**                  | [Testing](#testing)                   |
+| **Using the CLI**                  | [CLI Tool](#cli-tool-spacesh)         |
+| **Building extensions**            | [Extension System](#extension-system) |
+| **Code examples**                  | [Code Examples](#code-examples)       |
 
 ## Technology Stack
 
@@ -378,30 +378,30 @@ All commands are executed via `./space.sh <command>` from the project root.
 
 ### Command Reference
 
-| Category           | Command                     | Description                                                  |
-|--------------------|-----------------------------|--------------------------------------------------------------|
-| **Installation**   | `install`                   | Production install (no dev dependencies)                     |
-|                    | `dev-install`               | Development install (with dev dependencies)                  |
-|                    | `update`                    | Update dependencies                                          |
-| **Docker**         | `build`                     | Build Docker images                                          |
-|                    | `start`                     | Start Docker stack                                           |
-|                    | `stop`                      | Stop Docker stack                                            |
-|                    | `restart`                   | Restart Docker stack                                         |
-| **Configuration**  | `config`                    | Configure Space                                              |
-|                    | `create-admin`              | Create admin user (requires `email=<email> password=<pass>`) |
-| **Extensions**     | `extension-list`            | List available extensions                                    |
-|                    | `extension-enable`          | Enable extension (requires `name=<extension>`)               |
-|                    | `extension-disable`         | Disable extension (requires `name=<extension>`)              |
-| **QA & Testing**   | `qa`                        | Run all QA checks                                            |
-|                    | `qa-offline`                | Run QA without audit                                         |
-|                    | `test`                      | Run all tests with coverage                                  |
-|                    | `test-without-coverage`     | Run all tests without coverage                               |
-|                    | `phpstan`                   | Run PHPStan static analysis                                  |
-|                    | `phpcs`                     | Check code style                                             |
-|                    | `lint`                      | Check PHP syntax                                             |
-|                    | `audit`                     | Security vulnerability scan                                  |
-| **Maintenance**    | `clean`                     | Clean caches and vendors                                     |
-|                    | `warmup`                    | Clear and warm cache                                         |
+| Category          | Command                 | Description                                                  |
+|-------------------|-------------------------|--------------------------------------------------------------|
+| **Installation**  | `install`               | Production install (no dev dependencies)                     |
+|                   | `dev-install`           | Development install (with dev dependencies)                  |
+|                   | `update`                | Update dependencies                                          |
+| **Docker**        | `build`                 | Build Docker images                                          |
+|                   | `start`                 | Start Docker stack                                           |
+|                   | `stop`                  | Stop Docker stack                                            |
+|                   | `restart`               | Restart Docker stack                                         |
+| **Configuration** | `config`                | Configure Space                                              |
+|                   | `create-admin`          | Create admin user (requires `email=<email> password=<pass>`) |
+| **Extensions**    | `extension-list`        | List available extensions                                    |
+|                   | `extension-enable`      | Enable extension (requires `name=<extension>`)               |
+|                   | `extension-disable`     | Disable extension (requires `name=<extension>`)              |
+| **QA & Testing**  | `qa`                    | Run all QA checks                                            |
+|                   | `qa-offline`            | Run QA without audit                                         |
+|                   | `test`                  | Run all tests with coverage                                  |
+|                   | `test-without-coverage` | Run all tests without coverage                               |
+|                   | `phpstan`               | Run PHPStan static analysis                                  |
+|                   | `phpcs`                 | Check code style                                             |
+|                   | `lint`                  | Check PHP syntax                                             |
+|                   | `audit`                 | Security vulnerability scan                                  |
+| **Maintenance**   | `clean`                 | Clean caches and vendors                                     |
+|                   | `warmup`                | Clear and warm cache                                         |
 
 ## Extension System
 
@@ -409,16 +409,16 @@ Space supports extensions via Teknoo East Foundation.
 
 ### Extension Capabilities
 
-| Capability               | Description                               |
-|--------------------------|-------------------------------------------|
-| **Symfony Bundles**      | Add new bundles to the application        |
-| **PHP-DI Configuration** | Extend dependency injection configuration |
-| **Recipe Plans & Steps** | Add or modify workflow orchestration      |
-| **East PaaS Compiler**   | Customize the PaaS compilation process    |
-| **Build Hooks**          | Add hooks for build and deployment phases |
+| Capability               | Description                                  |
+|--------------------------|----------------------------------------------|
+| **Symfony Bundles**      | Add new bundles to the application           |
+| **PHP-DI Configuration** | Extend dependency injection configuration    |
+| **Recipe Plans & Steps** | Add or modify workflow orchestration         |
+| **East PaaS Compiler**   | Customize the PaaS compilation process       |
+| **Build Hooks**          | Add hooks for build and deployment phases    |
 | **Libraries**            | Extend containers, pods, services, ingresses |
-| **UI Customization**     | Modify templates, routes, menus, assets   |
-| **Branding**             | Change logo, CSS, and JavaScript          |
+| **UI Customization**     | Modify templates, routes, menus, assets      |
+| **Branding**             | Change logo, CSS, and JavaScript             |
 
 **Registration:** Extensions are registered in `extensions/enabled.json`.
 

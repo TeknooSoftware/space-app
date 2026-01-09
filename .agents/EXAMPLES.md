@@ -32,7 +32,9 @@ extensions/MyExtension/
 Extensions are registered in `extensions/enabled.json`:
 
 ```json
-["Teknoo\\Space\\Extensions\\MyExtension\\Extension"]
+[
+    "Teknoo\\Space\\Extensions\\MyExtension\\Extension"
+]
 ```
 
 ### Extension Class Implementation
@@ -196,7 +198,8 @@ echo $person->sayHello(); // "Bonjour, John"
 
 ## Recipe Plan Example
 
-Plans orchestrate workflows by combining multiple steps. They implement `EditablePlanInterface` to allow extensions to modify them.
+Plans orchestrate workflows by combining multiple steps. They implement `EditablePlanInterface` to allow extensions to
+modify them.
 
 ```php
 <?php
@@ -256,7 +259,8 @@ class Dashboard implements EditablePlanInterface
 
 ## Recipe Step Example
 
-Steps are individual operations in a workflow. They receive dependencies via constructor injection and workflow data via `__invoke()` parameters.
+Steps are individual operations in a workflow. They receive dependencies via constructor injection and workflow data via
+`__invoke()` parameters.
 
 ```php
 <?php

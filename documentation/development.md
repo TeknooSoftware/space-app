@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide is for developers who want to contribute to Space, extend its functionality, or understand the codebase for 
+This guide is for developers who want to contribute to Space, extend its functionality, or understand the codebase for
 customization purposes.
 
 ## Getting Started
@@ -46,9 +46,9 @@ customization purposes.
    ```
 
 6. **Access the application**:
-   - Web UI: http://localhost
-   - RabbitMQ Management: http://localhost:15672 (guest/guest)
-   - MongoDB: localhost:27017
+    - Web UI: http://localhost
+    - RabbitMQ Management: http://localhost:15672 (guest/guest)
+    - MongoDB: localhost:27017
 
 #### Local Setup (Without Docker)
 
@@ -129,21 +129,25 @@ space-app/
 Space follows PSR-12 coding style and uses PHPStan for static analysis.
 
 **Check code style**:
+
 ```bash
 ./space.sh phpcs
 ```
 
 **Fix code style automatically**:
+
 ```bash
 ./vendor/bin/phpcbf
 ```
 
 **Run PHPStan**:
+
 ```bash
 ./space.sh phpstan
 ```
 
 **Run all QA tools**:
+
 ```bash
 ./space.sh qa
 ```
@@ -201,12 +205,14 @@ final class Config implements ImmutableInterface
 Space follows DDD principles:
 
 **Domain Layer** (`appliance/domain/`):
+
 - Pure business logic
 - No dependencies on infrastructure
 - Entities, Value Objects, Domain Services
 - Interfaces define contracts
 
 **Infrastructure Layer** (`appliance/infrastructures/`):
+
 - Technical implementations
 - Adapters for external systems
 - Repository implementations
@@ -263,6 +269,7 @@ class MyStep implements StepInterface
 Repositories abstract data access:
 
 **Interface** (Domain):
+
 ```php
 namespace Teknoo\Space\Domain\Contracts\DbSource\Repository;
 
@@ -275,6 +282,7 @@ interface MyRepositoryInterface
 ```
 
 **Implementation** (Infrastructure):
+
 ```php
 namespace Teknoo\Space\Infrastructures\Doctrine\Repository;
 
@@ -302,21 +310,25 @@ class MyRepository extends DocumentRepository implements MyRepositoryInterface
 ### Running Tests
 
 **All tests**:
+
 ```bash
 ./space.sh test
 ```
 
 **Unit tests only**:
+
 ```bash
 ./vendor/bin/phpunit
 ```
 
 **Behavior tests (Behat)**:
+
 ```bash
 ./vendor/bin/behat
 ```
 
 **Without coverage**:
+
 ```bash
 ./space.sh test-without-coverage
 ```
@@ -360,7 +372,7 @@ Feature: Project Management
   Scenario: Create a project
     Given I am logged in as "user@example.com"
     When I create a project with:
-      | name       | My Project                           |
+      | name       | My Project                          |
       | repository | https://github.com/example/repo.git |
     Then the project should be created
     And I should see "My Project" in the project list
@@ -396,16 +408,19 @@ class ProjectContext implements Context
 ### Running QA Checks
 
 **Full QA suite**:
+
 ```bash
 ./space.sh qa
 ```
 
 **Offline QA** (no audit):
+
 ```bash
 ./space.sh qa-offline
 ```
 
 **Individual checks**:
+
 ```bash
 # Linting
 ./space.sh lint
@@ -531,15 +546,17 @@ class MyExtension implements ExtensionInterface
 **2. Register Extension**:
 
 Add to `extensions/enabled.json`:
+
 ```json
 [
-  "Acme\\SpaceExtension\\MyExtension"
+    "Acme\\SpaceExtension\\MyExtension"
 ]
 ```
 
 **3. Add Services**:
 
 `Resources/config/services.php`:
+
 ```php
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -616,6 +633,7 @@ class CustomHook implements HookInterface
 **2. Register Hook**:
 
 Add to hooks collection configuration:
+
 ```php
 [
     'name' => 'my-custom-hook',
@@ -667,12 +685,14 @@ APP_DEBUG=1
 ### Symfony Profiler
 
 Access profiler in browser:
+
 - Bottom toolbar with debug info
 - Full profiler: `/_profiler`
 
 ### Logging
 
 **Log Levels**:
+
 - DEBUG: Detailed information
 - INFO: Informational messages
 - WARNING: Warning messages
@@ -705,14 +725,15 @@ Configure XDebug for step debugging:
 
 ```ini
 ; php.ini
-zend_extension=xdebug.so
-xdebug.mode=debug
-xdebug.client_host=localhost
-xdebug.client_port=9003
-xdebug.start_with_request=yes
+zend_extension = xdebug.so
+xdebug.mode = debug
+xdebug.client_host = localhost
+xdebug.client_port = 9003
+xdebug.start_with_request = yes
 ```
 
 **PhpStorm Configuration**:
+
 1. Settings → PHP → Debug
 2. Set port to 9003
 3. Enable "Listen for PHP Debug Connections"
@@ -745,6 +766,7 @@ footer
 ```
 
 **Types**:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation
@@ -754,6 +776,7 @@ footer
 - `chore`: Maintenance
 
 **Example**:
+
 ```
 feat(domain): add support for custom hooks
 
@@ -775,6 +798,7 @@ Closes #123
 ### Code Review
 
 Code reviews focus on:
+
 - Correctness
 - Design and architecture
 - Testing coverage

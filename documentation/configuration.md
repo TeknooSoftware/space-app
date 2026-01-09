@@ -2,7 +2,7 @@
 
 ## Overview
 
-Space is configured primarily through environment variables, allowing flexible deployment across different 
+Space is configured primarily through environment variables, allowing flexible deployment across different
 environments. This guide covers all configuration options available in Space Standard Edition.
 
 ## Configuration Methods
@@ -15,6 +15,7 @@ Configuration can be set through:
 4. **JSON Configuration Files**: For subscription plan and cluster definition
 
 **Priority Order** (highest to lowest):
+
 1. System environment variables
 2. `.env.local` file
 3. `.env` file (default values)
@@ -24,6 +25,7 @@ Configuration can be set through:
 ### Application Settings
 
 #### APP_ENV
+
 - **Type**: String
 - **Values**: `dev`, `prod`, `test`
 - **Default**: `prod`
@@ -35,6 +37,7 @@ APP_ENV=prod
 ```
 
 #### APP_SECRET
+
 - **Type**: String (random)
 - **Required**: Yes
 - **Description**: Secret key for Symfony framework (CSRF, encryption)
@@ -45,6 +48,7 @@ APP_SECRET=your_random_32_char_secret_here
 ```
 
 #### APP_REMEMBER_SECRET
+
 - **Type**: String (random)
 - **Required**: Yes
 - **Description**: Secret for "remember me" functionality
@@ -55,6 +59,7 @@ APP_REMEMBER_SECRET=another_random_32_char_secret
 ```
 
 #### SPACE_HOSTNAME
+
 - **Type**: String (URL)
 - **Required**: Yes
 - **Description**: Public URL of your Space instance
@@ -69,6 +74,7 @@ SPACE_HOSTNAME=https://space.example.com
 ### MongoDB Connection
 
 #### MONGODB_SERVER
+
 - **Type**: String (MongoDB URI)
 - **Required**: Yes
 - **Description**: MongoDB connection string
@@ -89,6 +95,7 @@ MONGODB_SERVER=mongodb://user:pass@host:27017/?ssl=true
 ```
 
 #### MONGODB_NAME
+
 - **Type**: String
 - **Required**: Yes
 - **Description**: Database name for Space
@@ -103,6 +110,7 @@ MONGODB_NAME=space
 ### Symfony Messenger Transports
 
 #### MESSENGER_NEW_JOB_DSN
+
 - **Type**: String (DSN)
 - **Required**: Yes
 - **Description**: Transport for new job creation messages
@@ -113,6 +121,7 @@ MESSENGER_NEW_JOB_DSN=amqp://space_user:password@localhost:5672/%2f/new_job
 ```
 
 #### MESSENGER_EXECUTE_JOB_DSN
+
 - **Type**: String (DSN)
 - **Required**: Yes
 - **Description**: Transport for job execution messages
@@ -122,6 +131,7 @@ MESSENGER_EXECUTE_JOB_DSN=amqp://space_user:password@localhost:5672/%2f/execute_
 ```
 
 #### MESSENGER_HISTORY_SENT_DSN
+
 - **Type**: String (DSN)
 - **Required**: Yes
 - **Description**: Transport for history persistence messages
@@ -131,6 +141,7 @@ MESSENGER_HISTORY_SENT_DSN=amqp://space_user:password@localhost:5672/%2f/history
 ```
 
 #### MESSENGER_JOB_DONE_DSN
+
 - **Type**: String (DSN)
 - **Required**: Yes
 - **Description**: Transport for job completion messages
@@ -144,6 +155,7 @@ MESSENGER_JOB_DONE_DSN=amqp://space_user:password@localhost:5672/%2f/job_done
 ### Mailer Settings
 
 #### MAILER_DSN
+
 - **Type**: String (DSN)
 - **Required**: For email functionality
 - **Description**: Email transport configuration
@@ -167,6 +179,7 @@ MAILER_DSN=null://null
 ```
 
 #### MAILER_SENDER_ADDRESS
+
 - **Type**: String (email)
 - **Optional**: Yes
 - **Description**: Default sender email address used by the application
@@ -176,6 +189,7 @@ MAILER_SENDER_ADDRESS=no-reply@space.example.com
 ```
 
 #### MAILER_SENDER_NAME
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Default sender display name
@@ -185,6 +199,7 @@ MAILER_SENDER_NAME=Space Platform
 ```
 
 #### MAILER_FORBIDDEN_WORDS
+
 - **Type**: String (comma-separated)
 - **Optional**: Yes
 - **Description**: Comma-separated forbidden words to filter emails content
@@ -194,6 +209,7 @@ MAILER_FORBIDDEN_WORDS=spam,viagra,lottery
 ```
 
 #### SPACE_MAIL_MAX_ATTACHMENTS
+
 - **Type**: Integer
 - **Optional**: Yes
 - **Default**: `5`
@@ -204,6 +220,7 @@ SPACE_MAIL_MAX_ATTACHMENTS=5
 ```
 
 #### SPACE_MAIL_MAX_FILE_SIZE
+
 - **Type**: Integer (bytes)
 - **Optional**: Yes
 - **Default**: `204800`
@@ -218,6 +235,7 @@ SPACE_MAIL_MAX_FILE_SIZE=204800
 ### Support Contact
 
 #### SPACE_SUPPORT_CONTACT
+
 - **Type**: String (email or URL)
 - **Optional**: Yes
 - **Description**: Contact email address or URI for support displayed in the UI
@@ -229,6 +247,7 @@ SPACE_SUPPORT_CONTACT=support@space.example.com
 ### Two-Factor Authentication (2FA)
 
 #### SPACE_2FA_PROVIDER
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `google`
@@ -244,6 +263,7 @@ SPACE_2FA_PROVIDER=google
 ### Redis (sessions)
 
 #### SPACE_REDIS_HOST
+
 - **Type**: String (hostname)
 - **Optional**: Yes
 - **Description**: Redis host used for sessions
@@ -253,6 +273,7 @@ SPACE_REDIS_HOST=redis
 ```
 
 #### SPACE_REDIS_PORT
+
 - **Type**: Integer
 - **Optional**: Yes
 - **Default**: `6379`
@@ -267,6 +288,7 @@ SPACE_REDIS_PORT=6379
 ### JWT Configuration
 
 #### SPACE_JWT_SECRET_KEY
+
 - **Type**: String (file path)
 - **Required**: Yes (if JWT enabled)
 - **Description**: Path to the private key used to sign JWT tokens
@@ -276,6 +298,7 @@ SPACE_JWT_SECRET_KEY=/opt/space/jwt/private.pem
 ```
 
 #### SPACE_JWT_PUBLIC_KEY
+
 - **Type**: String (file path)
 - **Required**: Yes (if JWT enabled)
 - **Description**: Path to the public key used to verify JWT tokens
@@ -285,6 +308,7 @@ SPACE_JWT_PUBLIC_KEY=/opt/space/jwt/public.pem
 ```
 
 #### SPACE_JWT_PASSPHRASE
+
 - **Type**: String
 - **Optional**: Yes (if private key is protected)
 - **Description**: Passphrase to unlock the private key
@@ -294,6 +318,7 @@ SPACE_JWT_PASSPHRASE=change_this_passphrase
 ```
 
 #### SPACE_JWT_TTL
+
 - **Type**: Integer (seconds)
 - **Required**: Yes
 - **Description**: Token time-to-live in seconds
@@ -303,6 +328,7 @@ SPACE_JWT_TTL=3600
 ```
 
 #### SPACE_JWT_ENABLE_IN_QUERY
+
 - **Type**: Boolean (0/1)
 - **Optional**: Yes
 - **Description**: Allow JWT token to be passed via query string
@@ -312,6 +338,7 @@ SPACE_JWT_ENABLE_IN_QUERY=0
 ```
 
 #### SPACE_JWT_MAX_DAYS_TO_TIVE
+
 - **Type**: Integer (days)
 - **Optional**: Yes
 - **Default**: `30`
@@ -324,6 +351,7 @@ SPACE_JWT_MAX_DAYS_TO_TIVE=30
 ### OAuth Providers
 
 #### OAUTH_ENABLED
+
 - **Type**: Boolean (0/1)
 - **Optional**: Yes
 - **Description**: Enable or disable OAuth login buttons in the UI
@@ -333,6 +361,7 @@ OAUTH_ENABLED=1
 ```
 
 #### OAUTH_SERVER_TYPE
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Provider type when using a generic/custom server
@@ -344,11 +373,13 @@ OAUTH_SERVER_TYPE=gitlab
 #### DigitalOcean
 
 ##### OAUTH_DO_CLIENT_ID
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client id for DigitalOcean
 
 ##### OAUTH_DO_CLIENT_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client secret for DigitalOcean
@@ -356,11 +387,13 @@ OAUTH_SERVER_TYPE=gitlab
 #### GitHub
 
 ##### OAUTH_GH_CLIENT_ID
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client id for GitHub
 
 ##### OAUTH_GH_CLIENT_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client secret for GitHub
@@ -368,16 +401,19 @@ OAUTH_SERVER_TYPE=gitlab
 #### GitLab
 
 ##### OAUTH_GITLAB_CLIENT_ID
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client id for GitLab
 
 ##### OAUTH_GITLAB_CLIENT_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client secret for GitLab
 
 ##### OAUTH_GITLAB_SERVER_URL
+
 - **Type**: String (URL)
 - **Optional**: Yes
 - **Description**: Base URL of your GitLab instance (for self-hosted)
@@ -385,11 +421,13 @@ OAUTH_SERVER_TYPE=gitlab
 #### Google
 
 ##### OAUTH_GOOGLE_CLIENT_ID
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client id for Google
 
 ##### OAUTH_GOOGLE_CLIENT_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client secret for Google
@@ -397,11 +435,13 @@ OAUTH_SERVER_TYPE=gitlab
 #### Jira
 
 ##### OAUTH_JIRA_CLIENT_ID
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client id for Jira
 
 ##### OAUTH_JIRA_CLIENT_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client secret for Jira
@@ -409,11 +449,13 @@ OAUTH_SERVER_TYPE=gitlab
 #### Microsoft
 
 ##### OAUTH_MS_CLIENT_ID
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client id for Microsoft
 
 ##### OAUTH_MS_CLIENT_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: OAuth client secret for Microsoft
@@ -423,6 +465,7 @@ OAUTH_SERVER_TYPE=gitlab
 ### Single Cluster Configuration (Legacy)
 
 #### SPACE_KUBERNETES_MASTER
+
 - **Type**: String (URL)
 - **Required**: Yes (if not using cluster catalog)
 - **Description**: Kubernetes API server URL
@@ -432,6 +475,7 @@ SPACE_KUBERNETES_MASTER=https://kubernetes.example.com:6443
 ```
 
 #### SPACE_KUBERNETES_CREATE_TOKEN
+
 - **Type**: String (JWT)
 - **Required**: Yes
 - **Description**: Service account token for namespace creation
@@ -442,6 +486,7 @@ SPACE_KUBERNETES_CREATE_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 #### SPACE_KUBERNETES_DASHBOARD
+
 - **Type**: String (URL)
 - **Optional**: Yes
 - **Description**: Kubernetes Dashboard URL for embedding
@@ -451,6 +496,7 @@ SPACE_KUBERNETES_DASHBOARD=https://dashboard.kubernetes.example.com
 ```
 
 #### SPACE_KUBERNETES_CA_VALUE
+
 - **Type**: String (Base64 PEM)
 - **Optional**: Yes
 - **Description**: Custom CA certificate for Kubernetes API
@@ -460,6 +506,7 @@ SPACE_KUBERNETES_CA_VALUE=LS0tLS1CRUdJTi...
 ```
 
 #### SPACE_CLUSTER_NAME
+
 - **Type**: String
 - **Required**: Yes (if not using cluster catalog)
 - **Description**: Cluster name shown in UI
@@ -469,6 +516,7 @@ SPACE_CLUSTER_NAME=production
 ```
 
 #### SPACE_CLUSTER_TYPE
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `kubernetes`
@@ -483,6 +531,7 @@ SPACE_CLUSTER_TYPE=kubernetes
 Use **one** of these options:
 
 #### SPACE_CLUSTER_CATALOG_JSON
+
 - **Type**: JSON string
 - **Description**: Cluster catalog as JSON
 
@@ -503,6 +552,7 @@ SPACE_CLUSTER_CATALOG_JSON='[{
 ```
 
 #### SPACE_CLUSTER_CATALOG_FILE
+
 - **Type**: String (file path)
 - **Description**: JSON file returning cluster array
 
@@ -544,6 +594,7 @@ return [
 ### Kubernetes Client Settings
 
 #### SPACE_KUBERNETES_CLIENT_TIMEOUT
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Default**: `3`
@@ -554,6 +605,7 @@ SPACE_KUBERNETES_CLIENT_TIMEOUT=5
 ```
 
 #### SPACE_KUBERNETES_CLIENT_VERIFY_SSL
+
 - **Type**: Boolean (0/1)
 - **Optional**: Yes
 - **Default**: `1`
@@ -566,6 +618,7 @@ SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
 ### Kubernetes Namespace Configuration
 
 #### SPACE_KUBERNETES_ROOT_NAMESPACE
+
 - **Type**: String (prefix)
 - **Optional**: Yes
 - **Default**: `space-client-`
@@ -576,6 +629,7 @@ SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
 ```
 
 #### SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE
+
 - **Type**: String (prefix)
 - **Optional**: Yes
 - **Default**: `space-registry-`
@@ -586,6 +640,7 @@ SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE=space-registry-
 ```
 
 #### SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Default**: `5`
@@ -598,6 +653,7 @@ SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME=10
 ### Kubernetes Resource Defaults
 
 #### SPACE_STORAGE_CLASS
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `nfs.csi.k8s.io`
@@ -608,6 +664,7 @@ SPACE_STORAGE_CLASS=standard
 ```
 
 #### SPACE_STORAGE_DEFAULT_SIZE
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `3Gi`
@@ -618,6 +675,7 @@ SPACE_STORAGE_DEFAULT_SIZE=5Gi
 ```
 
 #### SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `public`
@@ -628,6 +686,7 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS=nginx
 ```
 
 #### SPACE_CLUSTER_ISSUER
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `lets-encrypt`
@@ -642,6 +701,7 @@ SPACE_CLUSTER_ISSUER=letsencrypt-prod
 Use **one** of these options:
 
 #### SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON
+
 - **Type**: JSON string
 - **Description**: Default annotations for ingresses
 
@@ -650,6 +710,7 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON='{"nginx.ingress.kubernetes.io
 ```
 
 #### SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE
+
 - **Type**: String (file path)
 - **Description**: JSON file returning annotations array
 
@@ -662,6 +723,7 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE=/opt/space/config/ingress-anno
 ### Private Registry Settings
 
 #### SPACE_OCI_REGISTRY_IMAGE
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `registry:latest`
@@ -672,6 +734,7 @@ SPACE_OCI_REGISTRY_IMAGE=registry:2
 ```
 
 #### SPACE_OCI_REGISTRY_URL
+
 - **Type**: String (URL template)
 - **Required**: Yes (if using private registries)
 - **Description**: URL template for account registries
@@ -682,6 +745,7 @@ SPACE_OCI_REGISTRY_URL={account}.registry.example.com
 ```
 
 #### SPACE_OCI_REGISTRY_TLS_SECRET
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `registry-certs`
@@ -692,6 +756,7 @@ SPACE_OCI_REGISTRY_TLS_SECRET=registry-tls
 ```
 
 #### SPACE_OCI_REGISTRY_PVC_SIZE
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `4Gi`
@@ -702,6 +767,7 @@ SPACE_OCI_REGISTRY_PVC_SIZE=10Gi
 ```
 
 #### SPACE_OCI_REGISTRY_REQUESTS_CPU
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `10m`
@@ -712,6 +778,7 @@ SPACE_OCI_REGISTRY_REQUESTS_CPU=50m
 ```
 
 #### SPACE_OCI_REGISTRY_REQUESTS_MEMORY
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `30Mi`
@@ -722,6 +789,7 @@ SPACE_OCI_REGISTRY_REQUESTS_MEMORY=64Mi
 ```
 
 #### SPACE_OCI_REGISTRY_LIMITS_CPU
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `100m`
@@ -732,6 +800,7 @@ SPACE_OCI_REGISTRY_LIMITS_CPU=200m
 ```
 
 #### SPACE_OCI_REGISTRY_LIMITS_MEMORY
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `256Mi`
@@ -744,6 +813,7 @@ SPACE_OCI_REGISTRY_LIMITS_MEMORY=512Mi
 ### Global Registry Settings
 
 #### SPACE_OCI_GLOBAL_REGISTRY_URL
+
 - **Type**: String (URL)
 - **Optional**: Yes
 - **Description**: Global OCI registry accessible by all deployments
@@ -753,6 +823,7 @@ SPACE_OCI_GLOBAL_REGISTRY_URL=registry.example.com
 ```
 
 #### SPACE_OCI_GLOBAL_REGISTRY_USERNAME
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Username for global registry
@@ -762,6 +833,7 @@ SPACE_OCI_GLOBAL_REGISTRY_USERNAME=space
 ```
 
 #### SPACE_OCI_GLOBAL_REGISTRY_PWD
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Password for global registry
@@ -777,6 +849,7 @@ SPACE_OCI_GLOBAL_REGISTRY_PWD=SecurePassword
 Used for encrypting messages between servers and workers.
 
 #### TEKNOO_PAAS_SECURITY_ALGORITHM
+
 - **Type**: String
 - **Values**: `rsa`, `dsa`
 - **Optional**: Yes (but recommended)
@@ -787,6 +860,7 @@ TEKNOO_PAAS_SECURITY_ALGORITHM=rsa
 ```
 
 #### TEKNOO_PAAS_SECURITY_PRIVATE_KEY
+
 - **Type**: String (file path)
 - **Required**: If encryption enabled
 - **Description**: Path to private key for decryption
@@ -796,6 +870,7 @@ TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/opt/space/config/secrets/private.pem
 ```
 
 #### TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Passphrase to unlock private key
@@ -805,6 +880,7 @@ TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=YourPassphrase
 ```
 
 #### TEKNOO_PAAS_SECURITY_PUBLIC_KEY
+
 - **Type**: String (file path)
 - **Required**: If encryption enabled
 - **Description**: Path to public key for encryption
@@ -818,6 +894,7 @@ TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/opt/space/config/secrets/public.pem
 Used for encrypting stored secrets in database.
 
 #### SPACE_PERSISTED_VAR_AGENT_MODE
+
 - **Type**: Boolean (0/1)
 - **Optional**: Yes
 - **Description**: Force agent mode (auto-enabled for CLI)
@@ -827,6 +904,7 @@ SPACE_PERSISTED_VAR_AGENT_MODE=1
 ```
 
 #### SPACE_PERSISTED_VAR_SECURITY_ALGORITHM
+
 - **Type**: String
 - **Values**: `rsa`, `dsa`
 - **Optional**: Yes (but recommended)
@@ -837,6 +915,7 @@ SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
 ```
 
 #### SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY
+
 - **Type**: String (file path)
 - **Required**: If encryption enabled
 - **Description**: Path to private key
@@ -846,6 +925,7 @@ SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/opt/space/config/secrets/var-private.p
 ```
 
 #### SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Passphrase for private key
@@ -855,6 +935,7 @@ SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=VarPassphrase
 ```
 
 #### SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY
+
 - **Type**: String (file path)
 - **Required**: If encryption enabled
 - **Description**: Path to public key
@@ -868,6 +949,7 @@ SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/opt/space/config/secrets/var-public.pem
 ### Account Subscription Settings
 
 #### SPACE_CODE_SUBSCRIPTION_REQUIRED
+
 - **Type**: Boolean (0/1)
 - **Optional**: Yes
 - **Default**: `0`
@@ -878,6 +960,7 @@ SPACE_CODE_SUBSCRIPTION_REQUIRED=1
 ```
 
 #### SPACE_CODE_GENERATOR_SALT
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Salt for subscription code generation
@@ -887,6 +970,7 @@ SPACE_CODE_GENERATOR_SALT=YourRandomSalt
 ```
 
 #### SPACE_SUBSCRIPTION_DEFAULT_PLAN
+
 - **Type**: String
 - **Optional**: Yes
 - **Description**: Default plan ID for new accounts
@@ -900,6 +984,7 @@ SPACE_SUBSCRIPTION_DEFAULT_PLAN=free
 Use **one** of these options:
 
 #### SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON
+
 - **Type**: JSON string
 - **Description**: Subscription plans as JSON
 
@@ -916,6 +1001,7 @@ SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON='[{
 ```
 
 #### SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE
+
 - **Type**: String (file path)
 - **Description**: JSON file returning plans array
 
@@ -975,6 +1061,7 @@ return [
 ### Job Execution Settings
 
 #### SPACE_JOB_ROOT
+
 - **Type**: String (path)
 - **Optional**: Yes
 - **Default**: `/tmp`
@@ -985,6 +1072,7 @@ SPACE_JOB_ROOT=/var/lib/space/jobs
 ```
 
 #### SPACE_WORKER_TIME_LIMIT
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Description**: Maximum time allowed for job execution
@@ -994,6 +1082,7 @@ SPACE_WORKER_TIME_LIMIT=3600
 ```
 
 #### SPACE_GIT_TIMEOUT
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Description**: Maximum time for Git clone operations
@@ -1005,6 +1094,7 @@ SPACE_GIT_TIMEOUT=600
 ### Image Building Settings
 
 #### SPACE_IMG_BUILDER_CMD
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `buildah`
@@ -1015,6 +1105,7 @@ SPACE_IMG_BUILDER_CMD=buildah
 ```
 
 #### SPACE_IMG_BUILDER_TIMEOUT
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Description**: Maximum time for image building
@@ -1024,6 +1115,7 @@ SPACE_IMG_BUILDER_TIMEOUT=1800
 ```
 
 #### SPACE_IMG_BUILDER_PLATFORMS
+
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `linux/amd64`
@@ -1036,6 +1128,7 @@ SPACE_IMG_BUILDER_PLATFORMS=linux/amd64,linux/arm64
 ### Worker Health Check
 
 #### SPACE_PING_FILE
+
 - **Type**: String (path)
 - **Optional**: Yes
 - **Default**: `/tmp/ping_file`
@@ -1046,6 +1139,7 @@ SPACE_PING_FILE=/var/run/space/ping
 ```
 
 #### SPACE_PING_SECONDS
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Default**: `60`
@@ -1062,6 +1156,7 @@ SPACE_PING_SECONDS=30
 Use **one** of these options:
 
 #### SPACE_HOOKS_COLLECTION_JSON
+
 - **Type**: JSON string
 - **Description**: Available hooks as JSON
 
@@ -1075,6 +1170,7 @@ SPACE_HOOKS_COLLECTION_JSON='[{
 ```
 
 #### SPACE_HOOKS_COLLECTION_FILE
+
 - **Type**: String (file path)
 - **Description**: JSON file returning hooks array
 
@@ -1087,6 +1183,7 @@ SPACE_HOOKS_COLLECTION_FILE=/opt/space/config/hooks.php
 Use **one** of these options:
 
 #### SPACE_PAAS_GLOBAL_VARIABLES_JSON
+
 - **Type**: JSON string
 - **Description**: Global variables for all deployments
 
@@ -1095,6 +1192,7 @@ SPACE_PAAS_GLOBAL_VARIABLES_JSON='{"APP_ENV":"production","TIMEZONE":"UTC"}'
 ```
 
 #### SPACE_PAAS_GLOBAL_VARIABLES_FILE
+
 - **Type**: String (file path)
 - **Description**: PHP file returning variables array
 
@@ -1107,8 +1205,11 @@ SPACE_PAAS_GLOBAL_VARIABLES_FILE=/opt/space/config/global-vars.php
 For pods, containers, services, and ingresses:
 
 #### SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON / _FILE
+
 #### SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON / _FILE
+
 #### SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON / _FILE
+
 #### SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON / _FILE
 
 See Enterprise Edition documentation for library configuration.
@@ -1118,10 +1219,12 @@ See Enterprise Edition documentation for library configuration.
 Use **one** of these options:
 
 #### SPACE_PAAS_IMAGE_LIBRARY_JSON
+
 - **Type**: JSON string
 - **Description**: Embedded OCI image library
 
 #### SPACE_PAAS_IMAGE_LIBRARY_FILE
+
 - **Type**: String (file path)
 - **Description**: Json file returning image library
 
@@ -1130,6 +1233,7 @@ Use **one** of these options:
 ### Real-Time Updates
 
 #### SPACE_MERCURE_PUBLISHING_ENABLED
+
 - **Type**: Boolean (0/1)
 - **Optional**: Yes
 - **Default**: `0`
@@ -1140,6 +1244,7 @@ SPACE_MERCURE_PUBLISHING_ENABLED=1
 ```
 
 #### MERCURE_PUBLISH_URL
+
 - **Type**: String (URL)
 - **Optional**: Yes (required if Mercure enabled)
 - **Description**: Mercure hub URL for publishing
@@ -1149,6 +1254,7 @@ MERCURE_PUBLISH_URL=http://mercure:3000/.well-known/mercure
 ```
 
 #### MERCURE_SUBSCRIBER_URL
+
 - **Type**: String (URL)
 - **Optional**: Yes (required if Mercure enabled)
 - **Description**: Mercure URL for browser subscriptions
@@ -1158,6 +1264,7 @@ MERCURE_SUBSCRIBER_URL=https://mercure.example.com/.well-known/mercure
 ```
 
 #### MERCURE_JWT_TOKEN
+
 - **Type**: String (JWT)
 - **Optional**: Yes (required if Mercure enabled)
 - **Description**: JWT token for Mercure authentication
@@ -1169,6 +1276,7 @@ MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### Job Notification
 
 #### SPACE_NEW_JOB_WAITING_TIME
+
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Description**: Wait time before redirecting to job page
@@ -1182,6 +1290,7 @@ SPACE_NEW_JOB_WAITING_TIME=3
 ### Extension Loader
 
 #### TEKNOO_EAST_EXTENSION_DISABLED
+
 - **Type**: Boolean (any non-empty value)
 - **Optional**: Yes
 - **Description**: Disable extension system
@@ -1195,12 +1304,13 @@ TEKNOO_EAST_EXTENSION_DISABLED=1
 ```
 
 #### TEKNOO_EAST_EXTENSION_LOADER
+
 - **Type**: String (class name)
 - **Optional**: Yes
 - **Default**: `Teknoo\East\Foundation\Extension\FileLoader`
-- **Values**: 
-  - `Teknoo\East\Foundation\Extension\FileLoader`
-  - `Teknoo\East\Foundation\Extension\ComposerLoader`
+- **Values**:
+    - `Teknoo\East\Foundation\Extension\FileLoader`
+    - `Teknoo\East\Foundation\Extension\ComposerLoader`
 - **Description**: Extension loader implementation
 
 ```bash
@@ -1208,6 +1318,7 @@ TEKNOO_EAST_EXTENSION_LOADER=Teknoo\East\Foundation\Extension\FileLoader
 ```
 
 #### TEKNOO_EAST_EXTENSION_FILE
+
 - **Type**: String (file path)
 - **Optional**: Yes (required for FileLoader)
 - **Default**: `extensions/enabled.json`
@@ -1221,8 +1332,8 @@ TEKNOO_EAST_EXTENSION_FILE=/opt/space/extensions/enabled.json
 
 ```json
 [
-  "Acme\\SpaceExtension\\MyExtension",
-  "Vendor\\AnotherExtension\\Extension"
+    "Acme\\SpaceExtension\\MyExtension",
+    "Vendor\\AnotherExtension\\Extension"
 ]
 ```
 

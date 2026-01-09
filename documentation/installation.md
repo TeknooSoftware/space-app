@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide provides step-by-step instructions for installing Space on your infrastructure. Before proceeding, 
+This guide provides step-by-step instructions for installing Space on your infrastructure. Before proceeding,
 ensure all [system requirements](requirements.md) are met.
 
 ## Installation Methods
@@ -34,6 +34,7 @@ cd space-app
 ### 1.2. Configure Environment
 
 Run the command and follow instructions to configure:
+
 - Docker compose
 - Database connection
 - RabbitMQ connection
@@ -41,11 +42,9 @@ Run the command and follow instructions to configure:
 - Email settings
 - Security settings
 
-
 ```bash
 ./space.sh config
 ```
-
 
 ### 1.3. Build Docker Images
 
@@ -54,6 +53,7 @@ Run the command and follow instructions to configure:
 ```
 
 This command builds all necessary Docker images including:
+
 - PHP-FPM for web server
 - PHP-CLI for workers
 - PHP-Buildah for image building
@@ -77,10 +77,10 @@ This starts all containers defined in `compose.yml`.
 ```
 
 This command:
+
 - Installs PHP dependencies via Composer
 - Builds Symfony application
 - Warms up caches
-
 
 ### 1.6 Create Administrator
 
@@ -91,6 +91,7 @@ This command:
 ### 1.7 Access Space
 
 Open your browser and navigate to:
+
 - **Web UI**: http://localhost
 - **RabbitMQ Management**: http://localhost:15672 (guest/guest)
 
@@ -255,7 +256,7 @@ cd /opt/space
 git clone https://github.com/TeknooSoftware/space-app.git .
 ```
 
-### 2.4. Configure 
+### 2.4. Configure
 
 ```bash
 cd /opt/space/appliance
@@ -394,76 +395,76 @@ Create systemd service files for workers.
 
 ```ini
 [Unit]
-Description=Space New Job Worker
-After=network.target rabbitmq-server.service mongodb.service
+Description = Space New Job Worker
+After = network.target rabbitmq-server.service mongodb.service
 
 [Service]
-Type=simple
-User=www-data
-WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
-Restart=always
-RestartSec=10
+Type = simple
+User = www-data
+WorkingDirectory = /opt/space/appliance
+ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
+Restart = always
+RestartSec = 10
 
 [Install]
-WantedBy=multi-user.target
+WantedBy = multi-user.target
 ```
 
 **Execute Job Worker** (`/etc/systemd/system/space-worker-execute-job.service`):
 
 ```ini
 [Unit]
-Description=Space Execute Job Worker
-After=network.target rabbitmq-server.service mongodb.service
+Description = Space Execute Job Worker
+After = network.target rabbitmq-server.service mongodb.service
 
 [Service]
-Type=simple
-User=www-data
-WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
-Restart=always
-RestartSec=10
+Type = simple
+User = www-data
+WorkingDirectory = /opt/space/appliance
+ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
+Restart = always
+RestartSec = 10
 
 [Install]
-WantedBy=multi-user.target
+WantedBy = multi-user.target
 ```
 
 **History Worker** (`/etc/systemd/system/space-worker-history.service`):
 
 ```ini
 [Unit]
-Description=Space History Worker
-After=network.target rabbitmq-server.service mongodb.service
+Description = Space History Worker
+After = network.target rabbitmq-server.service mongodb.service
 
 [Service]
-Type=simple
-User=www-data
-WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent
-Restart=always
-RestartSec=10
+Type = simple
+User = www-data
+WorkingDirectory = /opt/space/appliance
+ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent
+Restart = always
+RestartSec = 10
 
 [Install]
-WantedBy=multi-user.target
+WantedBy = multi-user.target
 ```
 
 **Job Done Worker** (`/etc/systemd/system/space-worker-job-done.service`):
 
 ```ini
 [Unit]
-Description=Space Job Done Worker
-After=network.target rabbitmq-server.service mongodb.service
+Description = Space Job Done Worker
+After = network.target rabbitmq-server.service mongodb.service
 
 [Service]
-Type=simple
-User=www-data
-WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done
-Restart=always
-RestartSec=10
+Type = simple
+User = www-data
+WorkingDirectory = /opt/space/appliance
+ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done
+Restart = always
+RestartSec = 10
 
 [Install]
-WantedBy=multi-user.target
+WantedBy = multi-user.target
 ```
 
 Enable and start workers:
@@ -503,18 +504,18 @@ Log in with the administrator credentials created in step 2.11.
    ```
 
 2. **Secure MongoDB**:
-   - Enable authentication
-   - Bind to localhost only (if on same server)
-   - Use TLS connections
+    - Enable authentication
+    - Bind to localhost only (if on same server)
+    - Use TLS connections
 
 3. **Secure RabbitMQ**:
-   - Change default passwords
-   - Restrict management UI access
-   - Enable TLS
+    - Change default passwords
+    - Restrict management UI access
+    - Enable TLS
 
 4. **File Permissions**:
-   - Ensure sensitive files are not publicly accessible
-   - Set proper ownership and permissions
+    - Ensure sensitive files are not publicly accessible
+    - Set proper ownership and permissions
 
 ### Backup Configuration
 
@@ -538,6 +539,7 @@ Set up regular backups for:
 ### Monitoring Setup
 
 Configure monitoring for:
+
 - Web server health
 - Worker processes
 - Database connections
@@ -568,21 +570,25 @@ sudo crontab -e
 ### Common Issues
 
 **Issue: Cannot connect to MongoDB**
+
 - Check MongoDB is running: `sudo systemctl status mongod`
 - Verify connection string in `.env.local`
 - Check firewall rules
 
 **Issue: Workers not processing jobs**
+
 - Check worker status: `sudo systemctl status space-worker-*`
 - View worker logs: `sudo journalctl -u space-worker-execute-job -f`
 - Verify RabbitMQ connection
 
 **Issue: 500 Internal Server Error**
+
 - Check application logs: `tail -f /opt/space/appliance/var/log/prod.log`
 - Verify file permissions
 - Clear cache: `./space.sh warmup`
 
 **Issue: Cannot build images**
+
 - Ensure Buildah is installed
 - Check Buildah configuration
 - Verify worker has proper permissions

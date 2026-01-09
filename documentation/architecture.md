@@ -2,7 +2,7 @@
 
 ## Overview
 
-Space is a **Platform as a Service (PaaS)** application built on modern PHP technologies, following 
+Space is a **Platform as a Service (PaaS)** application built on modern PHP technologies, following
 Domain-Driven Design (DDD) and hexagonal architecture principles. It provides continuous integration, delivery, and
 deployment capabilities for containerized applications on clusters, like Kubernetes.
 
@@ -12,7 +12,7 @@ deployment capabilities for containerized applications on clusters, like Kuberne
 
 Space follows a clean hexagonal architecture pattern with clear separation between:
 
-- **Domain Layer**: Core business logic, persisted objects, and domain services, Use cases and workflow orchestration 
+- **Domain Layer**: Core business logic, persisted objects, and domain services, Use cases and workflow orchestration
   through Recipes
 - **Application Layer**: Configuration and services containers optimisation
 - **Infrastructure Layer**: Technical implementations and adapters
@@ -174,13 +174,13 @@ Space leverages **Teknoo East PaaS** for deployment orchestration:
 - **Symfony 6.4+/7.3+**: Web framework and components
 - **Doctrine ODM 3.5+**: MongoDB object-document mapper
 - **Teknoo Libraries**:
-  - Immutable: Immutable object pattern
-  - States: State pattern implementation
-  - Recipe: Workflow orchestration
-  - East Foundation: Recipe pattern and extension system
-  - East Common: Shared components
-  - East PaaS: PaaS orchestration engine
-  - Kubernetes Client: Kubernetes API integration
+    - Immutable: Immutable object pattern
+    - States: State pattern implementation
+    - Recipe: Workflow orchestration
+    - East Foundation: Recipe pattern and extension system
+    - East Common: Shared components
+    - East PaaS: PaaS orchestration engine
+    - Kubernetes Client: Kubernetes API integration
 
 ### Infrastructure
 
@@ -201,8 +201,8 @@ Space provides a powerful extension mechanism allowing developers to:
 
 - Add Symfony bundles
 - Extend PHP-DI configuration
-  - Add or modify Recipe steps and plans
-  - Customize East PaaS compiler
+    - Add or modify Recipe steps and plans
+    - Customize East PaaS compiler
 - Add hooks for build/deployment processes
 - Extend libraries (containers, pods, services, ingresses resources in the cluster)
 - Customize UI (templates, routes, menus, assets)

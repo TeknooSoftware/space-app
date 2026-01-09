@@ -16,6 +16,7 @@ Space includes four types of workers, each with a specific responsibility:
 **Queue**: `new_job`
 
 **Responsibilities**:
+
 - Receive new job creation requests
 - Validate job parameters
 - Store job metadata in MongoDB
@@ -23,11 +24,13 @@ Space includes four types of workers, each with a specific responsibility:
 - Publish real-time updates via Mercure (if enabled)
 
 **Command**:
+
 ```bash
 bin/console messenger:consume new_job
 ```
 
 **Resource Requirements**:
+
 - CPU: Low (1-2 cores)
 - RAM: 64 - 256 MB
 - Concurrency: 1-2 instances recommended
@@ -39,6 +42,7 @@ bin/console messenger:consume new_job
 **Queue**: `execute_job`
 
 **Responsibilities**:
+
 - Clone Git repositories
 - Compile `.paas.yaml` file
 - Execute pre-deployment hooks (Composer, NPM, etc.)
@@ -50,11 +54,13 @@ bin/console messenger:consume new_job
 - Handle deployment failures
 
 **Command**:
+
 ```bash
 bin/console messenger:consume execute_job
 ```
 
 **Resource Requirements**:
+
 - CPU: High (4-8 cores)
 - RAM: 4-8 GB
 - Storage: 50-100 GB (for Git clones and image builds)
@@ -68,17 +74,20 @@ bin/console messenger:consume execute_job
 **Queue**: `history_sent`
 
 **Responsibilities**:
+
 - Receive history events from Execute Job Worker
 - Validate event data
 - Store events in MongoDB
 - Maintain sequential ordering
 
 **Command**:
+
 ```bash
 bin/console messenger:consume history_sent
 ```
 
 **Resource Requirements**:
+
 - CPU: Low (1-2 cores)
 - RAM: 64 - 256 MB
 - Concurrency: 1-2 instances recommended
@@ -90,16 +99,19 @@ bin/console messenger:consume history_sent
 **Queue**: `job_done`
 
 **Responsibilities**:
+
 - Receive job completion notifications
 - Update final job status
 - Trigger post-deployment actions
 
 **Command**:
+
 ```bash
 bin/console messenger:consume job_done
 ```
 
 **Resource Requirements**:
+
 - CPU: Low (1-2 cores)
 - RAM: 64 - 256 MB
 - Concurrency: 1-2 instances recommended
@@ -157,6 +169,7 @@ bin/console messenger:consume job_done
 Workers share most configuration with the web application but have specific settings:
 
 **Required for All Workers**:
+
 ```bash
 MONGODB_SERVER=mongodb://user:pass@host:27017
 MONGODB_NAME=space
@@ -167,6 +180,7 @@ MESSENGER_JOB_DONE_DSN=amqp://...
 ```
 
 **Execute Job Worker Specific**:
+
 ```bash
 SPACE_JOB_ROOT=/var/lib/space/jobs
 SPACE_WORKER_TIME_LIMIT=3600
@@ -191,6 +205,7 @@ SPACE_PING_SECONDS=60
 Common options for `messenger:consume`:
 
 **--time-limit=SECONDS**
+
 - Maximum execution time before worker restarts
 - Recommended: 3600 (1 hour)
 - Prevents memory leaks
@@ -200,6 +215,7 @@ bin/console messenger:consume execute_job
 ```
 
 **--memory-limit=LIMIT**
+
 - Maximum memory before worker restarts
 - Example: `128M`, `512M`, `1G`
 
@@ -208,6 +224,7 @@ bin/console messenger:consume execute_job --memory-limit=512M
 ```
 
 **--limit=COUNT**
+
 - Process N messages then exit
 - Useful for testing
 
@@ -216,6 +233,7 @@ bin/console messenger:consume execute_job --limit=10
 ```
 
 **--failure-limit=COUNT**
+
 - Stop after N failures
 - Default: Unlimited
 
@@ -234,6 +252,7 @@ Workers are automatically started by Docker Compose:
 ```
 
 View worker logs:
+
 ```bash
 docker-compose logs -f php-cli
 ```
@@ -248,30 +267,30 @@ File: `/etc/systemd/system/space-worker-execute-job@.service`
 
 ```ini
 [Unit]
-Description=Space Execute Job Worker %i
-After=network.target rabbitmq-server.service mongodb.service
+Description = Space Execute Job Worker %i
+After = network.target rabbitmq-server.service mongodb.service
 
 [Service]
-Type=simple
-User=www-data
-Group=www-data
-WorkingDirectory=/opt/space/appliance
-ExecStart=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
-Restart=always
-RestartSec=10
-StandardOutput=journal
-StandardError=journal
+Type = simple
+User = www-data
+Group = www-data
+WorkingDirectory = /opt/space/appliance
+ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
+Restart = always
+RestartSec = 10
+StandardOutput = journal
+StandardError = journal
 
 # Security
-PrivateTmp=true
-NoNewPrivileges=true
+PrivateTmp = true
+NoNewPrivileges = true
 
 # Resource limits
-LimitNOFILE=65536
-LimitNPROC=4096
+LimitNOFILE = 65536
+LimitNPROC = 4096
 
 [Install]
-WantedBy=multi-user.target
+WantedBy = multi-user.target
 ```
 
 **Start multiple instances**:
@@ -306,59 +325,59 @@ File: `/etc/supervisor/conf.d/space-workers.conf`
 
 ```ini
 [program:space-worker-new-job]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
-directory=/opt/space/appliance
-user=www-data
-numprocs=2
-process_name=%(program_name)s_%(process_num)02d
-autostart=true
-autorestart=true
-startsecs=10
-startretries=3
-stdout_logfile=/var/log/space/worker-new-job.log
-stderr_logfile=/var/log/space/worker-new-job-error.log
+command = /usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
+directory = /opt/space/appliance
+user = www-data
+numprocs = 2
+process_name = %(program_name)s_%(process_num)02d
+autostart = true
+autorestart = true
+startsecs = 10
+startretries = 3
+stdout_logfile = /var/log/space/worker-new-job.log
+stderr_logfile = /var/log/space/worker-new-job-error.log
 
 [program:space-worker-execute-job]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
-directory=/opt/space/appliance
-user=www-data
-numprocs=4
-process_name=%(program_name)s_%(process_num)02d
-autostart=true
-autorestart=true
-startsecs=10
-startretries=3
-stdout_logfile=/var/log/space/worker-execute-job.log
-stderr_logfile=/var/log/space/worker-execute-job-error.log
+command = /usr/bin/php /opt/space/appliance/bin/console messenger:consume execute_job
+directory = /opt/space/appliance
+user = www-data
+numprocs = 4
+process_name = %(program_name)s_%(process_num)02d
+autostart = true
+autorestart = true
+startsecs = 10
+startretries = 3
+stdout_logfile = /var/log/space/worker-execute-job.log
+stderr_logfile = /var/log/space/worker-execute-job-error.log
 
 [program:space-worker-history]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent
-directory=/opt/space/appliance
-user=www-data
-numprocs=2
-process_name=%(program_name)s_%(process_num)02d
-autostart=true
-autorestart=true
-startsecs=10
-startretries=3
-stdout_logfile=/var/log/space/worker-history.log
-stderr_logfile=/var/log/space/worker-history-error.log
+command = /usr/bin/php /opt/space/appliance/bin/console messenger:consume history_sent
+directory = /opt/space/appliance
+user = www-data
+numprocs = 2
+process_name = %(program_name)s_%(process_num)02d
+autostart = true
+autorestart = true
+startsecs = 10
+startretries = 3
+stdout_logfile = /var/log/space/worker-history.log
+stderr_logfile = /var/log/space/worker-history-error.log
 
 [program:space-worker-job-done]
-command=/usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done
-directory=/opt/space/appliance
-user=www-data
-numprocs=2
-process_name=%(program_name)s_%(process_num)02d
-autostart=true
-autorestart=true
-startsecs=10
-startretries=3
-stdout_logfile=/var/log/space/worker-job-done.log
-stderr_logfile=/var/log/space/worker-job-done-error.log
+command = /usr/bin/php /opt/space/appliance/bin/console messenger:consume job_done
+directory = /opt/space/appliance
+user = www-data
+numprocs = 2
+process_name = %(program_name)s_%(process_num)02d
+autostart = true
+autorestart = true
+startsecs = 10
+startretries = 3
+stdout_logfile = /var/log/space/worker-job-done.log
+stderr_logfile = /var/log/space/worker-job-done-error.log
 
 [group:space-workers]
-programs=space-worker-new-job,space-worker-execute-job,space-worker-history,space-worker-job-done
+programs = space-worker-new-job,space-worker-execute-job,space-worker-history,space-worker-job-done
 ```
 
 **Manage with supervisorctl**:
@@ -388,12 +407,14 @@ sudo supervisorctl status space-workers:*
 Workers update a ping file periodically to indicate health.
 
 **Configuration**:
+
 ```bash
 SPACE_PING_FILE=/var/run/space/ping
 SPACE_PING_SECONDS=60
 ```
 
 **Check health**:
+
 ```bash
 # File should be updated every SPACE_PING_SECONDS
 stat /var/run/space/ping
@@ -403,6 +424,7 @@ find /var/run/space/ping -mmin +2
 ```
 
 **Automated monitoring**:
+
 ```bash
 #!/bin/bash
 # check-worker-health.sh
@@ -440,32 +462,35 @@ bin/console messenger:stats
 ```
 
 **Key metrics**:
+
 - **messages**: Total messages in queue
 - **messages_ready**: Waiting to be processed
 - **messages_unacknowledged**: Being processed
 - **message_rate**: Messages/second
 
 **Alerts**:
+
 - Queue depth growing: Add more workers
 - High unacknowledged count: Workers may be slow or stuck
 - Low processing rate: Check worker performance
 
-
-
 ### Logging
 
 **Log locations**:
+
 - Systemd: `journalctl -u space-worker-*`
 - Supervisor: `/var/log/space/worker-*.log`
 - Application: `/opt/space/appliance/var/log/*.log`
 
 **Log levels**:
+
 - `ERROR`: Worker errors, job failures
 - `WARNING`: Timeouts, retries
 - `INFO`: Job start/completion, major steps
 - `DEBUG`: Detailed execution (development only)
 
 **Configure log level** in `.env.local`:
+
 ```bash
 APP_ENV=prod  # Only ERROR and WARNING
 # OR
@@ -481,12 +506,14 @@ APP_ENV=dev   # All levels including DEBUG
 **Symptoms**: Worker processes exit immediately
 
 **Causes**:
+
 - Missing dependencies
 - Invalid configuration
 - Database/RabbitMQ connection failure
 - Permission issues
 
 **Solutions**:
+
 ```bash
 # Check configuration
 ./space.sh verify
@@ -509,12 +536,14 @@ journalctl -u space-worker-execute-job -n 50
 **Symptoms**: Jobs not processing, queue depth increasing
 
 **Causes**:
+
 - No workers running
 - Workers crashed
 - RabbitMQ issues
 - Resource exhaustion
 
 **Solutions**:
+
 ```bash
 # Check worker status
 systemctl status 'space-worker-*'
@@ -535,6 +564,7 @@ systemctl restart 'space-worker-*'
 **Symptoms**: Jobs in failed status, messages in DLQ
 
 **Causes**:
+
 - Git repository unavailable
 - Buildah errors
 - Kubernetes API errors
@@ -542,6 +572,7 @@ systemctl restart 'space-worker-*'
 - Resource limits exceeded
 
 **Solutions**:
+
 ```bash
 # View failed jobs in RabbitMQ
 rabbitmqctl list_queues name messages | grep failed
@@ -568,12 +599,14 @@ buildah images
 **Symptoms**: Workers consuming excessive memory
 
 **Causes**:
+
 - Memory leaks
 - Large Git repositories
 - Large image builds
 - Insufficient memory limit
 
 **Solutions**:
+
 ```bash
 # Set memory limit
 bin/console messenger:consume execute_job --memory-limit=512M
@@ -592,6 +625,7 @@ ps aux | grep messenger:consume
 **Symptoms**: Jobs taking too long
 
 **Causes**:
+
 - Slow Git clone
 - Large image builds
 - Slow network to Kubernetes
@@ -599,6 +633,7 @@ ps aux | grep messenger:consume
 - Hook timeouts
 
 **Solutions**:
+
 ```bash
 # Increase timeouts
 SPACE_GIT_TIMEOUT=1200
@@ -617,22 +652,26 @@ SPACE_WORKER_TIME_LIMIT=7200
 **Enable debug logging**:
 
 Create `.env.local`:
+
 ```bash
 APP_ENV=dev
 MESSENGER_TRANSPORT_DEBUG=1
 ```
 
 **Run worker in foreground**:
+
 ```bash
 bin/console messenger:consume execute_job -vv
 ```
 
 **Process single message**:
+
 ```bash
 bin/console messenger:consume execute_job --limit=1 -vvv
 ```
 
 **Check message format**:
+
 ```bash
 # In RabbitMQ Management UI
 # Navigate to queue → Get messages → Get message
