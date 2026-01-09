@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02cda3e1b6736c45e99054add0de6f23",
+    "content-hash": "538f497e5188d4ae694fad1c92847948",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1635,16 +1635,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v12.45.2",
+            "version": "v12.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "875d406ead77f9fa66e99894bbe5d205d95a88d3"
+                "reference": "d3f104a32fdfbf416cd1a839dad0e2c670a03f4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/875d406ead77f9fa66e99894bbe5d205d95a88d3",
-                "reference": "875d406ead77f9fa66e99894bbe5d205d95a88d3",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/d3f104a32fdfbf416cd1a839dad0e2c670a03f4e",
+                "reference": "d3f104a32fdfbf416cd1a839dad0e2c670a03f4e",
                 "shasum": ""
             },
             "require": {
@@ -1691,11 +1691,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-01-06T14:58:44+00:00"
+            "time": "2026-01-07T21:26:29+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v12.45.2",
+            "version": "v12.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1741,7 +1741,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v12.45.2",
+            "version": "v12.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1789,7 +1789,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v12.45.2",
+            "version": "v12.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -13491,12 +13491,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ebc5572f219ad85f60f20fcff71b98b5055c4f8e"
+                "reference": "842120a67d0a2cc4f1b70f67683f4f541fec9711"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ebc5572f219ad85f60f20fcff71b98b5055c4f8e",
-                "reference": "ebc5572f219ad85f60f20fcff71b98b5055c4f8e",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/842120a67d0a2cc4f1b70f67683f4f541fec9711",
+                "reference": "842120a67d0a2cc4f1b70f67683f4f541fec9711",
                 "shasum": ""
             },
             "conflict": {
@@ -13681,7 +13681,7 @@
                 "drupal/commerce_alphabank_redirect": "<1.0.3",
                 "drupal/commerce_eurobank_redirect": "<2.1.1",
                 "drupal/config_split": "<1.10|>=2,<2.0.2",
-                "drupal/core": ">=6,<6.38|>=7,<7.102|>=8,<10.4.9|>=10.5,<10.5.6|>=11,<11.1.9|>=11.2,<11.2.8",
+                "drupal/core": ">=6,<6.38|>=7,<7.103|>=8,<10.4.9|>=10.5,<10.5.6|>=11,<11.1.9|>=11.2,<11.2.8",
                 "drupal/core-recommended": ">=7,<7.102|>=8,<10.2.11|>=10.3,<10.3.9|>=11,<11.0.8",
                 "drupal/currency": "<3.5",
                 "drupal/drupal": ">=5,<5.11|>=6,<6.38|>=7,<7.102|>=8,<10.2.11|>=10.3,<10.3.9|>=11,<11.0.8",
@@ -13796,7 +13796,7 @@
                 "geshi/geshi": "<=1.0.9.1",
                 "getformwork/formwork": "<2.2",
                 "getgrav/grav": "<1.11.0.0-beta1",
-                "getkirby/cms": "<3.9.8.3-dev|>=3.10,<3.10.1.2-dev|>=4,<4.7.1|>=5,<5.1.4",
+                "getkirby/cms": "<3.9.8.3-dev|>=3.10,<3.10.1.2-dev|>=4,<4.7.1|>=5,<=5.2.1",
                 "getkirby/kirby": "<3.9.8.3-dev|>=3.10,<3.10.1.2-dev|>=4,<4.7.1",
                 "getkirby/panel": "<2.5.14",
                 "getkirby/starterkit": "<=3.7.0.2",
@@ -14491,7 +14491,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-07T20:06:51+00:00"
+            "time": "2026-01-08T22:06:12+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -15953,12 +15953,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "b01be90dceff69c88c7b36c30ee45c9fd9107f7f"
+                "reference": "bdbabc199a7ba9965484e4725d66170e5711323b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/b01be90dceff69c88c7b36c30ee45c9fd9107f7f",
-                "reference": "b01be90dceff69c88c7b36c30ee45c9fd9107f7f",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/bdbabc199a7ba9965484e4725d66170e5711323b",
+                "reference": "bdbabc199a7ba9965484e4725d66170e5711323b",
                 "shasum": ""
             },
             "require": {
@@ -16007,7 +16007,7 @@
                 "issues": "https://github.com/webmozarts/assert/issues",
                 "source": "https://github.com/webmozarts/assert/tree/2.1.1"
             },
-            "time": "2026-01-07T17:26:38+00:00"
+            "time": "2026-01-08T11:28:40+00:00"
         },
         {
             "name": "zenstruck/assert",
