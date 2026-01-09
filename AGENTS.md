@@ -1,27 +1,66 @@
 # Agent Guidelines for Space
 
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Technology Stack](#technology-stack)
+    - [Backend](#backend)
+    - [Infrastructure](#infrastructure)
+    - [Frontend](#frontend)
+    - [Development & QA Tools](#development--qa-tools)
+- [Architecture](#architecture)
+    - [Hexagonal Architecture](#hexagonal-architecture-ports--adapters)
+    - [Domain-Driven Design](#domain-driven-design-ddd)
+    - [Recipe Pattern](#recipe-pattern)
+- [API & Routes](#api--routes)
+- [Coding Standards](#coding-standards)
+- [Testing](#testing)
+- [Quality Assurance](#quality-assurance)
+- [Contributing](#contributing)
+- [Security](#security)
+- [CLI Tool (space.sh)](#cli-tool-spacesh)
+- [Extension System](#extension-system)
+- [Code Examples](#code-examples)
+- [Key Design Patterns](#key-design-patterns)
+- [Contact](#contact)
+
+---
+
 ## Project Overview
 
-**Space** is a Platform as a Service (PaaS) / Platform as a Code application providing continuous integration, 
-delivery, and deployment capabilities. Built on **Teknoo East PaaS**, **Teknoo Kubernetes Client**, and **Symfony** 
+**Space** is a Platform as a Service (PaaS) / Platform as a Code application providing continuous integration,
+delivery, and deployment capabilities. Built on **Teknoo East PaaS**, **Teknoo Kubernetes Client**, and **Symfony**
 components, it supports multi-account, multi-user, and multi-project deployments on clusters, including Kubernetes.
+
+### Quick Start
+
+| For | See Section |
+|-----|-------------|
+| **Understanding the architecture** | [Architecture](#architecture) |
+| **Writing code** | [Coding Standards](#coding-standards) |
+| **Running tests** | [Testing](#testing) |
+| **Using the CLI** | [CLI Tool](#cli-tool-spacesh) |
+| **Building extensions** | [Extension System](#extension-system) |
+| **Code examples** | [Code Examples](#code-examples) |
 
 ## Technology Stack
 
 ### Backend
+
 - **PHP 8.4+** with strict typing
 - **Symfony 8+** (or 7.4+) framework
 - **Doctrine ODM 3.5+** for MongoDB persistence
 - **Teknoo Libraries**:
-  - `teknoo/east-paas` - PaaS orchestration engine
-  - `teknoo/kubernetes-client` - Kubernetes API integration
-  - `teknoo/recipe` - Workflow orchestration (Recipe pattern)
-  - `teknoo/states` - State pattern implementation
-  - `teknoo/immutable` - Immutable object pattern
-  - `teknoo/east-foundation` - Extension system and Recipe pattern
-  - `teknoo/east-common` - Shared components
+    - `teknoo/east-paas` - PaaS orchestration engine
+    - `teknoo/kubernetes-client` - Kubernetes API integration
+    - `teknoo/recipe` - Workflow orchestration (Recipe pattern)
+    - `teknoo/states` - State pattern implementation
+    - `teknoo/immutable` - Immutable object pattern
+    - `teknoo/east-foundation` - Extension system and Recipe pattern
+    - `teknoo/east-common` - Shared components
 
 ### Infrastructure
+
 - **MongoDB** - Primary database
 - **RabbitMQ (AMQP)** - Message broker for worker communication
 - **Mercure** - Real-time updates via Server-Sent Events
@@ -29,17 +68,24 @@ components, it supports multi-account, multi-user, and multi-project deployments
 - **Kubernetes 1.30+** - Container orchestration
 
 ### Frontend
+
 - **Twig** - Server-side templating for HTML and JSON API responses
 - **Symfony Forms** - Form generation and validation
 
 ### Development & QA Tools
-- **PHPUnit** - Unit testing framework
-- **Behat** - Behavior-driven development (BDD) testing
-  - `FriendsOfBehat/SymfonyExtension` - Symfony integration
-  - `DMarynicz/BehatParallelExtension` - Parallel test execution
-- **PHPStan** - Static analysis tool
-- **PHP_CodeSniffer** - Code style checker (PSR-12)
-- **Composer Audit** - Security vulnerability scanner
+
+| Tool                | Purpose                                   |
+|---------------------|-------------------------------------------|
+| **PHPUnit**         | Unit testing framework                    |
+| **Behat**           | Behavior-driven development (BDD) testing |
+| **PHPStan**         | Static analysis tool (level max)          |
+| **PHP_CodeSniffer** | Code style checker (PSR-12)               |
+| **Composer Audit**  | Security vulnerability scanner            |
+
+**Behat Extensions:**
+
+- `FriendsOfBehat/SymfonyExtension` - Symfony integration
+- `DMarynicz/BehatParallelExtension` - Parallel test execution
 
 ## Architecture
 
@@ -72,21 +118,26 @@ appliance/
 ### Domain-Driven Design (DDD)
 
 **Bounded Contexts:**
-- Account Management (tenants, settings, access control)
-- User Management (authentication, authorization, profiles)
-- Project Management (applications, metadata, configurations)
-- Job Management (deployment jobs lifecycle)
-- Cluster Management (Kubernetes and cie clusters)
-- Variable Management (persisted variables and secrets)
+
+| Context                 | Responsibilities                        |
+|-------------------------|-----------------------------------------|
+| **Account Management**  | Tenants, settings, access control       |
+| **User Management**     | Authentication, authorization, profiles |
+| **Project Management**  | Applications, metadata, configurations  |
+| **Job Management**      | Deployment jobs lifecycle               |
+| **Cluster Management**  | Kubernetes and other clusters           |
+| **Variable Management** | Persisted variables and secrets         |
 
 **Key Aggregates:**
-- `Account` (with Users, Projects, Environments)
-- `Project` (with Metadata, Variables)
-- `Job` (deployment execution)
+
+- `Account` - Root aggregate containing Users, Projects, and Environments
+- `Project` - Contains Metadata and Variables
+- `Job` - Manages deployment execution lifecycle
 
 ### Recipe Pattern
 
 Workflows are implemented using the Recipe pattern from Teknoo East Foundation:
+
 - **Plans**: High-level workflows combining multiple steps
 - **Steps**: Individual operations implementing specific use cases
 - **EditablePlan**: Dynamic plans modifiable through extensions
@@ -98,53 +149,58 @@ Workflows are implemented using the Recipe pattern from Teknoo East Foundation:
 The API is organized in versioned endpoints under `/api/v1/`:
 
 ```
-config/routes/
-├── api.yaml                    # Main API routing configuration
-├── api/v1/
-│   ├── unauthenticated/       # Public endpoints (login)
-│   │   └── space.api.v1.login.yaml
-│   ├── authenticated/         # User endpoints (requires JWT)
-│   │   ├── space.api.v1.account.yaml
-│   │   ├── space.api.v1.project.yaml
-│   │   ├── space.api.v1.job.yaml
-│   │   ├── space.api.v1.jwt.yaml
-│   │   └── space.api.v1.settings.yaml
-│   └── admin/                 # Admin endpoints
-│       ├── space.api.v1.account.yaml
-│       ├── space.api.v1.project.yaml
-│       ├── space.api.v1.job.yaml
-│       └── space.api.v1.user.yaml
+config/routes/api/v1/
+├── unauthenticated/       # Public endpoints (login)
+│   └── space.api.v1.login.yaml
+├── authenticated/         # User endpoints (requires JWT)
+│   ├── space.api.v1.account.yaml
+│   ├── space.api.v1.project.yaml
+│   ├── space.api.v1.job.yaml
+│   ├── space.api.v1.jwt.yaml
+│   └── space.api.v1.settings.yaml
+└── admin/                 # Admin endpoints
+    ├── space.api.v1.account.yaml
+    ├── space.api.v1.project.yaml
+    ├── space.api.v1.job.yaml
+    └── space.api.v1.user.yaml
 ```
 
 ### Web Routes Organization
 
 Web routes are organized by domain in `config/routes/`:
 
-- `space.account.yaml` - Account management
-- `space.project.yaml` - Project management
-- `space.job.yaml` - Job/deployment management
-- `space.dashboard.yaml` - Dashboard views
-- `space.settings.yaml` - User settings
-- `space.subscription.yaml` - Subscription management
-- `space.admin.*.yaml` - Admin interfaces
-- `east.paas.overwrite.*.yaml` - East PaaS route overrides
+| Route File                   | Purpose                   |
+|------------------------------|---------------------------|
+| `space.account.yaml`         | Account management        |
+| `space.project.yaml`         | Project management        |
+| `space.job.yaml`             | Job/deployment management |
+| `space.dashboard.yaml`       | Dashboard views           |
+| `space.settings.yaml`        | User settings             |
+| `space.subscription.yaml`    | Subscription management   |
+| `space.admin.*.yaml`         | Admin interfaces          |
+| `east.paas.overwrite.*.yaml` | East PaaS route overrides |
 
 ### API Authentication
 
-- **JWT Tokens**: Used for API authentication
-- Tokens are configured via environment variables (`SPACE_JWT_*`)
-- Users can manage API tokens through the settings interface
-- JWT tokens can be generated from the WebUI in the user account or via Users API token after calling the
-  `/api/v1/login` endpoint. 
-  - API Tokens can be generated only from the WebUI in the user account.
+**JWT Token Flow:**
 
-### Twig for HTML and JSON Rendering
+1. **Generate tokens** from WebUI in user account settings, or
+2. **Call** `/api/v1/login` endpoint with user credentials
+3. **Use token** in HTTP Authorization header: `Bearer {token}`
+4. **Optional**: Pass token in query string if `SPACE_JWT_ENABLE_IN_QUERY=true` (parameter: `bearer`)
 
-Twig is used for both HTML pages and JSON API responses:
+**Configuration:**
 
-**HTML Templates**: Standard Twig templates in `templates/`
+- Tokens are configured via environment variables prefixed with `SPACE_JWT_*`
+- Token regeneration available at `/api/v1/jwt/create-token`
+- API Keys can only be generated from the WebUI
 
-**JSON API Templates**: Templates with `.json.twig` extension
+### Rendering with Twig
+
+| Template Type | Extension    | Location     |
+|---------------|--------------|--------------|
+| **HTML**      | `.html.twig` | `templates/` |
+| **JSON API**  | `.json.twig` | `templates/` |
 
 ## Coding Standards
 
@@ -186,50 +242,51 @@ final class Example implements ImmutableInterface
 
 ### Key Conventions
 
-1. **Always use `declare(strict_types=1);`**
-2. **Full type declarations** for all parameters and return types
-3. **Readonly properties** where applicable
-4. **Immutable objects** using `Teknoo\Immutable` where possible
-5. **Final classes** by default unless inheritance is required
-6. **Constructor property promotion** for cleaner code
+| Convention              | Requirement                                         |
+|-------------------------|-----------------------------------------------------|
+| **Strict typing**       | Always use `declare(strict_types=1);`               |
+| **Type declarations**   | Full type hints for all parameters and return types |
+| **Readonly properties** | Use `readonly` where applicable                     |
+| **Immutability**        | Use `Teknoo\Immutable` pattern where possible       |
+| **Final classes**       | By default, unless inheritance is required          |
+| **Property promotion**  | Use constructor property promotion                  |
 
 ### Editor Configuration
 
-- **Charset**: UTF-8
-- **Line endings**: LF (Unix)
-- **Indentation**: 4 spaces
-- **Final newline**: Yes
-- **Trailing whitespace**: Trimmed (except in `.md` files)
-- **YAML files**: 2 spaces indentation
+| Setting                 | Value                        |
+|-------------------------|------------------------------|
+| **Charset**             | UTF-8                        |
+| **Line endings**        | LF (Unix)                    |
+| **Indentation (PHP)**   | 4 spaces                     |
+| **Indentation (YAML)**  | 2 spaces                     |
+| **Final newline**       | Yes                          |
+| **Trailing whitespace** | Trimmed (except `.md` files) |
 
 ## Testing
 
 ### Test Requirements
 
-- **90% code coverage** minimum for new contributions
-- Any contribution must provide tests for additional introduced conditions
-- Any unconfirmed issue needs a failing test case before being accepted
+| Requirement         | Description                                 |
+|---------------------|---------------------------------------------|
+| **Code Coverage**   | Minimum 90% for new contributions           |
+| **Test Conditions** | All additional conditions must be tested    |
+| **Bug Reports**     | Unconfirmed issues need a failing test case |
 
 ### Running Tests
 
-```bash
-# All tests with coverage
-./space.sh test
-
-# Tests without coverage
-./space.sh test-without-coverage
-
-# Unit tests only (PHPUnit)
-./vendor/bin/phpunit
-
-# Behavior tests (Behat)
-./vendor/bin/behat
-```
+| Command                            | Purpose                    |
+|------------------------------------|----------------------------|
+| `./space.sh test`                  | All tests with coverage    |
+| `./space.sh test-without-coverage` | All tests without coverage |
+| `./vendor/bin/phpunit`             | Unit tests only            |
+| `./vendor/bin/behat`               | Behavior tests only        |
 
 ### Test Structure
 
-- **Unit Tests**: `appliance/tests/` using PHPUnit
-- **Behavior Tests**: `appliance/features/` using Behat (Gherkin syntax)
+| Type               | Location              | Framework       |
+|--------------------|-----------------------|-----------------|
+| **Unit Tests**     | `appliance/tests/`    | PHPUnit         |
+| **Behavior Tests** | `appliance/features/` | Behat (Gherkin) |
 
 ### Writing Unit Tests
 
@@ -261,7 +318,7 @@ Feature: Project Management
   Scenario: Create a project
     Given I am logged in as "user@example.com"
     When I create a project with:
-      | name       | My Project                           |
+      | name       | My Project                          |
       | repository | https://github.com/example/repo.git |
     Then the project should be created
 ```
@@ -270,41 +327,33 @@ Feature: Project Management
 
 ### Running QA Checks
 
-```bash
-# Full QA suite
-./space.sh qa
-
-# Offline QA (no audit)
-./space.sh qa-offline
-
-# Individual checks
-./space.sh lint      # PHP linting
-./space.sh phpstan   # Static analysis
-./space.sh phpcs     # Code style
-./space.sh audit     # Security audit
-```
-
-### Fix Code Style
-
-```bash
-./vendor/bin/phpcbf
-```
+| Command                 | Description                 |
+|-------------------------|-----------------------------|
+| `./space.sh qa`         | Full QA suite (all checks)  |
+| `./space.sh qa-offline` | QA suite without audit      |
+| `./space.sh lint`       | PHP syntax linting          |
+| `./space.sh phpstan`    | Static analysis (level max) |
+| `./space.sh phpcs`      | Code style check (PSR-12)   |
+| `./space.sh audit`      | Security vulnerability scan |
+| `./vendor/bin/phpcbf`   | Auto-fix code style issues  |
 
 ## Contributing
 
 ### Branch Strategy
 
-- Pull requests must be sent from a new `hotfix/` or `feature/` branch
-- Never submit PRs directly from `master`
+- ✅ Create PRs from `hotfix/` or `feature/` branches
+- ❌ Never submit PRs directly from `master`
 
 ### Contribution Checklist
 
-1. ✅ Code follows PSR-12 style
-2. ✅ All type declarations present
-3. ✅ PHPStan passes without errors
-4. ✅ Tests provided for new functionality
-5. ✅ 90% code coverage maintained
-6. ✅ Behavior tests for user-facing features
+| Requirement                      | Status     |
+|----------------------------------|------------|
+| Code follows PSR-12 style        | ✅ Required |
+| All type declarations present    | ✅ Required |
+| PHPStan passes (level max)       | ✅ Required |
+| Tests for new functionality      | ✅ Required |
+| 90% code coverage maintained     | ✅ Required |
+| Behavior tests for user features | ✅ Required |
 
 ## Security
 
@@ -312,65 +361,66 @@ Feature: Project Management
 
 | Version | Supported |
 |---------|-----------|
-| 2.x     | ✅        |
-| 1.2.x   | ✅        |
-| < 1.2.x | ❌        |
+| 2.x     | ✅         |
+| 1.2.x   | ✅         |
+| < 1.2.x | ❌         |
 
 ### Reporting Vulnerabilities
 
 Send an email to `richard@teknoo.software` with:
+
 - Vulnerability description
 - Proof of concept of the exploit
 
 ## CLI Tool (space.sh)
 
-### Common Commands
+All commands are executed via `./space.sh <command>` from the project root.
 
-```bash
-# Installation
-./space.sh install        # Production install
-./space.sh dev-install    # Development install with dev dependencies
-./space.sh update         # Update dependencies
+### Command Reference
 
-# Docker
-./space.sh build          # Build Docker images
-./space.sh start          # Start Docker stack
-./space.sh stop           # Stop Docker stack
-
-# Configuration
-./space.sh config         # Configure Space
-./space.sh create-admin email=<email> password=<password>
-
-# Extensions
-./space.sh extension-list
-./space.sh extension-enable name=<extension>
-./space.sh extension-disable name=<extension>
-
-# QA & Testing
-./space.sh qa             # Run all QA checks
-./space.sh test           # Run all tests
-./space.sh phpstan        # Run PHPStan
-./space.sh phpcs          # Check code style
-
-# Maintenance
-./space.sh clean          # Clean all caches and vendors
-./space.sh warmup         # Clear and warm cache
-```
+| Category           | Command                     | Description                                                  |
+|--------------------|-----------------------------|--------------------------------------------------------------|
+| **Installation**   | `install`                   | Production install (no dev dependencies)                     |
+|                    | `dev-install`               | Development install (with dev dependencies)                  |
+|                    | `update`                    | Update dependencies                                          |
+| **Docker**         | `build`                     | Build Docker images                                          |
+|                    | `start`                     | Start Docker stack                                           |
+|                    | `stop`                      | Stop Docker stack                                            |
+|                    | `restart`                   | Restart Docker stack                                         |
+| **Configuration**  | `config`                    | Configure Space                                              |
+|                    | `create-admin`              | Create admin user (requires `email=<email> password=<pass>`) |
+| **Extensions**     | `extension-list`            | List available extensions                                    |
+|                    | `extension-enable`          | Enable extension (requires `name=<extension>`)               |
+|                    | `extension-disable`         | Disable extension (requires `name=<extension>`)              |
+| **QA & Testing**   | `qa`                        | Run all QA checks                                            |
+|                    | `qa-offline`                | Run QA without audit                                         |
+|                    | `test`                      | Run all tests with coverage                                  |
+|                    | `test-without-coverage`     | Run all tests without coverage                               |
+|                    | `phpstan`                   | Run PHPStan static analysis                                  |
+|                    | `phpcs`                     | Check code style                                             |
+|                    | `lint`                      | Check PHP syntax                                             |
+|                    | `audit`                     | Security vulnerability scan                                  |
+| **Maintenance**    | `clean`                     | Clean caches and vendors                                     |
+|                    | `warmup`                    | Clear and warm cache                                         |
 
 ## Extension System
 
-Space supports extensions via Teknoo East Foundation:
+Space supports extensions via Teknoo East Foundation.
 
-- Add Symfony bundles
-- Extend PHP-DI configuration
-- Add/modify Recipe steps and plans
-- Customize East PaaS compiler
-- Add hooks for build/deployment
-- Extend libraries (containers, pods, services, ingresses)
-- Customize UI (templates, routes, menus, assets)
-- Change branding (logo, CSS, JS)
+### Extension Capabilities
 
-Extensions are registered in `extensions/enabled.json`.
+| Capability               | Description                               |
+|--------------------------|-------------------------------------------|
+| **Symfony Bundles**      | Add new bundles to the application        |
+| **PHP-DI Configuration** | Extend dependency injection configuration |
+| **Recipe Plans & Steps** | Add or modify workflow orchestration      |
+| **East PaaS Compiler**   | Customize the PaaS compilation process    |
+| **Build Hooks**          | Add hooks for build and deployment phases |
+| **Libraries**            | Extend containers, pods, services, ingresses |
+| **UI Customization**     | Modify templates, routes, menus, assets   |
+| **Branding**             | Change logo, CSS, and JavaScript          |
+
+**Registration:** Extensions are registered in `extensions/enabled.json`.
 
 > 📖 **See [.agents/EXAMPLES.md](.agents/EXAMPLES.md#extension-example)** for complete extension implementation examples.
 
