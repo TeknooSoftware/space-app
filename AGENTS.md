@@ -187,7 +187,6 @@ Web routes are organized by domain in `config/routes/`:
 1. **Generate tokens** from WebUI in user account settings, or
 2. **Call** `/api/v1/login` endpoint with user credentials
 3. **Use token** in HTTP Authorization header: `Bearer {token}`
-4. **Optional**: Pass token in query string if `SPACE_JWT_ENABLE_IN_QUERY=true` (parameter: `bearer`)
 
 **Configuration:**
 
@@ -278,8 +277,6 @@ final class Example implements ImmutableInterface
 |------------------------------------|----------------------------|
 | `./space.sh test`                  | All tests with coverage    |
 | `./space.sh test-without-coverage` | All tests without coverage |
-| `./vendor/bin/phpunit`             | Unit tests only            |
-| `./vendor/bin/behat`               | Behavior tests only        |
 
 ### Test Structure
 
