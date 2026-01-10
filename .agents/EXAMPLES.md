@@ -1,6 +1,6 @@
 # Code Examples for Space
 
-This file contains detailed code examples referenced from [AGENT.md](AGENT.md).
+This file contains detailed code examples referenced from [AGENTS.md](AGENTS.md).
 
 ## Table of Contents
 
