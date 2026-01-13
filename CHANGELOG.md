@@ -1,5 +1,16 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.3] - 2026-01-13
+### Stable Release
+- Update Symfony 7.4.3 and 8.0.3
+- Fix errors in tests about wrong date format in MongoDB
+- Update spomky-labs/otphp
+- Update illuminates
+- Update sche/2fa
+- Update doctrine/collections
+- Add AGENTS.md
+- Complete documenation about API
+
 ## [2.0.2] - 2025-12-24
 ### Stable Release
 - Fix issue with uninitialized lazy object with doctrine and native proxy
