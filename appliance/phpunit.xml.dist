@@ -19,7 +19,7 @@
   <coverage/>
   <php>
     <ini name="error_reporting" value="-1"/>
-    <server name="KERNEL_CLASS" value="App/Kernel"/>
+    <server name="KERNEL_CLASS" value="Teknoo\Space\App\Kernel"/>
     <!-- ###+ symfony/messenger ### -->
     <!-- MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages -->
     <!-- ###- symfony/messenger ### -->
