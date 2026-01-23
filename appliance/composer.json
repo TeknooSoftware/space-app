@@ -107,10 +107,10 @@
         "teknoo/recipe": "^7.2.2",
         "teknoo/states": "^7.1.3",
         "tijsverkoyen/css-to-inline-styles": "^2.4",
-        "twig/cssinliner-extra": "^3.22",
-        "twig/extra-bundle": "^3.22.2",
-        "twig/inky-extra": "^3.22",
-        "twig/twig": "^3.22.2"
+        "twig/cssinliner-extra": "^3.23",
+        "twig/extra-bundle": "^3.23.0",
+        "twig/inky-extra": "^3.23",
+        "twig/twig": "^3.23.0"
     },
     "require-dev": {
         "behat/behat": "^3.29.0",
