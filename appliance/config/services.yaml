@@ -311,3 +311,6 @@ services:
         arguments:
             - '@Teknoo\East\Common\Loader\UserLoader'
             - '@Teknoo\East\Foundation\Time\DatesService'
+
+    GuzzleHttp\Client:
+        autowire: true
