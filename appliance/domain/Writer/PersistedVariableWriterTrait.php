@@ -71,6 +71,7 @@ trait PersistedVariableWriterTrait
     ): WriterInterface {
         /** @var Promise<EncryptableVariableInterface, mixed, mixed> $decoredPromise */
         $decoredPromise = new Promise(
+            /** @param TSuccessArgType $variable */
             fn (ObjectInterface $variable) => $this->persist($variable, $promise, $preferRealDateOnUpdate),
             fn (Throwable $error): ?PromiseInterface => $promise?->fail($error),
         );

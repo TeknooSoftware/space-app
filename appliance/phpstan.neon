@@ -39,6 +39,9 @@ parameters:
             message: '#BatchManipulationManagerInterface::deleteQuery#'
             path:  domain/Writer/Meta/
         -
+            message: '#::persist\(#'
+            path:  domain/Writer/PersistedVariableWriterTrait.php
+        -
             message: '#runVisit\(\) is unused#'
             path:  domain/Object
         -
