@@ -1,5 +1,17 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.4] - 2026-01-26
+### Stable Release
+- Simplify configuration
+- Fix some KERNEL_CLASS constant
+- Update twig and jwt configuration
+- Update 
+  - Symfony 7.4.4 and 8.0.4
+  - Sche/2fa
+  - Illuminates
+  - Doctrine
+  - Phpunit
+
 ## [2.0.3] - 2026-01-13
 ### Stable Release
 - Update Symfony 7.4.3 and 8.0.3
