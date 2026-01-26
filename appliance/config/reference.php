@@ -261,7 +261,7 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     proxy_namespace?: scalar|Param|null, // Default: "MongoDBODMProxies"
  *     proxy_dir?: scalar|Param|null, // Default: "%kernel.cache_dir%/doctrine/odm/mongodb/Proxies"
  *     enable_native_lazy_objects?: bool|Param, // Deprecated: The "enable_native_lazy_objects" option is deprecated and will be removed in 6.0. Native Lazy Objects are enable by default when using PHP 8.4+ and doctrine/mongodb-odm 2.14+. // Requires PHP 8.4+ and doctrine/mongodb-odm 2.14+ // Default: true
- *     enable_lazy_ghost_objects?: bool|Param, // Deprecated: The "enable_lazy_ghost_objects" option is deprecated and will be removed in 6.0. Native Lazy Objects are enable by default when using PHP 8.4+ and doctrine/mongodb-odm 2.14+. // Requires doctrine/mongodb-odm 2.12+ // Default: true
+ *     enable_lazy_ghost_objects?: bool|Param, // Deprecated: The "enable_lazy_ghost_objects" option is deprecated and will be removed in 6.0. Symfony Lazy Ghost Objects are enabled by default with doctrine/mongodb-odm 2.10+. // Requires doctrine/mongodb-odm 2.10+ // Default: true
  *     auto_generate_proxy_classes?: scalar|Param|null, // Default: 3
  *     hydrator_namespace?: scalar|Param|null, // Default: "Hydrators"
  *     hydrator_dir?: scalar|Param|null, // Default: "%kernel.cache_dir%/doctrine/odm/mongodb/Hydrators"
