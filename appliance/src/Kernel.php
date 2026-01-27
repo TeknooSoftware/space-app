@@ -25,10 +25,15 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App;
 
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Teknoo\East\FoundationBundle\Extension\Bundles as BundlesExtension;
 use Teknoo\East\FoundationBundle\Extension\Routes as RoutesExtension;
+
+use function is_file;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -47,5 +52,28 @@ class Kernel extends BaseKernel
         $this->configureRoutesTrait($routes);
 
         RoutesExtension::extendsRoutes($routes, $this->getEnvironment());
+    }
+
+    /**
+     * Overload to enable BundlesExtension
+     */
+    public function registerBundles(): iterable
+    {
+        $contents = [
+            FrameworkBundle::class => ['all' => true],
+        ];
+
+        if (is_file($bundlesPath = $this->getBundlesPath())) {
+            $contents = require $bundlesPath;
+        }
+
+        /** @var array<class-string<BundleInterface>, array<string, bool>> $contents  */
+        BundlesExtension::extendsBundles($contents);
+
+        foreach ($contents as $class => $envs) {
+            if ($envs[$this->environment] ?? $envs['all'] ?? false) {
+                yield new $class();
+            }
+        }
     }
 }

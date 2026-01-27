@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.5] - 2026-01-27
+### Stable Release
+- Fix issue introduced by Symfony Flex in 2.0.4 (custom `bundles.php` has been altered).
+- Migrate `BundlesExtension::extendsBundles` into `src/Kernel.php` by overloading the method `registerBundles` to 
+  prevent these error.
+
 ## [2.0.4] - 2026-01-26
 ### Stable Release
 - Simplify configuration

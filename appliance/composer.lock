@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fde02237155a466985470295ffcfa73d",
+    "content-hash": "ea65100ce0a819dbab1433db3b3abcb2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10904,16 +10904,16 @@
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "9.0.4",
+            "version": "9.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "827b2abf3868ddef30cf11d0ef633e446b0392a0"
+                "reference": "ae59b4a6ce7e6a1634436f678ab3a2e3c0970f26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/827b2abf3868ddef30cf11d0ef633e446b0392a0",
-                "reference": "827b2abf3868ddef30cf11d0ef633e446b0392a0",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/ae59b4a6ce7e6a1634436f678ab3a2e3c0970f26",
+                "reference": "ae59b4a6ce7e6a1634436f678ab3a2e3c0970f26",
                 "shasum": ""
             },
             "require": {
@@ -11003,20 +11003,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-12-22T08:35:16+00:00"
+            "time": "2026-01-27T09:38:03+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "9.0.4",
+            "version": "9.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "f4425dd2c91069106f67c2118ef99f16e2270729"
+                "reference": "26bc78689abc6b82786a3b1bbd44de62bc0a0890"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/f4425dd2c91069106f67c2118ef99f16e2270729",
-                "reference": "f4425dd2c91069106f67c2118ef99f16e2270729",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/26bc78689abc6b82786a3b1bbd44de62bc0a0890",
+                "reference": "26bc78689abc6b82786a3b1bbd44de62bc0a0890",
                 "shasum": ""
             },
             "require": {
@@ -11032,7 +11032,7 @@
                 "symfony/serializer": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-foundation": "^9.0.4",
+                "teknoo/east-foundation": "^9.0.5",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
                 "teknoo/states": "^7.1.2"
@@ -11081,7 +11081,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-12-22T08:39:01+00:00"
+            "time": "2026-01-27T09:39:18+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -13300,16 +13300,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "12.5.7",
+            "version": "12.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "79dee3d2685b80518e94b9ea741b3f822b213a5e"
+                "reference": "37ddb96c14bfee10304825edbb7e66d341ec6889"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/79dee3d2685b80518e94b9ea741b3f822b213a5e",
-                "reference": "79dee3d2685b80518e94b9ea741b3f822b213a5e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/37ddb96c14bfee10304825edbb7e66d341ec6889",
+                "reference": "37ddb96c14bfee10304825edbb7e66d341ec6889",
                 "shasum": ""
             },
             "require": {
@@ -13377,7 +13377,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.7"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/12.5.8"
             },
             "funding": [
                 {
@@ -13401,7 +13401,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-24T16:12:53+00:00"
+            "time": "2026-01-27T06:12:29+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13409,12 +13409,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "8e1e81cec2f088871c624d2adf767eb5e492ecdf"
+                "reference": "41f66a85ed999edf9e171452b75f642321aa7fcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/8e1e81cec2f088871c624d2adf767eb5e492ecdf",
-                "reference": "8e1e81cec2f088871c624d2adf767eb5e492ecdf",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/41f66a85ed999edf9e171452b75f642321aa7fcc",
+                "reference": "41f66a85ed999edf9e171452b75f642321aa7fcc",
                 "shasum": ""
             },
             "conflict": {
@@ -13902,7 +13902,7 @@
                 "mongodb/mongodb": ">=1,<1.9.2",
                 "mongodb/mongodb-extension": "<1.21.2",
                 "monolog/monolog": ">=1.8,<1.12",
-                "moodle/moodle": "<=5.1.1",
+                "moodle/moodle": "<4.4.12|>=4.5.0.0-beta,<4.5.8|>=5.0.0.0-beta,<5.0.4|>=5.1.0.0-beta,<5.1.1",
                 "moonshine/moonshine": "<=3.12.5",
                 "mos/cimage": "<0.7.19",
                 "movim/moxl": ">=0.8,<=0.10",
@@ -14416,7 +14416,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-23T21:05:59+00:00"
+            "time": "2026-01-26T18:09:51+00:00"
         },
         {
             "name": "sebastian/cli-parser",
