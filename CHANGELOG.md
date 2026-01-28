@@ -1,5 +1,12 @@
 # Teknoo Software - Space - Change Log
 
+## [2.0.6] - 2026-01-27
+### Stable Release
+- Update to Symfony 7.4.5 and 8.0.5 (CVE)
+- Update phpseclib/phpseclib
+- Update illuminates libraries
+- Fix some typos in Behat
+
 ## [2.0.5] - 2026-01-27
 ### Stable Release
 - Fix issue introduced by Symfony Flex in 2.0.4 (custom `bundles.php` has been altered).
