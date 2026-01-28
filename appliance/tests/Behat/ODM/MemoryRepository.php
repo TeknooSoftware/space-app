@@ -62,7 +62,7 @@ class MemoryRepository extends DocumentRepository
             return $this->context->findObjectById($this->className, $criteria['id']);
         }
 
-        foreach ($this->context->findObjectsBycriteria($this->className, $criteria) as $object) {
+        foreach ($this->context->findObjectsByCriteria($this->className, $criteria) as $object) {
             return $object;
         }
 
@@ -72,7 +72,7 @@ class MemoryRepository extends DocumentRepository
     #[\Override]
     public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null): array
     {
-        return $this->context->findObjectsBycriteria($this->className, $criteria);
+        return $this->context->findObjectsByCriteria($this->className, $criteria);
     }
 
     #[\Override]
@@ -85,7 +85,7 @@ class MemoryRepository extends DocumentRepository
     public function createQueryBuilder(): QueryBuilder
     {
         return new class ($this->context, $this->className) extends QueryBuilder {
-            private array $criteria;
+            private array $criteria = [];
 
             private ?int $limit = null;
 
@@ -123,7 +123,7 @@ class MemoryRepository extends DocumentRepository
                 );
 
                 $query->resultToReturn = new ArrayObject(
-                    $this->context->findObjectsBycriteria(
+                    $this->context->findObjectsByCriteria(
                         $this->className,
                         $this->criteria,
                         $this->limit,

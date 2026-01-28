@@ -193,7 +193,7 @@ trait PersistenceOperationTrait
         return true;
     }
 
-    public function findObjectsBycriteria(
+    public function findObjectsByCriteria(
         string $className,
         array $criteria,
         ?int $limit = null,

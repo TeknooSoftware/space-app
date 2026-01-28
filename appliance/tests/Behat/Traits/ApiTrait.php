@@ -2306,6 +2306,7 @@ trait ApiTrait
     #[When('the API client switch to new JWT token')]
     public function theApiClientSwitchToNewJwtToken(): void
     {
+        Assert::assertNotNull($this->nextJwtToken);
         $this->jwtToken = $this->nextJwtToken;
         $this->nextJwtToken = null;
     }

@@ -74,7 +74,7 @@ if (!\class_exists(Query::class, false)) {
             $type = ($this->query['type'] ?? self::TYPE_FIND);
             if (self::TYPE_REMOVE === $type) {
                 $className = $this->class->getName();
-                $objects = self::$testsContext->findObjectsBycriteria(
+                $objects = self::$testsContext->findObjectsByCriteria(
                     className: $className,
                     criteria: $this->query['query']['criteria'] ?? []
                 );
