@@ -45,7 +45,7 @@ if (!\class_exists(Query::class, false)) {
 
         public static ?SpaceContext $testsContext = null;
 
-        public static ?ObjectManager $testsObjecttManager = null;
+        public static ?ObjectManager $testsObjectManager = null;
 
         /**
          * @param DocumentManager|null $dm

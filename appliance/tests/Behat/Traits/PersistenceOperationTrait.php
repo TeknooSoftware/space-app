@@ -267,7 +267,7 @@ trait PersistenceOperationTrait
     {
         $this->objectManager ??= new MemoryObjectManager($this->getRepository(...), $this);
 
-        Query::$testsObjecttManager = $this->objectManager;
+        Query::$testsObjectManager = $this->objectManager;
         return $this->objectManager;
     }
 

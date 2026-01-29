@@ -56,37 +56,6 @@ use function json_encode;
  */
 trait BuilderTrait
 {
-    #[When('It goes to account settings')]
-    public function itGoesToAccountSettings(): void
-    {
-        $this->findUrlFromRouteInPageAndOpenIt(
-            crawler: $this->createCrawler(),
-            routeName: 'space_account_settings',
-        );
-
-        $this->formName = 'space_account';
-    }
-
-    #[When('It goes to account status')]
-    public function itGoesToAccountStatuss(): void
-    {
-        $this->findUrlFromRouteInPageAndOpenIt(
-            crawler: $this->createCrawler(),
-            routeName: 'space_account_status',
-        );
-    }
-
-    #[When('open the account variables page')]
-    public function openTheAccountVariablesPage(): void
-    {
-        $this->findUrlFromRouteInPageAndOpenIt(
-            crawler: $this->createCrawler(),
-            routeName: 'space_account_edit_variables',
-        );
-
-        $this->formName = 'account_vars';
-    }
-
     #[Then('it has an error about a timeout')]
     public function itHasAnErrorAboutATimeout(): void
     {

@@ -41,7 +41,7 @@ use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
 use Psr\Cache\CacheItemPoolInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -110,7 +110,7 @@ class SpaceContext implements Context
 
     private ?Response $response = null;
 
-    private ?Container $sfContainer = null;
+    private ?ContainerInterface $sfContainer = null;
 
     private ?ObjectManager $objectManager = null;
 
@@ -277,7 +277,7 @@ class SpaceContext implements Context
         $this->datesService = null;
         $this->currentDate = null;
         Query::$testsContext = $this;
-        Query::$testsObjecttManager = null;
+        Query::$testsObjectManager = null;
         $this->hookCollection = null;
         $this->jwtToken = null;
         $this->nextJwtToken = null;
@@ -344,7 +344,7 @@ class SpaceContext implements Context
     public function cleanScenario(): void
     {
         Query::$testsContext = $this;
-        Query::$testsObjecttManager = null;
+        Query::$testsObjectManager = null;
         $this->getTokenStorageService->tokenStorage?->setToken(null);
         $this->timeoutService->disable();
         $this->cacheExpiredLinks->clear();
