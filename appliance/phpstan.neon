@@ -12,6 +12,8 @@ parameters:
             message: '#mixed#'
             path:  config/
         -
+            message: '#Call to method [A-Za-z\\::\(\)]+ on a separate line has no effect.#'
+        -
             message: '#Psr\\Container\\ContainerInterface::get#'
             path:  config/di.recipe.plans.php
         -
