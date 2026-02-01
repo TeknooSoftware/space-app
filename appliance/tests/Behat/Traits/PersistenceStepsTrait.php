@@ -262,7 +262,6 @@ trait PersistenceStepsTrait
         );
     }
 
-
     #[Given('the 2FA authentication enable for last user')]
     public function theFaAuthenticationEnableForLastUser(): void
     {
