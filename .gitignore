@@ -5,6 +5,6 @@
 !/var/.gitkeep
 /var/mongo/
 !/var/mongo/.gitkeep
-/tasks/*
-!/tasks/.gitkeep
+/.agents/tasks/*
+!/.agents/tasks/.gitkeep
 *.bck

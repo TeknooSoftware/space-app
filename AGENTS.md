@@ -149,10 +149,10 @@ Web routes are organized by domain in `config/routes/`:
 
 ### Rendering with Twig
 
-| Template Type | Extension    | Location     |
-|---------------|--------------|--------------|
-| **HTML**      | `.html.twig` | `templates/` |
-| **JSON API**  | `.json.twig` | `templates/` |
+| Template Type | Extension    | Location                 |
+|---------------|--------------|--------------------------|
+| **HTML**      | `.html.twig` | `appliance/templates/`   |
+| **JSON API**  | `.json.twig` | `appliance/templates/`   |
 
 ---
 
@@ -322,7 +322,7 @@ Configuration uses environment variables extensively. Key files:
 - **Unit tests**: Test domain logic in isolation
 - **Behat tests**: Test full workflows and user scenarios
 - Use `APP_ENV=test` for test execution
-- JWT keypair auto-generated for tests:
+- JWT keypair auto-generated for tests (from `appliance/` directory):
   `bin/console lexik:jwt:generate-keypair --skip-if-exists`
 
 ### Working with Deployment Targets
@@ -421,11 +421,14 @@ Detailed code examples are available in a separate file for better readability:
 
 ## Workflow Orchestration
 
+**Note**: This section references optional project files (`.agents/tasks/*.md`) and required feedback files (`.agents/feedback/*.md`). The feedback system is mandatory for knowledge retention across sessions; task tracking files are optional per-session tools.
+
 ### 0. Session Start
 
 - **Always read** `.agents/feedback/INDEX.md` to learn from past challenges
 - Review recent feedback entries (last 5-10) for common patterns
 - Check if any documented issues are relevant to your current task
+- Check `.agents/tasks/lessons.md` if it exists for project-specific quick reference
 - Apply lessons learned to avoid repeating past mistakes
 
 ### 1. Plan Mode Default
@@ -445,10 +448,11 @@ Keep main context window clean:
 
 ### 3. Self-Improvement Loop
 
-- After ANY correction from the user: update 'tasks/lessons.md' with the pattern
+- After ANY correction from the user: document the pattern in `.agents/feedback/`
+- For project-specific patterns: optionally maintain `.agents/tasks/lessons.md` for quick reference
 - Write rules for yourself that prevent the same mistake
 - Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
+- Review `.agents/feedback/INDEX.md` at session start for all projects
 
 ### 4. Verification Before Done
 
@@ -475,12 +479,12 @@ Keep main context window clean:
 
 ## Task Management
 
-1. **Plan First**: Write plan to 'tasks/todo.md' with checkable items
+1. **Plan First**: Write plan to `.agents/tasks/todo.md` with checkable items (optional, session-specific)
 2. **Verify Plan**: Check in before starting implementation
 3. **Track Progress**: Mark items complete as you go
 4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review to 'tasks/todo.md'
-6. **Capture Lessons**: Update 'tasks/lessons.md' after corrections
+5. **Document Results**: Add review to `.agents/tasks/todo.md` (if used)
+6. **Capture Lessons**: Write feedback to `.agents/feedback/` (required) and optionally maintain `.agents/tasks/lessons.md` for quick project-specific reference
 
 ---
 
@@ -490,6 +494,8 @@ When completing a task, **always**:
 
 1. Write feedback summary to `.agents/feedback/{YYYY-MM-DD-task-name}.md`
 2. Update `.agents/feedback/INDEX.md` with the new entry
+
+**Purpose**: The `.agents/feedback/` directory serves as a persistent knowledge base that improves future task execution across all agents and sessions. Unlike `.agents/tasks/lessons.md` (which is optional and session/project-specific), feedback entries are required and provide structured historical context.
 
 ### What to Document
 

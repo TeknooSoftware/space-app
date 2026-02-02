@@ -72,7 +72,7 @@ Every time you start a new session:
 
 - [ ] Read [AGENTS.md](AGENTS.md) for project standards
 - [ ] Read `.agents/feedback/INDEX.md` for past challenges
-- [ ] Check `tasks/lessons.md` for project-specific lessons (if exists)
+- [ ] Check `.agents/tasks/lessons.md` for project-specific lessons (if exists)
 - [ ] Understand the current task requirements
 - [ ] Plan your approach (use plan mode for non-trivial tasks)
 - [ ] Execute with verification
@@ -93,14 +93,14 @@ If you notice work done by other agents:
 
 ## Key Files for Multi-Agent Coordination
 
-| File                              | Purpose                                    |
-|-----------------------------------|--------------------------------------------|
-| `AGENTS.md`                       | Universal standards for all agents         |
-| `.agents/feedback/INDEX.md`       | History of challenges and solutions        |
-| `.agents/feedback/*.md`           | Individual task feedback entries           |
-| `tasks/todo.md`                   | Current task tracking (if used)            |
-| `tasks/lessons.md`                | Project-specific lessons learned (if used) |
-| `.agents/EXAMPLES.md`             | Code examples and patterns (if exists)     |
+| File                              | Purpose                                      | Status   |
+|-----------------------------------|----------------------------------------------|----------|
+| `AGENTS.md`                       | Universal standards for all agents           | Required |
+| `.agents/feedback/INDEX.md`       | History of challenges and solutions          | Required |
+| `.agents/feedback/*.md`           | Individual task feedback entries             | Required |
+| `.agents/EXAMPLES.md`             | Code examples and patterns                   | Optional |
+| `.agents/tasks/todo.md`           | Current task tracking (session-specific)     | Optional |
+| `.agents/tasks/lessons.md`        | Project-specific lessons learned by agents   | Optional |
 
 ---
 
