@@ -1,6 +1,16 @@
 # Code Examples for Space
 
-This file contains detailed code examples referenced from [AGENTS.md](AGENTS.md).
+**Detailed code examples demonstrating Space patterns and conventions.**
+
+This file provides concrete examples of the architectural patterns and coding standards described in 
+[AGENTS.md](../AGENTS.md). Use these examples as templates when writing new code.
+
+**Navigation**:
+- [← Back to AGENTS.md](../AGENTS.md) - Main documentation
+- [← Back to .agents/](README.md) - .agents/ directory overview
+- [← Back to CLAUDE.md](../CLAUDE.md) - Claude Code guidance
+
+---
 
 ## Table of Contents
 

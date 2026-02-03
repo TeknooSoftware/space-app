@@ -1,13 +1,21 @@
 # Feedback Index
 
-This index tracks all feedback entries from AI agent sessions, helping identify patterns and
-documentation gaps.
+**Central index of all feedback entries from AI agent sessions.**
 
-**How to use this index:**
-- Read this at the start of each session to learn from past challenges
-- Look for patterns in missing context or recurring blockers
-- Check if documented issues are relevant to your current task
-- Update this file after creating each new feedback entry
+This index helps agents learn from past challenges and avoid repeating mistakes. 
+Read this at the **start of every session**.
+
+**Navigation**:
+- [← Back to .agents/](../README.md) - .agents/ directory overview
+- [← Back to AGENTS.md](../../AGENTS.md#feedback-loop) - Feedback loop documentation
+- [→ Feedback README](README.md) - Feedback system explanation
+
+**How to use**:
+- **Session Start**: Read recent entries (last 5-10) for patterns
+- **After Task**: Create new feedback file and update this index
+- **Look for**: Missing context, recurring blockers, common patterns
+
+**Format**: See [AGENTS.md](../../AGENTS.md#feedback-loop) for feedback file format and workflow.
 
 ---
 
@@ -44,17 +52,10 @@ Created feedback system with index, templates, and workflow integration.
 
 ## Adding New Entries
 
-When adding a new feedback file:
+**See [AGENTS.md](../../AGENTS.md#feedback-loop) for complete instructions.**
 
-1. Create the feedback file: `.agents/feedback/YYYY-MM-DD-task-name.md`
-2. Add entry to this index (at the top of "Recent Feedback Entries")
+Quick steps:
+1. Create feedback file: `YYYY-MM-DD-task-name.md`
+2. Add entry at top of "Recent Feedback Entries" above
 3. Update "Common Patterns" if applicable
-4. Keep entries in reverse chronological order (newest first)
-
-### Template for new entry:
-```markdown
-### YYYY-MM-DD - [Task Name](YYYY-MM-DD-task-name.md)
-**Status**: ⚠️ Needs attention
-
-Brief one-line summary of key missing precision or lesson learned.
-```
+4. Use format: `### YYYY-MM-DD - [Task Name](link.md) **Status**: ⚠️/✅/📝/🔄`

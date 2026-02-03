@@ -1,40 +1,57 @@
 # Feedback Directory
 
-This directory contains feedback reports from AI agent sessions, documenting what information was
-missing or unclear during task execution.
+**Feedback reports from AI agent sessions for continuous documentation improvement.**
+
+This directory contains structured feedback that helps improve project documentation and reduces future blockers.
+
+**Navigation**:
+- [← Back to .agents/](../README.md) - .agents/ directory overview
+- [→ INDEX.md](INDEX.md) - **Start here** - Read at every session start
+- [← AGENTS.md](../../AGENTS.md#feedback-loop) - Complete feedback workflow documentation
+
+---
 
 ## Purpose
 
-- Track missing context or documentation gaps
-- Identify patterns in unclear requirements
-- Improve AGENTS.md and project documentation over time
-- Help future agent sessions work more efficiently
+- Document missing context or documentation gaps
+- Identify patterns in recurring blockers
+- Improve AGENTS.md and project documentation continuously
+- Enable future agents to work more efficiently
 
-## Important Files
+---
 
-- **INDEX.md** - Central index of all feedback entries (read this first!)
-- **YYYY-MM-DD-task-name.md** - Individual feedback reports
+## Quick Workflow
 
-## Workflow
+| When                  | Action                                                    | File                          |
+|-----------------------|-----------------------------------------------------------|-------------------------------|
+| **Session Start**     | Read recent feedback to learn from past challenges        | [INDEX.md](INDEX.md)          |
+| **During Task**       | Note missing context, blockers, assumptions               | (Mental notes)                |
+| **Task Complete**     | Create feedback file with learnings                       | `YYYY-MM-DD-task-name.md`     |
+| **Update Index**      | Add entry and update common patterns                      | [INDEX.md](INDEX.md)          |
 
-1. **Session Start**: Read `INDEX.md` to learn from past challenges
-2. **During Task**: Note missing context and blockers
-3. **Task Complete**: Create feedback file `YYYY-MM-DD-task-name.md`
-4. **Update Index**: Add entry to `INDEX.md` and update patterns
+---
 
-## File Naming Convention
+## File Format
 
-`YYYY-MM-DD-task-name.md`
+**Complete format and examples**: See [AGENTS.md](../../AGENTS.md#feedback-loop)
 
-Example: `2026-02-02-add-oauth-provider.md`
+**File naming**: `YYYY-MM-DD-task-name.md` (example: `2026-02-02-add-oauth-provider.md`)
 
-## What to Include
+**Required sections**:
+- Task Summary
+- Missing Precision
+- Blockers
+- Suggestions
+- Lessons Learned
 
-Each feedback file should document:
-- Missing precision or context
-- Assumptions that needed clarification
-- Blockers encountered
-- Suggestions for improving documentation
-- Lessons learned
+---
 
-See AGENTS.md for the detailed format template.
+## Why This Matters
+
+Good feedback creates a **self-improving documentation system**:
+- Agents learn from each other's experiences
+- Documentation gaps get identified and filled
+- Common issues get documented once, preventing repetition
+- Project knowledge accumulates over time
+
+**Always update this directory after completing tasks** - it's required, not optional.

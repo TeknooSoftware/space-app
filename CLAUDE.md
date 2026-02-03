@@ -15,6 +15,7 @@ GitHub Copilot, etc.). To ensure good cohesion and avoid conflicts:
 **All agents must follow the standards defined in [AGENTS.md](AGENTS.md)**
 
 The AGENTS.md file contains:
+
 - Project architecture and structure
 - Code standards and conventions
 - Development guidelines
@@ -28,41 +29,41 @@ As Claude Code, you have unique capabilities that other agents may not have. Use
 #### Your Strengths
 
 1. **Autonomous Execution**
-   - You can read files, run commands, and make changes directly
-   - You can execute tests and verify your work
-   - You can interact with git, npm, composer, etc.
+    - You can read files, run commands, and make changes directly
+    - You can execute tests and verify your work
+    - You can interact with git, npm, composer, etc.
 
 2. **Context Management**
-   - You have access to the full codebase
-   - You can use subagents for parallel exploration
-   - You maintain conversation history for context
+    - You have access to the full codebase
+    - You can use subagents for parallel exploration
+    - You maintain conversation history for context
 
 3. **Verification Capabilities**
-   - You can run PHPStan, PHPCS, tests
-   - You can build and verify Docker images
-   - You can check git status and diffs
+    - You can run PHPStan, PHPCS, tests
+    - You can build and verify Docker images
+    - You can check git status and diffs
 
 #### Your Responsibilities
 
 1. **Read First**
-   - **ALWAYS** read [AGENTS.md](AGENTS.md) at the start of a session
-   - **ALWAYS** read `.agents/feedback/INDEX.md` to learn from past challenges
-   - Check if other agents have left notes in `.agents/` directory
+    - **ALWAYS** read [AGENTS.md](AGENTS.md) at the start of a session
+    - **ALWAYS** read `.agents/feedback/INDEX.md` to learn from past challenges
+    - Check if other agents have left notes in `.agents/` directory
 
 2. **Communicate**
-   - Leave feedback in `.agents/feedback/` after completing tasks
-   - Update `.agents/feedback/INDEX.md` with new entries
-   - Document any issues or missing context you encounter
+    - Leave feedback in `.agents/feedback/` after completing tasks
+    - Update `.agents/feedback/INDEX.md` with new entries
+    - Document any issues or missing context you encounter
 
 3. **Respect Standards**
-   - Follow the code standards in AGENTS.md
-   - Use the workflow orchestration guidelines
-   - Maintain the feedback loop
+    - Follow the code standards in AGENTS.md
+    - Use the workflow orchestration guidelines
+    - Maintain the feedback loop
 
 4. **Verify Your Work**
-   - Run tests before marking tasks complete
-   - Run PHPStan and PHPCS to verify code quality
-   - Check that your changes don't break existing functionality
+    - Run tests before marking tasks complete
+    - Run PHPStan and PHPCS to verify code quality
+    - Check that your changes don't break existing functionality
 
 ---
 
@@ -91,16 +92,45 @@ If you notice work done by other agents:
 
 ---
 
+## .agents/ Directory Structure
+
+The `.agents/` directory is your coordination hub. **Start here**: [.agents/README.md](.agents/README.md)
+
+### Quick Reference
+
+| File/Directory                                 | Purpose                                | Status   | When to Use            |
+|------------------------------------------------|----------------------------------------|----------|------------------------|
+| **[.agents/README.md](.agents/README.md)**     | Overview of the .agents/ system        | Required | First visit            |
+| **[.agents/EXAMPLES.md](.agents/EXAMPLES.md)** | Code examples and patterns             | Required | Writing code           |
+| **[.agents/feedback/](.agents/feedback/)**     | Feedback reports directory             | Required | Every session          |
+| `.agents/feedback/INDEX.md`                    | Index of all feedback entries          | Required | Every session start    |
+| `.agents/feedback/*.md`                        | Individual task feedback reports       | Required | After completing tasks |
+| **[.agents/tasks/](.agents/tasks/)**           | Session-specific tracking (gitignored) | Optional | Complex tasks          |
+| `.agents/tasks/todo.md`                        | Current task tracking                  | Optional | Multi-step tasks       |
+| `.agents/tasks/lessons.md`                     | Project-specific quick reference       | Optional | Project patterns       |
+
+### Navigation Flow
+
+```
+Start → CLAUDE.md (you are here)
+  ↓
+Read → AGENTS.md (universal standards)
+  ↓
+Check → .agents/feedback/INDEX.md (learn from past)
+  ↓
+Optionally → .agents/tasks/lessons.md (project notes)
+  ↓
+During work → .agents/EXAMPLES.md (code patterns)
+  ↓
+After task → .agents/feedback/ (document learnings)
+```
+
 ## Key Files for Multi-Agent Coordination
 
-| File                              | Purpose                                      | Status   |
-|-----------------------------------|----------------------------------------------|----------|
-| `AGENTS.md`                       | Universal standards for all agents           | Required |
-| `.agents/feedback/INDEX.md`       | History of challenges and solutions          | Required |
-| `.agents/feedback/*.md`           | Individual task feedback entries             | Required |
-| `.agents/EXAMPLES.md`             | Code examples and patterns                   | Optional |
-| `.agents/tasks/todo.md`           | Current task tracking (session-specific)     | Optional |
-| `.agents/tasks/lessons.md`        | Project-specific lessons learned by agents   | Optional |
+| File        | Purpose                                  | Status   |
+|-------------|------------------------------------------|----------|
+| `AGENTS.md` | Universal standards for all agents       | Required |
+| `.agents/`  | Multi-agent coordination hub (see above) | Required |
 
 ---
 

@@ -1,7 +1,17 @@
 # AGENTS.md
 
-This file provides guidance to AI agents (Claude Code, Cursor, GitHub Copilot, etc.) when working
-with code in this repository.
+**Universal standards and documentation for all AI agents working on Space.**
+
+This file is the **primary reference** for AI agents (Claude Code, Cursor, GitHub Copilot, etc.) working on this 
+project. It contains comprehensive documentation on architecture, code standards, workflows, and development practices.
+
+**Multi-Agent Environment**: Multiple AI agents may work on this project. All agents must follow the standards defined 
+here to ensure consistency and quality.
+
+**Related Files**:
+- [CLAUDE.md](CLAUDE.md) - Claude Code specific guidance and quick start
+- [.agents/README.md](.agents/README.md) - Overview of the .agents/ coordination system
+- [.agents/EXAMPLES.md](.agents/EXAMPLES.md) - Detailed code examples
 
 ---
 
