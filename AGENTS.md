@@ -431,7 +431,9 @@ Detailed code examples are available in a separate file for better readability:
 
 ## Workflow Orchestration
 
-**Note**: This section references optional project files (`.agents/tasks/*.md`) and required feedback files (`.agents/feedback/*.md`). The feedback system is mandatory for knowledge retention across sessions; task tracking files are optional per-session tools.
+**Note**: This section references optional project files (`.agents/tasks/*.md`) and required feedback
+files (`.agents/feedback/*.md`). The feedback system is mandatory for knowledge retention across
+sessions; task tracking files are optional per-session tools.
 
 ### 0. Session Start
 
@@ -494,7 +496,8 @@ Keep main context window clean:
 3. **Track Progress**: Mark items complete as you go
 4. **Explain Changes**: High-level summary at each step
 5. **Document Results**: Add review to `.agents/tasks/todo.md` (if used)
-6. **Capture Lessons**: Write feedback to `.agents/feedback/` (required) and optionally maintain `.agents/tasks/lessons.md` for quick project-specific reference
+6. **Capture Lessons**: Write feedback to `.agents/feedback/` (required) and optionally maintain
+   `.agents/tasks/lessons.md` for quick project-specific reference
 
 ---
 
@@ -505,7 +508,10 @@ When completing a task, **always**:
 1. Write feedback summary to `.agents/feedback/{YYYY-MM-DD-task-name}.md`
 2. Update `.agents/feedback/INDEX.md` with the new entry
 
-**Purpose**: The `.agents/feedback/` directory serves as a persistent knowledge base that improves future task execution across all agents and sessions. Unlike `.agents/tasks/lessons.md` (which is optional and session/project-specific), feedback entries are required and provide structured historical context.
+**Purpose**: The `.agents/feedback/` directory serves as a persistent knowledge base that improves
+future task execution across all agents and sessions. Unlike `.agents/tasks/lessons.md` (which is
+optional and session/project-specific), feedback entries are required and provide structured
+historical context.
 
 ### What to Document
 
