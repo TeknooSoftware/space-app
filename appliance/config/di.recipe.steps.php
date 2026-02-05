@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
+use Endroid\QrCode\QrCodeInterface;
 use Endroid\QrCode\Writer\PngWriter;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -462,7 +463,10 @@ return [
         );
     },
 
-    PngWriter::class => create(),
+    PngWriter::class => create()
+        ->constructor(
+            get(QrCodeInterface::class),
+        ),
 
     BuildQrCodeInterface::class => get(BuildQrCode::class),
     BuildQrCode::class => create()
