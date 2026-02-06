@@ -61,8 +61,7 @@ class ReloadNamespaceTest extends TestCase
 
         $this->client = $this->createStub(Client::class);
         $catalog = $this->createMock(ClusterCatalog::class);
-        $catalog->expects($this->any())
-            ->method('getCluster')
+        $catalog->method('getCluster')
             ->willReturn(
                 new ClusterConfig(
                     name: 'foo',
