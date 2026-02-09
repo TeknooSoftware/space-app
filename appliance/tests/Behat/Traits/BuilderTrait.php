@@ -358,6 +358,20 @@ trait BuilderTrait
         );
     }
 
+    #[Given('a custom backend protocol annotation mapper')]
+    public function aCustomBackendProtocolAnnotationMapper(): void
+    {
+        $_ENV['SPACE_INGRESS_PROVIDER_JSON'] = json_encode(
+            [
+                '#traefik#i' => 'traefik',
+                '#nginx#i' => 'nginx',
+                '#public#i' => 'nginx',
+                '#hap#i' => 'haproxy',
+            ],
+            JSON_THROW_ON_ERROR,
+        );
+    }
+
     #[When('the hook library is generated')]
     public function theHookLibraryIsGenerated(): void
     {

@@ -332,4 +332,18 @@ return [
             'prependFromContainer',
             true,
         ),
+
+    'teknoo.space.kubernetes.ingress.providers-list' => factory($loadFromEnv)
+        ->parameter(
+            'default',
+            [],
+        )
+        ->parameter(
+            'jsonKey',
+            'SPACE_INGRESS_PROVIDER_JSON',
+        )
+        ->parameter(
+            'fileKey',
+            'SPACE_INGRESS_PROVIDER_FILE',
+        ),
 ];

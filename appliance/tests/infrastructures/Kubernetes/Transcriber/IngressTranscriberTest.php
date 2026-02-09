@@ -130,7 +130,7 @@ class IngressTranscriberTest extends TestCase
 
     public function testError(): void
     {
-        $kubeClient = $this->createStub(KubeClient::class);
+        $kubeClient = $this->createMock(KubeClient::class);
         $cd = $this->createMock(CompiledDeploymentInterface::class);
 
         $cd->expects($this->once())
@@ -169,6 +169,7 @@ class IngressTranscriberTest extends TestCase
 
         $repo = $this->createMock(IngressRepository::class);
         $kubeClient
+            ->expects($this->atLeastOnce())
             ->method('__call')
             ->with('ingresses')
             ->willReturn($repo);

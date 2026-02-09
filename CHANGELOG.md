@@ -1,5 +1,27 @@
 # Teknoo Software - Space - Change Log
 
+## [2.1.0] - 2026-02-09
+### Stable Release
+- Update 
+  - doctrine/event-manager
+  - doctrine/mongodb-odm
+  - illuminates
+  - PHPUnit
+  - endroid/qr-code
+  - Teknoo East PaaS
+- Fix BCBreack introduced into patch version of endroid/qr-code
+- Fix some typo in tests and use interface instead final class
+- Update State and PHPStan and fix bc breaks and false positives introduced in last patch version of phpstan (again)
+- Improve AGENTS.md and allow Claude
+- Fix dotEnv files
+- Support differents ingresses providers and annotations about backend protocole thanks to env var
+  * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
+  * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
+    * Dictionary's structure : `{'pattern': 'type'}` where :
+    * `pattern` : (string) Regular expression to match against the ingress class name.
+    * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`,
+      `traefik2`, `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
+
 ## [2.0.6] - 2026-01-27
 ### Stable Release
 - Update to Symfony 7.4.5 and 8.0.5 (CVE)

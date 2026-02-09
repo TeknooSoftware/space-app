@@ -45,6 +45,7 @@ class IngressTranscriber extends BaseTranscriber
         ?int $defaultIngressPort,
         array $defaultIngressAnnotations,
         callable $prefixer,
+        callable $backendProtocolAnnotationMapper,
     ): array {
         $specs = parent::writeSpec(
             ingress: $ingress,
@@ -54,6 +55,7 @@ class IngressTranscriber extends BaseTranscriber
             defaultIngressPort: $defaultIngressPort,
             defaultIngressAnnotations: $defaultIngressAnnotations,
             prefixer: $prefixer,
+            backendProtocolAnnotationMapper: $backendProtocolAnnotationMapper
         );
 
         if (

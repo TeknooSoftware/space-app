@@ -34,6 +34,7 @@ use function json_encode;
 
 use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
+use const PHP_EOL;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -681,6 +682,7 @@ EOF;
         string $quotaMode,
         string $defaultsMods,
         bool $jobsEnabled,
+        string $ingressProvider,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -886,6 +888,17 @@ EOF;
                     JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT
                 );
         }
+
+        $ingressSecureAnnotations = match ($ingressProvider) {
+            'traefik' => '"kubernetes.io/ingress.class": "traefik",' . PHP_EOL .
+                    '"ingress.kubernetes.io\/protocol": "https"',
+            'hap' => '"kubernetes.io\/ingress.class": "haproxy",' . PHP_EOL .
+                    '"haproxy.org\/server-ssl": "true"',
+            'public' => '"kubernetes.io/ingress.class": "nginx",'
+                . PHP_EOL . '"nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"',
+            default => '"kubernetes.io/ingress.class": "public",'
+                . PHP_EOL . '"nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"',
+        };
 
         $jobsManifest = '';
         if ($jobsEnabled) {
@@ -2025,8 +2038,7 @@ EOF;
                     "name": "{$projectPrefix}demo-secure"
                 },
                 "annotations": {
-                    "kubernetes.io/ingress.class": "public",
-                    "nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"
+                    {$ingressSecureAnnotations}
                 }
             },
             "spec": {

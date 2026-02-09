@@ -557,38 +557,37 @@ SPACE_CLUSTER_CATALOG_JSON='[{
 - **Description**: JSON file returning cluster array
 
 ```bash
-SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.php
+SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.json
 ```
 
-**File format** (`/opt/space/config/clusters.php`):
+**File format** (`/opt/space/config/clusters.json`):
 
-```php
-<?php
-return [
-    [
-        'name' => 'production',
-        'type' => 'kubernetes',
-        'master' => 'https://k8s-prod.example.com:6443',
-        'dashboard' => 'https://dashboard-prod.example.com',
-        'create_account' => [
-            'token' => 'eyJhbGciOiJSUzI1...',
-            'ca_cert' => 'LS0tLS1CRUdJTi...',
-        ],
-        'storage_provisioner' => 'nfs.csi.k8s.io',
-        'support_registry' => true,
-        'use_hnc' => false,
-    ],
-    [
-        'name' => 'staging',
-        'type' => 'kubernetes',
-        'master' => 'https://k8s-staging.example.com:6443',
-        'create_account' => [
-            'token' => 'eyJhbGciOiJSUzI1...',
-        ],
-        'support_registry' => false,
-        'use_hnc' => false,
-    ],
-];
+```json
+[
+    {
+        "name": "production",
+        "type": "kubernetes",
+        "master": "https://k8s-prod.example.com:6443",
+        "dashboard": "https://dashboard-prod.example.com",
+        "create_account": {
+            "token": "eyJhbGciOiJSUzI1...",
+            "ca_cert": "LS0tLS1CRUdJTi..."
+        },
+        "storage_provisioner": "nfs.csi.k8s.io",
+        "support_registry": true,
+        "use_hnc": false
+    },
+    {
+        "name": "staging",
+        "type": "kubernetes",
+        "master": "https://k8s-staging.example.com:6443",
+        "create_account": {
+            "token": "eyJhbGciOiJSUzI1..."
+        },
+        "support_registry": false,
+        "use_hnc": false
+    }
+]
 ```
 
 ### Kubernetes Client Settings
@@ -715,7 +714,49 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON='{"nginx.ingress.kubernetes.io
 - **Description**: JSON file returning annotations array
 
 ```bash
-SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE=/opt/space/config/ingress-annotations.php
+SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE=/opt/space/config/ingress-annotations.json
+```
+
+### Kubernetes Ingress Provider Mapping
+
+Define ingress provider type based on ingress class name pattern matching.
+
+Use **one** of these options:
+
+#### SPACE_INGRESS_PROVIDER_JSON
+
+- **Type**: JSON string
+- **Optional**: Yes
+- **Description**: Maps ingress class name patterns (regex) to provider types
+- **Format**: `{"pattern": "type", ...}`
+  - `pattern`: Regular expression to match against ingress class name
+  - `type`: Provider type - one of: `nginx`, `traefik`, `traefik1`, `traefik2`, `haproxy`, `aws`, `gce`
+- **Default**: `nginx` (used when no match found or invalid type)
+
+```bash
+SPACE_INGRESS_PROVIDER_JSON='{".*nginx.*":"nginx",".*traefik.*":"traefik2",".*haproxy.*":"haproxy"}'
+```
+
+#### SPACE_INGRESS_PROVIDER_FILE
+
+- **Type**: String (file path)
+- **Optional**: Yes
+- **Description**: JSON file returning provider mapping object
+
+```bash
+SPACE_INGRESS_PROVIDER_FILE=/opt/space/config/ingress-providers.json
+```
+
+**File format** (`/opt/space/config/ingress-providers.json`):
+
+```json
+{
+    ".*nginx.*": "nginx",
+    ".*traefik.*": "traefik2",
+    ".*haproxy.*": "haproxy",
+    "public": "nginx",
+    "internal": "traefik"
+}
 ```
 
 ## OCI Registry Configuration
@@ -1006,54 +1047,53 @@ SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON='[{
 - **Description**: JSON file returning plans array
 
 ```bash
-SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.php
+SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.json
 ```
 
-**File format** (`/opt/space/config/plans.php`):
+**File format** (`/opt/space/config/plans.json`):
 
-```php
-<?php
-return [
-    [
-        'id' => 'free',
-        'name' => 'Free Plan',
-        'envsCountAllowed' => 1,
-        'quotas' => [
-            [
-                'category' => 'compute',
-                'type' => 'cpu',
-                'capacity' => '1000m',
-                'require' => '100m',
-            ],
-            [
-                'category' => 'memory',
-                'type' => 'memory',
-                'capacity' => '2Gi',
-                'require' => '256Mi',
-            ],
+```json
+[
+    {
+        "id": "free",
+        "name": "Free Plan",
+        "envsCountAllowed": 1,
+        "quotas": [
+            {
+                "category": "compute",
+                "type": "cpu",
+                "capacity": "1000m",
+                "require": "100m"
+            },
+            {
+                "category": "memory",
+                "type": "memory",
+                "capacity": "2Gi",
+                "require": "256Mi"
+            }
+        ]
+    },
+    {
+        "id": "pro",
+        "name": "Professional Plan",
+        "envsCountAllowed": 5,
+        "quotas": [
+            {
+                "category": "compute",
+                "type": "cpu",
+                "capacity": "10000m",
+                "require": "500m"
+            },
+            {
+                "category": "memory",
+                "type": "memory",
+                "capacity": "20Gi",
+                "require": "2Gi"
+            }
         ],
-    ],
-    [
-        'id' => 'pro',
-        'name' => 'Professional Plan',
-        'envsCountAllowed' => 5,
-        'quotas' => [
-            [
-                'category' => 'compute',
-                'type' => 'cpu',
-                'capacity' => '10000m',
-                'require' => '500m',
-            ],
-            [
-                'category' => 'memory',
-                'type' => 'memory',
-                'capacity' => '20Gi',
-                'require' => '2Gi',
-            ],
-        ],
-        'clusters' => ['production', 'staging'],
-    ],
-];
+        "clusters": ["production", "staging"]
+    }
+]
 ```
 
 ## Worker Configuration
@@ -1175,7 +1215,7 @@ SPACE_HOOKS_COLLECTION_JSON='[{
 - **Description**: JSON file returning hooks array
 
 ```bash
-SPACE_HOOKS_COLLECTION_FILE=/opt/space/config/hooks.php
+SPACE_HOOKS_COLLECTION_FILE=/opt/space/config/hooks.json
 ```
 
 ### Global Variables
@@ -1194,10 +1234,10 @@ SPACE_PAAS_GLOBAL_VARIABLES_JSON='{"APP_ENV":"production","TIMEZONE":"UTC"}'
 #### SPACE_PAAS_GLOBAL_VARIABLES_FILE
 
 - **Type**: String (file path)
-- **Description**: PHP file returning variables array
+- **Description**: JSON file returning variables object
 
 ```bash
-SPACE_PAAS_GLOBAL_VARIABLES_FILE=/opt/space/config/global-vars.php
+SPACE_PAAS_GLOBAL_VARIABLES_FILE=/opt/space/config/global-vars.json
 ```
 
 ### Extends Libraries
@@ -1369,7 +1409,7 @@ SPACE_HOSTNAME=https://space.example.com
 ###< space application ###
 
 ###> kubernetes ###
-SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.php
+SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.json
 SPACE_KUBERNETES_CLIENT_TIMEOUT=5
 SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
 SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
@@ -1377,6 +1417,7 @@ SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE=space-registry-
 SPACE_STORAGE_CLASS=fast-ssd
 SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS=nginx
 SPACE_CLUSTER_ISSUER=letsencrypt-prod
+SPACE_INGRESS_PROVIDER_JSON='{".*nginx.*":"nginx",".*traefik.*":"traefik2"}'
 ###< kubernetes ###
 
 ###> oci registry ###
@@ -1401,7 +1442,7 @@ SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/opt/space/config/secrets/var-public.pem
 SPACE_CODE_SUBSCRIPTION_REQUIRED=1
 SPACE_CODE_GENERATOR_SALT=MySuperSecretSalt
 SPACE_SUBSCRIPTION_DEFAULT_PLAN=starter
-SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.php
+SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.json
 ###< subscription ###
 
 ###> workers ###

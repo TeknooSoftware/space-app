@@ -51,8 +51,9 @@ class RemoveKeyTest extends TestCase
             ->with('to-remove')
             ->willReturnSelf();
 
-        $user = $this->createStub(User::class);
-        $user->method('getOneAuthData')
+        $user = $this->createMock(User::class);
+        $user->expects($this->atLeastOnce())
+            ->method('getOneAuthData')
             ->with(ApiKeysAuth::class)
             ->willReturn($apiKeys);
 
@@ -70,8 +71,9 @@ class RemoveKeyTest extends TestCase
 
     public function testInvokeWithoutExistingApiKeysAuth(): void
     {
-        $user = $this->createStub(User::class);
-        $user->method('getOneAuthData')
+        $user = $this->createMock(User::class);
+        $user->expects($this->atLeastOnce())
+            ->method('getOneAuthData')
             ->with(ApiKeysAuth::class)
             ->willReturn(null);
 
