@@ -25,9 +25,13 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\App\Config;
 
+use Psr\Container\ContainerInterface;
+
 use function DI\env;
 use function DI\get;
 use function dirname;
+use function preg_match;
+use function strtolower;
 
 return [
     //East PaaS Configuration
@@ -54,4 +58,56 @@ return [
         'SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS',
         'public'
     ),
+
+    'teknoo.east.paas.kubernetes.ingress.backend_annotations_mapper' => static function (
+        ContainerInterface $container
+    ): callable {
+        $providersList = $container->get('teknoo.space.kubernetes.ingress.providers-list');
+
+        return static function (
+            ?string $provider,
+            bool $isHttpsBackend,
+        ) use ($providersList): array {
+            $providerTypeFound = '';
+            if (!empty($provider)) {
+                foreach ($providersList as $providerRegex => $providerType) {
+                    if (preg_match($providerRegex, $provider)) {
+                        $providerTypeFound = strtolower($providerType);
+
+                        break;
+                    }
+                }
+            }
+
+            $key = match ($providerTypeFound) {
+                'traefik', 'traefik1' => 'ingress.kubernetes.io/protocol',
+                'traefik2' => 'traefik.ingress.kubernetes.io/service.serversscheme',
+                'haproxy' => 'haproxy.org/server-ssl',
+                'aws' => 'alb.ingress.kubernetes.io/backend-protocol',
+                'gce' => 'cloud.google.com/app-protocols',
+                default => 'nginx.ingress.kubernetes.io/backend-protocol'
+            };
+
+            if ('nginx.ingress.kubernetes.io/backend-protocol' === $key && !$isHttpsBackend) {
+                return [];
+            }
+
+            return [
+                $key => match ($providerTypeFound) {
+                    'traefik', 'traefik1', 'traefik2' => match ($isHttpsBackend) {
+                        true => 'https',
+                        false => 'http'
+                    },
+                    'haproxy' => match ($isHttpsBackend) {
+                        true => 'true',
+                        false => 'false'
+                    },
+                    default => match ($isHttpsBackend) {
+                        true => 'HTTPS',
+                        false => 'HTTP'
+                    },
+                },
+            ];
+        };
+    },
 ];

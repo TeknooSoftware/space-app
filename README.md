@@ -224,7 +224,7 @@ Environnements variables configuration
         * `TEKNOO_PAAS_SECURITY_PUBLIC_KEY` to define the public key location in the filesystem (to encrypt).
         * Default kubernetes annotations for ingresses **(Only one of these options)** *Optional* :
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON` : (json string).
-            * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (php file returning an array).
+            * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (json file).
     * Persited variable Encryption :
         * Encryptions of persisted variables between servers and agents or workers :
         * `SPACE_PERSISTED_VAR_AGENT_MODE`: *optional* To force the agent mode.
@@ -346,6 +346,13 @@ Environnements variables configuration
           `lets-encrypt` by default. *Optional*
         * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
           account token creation. `5` by default. *Optional*
+        * Ingress provider mapping **(Only one of these options)** *Optional* :
+            * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
+            * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
+            * Dictionary's structure : `{'pattern': 'type'}` where :
+                * `pattern` : (string) Regular expression to match against the ingress class name.
+                * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`, `traefik2`,
+                  `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
         * Managed kubernetes cluster :
             * One cluster (legacy):
                 * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
@@ -382,8 +389,9 @@ Environnements variables configuration
           valid code. *Optional*
         * `SPACE_CODE_GENERATOR_SALT` : (string) salt used to compute the code with the account's name. *Optional*
         * `SPACE_SUBSCRIPTION_DEFAULT_PLAN` : (string) *Optional* Defaut plan to apply when a new account is created
-        * Plan (to apply quota) *Optional*
+        * Plan (to apply quota) *Optional* **(Only one of these options)** :
             * `SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON` : (json array).
+            * `SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE` : (json file).
             * Dictionary's structure (`[].` represent a collection of subarray) :
                 * `id` : (string) Plan identifier.
                 * `name` : (string) Humain readable plan name
@@ -440,16 +448,16 @@ Environnements variables configuration
             * Compilation extensions (to be use with `extends` instruction in the `.paas.yaml`) :
                 * Pods **(Only one of these options)** *Optional* :
                     * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON` : (json string).
-                    * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+                    * `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_FILE` : (json file).
                 * Containers **(Only one of these options)** *Optional* :
                     * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON` : (json string).
-                    * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+                    * `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE` : (json file).
                 * Services **(Only one of these options)** *Optional* :
                     * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON` : (json string).
-                    * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+                    * `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_FILE` : (json file).
                 * Ingresses **(Only one of these options)** *Optional* :
                     * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON` : (json string).
-                    * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (php file returning an array).
+                    * `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_FILE` : (json file).
 
         * Hooks : To define hooks usable in Space (Composer, NPM, PIP, Make, etc..)
             * `SPACE_HOOKS_COLLECTION_JSON` : (json array).
@@ -482,6 +490,13 @@ Environnements variables configuration
               `public` by default. *Optional*
             * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
               `lets-encrypt` by default. *Optional*
+            * Ingress provider mapping **(Only one of these options)** *Optional* :
+                * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
+                * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
+                * Dictionary's structure : `{'pattern': 'type'}` where :
+                    * `pattern` : (string) Regular expression to match against the ingress class name.
+                    * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`,
+                      `traefik2`, `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
 
 Worker Commands
 ---------------

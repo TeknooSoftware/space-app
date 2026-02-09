@@ -1623,7 +1623,6 @@ Feature: API endpoints to create new job and deploy project
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-
   Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions,
   encrypted messages between workers, via a request with a form url encoded body
     Given A Space app instance
@@ -1814,6 +1813,249 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project with Traefik ingress controller, with a valid paas file,
+  jobs via a request with a json body
+    Given A Space app instance
+    And a custom backend protocol annotation mapper
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "Traefik" HTTPS backend
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project with Nginx ingress controller, with a valid paas file,
+  jobs via a request with a json body
+    Given A Space app instance
+    And a custom backend protocol annotation mapper
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "Public" HTTPS backend
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project with HAProxy ingress controller, with a valid paas file,
+  jobs via a request with a json body
+    Given A Space app instance
+    And a custom backend protocol annotation mapper
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "HAP" HTTPS backend
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project with Traefik ingress controller, with a valid paas file,
+  encrypted messages between workers, jobs via a request with a json body
+    Given A Space app instance
+    And a custom backend protocol annotation mapper
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "Traefik" HTTPS backend
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project with Nginx ingress controller, with a valid paas file,
+  encrypted messages between workers, jobs via a request with a json body
+    Given A Space app instance
+    And a custom backend protocol annotation mapper
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "Public" HTTPS backend
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project with HAProxy ingress controller, with a valid paas file,
+  encrypted messages between workers, jobs via a request with a json body
+    Given A Space app instance
+    And a custom backend protocol annotation mapper
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "HAP" HTTPS backend
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
     Then get a JSON reponse
     And a pending job id
     When the API is called to pending job status api

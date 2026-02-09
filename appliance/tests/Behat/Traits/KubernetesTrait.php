@@ -163,7 +163,8 @@ trait KubernetesTrait
             useHnc: $this->useHnc,
             quotaMode: $this->quotasMode,
             defaultsMods: $this->defaultsMode,
-            jobsEnabled: $this->jobsEnabled
+            jobsEnabled: $this->jobsEnabled,
+            ingressProvider: $this->ingressProvider,
         );
 
         Assert::assertEquals(

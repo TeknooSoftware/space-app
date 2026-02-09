@@ -80,6 +80,7 @@ use function gc_collect_cycles;
 use function is_readable;
 use function pcntl_alarm;
 use function str_replace;
+use function strtolower;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -161,6 +162,8 @@ class SpaceContext implements Context
     private bool $useHnc = false;
 
     private string $hncSuffix = '';
+
+    private string $ingressProvider = '';
 
     private array $manifests = [];
 
@@ -263,6 +266,7 @@ class SpaceContext implements Context
         $this->workMemory = [];
         $this->quotasAllowed = [];
         $this->quotasMode = '';
+        $this->ingressProvider = '';
         $this->defaultsMode = '';
         $this->hasBeenRedirected = false;
         $this->formName = null;
@@ -300,6 +304,8 @@ class SpaceContext implements Context
             'SPACE_PERSISTED_VAR_AGENT_MODE',
             'SPACE_HOOKS_COLLECTION_JSON',
             'SPACE_HOOKS_COLLECTION_FILE',
+            'SPACE_INGRESS_PROVIDER_JSON',
+            'SPACE_INGRESS_PROVIDER_FILE',
         ];
 
         foreach ($envVarsNames as $name) {
@@ -490,6 +496,15 @@ class SpaceContext implements Context
         $this->paasFile = __DIR__ . '/Project/WithJobs/paas.yaml';
         $this->quotasMode = '';
         $this->jobsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file with :provider HTTPS backend')]
+    public function theProjectHasACompletePaasFileWithHttpsBackend(string $provider): void
+    {
+        $providerLower = strtolower($provider);
+        $this->paasFile = __DIR__ . "/Project/WithHttpsBackend/paas.with-{$providerLower}-backend.yaml";
+        $this->quotasMode = '';
+        $this->ingressProvider = $providerLower;
     }
 
     #[Given('the project has a complete paas file with jobs with wrong version')]
