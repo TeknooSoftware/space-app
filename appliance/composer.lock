@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95f89805bdda15edd18aff63f314c386",
+    "content-hash": "4614fd06c5b58093e5d58f8a2feb33ba",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -12895,16 +12895,16 @@
         },
         {
             "name": "phpstan/phpstan-symfony",
-            "version": "2.0.12",
+            "version": "2.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan-symfony.git",
-                "reference": "a46dd92eaf15146cd932d897a272e59cd4108ce2"
+                "reference": "6feadf70de5fa2c8a106c443bd04e16ed0b17d64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/a46dd92eaf15146cd932d897a272e59cd4108ce2",
-                "reference": "a46dd92eaf15146cd932d897a272e59cd4108ce2",
+                "url": "https://api.github.com/repos/phpstan/phpstan-symfony/zipball/6feadf70de5fa2c8a106c443bd04e16ed0b17d64",
+                "reference": "6feadf70de5fa2c8a106c443bd04e16ed0b17d64",
                 "shasum": ""
             },
             "require": {
@@ -12958,11 +12958,14 @@
                 }
             ],
             "description": "Symfony Framework extensions and rules for PHPStan",
+            "keywords": [
+                "static analysis"
+            ],
             "support": {
                 "issues": "https://github.com/phpstan/phpstan-symfony/issues",
-                "source": "https://github.com/phpstan/phpstan-symfony/tree/2.0.12"
+                "source": "https://github.com/phpstan/phpstan-symfony/tree/2.0.13"
             },
-            "time": "2026-01-23T09:04:33+00:00"
+            "time": "2026-02-10T08:55:32+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -13348,16 +13351,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.0.1",
+            "version": "13.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "35b8abcac712ba24814d7fe8908dfb5702efb39f"
+                "reference": "87f0ca577a7056016741af70e7a7de9246c52e67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/35b8abcac712ba24814d7fe8908dfb5702efb39f",
-                "reference": "35b8abcac712ba24814d7fe8908dfb5702efb39f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/87f0ca577a7056016741af70e7a7de9246c52e67",
+                "reference": "87f0ca577a7056016741af70e7a7de9246c52e67",
                 "shasum": ""
             },
             "require": {
@@ -13426,7 +13429,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.0.1"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.0.2"
             },
             "funding": [
                 {
@@ -13450,7 +13453,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-08T07:08:25+00:00"
+            "time": "2026-02-10T12:33:24+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13458,12 +13461,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "c9bc175c224c05354a704903e6f38c31776d40e3"
+                "reference": "0c751a6ae38247a99675c8210d6a9d570314c87f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c9bc175c224c05354a704903e6f38c31776d40e3",
-                "reference": "c9bc175c224c05354a704903e6f38c31776d40e3",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/0c751a6ae38247a99675c8210d6a9d570314c87f",
+                "reference": "0c751a6ae38247a99675c8210d6a9d570314c87f",
                 "shasum": ""
             },
             "conflict": {
@@ -13605,9 +13608,10 @@
                 "cosenary/instagram": "<=2.3",
                 "couleurcitron/tarteaucitron-wp": "<0.3",
                 "cpsit/typo3-mailqueue": "<0.4.3|>=0.5,<0.5.1",
-                "craftcms/cms": "<=4.16.16|>=5,<=5.8.20",
+                "craftcms/cms": "<4.17.0.0-beta1|>=5,<5.9.0.0-beta1",
                 "craftcms/commerce": ">=4.0.0.0-RC1-dev,<=4.10|>=5,<=5.5.1",
                 "craftcms/composer": ">=4.0.0.0-RC1-dev,<=4.10|>=5.0.0.0-RC1-dev,<=5.5.1",
+                "craftcms/craft": ">=3.5,<=4.16.17|>=5.0.0.0-RC1-dev,<=5.8.21",
                 "croogo/croogo": "<=4.0.7",
                 "cuyz/valinor": "<0.12",
                 "czim/file-handling": "<1.5|>=2,<2.3",
@@ -13760,6 +13764,7 @@
                 "friendsoftypo3/mediace": ">=7.6.2,<7.6.5",
                 "friendsoftypo3/openid": ">=4.5,<4.5.31|>=4.7,<4.7.16|>=6,<6.0.11|>=6.1,<6.1.6",
                 "froala/wysiwyg-editor": "<=4.3",
+                "frosh/adminer-platform": "<2.2.1",
                 "froxlor/froxlor": "<=2.2.5",
                 "frozennode/administrator": "<=5.0.12",
                 "fuel/core": "<1.8.1",
@@ -14340,7 +14345,7 @@
                 "vertexvaar/falsftp": "<0.2.6",
                 "villagedefrance/opencart-overclocked": "<=1.11.1",
                 "vova07/yii2-fileapi-widget": "<0.1.9",
-                "vrana/adminer": "<=4.8.1",
+                "vrana/adminer": "<5.4.2",
                 "vufind/vufind": ">=2,<9.1.1",
                 "waldhacker/hcaptcha": "<2.1.2",
                 "wallabag/tcpdf": "<6.2.22",
@@ -14470,7 +14475,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-09T09:24:23+00:00"
+            "time": "2026-02-10T00:36:12+00:00"
         },
         {
             "name": "sebastian/cli-parser",
