@@ -118,8 +118,8 @@
         "friends-of-behat/symfony-extension": "^2.6.2",
         "masterminds/html5": "^2.10",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.38",
-        "phpstan/phpstan-symfony": "^2.0.13",
+        "phpstan/phpstan": "^2.1.39",
+        "phpstan/phpstan-symfony": "^2.0.14",
         "phpunit/phpunit": "^13.0.2",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^4.0.1",
@@ -131,7 +131,7 @@
         "symfony/var-dumper": "^6.4||^7.4.4",
         "symfony/web-profiler-bundle": ">=8.0.4",
         "webmozart/assert": "^2.1.2",
-        "zenstruck/messenger-test": "^1.13.0"
+        "zenstruck/messenger-test": "^1.14.0"
     },
     "config": {
         "audit": {
