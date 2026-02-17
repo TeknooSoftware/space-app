@@ -1,4 +1,4 @@
-FROM php:8.4-fpm
+FROM php:8.5-fpm
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:fr
@@ -13,6 +13,7 @@ RUN set -eux ; \
             apt-transport-https \
             ca-certificates \
             curl \
+            git \
             gnupg-agent \
             libbz2-dev \
             libcurl4-openssl-dev \
@@ -43,20 +44,23 @@ RUN set -eux ; \
         sed -i 's|#include "ext/dom/lexbor/lexbor/selectors-adapted/selectors.h"|#include "lexbor/selectors-adapted/selectors.h"|g' \
             /usr/src/php/ext/dom/lexbor/lexbor/selectors-adapted/selectors.c ; \
     fi ; \
+    # fix lexbor include paths for php 8.5 \
+    if [ -f /usr/src/php/ext/dom/parentnode/css_selectors.c ]; then \
+        sed -i 's|#include "ext/lexbor/lexbor/css/parser.h"|#include "lexbor/css/parser.h"|g' \
+            /usr/src/php/ext/dom/parentnode/css_selectors.c ; \
+        sed -i 's|#include "ext/lexbor/lexbor/selectors/selectors.h"|#include "lexbor/selectors/selectors.h"|g' \
+            /usr/src/php/ext/dom/parentnode/css_selectors.c ; \
+    fi ; \
+    export CFLAGS="${CFLAGS:-} -I/usr/src/php/ext/lexbor" ; \
     locale-gen ; \
-    pecl install apcu ; \
-    pecl install mongodb ; \
-    pecl install yaml ; \
-    pecl install xdebug ; \
-    pecl install -o -f amqp ; \
-    pecl install -o -f redis ; \
-    docker-php-ext-enable apcu  \
-                          mongodb  \
-                          yaml  \
-                          amqp \
-                          xdebug \
-                          redis \
-    ; \
+    curl -L https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie ; \
+    chmod +x /usr/local/bin/pie ; \
+    pie install apcu/apcu ; \
+    pie install mongodb/mongodb-extension ; \
+    pie install pecl/yaml ; \
+    pie install xdebug/xdebug ; \
+    pie install php-amqp/php-amqp ; \
+    pie install phpredis/phpredis ; \
     docker-php-ext-install bcmath \
                            bz2 \
                            calendar \
@@ -72,7 +76,6 @@ RUN set -eux ; \
                            pcntl \
                            pdo \
                            pdo_sqlite \
-                           opcache \
                            sockets \
                            sodium \
                            simplexml \
