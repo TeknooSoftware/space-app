@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e4b3a82468e37d36ede81d0c74957e76",
+    "content-hash": "c474caa3fb4d3a40f2ff35f0ae821c59",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -13351,16 +13351,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.0.3",
+            "version": "13.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a9c20642ffd2098c0f9e687c00849afbce2f23c7"
+                "reference": "915a2e7266f04c1867b2dc812abc86c34f1aa52f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a9c20642ffd2098c0f9e687c00849afbce2f23c7",
-                "reference": "a9c20642ffd2098c0f9e687c00849afbce2f23c7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/915a2e7266f04c1867b2dc812abc86c34f1aa52f",
+                "reference": "915a2e7266f04c1867b2dc812abc86c34f1aa52f",
                 "shasum": ""
             },
             "require": {
@@ -13429,7 +13429,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.0.3"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.0.4"
             },
             "funding": [
                 {
@@ -13453,7 +13453,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-16T08:38:33+00:00"
+            "time": "2026-02-18T09:00:54+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13461,12 +13461,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6683d4c2698e2fea48c8dc23c19bb38491290bb1"
+                "reference": "1476a499c47192447981cb2a9b63f87eca5abc83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6683d4c2698e2fea48c8dc23c19bb38491290bb1",
-                "reference": "6683d4c2698e2fea48c8dc23c19bb38491290bb1",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/1476a499c47192447981cb2a9b63f87eca5abc83",
+                "reference": "1476a499c47192447981cb2a9b63f87eca5abc83",
                 "shasum": ""
             },
             "conflict": {
@@ -13737,7 +13737,7 @@
                 "filegator/filegator": "<7.8",
                 "filp/whoops": "<2.1.13",
                 "fineuploader/php-traditional-server": "<=1.2.2",
-                "firebase/php-jwt": "<6",
+                "firebase/php-jwt": "<7",
                 "fisharebest/webtrees": "<=2.1.18",
                 "fixpunkt/fp-masterquiz": "<2.2.1|>=3,<3.5.2",
                 "fixpunkt/fp-newsletter": "<1.1.1|>=1.2,<2.1.2|>=2.2,<3.2.6",
@@ -14478,7 +14478,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-17T17:23:58+00:00"
+            "time": "2026-02-18T01:37:03+00:00"
         },
         {
             "name": "sebastian/cli-parser",
