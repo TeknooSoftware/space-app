@@ -138,7 +138,7 @@ test-mono-thread: 	  ## Run tests in a mono thread (units tests and behavior tes
 	rm -rf var/cache/test
 	@echo "Tests successful !"
 
-test-without-coverage: ## Run tests in $NB_THREADS threads (units tests and behavior tests without a code coverage)
+test-without-coverage: ## Run tests (units tests and behavior tests without a code coverage)
 	rm -rf var/cache/test
 	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
