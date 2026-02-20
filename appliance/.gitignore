@@ -28,8 +28,6 @@
 /public/build/css/*
 /public/build/js/*
 /public/test.php
-/tests/Behat/jwt/private.pem
-/tests/Behat/jwt/public.pem
 /tests/var/keys/messages/private.pem
 /tests/var/keys/messages/public.pem
 /tests/var/keys/variables/private.pem
