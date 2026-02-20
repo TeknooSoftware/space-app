@@ -226,7 +226,6 @@ class CreateRegistryDeployment
                     'group' => self::LABEL_GROUP,
                 ],
                 'annotations' => [
-                    'kubernetes.io/ingress.class' => $this->ingressClass,
                     'cert-manager.io/cluster-issuer' => $this->clusterIssuer,
                     'nginx.ingress.kubernetes.io/proxy-body-size' => "0",
                 ],
@@ -238,6 +237,7 @@ class CreateRegistryDeployment
                         'secretName' => $tlsSecretName,
                     ]
                 ],
+                'ingressClassName' => $this->ingressClass,
                 'rules' => [
                     [
                         'host' => $url,

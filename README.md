@@ -339,7 +339,7 @@ Environnements variables configuration
         * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
           `nfs.csi.k8s.io` by default. *Optional*
         * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
-        * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `kubernetes.io/ingress.class` in
+        * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value ofingressClassName` in
           ingresses.
           `public` by default. *Optional*
         * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
@@ -485,7 +485,7 @@ Environnements variables configuration
               `1` by default. *Optional*
             * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
               `nfs.csi.k8s.io` by default. *Optional*
-            * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `kubernetes.io/ingress.class` in
+            * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `ingressClassName` in
               ingresses.
               `public` by default. *Optional*
             * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.

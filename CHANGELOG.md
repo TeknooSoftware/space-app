@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.1.2] - 2026-02-20
+### Stable Release
+- Fix deprecation and use ingressClassName instead ingress.class
+
 ## [2.1.1] - 2026-02-20
 ### Stable Release
 - Fix some errors on tests

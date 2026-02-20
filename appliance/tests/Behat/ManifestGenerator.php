@@ -274,7 +274,6 @@ class ManifestGenerator
                     "group": "private-registry"
                 },
                 "annotations": {
-                    "kubernetes.io\/ingress.class": "public",
                     "cert-manager.io\/cluster-issuer": "lets-encrypt",
                     "nginx.ingress.kubernetes.io\/proxy-body-size": "0"
                 }
@@ -288,6 +287,7 @@ class ManifestGenerator
                         "secretName": "$name-registry-certs"
                     }
                 ],
+                "ingressClassName": "public",
                 "rules": [
                     {
                         "host": "$name.registry.kubernetes.localhost",
@@ -890,14 +890,17 @@ EOF;
         }
 
         $ingressSecureAnnotations = match ($ingressProvider) {
-            'traefik' => '"kubernetes.io/ingress.class": "traefik",' . PHP_EOL .
-                    '"ingress.kubernetes.io\/protocol": "https"',
-            'hap' => '"kubernetes.io\/ingress.class": "haproxy",' . PHP_EOL .
-                    '"haproxy.org\/server-ssl": "true"',
-            'public' => '"kubernetes.io/ingress.class": "nginx",'
-                . PHP_EOL . '"nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"',
-            default => '"kubernetes.io/ingress.class": "public",'
-                . PHP_EOL . '"nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"',
+            'traefik' => '"ingress.kubernetes.io\/protocol": "https"',
+            'hap' => '"haproxy.org\/server-ssl": "true"',
+            'public' => '"nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"',
+            default => '"nginx.ingress.kubernetes.io/backend-protocol": "HTTPS"',
+        };
+
+        $ingressProvider = match ($ingressProvider) {
+            'traefik' => 'traefik',
+            'hap' => 'haproxy',
+            'public' => 'nginx',
+            default => 'public',
         };
 
         $jobsManifest = '';
@@ -1918,8 +1921,7 @@ EOF;
                 },
                 "annotations": {
                     "foo2": "bar",
-                    "cert-manager.io/cluster-issuer": "lets-encrypt",
-                    "kubernetes.io/ingress.class": "public"
+                    "cert-manager.io/cluster-issuer": "lets-encrypt"
                 }
             },
             "spec": {
@@ -2016,6 +2018,7 @@ EOF;
                         }
                     }
                 ],
+                "ingressClassName": "public",
                 "tls": [
                     {
                         "hosts": [
@@ -2063,6 +2066,7 @@ EOF;
                         }
                     }
                 ],
+                "ingressClassName": "{$ingressProvider}",
                 "tls": [
                     {
                         "hosts": [

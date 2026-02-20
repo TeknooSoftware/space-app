@@ -101,7 +101,7 @@
         "teknoo/bridge-phpdi-symfony": "^7.1.2",
         "teknoo/east-common-symfony": "^4.1.4",
         "teknoo/east-foundation-symfony": "^9.0.5",
-        "teknoo/east-paas-symfony": "^5.2.1",
+        "teknoo/east-paas-symfony": "^5.2.2",
         "teknoo/immutable": "^3.0.22",
         "teknoo/kubernetes-client": "^2.0.3",
         "teknoo/recipe": "^7.2.2",
