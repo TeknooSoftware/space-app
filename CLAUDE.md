@@ -98,16 +98,16 @@ The `.agents/` directory is your coordination hub. **Start here**: [.agents/READ
 
 ### Quick Reference
 
-| File/Directory                             | Purpose                          | Status   | When to Use          |
-|--------------------------------------------|----------------------------------|----------|----------------------|
-| **[.agents/README.md](.agents/README.md)** | Overview of .agents/ system      | Required | First visit          |
-| **[.agents/EXAMPLES.md](.agents/EXAMPLES.md)** | Code examples and patterns   | Required | Writing code         |
-| **[.agents/feedback/](.agents/feedback/)** | Feedback reports directory       | Required | Every session        |
-| `.agents/feedback/INDEX.md`                | Index of feedback entries        | Required | Every session start  |
-| `.agents/feedback/*.md`                    | Individual task feedback reports | Required | After tasks          |
-| **[.agents/tasks/](.agents/tasks/)**       | Session tracking (gitignored)    | Optional | Complex tasks        |
-| `.agents/tasks/todo.md`                    | Current task tracking            | Optional | Multi-step tasks     |
-| `.agents/tasks/lessons.md`                 | Project-specific reference       | Optional | Project patterns     |
+| File/Directory                                 | Purpose                          | Status   | When to Use         |
+|------------------------------------------------|----------------------------------|----------|---------------------|
+| **[.agents/README.md](.agents/README.md)**     | Overview of .agents/ system      | Required | First visit         |
+| **[.agents/EXAMPLES.md](.agents/EXAMPLES.md)** | Code examples and patterns       | Required | Writing code        |
+| **[.agents/feedback/](.agents/feedback/)**     | Feedback reports directory       | Required | Every session       |
+| `.agents/feedback/INDEX.md`                    | Index of feedback entries        | Required | Every session start |
+| `.agents/feedback/*.md`                        | Individual task feedback reports | Required | After tasks         |
+| **[.agents/tasks/](.agents/tasks/)**           | Session tracking (gitignored)    | Optional | Complex tasks       |
+| `.agents/tasks/todo.md`                        | Current task tracking            | Optional | Multi-step tasks    |
+| `.agents/tasks/lessons.md`                     | Project-specific reference       | Optional | Project patterns    |
 
 ### Navigation Flow
 

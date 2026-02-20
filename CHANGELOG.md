@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [2.1.1] - 2026-02-20
+### Stable Release
+- Fix some errors on tests
+- Update :
+  - webmozart/assert
+  - phpunit
+  - phpstan
+  - illuminate
+  - knpuniversity/oauth2-client-bundle
+
 ## [2.1.0] - 2026-02-09
 ### Stable Release
 - Update 

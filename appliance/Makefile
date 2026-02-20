@@ -143,7 +143,7 @@ test-without-coverage: ## Run tests in $NB_THREADS threads (units tests and beha
 	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat -l ${NB_THREADS} --colors
+	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --colors
 	rm -rf var/cache/test
 	@echo "Tests successful !"
 
