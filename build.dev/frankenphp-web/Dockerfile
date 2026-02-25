@@ -1,5 +1,5 @@
 # FrankenPHP web image replacing httpd + php-fpm for development
-FROM dunglas/frankenphp:1.11-php8.5
+FROM dunglas/frankenphp:1.11.3-php8.5
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:fr
