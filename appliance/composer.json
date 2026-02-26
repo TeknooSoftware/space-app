@@ -119,7 +119,7 @@
         "masterminds/html5": "^2.10",
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.1.40",
-        "phpstan/phpstan-symfony": "^2.0.14",
+        "phpstan/phpstan-symfony": "^2.0.15",
         "phpunit/phpunit": "^13.0.5",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^4.0.1",
