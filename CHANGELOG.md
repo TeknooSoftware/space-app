@@ -1,5 +1,14 @@
 # Teknoo Software - Space - Change Log
 
+## [2.1.3] - 2026-02-27
+### Stable Release
+- Update logos
+- Update
+  - Symfony 7.4.6 and 8.0.6
+  - scheb/2fa
+  - illuminates
+  - phpstan
+
 ## [2.1.2] - 2026-02-20
 ### Stable Release
 - Fix deprecation and use ingressClassName instead ingress.class
