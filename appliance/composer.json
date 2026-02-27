@@ -130,7 +130,7 @@
         "symfony/stopwatch": ">=8",
         "symfony/var-dumper": "^6.4||^7.4.6",
         "symfony/web-profiler-bundle": ">=8.0.6",
-        "webmozart/assert": "^2.1.5",
+        "webmozart/assert": "^2.1.6",
         "zenstruck/messenger-test": "^1.14.0"
     },
     "config": {
