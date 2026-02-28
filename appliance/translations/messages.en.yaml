@@ -103,7 +103,7 @@ teknoo.space.action.status: 'Status'
 teknoo.space.action.subscribe: 'Subscribe'
 teknoo.space.action.view_job: 'View'
 teknoo.space.alert.data_saved: 'Saved data'
-teknoo.space.common.recovery_access.notification.subject: '[Teknoo Space] - Recovery access'
+teknoo.east.common.recovery_access.notification.subject: '[Teknoo Space] - Recovery access'
 teknoo.space.error.400.description: "Your request is malformed."
 teknoo.space.error.400.title: 'Bad request!'
 teknoo.space.error.400.upper: 'Oh no!'
