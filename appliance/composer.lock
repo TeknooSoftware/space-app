@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "019f0ae443bda92e57bebdfb8bb15a3e",
+    "content-hash": "c1f1b20b9c6ab15339df64ff11d91bdc",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2532,20 +2532,20 @@
         },
         {
             "name": "league/oauth2-google",
-            "version": "4.1.0",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/oauth2-google.git",
-                "reference": "8b9bb43740ac6d994aca881a35f7bacbe98c0ffb"
+                "reference": "72be69505f890ea8b6d4e716f619b3c10a1f5010"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/oauth2-google/zipball/8b9bb43740ac6d994aca881a35f7bacbe98c0ffb",
-                "reference": "8b9bb43740ac6d994aca881a35f7bacbe98c0ffb",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-google/zipball/72be69505f890ea8b6d4e716f619b3c10a1f5010",
+                "reference": "72be69505f890ea8b6d4e716f619b3c10a1f5010",
                 "shasum": ""
             },
             "require": {
-                "league/oauth2-client": "^2.0",
+                "league/oauth2-client": "^2.0 || ^3.0",
                 "php": "^7.3 || ^8.0"
             },
             "require-dev": {
@@ -2581,9 +2581,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/oauth2-google/issues",
-                "source": "https://github.com/thephpleague/oauth2-google/tree/4.1.0"
+                "source": "https://github.com/thephpleague/oauth2-google/tree/4.2.0"
             },
-            "time": "2025-12-15T12:24:14+00:00"
+            "time": "2026-03-09T09:36:58+00:00"
         },
         {
             "name": "lexik/jwt-authentication-bundle",
@@ -10680,16 +10680,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "4.2.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "19bb0309868b31a1922723fcef8e8deb9c187fbb"
+                "reference": "5734ec6cb07744d27bc261732d7a0187e5ed83bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/19bb0309868b31a1922723fcef8e8deb9c187fbb",
-                "reference": "19bb0309868b31a1922723fcef8e8deb9c187fbb",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/5734ec6cb07744d27bc261732d7a0187e5ed83bd",
+                "reference": "5734ec6cb07744d27bc261732d7a0187e5ed83bd",
                 "shasum": ""
             },
             "require": {
@@ -10816,20 +10816,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-04T15:39:18+00:00"
+            "time": "2026-03-09T13:23:26+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.2.0",
+            "version": "4.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "9c64252f4cc29cc4bd1158795b69686297e7616d"
+                "reference": "c01049a8743720a20688d20bd945798d1f40f72d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/9c64252f4cc29cc4bd1158795b69686297e7616d",
-                "reference": "9c64252f4cc29cc4bd1158795b69686297e7616d",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/c01049a8743720a20688d20bd945798d1f40f72d",
+                "reference": "c01049a8743720a20688d20bd945798d1f40f72d",
                 "shasum": ""
             },
             "require": {
@@ -10853,7 +10853,7 @@
                 "symfony/validator": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-common": "^4.2",
+                "teknoo/east-common": "^4.2.1",
                 "teknoo/east-foundation-symfony": "^9.1",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
@@ -10904,7 +10904,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-04T15:41:23+00:00"
+            "time": "2026-03-09T13:24:43+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -13466,12 +13466,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "258001d8c6f3310f9731d8987139aa64cccd8dc9"
+                "reference": "68e4c6721ef8cd2c366bd5e2290baf007d3f0e6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/258001d8c6f3310f9731d8987139aa64cccd8dc9",
-                "reference": "258001d8c6f3310f9731d8987139aa64cccd8dc9",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/68e4c6721ef8cd2c366bd5e2290baf007d3f0e6d",
+                "reference": "68e4c6721ef8cd2c366bd5e2290baf007d3f0e6d",
                 "shasum": ""
             },
             "conflict": {
@@ -13796,7 +13796,7 @@
                 "gp247/core": "<1.1.24",
                 "gree/jose": "<2.2.1",
                 "gregwar/rst": "<1.0.3",
-                "grumpydictator/firefly-iii": "<6.1.17",
+                "grumpydictator/firefly-iii": "<6.1.17|>=6.4.23,<=6.5",
                 "gugoan/economizzer": "<=0.9.0.0-beta1",
                 "guzzlehttp/guzzle": "<6.5.8|>=7,<7.4.5",
                 "guzzlehttp/oauth-subscriber": "<0.8.1",
@@ -13897,7 +13897,7 @@
                 "lavalite/cms": "<=10.1",
                 "lavitto/typo3-form-to-database": "<2.2.5|>=3,<3.2.2|>=4,<4.2.3|>=5,<5.0.2",
                 "lcobucci/jwt": ">=3.4,<3.4.6|>=4,<4.0.4|>=4.1,<4.1.5",
-                "league/commonmark": "<2.7",
+                "league/commonmark": "<=2.8",
                 "league/flysystem": "<1.1.4|>=2,<2.1.1",
                 "league/oauth2-server": ">=8.3.2,<8.4.2|>=8.5,<8.5.3",
                 "leantime/leantime": "<3.3",
@@ -14196,7 +14196,7 @@
                 "slim/slim": "<2.6",
                 "slub/slub-events": "<3.0.3",
                 "smarty/smarty": "<4.5.3|>=5,<5.1.1",
-                "snipe/snipe-it": "<=8.3.4",
+                "snipe/snipe-it": "<8.3.7",
                 "socalnick/scn-social-auth": "<1.15.2",
                 "socialiteproviders/steam": "<1.1",
                 "solspace/craft-freeform": "<4.1.29|>=5,<=5.14.6",
@@ -14387,7 +14387,7 @@
                 "wpanel/wpanel4-cms": "<=4.3.1",
                 "wpcloud/wp-stateless": "<3.2",
                 "wpglobus/wpglobus": "<=1.9.6",
-                "wwbn/avideo": "<=21",
+                "wwbn/avideo": "<25",
                 "xataface/xataface": "<3",
                 "xpressengine/xpressengine": "<3.0.15",
                 "yab/quarx": "<2.4.5",
@@ -14485,7 +14485,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-05T22:09:25+00:00"
+            "time": "2026-03-07T02:54:13+00:00"
         },
         {
             "name": "sebastian/cli-parser",
