@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7bc0293aa688fb4f25cb5135d6f609bd",
+    "content-hash": "32757f273eb94548debcba6bfa4f51d9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10821,16 +10821,16 @@
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.2.1",
+            "version": "4.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "c01049a8743720a20688d20bd945798d1f40f72d"
+                "reference": "21eee66bc92c86a5589c23a5776c53893194aa6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/c01049a8743720a20688d20bd945798d1f40f72d",
-                "reference": "c01049a8743720a20688d20bd945798d1f40f72d",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/21eee66bc92c86a5589c23a5776c53893194aa6e",
+                "reference": "21eee66bc92c86a5589c23a5776c53893194aa6e",
                 "shasum": ""
             },
             "require": {
@@ -10854,7 +10854,7 @@
                 "symfony/validator": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-common": "^4.2.1",
+                "teknoo/east-common": "^4.2.2",
                 "teknoo/east-foundation-symfony": "^9.1",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
@@ -10905,20 +10905,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-09T13:24:43+00:00"
+            "time": "2026-03-10T21:04:57+00:00"
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "9.1.0",
+            "version": "9.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "95dea7564d574816a19137006ae8b5f98f9530f3"
+                "reference": "b89c6a4de2f7fe91d17acbcadf3379b5db43f58d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/95dea7564d574816a19137006ae8b5f98f9530f3",
-                "reference": "95dea7564d574816a19137006ae8b5f98f9530f3",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/b89c6a4de2f7fe91d17acbcadf3379b5db43f58d",
+                "reference": "b89c6a4de2f7fe91d17acbcadf3379b5db43f58d",
                 "shasum": ""
             },
             "require": {
@@ -11009,20 +11009,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-04T11:44:20+00:00"
+            "time": "2026-03-11T13:52:10+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "9.1.0",
+            "version": "9.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "f24829507d618dea5168820772a2478a68c01f25"
+                "reference": "3114461acf3112a0aa0d1638909566416c293f4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/f24829507d618dea5168820772a2478a68c01f25",
-                "reference": "f24829507d618dea5168820772a2478a68c01f25",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/3114461acf3112a0aa0d1638909566416c293f4a",
+                "reference": "3114461acf3112a0aa0d1638909566416c293f4a",
                 "shasum": ""
             },
             "require": {
@@ -11038,7 +11038,7 @@
                 "symfony/serializer": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-foundation": "^9.1",
+                "teknoo/east-foundation": "^9.1.1",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
                 "teknoo/states": "^7.1.2"
@@ -11087,7 +11087,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-04T11:49:17+00:00"
+            "time": "2026-03-11T13:56:46+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -13467,12 +13467,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "3d966c87be1b67611dbac8a4f02b35d9dcc4c060"
+                "reference": "4c336cfd0f836275a3ea63a79b5111903f4a8c30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/3d966c87be1b67611dbac8a4f02b35d9dcc4c060",
-                "reference": "3d966c87be1b67611dbac8a4f02b35d9dcc4c060",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/4c336cfd0f836275a3ea63a79b5111903f4a8c30",
+                "reference": "4c336cfd0f836275a3ea63a79b5111903f4a8c30",
                 "shasum": ""
             },
             "conflict": {
@@ -13615,7 +13615,7 @@
                 "cosenary/instagram": "<=2.3",
                 "couleurcitron/tarteaucitron-wp": "<0.3",
                 "cpsit/typo3-mailqueue": "<0.4.3|>=0.5,<0.5.1",
-                "craftcms/cms": "<4.17.3|>=5,<5.9.6",
+                "craftcms/cms": "<4.17.3|>=5,<=5.9.8",
                 "craftcms/commerce": ">=4,<4.11|>=5,<5.6",
                 "craftcms/composer": ">=4.0.0.0-RC1-dev,<=4.10|>=5.0.0.0-RC1-dev,<=5.5.1",
                 "craftcms/craft": ">=3.5,<=4.16.17|>=5.0.0.0-RC1-dev,<=5.8.21",
@@ -14235,7 +14235,7 @@
                 "sylius/grid-bundle": "<1.10.1",
                 "sylius/paypal-plugin": "<1.6.2|>=1.7,<1.7.2|>=2,<2.0.2",
                 "sylius/resource-bundle": ">=1,<1.3.14|>=1.4,<1.4.7|>=1.5,<1.5.2|>=1.6,<1.6.4",
-                "sylius/sylius": "<1.9.12|>=1.10,<1.10.16|>=1.11,<1.11.17|>=1.12.0.0-alpha1,<1.12.19|>=1.13.0.0-alpha1,<1.13.4",
+                "sylius/sylius": "<1.9.12|>=1.10,<1.10.16|>=1.11,<1.11.17|>=1.12,<=1.12.22|>=1.13,<=1.13.14|>=1.14,<=1.14.17|>=2,<=2.0.15|>=2.1,<=2.1.11|>=2.2,<=2.2.2",
                 "symbiote/silverstripe-multivaluefield": ">=3,<3.1",
                 "symbiote/silverstripe-queuedjobs": ">=3,<3.0.2|>=3.1,<3.1.4|>=4,<4.0.7|>=4.1,<4.1.2|>=4.2,<4.2.4|>=4.3,<4.3.3|>=4.4,<4.4.3|>=4.5,<4.5.1|>=4.6,<4.6.4",
                 "symbiote/silverstripe-seed": "<6.0.3",
@@ -14363,9 +14363,9 @@
                 "wallabag/wallabag": "<2.6.11",
                 "wanglelecc/laracms": "<=1.0.3",
                 "wapplersystems/a21glossary": "<=0.4.10",
-                "web-auth/webauthn-framework": "<5.2.4",
-                "web-auth/webauthn-lib": "<5.2.4",
-                "web-auth/webauthn-symfony-bundle": "<5.2.4",
+                "web-auth/webauthn-framework": ">=3.3,<3.3.4|>=4.5,<4.9|>=5.2,<5.2.4",
+                "web-auth/webauthn-lib": ">=4.5,<4.9|>=5.2,<5.2.4",
+                "web-auth/webauthn-symfony-bundle": ">=5.2,<5.2.4",
                 "web-feet/coastercms": "==5.5",
                 "web-tp3/wec_map": "<3.0.3",
                 "webbuilders-group/silverstripe-kapost-bridge": "<0.4",
@@ -14489,7 +14489,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-10T20:10:40+00:00"
+            "time": "2026-03-11T01:36:21+00:00"
         },
         {
             "name": "sebastian/cli-parser",
