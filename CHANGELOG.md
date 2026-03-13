@@ -1,5 +1,14 @@
 # Teknoo Software - Space - Change Log
 
+## [2.1.4] - 2026-03-13
+### Stable Release
+- Update
+  - East Foundation 9.1.1
+  - East Common 4.2.3
+  - Illuminates
+  - Guzzle
+  - Symfony 8.0.7/7/4/7
+
 ## [2.1.3] - 2026-02-27
 ### Stable Release
 - Update logos
