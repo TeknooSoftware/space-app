@@ -95,12 +95,12 @@ class UserManageApiTokensTest extends TestCase
 
     public function testConstruct(): void
     {
-        self::assertInstanceOf(UserManageApiTokens::class, $this->plan);
+        $this->assertInstanceOf(UserManageApiTokens::class, $this->plan);
     }
 
     public function testPrepare(): void
     {
-        self::assertInstanceOf(
+        $this->assertInstanceOf(
             EditablePlanInterface::class,
             $this->plan->train($this->createStub(ChefInterface::class))
         );

@@ -347,14 +347,14 @@ class MyClassTest extends TestCase
     {
         $object = new MyClass('value');
         
-        self::assertInstanceOf(MyClass::class, $object);
+        $this->assertInstanceOf(MyClass::class, $object);
     }
     
     public function testGetValue(): void
     {
         $object = new MyClass('test');
         
-        self::assertEquals('test', $object->getValue());
+        $this->assertEquals('test', $object->getValue());
     }
 }
 ```
