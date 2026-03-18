@@ -49,7 +49,7 @@ parameters:
     teknoo.space.default.redis.port: 6379
     teknoo.space.default.subscription.plan_default: ''
     teknoo.space.default.support.contact: ''
-    teknoo.space.default.user.2fa.provider: 'google'
+    teknoo.space.default.user.2fa.provider: 'google_authenticator'
 
     teknoo.east.common.admin.rendering.clean_html: true
     teknoo.east.common.rendering.clean_html: true
