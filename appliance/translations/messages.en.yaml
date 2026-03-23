@@ -12,6 +12,7 @@
 Kubernetes: 'Kubernetes'
 Search: 'Search'
 teknoo.east.common.2fa.error_code_not_validated: 'Invalid Code'
+teknoo.east.common.recovery_access.notification.subject: '[Teknoo Space] - Recovery access'
 teknoo.space.action.2fa.disable: 'Disable'
 teknoo.space.action.2fa.validate: 'Validate'
 teknoo.space.action.2fa: '2FA'
@@ -103,7 +104,6 @@ teknoo.space.action.status: 'Status'
 teknoo.space.action.subscribe: 'Subscribe'
 teknoo.space.action.view_job: 'View'
 teknoo.space.alert.data_saved: 'Saved data'
-teknoo.east.common.recovery_access.notification.subject: '[Teknoo Space] - Recovery access'
 teknoo.space.error.400.description: "Your request is malformed."
 teknoo.space.error.400.title: 'Bad request!'
 teknoo.space.error.400.upper: 'Oh no!'
@@ -135,6 +135,7 @@ teknoo.space.error.space_project.project.fetching: "Main project's data can not 
 teknoo.space.error.space_project.project.persisting: "Can not persist project's updates"
 teknoo.space.error.space_project.project_metadata.fetching: "Project's data can not be fetched"
 teknoo.space.error.space_user.api_key.list_not_accessible: 'The keys list is not accessible'
+teknoo.space.error.space_user.api_key_already_exists: 'A token already exists with this token'
 teknoo.space.error.space_user.user.deleting: "Can not delete the user"
 teknoo.space.error.space_user.user.fetching: "Main user's data can not be fetched"
 teknoo.space.error.space_user.user.persisting: "Can not persist update's updates"
