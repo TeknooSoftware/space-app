@@ -98,6 +98,7 @@ trait HttpTrait
             server: array_merge(
                 [
                     'REMOTE_ADDR' => $this->clientIp,
+                    'HTTP_ORIGIN' => 'https://' . $this->appHostname,
                 ],
                 $headers,
             ),

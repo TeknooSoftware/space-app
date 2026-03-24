@@ -39,6 +39,7 @@ use Doctrine\Persistence\ObjectManager;
 use phpseclib3\Crypt\RSA;
 use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
+use PHPUnit\TextUI\Configuration\Builder as PhpUnitConfigBuilder;
 use Psr\Cache\CacheItemPoolInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -225,6 +226,9 @@ class SpaceContext implements Context
         self::$currentInstance = $this;
 
         $this->calibration($timeoutSeconds);
+
+        // Initialize PHPUnit Configuration Registry for Assert usage in Behat
+        (new PhpUnitConfigBuilder())->build([]);
     }
 
     private function calibration(int $timeoutSeconds): void
