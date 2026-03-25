@@ -570,8 +570,8 @@ trait PersistenceStepsTrait
             $account->setName("Account $i");
             $account->setNamespace("namespace-$i");
 
+            $users = [];
             for ($j = 1; $j <= random_int(1, $count); $j++) {
-                $users = [];
                 $user = new User();
                 $user->setId($this->generateId());
                 $user->setFirstName("Firstname $i");
