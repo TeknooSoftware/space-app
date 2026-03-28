@@ -10,6 +10,7 @@
 - Update League Flysystem
 - Enable Stateless csrf
 - Fix some typo
+- Remove support of PHP 8.4
 
 ## [2.1.4] - 2026-03-13
 ### Stable Release
