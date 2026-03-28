@@ -27,13 +27,13 @@ namespace Teknoo\Space\Object\Persisted;
 
 use LogicException;
 use Teknoo\East\Common\Object\ObjectTrait;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
-use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Immutable\ImmutableTrait;
 use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
+
+use function array_keys;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -45,33 +45,37 @@ trait PersistedVariableTrait
 {
     use ObjectTrait;
     use ImmutableTrait;
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
+    use AutoTrait;
 
+    #[Normalize(['default', 'crud_variables'])]
+    protected ?string $id = null;
+
+    #[Normalize('crud_variables')]
     private string $name;
 
+    #[Normalize('crud_variables', loader: static function (self $that): ?string {
+        $value = null;
+        if (!$that->isSecret()) {
+            $value = $that->getValue();
+        }
+
+        if ($that->isEncrypted()) {
+            $value = null;
+        }
+
+        return $value;
+    })]
     private ?string $value = null;
 
+    #[Normalize('crud_variables')]
     private string $envName;
 
+    #[Normalize('crud_variables')]
     private bool $secret = false;
 
     private ?string $encryptionAlgorithm = null;
 
     private bool $needEncryption = false;
-
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'crud_variables'],
-        'id' => ['default', 'crud_variables'],
-        'name' => ['crud_variables'],
-        'value' => ['crud_variables'],
-        'envName' => ['crud_variables'],
-        'secret' => ['crud_variables'],
-        'encrypted' => ['crud_variables'],
-    ];
 
     public function getName(): string
     {
@@ -121,39 +125,6 @@ trait PersistedVariableTrait
     public function mustEncrypt(): bool
     {
         return $this->needEncryption;
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $value = null;
-        if (!$this->isSecret()) {
-            $value = $this->getValue();
-        }
-
-        if ($this->isEncrypted()) {
-            $value = null;
-        }
-
-        $data = [
-            '@class' => self::class,
-            'id' => $this->getId(),
-            'name' => $this->getName(),
-            'value' => $value,
-            'envName' => $this->getEnvName(),
-            'secret' => $this->isSecret(),
-            'encrypted' => $this->isEncrypted(),
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-            )
-        );
-
-        return $this;
     }
 
     public function getContent(): string

@@ -31,11 +31,11 @@ use Teknoo\East\Common\Contracts\Object\VisitableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\VisitableTrait;
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 
 use function array_flip;
 use function array_intersect_key;
@@ -46,6 +46,7 @@ use function array_intersect_key;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
+#[ClassGroup('default', 'crud')]
 class ProjectMetadata implements
     IdentifiedObjectInterface,
     TimestampableInterface,
@@ -53,23 +54,15 @@ class ProjectMetadata implements
     NormalizableInterface
 {
     use ObjectTrait;
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
+    use AutoTrait;
     use VisitableTrait {
         VisitableTrait::runVisit as realRunVisit;
     }
 
     private Project $project;
 
+    #[Normalize('crud')]
     private ?string $projectUrl = null;
-
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'crud'],
-        'projectUrl' => ['crud'],
-    ];
 
     public function __construct(
         ?Project $project = null,
@@ -114,25 +107,6 @@ class ProjectMetadata implements
     public function export(ParametersBag $bag): self
     {
         $bag->set('projectUrl', $this->projectUrl);
-
-        return $this;
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $data = [
-            '@class' => self::class,
-            'projectUrl' => $this->projectUrl,
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-            )
-        );
 
         return $this;
     }

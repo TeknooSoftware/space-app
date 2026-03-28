@@ -26,14 +26,15 @@ declare(strict_types=1);
 namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 
+use function array_keys;
 use function array_values;
 
 /**
@@ -42,30 +43,28 @@ use function array_values;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
+#[ClassGroup('default', 'api', 'crud', 'digest')]
 class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface, \Stringable
 {
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
-
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'api', 'crud', 'digest'],
-        'account' => ['default', 'crud', 'digest'],
-        'accountData' => ['crud'],
-        'variables' => ['crud_variables'],
-        'environments' => ['crud_environments'],
-    ];
+    use AutoTrait;
 
     /**
      * @param iterable<AccountPersistedVariable>|AccountPersistedVariable[] $variables
      * @param AccountEnvironmentResume[] $environments
      */
     public function __construct(
+        #[Normalize(['default', 'crud', 'digest'], loader: '@lazy')]
         public Account $account = new Account(),
+        #[Normalize('crud', loader: '@lazy')]
         public ?AccountData $accountData = null,
+        #[Normalize('crud_variables', loader: '@lazy')]
         public iterable $variables = [],
+        #[Normalize(
+            'crud_environments',
+            loader: static function (self $that): iterable {
+                return array_values($that->environments ?? []);
+            }
+        )]
         public ?array $environments = null,
     ) {
         if (null === $this->accountData) {
@@ -81,28 +80,5 @@ class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface, 
     public function __toString(): string
     {
         return (string) $this->account;
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $data = [
-            '@class' => self::class,
-            'account' => fn (): Account => $this->account,
-            'accountData' => fn (): ?AccountData => $this->accountData,
-            'variables' => fn (): iterable => $this->variables,
-            'environments' => fn () => array_values($this->environments ?? []),
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-                lazyData: true,
-            )
-        );
-
-        return $this;
     }
 }

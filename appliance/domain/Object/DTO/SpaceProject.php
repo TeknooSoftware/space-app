@@ -26,12 +26,12 @@ declare(strict_types=1);
 namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 
@@ -41,29 +41,22 @@ use Teknoo\Space\Object\Persisted\ProjectMetadata;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
+#[ClassGroup('default', 'api', 'crud', 'crud_variables', 'digest')]
 class SpaceProject implements IdentifiedObjectInterface, NormalizableInterface, \Stringable
 {
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
+    use AutoTrait;
 
+    #[Normalize(['default', 'api', 'crud', 'digest'], loader: '@lazy')]
     public Project $project;
-
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'api', 'crud', 'crud_variables', 'digest'],
-        'project' => ['default', 'api', 'crud', 'digest'],
-        'projectMetadata' => ['crud'],
-        'variables' => ['crud_variables'],
-    ];
 
     /**
      * @param iterable<ProjectPersistedVariable>|ProjectPersistedVariable[] $variables
      */
     public function __construct(
         Project|Account $projectOrAccount,
+        #[Normalize('crud', loader: '@lazy')]
         public ?ProjectMetadata $projectMetadata = null,
+        #[Normalize('crud_variables', loader: '@lazy')]
         public iterable $variables = [],
         public ?string $addClusterName = null,
         public ?string $addClusterEnv = null,
@@ -88,27 +81,5 @@ class SpaceProject implements IdentifiedObjectInterface, NormalizableInterface, 
     public function __toString(): string
     {
         return (string) $this->project;
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $data = [
-            '@class' => self::class,
-            'project' => fn (): Project => $this->project,
-            'projectMetadata' => fn (): ?ProjectMetadata => $this->projectMetadata,
-            'variables' => fn (): iterable => $this->variables,
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-                lazyData: true,
-            )
-        );
-
-        return $this;
     }
 }

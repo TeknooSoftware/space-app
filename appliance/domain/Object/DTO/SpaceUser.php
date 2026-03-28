@@ -27,10 +27,10 @@ namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Object\User;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Space\Object\Persisted\UserData;
 
 /**
@@ -39,20 +39,13 @@ use Teknoo\Space\Object\Persisted\UserData;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
+#[ClassGroup('default', 'api', 'crud', 'digest')]
 class SpaceUser implements IdentifiedObjectInterface, NormalizableInterface, \Stringable
 {
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
-
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'api', 'crud', 'digest'],
-        'user' => ['default', 'api', 'crud', 'digest'],
-    ];
+    use AutoTrait;
 
     public function __construct(
+        #[Normalize(['default', 'api', 'crud', 'digest'], loader: '@lazy')]
         public User $user = new User(),
         public ?UserData $userData = null,
     ) {
@@ -69,25 +62,5 @@ class SpaceUser implements IdentifiedObjectInterface, NormalizableInterface, \St
     public function __toString(): string
     {
         return (string) $this->user;
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $data = [
-            '@class' => self::class,
-            'user' => fn (): User => $this->user,
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-                lazyData: true,
-            )
-        );
-
-        return $this;
     }
 }

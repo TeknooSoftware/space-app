@@ -1,5 +1,16 @@
 # Teknoo Software - Space - Change Log
 
+## [2.2.0] - 2026-03-28
+### Stable Release
+- Migrate to `Tekno East Foundation` 9.2
+  - Migrate to `AutoTrait`
+- Migrate to `Tekno East Common` 4.3
+- Migrate to `Tekno East PaaS` 5.3
+- Update Illuminate and Scheb 2fa
+- Update League Flysystem
+- Enable Stateless csrf
+- Fix some typo
+
 ## [2.1.4] - 2026-03-13
 ### Stable Release
 - Update

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Object\Persisted;
 
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Teknoo\East\Common\Contracts\Object\TimestampableInterface;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Immutable\ImmutableInterface;
@@ -38,6 +39,7 @@ use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
+#[ClassGroup('default', 'crud_variables')]
 class ProjectPersistedVariable implements
     IdentifiedObjectInterface,
     TimestampableInterface,

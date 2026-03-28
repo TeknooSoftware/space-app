@@ -31,11 +31,11 @@ use Teknoo\East\Common\Contracts\Object\VisitableInterface;
 use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Object\VisitableTrait;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 
@@ -48,6 +48,7 @@ use function array_intersect_key;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
+#[ClassGroup('default', 'crud')]
 class AccountData implements
     IdentifiedObjectInterface,
     TimestampableInterface,
@@ -56,36 +57,33 @@ class AccountData implements
     AccountComponentInterface
 {
     use ObjectTrait;
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
+    use AutoTrait;
     use VisitableTrait {
         VisitableTrait::runVisit as realRunVisit;
     }
 
+    #[Normalize('crud')]
     private ?string $vatNumber = '';
-
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'crud'],
-        'legalName' => ['default', 'crud'],
-        'streetAddress' => ['crud'],
-        'zipCode' => ['crud'],
-        'cityName' => ['crud'],
-        'countryName' => ['crud'],
-        'vatNumber' => ['crud'],
-        'subscriptionPlan' => ['default', 'crud'],
-    ];
 
     public function __construct(
         private Account $account,
+        #[Normalize(['default', 'crud'])]
         private string $legalName = '',
+        #[Normalize('crud')]
         private string $streetAddress = '',
+        #[Normalize('crud')]
         private string $zipCode = '',
+        #[Normalize('crud')]
         private string $cityName = '',
+        #[Normalize('crud')]
         private string $countryName = '',
         ?string $vatNumber = '',
+        #[Normalize(
+            ['default', 'crud'],
+            loader: static function (self $that): string {
+                return (string) $that->subscriptionPlan;
+            }
+        )]
         private ?string $subscriptionPlan = null,
     ) {
         //Issue with doctine
@@ -161,31 +159,6 @@ class AccountData implements
         );
 
         $this->realRunVisit($visitors);
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $data = [
-            '@class' => self::class,
-            'legalName' => $this->legalName,
-            'streetAddress' => $this->streetAddress,
-            'zipCode' => $this->zipCode,
-            'cityName' => $this->cityName,
-            'countryName' => $this->countryName,
-            'vatNumber' => $this->vatNumber,
-            'subscriptionPlan' => (string) $this->subscriptionPlan,
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-            )
-        );
-
-        return $this;
     }
 
     public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface

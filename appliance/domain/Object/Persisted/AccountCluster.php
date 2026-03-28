@@ -35,13 +35,13 @@ use Teknoo\East\Common\Object\ObjectTrait;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Object\VisitableTrait;
 use Teknoo\East\Common\Service\FindSlugService;
-use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
-use Teknoo\East\Foundation\Normalizer\Object\GroupsTrait;
+use Teknoo\East\Foundation\Normalizer\Object\AutoTrait;
+use Teknoo\East\Foundation\Normalizer\Object\ClassGroup;
+use Teknoo\East\Foundation\Normalizer\Object\Normalize;
 use Teknoo\East\Foundation\Normalizer\Object\NormalizableInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\ClusterCredentials;
-use Teknoo\East\Paas\Object\Traits\ExportConfigurationsTrait;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
@@ -56,6 +56,7 @@ use Teknoo\Space\Object\Config\Cluster;
  *
  * @implements SluggableInterface<IdentifiedObjectInterface>
  */
+#[ClassGroup('default', 'crud', 'api')]
 class AccountCluster implements
     IdentifiedObjectInterface,
     TimestampableInterface,
@@ -66,43 +67,37 @@ class AccountCluster implements
     \Stringable
 {
     use ObjectTrait;
-    use GroupsTrait;
-    use ExportConfigurationsTrait;
+    use AutoTrait;
     use VisitableTrait {
         VisitableTrait::runVisit as realRunVisit;
     }
 
-    /**
-     * @var array<string, string[]>
-     */
-    private static array $exportConfigurations = [
-        '@class' => ['default', 'crud', 'api'],
-        'name' => ['default', 'crud', 'api'],
-        'slug' => ['default', 'crud', 'api'],
-        'type' => ['crud', 'api'],
-        'masterAddress' => ['crud', 'api'],
-        'storageProvisioner' => ['crud'],
-        'dashboardAddress' => ['crud', 'api'],
-        'caCertificate' => ['crud'],
-        'token' => ['crud'],
-        'supportRegistry' => ['crud'],
-        'registryUrl' => ['crud'],
-        'useHnc' => ['crud'],
-    ];
-
     public function __construct(
         private Account $account,
+        #[Normalize(['default', 'crud', 'api'])]
         private string $name = '',
+        #[Normalize(['default', 'crud', 'api'])]
         private string $slug = '',
+        #[Normalize(['crud', 'api'])]
         private string $type = '',
+        #[Normalize(['crud', 'api'])]
         private string $masterAddress = '',
+        #[Normalize('crud')]
         private string $storageProvisioner = '',
+        #[Normalize(['crud', 'api'])]
         private string $dashboardAddress = '',
+        #[Normalize('crud')]
         private string $caCertificate = '',
         #[SensitiveParameter]
+        #[Normalize('crud', loader: static function (): string {
+            return '';
+        })]
         private string $token = '',
+        #[Normalize('crud')]
         private bool $supportRegistry = false,
+        #[Normalize('crud')]
         private ?string $registryUrl = null,
+        #[Normalize('crud')]
         private bool $useHnc = false,
     ) {
     }
@@ -276,35 +271,6 @@ class AccountCluster implements
         }
 
         $this->realRunVisit($visitors);
-    }
-
-    public function exportToMeData(EastNormalizerInterface $normalizer, array $context = []): NormalizableInterface
-    {
-        $data = [
-            '@class' => self::class,
-            'name' => $this->name,
-            'slug' => $this->slug,
-            'type' => $this->type,
-            'masterAddress' => $this->masterAddress,
-            'storageProvisioner' => $this->storageProvisioner,
-            'dashboardAddress' => $this->dashboardAddress,
-            'caCertificate' => $this->caCertificate,
-            'token' => '',
-            'supportRegistry' => $this->supportRegistry,
-            'registryUrl' => $this->registryUrl,
-            'useHnc' => $this->useHnc,
-        ];
-
-        $this->setGroupsConfiguration(self::$exportConfigurations);
-
-        $normalizer->injectData(
-            $this->filterExport(
-                data: $data,
-                groups: (array) ($context['groups'] ?? ['default']),
-            )
-        );
-
-        return $this;
     }
 
     public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface
