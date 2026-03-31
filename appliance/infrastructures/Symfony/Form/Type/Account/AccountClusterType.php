@@ -34,6 +34,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Traversable;
 
@@ -50,6 +51,11 @@ use function iterator_to_array;
  */
 class AccountClusterType extends AbstractType
 {
+    public function __construct(
+        private readonly EastDataMapper $dataMapper,
+    ) {
+    }
+
     /**
      * @param array<string, string|bool> $options
      */
@@ -169,50 +175,7 @@ class AccountClusterType extends AbstractType
             ],
         );
 
-        $builder->setDataMapper(
-            new class () implements DataMapperInterface {
-                /**
-                 * @param Traversable<string, FormInterface<string|int|bool>> $forms
-                 * @param ?AccountCluster $data
-                 */
-                public function mapDataToForms($data, $forms): void
-                {
-                    if (!$data instanceof AccountCluster) {
-                        return;
-                    }
-
-                    $visitors = array_map(
-                        fn (FormInterface $form): callable => $form->setData(...),
-                        iterator_to_array($forms)
-                    );
-                    $data->visit($visitors);
-                }
-
-                /**
-                 * @param Traversable<string, FormInterface<AccountCluster>> $forms
-                 * @param ?AccountCluster $data
-                 */
-                public function mapFormsToData($forms, &$data): void
-                {
-                    if (!$data instanceof AccountCluster) {
-                        return;
-                    }
-
-                    $forms = iterator_to_array($forms);
-                    $data->setName((string) $forms['name']->getData());
-                    $data->setSlug((string) $forms['slug']->getData());
-                    $data->setType((string) $forms['type']->getData());
-                    $data->setMasterAddress((string) $forms['masterAddress']->getData());
-                    $data->setStorageProvisioner((string) $forms['storageProvisioner']->getData());
-                    $data->setDashboardAddress((string) $forms['dashboardAddress']->getData());
-                    $data->setCaCertificate((string) $forms['caCertificate']->getData());
-                    $data->setToken((string) $forms['token']->getData());
-                    $data->setSupportRegistry(!empty($forms['supportRegistry']->getData()));
-                    $data->setRegistryUrl((string) $forms['registryUrl']->getData());
-                    $data->setUseHnc(!empty($forms['useHnc']->getData()));
-                }
-            }
-        );
+        $builder->setDataMapper($this->dataMapper->configure(AccountCluster::class));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

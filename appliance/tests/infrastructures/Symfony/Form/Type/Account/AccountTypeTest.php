@@ -26,9 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountType;
 
 /**
@@ -44,6 +46,8 @@ class AccountTypeTest extends TestCase
 {
     private AccountType $accountType;
 
+    private EastDataMapper&Stub $eastDataMapper;
+
     /**
      * {@inheritdoc}
      */
@@ -51,7 +55,9 @@ class AccountTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->accountType = new AccountType();
+        $this->eastDataMapper = $this->createStub(EastDataMapper::class);
+
+        $this->accountType = new AccountType($this->eastDataMapper);
     }
 
     public function testBuildForm(): void

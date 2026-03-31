@@ -26,7 +26,6 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Doctrine\Form\UserData;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -34,16 +33,13 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\East\CommonBundle\Form\Type\MediaType;
 use Teknoo\East\Common\Doctrine\Object\Media;
 use Teknoo\East\Common\Doctrine\Writer\ODM\MediaWriter;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Persisted\UserData;
 use Throwable;
-use Traversable;
-
-use function array_map;
-use function iterator_to_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -57,6 +53,7 @@ class UserDataType extends AbstractType
 {
     public function __construct(
         private readonly MediaWriter $mediaWriter,
+        private readonly EastDataMapper $dataMapper,
     ) {
     }
 
@@ -84,38 +81,7 @@ class UserDataType extends AbstractType
             ]
         );
 
-        $builder->setDataMapper(new class () implements DataMapperInterface {
-            /**
-             * @param Traversable<string, FormInterface<Media|string>> $forms
-             * @param ?UserData $data
-             */
-            public function mapDataToForms($data, $forms): void
-            {
-                if (!$data instanceof UserData) {
-                    return;
-                }
-
-                $visitors = array_map(
-                    fn (FormInterface $form): callable => $form->setData(...),
-                    iterator_to_array($forms)
-                );
-                $data->visit($visitors);
-            }
-
-            /**
-             * @param Traversable<string, FormInterface<string|Media>> $forms
-             * @param ?UserData $data
-             */
-            public function mapFormsToData($forms, &$data): void
-            {
-                $forms = iterator_to_array($forms);
-                $picture = $forms['picture']->getData();
-
-                if ($data instanceof UserData && $picture instanceof Media) {
-                    $data->setPicture($picture);
-                }
-            }
-        });
+        $builder->setDataMapper($this->dataMapper->configure(UserData::class));
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,

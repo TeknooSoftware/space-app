@@ -59,9 +59,6 @@ parameters:
             message: '#CreateRegistryDeployment::insertModel\(\) expects#'
             path:  infrastructures/Kubernetes/Recipe/Step/Registry/CreateRegistryDeployment.php
         -
-            message: '#to string#'
-            path:  infrastructures/Symfony/Form/Type/
-        -
             message: '#mixed given#'
             path:  infrastructures/Symfony/Form/Type/
         -

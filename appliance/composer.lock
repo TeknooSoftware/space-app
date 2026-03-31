@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8daf20b021171be1ee1dd5df60124e34",
+    "content-hash": "10f0b3a96505cf6c73bb0932f78f7b9e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10600,16 +10600,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "4.3.0",
+            "version": "4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "88808990c7c52164be0b6f0b83f56c4482bf4210"
+                "reference": "413e44aae390b3a49a97eb14109ec0e5675d16c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/88808990c7c52164be0b6f0b83f56c4482bf4210",
-                "reference": "88808990c7c52164be0b6f0b83f56c4482bf4210",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/413e44aae390b3a49a97eb14109ec0e5675d16c9",
+                "reference": "413e44aae390b3a49a97eb14109ec0e5675d16c9",
                 "shasum": ""
             },
             "require": {
@@ -10736,20 +10736,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-28T10:07:21+00:00"
+            "time": "2026-03-31T14:34:33+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.3.0",
+            "version": "4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "2e83c3a68dc6cb78360ffc60837a7eedb27f6c07"
+                "reference": "ace96d6f7ed8eca14240cf88ab2696f2c4b55521"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/2e83c3a68dc6cb78360ffc60837a7eedb27f6c07",
-                "reference": "2e83c3a68dc6cb78360ffc60837a7eedb27f6c07",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/ace96d6f7ed8eca14240cf88ab2696f2c4b55521",
+                "reference": "ace96d6f7ed8eca14240cf88ab2696f2c4b55521",
                 "shasum": ""
             },
             "require": {
@@ -10773,7 +10773,7 @@
                 "symfony/validator": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-common": "^4.3",
+                "teknoo/east-common": "^4.4",
                 "teknoo/east-foundation-symfony": "^9.2",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
@@ -10824,7 +10824,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-28T10:08:44+00:00"
+            "time": "2026-03-31T14:39:17+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -11010,16 +11010,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.3.0",
+            "version": "5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "24f22055dfe6149daa01b6fde7a4d329d9a344b6"
+                "reference": "0dbb195b694695e4f6afa0e5f6e32d869825042e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/24f22055dfe6149daa01b6fde7a4d329d9a344b6",
-                "reference": "24f22055dfe6149daa01b6fde7a4d329d9a344b6",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/0dbb195b694695e4f6afa0e5f6e32d869825042e",
+                "reference": "0dbb195b694695e4f6afa0e5f6e32d869825042e",
                 "shasum": ""
             },
             "require": {
@@ -11029,7 +11029,7 @@
                 "php": "^8.4",
                 "php-di/php-di": "^7.1.1",
                 "psr/http-client": "^1.0.3",
-                "teknoo/east-common": "^4.3",
+                "teknoo/east-common": "^4.4",
                 "teknoo/east-foundation": "^9.2",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
@@ -11053,7 +11053,7 @@
                 "php-http/mock-client": "^1.6.1",
                 "phpseclib/phpseclib": "^3.0.49",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.1.40",
+                "phpstan/phpstan": "^2.1.45",
                 "phpunit/phpunit": "^13.0.1",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
@@ -11158,20 +11158,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-28T10:14:47+00:00"
+            "time": "2026-03-31T14:40:28+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.3.0",
+            "version": "5.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "8b6ae0e2e3e1fb8c25ebcaf904cff744a53960b6"
+                "reference": "9da5986a42ddfdb8ced9005d6c75625cc205e7a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/8b6ae0e2e3e1fb8c25ebcaf904cff744a53960b6",
-                "reference": "8b6ae0e2e3e1fb8c25ebcaf904cff744a53960b6",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/9da5986a42ddfdb8ced9005d6c75625cc205e7a9",
+                "reference": "9da5986a42ddfdb8ced9005d6c75625cc205e7a9",
                 "shasum": ""
             },
             "require": {
@@ -11207,9 +11207,9 @@
                 "symfony/validator": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-common-symfony": "^4.3",
+                "teknoo/east-common-symfony": "^4.4",
                 "teknoo/east-foundation-symfony": "^9.2",
-                "teknoo/east-paas": "^5.3",
+                "teknoo/east-paas": "^5.4",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
                 "teknoo/recipe": "^7.2.2",
@@ -11271,7 +11271,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-28T10:16:02+00:00"
+            "time": "2026-03-31T14:42:59+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -12768,11 +12768,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.44",
+            "version": "2.1.45",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4a88c083c668b2c364a425c9b3171b2d9ea5d218",
-                "reference": "4a88c083c668b2c364a425c9b3171b2d9ea5d218",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f8cdfd9421b7edb7686a2d150a234870464eac70",
+                "reference": "f8cdfd9421b7edb7686a2d150a234870464eac70",
                 "shasum": ""
             },
             "require": {
@@ -12817,7 +12817,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-25T17:34:21+00:00"
+            "time": "2026-03-30T13:22:02+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13277,16 +13277,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.0.5",
+            "version": "13.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d57826e8921a534680c613924bfd921ded8047f4"
+                "reference": "9e426f7282c313c9138eeb9f25461e1a6be1e647"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d57826e8921a534680c613924bfd921ded8047f4",
-                "reference": "d57826e8921a534680c613924bfd921ded8047f4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9e426f7282c313c9138eeb9f25461e1a6be1e647",
+                "reference": "9e426f7282c313c9138eeb9f25461e1a6be1e647",
                 "shasum": ""
             },
             "require": {
@@ -13308,7 +13308,7 @@
                 "sebastian/cli-parser": "^5.0.0",
                 "sebastian/comparator": "^8.0.0",
                 "sebastian/diff": "^8.0.0",
-                "sebastian/environment": "^9.0.0",
+                "sebastian/environment": "^9.1.0",
                 "sebastian/exporter": "^8.0.0",
                 "sebastian/global-state": "^9.0.0",
                 "sebastian/object-enumerator": "^8.0.0",
@@ -13355,31 +13355,15 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.0.5"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.0.6"
             },
             "funding": [
                 {
-                    "url": "https://phpunit.de/sponsors.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/sebastianbergmann",
-                    "type": "github"
-                },
-                {
-                    "url": "https://liberapay.com/sebastianbergmann",
-                    "type": "liberapay"
-                },
-                {
-                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
-                    "type": "thanks_dev"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpunit/phpunit",
-                    "type": "tidelift"
+                    "url": "https://phpunit.de/sponsoring.html",
+                    "type": "other"
                 }
             ],
-            "time": "2026-02-18T12:40:03+00:00"
+            "time": "2026-03-31T06:44:39+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13387,12 +13371,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "df1aa77e0bcec36cb93c268f62c6d7613e87cb07"
+                "reference": "fdacac838472c18285bb944d528690f0fab9986f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/df1aa77e0bcec36cb93c268f62c6d7613e87cb07",
-                "reference": "df1aa77e0bcec36cb93c268f62c6d7613e87cb07",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fdacac838472c18285bb944d528690f0fab9986f",
+                "reference": "fdacac838472c18285bb944d528690f0fab9986f",
                 "shasum": ""
             },
             "conflict": {
@@ -13507,7 +13491,7 @@
                 "cesnet/simplesamlphp-module-proxystatistics": "<3.1",
                 "chriskacerguis/codeigniter-restserver": "<=2.7.1",
                 "chrome-php/chrome": "<1.14",
-                "ci4-cms-erp/ci4ms": "<0.28.5",
+                "ci4-cms-erp/ci4ms": "<=0.28.6",
                 "civicrm/civicrm-core": ">=4.2,<4.2.9|>=4.3,<4.3.3",
                 "ckeditor/ckeditor": "<4.25",
                 "clickstorm/cs-seo": ">=6,<6.8|>=7,<7.5|>=8,<8.4|>=9,<9.3",
@@ -14160,7 +14144,7 @@
                 "subhh/libconnect": "<7.0.8|>=8,<8.1",
                 "sukohi/surpass": "<1",
                 "sulu/form-bundle": ">=2,<2.5.3",
-                "sulu/sulu": "<1.6.44|>=2,<2.5.25|>=2.6,<2.6.9|>=3.0.0.0-alpha1,<3.0.0.0-alpha3",
+                "sulu/sulu": "<2.6.22|>=3,<3.0.5",
                 "sumocoders/framework-user-bundle": "<1.4",
                 "superbig/craft-audit": "<3.0.2",
                 "svewap/a21glossary": "<=0.4.10",
@@ -14428,7 +14412,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-27T23:11:54+00:00"
+            "time": "2026-03-30T18:22:46+00:00"
         },
         {
             "name": "sebastian/cli-parser",

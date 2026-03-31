@@ -31,6 +31,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Traversable;
 
@@ -47,42 +48,16 @@ use function iterator_to_array;
  */
 class ProjectMetadataType extends AbstractType
 {
+    public function __construct(
+        private readonly EastDataMapper $dataMapper,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('projectUrl', TextType::class);
 
-        $builder->setDataMapper(new class () implements DataMapperInterface {
-            /**
-             * @param Traversable<string, FormInterface<string>> $forms
-             * @param ?\Teknoo\Space\Object\Persisted\ProjectMetadata $data
-             */
-            public function mapDataToForms($data, $forms): void
-            {
-                if (!$data instanceof ProjectMetadata) {
-                    return;
-                }
-
-                $visitors = array_map(
-                    fn (FormInterface $form): callable => $form->setData(...),
-                    iterator_to_array($forms)
-                );
-                $data->visit($visitors);
-            }
-
-            /**
-             * @param Traversable<string, FormInterface<string>> $forms
-             * @param ?ProjectMetadata $data
-             */
-            public function mapFormsToData($forms, &$data): void
-            {
-                if (!$data instanceof ProjectMetadata) {
-                    return;
-                }
-
-                $forms = iterator_to_array($forms);
-                $data->setProjectUrl($forms['projectUrl']->getData());
-            }
-        });
+        $builder->setDataMapper($this->dataMapper->configure(ProjectMetadata::class));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -26,9 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\ProjectMetadata;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\ProjectMetadata\ProjectMetadataType;
 
 /**
@@ -44,6 +46,8 @@ class ProjectMetadataTypeTest extends TestCase
 {
     private ProjectMetadataType $projectMetadataType;
 
+    private EastDataMapper&Stub $eastDataMapper;
+
     /**
      * {@inheritdoc}
      */
@@ -51,7 +55,9 @@ class ProjectMetadataTypeTest extends TestCase
     {
         parent::setUp();
 
-        $this->projectMetadataType = new ProjectMetadataType();
+        $this->eastDataMapper = $this->createStub(EastDataMapper::class);
+
+        $this->projectMetadataType = new ProjectMetadataType($this->eastDataMapper);
     }
 
     public function testBuildForm(): void

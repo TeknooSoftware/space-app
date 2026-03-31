@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\Common\Doctrine\Writer\ODM\MediaWriter;
+use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType;
 
 /**
@@ -49,6 +50,8 @@ class UserDataTypeTest extends TestCase
 
     private MediaWriter&Stub $mediaWriter;
 
+    private EastDataMapper&Stub $eastDataMapper;
+
     /**
      * {@inheritdoc}
      */
@@ -57,9 +60,11 @@ class UserDataTypeTest extends TestCase
         parent::setUp();
 
         $this->mediaWriter = $this->createStub(MediaWriter::class);
+        $this->eastDataMapper = $this->createStub(EastDataMapper::class);
 
         $this->userDataType = new UserDataType(
             $this->mediaWriter,
+            $this->eastDataMapper
         );
     }
 

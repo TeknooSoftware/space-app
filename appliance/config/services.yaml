@@ -278,6 +278,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType'
         arguments:
             - '@Teknoo\East\Common\Doctrine\Writer\ODM\MediaWriter'
+            - '@Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper'
         tags:
             - {name: form.type}
 
