@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.0] - 2026-03-31
+### Stable Release
+- Migrate to `Tekno East Common` 4.4 and use `EastDataMapper`.
+
 ## [2.2.0] - 2026-03-28
 ### Stable Release
 - Migrate to `Tekno East Foundation` 9.2
