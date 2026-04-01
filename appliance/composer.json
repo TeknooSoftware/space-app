@@ -90,7 +90,7 @@
         "symfony/psr-http-message-bridge": "^6.4||^7.4.8",
         "symfony/runtime": ">=8.0.8",
         "symfony/security-bundle": ">=8.0.8,!=7.2.2",
-        "symfony/security-http": ">=8.0.6",
+        "symfony/security-http": ">=8.0.8",
         "symfony/serializer": ">=7.4.8",
         "symfony/string": ">=8.0.8",
         "symfony/translation": ">=7.4.8",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "19a4402d74cfd6aab04ea5fcb1e14b97",
+    "content-hash": "bef5fa0fc590265f3131fe233dc525ba",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -9273,16 +9273,16 @@
         },
         {
             "name": "symfony/security-http",
-            "version": "v8.0.6",
+            "version": "v8.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/security-http.git",
-                "reference": "ff6cdab586fed68f1ebc2a2ed42ae0dffafada1f"
+                "reference": "d3918d827ad0d18dcf009cf8fee82fd6e107de92"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/security-http/zipball/ff6cdab586fed68f1ebc2a2ed42ae0dffafada1f",
-                "reference": "ff6cdab586fed68f1ebc2a2ed42ae0dffafada1f",
+                "url": "https://api.github.com/repos/symfony/security-http/zipball/d3918d827ad0d18dcf009cf8fee82fd6e107de92",
+                "reference": "d3918d827ad0d18dcf009cf8fee82fd6e107de92",
                 "shasum": ""
             },
             "require": {
@@ -9336,7 +9336,7 @@
             "description": "Symfony Security Component - HTTP Integration",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/security-http/tree/v8.0.6"
+                "source": "https://github.com/symfony/security-http/tree/v8.0.8"
             },
             "funding": [
                 {
@@ -9356,7 +9356,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-17T13:07:04+00:00"
+            "time": "2026-03-30T15:14:47+00:00"
         },
         {
             "name": "symfony/serializer",
