@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.1] - 2026-04-01
+### Stable Release
+- Update to Symfony `7.4.8` and `8.0.8`
+
 ## [2.3.0] - 2026-03-31
 ### Stable Release
 - Migrate to `Tekno East Common` 4.4 and use `EastDataMapper`.
