@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bef5fa0fc590265f3131fe233dc525ba",
+    "content-hash": "f6c58e8d83a9523fc469618e7daaada7",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1545,16 +1545,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.2.0",
+            "version": "v13.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "adf06b38984b02ce29297b1489f0c757c56bff15"
+                "reference": "389c5008087f8c48d35b85585b4315107b5a0f9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/adf06b38984b02ce29297b1489f0c757c56bff15",
-                "reference": "adf06b38984b02ce29297b1489f0c757c56bff15",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/389c5008087f8c48d35b85585b4315107b5a0f9e",
+                "reference": "389c5008087f8c48d35b85585b4315107b5a0f9e",
                 "shasum": ""
             },
             "require": {
@@ -1600,11 +1600,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-03-23T14:32:36+00:00"
+            "time": "2026-03-30T19:06:46+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.2.0",
+            "version": "v13.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1650,16 +1650,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.2.0",
+            "version": "v13.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "6728b11fd8748dea0206e0b21c993cb8ae7ce426"
+                "reference": "8796cc5f30124b81210ae2f3b2ae0f69ad4fc7f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/6728b11fd8748dea0206e0b21c993cb8ae7ce426",
-                "reference": "6728b11fd8748dea0206e0b21c993cb8ae7ce426",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/8796cc5f30124b81210ae2f3b2ae0f69ad4fc7f8",
+                "reference": "8796cc5f30124b81210ae2f3b2ae0f69ad4fc7f8",
                 "shasum": ""
             },
             "require": {
@@ -1694,20 +1694,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-03-20T15:16:26+00:00"
+            "time": "2026-03-26T17:13:01+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.2.0",
+            "version": "v13.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
-                "reference": "fca71b5b0b1291a69a0383b886b9835410f45358"
+                "reference": "f108cb3a8680f26e23c6ce7367c64525412d85b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/macroable/zipball/fca71b5b0b1291a69a0383b886b9835410f45358",
-                "reference": "fca71b5b0b1291a69a0383b886b9835410f45358",
+                "url": "https://api.github.com/repos/illuminate/macroable/zipball/f108cb3a8680f26e23c6ce7367c64525412d85b0",
+                "reference": "f108cb3a8680f26e23c6ce7367c64525412d85b0",
                 "shasum": ""
             },
             "require": {
@@ -1740,7 +1740,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-02-25T16:07:55+00:00"
+            "time": "2026-03-28T19:16:13+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -8602,16 +8602,16 @@
         },
         {
             "name": "symfony/property-access",
-            "version": "v8.0.4",
+            "version": "v8.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-access.git",
-                "reference": "a35a5ec85b605d0d1a9fd802cb44d87682c746fd"
+                "reference": "704c7808116fcdd67327db7b17de56b8ef6169e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-access/zipball/a35a5ec85b605d0d1a9fd802cb44d87682c746fd",
-                "reference": "a35a5ec85b605d0d1a9fd802cb44d87682c746fd",
+                "url": "https://api.github.com/repos/symfony/property-access/zipball/704c7808116fcdd67327db7b17de56b8ef6169e4",
+                "reference": "704c7808116fcdd67327db7b17de56b8ef6169e4",
                 "shasum": ""
             },
             "require": {
@@ -8659,7 +8659,7 @@
                 "reflection"
             ],
             "support": {
-                "source": "https://github.com/symfony/property-access/tree/v8.0.4"
+                "source": "https://github.com/symfony/property-access/tree/v8.0.8"
             },
             "funding": [
                 {
@@ -8679,7 +8679,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-05T09:27:50+00:00"
+            "time": "2026-03-30T15:14:47+00:00"
         },
         {
             "name": "symfony/property-info",
@@ -12769,11 +12769,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.45",
+            "version": "2.1.46",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f8cdfd9421b7edb7686a2d150a234870464eac70",
-                "reference": "f8cdfd9421b7edb7686a2d150a234870464eac70",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a193923fc2d6325ef4e741cf3af8c3e8f54dbf25",
+                "reference": "a193923fc2d6325ef4e741cf3af8c3e8f54dbf25",
                 "shasum": ""
             },
             "require": {
@@ -12818,7 +12818,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-30T13:22:02+00:00"
+            "time": "2026-04-01T09:25:14+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -12896,16 +12896,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "13.0.1",
+            "version": "13.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "a8b58fde2f4fbc69a064e1f80ff917607cf7737c"
+                "reference": "2ea1bcdad040326c02edd6519cc9d1c5a9f6c87e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/a8b58fde2f4fbc69a064e1f80ff917607cf7737c",
-                "reference": "a8b58fde2f4fbc69a064e1f80ff917607cf7737c",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/2ea1bcdad040326c02edd6519cc9d1c5a9f6c87e",
+                "reference": "2ea1bcdad040326c02edd6519cc9d1c5a9f6c87e",
                 "shasum": ""
             },
             "require": {
@@ -12914,7 +12914,6 @@
                 "ext-xmlwriter": "*",
                 "nikic/php-parser": "^5.7.0",
                 "php": ">=8.4",
-                "phpunit/php-file-iterator": "^7.0",
                 "phpunit/php-text-template": "^6.0",
                 "sebastian/complexity": "^6.0",
                 "sebastian/environment": "^9.0",
@@ -12961,7 +12960,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/13.0.1"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/13.0.2"
             },
             "funding": [
                 {
@@ -12981,7 +12980,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-06T06:05:15+00:00"
+            "time": "2026-04-01T14:12:38+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -13372,12 +13371,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6a77cce24e143b6042397d1c255d085e22afae16"
+                "reference": "61130731cdf896e60028ed82193a1bc3c50d032a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6a77cce24e143b6042397d1c255d085e22afae16",
-                "reference": "6a77cce24e143b6042397d1c255d085e22afae16",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/61130731cdf896e60028ed82193a1bc3c50d032a",
+                "reference": "61130731cdf896e60028ed82193a1bc3c50d032a",
                 "shasum": ""
             },
             "conflict": {
@@ -13427,7 +13426,7 @@
                 "athlon1600/youtube-downloader": "<=4",
                 "aureuserp/aureuserp": "<1.3.0.0-beta1",
                 "austintoddj/canvas": "<=3.4.2",
-                "auth0/auth0-php": ">=3.3,<8.18",
+                "auth0/auth0-php": ">=3.3,<=8.18",
                 "auth0/login": "<7.20",
                 "auth0/symfony": "<=5.5",
                 "auth0/wordpress": "<=5.4",
@@ -13548,7 +13547,7 @@
                 "derhansen/sf_event_mgt": "<4.3.1|>=5,<5.1.1|>=7,<7.4",
                 "desperado/xml-bundle": "<=0.1.7",
                 "dev-lancer/minecraft-motd-parser": "<=1.0.5",
-                "devcode-it/openstamanager": "<=2.9.8",
+                "devcode-it/openstamanager": "<=2.10.1",
                 "devgroup/dotplant": "<2020.09.14-dev",
                 "digimix/wp-svg-upload": "<=1",
                 "directmailteam/direct-mail": "<6.0.3|>=7,<7.0.3|>=8,<9.5.2",
@@ -13760,6 +13759,7 @@
                 "islandora/crayfish": "<4.1",
                 "islandora/islandora": ">=2,<2.4.1",
                 "ivankristianto/phpwhois": "<=4.3",
+                "j0k3r/graby": "<=2.5",
                 "jackalope/jackalope-doctrine-dbal": "<1.7.4",
                 "jambagecom/div2007": "<0.10.2",
                 "james-heinrich/getid3": "<1.9.21",
@@ -14212,7 +14212,7 @@
                 "thelia/thelia": ">=2.1,<2.1.3",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "thinkcmf/thinkcmf": "<6.0.8",
-                "thorsten/phpmyfaq": "<=4.1",
+                "thorsten/phpmyfaq": "<4.1.1",
                 "tikiwiki/tiki-manager": "<=17.1",
                 "timber/timber": ">=0.16.6,<1.23.1|>=1.24,<1.24.1|>=2,<2.1",
                 "tinymce/tinymce": "<7.2",
@@ -14318,7 +14318,7 @@
                 "xpressengine/xpressengine": "<3.0.15",
                 "yab/quarx": "<2.4.5",
                 "yansongda/pay": "<=3.7.19",
-                "yeswiki/yeswiki": "<=4.5.4",
+                "yeswiki/yeswiki": "<4.6",
                 "yetiforce/yetiforce-crm": "<6.5",
                 "yidashi/yii2cmf": "<=2",
                 "yii2mod/yii2-cms": "<1.9.2",
@@ -14413,7 +14413,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-31T23:11:43+00:00"
+            "time": "2026-04-02T00:32:12+00:00"
         },
         {
             "name": "sebastian/cli-parser",
