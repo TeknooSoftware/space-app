@@ -32,24 +32,24 @@ use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
-use Teknoo\Space\Infrastructures\Twig\Extension\ApiRenderingObjectWithForm;
+use Teknoo\Space\Infrastructures\Twig\Extension\ApiObjectWithFormSerializing;
 use Teknoo\Space\Infrastructures\Twig\Extension\FormError;
-use Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing;
+use Teknoo\Space\Infrastructures\Twig\Extension\ApiObjectSerializing;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
-#[CoversClass(ApiRenderingObjectWithForm::class)]
-class ApiRenderingObjectWithFormTest extends TestCase
+#[CoversClass(ApiObjectWithFormSerializing::class)]
+class ApiObjectWithFormSerializingTest extends TestCase
 {
-    private ObjectSerializing $objectSerializing;
+    private ApiObjectSerializing $objectSerializing;
     private FormError $formError;
-    private ApiRenderingObjectWithForm $extension;
+    private ApiObjectWithFormSerializing $extension;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->objectSerializing = $this->createMock(ObjectSerializing::class);
+        $this->objectSerializing = $this->createMock(ApiObjectSerializing::class);
         $this->formError = $this->createMock(FormError::class);
-        $this->extension = new ApiRenderingObjectWithForm(
+        $this->extension = new ApiObjectWithFormSerializing(
             objectSerializing: $this->objectSerializing,
             formError: $this->formError,
         );

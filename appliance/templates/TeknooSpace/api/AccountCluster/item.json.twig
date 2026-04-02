@@ -1,2 +1,2 @@
 {# templates/TeknooSpace/api/AccountCluster/item.json.twig  #}
-{{ objectInstance|space_api_rendering_object_and_form(formView, {'groups': ['crud']}) }}
+{{ objectInstance|space_api_object_with_form_serialization(formView, {'groups': ['crud']}) }}

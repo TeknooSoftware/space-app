@@ -46,21 +46,21 @@ services:
         arguments:
             - '@Teknoo\East\Foundation\Extension\ManagerInterface'
 
-    Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing:
-        class: 'Teknoo\Space\Infrastructures\Twig\Extension\CollectionSerializing'
+    Teknoo\Space\Infrastructures\Twig\Extension\ApiCollectionSerializing:
+        class: 'Teknoo\Space\Infrastructures\Twig\Extension\ApiCollectionSerializing'
         arguments:
             $serializer: '@serializer'
 
-    Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing:
-        class: 'Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing'
+    Teknoo\Space\Infrastructures\Twig\Extension\ApiObjectSerializing:
+        class: 'Teknoo\Space\Infrastructures\Twig\Extension\ApiObjectSerializing'
         arguments:
             $serializer: '@serializer'
 
     Teknoo\Space\Infrastructures\Twig\Extension\:
         resource: '../infrastructures/Twig/Extension/*'
         exclude:
-            - '../infrastructures/Twig/Extension/CollectionSerializing'
-            - '../infrastructures/Twig/Extension/ObjectSerializing'
+            - '../infrastructures/Twig/Extension/ApiCollectionSerializing'
+            - '../infrastructures/Twig/Extension/ApiObjectSerializing'
             - '../infrastructures/Twig/Extension/MFARoutesFinder/'
 
     Teknoo\Space\Infrastructures\Symfony\Security\Voter\:

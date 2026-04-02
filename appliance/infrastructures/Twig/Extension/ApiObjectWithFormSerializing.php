@@ -30,10 +30,10 @@ use Symfony\Component\Form\FormView;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Twig\Attribute\AsTwigFilter;
 
-class ApiRenderingObjectWithForm
+class ApiObjectWithFormSerializing
 {
     public function __construct(
-        private readonly ObjectSerializing $objectSerializing,
+        private readonly ApiObjectSerializing $objectSerializing,
         private readonly FormError $formError,
     ) {
     }
@@ -43,7 +43,7 @@ class ApiRenderingObjectWithForm
      * @param array<string, string[]> $context
      * @param array<string, mixed> $meta
      */
-    #[AsTwigFilter(name: 'space_api_rendering_object_and_form', isSafe: ['html', 'json', 'js'])]
+    #[AsTwigFilter(name: 'space_api_object_with_form_serialization', isSafe: ['html', 'json', 'js'])]
     public function rendering(
         object|array $object,
         FormView $formView,

@@ -25,14 +25,11 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
-use Countable;
 use Symfony\Component\Serializer\SerializerInterface;
-use Traversable;
+use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 use Twig\Attribute\AsTwigFilter;
 
-use function array_merge;
-use function count;
-use function iterator_to_array;
+use function get_parent_class;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -40,7 +37,7 @@ use function iterator_to_array;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CollectionSerializing
+class ApiObjectSerializing
 {
     public function __construct(
         private readonly SerializerInterface $serializer,
@@ -48,42 +45,42 @@ class CollectionSerializing
     }
 
     /**
-     * @param iterable<mixed> $collection
+     * @param object|array<string, mixed> $object
      * @param array<string, string[]> $context
      * @param array<string, mixed> $meta
      */
-    #[AsTwigFilter(name: 'space_collection_serialization', isSafe: ['html', 'json', 'js'])]
+    #[AsTwigFilter(name: 'space_api_object_serialization', isSafe: ['html', 'json', 'js'])]
     public function serialize(
-        iterable $collection,
-        int $currentPage,
-        int $countPages,
+        object|array $object,
         array $context = [],
         string $format = 'json',
         array $meta = [],
+        ?IdentifiedObjectInterface $parentObject = null
     ): string {
-        $arrayCollection = $collection;
-        if ($arrayCollection instanceof Traversable) {
-            $arrayCollection = iterator_to_array($arrayCollection);
+        $computedMeta = [];
+
+        $metaObject = $object;
+        if (!$metaObject instanceof IdentifiedObjectInterface && $parentObject !== null) {
+            $metaObject = $parentObject;
         }
 
-        $count = 0;
-        if ($collection instanceof Countable) {
-            $count = $collection->count();
-        } else {
-            $count = count($arrayCollection);
+        if ($metaObject instanceof IdentifiedObjectInterface) {
+            $parentClass = $metaObject::class;
+            while (false !== ($tmp = get_parent_class($parentClass))) {
+                $parentClass = $tmp;
+            }
+
+            $computedMeta['id'] = $metaObject->getId();
+            $computedMeta['@class'] = $parentClass;
         }
 
         return $this->serializer->serialize(
             data: [
                 'meta' => array_merge(
-                    [
-                        'totalPages' => $countPages,
-                        'page' => $currentPage,
-                        'count' => $count,
-                    ],
+                    $computedMeta,
                     $meta,
                 ),
-                'data' => $arrayCollection,
+                'data' => $object,
             ],
             format: $format,
             context: $context,

@@ -42,7 +42,6 @@ class SpaceExtension
     ) {
     }
 
-
     #[AsTwigFunction(name: 'space_extension', isSafe: ['html', 'json', 'js'], needsEnvironment: true)]
     public function runExtension(Environment $env, string $block): string
     {

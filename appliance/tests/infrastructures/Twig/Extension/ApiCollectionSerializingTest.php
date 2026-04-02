@@ -30,20 +30,20 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
-use Teknoo\Space\Infrastructures\Twig\Extension\ObjectSerializing;
+use Teknoo\Space\Infrastructures\Twig\Extension\ApiCollectionSerializing;
 
 /**
- * Class ObjectSerializingTest.
+ * Class ApiCollectionSerializingTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(ObjectSerializing::class)]
-class ObjectSerializingTest extends TestCase
+#[CoversClass(ApiCollectionSerializing::class)]
+class ApiCollectionSerializingTest extends TestCase
 {
-    private ObjectSerializing $objectSerializing;
+    private ApiCollectionSerializing $collectionSerializing;
 
     private SerializerInterface&Stub $serializer;
 
@@ -56,7 +56,7 @@ class ObjectSerializingTest extends TestCase
 
         $this->serializer = $this->createStub(SerializerInterface::class);
 
-        $this->objectSerializing = new ObjectSerializing(
+        $this->collectionSerializing = new ApiCollectionSerializing(
             $this->serializer,
         );
     }
@@ -64,7 +64,7 @@ class ObjectSerializingTest extends TestCase
     public function testGetName(): void
     {
         $this->assertIsString(
-            $this->objectSerializing->serialize(new \stdClass()),
+            $this->collectionSerializing->serialize([], 1, 2),
         );
     }
 }
