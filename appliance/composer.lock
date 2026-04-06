@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
-            "version": "v3.0.4",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Bacon/BaconQrCode.git",
-                "reference": "3feed0e212b8412cc5d2612706744789b0615824"
+                "reference": "4da2233e72eeecd9be3b62e0dc2cc9ed8e2e31c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/3feed0e212b8412cc5d2612706744789b0615824",
-                "reference": "3feed0e212b8412cc5d2612706744789b0615824",
+                "url": "https://api.github.com/repos/Bacon/BaconQrCode/zipball/4da2233e72eeecd9be3b62e0dc2cc9ed8e2e31c2",
+                "reference": "4da2233e72eeecd9be3b62e0dc2cc9ed8e2e31c2",
                 "shasum": ""
             },
             "require": {
@@ -57,9 +57,9 @@
             "homepage": "https://github.com/Bacon/BaconQrCode",
             "support": {
                 "issues": "https://github.com/Bacon/BaconQrCode/issues",
-                "source": "https://github.com/Bacon/BaconQrCode/tree/v3.0.4"
+                "source": "https://github.com/Bacon/BaconQrCode/tree/v3.1.1"
             },
-            "time": "2026-03-16T01:01:30+00:00"
+            "time": "2026-04-05T21:06:35+00:00"
         },
         {
             "name": "chrishemmings/oauth2-digitalocean",
@@ -13373,12 +13373,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "958bc6ccdb194912236265e4f36256e55bb0c9da"
+                "reference": "db78064456eb735e368677828095fb7fe5aeda6f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/958bc6ccdb194912236265e4f36256e55bb0c9da",
-                "reference": "958bc6ccdb194912236265e4f36256e55bb0c9da",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/db78064456eb735e368677828095fb7fe5aeda6f",
+                "reference": "db78064456eb735e368677828095fb7fe5aeda6f",
                 "shasum": ""
             },
             "conflict": {
@@ -13799,7 +13799,7 @@
                 "knplabs/knp-snappy": "<=1.4.2",
                 "kohana/core": "<3.3.3",
                 "koillection/koillection": "<1.6.12",
-                "krayin/laravel-crm": "<=1.3",
+                "krayin/laravel-crm": "<=2.2",
                 "kreait/firebase-php": ">=3.2,<3.8.1",
                 "kumbiaphp/kumbiapp": "<=1.1.1",
                 "la-haute-societe/tcpdf": "<6.2.22",
@@ -14062,7 +14062,7 @@
                 "roadiz/documents": "<2.3.42|>=2.4,<2.5.44|>=2.6,<2.6.28|>=2.7,<2.7.9",
                 "robrichards/xmlseclibs": "<3.1.5",
                 "roots/soil": "<4.1",
-                "roundcube/roundcubemail": "<1.5.10|>=1.6,<1.6.11",
+                "roundcube/roundcubemail": "<1.5.10|>=1.6,<1.6.11|>=1.7.0.0-beta,<1.7.0.0-RC5-dev",
                 "rudloff/alltube": "<3.0.3",
                 "rudloff/rtmpdump-bin": "<=2.3.1",
                 "s-cart/core": "<=9.0.5",
@@ -14415,7 +14415,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-03T04:48:53+00:00"
+            "time": "2026-04-04T07:24:55+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -14650,16 +14650,16 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "8.0.0",
+            "version": "8.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "a2b6d09d7729ee87d605a439469f9dcc39be5ea3"
+                "reference": "9c957d730257f49c873f3761674559bd90098a7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/a2b6d09d7729ee87d605a439469f9dcc39be5ea3",
-                "reference": "a2b6d09d7729ee87d605a439469f9dcc39be5ea3",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/9c957d730257f49c873f3761674559bd90098a7d",
+                "reference": "9c957d730257f49c873f3761674559bd90098a7d",
                 "shasum": ""
             },
             "require": {
@@ -14672,7 +14672,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "8.0-dev"
+                    "dev-main": "8.1-dev"
                 }
             },
             "autoload": {
@@ -14705,7 +14705,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/diff/issues",
                 "security": "https://github.com/sebastianbergmann/diff/security/policy",
-                "source": "https://github.com/sebastianbergmann/diff/tree/8.0.0"
+                "source": "https://github.com/sebastianbergmann/diff/tree/8.1.0"
             },
             "funding": [
                 {
@@ -14725,20 +14725,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-02-06T04:42:27+00:00"
+            "time": "2026-04-05T12:02:33+00:00"
         },
         {
             "name": "sebastian/environment",
-            "version": "9.1.0",
+            "version": "9.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "c4a2dc54b1a24e13ef1839cbb5947b967cbae853"
+                "reference": "c0964f624fcac84e318fc9ef0193cbb9809a331a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/c4a2dc54b1a24e13ef1839cbb5947b967cbae853",
-                "reference": "c4a2dc54b1a24e13ef1839cbb5947b967cbae853",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/c0964f624fcac84e318fc9ef0193cbb9809a331a",
+                "reference": "c0964f624fcac84e318fc9ef0193cbb9809a331a",
                 "shasum": ""
             },
             "require": {
@@ -14753,7 +14753,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "9.1-dev"
+                    "dev-main": "9.2-dev"
                 }
             },
             "autoload": {
@@ -14781,7 +14781,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/environment/issues",
                 "security": "https://github.com/sebastianbergmann/environment/security/policy",
-                "source": "https://github.com/sebastianbergmann/environment/tree/9.1.0"
+                "source": "https://github.com/sebastianbergmann/environment/tree/9.2.0"
             },
             "funding": [
                 {
@@ -14801,7 +14801,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-22T06:31:50+00:00"
+            "time": "2026-04-05T07:07:20+00:00"
         },
         {
             "name": "sebastian/exporter",
