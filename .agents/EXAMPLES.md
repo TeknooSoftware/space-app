@@ -1,29 +1,11 @@
 # Code Examples for Space
 
-**Detailed code examples demonstrating Space patterns and conventions.**
-
-This file provides concrete examples of the architectural patterns and coding standards described in 
-[AGENTS.md](../AGENTS.md). Use these examples as templates when writing new code.
-
-**Navigation**:
-- [← Back to AGENTS.md](../AGENTS.md) - Main documentation
-- [← Back to .agents/](README.md) - .agents/ directory overview
-- [← Back to CLAUDE.md](../CLAUDE.md) - Claude Code guidance
-
----
-
-## Table of Contents
-
-- [Extension Example](#extension-example)
-- [Teknoo States Example](#teknoo-states-example)
-- [Recipe Plan Example](#recipe-plan-example)
-- [Recipe Step Example](#recipe-step-example)
+Concrete examples of Space patterns and conventions. Use as templates when writing new code.
+See [../AGENTS.md](../AGENTS.md) for architecture context.
 
 ---
 
 ## Extension Example
-
-Extensions allow you to add functionality to Space without modifying core code.
 
 ### Extension Structure
 
@@ -37,17 +19,7 @@ extensions/MyExtension/
 └── assets/                 # CSS, JS files
 ```
 
-### Extension Registration
-
-Extensions are registered in `extensions/enabled.json`:
-
-```json
-[
-    "Teknoo\\Space\\Extensions\\MyExtension\\Extension"
-]
-```
-
-### Extension Class Implementation
+### Extension Class
 
 ```php
 <?php
@@ -108,13 +80,13 @@ class Extension implements ExtensionInterface
 }
 ```
 
+Register in `extensions/enabled.json`: `["Teknoo\\Space\\Extensions\\MyExtension\\Extension"]`
+
 ---
 
 ## Teknoo States Example
 
-The State pattern allows objects to change behavior based on their internal state.
-
-### State Classes
+State pattern — objects change behavior based on internal state.
 
 ```php
 <?php
@@ -123,7 +95,6 @@ declare(strict_types=1);
 
 use Teknoo\States\State\AbstractState;
 
-// Define states as separate classes
 class English extends AbstractState
 {
     public function sayHello(): \Closure
@@ -145,8 +116,6 @@ class French extends AbstractState
 }
 ```
 
-### Main Class with Automated State Switching
-
 ```php
 <?php
 
@@ -160,7 +129,6 @@ use Teknoo\States\Automated\AutomatedTrait;
 use Teknoo\States\Proxy\ProxyInterface;
 use Teknoo\States\Proxy\ProxyTrait;
 
-// Main class with state switching based on properties
 #[StateClass(English::class)]
 #[StateClass(French::class)]
 #[PropertyAssertion(English::class, ['country', IsEqual::class, 'en'])]
@@ -187,19 +155,16 @@ class Person implements ProxyInterface, AutomatedInterface
     public function setCountry(string $country): self
     {
         $this->country = $country;
-        $this->updateStates(); // Triggers automatic state switching
+        $this->updateStates(); // triggers automatic state switching
         return $this;
     }
 }
 ```
 
-### Usage
-
 ```php
 $person = new Person();
 $person->setName('John')->setCountry('en');
 echo $person->sayHello(); // "Good morning, John"
-
 $person->setCountry('fr');
 echo $person->sayHello(); // "Bonjour, John"
 ```
@@ -208,8 +173,8 @@ echo $person->sayHello(); // "Bonjour, John"
 
 ## Recipe Plan Example
 
-Plans orchestrate workflows by combining multiple steps. They implement `EditablePlanInterface` to allow extensions to
-modify them.
+Plans orchestrate workflows by composing steps. Implement `EditablePlanInterface` so extensions
+can modify them.
 
 ```php
 <?php
@@ -242,15 +207,12 @@ class Dashboard implements EditablePlanInterface
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        // Add steps with priority (lower = earlier execution)
-        $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);
-        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 20);
-        $recipe = $recipe->cook($this->render, Render::class, [], 50);
+        $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);        // priority 10
+        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 20); // priority 20
+        $recipe = $recipe->cook($this->render, Render::class, [], 50);                // priority 50
 
-        // Error handler
         $recipe = $recipe->onError(new Bowl($this->renderError, []));
 
-        // Add data to workplan
         $this->addToWorkplan('errorTemplate', $this->defaultErrorTemplate);
 
         return $recipe;
@@ -258,19 +220,17 @@ class Dashboard implements EditablePlanInterface
 }
 ```
 
-### Key Concepts
-
-- **`cook()`**: Adds a step to the recipe with a priority (lower = earlier)
-- **`onError()`**: Defines error handling behavior
-- **`addToWorkplan()`**: Adds data available to all steps
-- **`EditablePlanTrait`**: Allows extensions to modify the plan
+- `cook($step, $class, $mapping, $priority)` — lower priority = earlier execution
+- `onError()` — defines error handler
+- `addToWorkplan()` — data available to all steps
+- `EditablePlanTrait` — allows extensions to inject/modify steps
 
 ---
 
 ## Recipe Step Example
 
-Steps are individual operations in a workflow. They receive dependencies via constructor injection and workflow data via
-`__invoke()` parameters.
+Steps are individual operations. Dependencies injected via constructor; workflow data via
+`__invoke()` parameters matched by type from the workplan.
 
 ```php
 <?php
@@ -297,19 +257,15 @@ class LoadEnvironments
         ManagerInterface $manager,
         ?Account $accountInstance = null,
     ): self {
-        // Create a promise to handle async result
         $fetchedPromise = new Promise(
-            // Success callback
             static function (iterable $environments) use ($manager): void {
                 $manager->updateWorkPlan([
                     AccountWallet::class => new AccountWallet($environments),
                 ]);
             },
-            // Error callback
             static fn (\Throwable $error) => $manager->error($error)
         );
 
-        // Execute query with promise
         $this->loader->query(
             new LoadFromAccountQuery($accountInstance),
             $fetchedPromise,
@@ -320,10 +276,7 @@ class LoadEnvironments
 }
 ```
 
-### Key Concepts
-
-- **Constructor Injection**: Dependencies (loaders, services) are injected via constructor
-- **`__invoke()` Parameters**: Workflow data from the workplan is passed as parameters
-- **`ManagerInterface`**: Used to update the workplan or signal errors
-- **`Promise`**: Handles asynchronous operations with success/error callbacks
-- **`updateWorkPlan()`**: Adds or updates data in the workflow context
+- `__invoke()` params are resolved from the workplan by type
+- `manager->updateWorkPlan()` — adds/updates data in workflow context
+- `manager->error()` — signals failure up the chain
+- `Promise` — handles async success/error callbacks

@@ -1,61 +1,46 @@
 # Feedback Index
 
-**Central index of all feedback entries from AI agent sessions.**
-
-This index helps agents learn from past challenges and avoid repeating mistakes. 
-Read this at the **start of every session**.
-
-**Navigation**:
-- [← Back to .agents/](../README.md) - .agents/ directory overview
-- [← Back to AGENTS.md](../../AGENTS.md#feedback-loop) - Feedback loop documentation
-- [→ Feedback README](README.md) - Feedback system explanation
-
-**How to use**:
-- **Session Start**: Read recent entries (last 5-10) for patterns
-- **After Task**: Create new feedback file and update this index
-- **Look for**: Missing context, recurring blockers, common patterns
-
-**Format**: See [AGENTS.md](../../AGENTS.md#feedback-loop) for feedback file format and workflow.
+Central knowledge base from AI agent sessions. **Read at every session start.**
+After each task: create `YYYY-MM-DD-task-name.md` here, then add an entry below.
 
 ---
 
 ## Recent Feedback Entries
 
-### 2026-02-02 - [Example Task](2026-02-02-example-task.md)
-**Status**: ✅ Resolved
+### 2026-02-02 — [Example Task](2026-02-02-example-task.md)
 
-Created feedback system with index, templates, and workflow integration.
+**Status**: ✅ Resolved — Created feedback system (index, templates, workflow integration).
 
 ---
 
 ## Common Patterns
 
 ### Documentation Gaps
-- (Will be populated as patterns emerge from feedback)
+
+- *(populate as patterns emerge)*
 
 ### Recurring Blockers
-- (Will be populated as patterns emerge from feedback)
+
+- *(populate as patterns emerge)*
 
 ### Frequently Missing Context
-- (Will be populated as patterns emerge from feedback)
+
+- *(populate as patterns emerge)*
 
 ---
 
 ## Legend
 
-- ⚠️ **Needs attention** - Issue not yet addressed
-- ✅ **Resolved** - Issue fixed, documentation updated
-- 📝 **Documented** - Added to AGENTS.md or other docs
-- 🔄 **In Progress** - Currently being addressed
-
----
+- ⚠️ Needs attention — not yet addressed
+- ✅ Resolved — fixed, docs updated
+- 📝 Documented — added to AGENTS.md or other docs
+- 🔄 In Progress — currently being addressed
 
 ## Adding New Entries
 
-**See [AGENTS.md](../../AGENTS.md#feedback-loop) for complete instructions.**
-
-Quick steps:
-1. Create feedback file: `YYYY-MM-DD-task-name.md`
-2. Add entry at top of "Recent Feedback Entries" above
+1. Create `YYYY-MM-DD-task-name.md` in this directory
+2. Add entry at top of "Recent Feedback Entries": `### YYYY-MM-DD — [Task Name](file.md) **Status**: icon`
 3. Update "Common Patterns" if applicable
-4. Use format: `### YYYY-MM-DD - [Task Name](link.md) **Status**: ⚠️/✅/📝/🔄`
+
+File sections: Task Summary · Missing Precision · Blockers · Suggestions · Lessons Learned.
+See [AGENTS.md](../../AGENTS.md#task-management--feedback-loop) for full format.
