@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c46e42ea45cb1b39f758d3150442c504",
+    "content-hash": "6463a30c7b63137e4bcbb43d37d1b870",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -13278,16 +13278,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.1.3",
+            "version": "13.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "06184715ee25f3af84d3b4a9ce28ff1f92bd0bfc"
+                "reference": "f51a678e41401c9b3eb3d3e506c054fee215dd93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/06184715ee25f3af84d3b4a9ce28ff1f92bd0bfc",
-                "reference": "06184715ee25f3af84d3b4a9ce28ff1f92bd0bfc",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f51a678e41401c9b3eb3d3e506c054fee215dd93",
+                "reference": "f51a678e41401c9b3eb3d3e506c054fee215dd93",
                 "shasum": ""
             },
             "require": {
@@ -13307,7 +13307,7 @@
                 "phpunit/php-text-template": "^6.0.0",
                 "phpunit/php-timer": "^9.0.0",
                 "sebastian/cli-parser": "^5.0.0",
-                "sebastian/comparator": "^8.1.1",
+                "sebastian/comparator": "^8.1.2",
                 "sebastian/diff": "^8.1.0",
                 "sebastian/environment": "^9.2.0",
                 "sebastian/exporter": "^8.0.1",
@@ -13357,7 +13357,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.1.3"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.1.4"
             },
             "funding": [
                 {
@@ -13365,7 +13365,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-04-13T05:40:20+00:00"
+            "time": "2026-04-15T05:07:43+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -13373,12 +13373,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "cb0cd5e07a530b16b21f52bbfc0c6f142d00d1ca"
+                "reference": "f8c7911d543be053da1601797a9d471110222b08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/cb0cd5e07a530b16b21f52bbfc0c6f142d00d1ca",
-                "reference": "cb0cd5e07a530b16b21f52bbfc0c6f142d00d1ca",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f8c7911d543be053da1601797a9d471110222b08",
+                "reference": "f8c7911d543be053da1601797a9d471110222b08",
                 "shasum": ""
             },
             "conflict": {
@@ -13508,7 +13508,7 @@
                 "codingms/modules": "<4.3.11|>=5,<5.7.4|>=6,<6.4.2|>=7,<7.5.5",
                 "commerceteam/commerce": ">=0.9.6,<0.9.9",
                 "components/jquery": ">=1.0.3,<3.5",
-                "composer/composer": "<1.10.27|>=2,<2.2.26|>=2.3,<2.9.3",
+                "composer/composer": "<1.10.27|>=2,<2.2.27|>=2.3,<2.9.6",
                 "concrete5/concrete5": "<9.4.8",
                 "concrete5/core": "<8.5.8|>=9,<9.1",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
@@ -13525,7 +13525,7 @@
                 "cpsit/typo3-mailqueue": "<0.4.5|>=0.5,<0.5.2",
                 "craftcms/aws-s3": ">=2.0.2,<=2.2.4",
                 "craftcms/azure-blob": ">=2.0.0.0-beta1,<=2.1",
-                "craftcms/cms": "<=4.17.7|>=5,<=5.9.13",
+                "craftcms/cms": "<=4.17.8|>=5,<5.9.15",
                 "craftcms/commerce": ">=4,<4.11|>=5,<5.6",
                 "craftcms/composer": ">=4.0.0.0-RC1-dev,<=4.10|>=5.0.0.0-RC1-dev,<=5.5.1",
                 "craftcms/craft": ">=3.5,<=4.16.17|>=5.0.0.0-RC1-dev,<=5.8.21",
@@ -13934,8 +13934,8 @@
                 "october/backend": "<1.1.2",
                 "october/cms": "<1.0.469|==1.0.469|==1.0.471|==1.1.1",
                 "october/october": "<3.7.5",
-                "october/rain": "<1.0.472|>=1.1,<1.1.2",
-                "october/system": "<=3.7.12|>=4,<=4.0.11",
+                "october/rain": "<=3.7.13|>=4,<=4.1.9",
+                "october/system": "<=3.7.13|>=4,<=4.1.9",
                 "oliverklee/phpunit": "<3.5.15",
                 "omeka/omeka-s": "<4.0.3",
                 "onelogin/php-saml": "<2.21.1|>=3,<3.8.1|>=4,<4.3.1",
@@ -14068,6 +14068,7 @@
                 "rudloff/rtmpdump-bin": "<=2.3.1",
                 "s-cart/core": "<=9.0.5",
                 "s-cart/s-cart": "<6.9",
+                "s9y/serendipity": "<2.6",
                 "sabberworm/php-css-parser": ">=1,<1.0.1|>=2,<2.0.1|>=3,<3.0.1|>=4,<4.0.1|>=5,<5.0.9|>=5.1,<5.1.3|>=5.2,<5.2.1|>=6,<6.0.2|>=7,<7.0.4|>=8,<8.0.1|>=8.1,<8.1.1|>=8.2,<8.2.1|>=8.3,<8.3.1",
                 "sabre/dav": ">=1.6,<1.7.11|>=1.8,<1.8.9",
                 "saloonphp/saloon": "<4",
@@ -14317,7 +14318,7 @@
                 "wpcloud/wp-stateless": "<3.2",
                 "wpglobus/wpglobus": "<=1.9.6",
                 "wpmetabox/meta-box": "<5.11.2",
-                "wwbn/avideo": "<=26",
+                "wwbn/avideo": "<=29",
                 "xataface/xataface": "<3",
                 "xpressengine/xpressengine": "<3.0.15",
                 "yab/quarx": "<2.4.5",
@@ -14417,7 +14418,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-14T01:37:23+00:00"
+            "time": "2026-04-15T00:40:17+00:00"
         },
         {
             "name": "sebastian/cli-parser",
