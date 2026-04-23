@@ -1,5 +1,22 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.2] - 2026-04-23
+### Stable Release
+- Update vendor
+  - illuminate libraries 
+  - phpunit
+  - phpstan
+  - symfony/property-access
+  - symfony/monolog-bundle
+  - bacon/bacon-qr-code
+  - phpseclib
+- Update to Teknoo 
+  - East Foundation 9.2.1
+  - East Common 4.4.1
+- Normalize Twig extensions about api in Space
+- Fix issue with errors from Kubernetes Dashboard
+- Optimize AGENTS file
+
 ## [2.3.1] - 2026-04-01
 ### Stable Release
 - Update to Symfony `7.4.8` and `8.0.8`
