@@ -39,6 +39,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Template\EngineInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
@@ -70,6 +71,8 @@ class DashboardFrameTest extends TestCase
 
     private UrlGeneratorInterface&Stub $urlGenerator;
 
+    private EngineInterface&Stub $template;
+
     /**
      * {@inheritdoc}
      */
@@ -81,6 +84,7 @@ class DashboardFrameTest extends TestCase
         $this->responseFactory = $this->createStub(ResponseFactoryInterface::class);
         $this->streamFactory = $this->createStub(StreamFactoryInterface::class);
         $this->urlGenerator = $this->createStub(UrlGeneratorInterface::class);
+        $this->template = $this->createStub(EngineInterface::class);
 
         $clusterConfig = new ClusterConfig(
             name: 'foo',
@@ -106,6 +110,7 @@ class DashboardFrameTest extends TestCase
             $this->responseFactory,
             $this->streamFactory,
             $this->urlGenerator,
+            $this->template,
         );
     }
 

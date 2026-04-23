@@ -36,6 +36,7 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Teknoo\East\Common\Service\FindSlugService;
 use Teknoo\East\CommonBundle\Contracts\Recipe\Step\BuildQrCodeInterface;
+use Teknoo\East\Foundation\Template\EngineInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
@@ -460,6 +461,7 @@ return [
             responseFactory: Psr17FactoryDiscovery::findResponseFactory(),
             streamFactory: $container->get(StreamFactoryInterface::class),
             urlGenerator: $container->get('router'),
+            templating: $container->get(EngineInterface::class),
         );
     },
 

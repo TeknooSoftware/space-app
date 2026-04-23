@@ -124,6 +124,9 @@ teknoo.space.error.contact.bot_forbidden: "Ungranted bot"
 teknoo.space.error.contact.file_too_large: 'File too large, max size is 200k'
 teknoo.space.error.contact.invalid_file_type: 'Invalid file type, accepts only texte file and images'
 teknoo.space.error.contact.missing.receiver: "Receiver address is not defined"
+teknoo.space.error.dashboard.server.description: 'The dashboard server could not be reached. Please try again later.'
+teknoo.space.error.dashboard.server.title: 'Dashboard Unavailable'
+teknoo.space.error.dashboard.server.upper: '502'
 teknoo.space.error.messenger.handler.message-can-not-decrypted: "Configuration error, agent can not decrypt messages"
 teknoo.space.error.space_account.account.deleting: "Can not delete the account"
 teknoo.space.error.space_account.account.fetching: "Main account's data can not be fetched"

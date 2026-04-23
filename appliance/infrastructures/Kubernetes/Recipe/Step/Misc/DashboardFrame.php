@@ -33,14 +33,17 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Common\Object\User;
+use Teknoo\East\Common\Recipe\Step\Traits\TemplateTrait;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Foundation\Template\EngineInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Throwable;
 
 use function http_build_query;
 use function in_array;
@@ -55,12 +58,18 @@ use function str_contains;
  */
 class DashboardFrame implements DashboardFrameInterface
 {
+    use TemplateTrait;
+
     public function __construct(
         private readonly HttpMethodsClientInterface $httpMethodsClient,
-        private readonly ResponseFactoryInterface $responseFactory,
-        private readonly StreamFactoryInterface $streamFactory,
+        ResponseFactoryInterface $responseFactory,
+        StreamFactoryInterface $streamFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
+        EngineInterface $templating,
     ) {
+        $this->templating = $templating;
+        $this->streamFactory = $streamFactory;
+        $this->responseFactory = $responseFactory;
     }
 
     private function getDashboardUrl(ClusterConfig $cluster, ?AccountEnvironment $env, string $wildcard): string
@@ -134,13 +143,24 @@ class DashboardFrame implements DashboardFrameInterface
 
         $dashboardUrl = $this->getDashboardUrl($clusterConfig, $accountEnvironment, $wildcard);
 
-        $responseDashboard = $this->httpMethodsClient->send(
-            method: $serverRequest->getMethod(),
-            uri: $dashboardUrl,
-            headers: [
-                'Authorization' => 'Bearer ' . trim($accountEnvironment?->getToken() ?? $clusterConfig->token),
-            ],
-        );
+        try {
+            $responseDashboard = $this->httpMethodsClient->send(
+                method: $serverRequest->getMethod(),
+                uri: $dashboardUrl,
+                headers: [
+                    'Authorization' => 'Bearer ' . trim($accountEnvironment?->getToken() ?? $clusterConfig->token),
+                ],
+            );
+        } catch (Throwable $error) {
+            $this->render(
+                client: $client,
+                view: '@TeknooSpace/Dashboard/server-error.html.twig',
+                parameters: ['error' => $error],
+                status: 502,
+            );
+
+            return $this;
+        }
 
         $response = $this->responseFactory->createResponse(
             $responseDashboard->getStatusCode(),
