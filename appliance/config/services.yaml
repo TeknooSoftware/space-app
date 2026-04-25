@@ -161,7 +161,7 @@ services:
             - '@logger'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
         tags:
-            - 'messenger.message_handler'
+            - { name: messenger.message_handler, sign: true }
 
     Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler:
         class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler'
@@ -178,7 +178,7 @@ services:
             - '@Teknoo\Space\Service\PersistedVariableEncryption'
             - '%env(default:teknoo.space.default.new_job.waiting_time:SPACE_NEW_JOB_WAITING_TIME)%'
         tags:
-            - 'messenger.message_handler'
+            - { name: messenger.message_handler, sign: true }
 
     Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\RunJobHandler:
         class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\RunJobHandler'
@@ -191,7 +191,7 @@ services:
             - '@logger'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
         tags:
-            - 'messenger.message_handler'
+            - { name: messenger.message_handler, sign: true }
 
     ########################
     # Recipe
