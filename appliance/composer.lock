@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40d11cfba50f702c9ba8b7561b6a25a3",
+    "content-hash": "8cb9289ca198c4220140b6fde2b5214d",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1546,16 +1546,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.6.0",
+            "version": "v13.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "8337eab46f512633d36df6b2f0ee54bf309c1da1"
+                "reference": "36cfc25fc23ca18714fc8ee6abc947ee99c18462"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/8337eab46f512633d36df6b2f0ee54bf309c1da1",
-                "reference": "8337eab46f512633d36df6b2f0ee54bf309c1da1",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/36cfc25fc23ca18714fc8ee6abc947ee99c18462",
+                "reference": "36cfc25fc23ca18714fc8ee6abc947ee99c18462",
                 "shasum": ""
             },
             "require": {
@@ -1601,11 +1601,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-04-18T13:28:59+00:00"
+            "time": "2026-04-27T18:16:57+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.6.0",
+            "version": "v13.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1651,16 +1651,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.6.0",
+            "version": "v13.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "022d9816b4ff052a3db5946a86be3cd2e224db0f"
+                "reference": "a5f08426a807faac42616f733113ba263779f2dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/022d9816b4ff052a3db5946a86be3cd2e224db0f",
-                "reference": "022d9816b4ff052a3db5946a86be3cd2e224db0f",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/a5f08426a807faac42616f733113ba263779f2dd",
+                "reference": "a5f08426a807faac42616f733113ba263779f2dd",
                 "shasum": ""
             },
             "require": {
@@ -1695,11 +1695,11 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-04-12T17:46:48+00:00"
+            "time": "2026-04-24T14:55:56+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.6.0",
+            "version": "v13.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -2016,16 +2016,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v2.0.12",
+            "version": "v2.0.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "a6abb4e54f6fcd3138120b9ad497f0bd146f9919"
+                "reference": "b566ee0dd251f3c4078bed003a7ce015f5ea6dce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/a6abb4e54f6fcd3138120b9ad497f0bd146f9919",
-                "reference": "a6abb4e54f6fcd3138120b9ad497f0bd146f9919",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/b566ee0dd251f3c4078bed003a7ce015f5ea6dce",
+                "reference": "b566ee0dd251f3c4078bed003a7ce015f5ea6dce",
                 "shasum": ""
             },
             "require": {
@@ -2073,7 +2073,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2026-04-14T13:33:34+00:00"
+            "time": "2026-04-16T14:03:50+00:00"
         },
         {
             "name": "lcobucci/clock",
@@ -3113,16 +3113,16 @@
         },
         {
             "name": "omines/oauth2-gitlab",
-            "version": "3.8.0",
+            "version": "3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/omines/oauth2-gitlab.git",
-                "reference": "4453c78bb7406a32b7abcae6146178e29fd7d53e"
+                "reference": "179e1a8a55da4adfaff019792d78e4e3cb4ec6d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/omines/oauth2-gitlab/zipball/4453c78bb7406a32b7abcae6146178e29fd7d53e",
-                "reference": "4453c78bb7406a32b7abcae6146178e29fd7d53e",
+                "url": "https://api.github.com/repos/omines/oauth2-gitlab/zipball/179e1a8a55da4adfaff019792d78e4e3cb4ec6d5",
+                "reference": "179e1a8a55da4adfaff019792d78e4e3cb4ec6d5",
                 "shasum": ""
             },
             "require": {
@@ -3132,18 +3132,18 @@
                 "php": ">=8.3"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.90.0",
-                "guzzlehttp/psr7": "^2.8.0",
-                "http-interop/http-factory-guzzle": "^1.2",
-                "infection/infection": "^0.31.9",
+                "friendsofphp/php-cs-fixer": "^3.95.1",
+                "guzzlehttp/psr7": "^2.9.0",
+                "http-interop/http-factory-guzzle": "^1.2.1",
+                "infection/infection": "^0.32.7",
                 "m4tthumphrey/php-gitlab-api": "^11.14|^12.0",
                 "mockery/mockery": "^1.6.12",
                 "php-http/guzzle7-adapter": "^1.1.0",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.1.32",
+                "phpstan/phpstan": "^2.1.51",
                 "phpstan/phpstan-mockery": "^2.0.0",
-                "phpstan/phpstan-phpunit": "^2.0.8",
-                "phpunit/phpunit": "^12.4.4"
+                "phpstan/phpstan-phpunit": "^2.0.16",
+                "phpunit/phpunit": "^12.5.10|^13.1.7"
             },
             "suggest": {
                 "m4tthumphrey/php-gitlab-api": "For further API usage using the acquired OAuth2 token"
@@ -3181,9 +3181,9 @@
             ],
             "support": {
                 "issues": "https://github.com/omines/oauth2-gitlab/issues",
-                "source": "https://github.com/omines/oauth2-gitlab/tree/3.8.0"
+                "source": "https://github.com/omines/oauth2-gitlab/tree/3.8.1"
             },
-            "time": "2025-11-22T22:05:41+00:00"
+            "time": "2026-04-28T09:10:44+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -10519,34 +10519,34 @@
         },
         {
             "name": "teknoo/bridge-phpdi-symfony",
-            "version": "7.1.2",
+            "version": "7.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/bridge-phpdi-symfony.git",
-                "reference": "84e92a75684021e4f5c188e31d6c9820565d4dc9"
+                "reference": "11613dad554095199d1ecec1e0840532e1097deb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/bridge-phpdi-symfony/zipball/84e92a75684021e4f5c188e31d6c9820565d4dc9",
-                "reference": "84e92a75684021e4f5c188e31d6c9820565d4dc9",
+                "url": "https://api.github.com/repos/TeknooSoftware/bridge-phpdi-symfony/zipball/11613dad554095199d1ecec1e0840532e1097deb",
+                "reference": "11613dad554095199d1ecec1e0840532e1097deb",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.4",
                 "php-di/php-di": "^7.1.1",
-                "symfony/config": "^6.4.24||^7.3||^8",
-                "symfony/dependency-injection": "^6.4.24||^7.3||^8",
-                "symfony/http-kernel": "^6.4.24||^7.3||^8"
+                "symfony/config": "^6.4.24||^7.4||^8",
+                "symfony/dependency-injection": "^6.4.24||^7.4||^8",
+                "symfony/http-kernel": "^6.4.24||^7.4||^8"
             },
             "require-dev": {
-                "phpstan/phpstan": "^2.1.33",
-                "phpunit/phpunit": "^12.5.2",
+                "phpstan/phpstan": "^2.1.53",
+                "phpunit/phpunit": "^13",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
-                "symfony/error-handler": "^6.4.24||^7.3||^8",
-                "symfony/filesystem": "^6.4.24||^7.3||^8",
-                "symfony/property-access": "^6.4.24||^7.3||^8",
-                "symfony/yaml": "^6.4.24||^7.3||^8"
+                "symfony/error-handler": "^6.4.24||^7.4||^8",
+                "symfony/filesystem": "^6.4.24||^7.4||^8",
+                "symfony/property-access": "^6.4.24||^7.4||^8",
+                "symfony/yaml": "^6.4.24||^7.4||^8"
             },
             "type": "library",
             "extra": {
@@ -10597,7 +10597,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-12-08T14:47:02+00:00"
+            "time": "2026-04-28T20:39:36+00:00"
         },
         {
             "name": "teknoo/east-common",
@@ -11435,16 +11435,16 @@
         },
         {
             "name": "teknoo/recipe",
-            "version": "7.2.2",
+            "version": "7.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/recipe.git",
-                "reference": "45842185732b90f70956e93d35435f659e11cfd2"
+                "reference": "29fb8536d4b3d80e981b91b5ec88624a19ee5720"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/45842185732b90f70956e93d35435f659e11cfd2",
-                "reference": "45842185732b90f70956e93d35435f659e11cfd2",
+                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/29fb8536d4b3d80e981b91b5ec88624a19ee5720",
+                "reference": "29fb8536d4b3d80e981b91b5ec88624a19ee5720",
                 "shasum": ""
             },
             "require": {
@@ -11453,14 +11453,14 @@
                 "teknoo/states": "^7.1.2"
             },
             "require-dev": {
-                "behat/behat": "^3.27",
-                "nikic/php-parser": "^5.6.2",
+                "behat/behat": "^3.29",
+                "nikic/php-parser": "^5.7",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.1.33",
-                "phpunit/phpunit": "^12.5.2",
+                "phpstan/phpstan": "^2.1.53",
+                "phpunit/phpunit": "^13.0.1",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
-                "symfony/property-access": "^6.4||^7.3||^8"
+                "symfony/property-access": "^6.4||^7.4||^8"
             },
             "type": "library",
             "extra": {
@@ -11514,7 +11514,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-12-08T12:36:17+00:00"
+            "time": "2026-04-28T20:38:30+00:00"
         },
         {
             "name": "teknoo/states",
@@ -12771,11 +12771,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.51",
+            "version": "2.1.53",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc3b523c45e714c70de2ac5113b958223b55dc59",
-                "reference": "dc3b523c45e714c70de2ac5113b958223b55dc59",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ef67586798c003274797b288a68b221e4270dca7",
+                "reference": "ef67586798c003274797b288a68b221e4270dca7",
                 "shasum": ""
             },
             "require": {
@@ -12820,7 +12820,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-21T18:22:01+00:00"
+            "time": "2026-04-28T16:09:00+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
