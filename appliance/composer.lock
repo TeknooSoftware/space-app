@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cb9289ca198c4220140b6fde2b5214d",
+    "content-hash": "4d0468ca00ea32c8571f17ab9dd191bf",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -12771,11 +12771,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.53",
+            "version": "2.1.54",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ef67586798c003274797b288a68b221e4270dca7",
-                "reference": "ef67586798c003274797b288a68b221e4270dca7",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
+                "reference": "8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
                 "shasum": ""
             },
             "require": {
@@ -12820,7 +12820,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-28T16:09:00+00:00"
+            "time": "2026-04-29T13:31:09+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13376,12 +13376,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "08cd07f04fb07fb4d316e956801d57b700cf7096"
+                "reference": "87a281378fdad8f5926efe259f6ca72e7a395e68"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/08cd07f04fb07fb4d316e956801d57b700cf7096",
-                "reference": "08cd07f04fb07fb4d316e956801d57b700cf7096",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/87a281378fdad8f5926efe259f6ca72e7a395e68",
+                "reference": "87a281378fdad8f5926efe259f6ca72e7a395e68",
                 "shasum": ""
             },
             "conflict": {
@@ -13997,7 +13997,7 @@
                 "phpoffice/common": "<0.2.9",
                 "phpoffice/math": "<=0.2",
                 "phpoffice/phpexcel": "<=1.8.2",
-                "phpoffice/phpspreadsheet": "<1.30|>=2,<2.1.12|>=2.2,<2.4|>=3,<3.10|>=4,<5",
+                "phpoffice/phpspreadsheet": "<=1.30.3|>=2,<=2.1.15|>=2.2,<=2.4.4|>=3,<=3.10.4|>=4,<=5.6",
                 "phppgadmin/phppgadmin": "<=7.13",
                 "phpseclib/phpseclib": "<2.0.53|>=3,<3.0.51",
                 "phpservermon/phpservermon": "<3.6",
@@ -14425,7 +14425,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-24T17:22:29+00:00"
+            "time": "2026-04-28T23:21:55+00:00"
         },
         {
             "name": "sebastian/cli-parser",
