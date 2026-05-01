@@ -1,5 +1,18 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.3] - 2026-05-01
+### Stable Release
+- Update vendor
+  - Symfony 8.0.9 / 7.4.9
+  - PhpStan fix
+  - Illuminates libraries
+  - Laravel Serializable Closure
+  - Doctrine/persistence
+  - Teknoo East PaaS 5.4.1 
+- Force signing message in symfony messenger
+- Fix false positive in PHPStan
+- Fix dists files names
+
 ## [2.3.2] - 2026-04-23
 ### Stable Release
 - Update vendor
