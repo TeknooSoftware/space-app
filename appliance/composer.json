@@ -68,7 +68,7 @@
         "stevenmaguire/oauth2-microsoft": "^2.2",
         "symfony/amqp-messenger": ">=8.0.9",
         "symfony/console": ">=7.4.9",
-        "symfony/cache-contracts": ">=3.6",
+        "symfony/cache-contracts": ">=3.7",
         "symfony/dotenv": ">=8.0.9",
         "symfony/expression-language": ">=7.4.8",
         "symfony/flex": "^2.10.0",
