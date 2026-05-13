@@ -51,6 +51,8 @@ parameters:
     teknoo.space.default.support.contact: ''
     teknoo.space.default.user.2fa.provider: 'google_authenticator'
 
+    teknoo.space.default.framework.trutest_hosts: ~
+
     teknoo.east.common.admin.rendering.clean_html: true
     teknoo.east.common.rendering.clean_html: true
 
@@ -70,6 +72,8 @@ parameters:
     teknoo.space.mail.constraints.max_file_size: '%env(int:default:teknoo.space.default.mail.constraints.max_file_size:SPACE_MAIL_MAX_FILE_SIZE)%'
 
     teknoo.space.mercure.publishing_enabled: '%env(default:teknoo.space.default.mercure.publishing_enabled:SPACE_MERCURE_PUBLISHING_ENABLED)%'
+
+    teknoo.space.framework.trutest_hosts: '%env(default:teknoo.space.default.framework.trutest_hosts:SPACE_TRUSTED_HOSTS)%'
 
     teknoo.space.messenger.dsn.execute_job: '%env(string:default:teknoo.space.default.messenger.dsn:MESSENGER_EXECUTE_JOB_DSN)%'
     teknoo.space.messenger.dsn.history_sent: '%env(string:default:teknoo.space.default.messenger.dsn:MESSENGER_HISTORY_SENT_DSN)%'

@@ -41,9 +41,10 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 use Throwable;
 
 use function base64_encode;
+use function bin2hex;
 use function hash;
 use function password_hash;
-use function random_int;
+use function random_bytes;
 use function ucfirst;
 
 /**
@@ -290,7 +291,7 @@ class CreateRegistryDeployment
 
     private function createPassword(string $accountNamespace): string
     {
-        return hash("sha256", random_int(1000000, 9999999) . $accountNamespace);
+        return hash("sha256", bin2hex(random_bytes(32)) . $accountNamespace);
     }
 
     private function configureRegistry(

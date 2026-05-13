@@ -5,7 +5,7 @@ framework:
     serializer: ~
     property_info:
         enabled: true
-    trusted_hosts: ~
+    trusted_hosts: '%teknoo.space.framework.trutest_hosts%'
     session:
         cookie_lifetime: 36000
         cookie_path: '/'

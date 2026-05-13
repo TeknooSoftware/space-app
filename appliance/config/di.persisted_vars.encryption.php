@@ -38,7 +38,7 @@ use Throwable;
 
 use function file_get_contents;
 use function is_readable;
-use function is_string;
+use function realpath;
 
 return [
     'teknoo.space.pvars.encryption.algorithm.env_key' => 'SPACE_PERSISTED_VAR_SECURITY_ALGORITHM',
@@ -67,13 +67,20 @@ return [
             $pkPassphrase = $_ENV[$privateKeyPassphraaseEnvKey] ?? null;
             $algo = Algorithm::from($algoValue);
 
+            $varKeyPrefix = 'var/keys/';
+            if ('test' === $_ENV['APP_ENV']) {
+                $varKeyPrefix = 'tests/var/keys';
+            }
+            $varKeyPrefix = realpath($varKeyPrefix);
+
             $privateKey = null;
+            $privatePath = realpath($_ENV[$privateKeyEnvKey] ?? '');
             if (
-                !empty($_ENV[$privateKeyEnvKey])
-                && is_string($_ENV[$privateKeyEnvKey])
-                && is_readable($_ENV[$privateKeyEnvKey])
+                !empty($privatePath)
+                && str_starts_with($privatePath, $varKeyPrefix)
+                && is_readable($privatePath)
             ) {
-                $privateKContent = (string) file_get_contents($_ENV[$privateKeyEnvKey]);
+                $privateKContent = (string) file_get_contents($privatePath);
 
                 $privateKey = match ($algo) {
                     Algorithm::RSA => RSA::loadPrivateKey(
@@ -87,17 +94,19 @@ return [
                 };
             }
 
+            $publicPath = realpath($_ENV[$publicKeyEnvKey] ?? '');
+
             if (
-                empty($_ENV[$publicKeyEnvKey])
-                || !is_string($_ENV[$publicKeyEnvKey])
-                || !is_readable($_ENV[$publicKeyEnvKey])
+                empty($publicPath)
+                || !str_starts_with($publicPath, $varKeyPrefix)
+                || !is_readable($publicPath)
             ) {
                 throw new InvalidConfigurationException(
                     "The public key defined for encryptions of variables is not readable"
                 );
             }
 
-            $publicKContent = (string) file_get_contents($_ENV[$publicKeyEnvKey]);
+            $publicKContent = (string) file_get_contents($publicPath);
 
             $publicKey = match ($algo) {
                 Algorithm::RSA => RSA::loadPublicKey($publicKContent),

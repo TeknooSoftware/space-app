@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b6f7b559be78f0d9aee1db8ce5ce737",
+    "content-hash": "df85f9182cbcb57f102f9644a50cfa45",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11443,16 +11443,16 @@
         },
         {
             "name": "teknoo/kubernetes-client",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/kubernetes-client.git",
-                "reference": "4849d9b64d9803ddfc1b795f2ceb5d2ff105bc24"
+                "reference": "456ed3e1f9725617d5531d3b06f1997970cf89e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/4849d9b64d9803ddfc1b795f2ceb5d2ff105bc24",
-                "reference": "4849d9b64d9803ddfc1b795f2ceb5d2ff105bc24",
+                "url": "https://api.github.com/repos/TeknooSoftware/kubernetes-client/zipball/456ed3e1f9725617d5531d3b06f1997970cf89e7",
+                "reference": "456ed3e1f9725617d5531d3b06f1997970cf89e7",
                 "shasum": ""
             },
             "require": {
@@ -11528,7 +11528,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-03-18T22:17:36+00:00"
+            "time": "2026-05-13T14:41:06+00:00"
         },
         {
             "name": "teknoo/recipe",
@@ -13473,12 +13473,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ec0c867c22e5b8d392815d48e4cc9de37470e8c0"
+                "reference": "61fa235a4c2d7870f22364fb795542e85b709459"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ec0c867c22e5b8d392815d48e4cc9de37470e8c0",
-                "reference": "ec0c867c22e5b8d392815d48e4cc9de37470e8c0",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/61fa235a4c2d7870f22364fb795542e85b709459",
+                "reference": "61fa235a4c2d7870f22364fb795542e85b709459",
                 "shasum": ""
             },
             "conflict": {
@@ -13609,7 +13609,7 @@
                 "codingms/modules": "<4.3.11|>=5,<5.7.4|>=6,<6.4.2|>=7,<7.5.5",
                 "commerceteam/commerce": ">=0.9.6,<0.9.9",
                 "components/jquery": ">=1.0.3,<3.5",
-                "composer/composer": "<2.2.27|>=2.3,<2.9.6",
+                "composer/composer": "<2.2.28|>=2.3,<2.9.8",
                 "concrete5/concrete5": "<9.4.8",
                 "concrete5/core": "<8.5.8|>=9,<9.1",
                 "contao-components/mediaelement": ">=2.14.2,<2.21.1",
@@ -14531,7 +14531,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-11T19:35:52+00:00"
+            "time": "2026-05-13T10:53:46+00:00"
         },
         {
             "name": "sebastian/cli-parser",
