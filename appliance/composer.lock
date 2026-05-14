@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40c1a80201e6f795038b66c6eab016eb",
+    "content-hash": "60614c4fd3a6c8b422165b55979a9f5e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2215,16 +2215,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.33.0",
+            "version": "3.34.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "570b8871e0ce693764434b29154c54b434905350"
+                "reference": "2daaac3b0d4c83ea7ed5d8586e786f5d00f3540e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/570b8871e0ce693764434b29154c54b434905350",
-                "reference": "570b8871e0ce693764434b29154c54b434905350",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/2daaac3b0d4c83ea7ed5d8586e786f5d00f3540e",
+                "reference": "2daaac3b0d4c83ea7ed5d8586e786f5d00f3540e",
                 "shasum": ""
             },
             "require": {
@@ -2292,9 +2292,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.33.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.34.0"
             },
-            "time": "2026-03-25T07:59:30+00:00"
+            "time": "2026-05-14T10:28:08+00:00"
         },
         {
             "name": "league/flysystem-local",
@@ -13473,12 +13473,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "bc5eb5643ac86830769128f1118ec66194008625"
+                "reference": "16706d82a6f250e56047a9e95791a92a8a29f791"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/bc5eb5643ac86830769128f1118ec66194008625",
-                "reference": "bc5eb5643ac86830769128f1118ec66194008625",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/16706d82a6f250e56047a9e95791a92a8a29f791",
+                "reference": "16706d82a6f250e56047a9e95791a92a8a29f791",
                 "shasum": ""
             },
             "conflict": {
@@ -13619,7 +13619,7 @@
                 "contao/core-bundle": "<4.13.57|>=5,<5.3.42|>=5.4,<5.6.5",
                 "contao/listing-bundle": ">=3,<=3.5.30|>=4,<4.4.8",
                 "contao/managed-edition": "<=1.5",
-                "coreshop/core-shop": "<4.1.9",
+                "coreshop/core-shop": "<4.1.9|==5",
                 "corveda/phpsandbox": "<1.3.5",
                 "cosenary/instagram": "<=2.3",
                 "couleurcitron/tarteaucitron-wp": "<0.3",
@@ -14531,7 +14531,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-13T16:50:04+00:00"
+            "time": "2026-05-14T13:38:25+00:00"
         },
         {
             "name": "sebastian/cli-parser",
