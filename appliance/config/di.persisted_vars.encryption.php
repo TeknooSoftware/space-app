@@ -67,11 +67,12 @@ return [
             $pkPassphrase = $_ENV[$privateKeyPassphraaseEnvKey] ?? null;
             $algo = Algorithm::from($algoValue);
 
-            $varKeyPrefix = 'var/keys/';
+            $varKeyPrefix = '/var/keys/';
             if ('test' === $_ENV['APP_ENV']) {
-                $varKeyPrefix = 'tests/var/keys';
+                $varKeyPrefix = '/tests/var/keys';
             }
-            $varKeyPrefix = realpath($varKeyPrefix);
+
+            $varKeyPrefix = realpath(dirname(__DIR__, 1) . $varKeyPrefix);
 
             if (empty($varKeyPrefix)) {
                 throw new InvalidConfigurationException('var/keys directory does not exist');
@@ -81,7 +82,10 @@ return [
             $privatePath = realpath($_ENV[$privateKeyEnvKey] ?? '');
             if (
                 !empty($privatePath)
-                && str_starts_with((string) $privatePath, $varKeyPrefix)
+                && (
+                    str_starts_with((string) $privatePath, $varKeyPrefix)
+                    || str_starts_with((string) $privatePath, '/etc/space')
+                )
                 && is_readable($privatePath)
             ) {
                 $privateKContent = (string) file_get_contents($privatePath);
@@ -102,7 +106,10 @@ return [
 
             if (
                 empty($publicPath)
-                || !str_starts_with((string) $publicPath, $varKeyPrefix)
+                || (
+                    !str_starts_with((string) $publicPath, $varKeyPrefix)
+                    && !str_starts_with((string) $publicPath, '/etc/space')
+                )
                 || !is_readable($publicPath)
             ) {
                 throw new InvalidConfigurationException(
