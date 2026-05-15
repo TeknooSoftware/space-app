@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.4] - 2026-05-15
+### Stable Release
+- Update vendor:
+  - Symfony 7.4.11 and 8.4.11
+  - Symfony Contract
+  - QA Tools
+  - Illuminates
+  - League Flysystem
+- Fix several minor securities issues or riskies behaviors with wrong configuration
+
 ## [2.3.3] - 2026-05-01
 ### Stable Release
 - Update vendor
