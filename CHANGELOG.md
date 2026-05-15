@@ -1,5 +1,9 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.5] - 2026-05-15
+### Stable Release
+- Update about restriction of locations of RSA keys to allow also there locations into /etc
+ 
 ## [2.3.4] - 2026-05-15
 ### Stable Release
 - Update vendor:
