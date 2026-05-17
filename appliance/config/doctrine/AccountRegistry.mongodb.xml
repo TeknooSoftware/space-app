@@ -6,7 +6,9 @@
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
     <document name="Teknoo\Space\Object\Persisted\AccountRegistry" collection="accounts_registries">
-        <id type="string" strategy="UUID"/>
+        <id type="string" strategy="CUSTOM">
+            <generator-option name="class" value="Teknoo\East\Common\Doctrine\IdGenerator\UuidV7Generator"/>
+        </id>
         <field field-name="registryNamespace" name="registry_namespace" type="string" nullable="false"/>
         <field field-name="registryUrl" name="registry_url" type="string" nullable="false"/>
         <field field-name="registryConfigName" name="registry_config_name" type="string" nullable="false"/>

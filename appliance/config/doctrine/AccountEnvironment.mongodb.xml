@@ -6,7 +6,9 @@
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
     <document name="Teknoo\Space\Object\Persisted\AccountEnvironment" collection="accounts_environments">
-        <id type="string" strategy="UUID"/>
+        <id type="string" strategy="CUSTOM">
+            <generator-option name="class" value="Teknoo\East\Common\Doctrine\IdGenerator\UuidV7Generator"/>
+        </id>
         <field field-name="clusterName" name="cluster_name" type="string" nullable="false"/>
         <field field-name="envName" name="environment_name" type="string" nullable="false"/>
         <field field-name="namespace" name="namespace" type="string" nullable="false"/>

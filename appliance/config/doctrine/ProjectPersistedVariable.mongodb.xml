@@ -6,7 +6,9 @@
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
 
     <document name="Teknoo\Space\Object\Persisted\ProjectPersistedVariable" collection="project_persisted_variables">
-        <id type="string" strategy="UUID"/>
+        <id type="string" strategy="CUSTOM">
+            <generator-option name="class" value="Teknoo\East\Common\Doctrine\IdGenerator\UuidV7Generator"/>
+        </id>
         <field field-name="name" name="name" type="string" nullable="false" index="true"/>
         <field field-name="value" name="value" type="string" nullable="true"/>
         <field field-name="envName" name="environment_name" type="string" nullable="false" index="true"/>

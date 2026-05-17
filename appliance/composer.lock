@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6afcb02e1a369126897856f4d81fa3eb",
+    "content-hash": "73374e716d9802089a7c9da599d373bc",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -8634,6 +8634,89 @@
             "time": "2026-04-26T13:13:48+00:00"
         },
         {
+            "name": "symfony/polyfill-uuid",
+            "version": "v1.37.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-uuid.git",
+                "reference": "26dfec253c4cf3e51b541b52ddf7e42cb0908e94"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-uuid/zipball/26dfec253c4cf3e51b541b52ddf7e42cb0908e94",
+                "reference": "26dfec253c4cf3e51b541b52ddf7e42cb0908e94",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "provide": {
+                "ext-uuid": "*"
+            },
+            "suggest": {
+                "ext-uuid": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Uuid\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Grégoire Pineau",
+                    "email": "lyrixx@lyrixx.info"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for uuid functions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "uuid"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-uuid/tree/v1.37.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-04-10T16:19:22+00:00"
+        },
+        {
             "name": "symfony/process",
             "version": "v7.4.11",
             "source": {
@@ -10193,6 +10276,84 @@
             "time": "2026-04-29T15:02:55+00:00"
         },
         {
+            "name": "symfony/uid",
+            "version": "v8.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/uid.git",
+                "reference": "4d9d6510bbe88ebb4608b7200d18606cdf80825c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/uid/zipball/4d9d6510bbe88ebb4608b7200d18606cdf80825c",
+                "reference": "4d9d6510bbe88ebb4608b7200d18606cdf80825c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.4",
+                "symfony/polyfill-uuid": "^1.15"
+            },
+            "require-dev": {
+                "symfony/console": "^7.4|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Uid\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Grégoire Pineau",
+                    "email": "lyrixx@lyrixx.info"
+                },
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Provides an object-oriented API to generate and represent UIDs",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "UID",
+                "ulid",
+                "uuid"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/uid/tree/v8.0.9"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-04-30T16:10:06+00:00"
+        },
+        {
             "name": "symfony/validator",
             "version": "v8.0.10",
             "source": {
@@ -10698,16 +10859,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "4.4.1",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "0f3a516e9bc513ba6d93d0e36890277d7120080a"
+                "reference": "88fee540c4512f92693da48a300f3f71ec65423a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/0f3a516e9bc513ba6d93d0e36890277d7120080a",
-                "reference": "0f3a516e9bc513ba6d93d0e36890277d7120080a",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/88fee540c4512f92693da48a300f3f71ec65423a",
+                "reference": "88fee540c4512f92693da48a300f3f71ec65423a",
                 "shasum": ""
             },
             "require": {
@@ -10735,7 +10896,7 @@
                 "league/oauth2-client": "^2.9",
                 "matthiasmullie/minify": "^1.3.75",
                 "phpstan/extension-installer": "^1.4.3",
-                "phpstan/phpstan": "^2.1.38",
+                "phpstan/phpstan": "^2.1.54",
                 "phpunit/phpunit": "^13.0.1",
                 "roave/security-advisories": "dev-latest",
                 "scheb/2fa-backup-code": "^8.3",
@@ -10771,6 +10932,7 @@
                 "symfony/string": "^6.4.24||^7.4||^8",
                 "symfony/translation-contracts": "^3.6.1",
                 "symfony/twig-bridge": "^6.4.24||^7.4||^8",
+                "symfony/uid": "^6.4.24||^7.4||^8",
                 "symfony/ux-live-component": "^2.32||^3",
                 "symfony/ux-twig-component": "^2.32||^3",
                 "symfony/validator": "^6.4.24||^7.4||^8",
@@ -10780,6 +10942,9 @@
                 "twig/cssinliner-extra": "^3.23",
                 "twig/inky-extra": "^3.23",
                 "twig/twig": "^3.23"
+            },
+            "suggest": {
+                "symfony/uid": "Required when using the Doctrine ODM User mapping shipped by this library (UUID v7 id generation)."
             },
             "type": "library",
             "extra": {
@@ -10834,20 +10999,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-14T07:13:27+00:00"
+            "time": "2026-05-17T07:34:57+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.4.1",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "82bba4027827f5ceaed03f51af68e988886a74b2"
+                "reference": "b547f9c5d2a6502949d18a97d79071043df1569d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/82bba4027827f5ceaed03f51af68e988886a74b2",
-                "reference": "82bba4027827f5ceaed03f51af68e988886a74b2",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/b547f9c5d2a6502949d18a97d79071043df1569d",
+                "reference": "b547f9c5d2a6502949d18a97d79071043df1569d",
                 "shasum": ""
             },
             "require": {
@@ -10868,10 +11033,11 @@
                 "symfony/psr-http-message-bridge": "^6.4.24||^7.3||^8",
                 "symfony/security-bundle": "^6.4.24||^7.3||^8",
                 "symfony/security-core": "^6.4.24||^7.3||^8",
+                "symfony/uid": "^6.4.24||^7.3||^8",
                 "symfony/validator": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-common": "^4.4.1",
+                "teknoo/east-common": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2.1",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
@@ -10922,7 +11088,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-14T07:15:10+00:00"
+            "time": "2026-05-17T07:37:45+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -11108,16 +11274,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.4.1",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "2d22467229d2598012b8266a5275c4cabc0cd790"
+                "reference": "55bf58de64f95888b5a0f89ed38ee9415780603b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/2d22467229d2598012b8266a5275c4cabc0cd790",
-                "reference": "2d22467229d2598012b8266a5275c4cabc0cd790",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/55bf58de64f95888b5a0f89ed38ee9415780603b",
+                "reference": "55bf58de64f95888b5a0f89ed38ee9415780603b",
                 "shasum": ""
             },
             "require": {
@@ -11127,7 +11293,7 @@
                 "php": "^8.4",
                 "php-di/php-di": "^7.1.1",
                 "psr/http-client": "^1.0.3",
-                "teknoo/east-common": "^4.4",
+                "teknoo/east-common": "^4.5",
                 "teknoo/east-foundation": "^9.2",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
@@ -11186,6 +11352,7 @@
                 "symfony/string": "^6.4.24||^7.4||^8",
                 "symfony/translation": "^6.4.24||^7.4||^8",
                 "symfony/translation-contracts": "^3.6.1",
+                "symfony/uid": "^6.4.24||^7.4||^8",
                 "symfony/validator": "^6.4.24||^7.4||^8",
                 "symfony/var-exporter": "^6.4.24||^7.4||^8",
                 "symfony/yaml": "^6.4.24||^7.4||^8",
@@ -11258,20 +11425,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-25T10:26:48+00:00"
+            "time": "2026-05-17T07:43:33+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.4.1",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "9d0602f765c58274cacf3e62a0817b10821a0bbf"
+                "reference": "6394f2d99d5dc7bc247f2e3f60ef13c40595d03f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/9d0602f765c58274cacf3e62a0817b10821a0bbf",
-                "reference": "9d0602f765c58274cacf3e62a0817b10821a0bbf",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/6394f2d99d5dc7bc247f2e3f60ef13c40595d03f",
+                "reference": "6394f2d99d5dc7bc247f2e3f60ef13c40595d03f",
                 "shasum": ""
             },
             "require": {
@@ -11307,9 +11474,9 @@
                 "symfony/validator": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-common-symfony": "^4.4",
+                "teknoo/east-common-symfony": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2",
-                "teknoo/east-paas": "^5.4.1",
+                "teknoo/east-paas": "^5.5",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
                 "teknoo/recipe": "^7.2.2",
@@ -11371,7 +11538,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-25T09:41:38+00:00"
+            "time": "2026-05-17T07:49:35+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -11970,16 +12137,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.24.0",
+            "version": "v3.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "a6769aefb305efef849dc25c9fd1653358c148f0"
+                "reference": "0dade995be754556af4dcbf8721d45cb3271f9b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/a6769aefb305efef849dc25c9fd1653358c148f0",
-                "reference": "a6769aefb305efef849dc25c9fd1653358c148f0",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/0dade995be754556af4dcbf8721d45cb3271f9b4",
+                "reference": "0dade995be754556af4dcbf8721d45cb3271f9b4",
                 "shasum": ""
             },
             "require": {
@@ -12034,7 +12201,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.24.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.25.0"
             },
             "funding": [
                 {
@@ -12046,7 +12213,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-03-17T21:31:11+00:00"
+            "time": "2026-05-17T07:41:26+00:00"
         }
     ],
     "packages-dev": [
@@ -12995,16 +13162,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "14.1.8",
+            "version": "14.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "031856c28c060e1c1d1fc94d256e3ffbe4230c91"
+                "reference": "655533a65696bbc4231cd8027af150dadc40ec88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/031856c28c060e1c1d1fc94d256e3ffbe4230c91",
-                "reference": "031856c28c060e1c1d1fc94d256e3ffbe4230c91",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/655533a65696bbc4231cd8027af150dadc40ec88",
+                "reference": "655533a65696bbc4231cd8027af150dadc40ec88",
                 "shasum": ""
             },
             "require": {
@@ -13061,7 +13228,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/14.1.8"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/14.1.9"
             },
             "funding": [
                 {
@@ -13081,7 +13248,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-09T12:06:52+00:00"
+            "time": "2026-05-16T05:16:14+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -13473,12 +13640,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "16706d82a6f250e56047a9e95791a92a8a29f791"
+                "reference": "80f4d3dbb1fc1ef5bb1eee68dbfb44060e1fb4e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/16706d82a6f250e56047a9e95791a92a8a29f791",
-                "reference": "16706d82a6f250e56047a9e95791a92a8a29f791",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/80f4d3dbb1fc1ef5bb1eee68dbfb44060e1fb4e8",
+                "reference": "80f4d3dbb1fc1ef5bb1eee68dbfb44060e1fb4e8",
                 "shasum": ""
             },
             "conflict": {
@@ -13599,7 +13766,7 @@
                 "clickstorm/cs-seo": ">=6,<6.8|>=7,<7.5|>=8,<8.4|>=9,<9.3",
                 "co-stack/fal_sftp": "<0.2.6",
                 "cockpit-hq/cockpit": "<2.14",
-                "code16/sharp": "<9.20",
+                "code16/sharp": "<9.22",
                 "codeception/codeception": "<3.1.3|>=4,<4.1.22",
                 "codeigniter/framework": "<3.1.10",
                 "codeigniter4/framework": "<4.6.2",
@@ -14223,6 +14390,7 @@
                 "simplesamlphp/saml2": "<=4.16.15|>=5.0.0.0-alpha1,<=5.0.0.0-alpha19",
                 "simplesamlphp/saml2-legacy": "<=4.16.15",
                 "simplesamlphp/simplesamlphp": "<1.18.6",
+                "simplesamlphp/simplesamlphp-module-casserver": "<=7.0.2",
                 "simplesamlphp/simplesamlphp-module-infocard": "<1.0.1",
                 "simplesamlphp/simplesamlphp-module-openid": "<1",
                 "simplesamlphp/simplesamlphp-module-openidprovider": "<0.9",
@@ -14531,7 +14699,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-14T13:38:25+00:00"
+            "time": "2026-05-15T18:36:41+00:00"
         },
         {
             "name": "sebastian/cli-parser",
