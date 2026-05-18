@@ -55,9 +55,6 @@ parameters:
             message: '#runVisit\(\) is unused#'
             path:  domain/Object
         -
-            message: '#Binary operation "\." between mixed#'
-            path:   domain/
-        -
             message: '#on left side of \?\? is unnecessary. Use -> instead#'
             path:   domain/
         -
