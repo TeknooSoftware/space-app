@@ -123,7 +123,7 @@ class AccountWalletTest extends TestCase
 
         $wallet = new AccountWallet([$env]);
 
-        $this->assertNull($wallet->get('cluster2', 'dev'));
+        $this->assertNotInstanceOf(AccountEnvironment::class, $wallet->get('cluster2', 'dev'));
     }
 
     public function testHasFound(): void

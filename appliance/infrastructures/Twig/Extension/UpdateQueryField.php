@@ -44,6 +44,7 @@ class UpdateQueryField
         private readonly UrlGeneratorInterface $generator,
     ) {
     }
+
     #[AsTwigFunction(name: 'app_update_query_field')]
     public function updateQueryField(
         Request $request,

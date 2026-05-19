@@ -522,7 +522,7 @@ trait PersistenceStepsTrait
     #[Given(':count standard projects :projectName and a prefix :prefix')]
     public function standardProjectsAndAPrefix(int $count, string $projectName, string $prefix): void
     {
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $this->aStandardProjectAndAPrefix(str_replace('X', (string) $i, $projectName), $prefix);
         }
     }
@@ -530,7 +530,7 @@ trait PersistenceStepsTrait
     #[Given(':count accounts clusters :name and a slug :slug')]
     public function accountsClustersAndASlug(int $count, string $name, string $slug): void
     {
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $this->anAccountClustersAndASlug(str_replace('X', (string) $i, $name), $slug . '-' . $i);
         }
     }
@@ -539,7 +539,7 @@ trait PersistenceStepsTrait
     public function basicsUsersForThisAccount(int $count): void
     {
         $users = [];
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $user = new User();
             $user->setId($this->generateId());
             $user->setFirstName("Firstname $i");
@@ -565,13 +565,13 @@ trait PersistenceStepsTrait
     #[Given(':count accounts with some users')]
     public function accountsWithSomeUsers(int $count): void
     {
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $account = new Account();
             $account->setName("Account $i");
             $account->setNamespace("namespace-$i");
 
             $users = [];
-            for ($j = 1; $j <= random_int(1, $count); $j++) {
+            for ($j = 1; $j <= random_int(1, $count); ++$j) {
                 $user = new User();
                 $user->setId($this->generateId());
                 $user->setFirstName("Firstname $i");

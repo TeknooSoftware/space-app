@@ -81,7 +81,10 @@ class LoadFromAccountQueryTest extends TestCase
             ->method('findOneBy')
             ->with(
                 $this->callback(
-                    static fn (array $criteria): bool => isset($criteria['account'])
+                    function (array $criteria): bool {
+                        $this->assertArrayHasKey('account', $criteria);
+                        return true;
+                    }
                 ),
                 $promise
             );
@@ -102,7 +105,10 @@ class LoadFromAccountQueryTest extends TestCase
             ->method('findBy')
             ->with(
                 $this->callback(
-                    static fn (array $criteria): bool => isset($criteria['account']),
+                    function (array $criteria): bool {
+                        $this->assertArrayHasKey('account', $criteria);
+                        return true;
+                    },
                 ),
                 $promise
             );

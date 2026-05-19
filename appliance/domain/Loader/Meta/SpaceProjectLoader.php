@@ -130,11 +130,11 @@ class SpaceProjectLoader implements LoaderInterface
     {
         /** @var Promise<iterable<Project>, mixed, iterable<SpaceProject>> $fetchedPromise */
         $fetchedPromise = new Promise(
-            static function (iterable $result) {
+            static function (iterable $result): array {
                 /** @var iterable<Project> $result */
                 $final = [];
                 foreach ($result as $project) {
-                    $final[] = new SpaceProject($project, null); //Not needed actually to fetch metdata
+                    $final[] = new SpaceProject($project); //Not needed actually to fetch metdata
                 }
 
                 return $final;

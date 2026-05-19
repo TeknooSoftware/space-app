@@ -228,7 +228,7 @@ class SpaceContext implements Context
         $this->calibration($timeoutSeconds);
 
         // Initialize PHPUnit Configuration Registry for Assert usage in Behat
-        (new PhpUnitConfigBuilder())->build([]);
+        new PhpUnitConfigBuilder()->build([]);
     }
 
     private function calibration(int $timeoutSeconds): void
@@ -236,9 +236,10 @@ class SpaceContext implements Context
         //Calibrates the number needed to simulate operations that are too long using str_repeat. Depending on the
         // machines, str_repeat can take more or less time and tests may fail.
         $t0 = microtime(true);
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $x = str_repeat('x', self::STR_REPEAT_FOR_SIMULATION);
         }
+
         $t1 = microtime(true);
         $duration = ($t1 - $t0) / 100;
 

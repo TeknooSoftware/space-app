@@ -142,12 +142,12 @@ class SpaceAccountWriter implements WriterInterface
         if ($object->accountData instanceof AccountData) {
             /** @var Promise<AccountData, mixed, mixed> $removedPromise */
             $removedPromise = new Promise(
-                function (mixed $result, ?PromiseInterface $next = null) use ($object) {
+                function (mixed $result, ?PromiseInterface $next = null) use ($object): void {
                     $account = $object->account;
 
                     /** @var Promise<AccountEnvironment, mixed, mixed> $credentialsPromise */
                     $credentialsPromise = new Promise(
-                        fn (AccountEnvironment $credential) => $this->credentialWriter->remove($credential),
+                        fn (AccountEnvironment $credential): WriterInterface => $this->credentialWriter->remove($credential),
                     );
                     $this->credentialLoader->fetch(
                         new LoadEnvironmentsFromAccountQuery($account),
@@ -156,7 +156,7 @@ class SpaceAccountWriter implements WriterInterface
 
                     /** @var Promise<AccountHistory, mixed, mixed> $historyPromise */
                     $historyPromise = new Promise(
-                        fn (AccountHistory $history) => $this->historyWriter->remove($history),
+                        fn (AccountHistory $history): WriterInterface => $this->historyWriter->remove($history),
                     );
                     $this->historyLoader->fetch(
                         new LoadHistoryFromAccountQuery($account),

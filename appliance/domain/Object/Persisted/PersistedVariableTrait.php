@@ -54,16 +54,15 @@ trait PersistedVariableTrait
     private string $name;
 
     #[Normalize('crud_variables', loader: static function (self $that): ?string {
-        $value = null;
         if (!$that->isSecret()) {
-            $value = $that->getValue();
+            return $that->getValue();
         }
 
         if ($that->isEncrypted()) {
-            $value = null;
+            return null;
         }
 
-        return $value;
+        return null;
     })]
     private ?string $value = null;
 

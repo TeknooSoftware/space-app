@@ -434,7 +434,7 @@ return [
                     with: [
                         'testValue' => AccountEnvironmentResume::class,
                         'expectedJumpValue' => new Value(
-                            static fn (AccountEnvironmentResume $resume) => !empty($resume->accountEnvironmentId),
+                            static fn (AccountEnvironmentResume $resume): bool => !empty($resume->accountEnvironmentId),
                         ),
                         'nextStep' => new Value(EndLooping::class),
                     ],

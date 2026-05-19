@@ -105,11 +105,11 @@ class SpaceUserLoader implements LoaderInterface
     {
         /** @var Promise<iterable<User>, mixed, iterable<SpaceUser>> $fetchedPromise */
         $fetchedPromise = new Promise(
-            static function (iterable $result) {
+            static function (iterable $result): array {
                 /** @var iterable<User> $result */
                 $final = [];
                 foreach ($result as $user) {
-                    $final[] = new SpaceUser($user, null); //Not needed actually to fetch metdata
+                    $final[] = new SpaceUser($user); //Not needed actually to fetch metdata
                 }
 
                 return $final;

@@ -70,7 +70,7 @@ class ApiKeysAuthTest extends TestCase
     {
         $a = new ApiKeysAuth(tokens: [$this->createToken('x'), $this->createToken('y')]);
 
-        $this->assertNull($a->getToken('z'));
+        $this->assertNotInstanceOf(ApiKeyToken::class, $a->getToken('z'));
     }
 
     public function testAddTokenDuplicateThrows(): void

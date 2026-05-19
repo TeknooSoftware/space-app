@@ -84,7 +84,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
@@ -94,7 +94,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->metadataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectMetadataLoader&MockObject {
                     $promise->success($this->createStub(ProjectMetadata::class));
 
                     return $this->metadataLoader;
@@ -121,7 +121,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->fail(new DomainException('error', 500));
 
                     return $this->projectLoader;
@@ -131,10 +131,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_project.project.fetching'
-                    && $error->getCode() === 500;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_project.project.fetching', $error->getMessage());
+                $this->assertSame(500, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -152,7 +153,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->fail(new DomainException('error', 0));
 
                     return $this->projectLoader;
@@ -162,10 +163,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_project.project.fetching'
-                    && $error->getCode() === 404;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_project.project.fetching', $error->getMessage());
+                $this->assertSame(404, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -182,7 +184,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
@@ -192,7 +194,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->metadataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectMetadataLoader&MockObject {
                     $promise->fail(new DomainException('metadata error', 500));
 
                     return $this->metadataLoader;
@@ -202,10 +204,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
-                    && $error->getCode() === 500;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_project.project_metadata.fetching', $error->getMessage());
+                $this->assertSame(500, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -222,7 +225,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
@@ -232,7 +235,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->metadataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectMetadataLoader&MockObject {
                     $promise->fail(new DomainException('metadata error', 0));
 
                     return $this->metadataLoader;
@@ -242,10 +245,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
-                    && $error->getCode() === 404;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_project.project_metadata.fetching', $error->getMessage());
+                $this->assertSame(404, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -266,7 +270,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('query')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) use ($project1, $project2) {
+                function ($query, PromiseInterface $promise) use ($project1, $project2): ProjectLoader&MockObject {
                     $promise->success([$project1, $project2]);
 
                     return $this->projectLoader;
@@ -276,10 +280,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('success')
-            ->with($this->callback(function (array $result) {
-                return count($result) === 2
-                    && $result[0] instanceof SpaceProject
-                    && $result[1] instanceof SpaceProject;
+            ->with($this->callback(function (array $result): true {
+                $this->assertCount(2, $result);
+                $this->assertInstanceOf(SpaceProject::class, $result[0]);
+                $this->assertInstanceOf(SpaceProject::class, $result[1]);
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -296,7 +301,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->success($this->createStub(Project::class));
 
                     return $this->projectLoader;
@@ -306,7 +311,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->metadataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectMetadataLoader&MockObject {
                     $promise->success($this->createStub(ProjectMetadata::class));
 
                     return $this->metadataLoader;
@@ -333,7 +338,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->fail(new DomainException('error', 403));
 
                     return $this->projectLoader;
@@ -343,10 +348,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
-                    && $error->getCode() === 403;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_project.project_metadata.fetching', $error->getMessage());
+                $this->assertSame(403, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -364,7 +370,7 @@ class SpaceProjectLoaderTest extends TestCase
         $this->projectLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): ProjectLoader&MockObject {
                     $promise->fail(new DomainException('error', 0));
 
                     return $this->projectLoader;
@@ -374,10 +380,11 @@ class SpaceProjectLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_project.project_metadata.fetching'
-                    && $error->getCode() === 404;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_project.project_metadata.fetching', $error->getMessage());
+                $this->assertSame(404, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(

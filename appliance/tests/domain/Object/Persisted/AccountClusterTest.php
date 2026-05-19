@@ -54,7 +54,7 @@ class AccountClusterTest extends TestCase
 {
     private AccountCluster $accountCluster;
 
-    private Account|MockObject $account;
+    private Account&MockObject $account;
 
     private string $name;
 

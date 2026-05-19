@@ -48,7 +48,7 @@ class AccountEnvironmentTest extends TestCase
 {
     private AccountEnvironment $accountEnvironment;
 
-    private Account|MockObject $account;
+    private Account&MockObject $account;
 
     private string $clusterName;
 
@@ -222,7 +222,7 @@ class AccountEnvironmentTest extends TestCase
     public function testVerifyAccessToUser(): void
     {
         $user = $this->createStub(User::class);
-        $promise = $this->createMock(PromiseInterface::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $this->account->expects($this->once())
             ->method('__call')

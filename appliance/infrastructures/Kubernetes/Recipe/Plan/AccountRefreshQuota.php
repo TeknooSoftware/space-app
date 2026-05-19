@@ -113,8 +113,6 @@ class AccountRefreshQuota implements EditablePlanInterface
 
         $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 120);
 
-        $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
-
-        return $recipe;
+        return $recipe->onError(new Bowl($this->errorHandler, []));
     }
 }

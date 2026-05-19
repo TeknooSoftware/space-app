@@ -84,7 +84,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->success($this->createStub(Account::class));
 
                     return $this->accountLoader;
@@ -94,7 +94,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->dataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): AccountDataLoader&MockObject {
                     $promise->success($this->createStub(AccountData::class));
 
                     return $this->dataLoader;
@@ -121,7 +121,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->fail(new DomainException('error', 500));
 
                     return $this->accountLoader;
@@ -131,10 +131,11 @@ class SpaceAccountLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_account.account.fetching'
-                    && $error->getCode() === 500;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_account.account.fetching', $error->getMessage());
+                $this->assertSame(500, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -152,7 +153,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->fail(new DomainException('error', 0));
 
                     return $this->accountLoader;
@@ -162,10 +163,11 @@ class SpaceAccountLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_account.account.fetching'
-                    && $error->getCode() === 404;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_account.account.fetching', $error->getMessage());
+                $this->assertSame(404, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -182,7 +184,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('load')
             ->willReturnCallback(
-                function (string $id, PromiseInterface $promise) {
+                function (string $id, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->success($this->createStub(Account::class));
 
                     return $this->accountLoader;
@@ -192,7 +194,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->dataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): AccountDataLoader&MockObject {
                     $promise->fail(new DomainException('data error'));
 
                     return $this->dataLoader;
@@ -224,7 +226,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('query')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) use ($account1, $account2) {
+                function ($query, PromiseInterface $promise) use ($account1, $account2): AccountLoader&MockObject {
                     $promise->success([$account1, $account2]);
 
                     return $this->accountLoader;
@@ -234,10 +236,11 @@ class SpaceAccountLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('success')
-            ->with($this->callback(function (array $result) {
-                return count($result) === 2
-                    && $result[0] instanceof SpaceAccount
-                    && $result[1] instanceof SpaceAccount;
+            ->with($this->callback(function (array $result): true {
+                $this->assertCount(2, $result);
+                $this->assertInstanceOf(SpaceAccount::class, $result[0]);
+                $this->assertInstanceOf(SpaceAccount::class, $result[1]);
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -254,7 +257,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->success($this->createStub(Account::class));
 
                     return $this->accountLoader;
@@ -264,7 +267,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->dataLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): AccountDataLoader&MockObject {
                     $promise->success($this->createStub(AccountData::class));
 
                     return $this->dataLoader;
@@ -291,7 +294,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->fail(new DomainException('error', 403));
 
                     return $this->accountLoader;
@@ -301,10 +304,11 @@ class SpaceAccountLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_account.account_data.fetching'
-                    && $error->getCode() === 403;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_account.account_data.fetching', $error->getMessage());
+                $this->assertSame(403, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(
@@ -322,7 +326,7 @@ class SpaceAccountLoaderTest extends TestCase
         $this->accountLoader->expects($this->once())
             ->method('fetch')
             ->willReturnCallback(
-                function ($query, PromiseInterface $promise) {
+                function ($query, PromiseInterface $promise): AccountLoader&MockObject {
                     $promise->fail(new DomainException('error', 0));
 
                     return $this->accountLoader;
@@ -332,10 +336,11 @@ class SpaceAccountLoaderTest extends TestCase
         $promise = $this->createMock(PromiseInterface::class);
         $promise->expects($this->once())
             ->method('fail')
-            ->with($this->callback(function (Throwable $error) {
-                return $error instanceof DomainException
-                    && $error->getMessage() === 'teknoo.space.error.space_account.account_data.fetching'
-                    && $error->getCode() === 404;
+            ->with($this->callback(function (Throwable $error): true {
+                $this->assertInstanceOf(DomainException::class, $error);
+                $this->assertSame('teknoo.space.error.space_account.account_data.fetching', $error->getMessage());
+                $this->assertSame(404, $error->getCode());
+                return true;
             }));
 
         $this->assertInstanceOf(

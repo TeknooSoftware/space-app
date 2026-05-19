@@ -77,8 +77,8 @@ trait HttpTrait
     ): Response {
         $this->hasBeenRedirected = false;
         $this->isApiCall = !empty($headers['HTTP_AUTHORIZATION']);
-
-        $host = $originalHost = 'https://' . $this->appHostname;
+        $host = 'https://' . $this->appHostname;
+        $originalHost = 'https://' . $this->appHostname;
         if (true === str_starts_with($url, 'http')) {
             $host = '';
         }

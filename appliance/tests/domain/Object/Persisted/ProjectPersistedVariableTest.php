@@ -249,8 +249,10 @@ class ProjectPersistedVariableTest extends TestCase
         $normalizer->expects($this->once())
             ->method('injectData')
             ->with(
-                $this->callback(function ($data) {
-                    return true === $data['secret'] && null === $data['value'];
+                $this->callback(function (array $data): true {
+                    $this->assertTrue($data['secret']);
+                    $this->assertNull($data['value']);
+                    return true;
                 })
             );
 
@@ -280,8 +282,10 @@ class ProjectPersistedVariableTest extends TestCase
         $normalizer->expects($this->once())
             ->method('injectData')
             ->with(
-                $this->callback(function ($data) {
-                    return false === $data['secret'] && 'testValue' === $data['value'];
+                $this->callback(function (array $data): true {
+                    $this->assertFalse($data['secret']);
+                    $this->assertSame('testValue', $data['value']);
+                    return true;
                 })
             );
 

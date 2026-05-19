@@ -101,8 +101,6 @@ class AccountRegistryReinstall implements EditablePlanInterface
 
         $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 100);
 
-        $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
-
-        return $recipe;
+        return $recipe->onError(new Bowl($this->errorHandler, []));
     }
 }

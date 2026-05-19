@@ -101,8 +101,7 @@ class SpaceAccountTest extends TestCase
         $account = $this->createStub(Account::class);
 
         $spaceAccount = new SpaceAccount(
-            account: $account,
-            accountData: null
+            account: $account
         );
 
         $this->assertInstanceOf(AccountData::class, $spaceAccount->accountData);

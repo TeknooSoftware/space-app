@@ -100,8 +100,6 @@ trait PrepareAccountTrait
             135,
         );
 
-        $recipe = $recipe->cook($this->render, Render::class, [], 140);
-
-        return $recipe;
+        return $recipe->cook($this->render, Render::class, [], 140);
     }
 }

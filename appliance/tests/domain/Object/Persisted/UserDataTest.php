@@ -83,7 +83,7 @@ class UserDataTest extends TestCase
         $result = $this->userData->setPicture(null);
 
         $this->assertInstanceOf(UserData::class, $result);
-        $this->assertNull($this->userData->getPicture());
+        $this->assertNotInstanceOf(Media::class, $this->userData->getPicture());
     }
 
     public function testGetPicture(): void
@@ -93,16 +93,16 @@ class UserDataTest extends TestCase
 
     public function testGetPictureWithNull(): void
     {
-        $userData = new UserData($this->user, null);
+        $userData = new UserData($this->user);
 
-        $this->assertNull($userData->getPicture());
+        $this->assertNotInstanceOf(Media::class, $userData->getPicture());
     }
 
     public function testConstructorWithNullPicture(): void
     {
         $userData = new UserData($this->user);
 
-        $this->assertNull($userData->getPicture());
+        $this->assertNotInstanceOf(Media::class, $userData->getPicture());
     }
 
     public function testVisit(): void

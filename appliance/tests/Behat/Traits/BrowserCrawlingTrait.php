@@ -117,7 +117,7 @@ trait BrowserCrawlingTrait
     public function itObtainsAEmptyAccountsVariablesForm(): void
     {
         $formValues = $this->createForm('account_vars')->getPhpValues();
-        Assert::assertFalse(isset($formValues['account_vars']['sets']));
+        Assert::assertArrayNotHasKey('sets', $formValues['account_vars']);
     }
 
     #[Then('the user obtains the form:')]
@@ -246,7 +246,7 @@ trait BrowserCrawlingTrait
     public function itObtainsAEmptyProjectsVariablesForm(): void
     {
         $formValues = $this->createForm('project_vars')->getPhpValues();
-        Assert::assertFalse(isset($formValues['project_vars']['sets']));
+        Assert::assertArrayNotHasKey('sets', $formValues['project_vars']);
     }
 
     #[Then('it obtains a deployment page')]

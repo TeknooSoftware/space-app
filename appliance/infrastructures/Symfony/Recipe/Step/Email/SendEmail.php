@@ -121,7 +121,7 @@ class SendEmail implements SendEmailInterface
                 contentType: $attachment->mimeType,
             );
 
-            $attachmentCount++;
+            ++$attachmentCount;
         }
 
         return $email;

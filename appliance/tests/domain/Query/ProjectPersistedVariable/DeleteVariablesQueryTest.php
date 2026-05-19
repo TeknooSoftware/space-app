@@ -76,7 +76,7 @@ class DeleteVariablesQueryTest extends TestCase
     public function testDelete(): void
     {
         $queryExecutor = $this->createMock(QueryExecutorInterface::class);
-        $promise = $this->createMock(PromiseInterface::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $queryExecutor->expects($this->once())
             ->method('filterOn')

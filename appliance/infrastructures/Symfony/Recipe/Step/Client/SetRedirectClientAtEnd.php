@@ -67,9 +67,8 @@ class SetRedirectClientAtEnd
         $response = $this->responseFactory->createResponse($status);
 
         $headers = ['location' => $url ];
-        $response = $this->addHeadersIntoResponse($response, $headers);
 
-        return $response;
+        return $this->addHeadersIntoResponse($response, $headers);
     }
 
     /**

@@ -71,8 +71,10 @@ trait ExtensionTrait
 
             $name = str_replace('extensions/', '', $item->path());
             $classExtension = 'Teknoo\\Space\\Extensions\\' . $name . '\\Extension';
-
-            if (!class_exists($classExtension, true) || !is_a($classExtension, ExtensionInterface::class, true)) {
+            if (!class_exists($classExtension, true)) {
+                continue;
+            }
+            if (!is_a($classExtension, ExtensionInterface::class, true)) {
                 continue;
             }
 

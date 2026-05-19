@@ -61,7 +61,7 @@ class ClusterAndEnvSelection
         $namespace = '_all';
 
         if (!empty($clusterSelectedStr) && is_string($clusterSelectedStr)) {
-            $clusterArray = explode('~', (string) $clusterSelectedStr);
+            $clusterArray = explode('~', $clusterSelectedStr);
             $clusterSlug = $clusterArray[0];
 
             if (!empty($clusterArray[1])) {

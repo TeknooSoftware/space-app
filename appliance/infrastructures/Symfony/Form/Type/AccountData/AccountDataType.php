@@ -127,7 +127,7 @@ class AccountDataType extends AbstractType
             ],
         );
 
-        $builder->setDataMapper(new class ($canUpdateSubscription) implements DataMapperInterface {
+        $builder->setDataMapper(new readonly class ($canUpdateSubscription) implements DataMapperInterface {
             public function __construct(
                 private bool $canUpdateSubscription,
             ) {

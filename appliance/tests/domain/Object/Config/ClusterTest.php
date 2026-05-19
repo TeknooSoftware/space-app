@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Object\Config;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
@@ -76,7 +77,7 @@ class ClusterTest extends TestCase
     public function testConstructWithCallable(): void
     {
         $client = $this->createStub(Client::class);
-        $callable = fn () => $client;
+        $callable = fn (): Stub => $client;
 
         $cluster = new ClusterConfig(
             name: 'foo',
@@ -99,7 +100,7 @@ class ClusterTest extends TestCase
     public function testConstructWithCallableAndNoRegistrySupport(): void
     {
         $client = $this->createStub(Client::class);
-        $callable = fn () => $client;
+        $callable = fn (): Stub => $client;
 
         $cluster = new ClusterConfig(
             name: 'foo',
@@ -127,7 +128,7 @@ class ClusterTest extends TestCase
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: fn () => null,
+            kubernetesClient: fn (): null => null,
             token: 'foo',
             supportRegistry: false,
             useHnc: true,
@@ -171,7 +172,7 @@ class ClusterTest extends TestCase
     public function testGetKubernetesRegistryClientWithCallableInitialization(): void
     {
         $client = $this->createStub(Client::class);
-        $callable = fn () => $client;
+        $callable = fn (): Stub => $client;
 
         $cluster = new ClusterConfig(
             name: 'foo',

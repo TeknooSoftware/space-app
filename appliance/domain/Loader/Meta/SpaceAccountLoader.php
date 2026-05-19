@@ -133,11 +133,11 @@ class SpaceAccountLoader implements LoaderInterface
     {
         /** @var Promise<iterable<Account>, mixed, iterable<SpaceAccount>> $fetchedPromise */
         $fetchedPromise = new Promise(
-            static function (iterable $result) {
+            static function (iterable $result): array {
                 /** @var iterable<Account> $result */
                 $final = [];
                 foreach ($result as $account) {
-                    $final[] = new SpaceAccount($account, null); //Not needed actually to fetch metdata
+                    $final[] = new SpaceAccount($account); //Not needed actually to fetch metdata
                 }
 
                 return $final;

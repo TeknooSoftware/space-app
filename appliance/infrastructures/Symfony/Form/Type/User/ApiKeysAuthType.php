@@ -95,7 +95,7 @@ class ApiKeysAuthType extends AbstractType
                         message: 'teknoo.space.form.user.api_key.name.regex_error',
                     ),
                     new Callback(
-                        callback: function (string $name, ExecutionContext $context, User $payload) {
+                        callback: function (string $name, ExecutionContext $context, User $payload): void {
                             /** @var ?ApiKeysAuth $apiKeys */
                             $apiKeys = $payload->getOneAuthData(ApiKeysAuth::class);
                             if ($apiKeys?->getToken($name)) {

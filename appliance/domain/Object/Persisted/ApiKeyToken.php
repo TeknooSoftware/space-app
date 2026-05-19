@@ -135,6 +135,7 @@ class ApiKeyToken implements AuthDataInterface
         if (null ===  $this->expiresAt) {
             $this->createdAt = $createdAt;
         }
+
         return $this;
     }
 

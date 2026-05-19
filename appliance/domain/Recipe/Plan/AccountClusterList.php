@@ -140,13 +140,11 @@ class AccountClusterList extends ListObjectEndPoint
 
         $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
 
-        $recipe = $recipe->cook(
+        return $recipe->cook(
             $this->injectToView,
             InjectToView::class,
             [],
             49,
         );
-
-        return $recipe;
     }
 }

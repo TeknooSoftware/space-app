@@ -130,13 +130,11 @@ class AccountClusterDelete extends DeleteObjectEndPoint
             06,
         );
 
-        $recipe = $recipe->cook(
+        return $recipe->cook(
             $this->injectToView,
             InjectToView::class,
             [],
             07,
         );
-
-        return $recipe;
     }
 }

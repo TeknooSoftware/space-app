@@ -95,8 +95,7 @@ class ProjectList extends ListObjectEndPoint
         $recipe = $recipe->cook($this->loadSubscriptionPlan, LoadSubscriptionPlan::class, [], 24);
         $recipe = $recipe->cook($this->createResumes, CreateResumes::class, [], 25);
         $recipe = $recipe->cook($this->prepareCriteria, PrepareCriteria::class, [], 25);
-        $recipe = $recipe->cook($this->injectStatus, InjectStatus::class, [], 26);
 
-        return $recipe;
+        return $recipe->cook($this->injectStatus, InjectStatus::class, [], 26);
     }
 }

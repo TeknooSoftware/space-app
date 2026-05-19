@@ -77,7 +77,7 @@ trait KubernetesTrait
             }
         }
 
-        if (empty($host) && !empty($account)) {
+        if (empty($host) && $account instanceof Account) {
             /** @var AccountCluster $accountClusterInstance */
             foreach ($this->listObjects(AccountCluster::class) as $accountClusterInstance) {
                 if (

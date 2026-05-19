@@ -74,9 +74,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
             )
         );
 
-        $url .= '&lastEventID=' . $newJobId;
-
-        return $url;
+        return $url . ('&lastEventID=' . $newJobId);
     }
 
     public function __invoke(

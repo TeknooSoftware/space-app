@@ -106,8 +106,6 @@ class AccountEnvironmentReinstall implements EditablePlanInterface
 
         $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 110);
 
-        $recipe = $recipe->onError(new Bowl($this->errorHandler, []));
-
-        return $recipe;
+        return $recipe->onError(new Bowl($this->errorHandler, []));
     }
 }

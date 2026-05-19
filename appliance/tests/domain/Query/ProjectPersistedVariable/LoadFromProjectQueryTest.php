@@ -75,13 +75,16 @@ class LoadFromProjectQueryTest extends TestCase
     {
         $loader = $this->createStub(LoaderInterface::class);
         $repository = $this->createMock(RepositoryInterface::class);
-        $promise = $this->createMock(PromiseInterface::class);
+        $promise = $this->createStub(PromiseInterface::class);
 
         $repository->expects($this->once())
             ->method('findBy')
             ->with(
                 $this->callback(
-                    static fn (array $criteria) => isset($criteria['project']),
+                    function (array $criteria): bool {
+                        $this->assertArrayHasKey('project', $criteria);
+                        return true;
+                    },
                 ),
                 $promise
             );

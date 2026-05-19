@@ -184,13 +184,7 @@ trait PersistenceOperationTrait
 
     private function testListOfCriteria(array $criteria, ReflectionObject $roInstance, object $object): bool
     {
-        foreach ($criteria as $name => &$value) {
-            if (!$this->testACriteria($name, $value, $roInstance, $object)) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all($criteria, fn($value, $name) => $this->testACriteria($name, $value, $roInstance, $object));
     }
 
     public function findObjectsByCriteria(

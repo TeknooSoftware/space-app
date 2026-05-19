@@ -274,9 +274,10 @@ class HostnameRedirectionMiddlewareTest extends TestCase
         $client = $this->createMock(ClientInterface::class);
         $client->expects($this->once())
             ->method('acceptResponse')
-            ->with($this->callback(function ($response) {
-                return $response instanceof RedirectResponse
-                    && $response->getStatusCode() === 302;
+            ->with($this->callback(function ($response): true {
+                $this->assertInstanceOf(RedirectResponse::class, $response);
+                $this->assertSame(302, $response->getStatusCode());
+                return true;
             }));
 
         $manager = $this->createMock(ManagerInterface::class);

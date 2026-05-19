@@ -49,7 +49,7 @@ class AccountPersistedVariableTest extends TestCase
 {
     private AccountPersistedVariable $accountPersistedVariable;
 
-    private Account|MockObject $account;
+    private Account&MockObject $account;
 
     private string $id;
 
@@ -295,7 +295,7 @@ class AccountPersistedVariableTest extends TestCase
         $normalizer->expects($this->once())
             ->method('injectData')
             ->with(
-                $this->callback(function ($data) {
+                $this->callback(function (array $data): true {
                     $this->assertIsArray($data);
                     $this->assertArrayHasKey('name', $data);
                     $this->assertArrayHasKey('secret', $data);
@@ -318,7 +318,7 @@ class AccountPersistedVariableTest extends TestCase
         $normalizer->expects($this->once())
             ->method('injectData')
             ->with(
-                $this->callback(function ($data) {
+                $this->callback(function ($data): true {
                     $this->assertIsArray($data);
                     $this->assertArrayHasKey('@class', $data);
                     $this->assertArrayHasKey('id', $data);
@@ -351,7 +351,7 @@ class AccountPersistedVariableTest extends TestCase
         $normalizer->expects($this->once())
             ->method('injectData')
             ->with(
-                $this->callback(function ($data) {
+                $this->callback(function (array $data): true {
                     $this->assertIsArray($data);
                     $this->assertArrayHasKey('value', $data);
                     $this->assertEquals('42', $data['value']);

@@ -83,8 +83,8 @@ return [
             if (
                 !empty($privatePath)
                 && (
-                    str_starts_with((string) $privatePath, $varKeyPrefix)
-                    || str_starts_with((string) $privatePath, '/etc/space')
+                    str_starts_with($privatePath, $varKeyPrefix)
+                    || str_starts_with($privatePath, '/etc/space')
                 )
                 && is_readable($privatePath)
             ) {
@@ -107,8 +107,8 @@ return [
             if (
                 empty($publicPath)
                 || (
-                    !str_starts_with((string) $publicPath, $varKeyPrefix)
-                    && !str_starts_with((string) $publicPath, '/etc/space')
+                    !str_starts_with($publicPath, $varKeyPrefix)
+                    && !str_starts_with($publicPath, '/etc/space')
                 )
                 || !is_readable($publicPath)
             ) {
