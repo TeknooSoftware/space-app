@@ -147,7 +147,8 @@ class SpaceAccountWriter implements WriterInterface
 
                     /** @var Promise<AccountEnvironment, mixed, mixed> $credentialsPromise */
                     $credentialsPromise = new Promise(
-                        fn (AccountEnvironment $credential): WriterInterface => $this->credentialWriter->remove($credential),
+                        fn (AccountEnvironment $credential): WriterInterface =>
+                            $this->credentialWriter->remove($credential),
                     );
                     $this->credentialLoader->fetch(
                         new LoadEnvironmentsFromAccountQuery($account),
