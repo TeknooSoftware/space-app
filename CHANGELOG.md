@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [2.3.6] - 2026-05-20
+### Stable Release
+- Update to Symfony 7.4.12/8.4.12 (multiple CVEs)
+- Upgrade to East Common 4.5 and use UUID v7
+
 ## [2.3.5] - 2026-05-15
 ### Stable Release
 - Update about restriction of locations of RSA keys to allow also there locations into /etc
