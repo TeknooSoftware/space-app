@@ -1,4 +1,4 @@
-FROM redis:8.2-alpine3.22
+FROM redis:8.6.3-alpine3.23
 
 RUN set -eux ; \
     apk update ; \
