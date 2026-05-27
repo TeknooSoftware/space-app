@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "395a4120fa1a7fbd40afe9b8d170b9fb",
+    "content-hash": "737c20524a65492bba4cd4f0f6fa41f0",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11276,16 +11276,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.5.0",
+            "version": "5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "55bf58de64f95888b5a0f89ed38ee9415780603b"
+                "reference": "c641de5cae762190202462ee689872141a3af469"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/55bf58de64f95888b5a0f89ed38ee9415780603b",
-                "reference": "55bf58de64f95888b5a0f89ed38ee9415780603b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/c641de5cae762190202462ee689872141a3af469",
+                "reference": "c641de5cae762190202462ee689872141a3af469",
                 "shasum": ""
             },
             "require": {
@@ -11427,20 +11427,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-05-17T07:43:33+00:00"
+            "time": "2026-05-27T14:18:12+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.5.0",
+            "version": "5.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "6394f2d99d5dc7bc247f2e3f60ef13c40595d03f"
+                "reference": "62bd8b0c18eaf10f22cbd5a0823cf30e5ff19300"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/6394f2d99d5dc7bc247f2e3f60ef13c40595d03f",
-                "reference": "6394f2d99d5dc7bc247f2e3f60ef13c40595d03f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/62bd8b0c18eaf10f22cbd5a0823cf30e5ff19300",
+                "reference": "62bd8b0c18eaf10f22cbd5a0823cf30e5ff19300",
                 "shasum": ""
             },
             "require": {
@@ -11478,7 +11478,7 @@
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
                 "teknoo/east-common-symfony": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2",
-                "teknoo/east-paas": "^5.5",
+                "teknoo/east-paas": "^5.6",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
                 "teknoo/recipe": "^7.2.2",
@@ -11540,7 +11540,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-05-17T07:49:35+00:00"
+            "time": "2026-05-27T14:39:21+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -12139,16 +12139,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v3.26.0",
+            "version": "v3.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "1fcae487b180d78e6351f4e0afa91f9eab96a2bc"
+                "reference": "04ae1bfe9463c816cf72ca0abe7eae2c77a9a9ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/1fcae487b180d78e6351f4e0afa91f9eab96a2bc",
-                "reference": "1fcae487b180d78e6351f4e0afa91f9eab96a2bc",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/04ae1bfe9463c816cf72ca0abe7eae2c77a9a9ed",
+                "reference": "04ae1bfe9463c816cf72ca0abe7eae2c77a9a9ed",
                 "shasum": ""
             },
             "require": {
@@ -12203,7 +12203,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v3.26.0"
+                "source": "https://github.com/twigphp/Twig/tree/v3.27.0"
             },
             "funding": [
                 {
@@ -12215,7 +12215,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-20T07:31:59+00:00"
+            "time": "2026-05-27T13:05:51+00:00"
         }
     ],
     "packages-dev": [
@@ -13547,16 +13547,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.1.12",
+            "version": "13.1.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "ca98c9f757c0e1e0778ab8ff80c4fb84152facf8"
+                "reference": "ddf7f25d9ee9652b464475d7f3bacde2613e355e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ca98c9f757c0e1e0778ab8ff80c4fb84152facf8",
-                "reference": "ca98c9f757c0e1e0778ab8ff80c4fb84152facf8",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/ddf7f25d9ee9652b464475d7f3bacde2613e355e",
+                "reference": "ddf7f25d9ee9652b464475d7f3bacde2613e355e",
                 "shasum": ""
             },
             "require": {
@@ -13626,7 +13626,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.1.12"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.1.13"
             },
             "funding": [
                 {
@@ -13634,7 +13634,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-05-25T15:37:19+00:00"
+            "time": "2026-05-27T14:03:08+00:00"
         },
         {
             "name": "roave/security-advisories",
