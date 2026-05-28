@@ -87,6 +87,168 @@ Feature: API endpoints to create new job and deploy project
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
+  Scenario: From the API, on a Kubernetes 1.36 cluster, execute a job from an owned project with prefix and a valid
+  paas file and obtain manifests using image volumes and hostUsers false
+    Given A Space app instance
+    And the kubernetes cluster runs version "1.36"
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes v1.36 manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, on a Kubernetes 1.35 cluster, execute a job from an owned project with prefix and a valid
+  paas file and obtain manifests using image volumes without hostUsers
+    Given A Space app instance
+    And the kubernetes cluster runs version "1.35"
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes v1.35 manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, on a Kubernetes 1.36 cluster reporting a 1.30 gitVersion, execute a job from an owned
+  project with prefix and a valid paas file and obtain manifests clamped to 1.30 behavior
+    Given A Space app instance
+    And the kubernetes cluster runs version "1.36"
+    And the kubernetes cluster reports gitVersion "v1.30.5"
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes v1.30 manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, on a Kubernetes 1.36 cluster that cannot return its version, execute a job from an owned
+  project with prefix and a valid paas file and obtain manifests using the configured 1.36 behavior
+    Given A Space app instance
+    And the kubernetes cluster runs version "1.36"
+    And the kubernetes cluster cannot return its version
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes v1.36 manifests have been created and executed on "Demo Kube Cluster"
+
   Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, encrypted messages
   between workers, via a request with a form url encoded body
     Given A Space app instance

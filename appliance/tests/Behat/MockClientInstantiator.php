@@ -84,6 +84,15 @@ class MockClientInstantiator implements InstantiatorInterface
                 $path = $uri->getPath();
                 $query = $uri->getQuery();
 
+                if ('GET' === $request->getMethod() && '/version' === $path) {
+                    $gitVersion = $this->testsContext->getClusterGitVersion();
+                    if (null === $gitVersion || '' === $gitVersion) {
+                        return new JsonResponse([]);
+                    }
+
+                    return new JsonResponse(['gitVersion' => $gitVersion]);
+                }
+
                 if ('/api/v1/namespaces' === $path) {
                     $qs = [];
                     parse_str($query, $qs);

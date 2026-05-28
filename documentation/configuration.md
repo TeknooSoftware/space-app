@@ -614,6 +614,19 @@ SPACE_KUBERNETES_CLIENT_TIMEOUT=5
 SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
 ```
 
+#### SPACE_KUBERNETES_VERSION_LEVEL
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `1.30`
+- **Description**: Target Kubernetes API level used by the manifest transcribers.
+  `1.32`+ emits native image-volume sources instead of init-container + emptyDir.
+  `1.36`+ adds `hostUsers: false` to pod specs.
+
+```bash
+SPACE_KUBERNETES_VERSION_LEVEL=1.30
+```
+
 ### Kubernetes Namespace Configuration
 
 #### SPACE_KUBERNETES_ROOT_NAMESPACE
@@ -1412,6 +1425,7 @@ SPACE_HOSTNAME=https://space.example.com
 SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.json
 SPACE_KUBERNETES_CLIENT_TIMEOUT=5
 SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+SPACE_KUBERNETES_VERSION_LEVEL=1.30
 SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
 SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE=space-registry-
 SPACE_STORAGE_CLASS=fast-ssd
