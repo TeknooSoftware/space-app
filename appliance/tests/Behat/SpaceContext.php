@@ -166,6 +166,10 @@ class SpaceContext implements Context
 
     private string $ingressProvider = '';
 
+    private string $kubernetesVersionLevel = '1.30';
+
+    private ?string $clusterGitVersion = null;
+
     private array $manifests = [];
 
     private array $deletedManifests = [];
@@ -280,6 +284,8 @@ class SpaceContext implements Context
         $this->slowBuilder = false;
         $this->useHnc = false;
         $this->hncSuffix = '';
+        $this->kubernetesVersionLevel = '1.30';
+        $this->clusterGitVersion = null;
         $this->manifests = [];
         $this->deletedManifests = [];
         $this->projectPrefix = null;
@@ -311,6 +317,7 @@ class SpaceContext implements Context
             'SPACE_HOOKS_COLLECTION_FILE',
             'SPACE_INGRESS_PROVIDER_JSON',
             'SPACE_INGRESS_PROVIDER_FILE',
+            'SPACE_KUBERNETES_VERSION_LEVEL',
         ];
 
         foreach ($envVarsNames as $name) {
@@ -448,6 +455,30 @@ class SpaceContext implements Context
     #[Given('the platform is booted')]
     public function thePlatformIsBooted(): void
     {
+    }
+
+    #[Given('the kubernetes cluster runs version :version')]
+    public function theKubernetesClusterRunsVersion(string $version): void
+    {
+        $this->kubernetesVersionLevel = $version;
+        $_ENV['SPACE_KUBERNETES_VERSION_LEVEL'] = $version;
+    }
+
+    #[Given('the kubernetes cluster reports gitVersion :gitVersion')]
+    public function theKubernetesClusterReportsGitVersion(string $gitVersion): void
+    {
+        $this->clusterGitVersion = $gitVersion;
+    }
+
+    #[Given('the kubernetes cluster cannot return its version')]
+    public function theKubernetesClusterCannotReturnItsVersion(): void
+    {
+        $this->clusterGitVersion = '';
+    }
+
+    public function getClusterGitVersion(): ?string
+    {
+        return $this->clusterGitVersion;
     }
 
     #[Given('the project has a complete paas file')]

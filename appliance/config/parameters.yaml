@@ -36,6 +36,7 @@ parameters:
     }
 
     teknoo.space.default.code.subscription.required: true
+    teknoo.space.default.east.paas.kubernetes.version_level: '1.30'
     teknoo.space.default.jwt.max-days-to-tive: 30
     teknoo.space.default.mail.constraints.max_attachments: 5
     teknoo.space.default.mail.constraints.max_file_size: 204800
@@ -58,11 +59,14 @@ parameters:
 
     teknoo.east.paas.admin.rendering.clean_html: true
     teknoo.east.paas.job_unit.use_hierarchical_namespaces: true
+    teknoo.east.paas.kubernernes.version_level: '%teknoo.space.east.paas.kubernetes.version_level%'
     teknoo.east.paas.rendering.clean_html: true
     teknoo.east.paas.symfony.history.prefer-real-date: true
     teknoo.east.paas.symfony.prepare-job.prefer-real-date: true
 
     teknoo.space.assets.version: '2025.11.21'
+
+    teknoo.space.east.paas.kubernetes.version_level: '%env(string:default:teknoo.space.default.east.paas.kubernetes.version_level:SPACE_KUBERNETES_VERSION_LEVEL)%'
 
     teknoo.space.jwt.enable_in-query: '%env(bool:SPACE_JWT_ENABLE_IN_QUERY)%'
     teknoo.space.jwt.max-days-to-tive: '%env(int:default:teknoo.space.default.jwt.max-days-to-tive:SPACE_JWT_MAX_DAYS_TO_TIVE)%'

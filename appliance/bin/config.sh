@@ -137,6 +137,7 @@ if [ "$useCatalog" = "0" ]; then
 else
   clusterCatalogFile=$(readAMandatoryFileResponse "Cluster Catalog file")
 fi
+kubernetesVersionLevel=$(readAMandatoryResponse "Kubernetes version level [1.30/1.32/1.35/1.36]" "1.30")
 dockerGlobalRegistryApi=$(readAMandatoryResponse "Docker Registry API Url")
 dockerGlobalRegistryUser=$(readAMandatoryResponse "Docker Registry User")
 dockerGlobalRegistryPassword=$(readAMandatoryResponse "Docker Registry Password")
@@ -424,6 +425,7 @@ if [ "$useCatalog" = "0" ]; then
 else
   updateFile "$ENV_LOCAL_FILE" "SPACE_CLUSTER_CATALOG_FILE" "$clusterCatalogFile"
 fi
+updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_VERSION_LEVEL" "$kubernetesVersionLevel"
 updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_GLOBAL_REGISTRY_URL" "$dockerGlobalRegistryApi"
 updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_GLOBAL_REGISTRY_USERNAME" "$dockerGlobalRegistryUser"
 updateFile "$ENV_LOCAL_FILE" "SPACE_OCI_REGISTRY_URL" "$dockerPrivateRegistryUrl"
@@ -467,6 +469,7 @@ if [ "$useDockerCompose" = "y" ]; then
   else
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CLUSTER_CATALOG_FILE" "$clusterCatalogFile"
   fi
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_VERSION_LEVEL" "$kubernetesVersionLevel"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_GLOBAL_REGISTRY_URL" "$dockerGlobalRegistryApi"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_GLOBAL_REGISTRY_USERNAME" "$dockerGlobalRegistryUser"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_OCI_REGISTRY_URL" "$dockerPrivateRegistryUrl"

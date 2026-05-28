@@ -43,9 +43,6 @@ parameters:
             message: '#is not nullable#'
             path:  domain/Recipe/Plan/Traits/PrepareAccountTrait.php
         -
-            message: '#is always true#'
-            path:  domain/Recipe/Plan/Traits/PrepareAccountTrait.php
-        -
             message: '#BatchManipulationManagerInterface::deleteQuery#'
             path:  domain/Writer/Meta/
         -
@@ -57,9 +54,6 @@ parameters:
         -
             message: '#on left side of \?\? is unnecessary. Use -> instead#'
             path:   domain/
-        -
-            message: '#will always evaluate to true#'
-            path:    domain/Recipe/Plan/Traits/PrepareAccountTrait.php
         -
             message: '#CreateRegistryDeployment::insertModel\(\) expects#'
             path:  infrastructures/Kubernetes/Recipe/Step/Registry/CreateRegistryDeployment.php

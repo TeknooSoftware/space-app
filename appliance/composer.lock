@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "737c20524a65492bba4cd4f0f6fa41f0",
+    "content-hash": "5c594c30572f62521aca84c8f1de4f2e",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11276,16 +11276,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.6.0",
+            "version": "5.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "c641de5cae762190202462ee689872141a3af469"
+                "reference": "2e7801e7c357484519710b1aef56940d9c5afc2c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/c641de5cae762190202462ee689872141a3af469",
-                "reference": "c641de5cae762190202462ee689872141a3af469",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/2e7801e7c357484519710b1aef56940d9c5afc2c",
+                "reference": "2e7801e7c357484519710b1aef56940d9c5afc2c",
                 "shasum": ""
             },
             "require": {
@@ -11427,20 +11427,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-05-27T14:18:12+00:00"
+            "time": "2026-05-28T08:57:34+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.6.0",
+            "version": "5.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "62bd8b0c18eaf10f22cbd5a0823cf30e5ff19300"
+                "reference": "2bf939ca546530bb28bd5870e86c1f414c21adf1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/62bd8b0c18eaf10f22cbd5a0823cf30e5ff19300",
-                "reference": "62bd8b0c18eaf10f22cbd5a0823cf30e5ff19300",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/2bf939ca546530bb28bd5870e86c1f414c21adf1",
+                "reference": "2bf939ca546530bb28bd5870e86c1f414c21adf1",
                 "shasum": ""
             },
             "require": {
@@ -11478,11 +11478,11 @@
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
                 "teknoo/east-common-symfony": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2",
-                "teknoo/east-paas": "^5.6",
+                "teknoo/east-paas": "^5.6.1",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
                 "teknoo/recipe": "^7.2.2",
-                "teknoo/states": "^7.1.2"
+                "teknoo/states": "^7.1.6"
             },
             "require-dev": {
                 "roave/security-advisories": "dev-latest"
@@ -11540,7 +11540,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-05-27T14:39:21+00:00"
+            "time": "2026-05-28T09:21:42+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -11784,16 +11784,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "7.1.5",
+            "version": "7.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "337bfd9973497f1deb5e79742cd9c30c15217f4d"
+                "reference": "e15e03cdadef09e42ba53d65eca79f698005c993"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/337bfd9973497f1deb5e79742cd9c30c15217f4d",
-                "reference": "337bfd9973497f1deb5e79742cd9c30c15217f4d",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/e15e03cdadef09e42ba53d65eca79f698005c993",
+                "reference": "e15e03cdadef09e42ba53d65eca79f698005c993",
                 "shasum": ""
             },
             "require": {
@@ -11801,12 +11801,12 @@
                 "teknoo/immutable": "^3.0.22"
             },
             "require-dev": {
-                "doctrine/mongodb-odm": "^2.15.1",
-                "doctrine/orm": "^3.5.4",
-                "nikic/php-parser": "^5.6.2",
-                "phpstan/phpdoc-parser": "^2.3",
-                "phpstan/phpstan": "^2.1.33",
-                "phpunit/phpunit": "^12.5.1",
+                "doctrine/mongodb-odm": "^2.16.1",
+                "doctrine/orm": "^3.6.2",
+                "nikic/php-parser": "^5.7",
+                "phpstan/phpdoc-parser": "^2.3.2",
+                "phpstan/phpstan": "^2.2",
+                "phpunit/phpunit": "^13",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
                 "symfony/property-access": "^6.4||^7.4||^8"
@@ -11867,7 +11867,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-01-30T22:22:34+00:00"
+            "time": "2026-05-28T08:49:37+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -13037,11 +13037,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.56",
+            "version": "2.2.0",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/93a603c9fc3be8c3c93bbc8d22170ad766685537",
-                "reference": "93a603c9fc3be8c3c93bbc8d22170ad766685537",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b4cd98348c809924f62bb9cc8c047f5e73bc9a58",
+                "reference": "b4cd98348c809924f62bb9cc8c047f5e73bc9a58",
                 "shasum": ""
             },
             "require": {
@@ -13063,6 +13063,17 @@
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ondřej Mirtes"
+                },
+                {
+                    "name": "Markus Staab"
+                },
+                {
+                    "name": "Vincent Langlet"
+                }
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
             "keywords": [
@@ -13086,7 +13097,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-26T17:04:57+00:00"
+            "time": "2026-05-28T08:22:43+00:00"
         },
         {
             "name": "phpstan/phpstan-symfony",
@@ -13642,12 +13653,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "b7bf7ec4104a3c4699d234d38b6ede3f6195c88a"
+                "reference": "d6992473ee5e901c44ba7e8c82b3445692d04794"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/b7bf7ec4104a3c4699d234d38b6ede3f6195c88a",
-                "reference": "b7bf7ec4104a3c4699d234d38b6ede3f6195c88a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d6992473ee5e901c44ba7e8c82b3445692d04794",
+                "reference": "d6992473ee5e901c44ba7e8c82b3445692d04794",
                 "shasum": ""
             },
             "conflict": {
@@ -13702,7 +13713,7 @@
                 "auth0/login": "<=7.20",
                 "auth0/symfony": "<=5.7",
                 "auth0/wordpress": "<=5.5",
-                "automad/automad": "<2.0.0.0-alpha5",
+                "automad/automad": "<=2.0.0.0-beta27",
                 "automattic/jetpack": "<9.8",
                 "awesome-support/awesome-support": "<=6.0.7",
                 "aws/aws-sdk-php": "<=3.371.3",
@@ -14293,7 +14304,7 @@
                 "pimcore/demo": "<10.3",
                 "pimcore/ecommerce-framework-bundle": "<1.0.10",
                 "pimcore/perspective-editor": "<1.5.1",
-                "pimcore/pimcore": "<=12.3.5",
+                "pimcore/pimcore": "<=12.3.6",
                 "pimcore/web2print-tools-bundle": "<=5.2.1|>=6.0.0.0-RC1-dev,<=6.1",
                 "piwik/piwik": "<1.11",
                 "pixelfed/pixelfed": "<0.12.5",
@@ -14457,9 +14468,9 @@
                 "symbiote/silverstripe-seed": "<6.0.3",
                 "symbiote/silverstripe-versionedfiles": "<=2.0.3",
                 "symfont/process": ">=0",
-                "symfony/cache": ">=2,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
+                "symfony/cache": "<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symfony/dependency-injection": ">=2,<2.0.17|>=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
-                "symfony/dom-crawler": ">=2,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
+                "symfony/dom-crawler": "<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symfony/error-handler": ">=4.4,<4.4.4|>=5,<5.0.4",
                 "symfony/form": ">=2.3,<2.3.35|>=2.4,<2.6.12|>=2.7,<2.7.50|>=2.8,<2.8.49|>=3,<3.4.20|>=4,<4.0.15|>=4.1,<4.1.9|>=4.2,<4.2.1",
                 "symfony/framework-bundle": ">=2,<2.3.18|>=2.4,<2.4.8|>=2.5,<2.5.2|>=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7|>=5.3.14,<5.3.15|>=5.4.3,<5.4.4|>=6.0.3,<6.0.4",
@@ -14470,27 +14481,27 @@
                 "symfony/intl": ">=2.7,<2.7.38|>=2.8,<2.8.31|>=3,<3.2.14|>=3.3,<3.3.13",
                 "symfony/json-path": ">=7.3,<7.4.12|>=8,<8.0.12",
                 "symfony/lox24-notifier": ">=7.1,<7.4.12|>=8,<8.0.12",
-                "symfony/mailer": ">=2,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
+                "symfony/mailer": "<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symfony/mailjet-mailer": ">=6.4,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symfony/mailomat-mailer": ">=7.2,<7.4.13|>=8,<8.0.13",
                 "symfony/mailtrap-mailer": ">=7.2,<7.4.12|>=8,<8.0.12",
                 "symfony/maker-bundle": ">=1.27,<1.29.2|>=1.30,<1.31.1",
-                "symfony/mime": ">=2,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
-                "symfony/monolog-bridge": ">=2,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
+                "symfony/mime": "<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
+                "symfony/monolog-bridge": "<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symfony/phpunit-bridge": ">=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
                 "symfony/polyfill": ">=1,<1.10|>=1.17.1,<1.38.1",
                 "symfony/polyfill-intl-idn": ">=1.17.1,<1.38.1",
                 "symfony/polyfill-php55": ">=1,<1.10",
                 "symfony/process": "<5.4.51|>=6,<6.4.33|>=7,<7.1.7|>=7.3,<7.3.11|>=7.4,<7.4.5|>=8,<8.0.5",
                 "symfony/proxy-manager-bridge": ">=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
-                "symfony/routing": ">=2,<5.4.53|>=6,<6.4.41|>=7,<7.4.13|>=8,<8.0.13",
+                "symfony/routing": "<5.4.53|>=6,<6.4.41|>=7,<7.4.13|>=8,<8.0.13",
                 "symfony/runtime": ">=5.3,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symfony/security": ">=2,<2.7.51|>=2.8,<3.4.49|>=4,<4.4.24|>=5,<5.2.8",
                 "symfony/security-bundle": ">=2,<4.4.50|>=5,<5.4.20|>=6,<6.0.20|>=6.1,<6.1.12|>=6.2,<6.4.10|>=7,<7.0.10|>=7.1,<7.1.3",
                 "symfony/security-core": ">=2.4,<2.6.13|>=2.7,<2.7.9|>=2.7.30,<2.7.32|>=2.8,<3.4.49|>=4,<4.4.24|>=5,<5.2.9",
                 "symfony/security-csrf": ">=2.4,<2.7.48|>=2.8,<2.8.41|>=3,<3.3.17|>=3.4,<3.4.11|>=4,<4.0.11",
                 "symfony/security-guard": ">=2.8,<3.4.48|>=4,<4.4.23|>=5,<5.2.8",
-                "symfony/security-http": ">=2,<5.4.53|>=6,<6.4.41|>=7,<7.4.13|>=8,<8.0.13",
+                "symfony/security-http": "<5.4.53|>=6,<6.4.41|>=7,<7.4.13|>=8,<8.0.13",
                 "symfony/serializer": ">=2,<2.0.11|>=4.1,<4.4.35|>=5,<5.3.12",
                 "symfony/symfony": "<5.4.53|>=6,<6.4.41|>=7,<7.4.13|>=8,<8.0.13",
                 "symfony/translation": ">=2,<2.0.17",
@@ -14503,7 +14514,7 @@
                 "symfony/var-exporter": ">=4.2,<4.2.12|>=4.3,<4.3.8",
                 "symfony/web-profiler-bundle": ">=2,<2.3.19|>=2.4,<2.4.9|>=2.5,<2.5.4|>=7.2.9,<7.4.12|>=8,<8.0.12",
                 "symfony/webhook": ">=6.3,<6.3.8",
-                "symfony/yaml": ">=2,<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
+                "symfony/yaml": "<5.4.52|>=6,<6.4.40|>=7,<7.4.12|>=8,<8.0.12",
                 "symphonycms/symphony-2": "<2.6.4",
                 "t3/dce": "<0.11.5|>=2.2,<2.6.2",
                 "t3g/svg-sanitizer": "<1.0.3",
@@ -14538,7 +14549,7 @@
                 "twig/cssinliner-extra": "<3.26",
                 "twig/intl-extra": "<3.26",
                 "twig/markdown-extra": "<3.26",
-                "twig/twig": "<3.26",
+                "twig/twig": "<3.27",
                 "typicms/core": "<16.1.7",
                 "typo3/cms": "<9.5.29|>=10,<10.4.35|>=11,<11.5.23|>=12,<12.2",
                 "typo3/cms-backend": "<4.1.14|>=4.2,<4.2.15|>=4.3,<4.3.7|>=4.4,<4.4.4|>=7,<=7.6.50|>=8,<=8.7.39|>=9,<9.5.55|>=10,<=10.4.54|>=11,<=11.5.48|>=12,<=12.4.40|>=13,<=13.4.22|>=14,<=14.0.1|==14.2",
@@ -14723,7 +14734,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-27T11:16:21+00:00"
+            "time": "2026-05-27T21:36:42+00:00"
         },
         {
             "name": "sebastian/cli-parser",

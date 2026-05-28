@@ -1,5 +1,26 @@
 # Teknoo Software - Space - Change Log
 
+## [2.4.0] - 2026-05-28
+### Stable Release
+- Upgrade to **Teknoo East PaaS 5.6** and **5.6.1**:
+  - New DI parameter `teknoo.east.paas.kubernernes.version_level` (default `1.30`) targeting a specific
+    Kubernetes API level. Injected into Deployment / StatefulSets / Job / CronJob transcribers.
+  - When `>= 1.32`, manifests emit native image-volume sources (no init-container + emptyDir).
+  - When `>= 1.36`, pod specs include `hostUsers: false` for user-namespace isolation.
+  - 5.6.1: transcribers now read the live cluster version via `Client::version()` and clamp the configured
+    `version_level` down to the cluster's (silent downgrade against an older cluster).
+- New env var `SPACE_KUBERNETES_VERSION_LEVEL` (default `1.30`) exposed via the standard 3-layer pattern
+  in `parameters.yaml` (`teknoo.space.default.east.paas.kubernetes.version_level` ->
+  `teknoo.space.east.paas.kubernetes.version_level` -> `teknoo.east.paas.kubernernes.version_level`).
+- Vendor updates:
+  - Symfony 7.4.13 / 8.0.13 (multiple CVEs across console / framework-bundle / http-client / mime /
+    process / runtime / security-bundle / security-http / string / web-profiler-bundle / yaml).
+  - Guzzle `^7.10.5` and guzzlehttp/psr7.
+  - Illuminate (contracts + collections) `^13.12.0`.
+  - Twig `^3.27.0`.
+  - PHPStan `^2.2.0`, PHPUnit `^13.1.13`
+  - `teknoo/states` `^7.1.6`
+
 ## [2.3.6] - 2026-05-20
 ### Stable Release
 - Update to Symfony 7.4.12/8.4.12 (multiple CVEs)

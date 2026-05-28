@@ -332,6 +332,9 @@ Environnements variables configuration
           `3` by default. *Optional*
         * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
           `1` by default. *Optional*
+        * `SPACE_KUBERNETES_VERSION_LEVEL` : (string) Target Kubernetes API level used by the manifest transcribers.
+          `1.30` by default. `1.32`+ emits native image-volume sources instead of init-container + emptyDir.
+          `1.36`+ adds `hostUsers: false` to pod specs. *Optional*
         * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
           account. `space-client-` by default. *Optional*
         * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace dedicated

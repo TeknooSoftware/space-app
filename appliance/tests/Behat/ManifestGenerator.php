@@ -683,9 +683,23 @@ EOF;
         string $defaultsMods,
         bool $jobsEnabled,
         string $ingressProvider,
+        string $versionLevel = '1.30',
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
+        }
+
+        $useImageVolumes = version_compare($versionLevel, '1.32', '>=');
+        $useHostUsers = version_compare($versionLevel, '1.36', '>=');
+
+        $hostUsersInline = '';
+        if ($useHostUsers) {
+            $hostUsersInline = ', "hostUsers": false';
+        }
+
+        $mountSubPath = '';
+        if ($useImageVolumes) {
+            $mountSubPath = ",\n                                        \"subPath\": \"/foo/bar\"";
         }
 
         $nameHnc = trim($hncSuffix, '-');
@@ -903,6 +917,91 @@ EOF;
             default => 'public',
         };
 
+        $translationInitContainerBlock = '';
+        if (!$useImageVolumes) {
+            $translationInitContainerBlock = <<<JSON
+,
+                        "initContainers": [
+                            {
+                                "name": "extra-myproject",
+                                "image": "my-company.registry.demo.teknoo.space/extra-myproject",
+                                "imagePullPolicy": "Always",
+                                "volumeMounts": [
+                                    {
+                                        "name": "extra-myproject-volume",
+                                        "mountPath": "/opt/extra",
+                                        "readOnly": false
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "MOUNT_PATH",
+                                        "value": "/opt/extra"
+                                    }
+                                ]
+                            }
+                        ]
+JSON;
+        }
+
+        $translationVolumeEntry = $useImageVolumes
+            ? <<<JSON
+{
+                                "name": "extra-myproject-volume",
+                                "image": {
+                                    "reference": "my-company.registry.demo.teknoo.space/extra-myproject",
+                                    "pullPolicy": "Always"
+                                }
+                            }
+JSON
+            : <<<JSON
+{
+                                "name": "extra-myproject-volume",
+                                "emptyDir": []
+                            }
+JSON;
+
+        $statefulSetInitContainerBlock = $useImageVolumes ? '' : <<<JSON
+,
+                        "initContainers": [
+                            {
+                                "name": "extra-{$jobId}",
+                                "image": "my-company.registry.demo.teknoo.space/extra-{$jobId}",
+                                "imagePullPolicy": "Always",
+                                "volumeMounts": [
+                                    {
+                                        "name": "extra-{$jobId}-volume",
+                                        "mountPath": "/opt/extra",
+                                        "readOnly": false
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "MOUNT_PATH",
+                                        "value": "/opt/extra"
+                                    }
+                                ]{$phpRunResources}
+                            }
+                        ]
+JSON;
+
+        $statefulSetVolumeEntry = $useImageVolumes
+            ? <<<JSON
+{
+                                "name": "extra-{$jobId}-volume",
+                                "image": {
+                                    "reference": "my-company.registry.demo.teknoo.space/extra-{$jobId}",
+                                    "pullPolicy": "Always"
+                                }
+                            }
+JSON
+            : <<<JSON
+{
+                                "name": "extra-{$jobId}-volume",
+                                "emptyDir": []
+                            }
+JSON;
+
         $jobsManifest = '';
         if ($jobsEnabled) {
             $jobsManifest = <<<"EOF"
@@ -940,7 +1039,7 @@ EOF;
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always"
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
@@ -986,7 +1085,7 @@ EOF;
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always"
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
@@ -1032,7 +1131,7 @@ EOF;
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always"
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
@@ -1078,7 +1177,7 @@ EOF;
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always"
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
@@ -1149,7 +1248,7 @@ EOF;
                                     {
                                         "name": "extra-myproject-volume",
                                         "mountPath": "/opt/extra",
-                                        "readOnly": true
+                                        "readOnly": true{$mountSubPath}
                                     },
                                     {
                                         "name": "data-b424d-43879-43879-volume",
@@ -1173,38 +1272,15 @@ EOF;
                                     }
                                 ]
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "restartPolicy": "Never",
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
                             }
-                        ],
-                        "initContainers": [
-                            {
-                                "name": "extra-myproject",
-                                "image": "my-company.registry.demo.teknoo.space/extra-myproject",
-                                "imagePullPolicy": "Always",
-                                "volumeMounts": [
-                                    {
-                                        "name": "extra-myproject-volume",
-                                        "mountPath": "/opt/extra",
-                                        "readOnly": false
-                                    }
-                                ],
-                                "env": [
-                                    {
-                                        "name": "MOUNT_PATH",
-                                        "value": "/opt/extra"
-                                    }
-                                ]
-                            }
-                        ],
+                        ]{$translationInitContainerBlock},
                         "volumes": [
-                            {
-                                "name": "extra-myproject-volume",
-                                "emptyDir": []
-                            },
+                            {$translationVolumeEntry},
                             {
                                 "name": "data-b424d-43879-43879-volume",
                                 "persistentVolumeClaim": {
@@ -1297,7 +1373,7 @@ EOF;
                                         "image": "registry.hub.docker.com/backup:alpine",
                                         "imagePullPolicy": "Always"
                                     }
-                                ],
+                                ]{$hostUsersInline},
                                 "restartPolicy": "OnFailure",
                                 "imagePullSecrets": [
                                     {
@@ -1496,7 +1572,7 @@ EOF;
                                 "image": "registry.hub.docker.com/bash:alpine",
                                 "imagePullPolicy": "Always"$shellResources
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1613,7 +1689,7 @@ EOF;
                                     }
                                 ]$blackfireResources
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1733,7 +1809,7 @@ EOF;
                                     {
                                         "name": "extra-{$jobId}-volume",
                                         "mountPath": "/opt/extra",
-                                        "readOnly": true
+                                        "readOnly": true{$mountSubPath}
                                     },
                                     {
                                         "name": "data-09597-1e225-volume",
@@ -1770,7 +1846,7 @@ EOF;
                                     "failureThreshold": 1
                                 }$phpRunResources
                             }
-                        ],
+                        ]{$hostUsersInline},
                         "imagePullSecrets": [
                             {
                                 "name": "$imagePullSecrets"
@@ -1795,32 +1871,9 @@ EOF;
                                     ]
                                 }
                             }
-                        },
-                        "initContainers": [
-                            {
-                                "name": "extra-{$jobId}",
-                                "image": "my-company.registry.demo.teknoo.space/extra-{$jobId}",
-                                "imagePullPolicy": "Always",
-                                "volumeMounts": [
-                                    {
-                                        "name": "extra-{$jobId}-volume",
-                                        "mountPath": "/opt/extra",
-                                        "readOnly": false
-                                    }
-                                ],
-                                "env": [
-                                    {
-                                        "name": "MOUNT_PATH",
-                                        "value": "/opt/extra"
-                                    }
-                                ]$phpRunResources
-                            }
-                        ],
+                        }{$statefulSetInitContainerBlock},
                         "volumes": [
-                            {
-                                "name": "extra-{$jobId}-volume",
-                                "emptyDir": []
-                            },
+                            {$statefulSetVolumeEntry},
                             {
                                 "name": "data-09597-1e225-volume",
                                 "persistentVolumeClaim": {

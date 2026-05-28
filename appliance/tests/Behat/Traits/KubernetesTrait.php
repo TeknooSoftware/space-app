@@ -136,8 +136,11 @@ trait KubernetesTrait
     }
 
     #[Then('some Kubernetes manifests have been created and executed on :cluster')]
-    public function someKubernetesManifestsHaveBeenCreatedAndExecuted(string $cluster): void
-    {
+    #[Then('some Kubernetes v:effectiveVersion manifests have been created and executed on :cluster')]
+    public function someKubernetesManifestsHaveBeenCreatedAndExecuted(
+        string $cluster,
+        ?string $effectiveVersion = null,
+    ): void {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
 
@@ -156,6 +159,8 @@ trait KubernetesTrait
             return;
         }
 
+        $versionLevel = $effectiveVersion ?? $this->kubernetesVersionLevel;
+
         $expected = new ManifestGenerator()->fullDeployment(
             projectPrefix: $this->projectPrefix,
             jobId: strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '', (string) $job->getProject()))),
@@ -165,6 +170,7 @@ trait KubernetesTrait
             defaultsMods: $this->defaultsMode,
             jobsEnabled: $this->jobsEnabled,
             ingressProvider: $this->ingressProvider,
+            versionLevel: $versionLevel,
         );
 
         Assert::assertEquals(
