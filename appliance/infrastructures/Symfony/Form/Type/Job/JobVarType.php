@@ -63,6 +63,9 @@ class JobVarType extends AbstractType
         $builder->add(
             'id',
             HiddenType::class,
+            [
+                'setter' => fn () => false,
+            ]
         );
 
         $builder->add(
@@ -71,6 +74,7 @@ class JobVarType extends AbstractType
             [
                 'required' => true,
                 'label' => 'teknoo.space.form.job.job_var.name',
+                'setter' => fn (JobVar $jobVar, mixed $value) => $jobVar->name = (string) $value,
             ],
         );
 
