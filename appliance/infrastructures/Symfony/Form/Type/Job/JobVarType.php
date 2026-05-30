@@ -36,6 +36,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Teknoo\Space\Object\DTO\JobVar;
 
 use function is_array;
@@ -74,6 +75,10 @@ class JobVarType extends AbstractType
             [
                 'required' => true,
                 'label' => 'teknoo.space.form.job.job_var.name',
+                'constraints' => [
+                    new NotBlank(),
+                ],
+                'setter' => fn (JobVar $jobVar, ?string $value) => $jobVar->name = (string) $value,
             ],
         );
 

@@ -31,6 +31,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\JobVarType;
+use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\JobVarsSet;
 
 /**
@@ -70,6 +71,7 @@ class VarsSetType extends AbstractType
                 'entry_type' => JobVarType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
+                'delete_empty' => static fn (?JobVar $jobVar): bool => null === $jobVar || '' === $jobVar->name,
                 'prototype' => true,
             ]
         );
