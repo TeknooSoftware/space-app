@@ -74,7 +74,6 @@ class JobVarType extends AbstractType
             [
                 'required' => true,
                 'label' => 'teknoo.space.form.job.job_var.name',
-                'setter' => fn (JobVar $jobVar, mixed $value) => $jobVar->name = (string) $value,
             ],
         );
 

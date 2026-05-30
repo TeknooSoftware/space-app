@@ -71,7 +71,7 @@
         "symfony/cache-contracts": ">=3.7",
         "symfony/dotenv": ">=8.0.11",
         "symfony/expression-language": ">=7.4.8",
-        "symfony/flex": "^2.10.0",
+        "symfony/flex": "^2.11.0",
         "symfony/form": ">=8.0.9",
         "symfony/framework-bundle": ">=8.0.13",
         "symfony/http-client": ">=8.0.13",
@@ -120,7 +120,7 @@
         "masterminds/html5": "^2.10",
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.2.1",
-        "phpstan/phpstan-symfony": "^2.0.18",
+        "phpstan/phpstan-symfony": "^2.0.19",
         "phpunit/phpunit": "^13.1.13",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^4.0.1",
@@ -194,7 +194,7 @@
                 "https://api.github.com/repos/TeknooSoftware/symfony-recipes/contents/index.json",
                 "flex://defaults"
             ],
-            "require": "^7.4||^8"
+            "require": "^7.4||8.0.*"
         }
     }
 }
