@@ -76,6 +76,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
                 'entry_type' => JobVarType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
+                'delete_empty' => static fn (?JobVar $jobVar): bool => null === $jobVar || '' === $jobVar->name,
                 'prototype' => true,
                 'prototype_data' => new JobVar(
                     canPersist: true,
