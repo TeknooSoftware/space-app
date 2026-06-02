@@ -81,7 +81,7 @@ return [
 
             $key = match ($providerTypeFound) {
                 'traefik', 'traefik1' => 'ingress.kubernetes.io/protocol',
-                'traefik2' => 'traefik.ingress.kubernetes.io/service.serversscheme',
+                'traefik2' => 'traefik.ingress.kubernetes.io/router.entrypoints',
                 'haproxy' => 'haproxy.org/server-ssl',
                 'aws' => 'alb.ingress.kubernetes.io/backend-protocol',
                 'gce' => 'cloud.google.com/app-protocols',
@@ -94,9 +94,13 @@ return [
 
             return [
                 $key => match ($providerTypeFound) {
-                    'traefik', 'traefik1', 'traefik2' => match ($isHttpsBackend) {
+                    'traefik', 'traefik1' => match ($isHttpsBackend) {
                         true => 'https',
                         false => 'http'
+                    },
+                    'traefik2' => match ($isHttpsBackend) {
+                        true => 'websecure',
+                        false => 'web'
                     },
                     'haproxy' => match ($isHttpsBackend) {
                         true => 'true',
