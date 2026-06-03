@@ -692,6 +692,13 @@ EOF;
         $useImageVolumes = version_compare($versionLevel, '1.32', '>=');
         $useHostUsers = version_compare($versionLevel, '1.36', '>=');
 
+        $servicePrefix = '';
+        $serviceSuffix = '';
+        if ('traefik' === $ingressProvider) {
+            $servicePrefix = 'https-';
+            $serviceSuffix = '-ssl';
+        }
+
         $hostUsersInline = '';
         if ($useHostUsers) {
             $hostUsersInline = ', "hostUsers": false';
@@ -1391,6 +1398,95 @@ JSON;
 EOF;
         }
 
+        if ('traefik' === $ingressProvider) {
+            $servicesManifest = <<<"EOF"
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "{$projectPrefix}demo",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}demo"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "name": "{$projectPrefix}demo"
+                },
+                "type": "ClusterIP",
+                "ports": [
+                    {
+                        "name": "demo-8080",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "{$projectPrefix}demo-ssl",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}demo-ssl"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "name": "{$projectPrefix}demo-ssl"
+                },
+                "type": "ClusterIP",
+                "ports": [
+                    {
+                        "name": "https-demo-ssl-8181",
+                        "protocol": "TCP",
+                        "port": 8181,
+                        "targetPort": 8181
+                    }
+                ]
+            }
+        }
+EOF;
+        } else {
+            $servicesManifest = <<<"EOF"
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "{$projectPrefix}demo",
+                "namespace": "space-client-my-company-prod{$hncSuffix}",
+                "labels": {
+                    "name": "{$projectPrefix}demo"
+                }
+            },
+            "spec": {
+                "selector": {
+                    "name": "{$projectPrefix}demo"
+                },
+                "type": "ClusterIP",
+                "ports": [
+                    {
+                        "name": "demo-8080",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    },
+                    {
+                        "name": "demo-8181",
+                        "protocol": "TCP",
+                        "port": 8181,
+                        "targetPort": 8181
+                    }
+                ]
+            }
+        }
+EOF;
+        }
+
         $json = <<<"EOF"
 {
     $hncManifest"namespaces/space-client-my-company-prod{$hncSuffix}/secrets": [
@@ -1922,7 +2018,7 @@ EOF;
                 "type": "LoadBalancer",
                 "ports": [
                     {
-                        "name": "php-service-9876",
+                        "name": "{$servicePrefix}php-service-9876",
                         "protocol": "TCP",
                         "port": 9876,
                         "targetPort": 8080
@@ -1930,37 +2026,7 @@ EOF;
                 ]
             }
         },
-        {
-            "kind": "Service",
-            "apiVersion": "v1",
-            "metadata": {
-                "name": "{$projectPrefix}demo",
-                "namespace": "space-client-my-company-prod{$hncSuffix}",
-                "labels": {
-                    "name": "{$projectPrefix}demo"
-                }
-            },
-            "spec": {
-                "selector": {
-                    "name": "{$projectPrefix}demo"
-                },
-                "type": "ClusterIP",
-                "ports": [
-                    {
-                        "name": "demo-8080",
-                        "protocol": "TCP",
-                        "port": 8080,
-                        "targetPort": 8080
-                    },
-                    {
-                        "name": "demo-8181",
-                        "protocol": "TCP",
-                        "port": 8181,
-                        "targetPort": 8181
-                    }
-                ]
-            }
-        }
+        {$servicesManifest}
     ],
     "namespaces/space-client-my-company-prod{$hncSuffix}/ingresses": [
         {
@@ -2108,7 +2174,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}demo",
+                                            "name": "{$projectPrefix}demo{$serviceSuffix}",
                                             "port": {
                                                 "number": 8181
                                             }

@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [2.4.1] - 2026-06-03
+### Stable Release
+- Add `HTTPS` as `transport`/`protocol` for services
+- If a service use HTTPS, the port implementation is prefixed by `https-`
+- Update Vendor
+  - Guzzle
+  - Illuminate
+  - Symfony Polyfill CVE
+  - Allow Symfony 8.1 expected Symfony form locked to 7.4 due to several BC in 8.1
+
 ## [2.4.0] - 2026-05-28
 ### Stable Release
 - Upgrade to **Teknoo East PaaS 5.6** and **5.6.1**:
