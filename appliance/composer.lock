@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae932f0e1b1a28506a4148fb556aab6b",
+    "content-hash": "7120f9b100959d4ee7762f723cc992da",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1551,7 +1551,7 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.14.0",
+            "version": "v13.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
@@ -1611,7 +1611,7 @@
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.14.0",
+            "version": "v13.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1657,7 +1657,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.14.0",
+            "version": "v13.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1705,7 +1705,7 @@
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.14.0",
+            "version": "v13.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
