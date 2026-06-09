@@ -114,7 +114,7 @@ useDockerCompose=$(readForYesOrNo "Configure to use with a local Docker Compose 
 if [ "$useDockerCompose" = "y" ]; then
   useDockerComposeFranken=$(readForYesOrNo "Prefere use FrankenPHP instead PHP FPM [y/n]")
 
-  mongoDbDSN="mongodb://space_user:space_pwd@db/space"
+  mongoDbDSN="mongodb://space_user:space_pwd@db/teknoo_space"
   amqpDSN="amqp://space:space_pwd@amqp:5672/"
   mercurePublishUrl="https://localhost/"
   mercureSubscribeUrl="https://localhost/"
