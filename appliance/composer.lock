@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7120f9b100959d4ee7762f723cc992da",
+    "content-hash": "f716c993c8ca30ab228db01e482819db",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11205,16 +11205,16 @@
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "9.2.1",
+            "version": "9.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "74a1e1742eb3f50c79d1cab13e8390968352630e"
+                "reference": "fde6bd4038ea393cc5315bdf907255c6e882292d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/74a1e1742eb3f50c79d1cab13e8390968352630e",
-                "reference": "74a1e1742eb3f50c79d1cab13e8390968352630e",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/fde6bd4038ea393cc5315bdf907255c6e882292d",
+                "reference": "fde6bd4038ea393cc5315bdf907255c6e882292d",
                 "shasum": ""
             },
             "require": {
@@ -11305,20 +11305,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-14T07:12:21+00:00"
+            "time": "2026-06-10T13:40:22+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "9.2.1",
+            "version": "9.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "1e572b88f7046dc3373143334d942c52990da123"
+                "reference": "e480ae865116eb314928fce8c478a4dfce47b199"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/1e572b88f7046dc3373143334d942c52990da123",
-                "reference": "1e572b88f7046dc3373143334d942c52990da123",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/e480ae865116eb314928fce8c478a4dfce47b199",
+                "reference": "e480ae865116eb314928fce8c478a4dfce47b199",
                 "shasum": ""
             },
             "require": {
@@ -11334,7 +11334,7 @@
                 "symfony/serializer": "^6.4.24||^7.3||^8",
                 "symfony/yaml": "^6.4.24||^7.3||^8",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-foundation": "^9.2.1",
+                "teknoo/east-foundation": "^9.2.2",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
                 "teknoo/states": "^7.1.2"
@@ -11383,7 +11383,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-04-14T07:14:37+00:00"
+            "time": "2026-06-10T13:54:05+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -13765,12 +13765,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2f3bb19d3f2665d75f6bd3277835897094b86f77"
+                "reference": "21becf5973eb93d86cf68e3e724af0aa412e8129"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2f3bb19d3f2665d75f6bd3277835897094b86f77",
-                "reference": "2f3bb19d3f2665d75f6bd3277835897094b86f77",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/21becf5973eb93d86cf68e3e724af0aa412e8129",
+                "reference": "21becf5973eb93d86cf68e3e724af0aa412e8129",
                 "shasum": ""
             },
             "conflict": {
@@ -14388,6 +14388,7 @@
                 "personnummer/personnummer": "<3.0.2",
                 "ph7software/ph7builder": "<=17.9.1",
                 "phanan/koel": "<=9.3.4",
+                "pheditor/pheditor": ">=2.0.1,<=2.0.3",
                 "phenx/php-svg-lib": "<0.5.2",
                 "php-censor/php-censor": "<2.0.13|>=2.1,<2.1.5",
                 "php-mod/curl": "<2.3.2",
@@ -14850,7 +14851,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-09T11:06:21+00:00"
+            "time": "2026-06-09T22:34:42+00:00"
         },
         {
             "name": "sebastian/cli-parser",
