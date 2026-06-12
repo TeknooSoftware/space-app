@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [2.4.3] - 2026-06-12
+### Stable Release
+- Update vendor
+  - scheb/2fa
+
 ## [2.4.2] - 2026-06-12
 ### Stable Release
 - Update vendor

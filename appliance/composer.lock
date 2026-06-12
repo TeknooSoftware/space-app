@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f716c993c8ca30ab228db01e482819db",
+    "content-hash": "771fa1e66015ec41dc5a826402157933",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4444,7 +4444,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v8.5.0",
+            "version": "v8.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -4487,22 +4487,22 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.5.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.6.0"
             },
             "time": "2026-01-24T13:26:10+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v8.5.0",
+            "version": "v8.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "ae26ae91723685e3a8622f2f3b9119016de23e20"
+                "reference": "e5f8793a8180d874d8a96b600cd6b95b25bd098f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/ae26ae91723685e3a8622f2f3b9119016de23e20",
-                "reference": "ae26ae91723685e3a8622f2f3b9119016de23e20",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/e5f8793a8180d874d8a96b600cd6b95b25bd098f",
+                "reference": "e5f8793a8180d874d8a96b600cd6b95b25bd098f",
                 "shasum": ""
             },
             "require": {
@@ -4555,13 +4555,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v8.5.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v8.6.0"
             },
-            "time": "2026-03-24T18:33:45+00:00"
+            "time": "2026-06-12T18:24:27+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v8.5.0",
+            "version": "v8.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
@@ -4608,13 +4608,13 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.5.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.6.0"
             },
             "time": "2026-01-24T13:27:55+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v8.5.0",
+            "version": "v8.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
@@ -4661,7 +4661,7 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v8.5.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v8.6.0"
             },
             "time": "2026-01-24T13:27:55+00:00"
         },
@@ -13762,12 +13762,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "111307ab063f0ca0869698eca9d14bd7be67e005"
+                "reference": "2c8fceb31770b4f5b80995f756ebfd7c40741118"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/111307ab063f0ca0869698eca9d14bd7be67e005",
-                "reference": "111307ab063f0ca0869698eca9d14bd7be67e005",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2c8fceb31770b4f5b80995f756ebfd7c40741118",
+                "reference": "2c8fceb31770b4f5b80995f756ebfd7c40741118",
                 "shasum": ""
             },
             "conflict": {
@@ -14667,7 +14667,7 @@
                 "twig/twig": "<3.27",
                 "typicms/core": "<16.1.7",
                 "typo3/cms": "<9.5.29|>=10,<10.4.35|>=11,<11.5.23|>=12,<12.2",
-                "typo3/cms-backend": "<4.1.14|>=4.2,<4.2.15|>=4.3,<4.3.7|>=4.4,<4.4.4|>=7,<=7.6.50|>=8,<=8.7.39|>=9,<9.5.55|>=10,<=10.4.54|>=11,<=11.5.48|>=12,<=12.4.40|>=13,<=13.4.22|>=14,<=14.0.1|==14.2",
+                "typo3/cms-backend": "<10.4.57|>=11,<11.5.51|>=12,<12.4.46|>=13,<13.4.31|>=14,<14.3.3",
                 "typo3/cms-belog": ">=10,<=10.4.47|>=11,<=11.5.41|>=12,<=12.4.24|>=13,<=13.4.2",
                 "typo3/cms-beuser": ">=9,<9.5.55|>=10,<10.4.54|>=11,<11.5.48|>=12,<12.4.37|>=13,<13.4.18",
                 "typo3/cms-core": "<10.4.57|>=11,<11.5.51|>=12,<12.4.46|>=13,<13.4.31|>=14,<14.3.3",
@@ -14675,10 +14675,11 @@
                 "typo3/cms-extbase": "<6.2.24|>=7,<7.6.8|==8.1.1",
                 "typo3/cms-extensionmanager": ">=10,<=10.4.47|>=11,<=11.5.41|>=12,<=12.4.24|>=13,<=13.4.2",
                 "typo3/cms-felogin": ">=4.2,<4.2.3",
+                "typo3/cms-filelist": ">=11,<11.5.51|>=12,<12.4.46|>=13,<13.4.31|>=14,<14.3.3",
                 "typo3/cms-fluid": "<4.3.4|>=4.4,<4.4.1",
-                "typo3/cms-form": ">=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.47|>=11,<=11.5.41|>=12,<=12.4.24|>=13,<=13.4.2",
+                "typo3/cms-form": "<10.4.57|>=11,<11.5.51|>=12,<12.4.46|>=13,<13.4.31|>=14,<14.3.3",
                 "typo3/cms-frontend": "<4.3.9|>=4.4,<4.4.5",
-                "typo3/cms-indexed-search": ">=10,<=10.4.47|>=11,<=11.5.41|>=12,<=12.4.24|>=13,<=13.4.2",
+                "typo3/cms-indexed-search": ">=10,<=10.4.47|>=11,<=11.5.41|>=12,<=12.4.24|>=13,<13.4.31|>=14,<14.3.3",
                 "typo3/cms-install": "<4.1.14|>=4.2,<4.2.16|>=4.3,<4.3.9|>=4.4,<4.4.5|>=12.2,<12.4.8|==13.4.2",
                 "typo3/cms-lowlevel": ">=11,<=11.5.41",
                 "typo3/cms-recordlist": ">=11,<11.5.48",
@@ -14849,7 +14850,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-12T15:06:50+00:00"
+            "time": "2026-06-12T19:41:51+00:00"
         },
         {
             "name": "sebastian/cli-parser",
