@@ -1,5 +1,15 @@
 # Teknoo Software - Space - Change Log
 
+## [2.4.2] - 2026-06-12
+### Stable Release
+- Update vendor
+  - illuminates libraries
+  - spomky-labs/otphp
+  - guzzlehttp/guzzle
+  - symfony polyfill libraries
+  - phpseclib
+  - teknoo/east-foundation
+
 ## [2.4.1] - 2026-06-03
 ### Stable Release
 - Add `HTTPS` as `transport`/`protocol` for services
