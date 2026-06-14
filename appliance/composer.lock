@@ -3773,16 +3773,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.53",
+            "version": "3.0.54",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "511ddc8e352d5d1f1e33bea468b6f4ef48438cf9"
+                "reference": "5418963581a6d3e69f030d8c972238cb6add3166"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/511ddc8e352d5d1f1e33bea468b6f4ef48438cf9",
-                "reference": "511ddc8e352d5d1f1e33bea468b6f4ef48438cf9",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/5418963581a6d3e69f030d8c972238cb6add3166",
+                "reference": "5418963581a6d3e69f030d8c972238cb6add3166",
                 "shasum": ""
             },
             "require": {
@@ -3863,7 +3863,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.53"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.54"
             },
             "funding": [
                 {
@@ -3879,7 +3879,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-09T18:08:26+00:00"
+            "time": "2026-06-14T19:54:17+00:00"
         },
         {
             "name": "psr/cache",
@@ -13762,12 +13762,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "2c8fceb31770b4f5b80995f756ebfd7c40741118"
+                "reference": "810e1d8cfbc718df8dacf74b62b7b9a1780b9698"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/2c8fceb31770b4f5b80995f756ebfd7c40741118",
-                "reference": "2c8fceb31770b4f5b80995f756ebfd7c40741118",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/810e1d8cfbc718df8dacf74b62b7b9a1780b9698",
+                "reference": "810e1d8cfbc718df8dacf74b62b7b9a1780b9698",
                 "shasum": ""
             },
             "conflict": {
@@ -14683,7 +14683,7 @@
                 "typo3/cms-install": "<4.1.14|>=4.2,<4.2.16|>=4.3,<4.3.9|>=4.4,<4.4.5|>=12.2,<12.4.8|==13.4.2",
                 "typo3/cms-lowlevel": ">=11,<=11.5.41",
                 "typo3/cms-recordlist": ">=11,<11.5.48",
-                "typo3/cms-recycler": ">=9,<9.5.55|>=10,<=10.4.54|>=11,<=11.5.48|>=12,<=12.4.40|>=13,<=13.4.22|>=14,<=14.0.1",
+                "typo3/cms-recycler": "<10.4.57|>=11,<11.5.51|>=12,<12.4.46|>=13,<13.4.31|>=14,<14.3.3",
                 "typo3/cms-redirects": ">=10,<=10.4.54|>=11,<=11.5.48|>=12,<=12.4.40|>=13,<=13.4.22|>=14,<=14.0.1",
                 "typo3/cms-rte-ckeditor": ">=9.5,<9.5.42|>=10,<10.4.39|>=11,<11.5.30",
                 "typo3/cms-scheduler": ">=11,<=11.5.41",
@@ -14850,7 +14850,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-12T19:41:51+00:00"
+            "time": "2026-06-12T20:48:39+00:00"
         },
         {
             "name": "sebastian/cli-parser",
