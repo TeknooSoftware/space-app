@@ -36,3 +36,4 @@
 /tests/var/keys/variables/public.pem
 /vendor-bin/
 /extensions/*
+/config/reference.php

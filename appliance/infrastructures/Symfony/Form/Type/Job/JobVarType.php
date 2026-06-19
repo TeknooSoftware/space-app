@@ -65,7 +65,7 @@ class JobVarType extends AbstractType
             'id',
             HiddenType::class,
             [
-                'setter' => fn () => false,
+                'setter' => fn (): false => false,
             ]
         );
 
@@ -78,7 +78,7 @@ class JobVarType extends AbstractType
                 'constraints' => [
                     new NotBlank(),
                 ],
-                'setter' => fn (JobVar $jobVar, ?string $value) => $jobVar->name = (string) $value,
+                'setter' => fn (JobVar $jobVar, ?string $value): string => $jobVar->name = (string) $value,
             ],
         );
 

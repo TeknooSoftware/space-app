@@ -74,6 +74,7 @@ trait ExtensionTrait
             if (!class_exists($classExtension, true)) {
                 continue;
             }
+
             if (!is_a($classExtension, ExtensionInterface::class, true)) {
                 continue;
             }
