@@ -8,4 +8,4 @@
 /.agents/tasks/*
 !/.agents/tasks/.gitkeep
 *.bck
-/graphify-out/
+graphify-out/
