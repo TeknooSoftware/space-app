@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c2fdb6bc9a06be2b68aef8206608ca34",
+    "content-hash": "2402349abfab498f71512c7f2d660910",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1657,16 +1657,16 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.16.1",
+            "version": "v13.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
-                "reference": "874c81d9fe7b0458d19add1fbefd7c880b847123"
+                "reference": "0b719e8cac0dcdb021e0ddfee5ef65410fe53000"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/874c81d9fe7b0458d19add1fbefd7c880b847123",
-                "reference": "874c81d9fe7b0458d19add1fbefd7c880b847123",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/0b719e8cac0dcdb021e0ddfee5ef65410fe53000",
+                "reference": "0b719e8cac0dcdb021e0ddfee5ef65410fe53000",
                 "shasum": ""
             },
             "require": {
@@ -1701,7 +1701,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-06-15T15:36:54+00:00"
+            "time": "2026-06-22T12:59:19+00:00"
         },
         {
             "name": "illuminate/macroable",
@@ -13762,12 +13762,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6c54e0520e210e3889b0b3bff4d256bfa19bdc52"
+                "reference": "c5afdab923ee443a1aadcdd52543132e5d92db90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6c54e0520e210e3889b0b3bff4d256bfa19bdc52",
-                "reference": "6c54e0520e210e3889b0b3bff4d256bfa19bdc52",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/c5afdab923ee443a1aadcdd52543132e5d92db90",
+                "reference": "c5afdab923ee443a1aadcdd52543132e5d92db90",
                 "shasum": ""
             },
             "conflict": {
@@ -14046,7 +14046,7 @@
                 "feehi/feehicms": "<=2.1.1",
                 "fenom/fenom": "<=2.12.1",
                 "filament/actions": ">=3.2,<3.2.123|>=4,<=4.11.3|>=5,<=5.6.3",
-                "filament/filament": ">=3,<=3.3.51|>=4,<=4.11.4|>=5,<=5.6.4",
+                "filament/filament": ">=3,<=3.3.51|>=4,<4.11.5|>=5,<5.6.5",
                 "filament/forms": ">=3,<=3.3.52",
                 "filament/infolists": ">=3,<3.2.115|>=4,<=4.11.4|>=5,<=5.6.4",
                 "filament/tables": ">=3,<=3.3.50|>=4,<=4.11.4|>=5,<=5.6.4",
@@ -14864,7 +14864,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-24T09:11:09+00:00"
+            "time": "2026-06-25T18:49:05+00:00"
         },
         {
             "name": "sebastian/cli-parser",
