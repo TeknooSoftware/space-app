@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "806fb1be6c65269ff55345461c4cbb8c",
+    "content-hash": "8e5ab4003832f0dd978100354817a10a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11895,16 +11895,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "7.1.6",
+            "version": "7.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "e15e03cdadef09e42ba53d65eca79f698005c993"
+                "reference": "65c42e58ef6632161466b9c5ee49fb54d01985bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/e15e03cdadef09e42ba53d65eca79f698005c993",
-                "reference": "e15e03cdadef09e42ba53d65eca79f698005c993",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/65c42e58ef6632161466b9c5ee49fb54d01985bd",
+                "reference": "65c42e58ef6632161466b9c5ee49fb54d01985bd",
                 "shasum": ""
             },
             "require": {
@@ -11916,8 +11916,8 @@
                 "doctrine/orm": "^3.6.2",
                 "nikic/php-parser": "^5.7",
                 "phpstan/phpdoc-parser": "^2.3.2",
-                "phpstan/phpstan": "^2.2",
-                "phpunit/phpunit": "^13",
+                "phpstan/phpstan": "^2.2.4",
+                "phpunit/phpunit": "^13.2",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
                 "symfony/property-access": "^6.4||^7.4||^8"
@@ -11978,7 +11978,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-05-28T08:49:37+00:00"
+            "time": "2026-07-03T12:19:28+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
