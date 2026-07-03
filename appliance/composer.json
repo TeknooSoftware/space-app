@@ -106,7 +106,7 @@
         "teknoo/immutable": "^3.0.22",
         "teknoo/kubernetes-client": "^2.0.5",
         "teknoo/recipe": "^7.2.3",
-        "teknoo/states": "^7.1.7",
+        "teknoo/states": "^7.1.8",
         "tijsverkoyen/css-to-inline-styles": "^2.4",
         "twig/cssinliner-extra": "^3.26",
         "twig/extra-bundle": "^3.24.0",

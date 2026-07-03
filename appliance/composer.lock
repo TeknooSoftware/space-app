@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8e5ab4003832f0dd978100354817a10a",
+    "content-hash": "90e41a4b74318050f0c090bddfff93f8",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11895,16 +11895,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "7.1.7",
+            "version": "7.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "65c42e58ef6632161466b9c5ee49fb54d01985bd"
+                "reference": "c4c451b9e786b265d1da33f8a9c82bcb50890e08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/65c42e58ef6632161466b9c5ee49fb54d01985bd",
-                "reference": "65c42e58ef6632161466b9c5ee49fb54d01985bd",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/c4c451b9e786b265d1da33f8a9c82bcb50890e08",
+                "reference": "c4c451b9e786b265d1da33f8a9c82bcb50890e08",
                 "shasum": ""
             },
             "require": {
@@ -11978,7 +11978,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-07-03T12:19:28+00:00"
+            "time": "2026-07-03T14:41:36+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
