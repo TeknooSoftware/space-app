@@ -111,7 +111,7 @@
         "twig/cssinliner-extra": "^3.26",
         "twig/extra-bundle": "^3.24.0",
         "twig/inky-extra": "^3.26",
-        "twig/twig": "^3.27.1"
+        "twig/twig": "^3.28.0"
     },
     "require-dev": {
         "behat/behat": "^3.32.0",
