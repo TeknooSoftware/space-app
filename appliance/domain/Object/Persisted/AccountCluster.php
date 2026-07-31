@@ -46,7 +46,10 @@ use Teknoo\Kubernetes\Client;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Contracts\Object\AccountComponentInterface;
-use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -99,6 +102,13 @@ class AccountCluster implements
         private ?string $registryUrl = null,
         #[Normalize('crud')]
         private bool $useHnc = false,
+        #[SensitiveParameter]
+        #[Normalize('crud', loader: static function (): string {
+            return '';
+        })]
+        private ?string $clientKey = null,
+        #[Normalize(['crud', 'api'])]
+        private ?string $username = null,
     ) {
     }
 
@@ -183,6 +193,22 @@ class AccountCluster implements
         return $this;
     }
 
+    public function setClientKey(#[SensitiveParameter] ?string $clientKey): AccountCluster
+    {
+        if (!empty($clientKey)) {
+            $this->clientKey = $clientKey;
+        }
+
+        return $this;
+    }
+
+    public function setUsername(?string $username): AccountCluster
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
     public function setUseHnc(bool $useHnc): AccountCluster
     {
         $this->useHnc = $useHnc;
@@ -222,7 +248,36 @@ class AccountCluster implements
     public function convertToConfigCluster(
         ClientFactoryInterface $clientFactory,
         RepositoryRegistry $repositoryRegistry,
-    ): Cluster {
+    ): ConfigClusterInterface {
+        return match ($this->type) {
+            'docker-compose' => $this->buildDockerComposeCluster(),
+            'kubernetes' => $this->buildKubernetesCluster($clientFactory, $repositoryRegistry),
+            default => throw new UnsupportedClusterTypeException(
+                "Error, the cluster {$this->name} uses an unsupported cluster type '{$this->type}'"
+            ),
+        };
+    }
+
+    private function buildDockerComposeCluster(): DockerComposeCluster
+    {
+        return new DockerComposeCluster(
+            name: $this->name,
+            sluggyName: $this->slug,
+            type: $this->type,
+            masterAddress: $this->masterAddress,
+            dashboardAddress: $this->dashboardAddress,
+            isExternal: true,
+            clientKey: (string) $this->clientKey,
+            username: (string) $this->username,
+            caCertificate: $this->caCertificate,
+            supportRegistry: true,
+        );
+    }
+
+    private function buildKubernetesCluster(
+        ClientFactoryInterface $clientFactory,
+        RepositoryRegistry $repositoryRegistry,
+    ): KubernetesCluster {
         $caCertificate = base64_decode($this->caCertificate);
 
         $credentials = new ClusterCredentials(
@@ -230,7 +285,7 @@ class AccountCluster implements
             token: $this->token,
         );
 
-        return new Cluster(
+        return new KubernetesCluster(
             name: $this->name,
             sluggyName: $this->slug,
             type: $this->type,

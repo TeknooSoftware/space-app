@@ -89,6 +89,7 @@ class AccountClusterType extends AbstractType
                 'label' => 'teknoo.space.form.account.account_cluster.type',
                 'choices' => [
                     'Kubernetes' => 'kubernetes',
+                    'Docker Compose' => 'docker-compose',
                 ],
             ],
         );
@@ -135,6 +136,26 @@ class AccountClusterType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.token',
+            ],
+        );
+
+        // docker-compose SSH credentials (key-only, rootless — no password). Rendered as a static superset;
+        // the caCertificate field above doubles as the known_hosts host key for docker-compose clusters.
+        $builder->add(
+            'clientKey',
+            TextareaType::class,
+            [
+                'required' => false,
+                'label' => 'teknoo.space.form.account.account_cluster.client_key',
+            ],
+        );
+
+        $builder->add(
+            'username',
+            TextType::class,
+            [
+                'required' => false,
+                'label' => 'teknoo.space.form.account.account_cluster.username',
             ],
         );
 

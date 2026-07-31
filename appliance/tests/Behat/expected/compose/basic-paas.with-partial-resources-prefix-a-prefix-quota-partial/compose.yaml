@@ -1,0 +1,145 @@
+services:
+    a-prefix-extra-myproject-volume-init:
+        image: my-company.registry.demo.teknoo.space/extra-myproject
+        environment:
+            MOUNT_PATH: /opt/extra
+        volumes:
+            - 'a-prefix-extra-myproject-volume:/opt/extra'
+        network_mode: none
+        restart: 'no'
+    php-pods:
+        image: 'my-company.registry.demo.teknoo.space/php-run:7.4-09597-1e225-prod'
+        networks:
+            - space-client-my-company-prod-a-prefix-myproject_private
+        expose:
+            - 8080
+        secrets:
+            - a-prefix-map-vault2-secret
+            - a-prefix-map-vault-secret
+            - a-prefix-volume-vault-secret
+        configs:
+            - a-prefix-map2-map
+            - a-prefix-map1-map
+        environment:
+            SERVER_SCRIPT: /opt/app/src/server.php
+        volumes:
+            - 'a-prefix-extra-myproject-volume:/opt/extra:ro'
+            - 'a-prefix-data-09597-1e225:/opt/data'
+            - 'a-prefix-data-replicated:/opt/data-replicated'
+        depends_on:
+            a-prefix-extra-myproject-volume-init:
+                condition: service_completed_successfully
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - 'ps aux php'
+            start_period: 10s
+            interval: 30s
+            retries: 1
+        deploy:
+            resources:
+                reservations:
+                    cpu: 68m
+                    memory: 9.600Mi
+                limits:
+                    cpu: 561m
+                    memory: 80Mi
+            replicas: 2
+        ports:
+            - '9876:8080'
+    shell:
+        image: 'registry.hub.docker.com/bash:alpine'
+        networks:
+            - space-client-my-company-prod-a-prefix-myproject_private
+        deploy:
+            resources:
+                reservations:
+                    cpu: 100m
+                    memory: 9.600Mi
+                limits:
+                    cpu: 100m
+                    memory: 80Mi
+    demo:
+        image: 'my-company.registry.demo.teknoo.space/nginx:alpine-2a975-5be1e-prod'
+        networks:
+            - space-client-my-company-prod-a-prefix-myproject_private
+        expose:
+            - 8080
+            - 8181
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - 'curl -fk https://localhost:8080/status || exit 1'
+            start_period: 10s
+            interval: 30s
+            retries: 2
+        deploy:
+            resources:
+                reservations:
+                    cpu: 68m
+                    memory: 9.600Mi
+                limits:
+                    cpu: 561m
+                    memory: 80Mi
+        group_add:
+            - '1000'
+    demo-waf:
+        image: 'registry.hub.docker.com/library/waf:alpine'
+        healthcheck:
+            test:
+                - CMD-SHELL
+                - 'nc -z localhost 8181 || exit 1'
+            start_period: 10s
+            interval: 30s
+            retries: 1
+        deploy:
+            resources:
+                reservations:
+                    cpu: 100m
+                    memory: 64Mi
+                limits:
+                    cpu: 100m
+                    memory: 64Mi
+        group_add:
+            - '1000'
+        network_mode: 'service:demo'
+    demo-blackfire:
+        image: 'blackfire/blackfire:2-prod'
+        environment:
+            BLACKFIRE_SERVER_ID: foo
+            BLACKFIRE_SERVER_TOKEN: bar
+        deploy:
+            resources:
+                reservations:
+                    cpu: 100m
+                    memory: 128Mi
+                limits:
+                    cpu: 100m
+                    memory: 128Mi
+        group_add:
+            - '1000'
+        network_mode: 'service:demo'
+networks:
+    space-client-my-company-prod-a-prefix-myproject_private:
+        name: space-client-my-company-prod-a-prefix-myproject_private
+        driver: bridge
+        internal: true
+volumes:
+    a-prefix-data-09597-1e225:
+        driver: local
+    a-prefix-data-replicated:
+        driver: local
+    a-prefix-extra-myproject-volume:
+        driver: local
+configs:
+    a-prefix-map1-map:
+        file: ./configs/a-prefix-map1-map
+    a-prefix-map2-map:
+        file: ./configs/a-prefix-map2-map
+secrets:
+    a-prefix-map-vault-secret:
+        file: ./secrets/a-prefix-map-vault-secret
+    a-prefix-map-vault2-secret:
+        file: ./secrets/a-prefix-map-vault2-secret
+    a-prefix-volume-vault-secret:
+        file: ./secrets/a-prefix-volume-vault-secret

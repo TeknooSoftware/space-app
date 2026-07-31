@@ -29,6 +29,8 @@ use Endroid\QrCode\QrCodeInterface;
 use Endroid\QrCode\Writer\PngWriter;
 use Http\Client\Common\HttpMethodsClient;
 use Http\Discovery\Psr17FactoryDiscovery;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -49,6 +51,11 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
+use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerFactoryInterface;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\BuildRegistryInventory;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\GenerateRegistryCredentials;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\PersistSshIdentity;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
@@ -131,9 +138,40 @@ use Teknoo\Space\Writer\Meta\SpaceAccountWriter;
 
 use function DI\create;
 use function DI\get;
+use function dirname;
 
 return [
     SelectClusterConfig::class => create(),
+
+    PersistSshIdentity::class => create(),
+
+    //Docker-compose per-account private registry provisioning (Ansible over SSH)
+    'teknoo.space.flysystem.ansible_inventory' => static function (ContainerInterface $container): Filesystem {
+        return new Filesystem(
+            new LocalFilesystemAdapter((string) $container->get('teknoo.east.paas.worker.tmp_dir')),
+        );
+    },
+
+    BuildRegistryInventory::class => create()
+        ->constructor(
+            get('teknoo.space.flysystem.ansible_inventory'),
+            get('teknoo.east.paas.worker.tmp_dir'),
+        ),
+
+    GenerateRegistryCredentials::class => create()
+        ->constructor(
+            get('teknoo.east.paas.docker-compose.registry.image'),
+            get('teknoo.east.paas.docker-compose.registry.network'),
+            get('teknoo.east.paas.docker-compose.registry.port'),
+            get('teknoo.east.paas.docker-compose.registry.tls'),
+            get('teknoo.east.paas.docker-compose.deploy_root'),
+        ),
+
+    RunRegistryPlaybook::class => create()
+        ->constructor(
+            get(RunnerFactoryInterface::class),
+            dirname(__DIR__) . '/infrastructures/AnsibleDockerCompose/templates/registry.yml',
+        ),
 
     SetAccountNamespace::class => create()
         ->constructor(

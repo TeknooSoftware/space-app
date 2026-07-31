@@ -99,6 +99,7 @@
         <td>{{ object.createdAt|date('Y M d H:i:s') }}</td>
         <td>{{ object.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
+            {{ space_extension('space_account_cluster_list_item', object) }}
             <a class="text-primary"
                href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
                title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">

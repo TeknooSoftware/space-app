@@ -37,6 +37,8 @@ use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Model\Service;
 use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Throwable;
 
@@ -398,6 +400,10 @@ class CreateRegistryDeployment
         string $persistentVolumeClaimName,
     ): self {
         $clusterRegistry = $clusterCatalog->getClusterForRegistry();
+        if (!$clusterRegistry instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $client = $clusterRegistry->getKubernetesRegistryClient();
         $client->setNamespace($kubeNamespace);
 

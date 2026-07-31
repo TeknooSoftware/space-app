@@ -17,6 +17,8 @@
         <field field-name="dashboardAddress" name="dashboard_address" type="string" nullable="false"/>
         <field field-name="caCertificate" name="ca_certificate" type="string" nullable="false"/>
         <field field-name="token" name="token" type="string" nullable="false"/>
+        <field field-name="clientKey" name="client_key" type="string" nullable="true"/>
+        <field field-name="username" name="username" type="string" nullable="true"/>
         <field field-name="supportRegistry" name="support_registry" type="bool" nullable="false"/>
         <field field-name="registryUrl" name="registry_url" type="string" nullable="true"/>
         <field field-name="useHnc" name="use_hnc" type="bool" nullable="true"/>

@@ -12,8 +12,8 @@ MAKEFLAGS += --no-print-directory
 .PHONY: verify
 .PHONY: install dev-install
 .PHONY: update dev-update
-.PHONY: config create-admin extension-list extension-enable extension-disable
-.PHONY: build start stop restart
+.PHONY: config config-dry-run create-admin extension-list extension-enable extension-disable
+.PHONY: build start stop restart db-backup db-restore
 .PHONY: qa qa-offline lint phpstan phpcs audit
 .PHONY: test test-mono-thread test-without-coverage all
 .PHONY: clean warmup
@@ -65,6 +65,9 @@ endif
 config: 		## To set values in env file to configure Space
 	@bin/config.sh ${PHP} ${APP_ENV}
 
+config-dry-run: 	## Preview the config (print the files that would be written, change nothing)
+	@bin/config.sh --dry-run ${PHP} ${APP_ENV}
+
 create-admin: 		## To create an administrator in users, requires "email" and "password" parameter
 	@bin/console teknoo:common:create-admin ${email} ${password}
 
@@ -90,6 +93,11 @@ stop: 		## To stop the docker stack
 
 restart: 	## To restart the docker stack
 restart: stop start
+db-backup: 		## Backup MongoDB database to an archive file
+	@bin/db-backup.sh
+
+db-restore: 		## Restore MongoDB database from an archive file
+	@bin/db-restore.sh
 
 ##
 ### QA:

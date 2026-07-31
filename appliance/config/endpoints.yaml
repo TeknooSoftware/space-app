@@ -155,21 +155,21 @@ services:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentReinstall'
+            - '@teknoo.space.provisioning.bowl.environment_reinstall'
             - '@service_container'
 
     teknoo.space.endpoint.admin.account.registry.reinstall:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryReinstall'
+            - '@teknoo.space.provisioning.bowl.registry_reinstall'
             - '@service_container'
 
     teknoo.space.endpoint.admin.account.quota.refresh:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRefreshQuota'
+            - '@teknoo.space.provisioning.bowl.refresh_quota'
             - '@service_container'
 
     teknoo.space.endpoint.project.list:

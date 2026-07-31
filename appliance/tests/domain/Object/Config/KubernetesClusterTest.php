@@ -29,10 +29,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 
 /**
- * Class ClusterTest.
+ * Class KubernetesClusterTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -40,7 +40,7 @@ use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
  *
  */
 #[CoversClass(ClusterConfig::class)]
-class ClusterTest extends TestCase
+class KubernetesClusterTest extends TestCase
 {
     private ClusterConfig $cluster;
 

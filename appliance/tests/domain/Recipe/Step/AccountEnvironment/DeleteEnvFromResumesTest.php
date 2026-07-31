@@ -30,7 +30,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\AccountWallet;
@@ -79,7 +79,7 @@ class DeleteEnvFromResumesTest extends TestCase
                     account: $this->createStub(Account::class),
                     environments: []
                 ),
-                new ClusterCatalog(['Foo' => $this->createStub(Cluster::class)], ['Foo' => 'foo']),
+                new ClusterCatalog(['Foo' => $this->createStub(KubernetesCluster::class)], ['Foo' => 'foo']),
             ),
         );
     }

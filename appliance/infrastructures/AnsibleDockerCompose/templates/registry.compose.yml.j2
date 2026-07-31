@@ -1,0 +1,30 @@
+services:
+  {{ registry_container }}:
+    image: "{{ registry_image }}"
+    container_name: "{{ registry_container }}"
+    restart: unless-stopped
+    environment:
+      REGISTRY_HTTP_ADDR: "0.0.0.0:{{ registry_port }}"
+      REGISTRY_AUTH: "htpasswd"
+      REGISTRY_AUTH_HTPASSWD_REALM: "Space Private Registry"
+      REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+{% if registry_tls %}
+      REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/registry.crt"
+      REGISTRY_HTTP_TLS_KEY: "/certs/registry.key"
+{% endif %}
+    volumes:
+      - "{{ registry_volume }}:/var/lib/registry"
+      - "{{ deploy_root }}/{{ registry_container }}/auth:/auth:ro"
+{% if registry_tls %}
+      - "{{ deploy_root }}/{{ registry_container }}/certs:/certs:ro"
+{% endif %}
+    expose:
+      - "{{ registry_port }}"
+    networks:
+      - registry
+volumes:
+  {{ registry_volume }}:
+networks:
+  registry:
+    name: "{{ registry_network }}"
+    external: true

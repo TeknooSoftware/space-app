@@ -33,8 +33,10 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -143,6 +145,38 @@ class CreateRegistryDeploymentTest extends TestCase
                 persistentVolumeClaimName: 'foo',
                 clusterCatalog: new ClusterCatalog(['defaults' => $clusterConfig], []),
             ),
+        );
+    }
+
+    public function testInvokeThrowsOnNonKubernetesCluster(): void
+    {
+        $nonK8s = new class implements ConfigClusterInterface {
+            public string $name = 'foo';
+
+            public string $sluggyName = 'foo';
+
+            public string $type = 'docker-compose';
+
+            public string $masterAddress = 'ssh://u@h:22';
+
+            public string $dashboardAddress = 'foo';
+
+            public bool $supportRegistry = true;
+
+            public bool $useHnc = false;
+
+            public bool $isExternal = false;
+        };
+
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        ($this->createRegistryAccount)(
+            manager: $this->createStub(ManagerInterface::class),
+            kubeNamespace: 'foo',
+            accountNamespace: 'bar',
+            accountHistory: $this->createStub(AccountHistory::class),
+            persistentVolumeClaimName: 'foo',
+            clusterCatalog: new ClusterCatalog(['defaults' => $nonK8s], []),
         );
     }
 }

@@ -76,7 +76,7 @@ The application implements DDD concepts:
 │                   External Dependencies                     │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────────┐   │
 │  │ MongoDB  │  │ RabbitMQ │  │ Mercure  │  │   Cluster  │   │
-│  │          │  │  (AMQP)  │  │          │  │(Kubernetes)│   │
+│  │          │  │  (AMQP)  │  │          │  │(K8s / SSH) │   │
 │  └──────────┘  └──────────┘  └──────────┘  └────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -133,7 +133,10 @@ Space leverages **Teknoo East PaaS** for deployment orchestration:
 - **Compilation**: Transforms `.paas.yaml` configurations into compilation and deployment plan
 - **Make**: Pre/post deployment hooks (Composer, NPM, PIP, Make, Symfony Console, Laravel Artisan)
 - **Image Building**: Uses Buildah to create OCI-compliant container images
-- **Deployment**: Applies resources to a clusters like Kubernetes
+- **Deployment**: Applies resources to a cluster. Two targets are supported, selected per cluster by the `type`
+  field: **Kubernetes** (via the Kubernetes API) and **docker-compose** (a remote Docker host running a Compose
+  stack behind Traefik v3, applied over SSH with Ansible). The job API and `RunJob` recipe are target-agnostic;
+  the driver is chosen at runtime by the cluster `type`.
 
 ## Data Flow
 
@@ -188,7 +191,9 @@ Space leverages **Teknoo East PaaS** for deployment orchestration:
 - **RabbitMQ**: Message broker for worker communication
 - **Mercure**: Real-time updates via Server-Sent Events (SSE)
 - **Buildah**: OCI image builder
-- **Kubernetes 1.30+**: Container orchestration platform
+- **Kubernetes 1.30+**: Container orchestration platform (default deployment target)
+- **Docker Compose + Ansible + Traefik v3**: alternative deployment target — a remote Docker host managed over
+  SSH with Ansible
 
 ### Frontend
 
@@ -286,6 +291,15 @@ Extensions are managed through Teknoo East Foundation's extension loader system 
                                  │   Cluster    │
                                  └──────────────┘
 ```
+
+The **Cluster** target is either a Kubernetes cluster (reached via its API) or a remote Docker host (reached
+over SSH; workers run Ansible to apply the Compose/Traefik stack). The target is chosen per cluster by the
+`type` field.
+
+Space **Enterprise** can additionally bootstrap a bare host into a valid docker-compose target — installing
+rootless Docker Engine + Compose v3, an SSH deploy user, and Traefik v3 over Ansible (via the `InstallDockerHost`
+plan, exposed as a CLI command and an admin endpoint). That functionality ships in the separate
+`space-app-enterprise` repository.
 
 ## Design Patterns
 

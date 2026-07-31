@@ -56,7 +56,7 @@ use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Infrastructures\Symfony\Object\ApiKeysAuthUser;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ConfigClusterInterface as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountData;
@@ -425,6 +425,23 @@ trait PersistenceStepsTrait
         }
     }
 
+    private ?string $overrideClusterType = null;
+
+    private ?string $overrideClusterName = null;
+
+    private ?string $overrideClusterAddress = null;
+
+    /**
+     * Override the cluster type/name/address the next `a standard project` step builds. Left `null` for every
+     * Kubernetes scenario, so the produced clusters stay byte-for-byte identical to the default behaviour.
+     */
+    public function setClusterOverride(string $type, string $name, string $address): void
+    {
+        $this->overrideClusterType = $type;
+        $this->overrideClusterName = $name;
+        $this->overrideClusterAddress = $address;
+    }
+
     #[Given('a standard project :projectName')]
     public function aStandardWebsiteProject(string $projectName): void
     {
@@ -461,9 +478,9 @@ trait PersistenceStepsTrait
         );
 
         $cluster = new Cluster();
-        $cluster->setName($this->defaultClusterName);
-        $cluster->setType($this->defaultClusterType);
-        $cluster->setAddress($this->defaultClusterAddress);
+        $cluster->setName($this->overrideClusterName ?? $this->defaultClusterName);
+        $cluster->setType($this->overrideClusterType ?? $this->defaultClusterType);
+        $cluster->setAddress($this->overrideClusterAddress ?? $this->defaultClusterAddress);
         $cluster->useHierarchicalNamespaces($this->useHnc);
         $account->namespaceIsItDefined(
             fn (string $ns, string $pf): Cluster => $cluster->setNamespace($pf . $ns . '-prod')
@@ -480,9 +497,9 @@ trait PersistenceStepsTrait
         );
 
         $clusterDev = new Cluster();
-        $clusterDev->setName($this->defaultClusterName);
-        $clusterDev->setType($this->defaultClusterType);
-        $clusterDev->setAddress('dev.' . $this->defaultClusterAddress);
+        $clusterDev->setName($this->overrideClusterName ?? $this->defaultClusterName);
+        $clusterDev->setType($this->overrideClusterType ?? $this->defaultClusterType);
+        $clusterDev->setAddress($this->overrideClusterAddress ?? ('dev.' . $this->defaultClusterAddress));
         $clusterDev->useHierarchicalNamespaces($this->useHnc);
         $account->namespaceIsItDefined(
             fn (string $ns, string $pf): Cluster => $clusterDev->setNamespace($pf . $ns . '-dev')
@@ -764,7 +781,7 @@ trait PersistenceStepsTrait
 
             $cluster = $this->createCatalogCluster(
                 $account,
-                $clustersCatalog->getCluster($this->defaultClusterName),
+                $clustersCatalog->getCluster($this->overrideClusterName ?? $this->defaultClusterName),
                 $credential,
                 '',
                 'prod',
@@ -772,7 +789,7 @@ trait PersistenceStepsTrait
 
             $clusterDev = $this->createCatalogCluster(
                 $account,
-                $clustersCatalog->getCluster($this->defaultClusterName),
+                $clustersCatalog->getCluster($this->overrideClusterName ?? $this->defaultClusterName),
                 $credential,
                 'dev.',
                 'dev',
@@ -897,6 +914,31 @@ trait PersistenceStepsTrait
             supportRegistry: true,
             registryUrl: "https://registry.{$slug}.behat",
             useHnc: false,
+        );
+
+        $this->persistAndRegister($cluster);
+    }
+
+    #[Given('an account clusters :name and a slug :slug on docker compose')]
+    public function anAccountClustersAndASlugOnDockerCompose(string $name, string $slug): void
+    {
+        $account = $this->recall(Account::class);
+
+        $cluster = new AccountCluster(
+            account: $account,
+            name: $name,
+            slug: $slug,
+            type: 'docker-compose',
+            masterAddress: "ssh://deployer@docker-host.{$slug}.behat:22",
+            storageProvisioner: '',
+            dashboardAddress: '',
+            caCertificate: \base64_encode('behatKnownHosts'),
+            token: '',
+            supportRegistry: false,
+            registryUrl: null,
+            useHnc: false,
+            clientKey: 'fake-ssh-private-key',
+            username: 'deployer',
         );
 
         $this->persistAndRegister($cluster);

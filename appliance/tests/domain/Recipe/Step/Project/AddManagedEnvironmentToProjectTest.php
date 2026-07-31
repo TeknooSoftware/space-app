@@ -28,10 +28,12 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\Project;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Cluster as EastCluster;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -172,7 +174,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
 
         $wallet = new AccountWallet([$accountEnv]);
 
-        $clusterConfig = new Cluster(
+        $clusterConfig = new KubernetesCluster(
             name: 'cluster1',
             sluggyName: 'cluster1',
             type: 'kubernetes',
@@ -253,7 +255,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
 
         $wallet = new AccountWallet([$accountEnv]);
 
-        $clusterConfig = new Cluster(
+        $clusterConfig = new KubernetesCluster(
             name: 'cluster1',
             sluggyName: 'cluster1',
             type: 'kubernetes',
@@ -303,6 +305,71 @@ class AddManagedEnvironmentToProjectTest extends TestCase
                 $clusterCatalog,
             )
         );
+    }
+
+    public function testInvokeAddsDockerComposeManagedEnvironmentWithSshIdentity(): void
+    {
+        // docker-compose environment: the SSH private key is stored in the AccountEnvironment `client_key`
+        // field, the known_hosts host key in `ca_certificate`, and the token is empty (key-only, no password).
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv->method('getEnvName')->willReturn('prod');
+        $accountEnv->method('getClusterName')->willReturn('docker-cluster');
+        $accountEnv->method('getNamespace')->willReturn('acct-prod');
+        $accountEnv->method('getCaCertificate')->willReturn('known-hosts-line');
+        $accountEnv->method('getClientCertificate')->willReturn('');
+        $accountEnv->method('getClientKey')->willReturn('-----BEGIN OPENSSH PRIVATE KEY-----KEY');
+        $accountEnv->method('getToken')->willReturn('');
+
+        $wallet = new AccountWallet([$accountEnv]);
+
+        $clusterConfig = new DockerComposeCluster(
+            name: 'docker-cluster',
+            sluggyName: 'docker-cluster',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@docker-host.example.com:22',
+            dashboardAddress: '',
+            isExternal: true,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            caCertificate: 'known-hosts-line',
+        );
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with('docker-cluster')
+            ->willReturn($clusterConfig);
+
+        $captured = null;
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('visit')
+            ->with('clusters', $this->isCallable())
+            ->willReturnCallback(function ($visitors, $callable) use ($project) {
+                $callable([]);
+
+                return $project;
+            });
+        $project->expects($this->once())
+            ->method('setClusters')
+            ->with($this->callback(function (array $clusters) use (&$captured): bool {
+                $captured = $clusters[0] ?? null;
+
+                return true;
+            }));
+
+        $spaceProject = new SpaceProject($project);
+        $spaceProject->addClusterName = 'docker-cluster';
+        $spaceProject->addClusterEnv = 'prod';
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        ($this->addManagedEnvironmentToProject)($manager, $spaceProject, $wallet, $clusterCatalog);
+
+        // The docker-compose environment is added to the project as an East Cluster (its SSH ClusterCredentials
+        // are built from the AccountEnvironment client_key/ca_certificate via the same generic mapping the
+        // Kubernetes path uses; East Cluster exposes no public identity getter to assert deeper here).
+        $this->assertInstanceOf(EastCluster::class, $captured);
     }
 
     public function testInvokeWithException(): void

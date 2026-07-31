@@ -48,6 +48,8 @@ class Twig implements ModuleInterface
 
     private ?string $block = null;
 
+    private ?object $object = null;
+
     /**
      * @var array<int, TemplateWrapper>
      */
@@ -58,11 +60,12 @@ class Twig implements ModuleInterface
     ) {
     }
 
-    public function run(Environment $env, string $block): self
+    public function run(Environment $env, string $block, ?object $object = null): self
     {
         $that = clone $this;
         $that->envTwig = $env;
         $that->block = $block;
+        $that->object = $object;
 
         $this->manager->execute($that);
 
@@ -90,7 +93,11 @@ class Twig implements ModuleInterface
         return implode(
             PHP_EOL,
             array_map(
-                fn (TemplateWrapper $template): string => $template->render(),
+                fn (TemplateWrapper $template): string => $template->render(
+                    [
+                        'currentObject' => $this->object
+                    ]
+                ),
                 $this->templates,
             )
         );

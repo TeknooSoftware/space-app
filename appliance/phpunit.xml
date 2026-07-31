@@ -44,6 +44,7 @@
       <directory>domain</directory>
       <directory>src</directory>
       <directory>infrastructures</directory>
+      <directory>extensions</directory>
     </include>
   </source>
 </phpunit>

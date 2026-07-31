@@ -72,11 +72,24 @@ use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentInstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentReinstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRefreshQuota;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryInstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryReinstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentInstall as K8sEnvInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentReinstall as K8sEnvReinstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRefreshQuota as K8sRefreshQuota;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryInstall as K8sRegistryInstall;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryReinstall as K8sRegistryReinstall;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountEnvironmentInstall as DcEnvInstall;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountEnvironmentReinstall as DcEnvReinstall;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountRefreshQuota as DcRefreshQuota;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountRegistryInstall as DcRegistryInstall;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountRegistryReinstall as DcRegistryReinstall;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\BuildRegistryInventory;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\GenerateRegistryCredentials;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\PersistSshIdentity;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
+use Teknoo\Space\Infrastructures\Recipe\Bowl\ProvisioningPlanBowl;
+use Teknoo\Space\Cluster\Contract\ProvisioningPlanDirectoryInterface;
+use Teknoo\Space\Cluster\ProvisioningPlanDirectory;
+use Teknoo\Space\Cluster\ProvisioningPlanSet;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
@@ -221,7 +234,7 @@ return [
             diGet('teknoo.east.common.get_default_error_template'),
         ),
 
-    AccountEnvironmentInstall::class => create()
+    K8sEnvInstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadAccountClusters::class),
@@ -238,7 +251,7 @@ return [
             diGet(ObjectAccessControlInterface::class),
         ),
 
-    AccountEnvironmentReinstall::class => create()
+    K8sEnvReinstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadObject::class),
@@ -250,7 +263,7 @@ return [
             diGet(ReloadNamespace::class),
             diGet(FindEnvironmentInWallet::class),
             diGet(RemoveEnvironment::class),
-            diGet(AccountEnvironmentInstall::class),
+            diGet(K8sEnvInstall::class),
             diGet(UpdateAccountHistory::class),
             diGet(JumpIf::class),
             diGet(Render::class),
@@ -258,7 +271,7 @@ return [
             diGet(ObjectAccessControlInterface::class),
         ),
 
-    AccountRegistryInstall::class => create()
+    K8sRegistryInstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadAccountClusters::class),
@@ -271,7 +284,7 @@ return [
             diGet('teknoo.east.paas.default_storage_size'),
         ),
 
-    AccountRegistryReinstall::class => create()
+    K8sRegistryReinstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadObject::class),
@@ -281,7 +294,7 @@ return [
             diGet(LoadRegistryCredential::class),
             diGet(ReloadNamespace::class),
             diGet(RemoveRegistryCredential::class),
-            diGet(AccountRegistryInstall::class),
+            diGet(K8sRegistryInstall::class),
             diGet(UpdateAccountHistory::class),
             diGet(JumpIf::class),
             diGet(Render::class),
@@ -290,7 +303,7 @@ return [
             diGet('teknoo.east.paas.default_storage_size'),
         ),
 
-    AccountRefreshQuota::class => create()
+    K8sRefreshQuota::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadObject::class),
@@ -310,6 +323,138 @@ return [
             diGet(ObjectAccessControlInterface::class),
         ),
 
+    DcEnvInstall::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadAccountClusters::class),
+            diGet(SelectClusterConfig::class),
+            diGet(PersistSshIdentity::class),
+            diGet(PersistEnvironment::class),
+            diGet(PrepareAccountErrorHandler::class),
+            diGet(ObjectAccessControlInterface::class),
+        ),
+
+    DcEnvReinstall::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(AccountPrepareRedirection::class),
+            diGet(SetRedirectClientAtEnd::class),
+            diGet(LoadHistory::class),
+            diGet(LoadEnvironments::class),
+            diGet(FindEnvironmentInWallet::class),
+            diGet(RemoveEnvironment::class),
+            diGet(DcEnvInstall::class),
+            diGet(UpdateAccountHistory::class),
+            diGet(JumpIf::class),
+            diGet(Render::class),
+            diGet(ReinstallAccountErrorHandler::class),
+            diGet(ObjectAccessControlInterface::class),
+        ),
+
+    DcRefreshQuota::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(AccountPrepareRedirection::class),
+            diGet(SetRedirectClientAtEnd::class),
+            diGet(LoadHistory::class),
+            diGet(LoadEnvironments::class),
+            diGet(UpdateAccountHistory::class),
+            diGet(JumpIf::class),
+            diGet(Render::class),
+            diGet(ReinstallAccountErrorHandler::class),
+            diGet(ObjectAccessControlInterface::class),
+        ),
+
+    DcRegistryInstall::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadAccountClusters::class),
+            diGet(BuildRegistryInventory::class),
+            diGet(GenerateRegistryCredentials::class),
+            diGet(RunRegistryPlaybook::class),
+            diGet(PersistRegistryCredential::class),
+            diGet(PrepareAccountErrorHandler::class),
+            diGet(ObjectAccessControlInterface::class),
+        ),
+
+    DcRegistryReinstall::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(AccountPrepareRedirection::class),
+            diGet(SetRedirectClientAtEnd::class),
+            diGet(LoadHistory::class),
+            diGet(LoadRegistryCredential::class),
+            diGet(ReloadNamespace::class),
+            diGet(RemoveRegistryCredential::class),
+            diGet(DcRegistryInstall::class),
+            diGet(UpdateAccountHistory::class),
+            diGet(JumpIf::class),
+            diGet(Render::class),
+            diGet(ReinstallAccountErrorHandler::class),
+            diGet(ObjectAccessControlInterface::class),
+        ),
+
+    // Provisioning-plan directory: kubernetes returns the existing (unchanged) plan instances; docker-compose
+    // returns the AnsibleDockerCompose plans, including a real per-account registry provisioned over Ansible.
+    ProvisioningPlanDirectoryInterface::class => static function (
+        ContainerInterface $container
+    ): ProvisioningPlanDirectory {
+        $directory = new ProvisioningPlanDirectory();
+
+        $directory->register(
+            'kubernetes',
+            new ProvisioningPlanSet(
+                environmentInstall: $container->get(K8sEnvInstall::class),
+                environmentReinstall: $container->get(K8sEnvReinstall::class),
+                refreshQuota: $container->get(K8sRefreshQuota::class),
+                registryInstall: $container->get(K8sRegistryInstall::class),
+                registryReinstall: $container->get(K8sRegistryReinstall::class),
+            ),
+        );
+
+        $directory->register(
+            'docker-compose',
+            new ProvisioningPlanSet(
+                environmentInstall: $container->get(DcEnvInstall::class),
+                environmentReinstall: $container->get(DcEnvReinstall::class),
+                refreshQuota: $container->get(DcRefreshQuota::class),
+                registryInstall: $container->get(DcRegistryInstall::class),
+                registryReinstall: $container->get(DcRegistryReinstall::class),
+            ),
+        );
+
+        return $directory;
+    },
+
+    // Runtime type-dispatch bowls: each admin provisioning entry point resolves the plan by the account's
+    // cluster type at request time (kubernetes returns the unchanged K8s plan, docker-compose the Ansible one).
+    'teknoo.space.provisioning.bowl.registry_install' => create(ProvisioningPlanBowl::class)
+        ->constructor(
+            diGet(ProvisioningPlanDirectoryInterface::class),
+            ProvisioningPlanBowl::ROLE_REGISTRY_INSTALL,
+        ),
+
+    'teknoo.space.provisioning.bowl.registry_reinstall' => create(ProvisioningPlanBowl::class)
+        ->constructor(
+            diGet(ProvisioningPlanDirectoryInterface::class),
+            ProvisioningPlanBowl::ROLE_REGISTRY_REINSTALL,
+        ),
+
+    'teknoo.space.provisioning.bowl.environment_reinstall' => create(ProvisioningPlanBowl::class)
+        ->constructor(
+            diGet(ProvisioningPlanDirectoryInterface::class),
+            ProvisioningPlanBowl::ROLE_ENVIRONMENT_REINSTALL,
+        ),
+
+    'teknoo.space.provisioning.bowl.refresh_quota' => create(ProvisioningPlanBowl::class)
+        ->constructor(
+            diGet(ProvisioningPlanDirectoryInterface::class),
+            ProvisioningPlanBowl::ROLE_REFRESH_QUOTA,
+        ),
+
     'teknoo.space.account.endpoint.new.additional_steps' => [
         //After ObjectAccessControlInterface
         ExtractFromAccountDTO::class => 54,
@@ -319,7 +464,8 @@ return [
 
         //After SaveObject
         CreateAccountHistory::class => 61,
-        AccountRegistryInstall::class => 62,
+        //Type-dispatch bowl: kubernetes → K8s registry install, docker-compose → Ansible registry install.
+        'teknoo.space.provisioning.bowl.registry_install' => 62,
         UpdateAccountHistory::class => 69,
 
         //After RedirectClientInterface
@@ -448,8 +594,9 @@ return [
             );
 
             $steps->add(
-                action: new RecipeBowl(
-                    recipe: $container->get(AccountEnvironmentInstall::class),
+                action: new ProvisioningPlanBowl(
+                    directory: $container->get(ProvisioningPlanDirectoryInterface::class),
+                    role: ProvisioningPlanBowl::ROLE_ENVIRONMENT_INSTALL,
                     repeat: 0,
                 ),
                 position: 66,

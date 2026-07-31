@@ -28,7 +28,6 @@ namespace Teknoo\Space\Object\Config;
 use DomainException;
 use IteratorAggregate;
 use Teknoo\East\Paas\Object\Cluster as EastCluster;
-use Teknoo\Kubernetes\Client;
 use Traversable;
 
 /**
@@ -37,12 +36,12 @@ use Traversable;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  *
- * @implements IteratorAggregate<Cluster>
+ * @implements IteratorAggregate<ConfigClusterInterface>
  */
 class ClusterCatalog implements IteratorAggregate
 {
     /**
-     * @param array<string, Cluster> $clusters
+     * @param array<string, ConfigClusterInterface> $clusters
      * @param array<string, string> $aliases
      */
     public function __construct(
@@ -52,7 +51,7 @@ class ClusterCatalog implements IteratorAggregate
     ) {
     }
 
-    public function getClusterForRegistry(): Cluster
+    public function getClusterForRegistry(): ConfigClusterInterface
     {
         foreach ($this->clusters as $cluster) {
             if ($cluster->supportRegistry) {
@@ -60,7 +59,9 @@ class ClusterCatalog implements IteratorAggregate
             }
         }
 
-        $this->parentCatalog?->getClusterForRegistry();
+        if (null !== ($cluster = $this->parentCatalog?->getClusterForRegistry())) {
+            return $cluster;
+        }
 
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
@@ -71,12 +72,14 @@ class ClusterCatalog implements IteratorAggregate
             return $name;
         }
 
-        $this->parentCatalog?->getDefaultClusterName();
+        if (!empty($name = $this->parentCatalog?->getDefaultClusterName())) {
+            return $name;
+        }
 
         throw new DomainException("Missing cluster configuration able to support privates registries");
     }
 
-    public function getCluster(string|EastCluster $name): Cluster
+    public function getCluster(string|EastCluster $name): ConfigClusterInterface
     {
         if ($name instanceof EastCluster) {
             $name = (string) $name;

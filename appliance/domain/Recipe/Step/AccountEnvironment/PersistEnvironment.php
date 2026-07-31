@@ -31,7 +31,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Promise\Promise;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ConfigClusterInterface as ClusterConfig;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -72,6 +72,8 @@ class PersistEnvironment
         ClusterConfig $clusterConfig,
         ?AccountEnvironmentResume $resume = null,
         array $envMetadata = [],
+        #[SensitiveParameter]
+        string $clientKey = '',
     ): self {
         if ($spaceAccount instanceof SpaceAccount) {
             $account = $spaceAccount->account;
@@ -89,7 +91,7 @@ class PersistEnvironment
             roleBindingName: $roleBindingName,
             caCertificate: $caCertificate,
             clientCertificate: '',
-            clientKey: '',
+            clientKey: $clientKey,
             token: $token,
             metadata: $envMetadata,
         );

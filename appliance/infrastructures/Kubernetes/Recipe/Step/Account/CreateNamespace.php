@@ -31,6 +31,8 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Model\NamespaceModel;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 use function strtolower;
@@ -77,7 +79,11 @@ class CreateNamespace
     ): self {
         if ($forRegistry) {
             $namespaceValue = $this->registryRootNamespace . $accountNamespace;
-            $client = $clusterCatalog->getClusterForRegistry()->getKubernetesClient();
+            $registryCluster = $clusterCatalog->getClusterForRegistry();
+            if (!$registryCluster instanceof KubernetesCluster) {
+                throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+            }
+            $client = $registryCluster->getKubernetesClient();
         } else {
             if (empty($clusterName)) {
                 throw new \LogicException('Missing clusterName where create the namespace');
@@ -85,6 +91,9 @@ class CreateNamespace
 
             $namespaceValue = strtolower($this->rootNamespace . $accountNamespace . '-' . $envName);
             $clusterConfig = $clusterCatalog->getCluster($clusterName);
+            if (!$clusterConfig instanceof KubernetesCluster) {
+                throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+            }
             $client = $clusterConfig->getKubernetesClient();
         }
 

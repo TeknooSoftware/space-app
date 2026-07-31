@@ -69,6 +69,36 @@ class AccountClusterTypeTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testBuildFormOffersBothTypesAndSshFieldsWithoutPassword(): void
+    {
+        $added = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')
+            ->willReturnCallback(
+                function (string $child, ?string $type = null, array $options = []) use (&$added, $builder) {
+                    $added[$child] = $options;
+
+                    return $builder;
+                }
+            );
+
+        $this->accountClusterType->buildForm($builder, []);
+
+        $this->assertArrayHasKey('type', $added);
+        $this->assertSame(
+            ['Kubernetes' => 'kubernetes', 'Docker Compose' => 'docker-compose'],
+            $added['type']['choices'],
+        );
+
+        $this->assertArrayHasKey('clientKey', $added);
+        $this->assertArrayHasKey('username', $added);
+        $this->assertArrayHasKey('caCertificate', $added);
+
+        $this->assertArrayNotHasKey('password', $added);
+        $this->assertArrayNotHasKey('sshPassword', $added);
+        $this->assertArrayNotHasKey('becomePassword', $added);
+    }
+
     public function testConfigureOptions(): void
     {
         $this->accountClusterType->configureOptions(

@@ -30,6 +30,8 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Model\PersistentVolumeClaim;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
@@ -87,6 +89,10 @@ class CreateStorage
         ?AccountRegistry $accountRegistry = null,
     ): self {
         $clusterRegistry = $clusterCatalog->getClusterForRegistry();
+        if (!$clusterRegistry instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $client = $clusterRegistry->getKubernetesRegistryClient();
         $client->setNamespace($kubeNamespace);
 

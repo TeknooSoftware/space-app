@@ -28,8 +28,10 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Step\ClusterConfig;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
@@ -61,7 +63,35 @@ class SelectClusterConfigTest extends TestCase
             SelectClusterConfig::class,
             ($this->selectClusterConfig)(
                 $this->createStub(ManagerInterface::class),
-                new ClusterCatalog(['foo' => $this->createStub(Cluster::class)], []),
+                new ClusterCatalog(['foo' => $this->createStub(KubernetesCluster::class)], []),
+                'foo',
+            ),
+        );
+    }
+
+    public function testInvokeKeysWorkplanByConfigClusterInterfaceForDockerCompose(): void
+    {
+        $dockerCompose = new DockerComposeCluster(
+            name: 'foo',
+            sluggyName: 'foo',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'foo',
+            isExternal: false,
+            clientKey: 'k',
+        );
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([ConfigClusterInterface::class => $dockerCompose])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            SelectClusterConfig::class,
+            ($this->selectClusterConfig)(
+                $manager,
+                new ClusterCatalog(['foo' => $dockerCompose], []),
                 'foo',
             ),
         );

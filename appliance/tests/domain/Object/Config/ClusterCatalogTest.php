@@ -29,7 +29,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Cluster as ClusterPaaS;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 
 use function iterator_to_array;
@@ -55,7 +57,7 @@ class ClusterCatalogTest extends TestCase
         parent::setUp();
 
         $this->clusterCatalog = new ClusterCatalog(
-            ['Foo' => $this->createStub(Cluster::class)],
+            ['Foo' => $this->createStub(KubernetesCluster::class)],
             ['foo' => 'Foo'],
         );
     }
@@ -63,19 +65,19 @@ class ClusterCatalogTest extends TestCase
     public function testConstruct(): void
     {
         $this->assertInstanceOf(
-            Cluster::class,
+            KubernetesCluster::class,
             iterator_to_array($this->clusterCatalog)['Foo'],
         );
 
         $this->assertInstanceOf(
-            Cluster::class,
+            KubernetesCluster::class,
             $this->clusterCatalog->getCluster('foo'),
         );
     }
 
     public function testGetClusterForRegistry(): void
     {
-        $cluster = new Cluster(
+        $cluster = new KubernetesCluster(
             'test',
             'test',
             'test',
@@ -97,9 +99,9 @@ class ClusterCatalogTest extends TestCase
         $this->assertSame($cluster, $catalog->getClusterForRegistry());
     }
 
-    public function testGetClusterForRegistryWithNoSupportThrowsExceptionEvenWithParent(): void
+    public function testGetClusterForRegistryWithNoSupportFallsBackToParent(): void
     {
-        $clusterWithRegistry = new Cluster(
+        $clusterWithRegistry = new KubernetesCluster(
             'parent',
             'parent',
             'test',
@@ -118,7 +120,7 @@ class ClusterCatalogTest extends TestCase
             [],
         );
 
-        $childCluster = new Cluster(
+        $childCluster = new KubernetesCluster(
             'child',
             'child',
             'test',
@@ -138,14 +140,13 @@ class ClusterCatalogTest extends TestCase
             $parentCatalog,
         );
 
-        // The current implementation doesn't return from parent, so exception is thrown
-        $this->expectException(\DomainException::class);
-        $catalog->getClusterForRegistry();
+        // No registry-capable cluster in the child, so the catalog falls back to the parent's.
+        $this->assertSame($clusterWithRegistry, $catalog->getClusterForRegistry());
     }
 
     public function testGetClusterForRegistryThrowsException(): void
     {
-        $cluster = new Cluster(
+        $cluster = new KubernetesCluster(
             'test',
             'test',
             'test',
@@ -171,7 +172,7 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetDefaultClusterName(): void
     {
-        $cluster = $this->createStub(Cluster::class);
+        $cluster = $this->createStub(KubernetesCluster::class);
 
         $catalog = new ClusterCatalog(
             ['DefaultCluster' => $cluster],
@@ -181,9 +182,9 @@ class ClusterCatalogTest extends TestCase
         $this->assertSame('DefaultCluster', $catalog->getDefaultClusterName());
     }
 
-    public function testGetDefaultClusterNameWithEmptyClustersThrowsExceptionEvenWithParent(): void
+    public function testGetDefaultClusterNameWithEmptyClustersFallsBackToParent(): void
     {
-        $parentCluster = $this->createStub(Cluster::class);
+        $parentCluster = $this->createStub(KubernetesCluster::class);
         $parentCatalog = new ClusterCatalog(
             ['ParentCluster' => $parentCluster],
             [],
@@ -195,9 +196,8 @@ class ClusterCatalogTest extends TestCase
             $parentCatalog,
         );
 
-        // The current implementation doesn't return from parent, so exception is thrown
-        $this->expectException(\DomainException::class);
-        $catalog->getDefaultClusterName();
+        // The child has no cluster, so the catalog falls back to the parent's default cluster name.
+        $this->assertSame('ParentCluster', $catalog->getDefaultClusterName());
     }
 
     public function testGetDefaultClusterNameThrowsException(): void
@@ -214,7 +214,7 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetClusterWithEastCluster(): void
     {
-        $cluster = $this->createStub(Cluster::class);
+        $cluster = $this->createStub(KubernetesCluster::class);
         $eastCluster = $this->createStub(ClusterPaaS::class);
         $eastCluster
             ->method('__toString')
@@ -230,7 +230,7 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetClusterDirectName(): void
     {
-        $cluster = $this->createStub(Cluster::class);
+        $cluster = $this->createStub(KubernetesCluster::class);
 
         $catalog = new ClusterCatalog(
             ['DirectCluster' => $cluster],
@@ -240,16 +240,38 @@ class ClusterCatalogTest extends TestCase
         $this->assertSame($cluster, $catalog->getCluster('DirectCluster'));
     }
 
+    public function testGetClusterResolvesDockerComposeEntryAsConfigClusterInterface(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'Docker Host',
+            sluggyName: 'docker-host',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@host.example.com:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            isExternal: false,
+            clientKey: 'a-fake-key',
+        );
+
+        $catalog = new ClusterCatalog(
+            ['DockerCluster' => $cluster],
+            [],
+        );
+
+        $resolved = $catalog->getCluster('DockerCluster');
+        $this->assertInstanceOf(ConfigClusterInterface::class, $resolved);
+        $this->assertSame($cluster, $resolved);
+    }
+
     public function testGetClusterWithParent(): void
     {
-        $parentCluster = $this->createStub(Cluster::class);
+        $parentCluster = $this->createStub(KubernetesCluster::class);
         $parentCatalog = new ClusterCatalog(
             ['ParentCluster' => $parentCluster],
             [],
         );
 
         $catalog = new ClusterCatalog(
-            ['ChildCluster' => $this->createStub(Cluster::class)],
+            ['ChildCluster' => $this->createStub(KubernetesCluster::class)],
             [],
             $parentCatalog,
         );
@@ -260,7 +282,7 @@ class ClusterCatalogTest extends TestCase
     public function testGetClusterThrowsException(): void
     {
         $catalog = new ClusterCatalog(
-            ['TestCluster' => $this->createStub(Cluster::class)],
+            ['TestCluster' => $this->createStub(KubernetesCluster::class)],
             [],
         );
 
@@ -271,13 +293,13 @@ class ClusterCatalogTest extends TestCase
 
     public function testGetIteratorWithParent(): void
     {
-        $parentCluster = $this->createStub(Cluster::class);
+        $parentCluster = $this->createStub(KubernetesCluster::class);
         $parentCatalog = new ClusterCatalog(
             ['ParentCluster' => $parentCluster],
             [],
         );
 
-        $childCluster = $this->createStub(Cluster::class);
+        $childCluster = $this->createStub(KubernetesCluster::class);
         $catalog = new ClusterCatalog(
             ['ChildCluster' => $childCluster],
             [],

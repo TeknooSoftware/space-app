@@ -13,6 +13,10 @@ Space can be installed using several methods:
 2. **Manual Installation** (recommended for production)
 3. **Kubernetes Deployment** (Enterprise Edition with Helm charts)
 
+> These methods describe how to run **Space itself**. They are independent of the **deployment target** Space
+> deploys your projects to — which may be a Kubernetes cluster **or** a remote Docker host (Compose + Traefik
+> over SSH/Ansible), configured per cluster (see [configuration.md](configuration.md)).
+
 ## Prerequisites
 
 Before installation, ensure you have:
@@ -38,7 +42,7 @@ Run the command and follow instructions to configure:
 - Docker compose
 - Database connection
 - RabbitMQ connection
-- Kubernetes cluster
+- Deployment cluster (Kubernetes or docker-compose)
 - Email settings
 - Security settings
 
