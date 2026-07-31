@@ -48,7 +48,8 @@ bin/console messenger:consume new_job
 - Execute pre-deployment hooks (Composer, NPM, etc.)
 - Build OCI images with Buildah
 - Transcribe to cluster resources
-- Deploy resources to Kubernetes clusters
+- Deploy resources to the target cluster — a Kubernetes API, or a Docker host over SSH/Ansible for
+  `docker-compose` clusters
 - Monitor deployment progress
 - Report history events
 - Handle deployment failures
@@ -190,6 +191,8 @@ SPACE_IMG_BUILDER_TIMEOUT=1800
 SPACE_IMG_BUILDER_PLATFORMS=linux/amd64
 SPACE_KUBERNETES_MASTER=https://...
 SPACE_KUBERNETES_CREATE_TOKEN=...
+# For docker-compose deployment targets, the SPACE_DC_* variables apply instead
+# (see documentation/configuration.md — Docker Compose Configuration).
 ```
 
 **Health Check**:

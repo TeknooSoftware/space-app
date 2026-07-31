@@ -1,5 +1,28 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta1] - 2026-07-31
+### Beta Release
+- **Docker Compose Deployment Target** — Full parallel path alongside Kubernetes. SSH key-based auth to a remote Docker host, managed via Ansible. Supports cluster provisioning and job deployment with Traefik v3 routing, DNS management, and TLS. 73 commits, 259 new files, 84 modified, +18,640 / −780 lines. All existing Kubernetes behavior byte-for-byte unchanged; full Behat suite passes without modification.
+  - 4 new plans (cluster/job provisioning + unprovisioning), 4 new steps (validate, deploy, DNS, Traefik)
+  - 13 new `SPACE_DC_*` environment variables for SSH, Traefik, and Docker configuration
+  - 2 new Behat features (~3,786 scenario lines), 17 PHPUnit test files (~2,938 lines)
+  - Enterprise extension: InstallDockerHost plan, Trivy vulnerability/audit reports UI, CLI command
+  - Shell scripts: `dc-start`, `dc-stop`, `dc-status`, `dc-logs`, `dc-cleanup`
+
+- Update vendor (diff vs `dev`):
+  - `guzzlehttp/guzzle` `^7.13.2` → `^7.15.2||^8` (major support)
+  - `illuminate/collections` `^13.18` → `^13.23.0`
+  - `illuminate/contracts` `^13.18` → `^13.23.0`
+  - `symfony/*` : Forbid 8.0, keep only 7.4 or 8.1, upgrade to 7.4.5 or 8.1.5
+  - `teknoo/east-common-symfony` `^4.5.0` → `^4.5.1`
+  - `teknoo/east-paas` `^5.7.0-beta4` (new)
+  - `teknoo/east-paas-symfony` `^5.6.2` → `^5.7.0-beta4`
+  - `teknoo/states` `^7.1.8` → `^7.1.9`
+  - `doctrine/mongodb-odm` `^2.16.2` → `^2.16.3`
+  - `laravel/serializable-closure` `^2.0.13` → `^2.0.15`
+  - `league/mime-type-detection` `^1.16` → `^1.17`
+  - `scheb/2fa-*` `^8.6.0` → `^8.6.1` (4 packages)
+
 ## [2.4.4] - 2026-06-24
 ### Stable Release
 - Update vendor (CVE and bugfix)

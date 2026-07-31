@@ -520,7 +520,9 @@ SPACE_CLUSTER_NAME=production
 - **Type**: String
 - **Optional**: Yes
 - **Default**: `kubernetes`
-- **Description**: Cluster type identifier
+- **Description**: Cluster type identifier. Selects the deployment target for this cluster. Supported values:
+  `kubernetes` (deploy to a Kubernetes API) and `docker-compose` (deploy to a remote Docker host over SSH with
+  Ansible — see [Docker Compose Configuration](#docker-compose-configuration)).
 
 ```bash
 SPACE_CLUSTER_TYPE=kubernetes
@@ -550,6 +552,40 @@ SPACE_CLUSTER_CATALOG_JSON='[{
   "use_hnc": false
 }]'
 ```
+
+**Docker Compose cluster entry** — a cluster with `"type": "docker-compose"` targets a remote Docker host over
+**SSH** (key-only authentication, no password, all operations rootless) instead of a Kubernetes API. It carries
+an `ssh` block rather than `create_account`/`storage_provisioner`/`use_hnc`:
+
+```bash
+SPACE_CLUSTER_CATALOG_JSON='[{
+  "name": "docker-prod-1",
+  "type": "docker-compose",
+  "master": "ssh://deployer@docker-host.example.com:22",
+  "support_registry": true,
+  "ssh": {
+    "client_key": "-----BEGIN OPENSSH PRIVATE KEY-----\n...",
+    "username": "deployer",
+    "known_hosts": ""
+  }
+}]'
+```
+
+Field mapping for a docker-compose entry:
+
+- `master` — SSH URL of the target host, `ssh://user@host:port` (the user may be embedded here or supplied via
+  `ssh.username`). Stored on `masterAddress`.
+- `ssh.client_key` — **required** SSH private key (PEM). Stored plaintext in the same `client_key` field used by
+  the Kubernetes client key.
+- `ssh.username` — *Optional* SSH user (falls back to the user embedded in `master`).
+- `ssh.known_hosts` — *Optional* `known_hosts` host key. Stored in the same `ca_cert`/`caCertificate` field used
+  by the Kubernetes CA.
+- `support_registry` — *Optional*, defaults `true`. When enabled, Space provisions a **per-account private OCI
+  registry** container on the same Docker host over Ansible (see
+  [Docker Compose Configuration](#docker-compose-configuration)).
+
+The `create_account.token`, `create_account.ca_cert`, `storage_provisioner`, and `use_hnc` keys are
+Kubernetes-only and ignored for docker-compose entries.
 
 #### SPACE_CLUSTER_CATALOG_FILE
 
@@ -772,7 +808,238 @@ SPACE_INGRESS_PROVIDER_FILE=/opt/space/config/ingress-providers.json
 }
 ```
 
+## Docker Compose Configuration
+
+These variables tune the **docker-compose** deployment target — used only when a project's cluster has
+`type: docker-compose`. Deployments are applied to a remote Docker host over SSH with Ansible, exposing services
+through **Traefik v3**. Every variable is **optional**; each maps to a `teknoo.east.paas.docker-compose.*` DI
+parameter and, when unset, falls back to the library default shown below.
+
+The deployment target is always the per-cluster `type` — there is intentionally no global deployment-target
+variable.
+
+### Ansible & Runtime Settings
+
+#### SPACE_DC_ANSIBLE_BINARY
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `ansible-playbook`
+- **Maps to**: `teknoo.east.paas.docker-compose.ansible.binary`
+- **Description**: `ansible-playbook` executable used to apply the generated playbooks
+
+```bash
+SPACE_DC_ANSIBLE_BINARY=ansible-playbook
+```
+
+#### SPACE_DC_TIMEOUT
+
+- **Type**: Integer (seconds)
+- **Optional**: Yes
+- **Default**: `300`
+- **Maps to**: `teknoo.east.paas.docker-compose.timeout`
+- **Description**: Timeout for a single playbook run
+
+```bash
+SPACE_DC_TIMEOUT=600
+```
+
+#### SPACE_DC_DEPLOY_ROOT
+
+- **Type**: String (path)
+- **Optional**: Yes
+- **Default**: `/opt/paas`
+- **Maps to**: `teknoo.east.paas.docker-compose.deploy_root`
+- **Description**: Root directory on the target host where compose projects are written
+
+```bash
+SPACE_DC_DEPLOY_ROOT=/opt/paas
+```
+
+#### SPACE_DC_NETWORK_DRIVER
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `bridge`
+- **Maps to**: `teknoo.east.paas.docker-compose.network.driver`
+- **Description**: Docker network driver for generated project networks
+
+```bash
+SPACE_DC_NETWORK_DRIVER=bridge
+```
+
+#### SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY
+
+- **Type**: Boolean
+- **Optional**: Yes
+- **Default**: `false`
+- **Maps to**: `teknoo.east.paas.docker-compose.https_backend.insecure_skip_verify`
+- **Description**: Skip TLS certificate verification for HTTPS backends behind Traefik
+
+```bash
+SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY=false
+```
+
+### Traefik Settings
+
+#### SPACE_DC_TRAEFIK_CONTAINER
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `traefik`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.container`
+- **Description**: Name of the Traefik container on the target host
+
+```bash
+SPACE_DC_TRAEFIK_CONTAINER=traefik
+```
+
+#### SPACE_DC_TRAEFIK_DYNAMIC_DIR
+
+- **Type**: String (path)
+- **Optional**: Yes
+- **Default**: `/etc/traefik/dynamic`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.dynamic_dir`
+- **Description**: Directory Traefik watches for dynamic file-provider configuration
+
+```bash
+SPACE_DC_TRAEFIK_DYNAMIC_DIR=/etc/traefik/dynamic
+```
+
+#### SPACE_DC_TRAEFIK_CERTS_DIR
+
+- **Type**: String (path)
+- **Optional**: Yes
+- **Default**: `/etc/traefik/certs`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.certs_dir`
+- **Description**: Directory holding TLS certificates for Traefik
+
+```bash
+SPACE_DC_TRAEFIK_CERTS_DIR=/etc/traefik/certs
+```
+
+#### SPACE_DC_TRAEFIK_CERTRESOLVER
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: _(none)_
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.default_certresolver`
+- **Description**: Default Traefik cert resolver (e.g. an ACME resolver). The DI parameter is **only declared
+  when this variable is set to a non-empty value**; otherwise the driver's own default applies.
+
+```bash
+SPACE_DC_TRAEFIK_CERTRESOLVER=letsencrypt
+```
+
+#### SPACE_DC_TRAEFIK_ENTRYPOINT_WEB
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `web`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.web`
+- **Description**: Traefik entrypoint name for plain HTTP
+
+```bash
+SPACE_DC_TRAEFIK_ENTRYPOINT_WEB=web
+```
+
+#### SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `websecure`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.websecure`
+- **Description**: Traefik entrypoint name for HTTPS
+
+```bash
+SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE=websecure
+```
+
+#### SPACE_DC_TRAEFIK_ENTRYPOINT_TCP
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `tcp`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.tcp`
+- **Description**: Traefik entrypoint name for raw TCP services
+
+```bash
+SPACE_DC_TRAEFIK_ENTRYPOINT_TCP=tcp
+```
+
+#### SPACE_DC_TRAEFIK_ENTRYPOINT_UDP
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `udp`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.udp`
+- **Description**: Traefik entrypoint name for UDP services
+
+```bash
+SPACE_DC_TRAEFIK_ENTRYPOINT_UDP=udp
+```
+
+### Per-Account Registry Settings (docker-compose)
+
+When a docker-compose cluster has `support_registry: true` (the default), Space provisions a **per-account
+private OCI registry** as a dedicated `<namespace>-registry` container on the same Docker host, over Ansible.
+It is reachable only over an internal Docker network by its container name (no public route), authenticated with
+htpasswd, and TLS is optional. This is the docker-compose equivalent of the Kubernetes-hosted per-account
+registry — docker-compose clusters do **not** require the Kubernetes-only OCI registry settings below.
+
+#### SPACE_DC_REGISTRY_IMAGE
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `registry:2`
+- **Maps to**: `teknoo.east.paas.docker-compose.registry.image`
+- **Description**: Docker image used for the per-account registry container
+
+```bash
+SPACE_DC_REGISTRY_IMAGE=registry:2
+```
+
+#### SPACE_DC_REGISTRY_NETWORK
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: `space-registry`
+- **Maps to**: `teknoo.east.paas.docker-compose.registry.network`
+- **Description**: Name of the external, internal-only Docker network the registry is attached to
+
+```bash
+SPACE_DC_REGISTRY_NETWORK=space-registry
+```
+
+#### SPACE_DC_REGISTRY_PORT
+
+- **Type**: Integer
+- **Optional**: Yes
+- **Default**: `5000`
+- **Maps to**: `teknoo.east.paas.docker-compose.registry.port`
+- **Description**: Port the registry container exposes on the internal network
+
+```bash
+SPACE_DC_REGISTRY_PORT=5000
+```
+
+#### SPACE_DC_REGISTRY_TLS
+
+- **Type**: Boolean
+- **Optional**: Yes
+- **Default**: `false`
+- **Maps to**: `teknoo.east.paas.docker-compose.registry.tls`
+- **Description**: Enable TLS on the per-account registry container
+
+```bash
+SPACE_DC_REGISTRY_TLS=false
+```
+
 ## OCI Registry Configuration
+
+The settings in this section configure the **Kubernetes-hosted** per-account registry and the shared global
+registry. For docker-compose clusters, the per-account registry is provisioned over Ansible instead — see
+[Per-Account Registry Settings (docker-compose)](#per-account-registry-settings-docker-compose).
 
 ### Private Registry Settings
 

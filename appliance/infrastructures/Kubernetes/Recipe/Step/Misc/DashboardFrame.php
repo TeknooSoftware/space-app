@@ -39,8 +39,9 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Template\EngineInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Throwable;
@@ -72,7 +73,7 @@ class DashboardFrame implements DashboardFrameInterface
         $this->responseFactory = $responseFactory;
     }
 
-    private function getDashboardUrl(ClusterConfig $cluster, ?AccountEnvironment $env, string $wildcard): string
+    private function getDashboardUrl(KubernetesCluster $cluster, ?AccountEnvironment $env, string $wildcard): string
     {
         if (!str_contains($wildcard, '#')) {
             if ('config/config.json' === $wildcard) {
@@ -117,6 +118,9 @@ class DashboardFrame implements DashboardFrameInterface
         }
 
         $clusterConfig = $clusterCatalog->getCluster($clusterName);
+        if (!$clusterConfig instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
 
         $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
         $accountEnvironment = null;

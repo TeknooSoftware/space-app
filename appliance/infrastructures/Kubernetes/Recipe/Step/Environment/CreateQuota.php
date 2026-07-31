@@ -32,7 +32,9 @@ use Teknoo\East\Paas\Object\Account;
 use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\Kubernetes\Model\ResourceQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 use function in_array;
@@ -96,8 +98,12 @@ class CreateQuota
         string $accountNamespace,
         Account $accountInstance,
         AccountHistory $accountHistory,
-        ClusterConfig $clusterConfig,
+        ConfigClusterInterface $clusterConfig,
     ): self {
+        if (!$clusterConfig instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $client = $clusterConfig->getKubernetesClient();
 
         $name = $accountNamespace . self::QUOTA_SUFFIX;

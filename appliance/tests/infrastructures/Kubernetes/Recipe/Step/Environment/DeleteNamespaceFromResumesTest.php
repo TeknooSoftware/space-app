@@ -31,8 +31,10 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceAccount;
@@ -101,7 +103,55 @@ class DeleteNamespaceFromResumesTest extends TestCase
                         )
                     ]
                 ),
-                new ClusterCatalog(['foo' => $this->createStub(Cluster::class)], ['Foo' => 'foo']),
+                new ClusterCatalog(['foo' => $this->createStub(KubernetesCluster::class)], ['Foo' => 'foo']),
+            ),
+        );
+    }
+
+    public function testInvokeThrowsOnNonKubernetesCluster(): void
+    {
+        $account = $this->createStub(Account::class);
+
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        ($this->deleteNamespaceFromResumes)(
+            new AccountWallet([
+                new AccountEnvironment(
+                    $account,
+                    'Foo',
+                    'Prod',
+                    'foo',
+                    'foo',
+                    'foo',
+                    'foo',
+                    'foo',
+                    'foo',
+                    'foo',
+                    'foo',
+                    [],
+                )->setId('foo'),
+            ]),
+            new SpaceAccount(
+                account: $account,
+                environments: [
+                    new AccountEnvironmentResume(
+                        'Foo',
+                        'Prod',
+                        'foo5',
+                    )
+                ]
+            ),
+            new ClusterCatalog(
+                ['foo' => new DockerComposeCluster(
+                    name: 'foo',
+                    sluggyName: 'foo',
+                    type: 'docker-compose',
+                    masterAddress: 'ssh://u@h:22',
+                    dashboardAddress: 'foo',
+                    isExternal: false,
+                    clientKey: 'k',
+                )],
+                ['Foo' => 'foo'],
             ),
         );
     }

@@ -34,7 +34,7 @@ use Teknoo\Kubernetes\Client;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class Cluster
+class KubernetesCluster implements ConfigClusterInterface
 {
     private ?Client $kubernetesClient = null;
 

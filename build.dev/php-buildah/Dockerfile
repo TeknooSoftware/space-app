@@ -61,10 +61,6 @@ RUN set -eux ; \
     export CFLAGS="${CFLAGS:-} -I/usr/src/php/ext/lexbor" ; \
     curl -L https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie ; \
     chmod +x /usr/local/bin/pie ; \
-    pie install apcu/apcu ; \
-    pie install mongodb/mongodb-extension ; \
-    pie install pecl/yaml ; \
-    pie install php-amqp/php-amqp ; \
     docker-php-ext-install bcmath \
                            bz2 \
                            calendar \
@@ -89,6 +85,10 @@ RUN set -eux ; \
                            xsl  \
                            zip \
     ; \
+    pie install apcu/apcu ; \
+    pie install mongodb/mongodb-extension ; \
+    pie install pecl/yaml ; \
+    pie install php-amqp/php-amqp ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
     locale-gen ; \

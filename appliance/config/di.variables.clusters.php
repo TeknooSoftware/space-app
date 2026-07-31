@@ -33,8 +33,10 @@ use Teknoo\East\Paas\Infrastructures\Kubernetes\Transcriber\IngressTranscriber a
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 
 use function DI\env;
 use function preg_replace;
@@ -92,15 +94,42 @@ return [
 
         $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', (string) $text)));
 
-        $clustersList = [];
-        $aliases = [];
-
-        foreach ($definitions as $definition) {
-            $name = (string) $definition['name'];
-            if (isset($clustersList[$name])) {
-                throw new DomainException("Error, the cluster $name is already defined in the catalog");
+        $buildDockerComposeCluster = static function (
+            array $definition,
+            string $name,
+            string $sluggyName,
+            string $type,
+        ): DockerComposeCluster {
+            if (empty($definition['ssh']['client_key'])) {
+                throw new DomainException(
+                    "Error, the docker-compose cluster $name requires an ssh.client_key in the catalog"
+                );
             }
 
+            return new DockerComposeCluster(
+                name: $name,
+                sluggyName: $sluggyName,
+                type: $type,
+                masterAddress: (string) $definition['master'],
+                dashboardAddress: (string) ($definition['dashboard'] ?? ''),
+                isExternal: !empty($definition['is_external']),
+                clientKey: (string) $definition['ssh']['client_key'],
+                username: (string) ($definition['ssh']['username'] ?? ''),
+                caCertificate: (string) ($definition['ssh']['known_hosts'] ?? ''),
+                supportRegistry: (bool) ($definition['support_registry'] ?? true),
+            );
+        };
+
+        $buildKubernetesCluster = static function (
+            array $definition,
+            string $name,
+            string $sluggyName,
+            string $type,
+        ) use (
+            $container,
+            $factory,
+            $storageProvisioner
+): KubernetesCluster {
             $caCertificate = base64_decode((string) $definition['create_account']['ca_cert']);
             $credentials = new ClusterCredentials(
                 caCertificate: $caCertificate,
@@ -113,12 +142,10 @@ return [
                 $container->get(RepositoryRegistry::class)
             );
 
-            $sluggyName = $sluggyfier($definition['name']);
-            $aliases[$sluggyName] = $name;
-            $clustersList[$name] = new Cluster(
+            return new KubernetesCluster(
                 name: $name,
                 sluggyName: $sluggyName,
-                type: $definition['type'],
+                type: $type,
                 masterAddress: $definition['master'],
                 storageProvisioner: $definition['storage_provisioner'] ?? $storageProvisioner,
                 dashboardAddress: $definition['dashboard'] ?? '',
@@ -128,6 +155,29 @@ return [
                 useHnc: !empty($definition['use_hnc']),
                 isExternal: false,
             );
+        };
+
+        $clustersList = [];
+        $aliases = [];
+
+        foreach ($definitions as $definition) {
+            $name = (string) $definition['name'];
+            if (isset($clustersList[$name])) {
+                throw new DomainException("Error, the cluster $name is already defined in the catalog");
+            }
+
+            $sluggyName = $sluggyfier($definition['name']);
+            $aliases[$sluggyName] = $name;
+
+            $type = (string) ($definition['type'] ?? 'kubernetes');
+
+            $clustersList[$name] = match ($type) {
+                'docker-compose' => $buildDockerComposeCluster($definition, $name, $sluggyName, $type),
+                'kubernetes' => $buildKubernetesCluster($definition, $name, $sluggyName, $type),
+                default => throw new UnsupportedClusterTypeException(
+                    "Error, the cluster $name uses an unsupported cluster type '$type'"
+                ),
+            };
         }
 
         return $clusterCatalog = new ClusterCatalog($clustersList, $aliases);

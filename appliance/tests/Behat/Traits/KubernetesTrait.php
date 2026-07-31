@@ -35,7 +35,7 @@ use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Recipe\Promise\Promise;
-use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
@@ -64,7 +64,7 @@ trait KubernetesTrait
         $host = null;
 
         $clusterCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
-        /** @var Cluster $clusterInstance */
+        /** @var ConfigClusterInterface $clusterInstance */
         foreach ($clusterCatalog as $clusterInstance) {
             if ($clusterInstance->name === $clusterName) {
                 $urlParts = parse_url($clusterInstance->masterAddress);

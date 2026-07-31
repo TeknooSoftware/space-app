@@ -148,7 +148,44 @@ Kubernetes-specific workflow steps:
 - Retrieves available clusters
 - Provides cluster metadata
 
-### 3. Symfony Integration
+### 3. Docker Compose / Ansible Integration
+
+Located in `appliance/infrastructures/AnsibleDockerCompose/`. This is the account-provisioning half of the
+second deployment target: a remote **Docker host** running a Compose stack behind **Traefik v3**, applied over
+SSH with **Ansible**. The deployment mechanics themselves (the `docker-compose` cluster driver, the Ansible
+runner, and the Compose/Traefik transcribers) are **provided by the East PaaS library** and selected at runtime
+by the cluster `type`; Space only wires them and adds the type-aware account provisioning.
+
+#### Provisioning Plans & Steps
+
+`Recipe/Plan/` — docker-compose equivalents of the Kubernetes account plans:
+
+- `AccountEnvironmentInstall` / `AccountEnvironmentReinstall` — persist the SSH identity and the compose
+  namespace (no Kubernetes namespace / service account / role / quota). The SSH private key is supplied, never
+  minted.
+- `AccountRefreshQuota` — a documented no-op (a Docker host has no Kubernetes `ResourceQuota`), kept for parity.
+- `AccountRegistryInstall` / `AccountRegistryReinstall` — provision a **per-account private OCI registry** on the
+  Docker host over Ansible.
+
+`Recipe/Step/`:
+
+- `PersistSshIdentity` — guards `instanceof DockerComposeCluster`, stages the SSH key + known_hosts + compose
+  namespace onto the workplan for the reused `PersistEnvironment` step.
+- `BuildRegistryInventory`, `GenerateRegistryCredentials`, `RunRegistryPlaybook` — build the single-host
+  inventory, generate htpasswd credentials, and run the registry playbook via the East PaaS
+  `RunnerFactoryInterface` (no custom runner).
+
+`templates/` — `registry.yml` (Ansible playbook, rootless, apt/dnf) and `registry.compose.yml.j2` render a
+dedicated `<namespace>-registry` container on an internal-only network.
+
+#### Provisioning-plan selection
+
+`ProvisioningPlanDirectory` (`appliance/domain/Cluster/`) maps each cluster `type` to its plan set, and
+`ProvisioningPlanBowl` (`appliance/infrastructures/Recipe/Bowl/`) resolves the right plan **at request time**
+from the workplan's cluster type — because a `RecipeBowl`'s recipe is otherwise fixed at container-build time.
+Kubernetes resolves to the unchanged Kubernetes plan instances, so its behaviour is byte-for-byte identical.
+
+### 4. Symfony Integration
 
 Located in `appliance/infrastructures/Symfony/`:
 
@@ -298,7 +335,7 @@ Symfony-specific workflow steps:
 
 - Client call
 
-### 4. Twig Integration
+### 5. Twig Integration
 
 Located in `appliance/infrastructures/Twig/`:
 
@@ -319,7 +356,7 @@ Located in `appliance/infrastructures/Twig/`:
 - `space_format_date`: Date formatting
 - `space_truncate`: Text truncation
 
-### 5. Endroid QR Code Integration
+### 6. Endroid QR Code Integration
 
 Located in `appliance/infrastructures/Endroid/QrCode/`:
 

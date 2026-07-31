@@ -30,8 +30,9 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Paas\Object\Cluster as ClusterObject;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Recipe\Step\NewJob\NewJobSetDefaults;
@@ -85,7 +86,7 @@ class NewJobSetDefaultsTest extends TestCase
 
         $kubeClient = $this->createStub(Client::class);
 
-        $config1 = new Cluster(
+        $config1 = new KubernetesCluster(
             name: 'cluster1',
             sluggyName: 'cluster1-slug',
             type: 'kubernetes',
@@ -99,7 +100,7 @@ class NewJobSetDefaultsTest extends TestCase
             isExternal: false,
         );
 
-        $config2 = new Cluster(
+        $config2 = new KubernetesCluster(
             name: 'cluster2',
             sluggyName: 'cluster2-slug',
             type: 'kubernetes',
@@ -197,7 +198,7 @@ class NewJobSetDefaultsTest extends TestCase
 
         $kubeClient = $this->createStub(Client::class);
 
-        $config = new Cluster(
+        $config = new KubernetesCluster(
             name: 'locked-cluster',
             sluggyName: 'locked-cluster-slug',
             type: 'kubernetes',
@@ -240,5 +241,50 @@ class NewJobSetDefaultsTest extends TestCase
         $this->assertArrayHasKey('locked-cluster', $newJob->storageProvisionerPerCluster);
         $this->assertEquals('locked-provisioner', $newJob->storageProvisionerPerCluster['locked-cluster']);
         $this->assertCount(1, $newJob->storageProvisionerPerCluster);
+    }
+
+    public function testInvokeSkipsNonKubernetesCluster(): void
+    {
+        $lockedCluster = $this->createMock(ClusterObject::class);
+        $lockedCluster->expects($this->once())
+            ->method('isLocked')
+            ->willReturn(true);
+
+        $config = new DockerComposeCluster(
+            name: 'docker-cluster',
+            sluggyName: 'docker-cluster-slug',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            isExternal: false,
+            clientKey: 'k',
+        );
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with($lockedCluster)
+            ->willReturn($config);
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($field, $callback) use ($lockedCluster, $project) {
+                if ('clusters' === $field) {
+                    $callback([$lockedCluster]);
+                }
+                return $project;
+            });
+
+        $newJob = new NewJob();
+
+        $result = ($this->newJobSetDefaults)(
+            project: new SpaceProject($project),
+            newJob: $newJob,
+            clusterCatalog: $clusterCatalog,
+        );
+
+        $this->assertInstanceOf(NewJobSetDefaults::class, $result);
+        $this->assertEmpty($newJob->storageProvisionerPerCluster);
     }
 }

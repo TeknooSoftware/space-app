@@ -5,6 +5,7 @@ di_bridge:
        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Flysystem/di.php' }
        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Git/di.php' }
        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Kubernetes/di.php' }
+       - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/DockerCompose/di.php' }
        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Image/di.php' }
        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/ProjectBuilding/di.php' }
        - { priority: 10, file: '%kernel.project_dir%/vendor/teknoo/east-paas/infrastructures/Laminas/di.php' }

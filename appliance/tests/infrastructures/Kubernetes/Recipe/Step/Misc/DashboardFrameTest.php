@@ -43,8 +43,10 @@ use Teknoo\East\Foundation\Template\EngineInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 
@@ -158,6 +160,34 @@ class DashboardFrameTest extends TestCase
                 accountWallet: $wallet,
                 envName: 'prod',
             )
+        );
+    }
+
+    public function testInvokeThrowsOnNonKubernetesCluster(): void
+    {
+        $catalog = new ClusterCatalog(
+            ['clusterName' => new DockerComposeCluster(
+                name: 'foo',
+                sluggyName: 'foo',
+                type: 'docker-compose',
+                masterAddress: 'ssh://u@h:22',
+                dashboardAddress: 'foo',
+                isExternal: false,
+                clientKey: 'k',
+            )],
+            [],
+        );
+
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createStub(ServerRequestInterface::class),
+            user: $this->createStub(User::class),
+            clusterCatalog: $catalog,
+            clusterName: 'clusterName',
+            wildcard: '*',
         );
     }
 }

@@ -47,6 +47,9 @@ This is the `Standard` version of Space. It is released under the 3-Clause BSD l
 * Deployment workers
 * Kubernetes integration
     * include a Dashboard integration
+* Docker Compose integration
+    * Deployments to remote Docker hosts via Ansible
+    * Support for Traefik v3
 * Space can allow any users to subscribe, but it's not manage billings.
     * Subscriptions can be restricted with unique code to forbid non granted user to subscribe.
 
@@ -386,6 +389,44 @@ Environnements variables configuration
                     * `storage_provisioner` : (string) Default storage provisioner *Optional*
                     * `support_registry` : (bool) If the cluster can host private OCI registries *Optional*
                     * `use_hnc` : (bool) If the cluster use hierarchical namespace *Optional*
+                    * For `type` = `docker-compose` the entry targets a host over **SSH** (key-only, no
+                      password) instead of a Kubernetes API:
+                        * `master` : (string) SSH URL of the target host, `ssh://user@host:port`.
+                        * `type` : must be `docker-compose`.
+                        * `ssh.client_key` : (string) SSH private key (PEM, plaintext). Stored in the same
+                          `client_key` field as the Kubernetes client key.
+                        * `ssh.username` : (string) *Optional* SSH user (else taken from the user embedded in
+                          `master`).
+                        * `ssh.known_hosts` : (string) *Optional* `known_hosts` content. Stored in the same
+                          `ca_cert` field as the Kubernetes CA.
+                        * `support_registry` : (bool) *Optional*, `true` by default. When enabled, Space
+                          provisions a per-account private OCI registry container on the same Docker host over
+                          Ansible (see the `SPACE_DC_REGISTRY_*` settings below).
+
+    * Docker Compose : *Optional — only used when a cluster has `type: docker-compose`. All keys optional;
+      library defaults shown. When `support_registry` is enabled, a per-account private OCI registry is
+      provisioned on the Docker host over Ansible; otherwise deployments can use the global OCI registry
+      (`SPACE_OCI_GLOBAL_REGISTRY_*`).*
+        * `SPACE_DC_ANSIBLE_BINARY` : (string) ansible-playbook binary. `ansible-playbook` by default.
+        * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `300` by default.
+        * `SPACE_DC_DEPLOY_ROOT` : (string) deploy root on the target host. `/opt/paas` by default.
+        * `SPACE_DC_NETWORK_DRIVER` : (string) docker network driver. `bridge` by default.
+        * `SPACE_DC_TRAEFIK_CONTAINER` : (string) Traefik container name. `traefik` by default.
+        * `SPACE_DC_TRAEFIK_DYNAMIC_DIR` : (string) Traefik dynamic config dir. `/etc/traefik/dynamic` by
+          default.
+        * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir. `/etc/traefik/certs` by default.
+        * `SPACE_DC_TRAEFIK_CERTRESOLVER` : (string) Traefik cert resolver name. No default.
+        * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEB` : (string) HTTP entrypoint. `web` by default.
+        * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE` : (string) HTTPS entrypoint. `websecure` by default.
+        * `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` : (string) TCP entrypoint. `tcp` by default.
+        * `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` : (string) UDP entrypoint. `udp` by default.
+        * `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` : (int/bool) skip TLS verify for HTTPS backends.
+          `false` by default.
+        * `SPACE_DC_REGISTRY_IMAGE` : (string) per-account registry image. `registry:2` by default.
+        * `SPACE_DC_REGISTRY_NETWORK` : (string) internal-only Docker network for the registry. `space-registry`
+          by default.
+        * `SPACE_DC_REGISTRY_PORT` : (int) registry port on the internal network. `5000` by default.
+        * `SPACE_DC_REGISTRY_TLS` : (int/bool) enable TLS on the per-account registry. `false` by default.
 
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a

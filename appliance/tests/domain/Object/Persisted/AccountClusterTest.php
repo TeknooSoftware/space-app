@@ -37,7 +37,9 @@ use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
@@ -315,12 +317,94 @@ class AccountClusterTest extends TestCase
     #[AllowMockObjectsWithoutExpectations]
     public function testConvertToConfigCluster(): void
     {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: '42',
+            slug: '42',
+            type: 'kubernetes',
+            masterAddress: '42',
+            storageProvisioner: '42',
+            dashboardAddress: '42',
+            caCertificate: '42',
+            token: '42',
+            supportRegistry: true,
+            registryUrl: '42',
+            useHnc: false,
+        );
+
         $clientFactory = $this->createStub(ClientFactoryInterface::class);
         $repositoryRegistry = $this->createStub(RepositoryRegistry::class);
 
-        $result = $this->accountCluster->convertToConfigCluster($clientFactory, $repositoryRegistry);
+        $result = $accountCluster->convertToConfigCluster($clientFactory, $repositoryRegistry);
 
-        $this->assertInstanceOf(Cluster::class, $result);
+        $this->assertInstanceOf(KubernetesCluster::class, $result);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterThrowsForUnsupportedType(): void
+    {
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        $this->accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterForDockerCompose(): void
+    {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: 'DC',
+            slug: 'dc',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@docker-host.example.com:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            caCertificate: 'host ssh-ed25519 AAAA',
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'deployer',
+        );
+
+        $result = $accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $result);
+        $this->assertNotInstanceOf(KubernetesCluster::class, $result);
+        $this->assertSame('ssh://deployer@docker-host.example.com:22', $result->masterAddress);
+        $this->assertTrue($result->supportRegistry);
+
+        $credentials = $result->getCredentials();
+        $this->assertSame('-----BEGIN OPENSSH PRIVATE KEY-----KEY', $credentials->getClientKey());
+        $this->assertSame('host ssh-ed25519 AAAA', $credentials->getCaCertificate());
+        $this->assertSame('deployer', $credentials->getUsername());
+        $this->assertSame('', $credentials->getPassword());
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testSetClientKey(): void
+    {
+        $result = $this->accountCluster->setClientKey('-----BEGIN OPENSSH PRIVATE KEY-----KEY');
+
+        $this->assertInstanceOf(AccountCluster::class, $result);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testSetClientKeyWithEmptyString(): void
+    {
+        $result = $this->accountCluster->setClientKey('');
+
+        $this->assertInstanceOf(AccountCluster::class, $result);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testSetUsername(): void
+    {
+        $result = $this->accountCluster->setUsername('deployer');
+
+        $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
     #[AllowMockObjectsWithoutExpectations]

@@ -29,7 +29,9 @@ use DateTimeInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Model\ServiceAccount;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -66,8 +68,12 @@ class CreateServiceAccount
         string $kubeNamespace,
         string $accountNamespace,
         AccountHistory $accountHistory,
-        ClusterConfig $clusterConfig,
+        ConfigClusterInterface $clusterConfig,
     ): self {
+        if (!$clusterConfig instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $serviceName = $accountNamespace . self::SERVICE_SUFFIX;
 
         $client = $clusterConfig->getKubernetesClient();

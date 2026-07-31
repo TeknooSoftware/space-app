@@ -33,7 +33,9 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -93,6 +95,27 @@ class CreateServiceAccountTest extends TestCase
                 accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )
+        );
+    }
+
+    public function testInvokeThrowsOnNonKubernetesCluster(): void
+    {
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        ($this->createServiceAccount)(
+            manager: $this->createStub(ManagerInterface::class),
+            kubeNamespace: 'foo',
+            accountNamespace: 'foo',
+            accountHistory: $this->createStub(AccountHistory::class),
+            clusterConfig: new DockerComposeCluster(
+                name: 'foo',
+                sluggyName: 'foo',
+                type: 'docker-compose',
+                masterAddress: 'ssh://u@h:22',
+                dashboardAddress: 'foo',
+                isExternal: false,
+                clientKey: 'k',
+            ),
         );
     }
 }

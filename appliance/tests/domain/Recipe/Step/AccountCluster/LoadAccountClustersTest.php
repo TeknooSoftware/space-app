@@ -35,7 +35,7 @@ use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Loader\AccountClusterLoader;
-use Teknoo\Space\Object\Config\Cluster;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
@@ -132,7 +132,7 @@ class LoadAccountClustersTest extends TestCase
     public function testInvokeWithClusters(): void
     {
         $accountCluster = $this->createMock(AccountCluster::class);
-        $configCluster = new Cluster(
+        $configCluster = new KubernetesCluster(
             name: 'cluster-name',
             sluggyName: 'cluster-slug',
             type: 'kubernetes',

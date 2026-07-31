@@ -33,7 +33,7 @@ use function dirname;
 use function preg_match;
 use function strtolower;
 
-return [
+$parameters = [
     //East PaaS Configuration
     'teknoo.east.paas.project_configuration_filename' => 'space.paas.yaml',
     'teknoo.east.paas.root_dir' => dirname(__DIR__),
@@ -114,4 +114,44 @@ return [
             ];
         };
     },
+
+    // docker-compose driver tunables (spec §7); each is optional — the vendored DockerCompose/di.php guards
+    // every one with $container->has(...) and falls back to its own default when the param is absent.
+    'teknoo.east.paas.docker-compose.ansible.binary' => env('SPACE_DC_ANSIBLE_BINARY', 'ansible-playbook'),
+    'teknoo.east.paas.docker-compose.timeout' => env('SPACE_DC_TIMEOUT', 300),
+    'teknoo.east.paas.docker-compose.deploy_root' => env('SPACE_DC_DEPLOY_ROOT', '/opt/paas'),
+    'teknoo.east.paas.docker-compose.network.driver' => env('SPACE_DC_NETWORK_DRIVER', 'bridge'),
+    'teknoo.east.paas.docker-compose.traefik.container' => env('SPACE_DC_TRAEFIK_CONTAINER', 'traefik'),
+    'teknoo.east.paas.docker-compose.traefik.dynamic_dir' => env(
+        'SPACE_DC_TRAEFIK_DYNAMIC_DIR',
+        '/etc/traefik/dynamic'
+    ),
+    'teknoo.east.paas.docker-compose.traefik.certs_dir' => env('SPACE_DC_TRAEFIK_CERTS_DIR', '/etc/traefik/certs'),
+    'teknoo.east.paas.docker-compose.traefik.entrypoint.web' => env('SPACE_DC_TRAEFIK_ENTRYPOINT_WEB', 'web'),
+    'teknoo.east.paas.docker-compose.traefik.entrypoint.websecure' => env(
+        'SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE',
+        'websecure'
+    ),
+    'teknoo.east.paas.docker-compose.traefik.entrypoint.tcp' => env('SPACE_DC_TRAEFIK_ENTRYPOINT_TCP', 'tcp'),
+    'teknoo.east.paas.docker-compose.traefik.entrypoint.udp' => env('SPACE_DC_TRAEFIK_ENTRYPOINT_UDP', 'udp'),
+    'teknoo.east.paas.docker-compose.https_backend.insecure_skip_verify' => env(
+        'SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY',
+        false
+    ),
+
+    // Per-account private registry (docker-compose): a dedicated `registry` container provisioned over Ansible,
+    // reachable only over the external private network by its container name (no public route). TLS optional.
+    'teknoo.east.paas.docker-compose.registry.image' => env('SPACE_DC_REGISTRY_IMAGE', 'registry:2'),
+    'teknoo.east.paas.docker-compose.registry.network' => env('SPACE_DC_REGISTRY_NETWORK', 'space-registry'),
+    'teknoo.east.paas.docker-compose.registry.port' => env('SPACE_DC_REGISTRY_PORT', 5000),
+    'teknoo.east.paas.docker-compose.registry.tls' => env('SPACE_DC_REGISTRY_TLS', false),
 ];
+
+// The default_certresolver param is only declared when SPACE_DC_TRAEFIK_CERTRESOLVER is explicitly set, so the
+// vendored DockerCompose/di.php keeps applying its own default when the operator did not configure a resolver.
+if (!empty($_ENV['SPACE_DC_TRAEFIK_CERTRESOLVER'])) {
+    $parameters['teknoo.east.paas.docker-compose.traefik.default_certresolver']
+        = $_ENV['SPACE_DC_TRAEFIK_CERTRESOLVER'];
+}
+
+return $parameters;

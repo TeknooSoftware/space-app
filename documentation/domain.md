@@ -28,7 +28,7 @@ Orchestrates deployment jobs and their lifecycle.
 
 ### 5. Cluster Management
 
-Manages Kubernetes clusters and their configurations.
+Manages deployment clusters (Kubernetes or docker-compose) and their configurations.
 
 ### 6. Variable Management
 
@@ -196,30 +196,37 @@ Represents a deployment environment for an account.
 
 ### AccountCluster
 
-Links an account to available Kubernetes clusters.
+Links an account to an available deployment cluster (Kubernetes **or** docker-compose).
 
 **Properties:**
 
 - `id`: Unique identifier
 - `name`
 - `slug`
-- `type`: type like Kubernetes or other
-- `masterAddress`: URL to connect to the cluster
-- `storageProvisioner`: Default name of the storage provisioner
-- `dashboardAddress`: URL of the dashboardd
-- `caCertificate`, `token`: Credentials to connect to this cluster
+- `type`: cluster type — `kubernetes` or `docker-compose`
+- `masterAddress`: address to connect to the cluster (a Kubernetes API URL, or an `ssh://user@host:port` URL for
+  docker-compose)
+- `storageProvisioner`: Default name of the storage provisioner (Kubernetes-only)
+- `dashboardAddress`: URL of the dashboard
+- `caCertificate`, `token`: Kubernetes credentials. For docker-compose, `caCertificate` reuses the same field to
+  hold the SSH `known_hosts` host key
+- `clientKey`: Kubernetes client key, or — for docker-compose — the SSH **private key** (nullable, stored
+  plaintext, key-only/rootless authentication)
+- `username`: SSH user for docker-compose clusters (nullable; else taken from `masterAddress`)
 - `supportRegistry`: To flag this cluster is available to host the account registry
 - `registryUrl`
-- `useHnc`: If the cluster use Hierarchical namespace in Kubernetes
+- `useHnc`: If the cluster uses Hierarchical namespace (Kubernetes-only)
 
 **Relationships:**
 
-- References global **Cluster** configuration
+- References the global cluster configuration (**ConfigClusterInterface**) via `convertToConfigCluster()`, which
+  returns a **KubernetesCluster** or **DockerComposeCluster** depending on `type`
 
 **Business Rules:**
 
-- Service account token provides scoped access
-- Token creation must complete within timeout
+- Kubernetes: service account token provides scoped access; token creation must complete within timeout
+- docker-compose: authentication is SSH key-only (no password), all operations rootless; the SSH key and
+  `known_hosts` are stored plaintext (parity with the Kubernetes `token`/`clientKey`/`caCertificate`)
 - Different clusters may have different capabilities
 
 ### AccountRegistry
@@ -244,9 +251,11 @@ Represents a private OCI image registry for an account.
 - Each account can have one private registry
 - Registry deployed in dedicated namespace
 - Storage is claimed via PersistentVolumeClaim
-- Registry credentials are managed as Kubernetes secrets
-- Registry is shared for all environment and clusters
-- Registry can be present on a different kubernetes cluster
+- On Kubernetes, registry credentials are managed as Kubernetes secrets
+- On docker-compose clusters, the per-account registry is a dedicated `<namespace>-registry` container
+  provisioned on the Docker host over Ansible (internal-only network, htpasswd auth, optional TLS)
+- Registry is shared for all environments and clusters
+- Registry can be present on a different Kubernetes cluster
 
 ### AccountHistory
 
@@ -291,22 +300,38 @@ Represents a configuration variable that can be persisted and optionally encrypt
 
 ### Configuration Objects
 
-#### Cluster
+#### Cluster configuration (ConfigClusterInterface)
 
-Represents a Kubernetes cluster configuration.
+Represents a deployment cluster configuration. `ConfigClusterInterface` is the target-agnostic contract; there
+is one implementation per deployment target. The concrete type is selected by the cluster `type` field, both in
+the catalog (`di.variables.clusters.php`) and when converting an `AccountCluster`.
 
-**Properties:**
+**`ConfigClusterInterface` (get-only properties):**
 
 - `name`
 - `sluggyName`: Cluster's name as slug
-- `type`: like kubernetes or other
-- `masterAddress`: Endpoint to connect
-- `storageProvisioner`: Name of the storage provisioner
-- `dashboardAddress`: Endpoint to access to the dasboard
-- `token`: Token to connect to this cluster and create namespace
-- `supportRegistry`: This cluster can be use to store OCI registry
-- `useHnc`: This cluster use hierarchical namespace
+- `type`: `kubernetes` or `docker-compose`
+- `masterAddress`: endpoint to connect (Kubernetes API URL, or `ssh://user@host:port` for docker-compose)
+- `dashboardAddress`: Endpoint to access the dashboard
+- `supportRegistry`: This cluster can host a per-account OCI registry
+- `useHnc`: This cluster uses hierarchical namespaces (Kubernetes-only)
 - `isExternal`: This cluster is user defined and not admin defined
+
+**`KubernetesCluster`** (implements the interface; renamed from the former `Cluster`)
+
+- Adds Kubernetes-only members kept **off** the interface: `storageProvisioner`, `token`,
+  `getKubernetesClient()`, `getKubernetesRegistryClient()`.
+
+**`DockerComposeCluster`** (implements the interface)
+
+- `supportRegistry` defaults **true**; `useHnc` is always `false`; no Kubernetes client or storage provisioner.
+- Carries the SSH connection data: `clientKey` (SSH private key), `username` (optional), `caCertificate`
+  (known_hosts). `getCredentials()` returns an East PaaS `ClusterCredentials` (key-only, rootless — no
+  password, no token).
+
+Kubernetes-only Recipe steps narrow the injected instance with `instanceof KubernetesCluster` and throw
+`UnsupportedClusterTypeException` when routed a non-Kubernetes cluster; catalog-iterating *display* steps
+(e.g. dashboard health, job defaults) skip non-Kubernetes clusters instead of throwing.
 
 #### SubscriptionPlan
 
@@ -337,7 +362,7 @@ Collection of available clusters.
 
 **Properties:**
 
-- `clusters`: Array of Cluster objects
+- `clusters`: Array of `ConfigClusterInterface` objects (each a `KubernetesCluster` or `DockerComposeCluster`)
 
 #### SubscriptionPlanCatalog
 
@@ -449,11 +474,11 @@ Domain defines contracts for workflow steps without implementing them:
 - `FetchJobIdFromPendingInterface`: Retrieve pending job
 - `NewJobNotifierInterface`: Notify about new jobs
 
-#### Kubernetes Operations
+#### Cluster Operations
 
 - `ClustersInfoInterface`: Retrieve cluster information
-- `DashboardFrameInterface`: Generate dashboard embed
-- `HealthInterface`: Check cluster health
+- `DashboardFrameInterface`: Generate dashboard embed (Kubernetes)
+- `HealthInterface`: Check cluster health (Kubernetes)
 
 #### Subscription
 
@@ -502,7 +527,8 @@ Variables are merged with the following precedence (highest to lowest):
 5. Git repository cloned
 6. Hooks executed (optional)
 7. OCI images built
-8. Kubernetes resources deployed
+8. Resources deployed to the target cluster — Kubernetes API, or a Docker host over SSH/Ansible for
+   `docker-compose` clusters
 9. History events recorded
 10. Job marked as complete/failed
 

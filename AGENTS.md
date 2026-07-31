@@ -39,9 +39,14 @@ Teknoo Kubernetes Client, and Symfony. Multi-account, multi-users, multi-project
 IT projects on containerized platforms.
 
 **Key Technologies**: PHP 8.4+, Symfony 7.4+/8+, Doctrine MongoDB ODM, AMQP (RabbitMQ), Mercure,
-Buildah (OCI image builder), Kubernetes (default deployment target via driver system).
+Buildah (OCI image builder), Kubernetes (default deployment target via driver system), Docker Compose + Ansible
++ Traefik v3 (second deployment target — a remote Docker host managed over SSH).
 
-**Extensibility**: Driver-based architecture supports other targets (Docker Swarm, Ansible) and build tools.
+**Deployment targets**: selected per cluster by the `type` field — `kubernetes` (via the Kubernetes API) or
+`docker-compose` (a Docker host reached over SSH; workers run Ansible to apply the Compose/Traefik stack). The
+job API and `RunJob` recipe are target-agnostic.
+
+**Extensibility**: Driver-based architecture supports further targets and build tools.
 
 ## Code Architecture
 
@@ -49,7 +54,7 @@ Buildah (OCI image builder), Kubernetes (default deployment target via driver sy
 appliance/
 ├── domain/         # Business logic — Object/, Recipe/, Contracts/, Loader/, Writer/, Query/, Service/, Middleware/
 ├── src/            # Application layer — Kernel.php only
-├── infrastructures/ # Framework integrations — Doctrine/, Kubernetes/, Symfony/, Twig/
+├── infrastructures/ # Framework integrations — Doctrine/, Kubernetes/, AnsibleDockerCompose/, Symfony/, Twig/
 ├── extensions/     # Extension system (e.g. Enterprise edition)
 ├── config/         # PHP-DI + Symfony config — di.*.php files, env-var driven
 └── tests/          # PHPUnit unit tests + Behat behavioral tests
@@ -188,21 +193,24 @@ See [.agents/EXAMPLES.md](.agents/EXAMPLES.md) for Plan and Step examples.
 - **User** — human users belonging to accounts
 - **Project** — Git repositories owned by accounts
 - **Job** — represents a single deployment
-- **Environment** — cluster namespaces per account
+- **Environment** — per-account cluster namespaces (Kubernetes) or compose namespaces (docker-compose)
 
 ### Deployment Flow
 
 1. User creates Job → `new_job` worker prepares it
 2. `execute_job` worker clones Git repo, runs PaaS compilation
 3. OCI images built (default: Buildah, configurable via `SPACE_IMG_BUILDER_CMD`)
-4. Resources deployed to cluster (default: Kubernetes, extensible via drivers)
+4. Resources deployed to the target cluster — Kubernetes API, or a Docker host over SSH/Ansible for
+   `docker-compose` clusters (target chosen at runtime by cluster `type`)
 5. `history_sent` / `job_done` workers persist results
 
 ### PaaS Compilation
 
 Projects define deployments in `.paas.yaml`. The compiler: parses YAML → applies hooks
 (composer, npm, pip, make, etc.) → builds OCI images → generates deployment manifests.
-Platform-agnostic at domain level; platform-specific transcribers in `infrastructures/Kubernetes/`.
+Platform-agnostic at domain level; platform-specific transcribers come from East PaaS (Kubernetes transcribers,
+and the docker-compose/Traefik driver + Ansible runner). Space adds type-aware account provisioning in
+`infrastructures/Kubernetes/` and `infrastructures/AnsibleDockerCompose/`, dispatched by cluster `type`.
 Supports "extends" for reusable components (BigBang library in Enterprise).
 
 ## Workflow Orchestration

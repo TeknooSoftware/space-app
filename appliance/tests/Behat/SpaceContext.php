@@ -65,6 +65,7 @@ use Teknoo\Space\Tests\Behat\Traits\ApiTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserActionTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserCrawlingTrait;
 use Teknoo\Space\Tests\Behat\Traits\BuilderTrait;
+use Teknoo\Space\Tests\Behat\Traits\DockerComposeTrait;
 use Teknoo\Space\Tests\Behat\Traits\HttpTrait;
 use Teknoo\Space\Tests\Behat\Traits\JwtTrait;
 use Teknoo\Space\Tests\Behat\Traits\KubernetesTrait;
@@ -94,6 +95,7 @@ class SpaceContext implements Context
     use BrowserActionTrait;
     use BrowserCrawlingTrait;
     use BuilderTrait;
+    use DockerComposeTrait;
     use HttpTrait;
     use JwtTrait;
     use KubernetesTrait;

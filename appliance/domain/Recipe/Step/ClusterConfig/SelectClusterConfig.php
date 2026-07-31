@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Step\ClusterConfig;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface as ClusterConfig;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)

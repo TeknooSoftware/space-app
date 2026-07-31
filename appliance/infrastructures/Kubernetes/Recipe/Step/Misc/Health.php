@@ -30,6 +30,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Kubernetes\Client as KubernetesClient;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Throwable;
 
 /**
@@ -52,6 +53,12 @@ class Health implements HealthInterface
         $values = [];
 
         foreach ($this->clusterCatalog as $cluster) {
+            //The health overview iterates the whole catalog; non-Kubernetes clusters (e.g. docker-compose)
+            //have no Kubernetes API to query, so they are simply skipped rather than breaking the dashboard.
+            if (!$cluster instanceof KubernetesCluster) {
+                continue;
+            }
+
             $client = $cluster->getKubernetesClient();
             try {
                 $values = [

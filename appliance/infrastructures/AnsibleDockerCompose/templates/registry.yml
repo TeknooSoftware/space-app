@@ -1,0 +1,77 @@
+---
+# Teknoo Space — per-account private OCI registry provisioning playbook (docker-compose deploy target).
+#
+# Runs a dedicated rootless `registry` container for one account on the remote Docker host, reachable only over
+# the external private network by its container name (no host port, no public Traefik route). htpasswd auth,
+# persistent volume, TLS optional (with signature check disabled on the consuming side). Mirrors the Kubernetes
+# per-account registry but provisioned over SSH/Ansible through the reused East PaaS docker-compose runner.
+#
+# Idempotent (install-if-absent / config-converge), rootless runtime, passwordless escalation only — never an
+# SSH or become password.
+#
+# Expected extraVars: registry_container, registry_image, registry_network, registry_port, registry_tls,
+# registry_htpasswd, registry_volume, deploy_root (optionally deploy_user).
+
+- name: Provision a per-account private OCI registry for docker-compose deployments
+  hosts: registry_host
+  gather_facts: true
+
+  vars:
+    deploy_user: "{{ deploy_user | default('paas') }}"
+    deploy_root: "{{ deploy_root | default('/opt/paas') }}"
+    registry_image: "{{ registry_image | default('registry:2') }}"
+    registry_network: "{{ registry_network | default('space-registry') }}"
+    registry_port: "{{ registry_port | default(5000) }}"
+    registry_tls: "{{ registry_tls | default(false) }}"
+    deploy_home: "/home/{{ deploy_user }}"
+    registry_dir: "{{ deploy_root }}/{{ registry_container }}"
+
+  tasks:
+    - name: Ensure the external private registry network exists
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: "docker network create {{ registry_network }}"
+      environment:
+        DOCKER_HOST: "unix:///run/user/{{ ansible_facts['user_uid'] | default('1000') }}/docker.sock"
+      register: registry_network_create
+      changed_when: "registry_network_create.rc == 0"
+      failed_when: >-
+        registry_network_create.rc != 0
+        and 'already exists' not in (registry_network_create.stderr | default(''))
+
+    - name: Create the registry auth directory
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.file:
+        path: "{{ registry_dir }}/auth"
+        state: directory
+        mode: "0750"
+
+    - name: Write the registry htpasswd file
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.copy:
+        content: "{{ registry_htpasswd }}\n"
+        dest: "{{ registry_dir }}/auth/htpasswd"
+        mode: "0640"
+
+    - name: Render the registry compose file
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.template:
+        src: registry.compose.yml.j2
+        dest: "{{ registry_dir }}/registry.compose.yml"
+        mode: "0640"
+
+    - name: Start / converge the private registry stack
+      become: true
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: >-
+          docker compose -p {{ registry_container }}
+          -f {{ registry_dir }}/registry.compose.yml up -d --remove-orphans
+      environment:
+        DOCKER_HOST: "unix:///run/user/{{ ansible_facts['user_uid'] | default('1000') }}/docker.sock"
+      register: registry_up
+      changed_when: "'Started' in (registry_up.stderr | default('')) or 'Created' in (registry_up.stderr | default(''))"

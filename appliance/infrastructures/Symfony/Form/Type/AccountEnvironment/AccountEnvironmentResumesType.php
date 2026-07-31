@@ -36,8 +36,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\EqualTo;
-use Teknoo\Space\Object\Config\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 
@@ -73,7 +73,7 @@ class AccountEnvironmentResumesType extends AbstractType
         $clustersInPlan = $subscriptionPlan->getClusters();
         $clusterCatalog = $options['clusterCatalog'];
         $clustersList = [];
-        /** @var Cluster $cluster */
+        /** @var ConfigClusterInterface $cluster */
         foreach ($clusterCatalog as $cluster) {
             if (in_array($cluster->name, $clustersInPlan) || $cluster->isExternal) {
                 $clustersList[$cluster->name] = $cluster->name;

@@ -33,7 +33,9 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Repository\SecretRepository;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 use function base64_decode;
@@ -86,8 +88,12 @@ class CreateSecretServiceAccountToken
         string $accountNamespace,
         string $serviceName,
         AccountHistory $accountHistory,
-        ClusterConfig $clusterConfig,
+        ConfigClusterInterface $clusterConfig,
     ): self {
+        if (!$clusterConfig instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $client = $clusterConfig->getKubernetesClient();
 
         $client->setNamespace($kubeNamespace);

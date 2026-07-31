@@ -61,12 +61,6 @@ RUN set -eux ; \
     locale-gen ; \
     curl -L https://github.com/php/pie/releases/latest/download/pie.phar -o /usr/local/bin/pie ; \
     chmod +x /usr/local/bin/pie ; \
-    pie install apcu/apcu ; \
-    pie install mongodb/mongodb-extension ; \
-    pie install pecl/yaml ; \
-    pie install xdebug/xdebug ; \
-    pie install php-amqp/php-amqp ; \
-    pie install phpredis/phpredis ; \
     docker-php-ext-install bcmath \
                            bz2 \
                            calendar \
@@ -91,6 +85,12 @@ RUN set -eux ; \
                            xsl  \
                            zip \
     ; \
+    pie install apcu/apcu ; \
+    pie install mongodb/mongodb-extension ; \
+    pie install pecl/yaml ; \
+    pie install xdebug/xdebug ; \
+    pie install php-amqp/php-amqp ; \
+    pie install phpredis/phpredis ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 || true ; \
     addgroup --gid 1000 spacegroup ; \

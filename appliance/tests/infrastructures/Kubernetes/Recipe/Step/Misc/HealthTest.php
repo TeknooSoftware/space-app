@@ -31,6 +31,7 @@ use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
 
 /**
  * Class HealthTest.
@@ -64,6 +65,44 @@ class HealthTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ParametersBag::class),
             )
+        );
+    }
+
+    public function testInvokeSkipsNonKubernetesCluster(): void
+    {
+        $nonK8s = new class implements ConfigClusterInterface {
+            public string $name = 'foo';
+
+            public string $sluggyName = 'foo';
+
+            public string $type = 'docker-compose';
+
+            public string $masterAddress = 'ssh://u@h:22';
+
+            public string $dashboardAddress = 'foo';
+
+            public bool $supportRegistry = false;
+
+            public bool $useHnc = false;
+
+            public bool $isExternal = false;
+        };
+
+        $health = new Health(new ClusterCatalog(['foo' => $nonK8s], []));
+
+        //Non-Kubernetes clusters have no Kubernetes API, so they are skipped from the health overview
+        //(no exception) and never appear in the "k8s" parameter.
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with('k8s', []);
+
+        $this->assertInstanceOf(
+            Health::class,
+            $health(
+                $this->createStub(ManagerInterface::class),
+                $bag,
+            ),
         );
     }
 }

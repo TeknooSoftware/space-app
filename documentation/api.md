@@ -149,6 +149,10 @@ The API is organized into authenticated user endpoints and admin endpoints.
 
 ### Account Cluster Management
 
+A cluster's `type` may be `kubernetes` or `docker-compose`. For docker-compose clusters, `master` is an
+`ssh://user@host:port` address and credentials are SSH-based (private key + optional `known_hosts`, key-only,
+rootless) rather than a Kubernetes token.
+
 **List Account Clusters**
 
 - `GET /api/v1/account/clusters`

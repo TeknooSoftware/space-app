@@ -34,7 +34,9 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
@@ -92,6 +94,28 @@ class CreateQuotaTest extends TestCase
                 accountHistory: $this->createStub(AccountHistory::class),
                 clusterConfig: $clusterConfig,
             )
+        );
+    }
+
+    public function testInvokeThrowsOnNonKubernetesCluster(): void
+    {
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        ($this->createQuota)(
+            manager: $this->createStub(ManagerInterface::class),
+            kubeNamespace: 'foo',
+            accountNamespace: 'foo',
+            accountInstance: $this->createStub(Account::class),
+            accountHistory: $this->createStub(AccountHistory::class),
+            clusterConfig: new DockerComposeCluster(
+                name: 'foo',
+                sluggyName: 'foo',
+                type: 'docker-compose',
+                masterAddress: 'ssh://u@h:22',
+                dashboardAddress: 'foo',
+                isExternal: false,
+                clientKey: 'k',
+            ),
         );
     }
 }

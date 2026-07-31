@@ -9,3 +9,5 @@
 !/.agents/tasks/.gitkeep
 *.bck
 graphify-out/
+/appliance/.plan/
+/.plan/

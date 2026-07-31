@@ -27,6 +27,8 @@ namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
 use RuntimeException;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\AbstractDeleteFromResumes;
 
@@ -47,6 +49,10 @@ class DeleteNamespaceFromResumes extends AbstractDeleteFromResumes
         }
 
         $clusterConfig = $clusterCatalog->getCluster($accountEnvironment->getClusterName());
+        if (!$clusterConfig instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $client = $clusterConfig->getKubernetesClient();
         $namespace = $accountEnvironment->getNamespace();
 

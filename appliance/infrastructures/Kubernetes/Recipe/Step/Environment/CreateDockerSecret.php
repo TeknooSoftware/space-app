@@ -31,7 +31,9 @@ use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Space\Infrastructures\Kubernetes\Traits\InsertModelTrait;
-use Teknoo\Space\Object\Config\Cluster as ClusterConfig;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 
@@ -114,8 +116,12 @@ class CreateDockerSecret
         AccountRegistry $accountRegistry,
         string $kubeNamespace,
         string $accountNamespace,
-        ClusterConfig $clusterConfig,
+        ConfigClusterInterface $clusterConfig,
     ): self {
+        if (!$clusterConfig instanceof KubernetesCluster) {
+            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
         $client = $clusterConfig->getKubernetesClient();
 
         $dockerConfigSecret = $this->createDockerConfigSecret(

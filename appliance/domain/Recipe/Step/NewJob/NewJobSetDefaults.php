@@ -27,6 +27,7 @@ namespace Teknoo\Space\Recipe\Step\NewJob;
 
 use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
 
@@ -51,7 +52,9 @@ class NewJobSetDefaults
                     if ($cluster->isLocked()) {
                         $config = $clusterCatalog->getCluster($cluster);
 
-                        $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
+                        if ($config instanceof KubernetesCluster) {
+                            $newJob->storageProvisionerPerCluster[$config->name] = $config->storageProvisioner;
+                        }
                     }
                 }
             },
