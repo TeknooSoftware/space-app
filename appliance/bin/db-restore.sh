@@ -33,7 +33,7 @@ fi
 
 echo "Starting restore..."
 docker cp "$FILENAME" "${CONTAINER_ID}:/tmp/restore.gz"
-$DOCKER_CMD exec -T db mongorestore --username admin_space --password space_pwd --authenticationDatabase admin --archive=/tmp/restore.gz --gzip
+$DOCKER_CMD exec -T db mongorestore --username admin_space --password space_pwd --authenticationDatabase admin --drop --archive=/tmp/restore.gz --gzip
 docker exec "$CONTAINER_ID" rm /tmp/restore.gz
 
 echo "Database restored successfully from $FILENAME"
