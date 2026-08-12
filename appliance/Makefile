@@ -5,8 +5,11 @@ PHP ?= /usr/bin/env php
 NB_THREADS ?= 4
 APP_ENV ?= prod
 IGNORE_DEPRECATIONS ?= 0
+PHP_LINT_DIRS := ./src ./domain ./infrastructures ./tests ./config ./extensions
 
 MAKEFLAGS += --no-print-directory
+
+.DEFAULT_GOAL := help
 
 .PHONY: help
 .PHONY: verify
@@ -15,15 +18,19 @@ MAKEFLAGS += --no-print-directory
 .PHONY: config config-dry-run create-admin extension-list extension-enable extension-disable
 .PHONY: build start stop restart db-backup db-restore
 .PHONY: qa qa-offline lint phpstan phpcs audit
-.PHONY: test test-mono-thread test-without-coverage all
+.PHONY: test test-mono-thread test-without-coverage
+.PHONY: units-tests units-tests-without-coverage behavior-test behavior-test-mono-thread
+.PHONY: all
 .PHONY: clean warmup
+.PHONY: setup-behat setup-phpunit
 
-##Teknoo Space
-##Tools to manage Space's vendors, configuration, tests and deployment
+## Teknoo Space — CI/CD/Deployment PaaS Build & Deployment Tools
 ##
-### Generics:
-help: 		## Show this help.
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
+## Usage: make <target>
+##
+
+help: ## Show this help.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | grep -v '^[[:space:]]' | awk '{gsub(/^[[:space:]]+/, ""); gsub(/[[:space:]]+$$/, ""); if ($$0 == "") {printf "\n"; next} if ($$0 ~ /^#/) {gsub(/^#+[[:space:]]*/, ""); printf "\n%s\n", $$0; next} if (match($$0, /^[a-zA-Z_-]+:/)) {target = substr($$0, 1, index($$0, ":") - 1); pos = index($$0, "##"); if (pos > 0) {desc = substr($$0, pos + 2)} else {desc = substr($$0, index($$0, ":") + 1)} gsub(/^[[:space:]]+/, "", target); gsub(/[[:space:]]+$$/, "", target); gsub(/^[[:space:]]+/, "", desc); printf "  %-35s %s\n", target, desc; next} printf "%s\n", $$0}'
 
 verify: 	## Download dependencies via Composer and verify space installation
 verify: clean dev-install test-without-coverage qa-offline clean install
@@ -110,14 +117,15 @@ qa-offline: lint phpstan phpcs
 	@echo "QA successful !"
 
 lint: 		## To detect error in PHP file causing compilation errors
-	find ./src -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
-	find ./domain -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
-	find ./infrastructures -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
-	find ./tests -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
-	find ./config -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
-	find ./extensions -name "*.php" -exec ${PHP} -l {} \; | grep "Parse error" > /dev/null && exit 1 || exit 0
+	@find $(PHP_LINT_DIRS) -name "*.php" -exec ${PHP} -l {} \; 2>/dev/null \
+		| grep "Parse error" > /tmp/php_lint_errors || true
+	@if [ -s /tmp/php_lint_errors ]; then \
+		cat /tmp/php_lint_errors; exit 1; \
+	fi
+	@rm -f /tmp/php_lint_errors
 
 phpstan: 	## To run code analyze with PHPStan to prevent bugs
+	@[ -f phpstan.neon ] || cp phpstan.dist.neon phpstan.neon
 	${PHP} -d memory_limit=256M vendor/bin/phpstan analyse
 
 phpcs: 		## To check if the code follow the PSR 12
@@ -129,32 +137,44 @@ audit: 		## Run an audit on vendors to detect CVE and deprecated libraries
 ##
 ### Testing:
 test: 		## Run tests in $NB_THREADS threads (units tests and behavior tests, with a code coverage) to check if the installation can work properly
-	rm -rf var/cache/test
-	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
-	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
-	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --parallel-feature ${NB_THREADS} --colors
-	rm -rf var/cache/test
-	@echo "Tests successful !"
+test: units-tests behavior-test
 
 test-mono-thread: 	  ## Run tests in a mono thread (units tests and behavior tests, with a code coverage) to check if the installation can work properly
-	rm -rf var/cache/test
-	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
-	XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
-	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --colors
-	rm -rf var/cache/test
-	@echo "Tests successful !"
+test-mono-thread: units-tests behavior-test-mono-thread
 
 test-without-coverage: ## Run tests (units tests and behavior tests without a code coverage)
-	rm -rf var/cache/test
-	APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
-	${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
-	APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
-	IGNORE_DEPRECATIONS=${IGNORE_DEPRECATIONS} APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --colors
-	rm -rf var/cache/test
+test-without-coverage: units-tests-without-coverage behavior-test
+
+setup-phpunit:
+	@[ -f phpunit.xml ] || cp phpunit.dist.xml phpunit.xml
+
+units-tests: setup-phpunit 		## Run only units tests with a code coverage
+	@XDEBUG_MODE=coverage ${PHP} -dmax_execution_time=0 -dzend_extension=xdebug.so -dxdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml --colors --coverage-text
+
+units-tests-without-coverage: setup-phpunit 		## Run only units tests without code coverage
+	@${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
+
+setup-behat:
+	@[ -f behat.yml ] || cp behat.dist.yml behat.yml
+	@rm -rf var/cache/test
+	@APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
+	@APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists
+
+behavior-test: setup-behat 		## Run behavior tests in $NB_THREADS to check if the installation can work properly
+	@rm -rf var/cache/test
+	@APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --parallel-feature ${NB_THREADS} --colors
+	@rm -rf var/cache/test
 	@echo "Tests successful !"
 
+behavior-test-mono-thread: setup-behat 	  ## Run behavior tests in a mono thread to check if the installation can work properly
+	@rm -rf var/cache/test
+	@APP_ENV=test ${PHP} -dxdebug.mode=off vendor/bin/behat --colors
+	@rm -rf var/cache/test
+	@echo "Tests successful !"
+
+
+##
+### Miscellaneous:
 all: ## Run QA and all tests
 all: qa test
 

@@ -95,10 +95,19 @@ All commands from project root via `./space.sh` or from `appliance/`.
 ./space.sh config               # Interactive config wizard
 ./space.sh create-admin email=user@example.com password=secret
 
-# Testing
-./space.sh test                 # Full suite with coverage (multi-threaded)
-./space.sh test-without-coverage
+# Testing (full suite)
+./space.sh test                 # All tests (units + behavior, with coverage, multi-threaded)
+./space.sh test-mono-thread     # All tests in mono thread (units + behavior, with coverage)
+./space.sh test-without-coverage # All tests without coverage
+
+# Unit tests only
+./space.sh units-tests           # Unit tests with coverage
+./space.sh units-tests-without-coverage # Unit tests without coverage
 vendor/bin/phpunit tests/path/to/TestFile.php
+
+# Behavior tests only
+./space.sh behavior-test         # Behavior tests (Behat, multi-threaded)
+./space.sh behavior-test-mono-thread # Behavior tests (Behat, mono thread)
 vendor/bin/behat features/path/to/feature.feature
 
 # Quality Assurance

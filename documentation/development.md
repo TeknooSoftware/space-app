@@ -309,28 +309,58 @@ class MyRepository extends DocumentRepository implements MyRepositoryInterface
 
 ### Running Tests
 
-**All tests**:
+**All tests** (unit + behavior, with coverage, multi-threaded):
 
 ```bash
 ./space.sh test
 ```
 
-**Unit tests only**:
+**All tests in mono thread** (unit + behavior, with coverage):
 
 ```bash
-./vendor/bin/phpunit
+./space.sh test-mono-thread
 ```
 
-**Behavior tests (Behat)**:
-
-```bash
-./vendor/bin/behat
-```
-
-**Without coverage**:
+**All tests without coverage** (unit + behavior, multi-threaded):
 
 ```bash
 ./space.sh test-without-coverage
+```
+
+**Unit tests only** (with coverage):
+
+```bash
+./space.sh units-tests
+```
+
+**Unit tests only** (without coverage):
+
+```bash
+./space.sh units-tests-without-coverage
+```
+
+**Unit tests directly** (PHPUnit):
+
+```bash
+vendor/bin/phpunit tests/path/to/TestFile.php
+```
+
+**Behavior tests only** (Behat, multi-threaded):
+
+```bash
+./space.sh behavior-test
+```
+
+**Behavior tests only** (Behat, mono thread):
+
+```bash
+./space.sh behavior-test-mono-thread
+```
+
+**Behavior tests directly** (Behat):
+
+```bash
+vendor/bin/behat features/path/to/feature.feature
 ```
 
 ### Writing Unit Tests

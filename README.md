@@ -205,9 +205,13 @@ You can also use the `make` command directly under the folder `application` but 
     * `phpcs`:         To check if the code follow the PSR 12.
     * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
 * **Testing**:
-    * `test`:          Run tests (units tests and behavior tests, with a code coverage) to check if the installation can
-      work properly.
-    * `test-without-coverage`:  Run tests (units tests and behavior tests without a code coverage).
+    * `test`:                  Run all tests (units tests and behavior tests, with a code coverage) to check if the installation can work properly.
+    * `test-mono-thread`:      Run all tests in a mono thread (units tests and behavior tests, with a code coverage) to check if the installation can work properly.
+    * `test-without-coverage`: Run all tests (units tests and behavior tests without a code coverage).
+    * `units-tests`:           Run only unit tests with a code coverage.
+    * `units-tests-without-coverage`: Run only unit tests without code coverage.
+    * `behavior-test`:         Run behavior tests (Behat) to check if the installation can work properly.
+    * `behavior-test-mono-thread`: Run behavior tests in a mono thread to check if the installation can work properly.
 * **Cleaning**:
     * `clean`:         Remove all PHP vendors, composer generated map, clean all Symfony builds, caches and logs
     * `warmup`:        Clear cache and warming , dump autoloader
