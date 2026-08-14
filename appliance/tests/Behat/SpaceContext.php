@@ -257,9 +257,9 @@ class SpaceContext implements Context
         $this->loopCountToWait = (int) (ceil($timeoutMicroSecond / $duration));
     }
 
-    public function current(): self
+    public static function current(): self
     {
-        return $this;
+        return self::$currentInstance;
     }
 
     private function clear(): void
