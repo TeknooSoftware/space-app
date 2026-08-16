@@ -5,10 +5,13 @@ default:
 
     suites:
         default:
+            paths:
+                - '%paths.base%/features'
             contexts:
                 - Teknoo\Space\Tests\Behat\SpaceContext
 
     extensions:
+        Teknoo\Space\Tests\Behat\ExtensionsDiscoveryExtension: ~
         DMarynicz\BehatParallelExtension\Extension: ~
         FriendsOfBehat\SymfonyExtension:
             bootstrap: tests/bootstrap.php

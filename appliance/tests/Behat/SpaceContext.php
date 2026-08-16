@@ -375,6 +375,16 @@ class SpaceContext implements Context
         }
     }
 
+    public function getResponse(): Response
+    {
+        return $this->response;
+    }
+
+    public function getJwtToken(): ?string
+    {
+        return $this->jwtToken;
+    }
+
     public function setDateTime(DateTimeInterface $dateTime): void
     {
         $this->datesService = $this->sfContainer?->get(DatesService::class);

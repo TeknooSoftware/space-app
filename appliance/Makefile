@@ -117,12 +117,14 @@ qa-offline: lint phpstan phpcs
 	@echo "QA successful !"
 
 lint: 		## To detect error in PHP file causing compilation errors
+	@echo "Start lint analyze"
 	@find $(PHP_LINT_DIRS) -name "*.php" -exec ${PHP} -l {} \; 2>/dev/null \
 		| grep "Parse error" > /tmp/php_lint_errors || true
 	@if [ -s /tmp/php_lint_errors ]; then \
 		cat /tmp/php_lint_errors; exit 1; \
 	fi
 	@rm -f /tmp/php_lint_errors
+	@echo "Lint analyze ended"
 
 phpstan: 	## To run code analyze with PHPStan to prevent bugs
 	@[ -f phpstan.neon ] || cp phpstan.dist.neon phpstan.neon
