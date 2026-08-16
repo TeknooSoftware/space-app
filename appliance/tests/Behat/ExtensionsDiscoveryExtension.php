@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Behat;
 
+use Behat\Behat\Context\Context;
 use Behat\Testwork\ServiceContainer\Extension as TestworkExtension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use ReflectionClass;
@@ -35,14 +36,18 @@ use Teknoo\East\Foundation\Extension\Manager;
 use function class_exists;
 use function dirname;
 use function glob;
+use function is_a;
 use function is_dir;
 use function is_array;
-use function str_replace;
 use function substr;
 
 /**
  * Discovers and registers Behat feature files and context classes from
  * all enabled Space extensions (via Teknoo\East\Foundation\Extension\Manager).
+ *
+ * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
+ * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @author Richard Déloge <richard@teknoo.software>
  */
 final class ExtensionsDiscoveryExtension implements TestworkExtension
 {
@@ -102,7 +107,11 @@ final class ExtensionsDiscoveryExtension implements TestworkExtension
                     foreach ($contextFiles as $contextFile) {
                         $className = substr(basename($contextFile), 0, -4);
                         $fqcn = $rc->getNamespaceName() . '\\Tests\\Behat\\Context\\' . $className;
-                        if (class_exists($fqcn) && !in_array($fqcn, $settings['default']['settings']['contexts'], true)) {
+                        if (
+                            class_exists($fqcn)
+                            && !in_array($fqcn, $settings['default']['settings']['contexts'], true)
+                            && is_a($fqcn, Context::class, true)
+                        ) {
                             $settings['default']['settings']['contexts'][] = $fqcn;
                         }
                     }
