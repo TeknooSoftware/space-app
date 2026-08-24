@@ -126,7 +126,7 @@ vendor/bin/behat features/path/to/feature.feature
 ./space.sh extension-enable name=ExtensionName
 
 # Workers (async job processing)
-bin/console messenger:consume new_job        # Prepare deployments
+bin/console messenger:consume new_task        # Prepare deployments
 bin/console messenger:consume execute_job    # Execute deployments
 bin/console messenger:consume history_sent   # Persist histories
 bin/console messenger:consume job_done       # Persist final results
@@ -206,7 +206,7 @@ See [.agents/EXAMPLES.md](.agents/EXAMPLES.md) for Plan and Step examples.
 
 ### Deployment Flow
 
-1. User creates Job → `new_job` worker prepares it
+1. User creates Job → `new_task` worker prepares it
 2. `execute_job` worker clones Git repo, runs PaaS compilation
 3. OCI images built (default: Buildah, configurable via `SPACE_IMG_BUILDER_CMD`)
 4. Resources deployed to the target cluster — Kubernetes API, or a Docker host over SSH/Ansible for

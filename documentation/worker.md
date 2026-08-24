@@ -9,11 +9,11 @@ Workers are independent processes that consume messages from RabbitMQ queues and
 
 Space includes four types of workers, each with a specific responsibility:
 
-### 1. New Job Worker
+### 1. New Task Worker
 
 **Purpose**: Initialize new deployment jobs
 
-**Queue**: `new_job`
+**Queue**: `new_task`
 
 **Responsibilities**:
 
@@ -26,7 +26,7 @@ Space includes four types of workers, each with a specific responsibility:
 **Command**:
 
 ```bash
-bin/console messenger:consume new_job
+bin/console messenger:consume new_task
 ```
 
 **Resource Requirements**:
@@ -124,9 +124,9 @@ bin/console messenger:consume job_done
 ```
 1. User creates job (Web UI/API)
         ↓
-2. NewJobN → new_job queue
+2. NewJob → new_task queue
         ↓
-3. NewJob Worker processes message
+3. New Task Worker processes message
         ↓
 4. MessageJob → execute_job queue
         ↓
@@ -174,7 +174,7 @@ Workers share most configuration with the web application but have specific sett
 ```bash
 MONGODB_SERVER=mongodb://user:pass@host:27017
 MONGODB_NAME=space
-MESSENGER_NEW_JOB_DSN=amqp://...
+MESSENGER_NEW_TASK_DSN=amqp://...
 MESSENGER_EXECUTE_JOB_DSN=amqp://...
 MESSENGER_HISTORY_SENT_DSN=amqp://...
 MESSENGER_JOB_DONE_DSN=amqp://...
@@ -328,7 +328,7 @@ File: `/etc/supervisor/conf.d/space-workers.conf`
 
 ```ini
 [program:space-worker-new-job]
-command = /usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
+command = /usr/bin/php /opt/space/appliance/bin/console messenger:consume new_task
 directory = /opt/space/appliance
 user = www-data
 numprocs = 2

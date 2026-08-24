@@ -1,4 +1,4 @@
-FROM rabbitmq:4.2-management-alpine
+FROM rabbitmq:4.3-management-alpine
 
 USER root:root
 

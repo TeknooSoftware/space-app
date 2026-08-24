@@ -23,15 +23,12 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Mercure;
+namespace Teknoo\Space\Contracts\Recipe\Step\Task;
 
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
-use Throwable;
-
-use function json_encode;
-
-use const JSON_THROW_ON_ERROR;
+use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
+use Teknoo\Space\Object\DTO\SpaceProject;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -39,37 +36,12 @@ use const JSON_THROW_ON_ERROR;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobErrorPublisher
+interface CallNewTaskInterface
 {
-    public function __construct(
-        private readonly HubInterface $hub,
-        private readonly bool $enabled = true,
-    ) {
-    }
-
-    public function publish(
-        string $url,
-        string $newJobId,
-        Throwable $error,
-    ): static {
-        if (!$this->enabled) {
-            return $this;
-        }
-
-        $update = new Update(
-            topics: $url,
-            data: json_encode(
-                [
-                    'new_job_id' => $newJobId,
-                    'error_code' => $error->getCode(),
-                    'error_message' => $error->getMessage(),
-                ],
-                JSON_THROW_ON_ERROR,
-            )
-        );
-
-        $this->hub->publish($update);
-
-        return $this;
-    }
+    public function __invoke(
+        ManagerInterface $manager,
+        NewTaskInterface $newTask,
+        ParametersBag $parametersBag,
+        ?SpaceProject $project = null,
+    ): CallNewTaskInterface;
 }

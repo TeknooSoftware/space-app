@@ -52,7 +52,7 @@ class JobUpdaterNotifierTest extends TestCase
 
     private UrlGeneratorInterface&Stub $generator;
 
-    private string $pendingJobRoute;
+    private string $pendingTaskRoute;
 
     private string $getJobRoute;
 
@@ -65,12 +65,12 @@ class JobUpdaterNotifierTest extends TestCase
 
         $this->publisher = $this->createStub(JobUrlPublisher::class);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
-        $this->pendingJobRoute = '42';
+        $this->pendingTaskRoute = '42';
         $this->getJobRoute = '42';
         $this->jobUpdaterNotifier = new JobUpdaterNotifier(
             $this->publisher,
             $this->generator,
-            $this->pendingJobRoute,
+            $this->pendingTaskRoute,
             $this->getJobRoute
         );
     }
@@ -82,7 +82,7 @@ class JobUpdaterNotifierTest extends TestCase
             ($this->jobUpdaterNotifier)(
                 project: $this->createStub(Project::class),
                 job: $this->createStub(Job::class),
-                newJobId: 'foo',
+                taskId: 'foo',
             )
         );
     }

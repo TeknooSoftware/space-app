@@ -42,8 +42,8 @@ use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\Ingredient\IngredientWithCondition;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\NewTaskNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
@@ -75,9 +75,9 @@ class JobStart implements EditablePlanInterface
         private readonly FormProcessingInterface $formProcessing,
         private readonly NewJobSetDefaults $newJobSetDefaults,
         private readonly PersistJobVar $persistJobVar,
-        private readonly NewJobNotifierInterface $newJobNotifier,
+        private readonly NewTaskNotifierInterface $newTaskNotifier,
         private readonly JumpIf $jumpIf,
-        private readonly CallNewJobInterface $callNewJob,
+        private readonly CallNewTaskInterface $callNewTask,
         private readonly RedirectClientInterface $redirectClient,
         private readonly RenderFormInterface $renderForm,
         private readonly RenderError $renderError,
@@ -148,9 +148,9 @@ class JobStart implements EditablePlanInterface
 
         $recipe = $recipe->cook($this->persistJobVar, PersistJobVar::class, [], 65);
 
-        $recipe = $recipe->cook($this->newJobNotifier, NewJobNotifierInterface::class, [], 70);
+        $recipe = $recipe->cook($this->newTaskNotifier, NewTaskNotifierInterface::class, [], 70);
 
-        $recipe = $recipe->cook($this->callNewJob, CallNewJobInterface::class, [], 80);
+        $recipe = $recipe->cook($this->callNewTask, CallNewTaskInterface::class, [], 80);
 
         $recipe = $recipe->cook(
             $this->jumpIf,

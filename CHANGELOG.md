@@ -1,5 +1,18 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta2] - 2026-08-24
+### Beta Release
+- Add NewTaskInterface, rework NewJob to follow t, Transform NewJobHandler/Worker to NewTask to allow execute any new task
+ in worker mode not only in web like docker install or kubernetes install later
+- Rename CallNewJob to CallNewTask and CallNewJobInterface to CallNewTaskInterface
+- Update any reference to new_job_id / newJobId to task_id / taskId
+- Fix Symfony Messenger Config
+- Update libs
+  - Illuminate
+  - Masterming/html5
+  - Symfony 7.417/8.1.4
+  - Guzzle
+
 ## [2.5.0-beta1] - 2026-07-31
 ### Beta Release
 - **Docker Compose Deployment Target** — Full parallel path alongside Kubernetes. SSH key-based auth to a remote Docker host, managed via Ansible. Supports cluster provisioning and job deployment with Traefik v3 routing, DNS management, and TLS. 73 commits, 259 new files, 84 modified, +18,640 / −780 lines. All existing Kubernetes behavior byte-for-byte unchanged; full Behat suite passes without modification.
@@ -259,7 +272,7 @@
 - Fix some bugs and QA issues
 - Switch license from MIT to 3-Clause BSD
 - Remove Blackfire integration (may come back later)
-- Fix issue with reused promise in NewJobHandler
+- Fix issue with reused promise in NewTaskHandler
 - Fix issue with Kubernetes Client Http Client discovering
 - Update API 
   - Add API `/api/v1/jwt/create-token` to regenerate new JWT token before its expiration.
@@ -365,7 +378,7 @@
 - Fix some bugs and QA issues
 - Switch license from MIT to 3-Clause BSD
 - Remove Blackfire integration (may come back later)
-- Fix issue with reused promise in NewJobHandler
+- Fix issue with reused promise in NewTaskHandler
 - Fix issue with Kubernetes Client Http Client discovering 
 
 ## [2.0.0-beta3] - 2025-09-02
@@ -374,7 +387,7 @@
 
 ## [2.0.0-beta2] - 2025-09-02
 ### Beta Release
-- Fix issue with reused promise in NewJobHandler
+- Fix issue with reused promise in NewTaskHandler
 
 ## [2.0.0-beta1] - 2025-08-31
 ### Beta Release
@@ -1040,7 +1053,7 @@ Update libraries :
   - Add `encryptionAlgorithm` property to `AccountPersistedVariable` and `ProjectPersistedVariable`.
   - Add `Teknoo\Space\Contracts\Object\EncryptableVariableInterface`
   - Non encrypted secret are automatically encrypted at next save.
-  - The Web interface / API cannot decrypt secret, only the `new_job` worker.
+  - The Web interface / API cannot decrypt secret, only the `new_task` worker.
   - Encryption is optional, but if the secret encryption is disable, encrypted secret are unusable.
 - Improve functionals tests (with Behat) to support all API operations in all availables configurations. 
 - Some other templates and translations fixes.

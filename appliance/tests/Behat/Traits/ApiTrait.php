@@ -1217,7 +1217,7 @@ trait ApiTrait
         $unserialized = json_decode(json: $body, associative: true);
 
         Assert::assertNotEmpty($unserialized['meta']['url']);
-        Assert::assertNotEmpty($unserialized['data']['job_queue_id']);
+        Assert::assertNotEmpty($unserialized['data']['task_queue_id']);
 
         $this->apiPendingJobUrl = $unserialized['meta']['url'];
 
@@ -1228,14 +1228,14 @@ trait ApiTrait
                     [
                         'accountId' => $this->recall(Account::class)?->getId(),
                         'projectId' => $this->recall(Project::class)?->getId(),
-                        'newJobId' => $unserialized['data']['job_queue_id'],
+                        'taskId' => $unserialized['data']['task_queue_id'],
                     ]
                 ),
                 default => $this->urlGenerator->generate(
                     'space_api_v1_job_new_pending',
                     [
                         'projectId' => $this->recall(Project::class)?->getId(),
-                        'newJobId' => $unserialized['data']['job_queue_id'],
+                        'taskId' => $unserialized['data']['task_queue_id'],
                     ]
                 ),
             },

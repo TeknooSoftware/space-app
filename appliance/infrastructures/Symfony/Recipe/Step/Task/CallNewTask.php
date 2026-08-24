@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task;
 
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -32,9 +32,11 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\Promise;
-use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -43,7 +45,7 @@ use Throwable;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class CallNewJob implements CallNewJobInterface
+class CallNewTask implements CallNewTaskInterface
 {
     public function __construct(
         private readonly MessageBusInterface $messageBus,
@@ -53,20 +55,20 @@ class CallNewJob implements CallNewJobInterface
 
     public function __invoke(
         ManagerInterface $manager,
-        NewJob $newJob,
-        SpaceProject $project,
+        NewTaskInterface $newTask,
         ParametersBag $parametersBag,
-    ): CallNewJobInterface {
-        $dispatching = function (NewJob $newJob): void {
+        ?SpaceProject $project = null,
+    ): CallNewTaskInterface {
+        $dispatching = function (NewTaskInterface $newTask): void {
             $this->messageBus->dispatch(
                 new Envelope(
-                    $newJob->export()
+                    $newTask->export()
                 )
             );
         };
 
         if (null === $this->encryption) {
-            $dispatching($newJob);
+            $dispatching($newTask);
         } else {
             /** @var Promise<SensitiveContentInterface, mixed, mixed> $promise */
             $promise = new Promise(
@@ -75,21 +77,31 @@ class CallNewJob implements CallNewJobInterface
             );
 
             $this->encryption->encrypt(
-                data: $newJob,
+                data: $newTask,
                 promise: $promise,
             );
         }
 
-        $parametersBag->set('newJobId', $newJob->newJobId);
-        $parametersBag->set('projectId', $project->getId());
-        $parametersBag->set('accountId', $newJob->accountId);
+        $parametersBag->set('taskId', $newTask->taskId);
+        $parametersBag->set('accountId', $newTask->accountId);
+
+        $routeParameters = [
+            'taskId' => $newTask->taskId,
+        ];
+
+        if ($newTask instanceof NewJob) {
+            if (!$project instanceof SpaceProject) {
+                throw new RuntimeException('teknoo.space.error.call_new_task.missing_project');
+            }
+
+            $parametersBag->set('projectId', $project->getId());
+
+            $routeParameters['projectId'] = $project->getId();
+            $routeParameters['projectName'] = (string) $project->project;
+        }
 
         $manager->updateWorkPlan([
-            'routeParameters' => [
-                'newJobId' => $newJob->newJobId,
-                'projectId' => $project->getId(),
-                'projectName' => (string) $project->project,
-            ]
+            'routeParameters' => $routeParameters,
         ]);
 
         return $this;

@@ -35,29 +35,32 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
-use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
-use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError;
+use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewTaskHandler;
+use Teknoo\Recipe\BaseRecipeInterface;
 use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Service\NewTaskRecipeRegistry;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 
 /**
- * Class NewJobHandlerTest.
+ * Class NewTaskHandlerTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(NewJobHandler::class)]
-class NewJobHandlerTest extends TestCase
+#[CoversClass(NewTaskHandler::class)]
+class NewTaskHandlerTest extends TestCase
 {
-    private NewJobHandler $newJobHandler;
+    private NewTaskHandler $newTaskHandler;
 
     private Executor&Stub $executor;
 
-    private NewJobInterface&Stub $recipe;
+    private BaseRecipeInterface&Stub $recipe;
+
+    private NewTaskRecipeRegistry $recipeRegistry;
 
     private MessageFactoryInterface&Stub $messageFactory;
 
@@ -67,7 +70,7 @@ class NewJobHandlerTest extends TestCase
 
     private LoggerInterface&Stub $logger;
 
-    private JobError&Stub $jobError;
+    private TaskError&Stub $jobError;
 
     private EncryptionInterface&Stub $encryption;
 
@@ -85,19 +88,20 @@ class NewJobHandlerTest extends TestCase
         parent::setUp();
 
         $this->executor = $this->createStub(Executor::class);
-        $this->recipe = $this->createStub(NewJobInterface::class);
+        $this->recipe = $this->createStub(BaseRecipeInterface::class);
+        $this->recipeRegistry = (new NewTaskRecipeRegistry())->register(NewJob::class, $this->recipe);
         $this->messageFactory = $this->createStub(MessageFactoryInterface::class);
         $this->streamFactory = $this->createStub(StreamFactoryInterface::class);
         $this->client = $this->createStub(Client::class);
         $this->logger = $this->createStub(LoggerInterface::class);
-        $this->jobError = $this->createStub(JobError::class);
+        $this->jobError = $this->createStub(TaskError::class);
         $this->encryption = $this->createStub(EncryptionInterface::class);
         $this->sleepService = $this->createStub(SleepServiceInterface::class);
         $this->persistedVariableEncryption = $this->createStub(PersistedVariableEncryption::class);
         $this->waitingTimeSecond = 1;
-        $this->newJobHandler = new NewJobHandler(
+        $this->newTaskHandler = new NewTaskHandler(
             $this->executor,
-            $this->recipe,
+            $this->recipeRegistry,
             $this->messageFactory,
             $this->streamFactory,
             $this->client,
@@ -113,10 +117,73 @@ class NewJobHandlerTest extends TestCase
     public function testInvoke(): void
     {
         $this->assertInstanceOf(
-            NewJobHandler::class,
-            ($this->newJobHandler)(
-                new NewJob(newJobId: 'foo'),
+            NewTaskHandler::class,
+            ($this->newTaskHandler)(
+                new NewJob(taskId: 'foo'),
             )
+        );
+    }
+
+    public function testInvokeWithoutEncryptionResolvesTheRecipeFromTheRegistry(): void
+    {
+        $executor = $this->createMock(Executor::class);
+        $executor->expects($this->once())
+            ->method('execute')
+            ->with(
+                $this->recipe,
+                $this->anything(),
+                $this->anything(),
+                $this->callback(
+                    static fn (array $workPlan): bool => 'foo' === $workPlan['taskId']
+                        && ['task_id' => 'foo'] === $workPlan['extra']
+                        && $workPlan[NewJob::class] instanceof NewJob,
+                ),
+            );
+
+        $handler = new NewTaskHandler(
+            $executor,
+            $this->recipeRegistry,
+            $this->messageFactory,
+            $this->streamFactory,
+            $this->client,
+            $this->logger,
+            $this->jobError,
+            null,
+            $this->sleepService,
+            $this->persistedVariableEncryption,
+            0,
+        );
+
+        $this->assertInstanceOf(
+            NewTaskHandler::class,
+            $handler(new NewJob(taskId: 'foo')),
+        );
+    }
+
+    public function testInvokeWithoutRegisteredRecipeGoesToTheErrorChannel(): void
+    {
+        $jobError = $this->createMock(TaskError::class);
+        $jobError->expects($this->once())
+            ->method('process')
+            ->with($this->anything(), 'foo');
+
+        $handler = new NewTaskHandler(
+            $this->executor,
+            new NewTaskRecipeRegistry(),
+            $this->messageFactory,
+            $this->streamFactory,
+            $this->client,
+            $this->logger,
+            $jobError,
+            null,
+            $this->sleepService,
+            $this->persistedVariableEncryption,
+            0,
+        );
+
+        $this->assertInstanceOf(
+            NewTaskHandler::class,
+            $handler(new NewJob(taskId: 'foo')),
         );
     }
 }

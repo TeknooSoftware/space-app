@@ -470,9 +470,9 @@ Domain defines contracts for workflow steps without implementing them:
 
 #### Job Management
 
-- `CallNewJobInterface`: Create new deployment job
+- `CallNewTaskInterface`: Dispatch a task (any `NewTaskInterface`) to the `new_task` worker
 - `FetchJobIdFromPendingInterface`: Retrieve pending job
-- `NewJobNotifierInterface`: Notify about new jobs
+- `NewTaskNotifierInterface`: Notify about new tasks
 
 #### Cluster Operations
 

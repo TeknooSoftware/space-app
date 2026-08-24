@@ -23,10 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Job;
+namespace Teknoo\Space\Contracts\Recipe\Step\Task;
 
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
+use Teknoo\Space\Object\DTO\NewJob;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,31 +35,10 @@ use Symfony\Component\Form\FormBuilderInterface;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class NewJobType extends ApiNewJobType
+interface NewTaskNotifierInterface
 {
-    #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
-        parent::buildForm($builder, $options);
-
-        if (!empty($options['api'])) {
-            return;
-        }
-
-        $builder->add(
-            'taskId',
-            HiddenType::class,
-            [
-                'required' => true,
-            ],
-        );
-
-        $builder->add(
-            'projectId',
-            HiddenType::class,
-            [
-                'required' => true,
-            ],
-        );
-    }
+    public function __invoke(
+        NewTaskInterface $task,
+        ManagerInterface $manager,
+    ): NewTaskNotifierInterface;
 }

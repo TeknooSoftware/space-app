@@ -40,7 +40,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -84,7 +84,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -125,7 +125,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | PROJECT_URL   |
       | new_job.variables.0.value             | <auto>        |
@@ -170,7 +170,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value                   |
       | new_job._token                        | <auto>                  |
       | new_job.projectId                     | <auto>                  |
-      | new_job.newJobId                      | <auto>                  |
+      | new_job.taskId                        | <auto>                  |
       | new_job.envName                       | prod                    |
       | new_job.variables.0.name              | FOO                     |
       | new_job.variables.0.value             | BAR                     |
@@ -214,7 +214,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -258,7 +258,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -302,7 +302,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -347,7 +347,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -393,7 +393,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -437,7 +437,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -482,7 +482,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -528,7 +528,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -572,7 +572,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -617,7 +617,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -663,7 +663,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -707,7 +707,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -752,7 +752,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -798,7 +798,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -841,7 +841,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -885,7 +885,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -930,7 +930,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -973,7 +973,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1018,7 +1018,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1064,7 +1064,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1108,7 +1108,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1152,7 +1152,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1197,7 +1197,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1241,7 +1241,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1286,7 +1286,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1332,7 +1332,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                 | value         |
       | new_job._token                        | <auto>        |
       | new_job.projectId                     | <auto>        |
-      | new_job.newJobId                      | <auto>        |
+      | new_job.taskId                        | <auto>        |
       | new_job.envName                       | prod          |
       | new_job.variables.0.name              | FOO           |
       | new_job.variables.0.value             | BAR           |
@@ -1375,7 +1375,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                     | value                   |
       | new_job._token                            | <auto>                  |
       | new_job.projectId                         | <auto>                  |
-      | new_job.newJobId                          | <auto>                  |
+      | new_job.taskId                            | <auto>                  |
       | new_job.envName                           | prod                    |
       | new_job.variables.0.name                  | PROJECT_URL             |
       | new_job.variables.0.value                 | <auto>                  |
@@ -1433,7 +1433,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                     | value                   |
       | new_job._token                            | <auto>                  |
       | new_job.projectId                         | <auto>                  |
-      | new_job.newJobId                          | <auto>                  |
+      | new_job.taskId                            | <auto>                  |
       | new_job.envName                           | prod                    |
       | new_job.variables.0.name                  | PROJECT_URL             |
       | new_job.variables.0.value                 | <auto>                  |
@@ -1491,7 +1491,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                     | value                   |
       | new_job._token                            | <auto>                  |
       | new_job.projectId                         | <auto>                  |
-      | new_job.newJobId                          | <auto>                  |
+      | new_job.taskId                            | <auto>                  |
       | new_job.envName                           | prod                    |
       | new_job.variables.SERVER_SCRIPT.name      | SERVER_SCRIPT           |
       | new_job.variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |
@@ -1553,7 +1553,7 @@ Feature: Web interface to create new job and deploy project with variables from 
       | field                                     | value                   |
       | new_job._token                            | <auto>                  |
       | new_job.projectId                         | <auto>                  |
-      | new_job.newJobId                          | <auto>                  |
+      | new_job.taskId                            | <auto>                  |
       | new_job.envName                           | prod                    |
       | new_job.variables.SERVER_SCRIPT.name      | SERVER_SCRIPT           |
       | new_job.variables.SERVER_SCRIPT.value     | /opt/app/src/server.php |

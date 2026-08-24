@@ -1,8 +1,12 @@
 {# templates/TeknooSpace/api/Job/new.json.twig #}
-{% if newJobId is defined and newJobId is not empty %}
-{% set path = path('space_api_v1_job_new_pending', {"projectId": projectId, "newJobId": newJobId}) %}
-{% set object = {"job_queue_id": newJobId} %}
+{% if taskId is defined and taskId is not empty %}
+{% set object = {"task_queue_id": taskId} %}
+{% if projectId is defined and projectId is not empty %}
+{% set path = path('space_api_v1_job_new_pending', {"projectId": projectId, "taskId": taskId}) %}
 {{ object|space_api_object_serialization({}, 'json', {'url': path }) }}
+{% else %}
+{{ object|space_api_object_serialization({}, 'json', {}) }}
+{% endif %}
 {% else %}
 {{ space_form_errors(formView)|space_api_object_serialization({}, 'json', {"error": true}) }}
 {% endif %}

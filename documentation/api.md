@@ -215,7 +215,7 @@ rootless) rather than a Kubernetes token.
 
 **Get Pending Job Status**
 
-- `GET /api/v1/project/{projectId}/job/pending/{newJobId}`
+- `GET /api/v1/project/{projectId}/job/pending/{taskId}`
 
 **List Jobs for Project**
 
@@ -382,7 +382,7 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 
 **Get Pending Job Status**
 
-- `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/pending/{newJobId}`
+- `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/pending/{taskId}`
 
 **List Jobs for Project**
 

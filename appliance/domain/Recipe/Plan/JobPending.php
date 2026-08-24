@@ -65,7 +65,7 @@ class JobPending implements EditablePlanInterface
     {
         $recipe = $recipe->require(new Ingredient('string', 'template'));
         $recipe = $recipe->require(new Ingredient('string', 'projectId'));
-        $recipe = $recipe->require(new Ingredient('string', 'newJobId'));
+        $recipe = $recipe->require(new Ingredient('string', 'taskId'));
 
         $recipe = $recipe->cook(
             $this->loadObject,

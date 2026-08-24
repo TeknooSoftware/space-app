@@ -69,12 +69,12 @@ services:
 
     ##################
     # Domain interface implementation
-    Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface:
-        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob'
+    Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\CallNewTask'
         public: true
 
-    Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface:
-        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier'
+    Teknoo\Space\Contracts\Recipe\Step\Task\NewTaskNotifierInterface:
+        alias: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier'
         public: true
 
     Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface:
@@ -135,16 +135,16 @@ services:
             - '@Symfony\Component\Mercure\HubInterface'
             - '%teknoo.space.mercure.publishing_enabled%'
 
-    Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher'
+    Teknoo\Space\Infrastructures\Symfony\Mercure\TaskErrorPublisher:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\TaskErrorPublisher'
         arguments:
             - '@Symfony\Component\Mercure\HubInterface'
             - '%teknoo.space.mercure.publishing_enabled%'
 
-    Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
+    Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError'
         arguments:
-            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\TaskErrorPublisher'
             - '@router'
             - 'space_job_new_pending'
 
@@ -163,20 +163,20 @@ services:
         tags:
             - { name: messenger.message_handler, sign: true }
 
-    Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewJobHandler'
+    Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewTaskHandler:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewTaskHandler'
         arguments:
             - '@Teknoo\East\FoundationBundle\Messenger\Executor'
-            - '@Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface'
+            - '@Teknoo\Space\Service\NewTaskRecipeRegistry'
             - '@Teknoo\East\Foundation\Http\Message\MessageFactoryInterface'
             - '@Psr\Http\Message\StreamFactoryInterface'
             - '@Teknoo\East\FoundationBundle\Messenger\Client'
             - '@logger'
-            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
             - '@Teknoo\East\Foundation\Time\SleepServiceInterface'
             - '@Teknoo\Space\Service\PersistedVariableEncryption'
-            - '%env(default:teknoo.space.default.new_job.waiting_time:SPACE_NEW_JOB_WAITING_TIME)%'
+            - '%env(default:teknoo.space.default.new_task.waiting_time:SPACE_NEW_TASK_WAITING_TIME)%'
         tags:
             - { name: messenger.message_handler, sign: true }
 
@@ -195,22 +195,23 @@ services:
 
     ########################
     # Recipe
-    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\CallNewJob'
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\CallNewTask:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\CallNewTask'
         public: true
         arguments:
             - '@messenger.routable_message_bus'
             - '@Teknoo\East\Paas\Contracts\Security\EncryptionInterface'
 
 
-    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\NewJobNotifier'
+    Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier'
         public: true
         arguments:
             - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
             - '@router'
             - 'space_job_new_pending'
             - 'space_job_list'
+            - 'space_dashboard'
             - '@logger'
 
     Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier:
@@ -226,7 +227,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError'
 
     Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar'

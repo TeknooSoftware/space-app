@@ -109,7 +109,7 @@ MONGODB_NAME=space
 
 ### Symfony Messenger Transports
 
-#### MESSENGER_NEW_JOB_DSN
+#### MESSENGER_NEW_TASK_DSN
 
 - **Type**: String (DSN)
 - **Required**: Yes
@@ -117,7 +117,7 @@ MONGODB_NAME=space
 - **Format**: `amqp://user:pass@host:port/vhost/queue`
 
 ```bash
-MESSENGER_NEW_JOB_DSN=amqp://space_user:password@localhost:5672/%2f/new_job
+MESSENGER_NEW_TASK_DSN=amqp://space_user:password@localhost:5672/%2f/new_task
 ```
 
 #### MESSENGER_EXECUTE_JOB_DSN
@@ -1595,14 +1595,14 @@ MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Job Notification
 
-#### SPACE_NEW_JOB_WAITING_TIME
+#### SPACE_NEW_TASK_WAITING_TIME
 
 - **Type**: Integer (seconds)
 - **Optional**: Yes
 - **Description**: Wait time before redirecting to job page
 
 ```bash
-SPACE_NEW_JOB_WAITING_TIME=3
+SPACE_NEW_TASK_WAITING_TIME=3
 ```
 
 ## Extension System Configuration
@@ -1674,7 +1674,7 @@ MONGODB_NAME=space
 ###< doctrine/mongodb-odm-bundle ###
 
 ###> symfony/messenger ###
-MESSENGER_NEW_JOB_DSN=amqp://space:RabbitPass456@rabbitmq:5672/%2f/new_job
+MESSENGER_NEW_TASK_DSN=amqp://space:RabbitPass456@rabbitmq:5672/%2f/new_task
 MESSENGER_EXECUTE_JOB_DSN=amqp://space:RabbitPass456@rabbitmq:5672/%2f/execute_job
 MESSENGER_HISTORY_SENT_DSN=amqp://space:RabbitPass456@rabbitmq:5672/%2f/history_sent
 MESSENGER_JOB_DONE_DSN=amqp://space:RabbitPass456@rabbitmq:5672/%2f/job_done

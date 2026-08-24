@@ -104,7 +104,7 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_healthy
-    cli_new_job:
+    cli_new_task:
         build:
             context: build.dev/php-cli
         networks:
@@ -116,7 +116,7 @@ services:
         volumes:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
-        command: ["bin/console", "messenger:consume", "-vv", "new_job"]
+        command: ["bin/console", "messenger:consume", "-vv", "new_task"]
         environment:
             - MONGODB_NAME=teknoo_space
             - SPACE_CLUSTER_ISSUER=lets-encrypt

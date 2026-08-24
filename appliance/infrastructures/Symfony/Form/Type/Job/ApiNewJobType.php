@@ -128,7 +128,7 @@ class ApiNewJobType extends AbstractType implements FormApiAwareInterface
         $resolver->setDefaults([
             'data_class' => NewJob::class,
             'empty_data' => static fn (FormInterface $form): NewJob => new NewJob(
-                $form->get('newJobId')->getData(),
+                $form->get('taskId')->getData(),
                 $form->get('variables')->getData(),
                 $form->get('projectId')->getData(),
                 $form->get('accountId')->getData(),
