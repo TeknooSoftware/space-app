@@ -39,6 +39,6 @@ interface FetchJobIdFromPendingInterface
     public function __invoke(
         ManagerInterface $manager,
         ParametersBag $parametersBag,
-        string $newJobId,
+        string $taskId,
     ): FetchJobIdFromPendingInterface;
 }

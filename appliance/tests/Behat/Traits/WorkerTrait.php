@@ -48,17 +48,17 @@ trait WorkerTrait
         $service = $this->sfContainer->get(PersistedVariableEncryption::class);
         $service->setAgentMode(true);
 
-        $newJobTransport = $this->testTransport->get('new_job');
+        $newTaskTransport = $this->testTransport->get('new_task');
         $executeJobTransport = $this->testTransport->get('execute_job');
         $historySentTransport = $this->testTransport->get('history_sent');
         $jobDoneTransport = $this->testTransport->get('job_done');
 
-        $newJobTransport->throwExceptions();
+        $newTaskTransport->throwExceptions();
         $executeJobTransport->throwExceptions();
         $historySentTransport->throwExceptions();
         $jobDoneTransport->throwExceptions();
 
-        $newJobTransport->process();
+        $newTaskTransport->process();
         $executeJobTransport->process();
         $historySentTransport->process();
         $jobDoneTransport->process();

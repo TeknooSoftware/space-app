@@ -2,7 +2,7 @@ services:
     db:
         build:
             args:
-                MONGO_VERSION: 7
+                MONGO_VERSION: 8.3
     web:
         environment:
             - APP_ENV=dev
@@ -16,7 +16,7 @@ services:
             - MERCURE_PUBLISH_URL=ToChange!
             - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
             - MERCURE_SUBSCRIBER_URL=ToChange!
-            - MESSENGER_NEW_JOB_DSN=ToChange!
+            - MESSENGER_NEW_TASK_DSN=ToChange!
             - MONGODB_SERVER=ToChange!
             - OAUTH_CLIENT_ID=ToChange!
             - OAUTH_CLIENT_SECRET=ToChange!
@@ -52,7 +52,7 @@ services:
             - PHP_XDEBUG_HOST=ToChange!
               SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON=ToChange!
             - SPACE_CLUSTER_CATALOG_JSON=ToChange!
-    cli_new_job:
+    cli_new_task:
         environment:
             - APP_ENV=dev
             - APP_SECRET=ToChange!

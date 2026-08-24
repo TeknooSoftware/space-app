@@ -406,7 +406,7 @@ After = network.target rabbitmq-server.service mongodb.service
 Type = simple
 User = www-data
 WorkingDirectory = /opt/space/appliance
-ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume new_job
+ExecStart = /usr/bin/php /opt/space/appliance/bin/console messenger:consume new_task
 Restart = always
 RestartSec = 10
 

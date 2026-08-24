@@ -33,14 +33,14 @@ use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
-use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
 use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception\BadEncryptionConfigurationException;
 use Teknoo\Space\Object\DTO\JobVar;
-use Teknoo\Space\Object\DTO\NewJob;
+use Teknoo\Space\Service\NewTaskRecipeRegistry;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
 
@@ -55,16 +55,16 @@ use const JSON_THROW_ON_ERROR;
  * @author      Richard Déloge <richard@teknoo.software>
  */
 #[AsMessageHandler]
-class NewJobHandler
+class NewTaskHandler
 {
     public function __construct(
         private readonly Executor $executor,
-        private readonly NewJobInterface $recipe,
+        private readonly NewTaskRecipeRegistry $recipeRegistry,
         private readonly MessageFactoryInterface $messageFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private readonly Client $client,
         private readonly LoggerInterface $logger,
-        private readonly JobError $jobErrorNotifier,
+        private readonly TaskError $jobErrorNotifier,
         private readonly ?EncryptionInterface $encryption,
         private readonly SleepServiceInterface $sleepService,
         private readonly PersistedVariableEncryption $encryptionService,
@@ -73,7 +73,7 @@ class NewJobHandler
     }
 
     /**
-     * @param array<JobVar> $variables
+     * @param array<object|JobVar> $variables
      */
     private function convertToJson(array $variables): string
     {
@@ -81,8 +81,10 @@ class NewJobHandler
 
         /** @var Promise<EncryptableVariableInterface, mixed, mixed> $promise */
         $promise = new Promise(
-            static function (JobVar $jobVar) use (&$final): void {
-                $final[$jobVar->name] = (string) $jobVar->value;
+            static function (object $jobVar) use (&$final): void {
+                if ($jobVar instanceof JobVar) {
+                    $final[$jobVar->name] = (string)$jobVar->value;
+                }
             },
             fn (Throwable $error) => throw $error,
         );
@@ -104,7 +106,7 @@ class NewJobHandler
         return json_encode($final, JSON_THROW_ON_ERROR);
     }
 
-    public function __invoke(NewJob $newJob): self
+    public function __invoke(NewTaskInterface $newTask): self
     {
         $client = clone $this->client;
         $client->sendAResponseIsOptional();
@@ -113,18 +115,14 @@ class NewJobHandler
             $this->sleepService->wait($this->waitingTimeSecond);
         }
 
-        $currentNewJobId = $newJob->newJobId;
+        $currentTaskId = $newTask->taskId;
 
-        $processMessage = function (NewJob $newJob) use ($client): void {
+        $processMessage = function (NewTaskInterface $newTask) use ($client): void {
             $this->logger->info(
                 json_encode(
-                    value: [
+                    value: $newTask->toArray() + [
                         'action' => 'start',
-                        'class' => $newJob::class,
-                        'projectId' => $newJob->projectId,
-                        'accountId' => $newJob->accountId,
-                        'envName' => $newJob->envName,
-                        'newJobId' => $newJob->newJobId,
+                        'class' => $newTask::class,
                     ],
                     flags: JSON_THROW_ON_ERROR,
                 ),
@@ -133,32 +131,29 @@ class NewJobHandler
             $message = $this->messageFactory->createMessage('1.1');
             $message = $message->withBody(
                 $this->streamFactory->createStream(
-                    $this->convertToJson($newJob->variables)
+                    $this->convertToJson($newTask->variables)
                 )
             );
             $message = $message->withAddedHeader('Content-Type', 'application/json');
 
+            $workPlan = $newTask->toArray();
+            $workPlan['extra'] = ['task_id' => $newTask->taskId] + (array) ($workPlan['extra'] ?? []);
+            $workPlan[$newTask::class] = $newTask;
+
             $this->executor->execute(
-                $this->recipe,
+                $this->recipeRegistry->get($newTask::class),
                 $message,
                 $client,
-                [
-                    'projectId' => $newJob->projectId,
-                    'accountId' => $newJob->accountId,
-                    'envName' => $newJob->envName,
-                    'newJobId' => $newJob->newJobId,
-                    NewJob::class => $newJob,
-                    'extra' => ['new_job_id' => $newJob->newJobId],
-                ],
+                $workPlan,
             );
         };
 
-        $processError = function (Throwable $error) use ($client, $currentNewJobId): void {
+        $processError = function (Throwable $error) use ($client, $currentTaskId): void {
             $this->logger->critical($error);
 
             $this->jobErrorNotifier->process(
                 error: $error,
-                newJobId: $currentNewJobId,
+                taskId: $currentTaskId,
             );
 
             $client->errorInRequest(
@@ -171,21 +166,21 @@ class NewJobHandler
         };
 
         if (null !== $this->encryption) {
-            /** @var Promise<NewJob, mixed, mixed> $promise */
+            /** @var Promise<NewTaskInterface, mixed, mixed> $promise */
             $promise = new Promise(
                 onSuccess: $processMessage,
                 onFail: $processError,
             );
 
             $this->encryption->decrypt(
-                $newJob,
+                $newTask,
                 $promise,
             );
 
             return $this;
         }
 
-        if (!empty($newJob->getEncryptionAlgorithm())) {
+        if (!empty($newTask->getEncryptionAlgorithm())) {
             $processError(
                 new BadEncryptionConfigurationException(
                     'teknoo.space.error.messenger.handler.message-can-not-decrypted',
@@ -196,7 +191,7 @@ class NewJobHandler
         }
 
         try {
-            $processMessage($newJob);
+            $processMessage($newTask);
         } catch (Throwable $error) {
             $processError($error);
         }

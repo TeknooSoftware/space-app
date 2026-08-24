@@ -65,7 +65,7 @@ class FetchJobIdFromPendingTest extends TestCase
 
     private EventSourceHttpClient $sseClient;
 
-    private string $pendingJobRoute;
+    private string $pendingTaskRoute;
 
     /**
      * {@inheritdoc}
@@ -123,12 +123,12 @@ class FetchJobIdFromPendingTest extends TestCase
                 }
             );
 
-        $this->pendingJobRoute = 'foo';
+        $this->pendingTaskRoute = 'foo';
         $this->fetchJobIdFromPending = new FetchJobIdFromPending(
             $this->hub,
             $this->generator,
             $this->sseClient,
-            $this->pendingJobRoute,
+            $this->pendingTaskRoute,
             123,
             456
         );

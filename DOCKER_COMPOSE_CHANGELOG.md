@@ -303,9 +303,9 @@ docker-compose infrastructure.
 
 | File                                                                      | Lines | Purpose                                                                                      |
 |---------------------------------------------------------------------------|-------|----------------------------------------------------------------------------------------------|
-| `appliance/Bundle/TeknooSpaceEnterpriseBundle.php`                        | 28    | Empty Symfony bundle class. Registered in `Extension::executeFor(Bundles::class)`.           |
-| `appliance/Bundle/DependencyInjection/TeknooSpaceEnterpriseExtension.php` | 47    | Symfony DI extension. Loads `services.yaml`.                                                 |
-| `appliance/Bundle/DependencyInjection/Configuration.php`                  | 33    | DI configuration tree builder. Defines `teknoo_space_enterprise` config key (no sub-params). |
+| `appliance/Infrastructure/Symfony/Bundle/TeknooSpaceEnterpriseBundle.php`                        | 28    | Empty Symfony bundle class. Registered in `Extension::executeFor(Bundles::class)`.           |
+| `appliance/Infrastructure/Symfony/Bundle/DependencyInjection/TeknooSpaceEnterpriseExtension.php` | 47    | Symfony DI extension. Loads `services.yaml`.                                                 |
+| `appliance/Infrastructure/Symfony/Bundle/DependencyInjection/Configuration.php`                  | 33    | DI configuration tree builder. Defines `teknoo_space_enterprise` config key (no sub-params). |
 
 ### Routes (4 files, 9 endpoints)
 
@@ -320,17 +320,17 @@ docker-compose infrastructure.
 
 | File                                                                      | Lines | Purpose                                                                                            |
 |---------------------------------------------------------------------------|-------|----------------------------------------------------------------------------------------------------|
-| `appliance/Bundle/templates/container.html.twig`                          | 0     | Empty placeholder                                                                                  |
-| `appliance/Bundle/templates/menu/top_header.html.twig`                    | 0     | Empty placeholder                                                                                  |
-| `appliance/Bundle/templates/menu/left.html.twig`                          | 28    | Sidebar menu: Trivy links (vulnerabilities + audits) for admin, vulnerabilities only for non-admin |
-| `appliance/Bundle/templates/part/left_brand.html.twig`                    | 4     | Enterprise logo (SVG) in sidebar brand area                                                        |
-| `appliance/Bundle/templates/cluster/list_item.html.twig`                  | 8     | Docker-compose cluster action icon in cluster list (links to install endpoint)                     |
-| `appliance/Bundle/templates/cluster/edit_item_action.html.twig`           | 11    | Docker-compose cluster "Install" button in cluster edit view                                       |
-| `appliance/Bundle/templates/kubernetes/reports/vulnerabilities.html.twig` | 91    | Vulnerability reports list view with table (namespace, name, age, severity counts)                 |
-| `appliance/Bundle/templates/kubernetes/reports/vulnerability.html.twig`   | 219   | Single vulnerability detail view (metadata, scanner info, severity breakdown, checks table)        |
-| `appliance/Bundle/templates/kubernetes/reports/audits.html.twig`          | 81    | Configuration audit reports list view (same structure as vulnerabilities)                          |
-| `appliance/Bundle/templates/kubernetes/reports/audit.html.twig`           | 207   | Single audit detail view (same structure as vulnerability)                                         |
-| `appliance/Bundle/templates/kubernetes/part/cluster-selector.html.twig`   | 25    | Cluster/environment selector dropdown for Trivy views                                              |
+| `appliance/Infrastructure/Symfony/Bundle/templates/container.html.twig`                          | 0     | Empty placeholder                                                                                  |
+| `appliance/Infrastructure/Symfony/Bundle/templates/menu/top_header.html.twig`                    | 0     | Empty placeholder                                                                                  |
+| `appliance/Infrastructure/Symfony/Bundle/templates/menu/left.html.twig`                          | 28    | Sidebar menu: Trivy links (vulnerabilities + audits) for admin, vulnerabilities only for non-admin |
+| `appliance/Infrastructure/Symfony/Bundle/templates/part/left_brand.html.twig`                    | 4     | Enterprise logo (SVG) in sidebar brand area                                                        |
+| `appliance/Infrastructure/Symfony/Bundle/templates/cluster/list_item.html.twig`                  | 8     | Docker-compose cluster action icon in cluster list (links to install endpoint)                     |
+| `appliance/Infrastructure/Symfony/Bundle/templates/cluster/edit_item_action.html.twig`           | 11    | Docker-compose cluster "Install" button in cluster edit view                                       |
+| `appliance/Infrastructure/Symfony/Bundle/templates/kubernetes/reports/vulnerabilities.html.twig` | 91    | Vulnerability reports list view with table (namespace, name, age, severity counts)                 |
+| `appliance/Infrastructure/Symfony/Bundle/templates/kubernetes/reports/vulnerability.html.twig`   | 219   | Single vulnerability detail view (metadata, scanner info, severity breakdown, checks table)        |
+| `appliance/Infrastructure/Symfony/Bundle/templates/kubernetes/reports/audits.html.twig`          | 81    | Configuration audit reports list view (same structure as vulnerabilities)                          |
+| `appliance/Infrastructure/Symfony/Bundle/templates/kubernetes/reports/audit.html.twig`           | 207   | Single audit detail view (same structure as vulnerability)                                         |
+| `appliance/Infrastructure/Symfony/Bundle/templates/kubernetes/part/cluster-selector.html.twig`   | 25    | Cluster/environment selector dropdown for Trivy views                                              |
 
 ### Configuration (8 files)
 
@@ -353,9 +353,9 @@ docker-compose infrastructure.
 | `appliance/Extension.php`                        | 156   | Main extension class. Implements `ExtensionInterface`. Registers PHPDI params, routes, Twig templates, frontend assets (CSS), and test extension. |
 | `appliance/ExtensionOfTest.php`                  | 119   | Test extension. Adds enterprise `Role` and `RoleBinding` manifests to expected Kubernetes manifests for Behat tests.                              |
 | `appliance/Twig/Extension/SinceTodayFilter.php`  | 50    | Twig filter `space_enterprise_since_today` — computes days between a date and now.                                                                |
-| `appliance/Bundle/translations/messages.en.yaml` | 58    | 57 translation keys for Trivy UI labels.                                                                                                          |
-| `appliance/Bundle/config/services.yaml`          | 17    | Service definitions: autowiring + InstallDockerHostCommand.                                                                                       |
-| `appliance/Bundle/config/endpoints.yaml`         | 33    | 4 endpoint services: get_media, get_from_kubernetes, list_from_kubernetes, install_docker_host.                                                   |
+| `appliance/Infrastructure/Symfony/Bundle/translations/messages.en.yaml` | 58    | 57 translation keys for Trivy UI labels.                                                                                                          |
+| `appliance/Infrastructure/Symfony/Bundle/config/services.yaml`          | 17    | Service definitions: autowiring + InstallDockerHostCommand.                                                                                       |
+| `appliance/Infrastructure/Symfony/Bundle/config/endpoints.yaml`         | 33    | 4 endpoint services: get_media, get_from_kubernetes, list_from_kubernetes, install_docker_host.                                                   |
 | `appliance/Makefile`                             | 11    | Help command.                                                                                                                                     |
 | `appliance/behat.yml`                            | 0     | Empty — no Behat config in this repo.                                                                                                             |
 

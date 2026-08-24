@@ -84,7 +84,7 @@ customization purposes.
    php -S localhost:8000 -t public
    
    # Workers
-   bin/console messenger:consume new_job &
+   bin/console messenger:consume new_task &
    bin/console messenger:consume execute_job &
    bin/console messenger:consume history_sent &
    bin/console messenger:consume job_done &
@@ -487,7 +487,7 @@ use Teknoo\East\Foundation\Extension\ModuleInterface;
 use Teknoo\East\FoundationBundle\Extension\Bundles;
 use Teknoo\East\FoundationBundle\Extension\PHPDI;
 use Teknoo\East\FoundationBundle\Extension\Routes;
-use Teknoo\Space\Extensions\Enterprise\Bundle\TeknooSpaceEnterpriseBundle;
+use Teknoo\Space\Extensions\Enterprise\Infrastructure\Symfony\Bundle\TeknooSpaceEnterpriseBundle;
 use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig;
 
 use function class_exists;

@@ -263,7 +263,7 @@ Environnements variables configuration
     * Symfony
         * `APP_SECRET` : (string) `framework.secret` value.
         * `APP_REMEMBER_SECRET` : (string) `remember_me.secret` value in Symfony firewall.
-        * `MESSENGER_NEW_JOB_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment
+        * `MESSENGER_NEW_TASK_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment
           request.
     * Support
         * `SPACE_SUPPORT_CONTACT` : (string) Email address (or URI) for support contact displayed in the UI. *Optional*
@@ -452,7 +452,7 @@ Environnements variables configuration
                 * `clusters`: (string[]) *Optional* List of clusters allowed with this plan (available later)
 
     * Job create
-        * `SPACE_NEW_JOB_WAITING_TIME` : (int) time in seconds to wait before redirect user to the job page. *Optional*
+        * `SPACE_NEW_TASK_WAITING_TIME` : (int) time in seconds to wait before redirect user to the job page. *Optional*
 
 * Workers configuration :
     * Workers only (not builder) :
@@ -551,7 +551,7 @@ Worker Commands
 
 To launch workers on your environment if you does not use docker compose :
 
-* worker to prepare a new job : `bin/console messenger:consume new_job`
+* worker to prepare a new job : `bin/console messenger:consume new_task`
 * worker to persist histories of jobs : `bin/console messenger:consume history_sent`
 * worker to persist final results of jobs : `bin/console messenger:consume job_done`
 * worker to execute jobs : `bin/console messenger:consume execute_job`

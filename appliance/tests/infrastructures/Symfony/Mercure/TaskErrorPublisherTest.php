@@ -31,20 +31,20 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mercure\HubInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskErrorPublisher;
 
 /**
- * Class JobErrorPublisherTest.
+ * Class TaskErrorPublisherTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(JobErrorPublisher::class)]
-class JobErrorPublisherTest extends TestCase
+#[CoversClass(TaskErrorPublisher::class)]
+class TaskErrorPublisherTest extends TestCase
 {
-    private JobErrorPublisher $jobErrorPublisher;
+    private TaskErrorPublisher $taskErrorPublisher;
 
     private HubInterface&Stub $hub;
 
@@ -56,14 +56,14 @@ class JobErrorPublisherTest extends TestCase
         parent::setUp();
 
         $this->hub = $this->createStub(HubInterface::class);
-        $this->jobErrorPublisher = new JobErrorPublisher($this->hub);
+        $this->taskErrorPublisher = new TaskErrorPublisher($this->hub);
     }
 
     public function testPublish(): void
     {
         $this->assertInstanceOf(
-            JobErrorPublisher::class,
-            $this->jobErrorPublisher->publish(
+            TaskErrorPublisher::class,
+            $this->taskErrorPublisher->publish(
                 'foo',
                 'bar',
                 new Exception('foo'),

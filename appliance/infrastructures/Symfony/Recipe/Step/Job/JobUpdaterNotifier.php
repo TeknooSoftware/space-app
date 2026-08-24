@@ -41,7 +41,7 @@ class JobUpdaterNotifier
     public function __construct(
         private readonly JobUrlPublisher $publisher,
         private readonly UrlGeneratorInterface $generator,
-        private readonly string $pendingJobRoute,
+        private readonly string $pendingTaskRoute,
         private readonly string $getJobRoute,
     ) {
     }
@@ -49,17 +49,17 @@ class JobUpdaterNotifier
     public function __invoke(
         Project $project,
         Job $job,
-        string $newJobId,
+        string $taskId,
     ): static {
         $this->publisher->publish(
             url: $this->generator->generate(
-                name: $this->pendingJobRoute,
+                name: $this->pendingTaskRoute,
                 parameters: [
-                    'newJobId' => $newJobId,
+                    'taskId' => $taskId,
                 ],
                 referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
             ),
-            newJobId: $newJobId,
+            taskId: $taskId,
             jobUrl: $this->generator->generate(
                 name: $this->getJobRoute,
                 parameters: [

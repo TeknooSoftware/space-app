@@ -23,10 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Contracts\Recipe\Step\Job;
+namespace Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier;
 
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Object\DTO\NewJob;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskErrorPublisher;
+use Throwable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -34,10 +35,31 @@ use Teknoo\Space\Object\DTO\NewJob;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-interface NewJobNotifierInterface
+class TaskError
 {
-    public function __invoke(
-        NewJob $newJob,
-        ManagerInterface $manager,
-    ): NewJobNotifierInterface;
+    public function __construct(
+        private readonly TaskErrorPublisher $publisher,
+        private readonly UrlGeneratorInterface $generator,
+        private readonly string $pendingTaskRoute,
+    ) {
+    }
+
+    public function process(
+        Throwable $error,
+        string $taskId,
+    ): static {
+        $this->publisher->publish(
+            $this->generator->generate(
+                $this->pendingTaskRoute,
+                [
+                    'taskId' => $taskId,
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ),
+            $taskId,
+            $error,
+        );
+
+        return $this;
+    }
 }

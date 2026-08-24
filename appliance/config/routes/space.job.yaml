@@ -31,7 +31,7 @@ space_job_restart:
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_job_new_pending:
-    path: '/job/pending/{newJobId}'
+    path: '/job/pending/{taskId}'
     methods: ['GET']
     schemes: ['https']
     defaults:

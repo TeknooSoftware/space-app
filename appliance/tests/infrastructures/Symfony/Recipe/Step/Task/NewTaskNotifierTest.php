@@ -23,35 +23,44 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Mercure\Notifier;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Task;
 
-use Exception;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobErrorPublisher;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier;
+use Teknoo\Space\Object\DTO\JobVar;
+use Teknoo\Space\Object\DTO\NewJob;
 
 /**
- * Class JobErrorNotifierTest.
+ * Class NewTaskNotifierTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(JobError::class)]
-class JobErrorTest extends TestCase
+#[CoversClass(NewTaskNotifier::class)]
+class NewTaskNotifierTest extends TestCase
 {
-    private JobError $jobErrorNotifier;
+    private NewTaskNotifier $newTaskNotifier;
 
-    private JobErrorPublisher&Stub $publisher;
+    private JobUrlPublisher&Stub $publisher;
 
     private UrlGeneratorInterface&Stub $generator;
 
-    private string $pendingJobRoute;
+    private LoggerInterface&Stub $logger;
+
+    private string $pendingTaskRoute;
+
+    private string $spaceDashoardRoute;
+
+    private string $listJobRoute;
 
     /**
      * {@inheritdoc}
@@ -60,19 +69,36 @@ class JobErrorTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createStub(JobErrorPublisher::class);
+        $this->publisher = $this->createStub(JobUrlPublisher::class);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
-        $this->pendingJobRoute = '42';
-        $this->jobErrorNotifier = new JobError($this->publisher, $this->generator, $this->pendingJobRoute);
+        $this->logger = $this->createStub(LoggerInterface::class);
+        $this->pendingTaskRoute = '42';
+        $this->listJobRoute = '42';
+        $this->spaceDashoardRoute = '42';
+        $this->newTaskNotifier = new NewTaskNotifier(
+            $this->publisher,
+            $this->generator,
+            $this->pendingTaskRoute,
+            $this->listJobRoute,
+            $this->spaceDashoardRoute,
+            $this->logger,
+        );
     }
 
-    public function testProcess(): void
+    public function testInvoke(): void
     {
+        $newJob = new NewJob(
+            taskId: 'foo',
+            variables: [
+                new JobVar('foo'),
+            ],
+        );
+
         $this->assertInstanceOf(
-            JobError::class,
-            ($this->jobErrorNotifier)->process(
-                new Exception('foo'),
-                'bar',
+            NewTaskNotifier::class,
+            ($this->newTaskNotifier)(
+                $newJob,
+                $this->createStub(ManagerInterface::class),
             )
         );
     }

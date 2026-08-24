@@ -14,7 +14,7 @@ space_api_v1_admin_job_new:
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_job_new_pending:
-    path: '/account/{accountId}/project/{projectId}/job/pending/{newJobId}'
+    path: '/account/{accountId}/project/{projectId}/job/pending/{taskId}'
     methods: ['GET']
     schemes: ['https']
     defaults:

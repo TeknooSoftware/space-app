@@ -42,8 +42,8 @@ use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\NewTaskNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Recipe\Plan\JobStart;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
@@ -88,12 +88,12 @@ class JobStartTest extends TestCase
 
     private NewJobSetDefaults&Stub $newJobSetDefaults;
 
-    private NewJobNotifierInterface&Stub $newJobNotifier;
+    private NewTaskNotifierInterface&Stub $newTaskNotifier;
 
 
     private JumpIf&Stub $jumpIf;
 
-    private CallNewJobInterface&Stub $callNewJob;
+    private CallNewTaskInterface&Stub $callNewTask;
 
     private PersistJobVar&Stub $persistJobVar;
 
@@ -123,9 +123,9 @@ class JobStartTest extends TestCase
         $this->formHandling = $this->createStub(FormHandlingInterface::class);
         $this->formProcessing = $this->createStub(FormProcessingInterface::class);
         $this->newJobSetDefaults = $this->createStub(NewJobSetDefaults::class);
-        $this->newJobNotifier = $this->createStub(NewJobNotifierInterface::class);
+        $this->newTaskNotifier = $this->createStub(NewTaskNotifierInterface::class);
         $this->jumpIf = $this->createStub(JumpIf::class);
-        $this->callNewJob = $this->createStub(CallNewJobInterface::class);
+        $this->callNewTask = $this->createStub(CallNewTaskInterface::class);
         $this->persistJobVar = $this->createStub(PersistJobVar::class);
         $this->redirectClient = $this->createStub(RedirectClientInterface::class);
         $this->renderForm = $this->createStub(RenderFormInterface::class);
@@ -144,9 +144,9 @@ class JobStartTest extends TestCase
             formProcessing: $this->formProcessing,
             newJobSetDefaults: $this->newJobSetDefaults,
             persistJobVar: $this->persistJobVar,
-            newJobNotifier: $this->newJobNotifier,
+            newTaskNotifier: $this->newTaskNotifier,
             jumpIf: $this->jumpIf,
-            callNewJob: $this->callNewJob,
+            callNewTask: $this->callNewTask,
             redirectClient: $this->redirectClient,
             renderForm: $this->renderForm,
             renderError: $this->renderError,

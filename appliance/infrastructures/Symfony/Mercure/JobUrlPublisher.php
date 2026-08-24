@@ -50,7 +50,7 @@ class JobUrlPublisher
 
     public function publish(
         string $url,
-        string $newJobId,
+        string $taskId,
         ?string $jobUrl,
         ?Project $project = null,
         ?Job $job = null,
@@ -61,14 +61,14 @@ class JobUrlPublisher
 
         $id = null;
         if (null === $jobUrl) {
-            $id = $newJobId;
+            $id = $taskId;
         }
 
         $update = new Update(
             topics: $url,
             data: json_encode(
                 [
-                    'new_job_id' => $newJobId,
+                    'task_id' => $taskId,
                     'job_id' => $job?->getId(),
                     'project_id' => $project?->getId(),
                     'job_url' => $jobUrl,

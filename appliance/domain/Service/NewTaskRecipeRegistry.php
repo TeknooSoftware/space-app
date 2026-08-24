@@ -23,42 +23,49 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Job;
+namespace Teknoo\Space\Service;
 
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\FormBuilderInterface;
+use DomainException;
+use Teknoo\Recipe\BaseRecipeInterface;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
+
+use function is_a;
 
 /**
+ * To find the recipe/plan able to execute a task, from the task's class name.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class NewJobType extends ApiNewJobType
+class NewTaskRecipeRegistry
 {
-    #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    /**
+     * @var array<class-string<NewTaskInterface>, BaseRecipeInterface>
+     */
+    private array $recipes = [];
+
+    /**
+     * @param class-string<NewTaskInterface> $taskClass
+     */
+    public function register(string $taskClass, BaseRecipeInterface $recipe): NewTaskRecipeRegistry
     {
-        parent::buildForm($builder, $options);
+        if (!is_a($taskClass, NewTaskInterface::class, true)) {
+            throw new DomainException("Error, the task class {$taskClass} is not a valid task");
+        };
 
-        if (!empty($options['api'])) {
-            return;
-        }
+        $this->recipes[$taskClass] = $recipe;
 
-        $builder->add(
-            'taskId',
-            HiddenType::class,
-            [
-                'required' => true,
-            ],
-        );
+        return $this;
+    }
 
-        $builder->add(
-            'projectId',
-            HiddenType::class,
-            [
-                'required' => true,
-            ],
-        );
+    /**
+     * @param class-string<NewTaskInterface> $taskClass
+     */
+    public function get(string $taskClass): BaseRecipeInterface
+    {
+        return $this->recipes[$taskClass]
+            ?? throw new DomainException("Error, no recipe is registered for the task {$taskClass}");
     }
 }

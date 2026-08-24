@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 
-use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\JobError;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError;
 use Throwable;
 
 /**
@@ -37,17 +37,17 @@ use Throwable;
 class JobErrorNotifier
 {
     public function __construct(
-        private readonly JobError $notifier,
+        private readonly TaskError $notifier,
     ) {
     }
 
     public function __invoke(
         Throwable $error,
-        string $newJobId,
+        string $taskId,
     ): static {
         $this->notifier->process(
             error: $error,
-            newJobId: $newJobId,
+            taskId: $taskId,
         );
 
         return $this;

@@ -48,14 +48,14 @@
 {% endblock %}
 
 {% block javascript_additonals %}
-    {% set newJobId = app.request.attributes.get('newJobId') %}
+    {% set taskId = app.request.attributes.get('taskId') %}
     <script nonce="{{ space_nonce() }}">
         {% if mercureEnabled %}
         const eventSource = new EventSource(
           "{{ mercure(
-              url('space_job_new_pending', {'newJobId': newJobId }),
+              url('space_job_new_pending', {'taskId': taskId }),
               {
-                  'lastEventId': newJobId,
+                  'lastEventId': taskId,
                   'subscribe': mercureUrl
               }
           )|escape('js') }}"

@@ -50,6 +50,7 @@ use Teknoo\East\Common\Recipe\Step\StartLoopingOn;
 use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditAccountEndPointInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditProjectEndPointInterface;
+use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
 use Teknoo\East\Paas\Recipe\Plan\AbstractEditObjectEndPoint;
 use Teknoo\East\Paas\Recipe\Plan\NewAccountEndPoint;
 use Teknoo\East\Paas\Recipe\Plan\NewJob;
@@ -62,9 +63,9 @@ use Teknoo\Recipe\PlanInterface;
 use Teknoo\Recipe\RecipeInterface as OriginalRecipeInterface;
 use Teknoo\Recipe\Value;
 use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\CallNewJobInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Job\NewJobNotifierInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Task\NewTaskNotifierInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
@@ -110,8 +111,10 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobErrorNotifier;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
+use Teknoo\Space\Object\DTO\NewJob as NewJobDto;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Service\NewTaskRecipeRegistry;
 use Teknoo\Space\Recipe\Plan\AccountClusterDelete;
 use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
 use Teknoo\Space\Recipe\Plan\AccountClusterList;
@@ -703,9 +706,9 @@ return [
             diGet(FormProcessingInterface::class),
             diGet(NewJobSetDefaults::class),
             diGet(PersistJobVar::class),
-            diGet(NewJobNotifierInterface::class),
+            diGet(NewTaskNotifierInterface::class),
             diGet(JumpIf::class),
-            diGet(CallNewJobInterface::class),
+            diGet(CallNewTaskInterface::class),
             diGet(RedirectClientInterface::class),
             diGet(RenderFormInterface::class),
             diGet(RenderError::class),
@@ -1062,5 +1065,12 @@ return [
             diGet(Render::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
-        )
+        ),
+
+    NewTaskRecipeRegistry::class => static function (
+        ContainerInterface $container,
+    ): NewTaskRecipeRegistry {
+        return (new NewTaskRecipeRegistry())
+            ->register(NewJobDto::class, $container->get(NewJobInterface::class));
+    },
 ];

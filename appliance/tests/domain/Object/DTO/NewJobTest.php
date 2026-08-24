@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
@@ -46,7 +47,7 @@ class NewJobTest extends TestCase
 {
     private NewJob $newJob;
 
-    private string $newJobId;
+    private string $taskId;
 
     /**
      * @var MockObject[]
@@ -66,7 +67,7 @@ class NewJobTest extends TestCase
     {
         parent::setUp();
 
-        $this->newJobId = '42';
+        $this->taskId = '42';
         $this->variables = [
             $this->createMock(JobVar::class),
             $this->createMock(JobVar::class),
@@ -75,7 +76,7 @@ class NewJobTest extends TestCase
         $this->accountId = '42';
         $this->envName = '42';
         $this->newJob = new NewJob(
-            newJobId: $this->newJobId,
+            taskId: $this->taskId,
             variables: $this->variables,
             projectId: $this->projectId,
             accountId: $this->accountId,
@@ -86,16 +87,16 @@ class NewJobTest extends TestCase
     #[AllowMockObjectsWithoutExpectations]
     public function testConstructWithProvidedId(): void
     {
-        $newJob = new NewJob(newJobId: 'custom-id');
-        $this->assertEquals('custom-id', $newJob->newJobId);
+        $newJob = new NewJob(taskId: 'custom-id');
+        $this->assertEquals('custom-id', $newJob->taskId);
     }
 
     #[AllowMockObjectsWithoutExpectations]
     public function testConstructWithEmptyId(): void
     {
         $newJob = new NewJob();
-        $this->assertNotEmpty($newJob->newJobId);
-        $this->assertEquals(48, strlen($newJob->newJobId)); // bin2hex(random_bytes(24)) = 48 chars
+        $this->assertNotEmpty($newJob->taskId);
+        $this->assertEquals(48, strlen($newJob->taskId)); // bin2hex(random_bytes(24)) = 48 chars
     }
 
     #[AllowMockObjectsWithoutExpectations]
@@ -105,7 +106,7 @@ class NewJobTest extends TestCase
         $storageProvisioner = ['cluster1' => 'provisioner1'];
 
         $newJob = new NewJob(
-            newJobId: 'test-id',
+            taskId: 'test-id',
             variables: $variables,
             projectId: 'proj-123',
             accountId: 'acc-456',
@@ -113,7 +114,7 @@ class NewJobTest extends TestCase
             storageProvisionerPerCluster: $storageProvisioner
         );
 
-        $this->assertEquals('test-id', $newJob->newJobId);
+        $this->assertEquals('test-id', $newJob->taskId);
         $this->assertSame($variables, $newJob->variables);
         $this->assertEquals('proj-123', $newJob->projectId);
         $this->assertEquals('acc-456', $newJob->accountId);
@@ -148,7 +149,7 @@ class NewJobTest extends TestCase
         $var2 = new JobVar(name: 'var2', value: 'value2');
 
         $newJob = new NewJob(
-            newJobId: 'test-id',
+            taskId: 'test-id',
             variables: [$var1, $var2]
         );
 
@@ -166,7 +167,7 @@ class NewJobTest extends TestCase
         $var1 = new JobVar(name: 'var1', value: 'value1');
 
         $newJob = new NewJob(
-            newJobId: 'test-id',
+            taskId: 'test-id',
             variables: [$var1]
         );
 
@@ -183,7 +184,7 @@ class NewJobTest extends TestCase
         $var1 = new JobVar(name: 'var1', value: 'value1');
 
         $newJob = new NewJob(
-            newJobId: 'test-id',
+            taskId: 'test-id',
             variables: [$var1]
         );
 
@@ -195,7 +196,7 @@ class NewJobTest extends TestCase
     #[AllowMockObjectsWithoutExpectations]
     public function testGetEncryptionAlgorithm(): void
     {
-        $newJob = new NewJob(newJobId: 'test-id');
+        $newJob = new NewJob(taskId: 'test-id');
         $this->assertNull($newJob->getEncryptionAlgorithm());
 
         // After cloning with encryption
@@ -209,7 +210,7 @@ class NewJobTest extends TestCase
         $var1 = new JobVar(name: 'var1', value: 'value1');
 
         $newJob = new NewJob(
-            newJobId: 'test-id',
+            taskId: 'test-id',
             variables: [$var1]
         );
 
@@ -229,7 +230,7 @@ class NewJobTest extends TestCase
         $var2 = new JobVar(id: 'id2', name: 'var2', value: 'value2', persisted: true, secret: true);
 
         $newJob = new NewJob(
-            newJobId: 'test-id',
+            taskId: 'test-id',
             variables: [$var1, $var2]
         );
 
@@ -246,5 +247,59 @@ class NewJobTest extends TestCase
         $this->assertInstanceOf(JobVar::class, $decrypted->variables[0]);
         $this->assertEquals('var1', $decrypted->variables[0]->name);
         $this->assertEquals('var2', $decrypted->variables[1]->name);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testIsANewTask(): void
+    {
+        $this->assertInstanceOf(NewTaskInterface::class, $this->newJob);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testNewJobIdIsAnAliasOfTaskId(): void
+    {
+        $newJob = new NewJob(taskId: 'legacy-id');
+
+        $this->assertEquals('legacy-id', $newJob->newJobId);
+        $this->assertEquals($newJob->taskId, $newJob->newJobId);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testToArray(): void
+    {
+        $newJob = new NewJob(
+            taskId: 'test-id',
+            projectId: 'proj-123',
+            accountId: 'acc-456',
+            envName: 'production',
+        );
+
+        $this->assertEquals(
+            [
+                'projectId' => 'proj-123',
+                'accountId' => 'acc-456',
+                'envName' => 'production',
+                'taskId' => 'test-id',
+                'extra' => ['task_id' => 'test-id'],
+            ],
+            $newJob->toArray(),
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testToArrayWithoutOptionalIdentifiers(): void
+    {
+        $newJob = new NewJob(taskId: 'test-id');
+
+        $this->assertEquals(
+            [
+                'projectId' => null,
+                'accountId' => null,
+                'envName' => null,
+                'taskId' => 'test-id',
+                'extra' => ['task_id' => 'test-id'],
+            ],
+            $newJob->toArray(),
+        );
     }
 }

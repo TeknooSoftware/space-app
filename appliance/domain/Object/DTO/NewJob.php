@@ -27,6 +27,7 @@ namespace Teknoo\Space\Object\DTO;
 
 use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Paas\Contracts\Security\SensitiveContentInterface;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
 
 use function bin2hex;
 use function json_decode;
@@ -41,8 +42,22 @@ use const JSON_THROW_ON_ERROR;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class NewJob implements ObjectInterface, SensitiveContentInterface
+class NewJob implements ObjectInterface, NewTaskInterface
 {
+    /*
+     * @deprecated Kept only for backward compatibility, use $taskId instead.
+     *
+     * phpcs 4.0.4 does not tokenize property hook bodies, it reads `$this` as a second property
+     * declaration. Only the abstract form (`{ get; }`, used in interfaces) is understood.
+     */
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
+    public string $newJobId {
+        get => $this->taskId;
+    }
+    // phpcs:enable PSR2.Classes.PropertyDeclaration.ScopeMissing
+    // phpcs:enable PSR2.Classes.PropertyDeclaration.Multiple
+
     private ?string $encryptionAlgorithm = null;
 
     private ?string $encryptedVariables = null;
@@ -52,22 +67,22 @@ class NewJob implements ObjectInterface, SensitiveContentInterface
      * @param array<string, string> $storageProvisionerPerCluster
      */
     public function __construct(
-        public string $newJobId = '',
+        public string $taskId = '',
         public array $variables = [],
         public ?string $projectId = null,
         public ?string $accountId = null,
         public ?string $envName = null,
         public array $storageProvisionerPerCluster = [],
     ) {
-        if (empty($this->newJobId)) {
-            $this->newJobId = bin2hex(random_bytes(24));
+        if (empty($this->taskId)) {
+            $this->taskId = bin2hex(random_bytes(24));
         }
     }
 
     /*
      * To remove all occurences of persisted object or doctrine proxies in a serialized representation
      */
-    public function export(bool $asArray = false): self
+    public function export(): self
     {
         $that = clone $this;
         $that->variables = [];
@@ -76,6 +91,20 @@ class NewJob implements ObjectInterface, SensitiveContentInterface
         }
 
         return $that;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'projectId' => $this->projectId,
+            'accountId' => $this->accountId,
+            'envName' => $this->envName,
+            'taskId' => $this->taskId,
+            'extra' => ['task_id' => $this->taskId],
+        ];
     }
 
     public function getMessage(): string

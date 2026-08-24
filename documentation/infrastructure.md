@@ -207,11 +207,11 @@ Symfony Messenger handles asynchronous job processing.
 
 Located in `appliance/infrastructures/Symfony/Messenger/Handler/`:
 
-**NewJobHandler**
+**NewTaskHandler**
 
-- Handles: `NewJobMessage`
+- Handles: any `NewTaskInterface` message (currently `NewJob`)
 - Action: Initializes deployment workflow
-- Transport: RabbitMQ (`new_job` queue)
+- Transport: RabbitMQ (`new_task` queue)
 
 **ExecuteJobHandler**
 
@@ -377,7 +377,7 @@ Located in `appliance/infrastructures/Endroid/QrCode/`:
 
 **Queues**
 
-- `new_job`: New deployment requests
+- `new_task`: New deployment requests
 - `execute_job`: Job execution tasks
 - `history_sent`: History persistence
 - `job_done`: Job completion

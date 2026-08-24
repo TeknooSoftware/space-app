@@ -60,7 +60,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
 
     private function getMercureUrl(
         HubInterface $hub,
-        string $newJobId,
+        string $taskId,
     ): string {
         $url = $hub->getPublicUrl();
 
@@ -68,25 +68,25 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
             $this->urlGenerator->generate(
                 name: $this->topicRoute,
                 parameters: [
-                    'newJobId' => $newJobId,
+                    'taskId' => $taskId,
                 ],
                 referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
             )
         );
 
-        return $url . ('&lastEventID=' . $newJobId);
+        return $url . ('&lastEventID=' . $taskId);
     }
 
     public function __invoke(
         ManagerInterface $manager,
         ParametersBag $parametersBag,
-        string $newJobId,
+        string $taskId,
     ): FetchJobIdFromPendingInterface {
         if (false === $this->mercureEnabled) {
             $parametersBag->set(
                 'newJobResult',
                 [
-                    'job_id' => $newJobId,
+                    'task_id' => $taskId,
                     'error_code' => 500,
                     'error_message' => 'teknoo.space.error.job.pending.mercure_disabled',
                 ],
@@ -96,7 +96,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
         }
 
         $hub = $this->hubRegistry->getHub();
-        $url = $this->getMercureUrl($hub, $newJobId);
+        $url = $this->getMercureUrl($hub, $taskId);
         $jwt = $hub->getFactory()?->create();
 
         $this->sseClient->reset();
