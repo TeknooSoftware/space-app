@@ -11,7 +11,7 @@ Space can be installed using several methods:
 
 1. **Docker Compose** (recommended for development and testing)
 2. **Manual Installation** (recommended for production)
-3. **Kubernetes Deployment** (Enterprise Edition with Helm charts)
+3. **Kubernetes Deployment** (see [configuration.md](configuration.md) for cluster setup)
 
 > These methods describe how to run **Space itself**. They are independent of the **deployment target** Space
 > deploys your projects to — which may be a Kubernetes cluster **or** a remote Docker host (Compose + Traefik

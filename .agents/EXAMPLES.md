@@ -183,12 +183,17 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Plan;
 
+use Stringable;
 use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 
 class Dashboard implements EditablePlanInterface
 {
@@ -198,22 +203,26 @@ class Dashboard implements EditablePlanInterface
         RecipeInterface $recipe,
         private readonly HealthInterface $health,
         private readonly LoadEnvironments $loadEnvironments,
+        private readonly ClustersInfoInterface $clustersInfo,
+        private readonly ClusterAndEnvSelection $clusterAndEnvSelection,
         private readonly Render $render,
         private readonly RenderError $renderError,
-        private readonly string $defaultErrorTemplate,
+        private readonly string|Stringable $defaultErrorTemplate,
     ) {
         $this->fill($recipe);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);        // priority 10
-        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 20); // priority 20
-        $recipe = $recipe->cook($this->render, Render::class, [], 50);                // priority 50
+        $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);
+        $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
+        $recipe = $recipe->cook($this->clustersInfo, ClustersInfoInterface::class, [], 20);
+        $recipe = $recipe->cook($this->clusterAndEnvSelection, ClusterAndEnvSelection::class, [], 30);
+        $recipe = $recipe->cook($this->render, Render::class, [], 50);
 
         $recipe = $recipe->onError(new Bowl($this->renderError, []));
 
-        $this->addToWorkplan('errorTemplate', $this->defaultErrorTemplate);
+        $this->addToWorkplan('errorTemplate', (string) $this->defaultErrorTemplate);
 
         return $recipe;
     }
@@ -239,11 +248,15 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\AccountEnvironment;
 
+use DomainException;
+use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Loader\AccountEnvironmentLoader;
 use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Query\AccountEnvironment\LoadFromAccountQuery;
 
 class LoadEnvironments
@@ -255,15 +268,44 @@ class LoadEnvironments
 
     public function __invoke(
         ManagerInterface $manager,
-        ?Account $accountInstance = null,
+        Account|SpaceAccount|null $accountInstance = null,
+        bool $allowEmptyCredentials = false
     ): self {
+        if ($accountInstance instanceof SpaceAccount) {
+            $accountInstance = $accountInstance->account;
+        }
+
+        if (true === $allowEmptyCredentials && null === $accountInstance) {
+            return $this;
+        }
+
+        $errorCallback = fn (): ChefInterface => $manager->updateWorkPlan([
+            AccountWallet::class => new AccountWallet([])
+        ]);
+
+        if (false === $allowEmptyCredentials) {
+            $errorCallback = static fn (\Throwable $error): ChefInterface => $manager->error(
+                new DomainException(
+                    message: 'teknoo.space.error.space_account.account_environment.fetching',
+                    code: $error->getCode() > 0 ? $error->getCode() : 404,
+                    previous: $error,
+                )
+            );
+
+            if (null === $accountInstance) {
+                $errorCallback(new RuntimeException('teknoo.space.error.space_account.missing'));
+
+                return $this;
+            }
+        }
+
         $fetchedPromise = new Promise(
-            static function (iterable $environments) use ($manager): void {
+            static function (iterable $credentials) use ($manager): void {
                 $manager->updateWorkPlan([
-                    AccountWallet::class => new AccountWallet($environments),
+                    AccountWallet::class => new AccountWallet($credentials),
                 ]);
             },
-            static fn (\Throwable $error) => $manager->error($error)
+            $errorCallback
         );
 
         $this->loader->query(

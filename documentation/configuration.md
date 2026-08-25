@@ -1532,8 +1532,6 @@ For pods, containers, services, and ingresses:
 
 #### SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON / _FILE
 
-See Enterprise Edition documentation for library configuration.
-
 ### Image Library
 
 Use **one** of these options:
@@ -1807,5 +1805,3 @@ kubectl --kubeconfig=/path/to/kubeconfig cluster-info
 - [Installation Guide](installation.md) - Installation procedures
 - [Worker Documentation](worker.md) - Worker configuration
 - [Requirements](requirements.md) - System requirements
-
-For Enterprise Edition features and additional configuration options, contact richard@teknoo.software.

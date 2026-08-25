@@ -59,8 +59,8 @@ A commercial `Enterprise` version is planned with some additional features.
 
 Support this project
 ---------------------
-This project is free and will remain free. It is fully supported by the activities of the EIRL and
-by the `Enterprise` edition sales.
+This project is free and will remain free. It is fully supported by commercial activities of SASU Teknoo Software and 
+EIRL Richard DELOGE and by the `Enterprise` edition sales.
 If you like it and help me maintain it and evolve it, don't hesitate to support me on
 [Patreon](https://patreon.com/teknoo_software) or [Github](https://github.com/sponsors/TeknooSoftware).
 

@@ -296,11 +296,6 @@ The **Cluster** target is either a Kubernetes cluster (reached via its API) or a
 over SSH; workers run Ansible to apply the Compose/Traefik stack). The target is chosen per cluster by the
 `type` field.
 
-Space **Enterprise** can additionally bootstrap a bare host into a valid docker-compose target — installing
-rootless Docker Engine + Compose v3, an SSH deploy user, and Traefik v3 over Ansible (via the `InstallDockerHost`
-plan, exposed as a CLI command and an admin endpoint). That functionality ships in the separate
-`space-app-enterprise` repository.
-
 ## Design Patterns
 
 ### Used Patterns

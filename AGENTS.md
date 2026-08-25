@@ -62,7 +62,7 @@ appliance/
 
 ### Architectural Patterns
 
-1. **Recipe Pattern**: Workflows composed of **Plans** (`domain/Recipe/Plan/`) and **Steps** (`domain/Recipe/Step/`)
+1. **Recipe Pattern**: Workflows composed of **Plans** (`domain/Recipe/Plan/`, 25 plans) and **Steps** (`domain/Recipe/Step/`, 18 categories)
 2. **DDD**: Clear separation between domain, application, and infrastructure layers
 3. **Immutability**: Uses Teknoo/Immutable and Teknoo/States
 4. **PHP-DI**: Dependency injection via `config/di.*.php`
@@ -77,9 +77,9 @@ config/routes/api/v1/
 └── admin/              # Admin endpoints: account, project, job, user
 ```
 
-Web routes in `config/routes/`: `space.account.yaml`, `space.project.yaml`, `space.job.yaml`,
-`space.dashboard.yaml`, `space.settings.yaml`, `space.subscription.yaml`, `space.admin.*.yaml`,
-`east.paas.overwrite.*.yaml`.
+Web routes in `config/routes/`: 10 Space route files (`space.account.yaml`, `space.admin.account.yaml`,
+`space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`, `space.project.yaml`,
+`space.settings.yaml`, `space.subscription.yaml`, `space.support.contact.yaml`) with 48 `path:` entries total.
 
 **JWT Auth**: Generate from WebUI account settings or `POST /api/v1/login`. Use `Authorization: Bearer {token}`.
 Config via `SPACE_JWT_*` env vars. Templates: `.html.twig` (HTML) and `.json.twig` (API) in `appliance/templates/`.
@@ -164,15 +164,15 @@ bin/console messenger:consume job_done       # Persist final results
 
 ### Working with Recipes
 
-1. Create Steps in `domain/Recipe/Step/` (granular operations)
-2. Compose Plans in `domain/Recipe/Plan/` (workflow orchestration)
+1. Create Steps in `domain/Recipe/Step/` (18 categories, granular operations)
+2. Compose Plans in `domain/Recipe/Plan/` (25 plans, workflow orchestration)
 3. Register in `config/di.recipe.*.php`
 
 See [.agents/EXAMPLES.md](.agents/EXAMPLES.md) for Plan and Step examples.
 
 ### Configuration System
 
-- `config/di.variables.from.envs.php` — maps env vars to DI container
+- `documentation/configuration.md` — full environment variable reference table (extracted from `di.variables.from.envs.php`)
 - `.env.local` — local config (not committed); `.env.local.dist` — template
 
 ### Testing
@@ -220,7 +220,7 @@ Projects define deployments in `.paas.yaml`. The compiler: parses YAML → appli
 Platform-agnostic at domain level; platform-specific transcribers come from East PaaS (Kubernetes transcribers,
 and the docker-compose/Traefik driver + Ansible runner). Space adds type-aware account provisioning in
 `infrastructures/Kubernetes/` and `infrastructures/AnsibleDockerCompose/`, dispatched by cluster `type`.
-Supports "extends" for reusable components (BigBang library in Enterprise).
+Supports "extends" for reusable components via container libraries.
 
 ## Workflow Orchestration
 
