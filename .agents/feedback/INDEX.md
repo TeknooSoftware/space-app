@@ -7,6 +7,14 @@ After each task: create `YYYY-MM-DD-task-name.md` here, then add an entry below.
 
 ## Recent Feedback Entries
 
+### 2026-08-26 — [Stage 2: setup docker on the task worker](2026-08-26-setup-docker-task-worker.md)
+
+**Status**: ✅ Resolved — `SetupDockerDto`/`RunSetupDockerDto` + persisted `SetupDockerJob`; two-hop worker
+flow (`PrepareInstallDockerHost` → `RunInstallDockerHost` → `InstallDockerHost`) with a history page;
+doctrine mapping + messenger transport declared from the Enterprise bundle. Three latent bugs in the
+rewritten files fixed (unautoloadable form-type namespace, two missing route defaults, a template extending
+a non-existent layout). make qa + make test exit 0 (1165 tests, 44/44 features).
+
 ### 2026-08-24 — [Stage 1b: `CallNewJob` → `CallNewTask`](2026-08-24-call-new-task.md)
 
 **Status**: ✅ Resolved — dispatch step generalized to `NewTaskInterface`; `projectId`/`projectName` gated

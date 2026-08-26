@@ -262,6 +262,16 @@ class SpaceContext implements Context
         return self::$currentInstance;
     }
 
+    public function kernel(): KernelInterface
+    {
+        return $this->kernel;
+    }
+
+    public function transportRegistry(): TestTransportRegistry
+    {
+        return $this->testTransport;
+    }
+
     private function clear(): void
     {
         $this->request = null;

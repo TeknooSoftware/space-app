@@ -15,6 +15,10 @@ Multi-agent coordination hub for the Space project.
     └── lessons.md         # Optional: project-specific quick reference
 ```
 
+**Extension Directives**: Enabled extensions may have their own
+`appliance/extensions/*/.agents/*.md` files. These extend or refine the
+coordination system for extension-specific workflows.
+
 ## File Roles
 
 | File                | Required                | Read When                 |
@@ -27,6 +31,7 @@ Multi-agent coordination hub for the Space project.
 
 ## Navigation
 
-- **New session**: read [../AGENTS.md](../AGENTS.md) → read [feedback/INDEX.md](feedback/INDEX.md)
+- **New session**: read [../AGENTS.md](../AGENTS.md) → read `appliance/extensions/*/AGENTS.md`
+  (if any) → read [feedback/INDEX.md](feedback/INDEX.md)
 - **Writing code**: refer to [EXAMPLES.md](EXAMPLES.md)
 - **After task**: create `feedback/YYYY-MM-DD-task-name.md` → update [feedback/INDEX.md](feedback/INDEX.md)

@@ -14,6 +14,12 @@ here to ensure consistency and quality.
 - [.agents/README.md](.agents/README.md) - Overview of the .agents/ coordination system
 - [.agents/EXAMPLES.md](.agents/EXAMPLES.md) - Detailed code examples
 
+**Extension Directives**: Each enabled extension may ship its own `appliance/extensions/*/AGENTS.md`
+and `.agents/*.md` documentation. These files extend or refine the standards above for extension-specific
+behavior (recipes, steps, hooks, container libraries, routes, etc.). In case of conflict,
+extension-specific directives take precedence for that extension's code. Always read them before
+working on or with extensions.
+
 ---
 
 ## Table of Contents
@@ -229,6 +235,8 @@ Supports "extends" for reusable components via container libraries.
 - Read `.agents/feedback/INDEX.md` — learn from past challenges
 - Check `.agents/tasks/lessons.md` if it exists — project-specific quick reference
 - Apply lessons to avoid past mistakes
+- Read `appliance/extensions/*/AGENTS.md` and `appliance/extensions/*/.agents/*.md` (if they
+  exist) — extension-specific directives that supplement the project-wide standards
 
 ### 1. Plan Mode Default
 

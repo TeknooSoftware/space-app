@@ -46,7 +46,10 @@ As Claude Code, you have unique capabilities that other agents may not have. Use
 #### Your Responsibilities
 
 1. **Read First**
-    - **ALWAYS** read [AGENTS.md](AGENTS.md) at the start of a session
+    - **ALWAYS** read [AGENTS.md](AGENTS.md) at the start of a session — this is the universal standards
+      document. Follow its instructions, which include reading extension-level `AGENTS.md` files
+      (`appliance/extensions/*/AGENTS.md`) and extension `.agents/` documentation whenever an extension
+      is enabled and relevant to the task.
     - **ALWAYS** read `.agents/feedback/INDEX.md` to learn from past challenges
     - Check if other agents have left notes in `.agents/` directory
 
@@ -74,6 +77,7 @@ Every time you start a new session:
 - [ ] Read [AGENTS.md](AGENTS.md) for project standards
 - [ ] Read `.agents/feedback/INDEX.md` for past challenges
 - [ ] Check `.agents/tasks/lessons.md` for project-specific lessons (if exists)
+- [ ] Read extension-level `appliance/extensions/*/AGENTS.md` (if any exist)
 - [ ] Understand the current task requirements
 - [ ] Plan your approach (use plan mode for non-trivial tasks)
 - [ ] Execute with verification
@@ -115,6 +119,10 @@ The `.agents/` directory is your coordination hub. **Start here**: [.agents/READ
 Start → CLAUDE.md (you are here)
   ↓
 Read → AGENTS.md (universal standards)
+  ↓
+Read → appliance/extensions/*/AGENTS.md (extension-specific standards, if any)
+  ↓
+Read → .agents/README.md (.agents/ coordination system)
   ↓
 Check → .agents/feedback/INDEX.md (learn from past)
   ↓
