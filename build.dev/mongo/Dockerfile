@@ -6,7 +6,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -ux ; \
     apt-get update ; \
-    apt-get dist-upgrade -y ; \
-    apt-get install -y netcat
+    apt-get dist-upgrade -y
 
 COPY init_mongo.js /docker-entrypoint-initdb.d/
