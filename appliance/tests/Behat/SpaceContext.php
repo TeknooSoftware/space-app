@@ -36,7 +36,7 @@ use DI\Container as DiContainer;
 use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
-use phpseclib3\Crypt\RSA;
+use phpseclib4\Crypt\RSA;
 use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
 use PHPUnit\TextUI\Configuration\Builder as PhpUnitConfigBuilder;

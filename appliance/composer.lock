@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "faa71bbba21e998257517ebafdd47adb",
+    "content-hash": "e74ab338581111288c80abb19acbb7d3",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -3773,31 +3773,35 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.57",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4"
+                "reference": "bb7b959c8159957edae6f5084ebbac765d310e16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
-                "reference": "d17e0ddaeaf6f22f7e007cbb437d78792fe2a0e4",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/bb7b959c8159957edae6f5084ebbac765d310e16",
+                "reference": "bb7b959c8159957edae6f5084ebbac765d310e16",
                 "shasum": ""
             },
             "require": {
-                "paragonie/constant_time_encoding": "^1|^2|^3",
-                "paragonie/random_compat": "^1.4|^2.0|^9.99.99",
-                "php": ">=5.6.1"
+                "paragonie/constant_time_encoding": "^2|^3",
+                "php": ">=8.1",
+                "symfony/polyfill-php82": "^1.26"
             },
             "require-dev": {
-                "phpunit/phpunit": "*"
+                "brianium/paratest": "^7.22",
+                "ext-xml": "*",
+                "php-parallel-lint/php-parallel-lint": "^1.3",
+                "phpunit/phpunit": "^13",
+                "squizlabs/php_codesniffer": "^3.7",
+                "vimeo/psalm": "*"
             },
             "suggest": {
                 "ext-dom": "Install the DOM extension to load XML formatted public keys.",
                 "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
                 "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
-                "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
                 "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
             },
             "type": "library",
@@ -3806,7 +3810,7 @@
                     "phpseclib/bootstrap.php"
                 ],
                 "psr-4": {
-                    "phpseclib3\\": "phpseclib/"
+                    "phpseclib4\\": "phpseclib/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3838,10 +3842,16 @@
                     "name": "Graham Campbell",
                     "email": "graham@alt-three.com",
                     "role": "Developer"
+                },
+                {
+                    "name": "Jack Worman",
+                    "email": "jack.worman@gmail.com",
+                    "homepage": "https://jackworman.com",
+                    "role": "Developer"
                 }
             ],
             "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
-            "homepage": "http://phpseclib.sourceforge.net",
+            "homepage": "https://phpseclib.com/",
             "keywords": [
                 "BigInteger",
                 "aes",
@@ -3863,7 +3873,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.57"
+                "source": "https://github.com/phpseclib/phpseclib/tree/4.0.1"
             },
             "funding": [
                 {
@@ -3879,7 +3889,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-26T12:13:21+00:00"
+            "time": "2026-08-26T12:15:13+00:00"
         },
         {
             "name": "psr/cache",
@@ -8525,6 +8535,86 @@
             "time": "2026-04-10T16:19:22+00:00"
         },
         {
+            "name": "symfony/polyfill-php82",
+            "version": "v1.38.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php82.git",
+                "reference": "002dc0cfe5fd4ed6033d48f27d4f19a486c4b04b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php82/zipball/002dc0cfe5fd4ed6033d48f27d4f19a486c4b04b",
+                "reference": "002dc0cfe5fd4ed6033d48f27d4f19a486c4b04b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php82\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.2+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php82/tree/v1.38.1"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-05-26T12:45:58+00:00"
+        },
+        {
             "name": "symfony/polyfill-php84",
             "version": "v1.38.1",
             "source": {
@@ -11430,16 +11520,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.7.0-beta4",
+            "version": "5.7.0-beta6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "9e6184ee7f2512a5d0e670a0e34512a9f047b4f0"
+                "reference": "7b21fd9ac035b17cca5a9702b3484287c6a22cf6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/9e6184ee7f2512a5d0e670a0e34512a9f047b4f0",
-                "reference": "9e6184ee7f2512a5d0e670a0e34512a9f047b4f0",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/7b21fd9ac035b17cca5a9702b3484287c6a22cf6",
+                "reference": "7b21fd9ac035b17cca5a9702b3484287c6a22cf6",
                 "shasum": ""
             },
             "require": {
@@ -11473,7 +11563,7 @@
                 "nikic/php-parser": "^5.7",
                 "php-http/discovery": "^1.20",
                 "php-http/mock-client": "^1.6.1",
-                "phpseclib/phpseclib": "^3.0.49",
+                "phpseclib/phpseclib": "^4",
                 "phpstan/extension-installer": "^1.4.3",
                 "phpstan/phpstan": "^2.2.3",
                 "phpunit/phpunit": "^13.0.1",
@@ -11587,20 +11677,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-07-30T07:40:49+00:00"
+            "time": "2026-08-27T08:34:27+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.7.0-beta4",
+            "version": "5.7.0-beta6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "be164ee624af0ff02c02059bc8075bcc480699f6"
+                "reference": "fa5d4e9155ba4d837346d385451ec15fefeba94d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/be164ee624af0ff02c02059bc8075bcc480699f6",
-                "reference": "be164ee624af0ff02c02059bc8075bcc480699f6",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/fa5d4e9155ba4d837346d385451ec15fefeba94d",
+                "reference": "fa5d4e9155ba4d837346d385451ec15fefeba94d",
                 "shasum": ""
             },
             "require": {
@@ -11618,7 +11708,7 @@
                 "php": "^8.3",
                 "php-di/php-di": "^7.1.1",
                 "php-http/guzzle7-adapter": "^1.1",
-                "phpseclib/phpseclib": "^3.0.46",
+                "phpseclib/phpseclib": "^4",
                 "psr/http-client": "^1.0.3",
                 "symfony/amqp-messenger": "^6.4.24||^7.4||^8.1",
                 "symfony/console": "^6.4.24||^7.4||^8.1",
@@ -11638,7 +11728,7 @@
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
                 "teknoo/east-common-symfony": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2",
-                "teknoo/east-paas": "^5.7.0-beta4",
+                "teknoo/east-paas": "^5.7.0-beta6",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
                 "teknoo/recipe": "^7.2.2",
@@ -11700,7 +11790,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-07-30T07:43:12+00:00"
+            "time": "2026-08-27T08:35:19+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13858,12 +13948,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "66e87ad57a1a06a0eb01de9168b25605915d910a"
+                "reference": "d7dcb4d45ec2a3ee1a5b24a0b071868c280807e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/66e87ad57a1a06a0eb01de9168b25605915d910a",
-                "reference": "66e87ad57a1a06a0eb01de9168b25605915d910a",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/d7dcb4d45ec2a3ee1a5b24a0b071868c280807e1",
+                "reference": "d7dcb4d45ec2a3ee1a5b24a0b071868c280807e1",
                 "shasum": ""
             },
             "conflict": {
@@ -13971,6 +14061,7 @@
                 "cakephp/authentication": "<2.11.1|>=3,<3.3.6|>=4,<4.1.1",
                 "cakephp/cakephp": "<4.5.11|>=4.6,<4.6.4|>=5,<5.1.7|>=5.2,<5.2.13|>=5.3,<5.3.6",
                 "cakephp/database": ">=4.2,<4.2.12|>=4.3,<4.3.11|>=4.4,<4.4.10",
+                "cakephp/debug_kit": "<4.10.3|>=5,<5.2.4",
                 "cardgate/magento2": "<2.0.33",
                 "cardgate/woocommerce": "<=3.1.15",
                 "cart2quote/module-quotation": ">=4.1.6,<4.4.6|>=5,<5.4.4",
@@ -14989,7 +15080,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-26T07:45:11+00:00"
+            "time": "2026-08-26T16:17:54+00:00"
         },
         {
             "name": "sebastian/cli-parser",
