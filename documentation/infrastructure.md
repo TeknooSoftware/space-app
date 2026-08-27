@@ -406,3 +406,36 @@ Space uses PHP-DI for dependency injection:
 - Autowiring for standard services
 - Manual wiring for complex dependencies
 
+### Loader/Writer Persistence
+
+MongoDB ODM repositories live in `infrastructures/Doctrine/Repository/ODM/` (9 repositories):
+
+- `AccountDataRepository`, `UserDataRepository`, `ProjectMetadataRepository`
+- `AccountEnvironmentRepository`, `AccountClusterRepository`, `AccountRegistryRepository`
+- `ProjectPersistedVariableRepository`, `AccountPersistedVariableRepository`, `AccountHistoryRepository`
+
+Each repository extends `Doctrine\ODM\MongoDB\Repository\DocumentRepository` and implements its domain
+interface. Loaders and Writers (in `domain/Loader/` and `domain/Writer/`) use these repositories for
+data access.
+
+### PHP-DI Config Files
+
+The 11 `di.*.php` files in `config/di/` are loaded by PHP-DI at container build time:
+
+- `di.common.php`: Core services
+- `di.hook.php`: Hook registration
+- `di.recipe.plans.php`: Plan definitions (51 plans)
+- `di.recipe.steps.php`: Step definitions (56 steps, 18 categories)
+- `di.variables.php`, `di.variables.clusters.php`, `di.variables.east.common.php`,
+  `di.variables.east.paas.php`, `di.variables.from.envs.php`: Variable configurations
+- `di.persistent_data.php`: MongoDB repositories, loaders, writers
+- `di.persisted_vars.encryption.php`: Encryption service
+
+Extensions add their own services via `di.php` files loaded by the Teknoo East Foundation extension system.
+
+### Two-repo Layout
+
+Enterprise extensions are mounted from the `space-app-enterprise` repository. The extension loader
+discovers Enterprise bundles at runtime via Composer autoloading. Enterprise code lives in a separate
+Git repository; plan-doc Findings commits go to `space-app`.
+

@@ -13,6 +13,8 @@ here to ensure consistency and quality.
 - [CLAUDE.md](CLAUDE.md) - Claude Code specific guidance and quick start
 - [.agents/README.md](.agents/README.md) - Overview of the .agents/ coordination system
 - [.agents/EXAMPLES.md](.agents/EXAMPLES.md) - Detailed code examples
+- [documentation/](documentation/) — Deep-dive docs: architecture, domain model, API, configuration, development,
+  workers, infrastructure, installation, requirements
 
 **Extension Directives**: Each enabled extension may ship its own `appliance/extensions/*/AGENTS.md`
 and `.agents/*.md` documentation. These files extend or refine the standards above for extension-specific
@@ -30,11 +32,9 @@ working on or with extensions.
 4. [Common Commands](#common-commands)
 5. [Development Guidelines](#development-guidelines)
 6. [Key Concepts](#key-concepts)
-7. [Contributing](#contributing)
-8. [Workflow Orchestration](#workflow-orchestration)
-9. [Task Management](#task-management)
-10. [Feedback Loop](#feedback-loop)
-11. [Core Principles](#core-principles)
+7. [Workflow Orchestration](#workflow-orchestration)
+8. [Task Management & Feedback Loop](#task-management--feedback-loop)
+9. [Core Principles](#core-principles)
 
 ---
 
@@ -45,22 +45,22 @@ Teknoo Kubernetes Client, and Symfony. Multi-account, multi-users, multi-project
 IT projects on containerized platforms.
 
 **Key Technologies**: PHP 8.4+, Symfony 7.4+/8+, Doctrine MongoDB ODM, AMQP (RabbitMQ), Mercure,
-Buildah (OCI image builder), Kubernetes (default deployment target via driver system), Docker Compose + Ansible
-+ Traefik v3 (second deployment target — a remote Docker host managed over SSH).
+Buildah (OCI image builder), Kubernetes (default), Docker Compose + Ansible + Traefik v3 (alternate target).
 
-**Deployment targets**: selected per cluster by the `type` field — `kubernetes` (via the Kubernetes API) or
-`docker-compose` (a Docker host reached over SSH; workers run Ansible to apply the Compose/Traefik stack). The
-job API and `RunJob` recipe are target-agnostic.
+**Deployment targets**: selected per cluster by the `type` field — `kubernetes` (Kubernetes API) or
+`docker-compose` (Docker host over SSH, Ansible applies Compose/Traefik stack). The job API and
+`RunJob` recipe are target-agnostic.
 
-**Extensibility**: Driver-based architecture supports further targets and build tools.
+**Extensibility**: Driver-based architecture supports further targets and build tools. Enterprise extensions
+are mounted from a separate repository (`space-app-enterprise`), not in the main `space-app` repo.
 
 ## Code Architecture
 
 ```
 appliance/
-├── domain/         # Business logic — Object/, Recipe/, Contracts/, Loader/, Writer/, Query/, Service/, Middleware/
+├── domain/         # Business logic — Object/, Recipe/, Contracts/, Loader/, Writer/, Query/
 ├── src/            # Application layer — Kernel.php only
-├── infrastructures/ # Framework integrations — Doctrine/, Kubernetes/, AnsibleDockerCompose/, Symfony/, Twig/
+├── infrastructures/ # Framework integrations — Doctrine/, Kubernetes/, AnsibleDockerCompose/, Symfony/
 ├── extensions/     # Extension system (e.g. Enterprise edition)
 ├── config/         # PHP-DI + Symfony config — di.*.php files, env-var driven
 └── tests/          # PHPUnit unit tests + Behat behavioral tests
@@ -68,11 +68,10 @@ appliance/
 
 ### Architectural Patterns
 
-1. **Recipe Pattern**: Workflows composed of **Plans** (`domain/Recipe/Plan/`, 25 plans) and **Steps** (`domain/Recipe/Step/`, 18 categories)
-2. **DDD**: Clear separation between domain, application, and infrastructure layers
-3. **Immutability**: Uses Teknoo/Immutable and Teknoo/States
-4. **PHP-DI**: Dependency injection via `config/di.*.php`
-5. **Extension System**: From Teknoo East Foundation — modify behavior without editing core code
+1. **Recipe Pattern**: Workflows composed of **Plans** (`domain/Recipe/Plan/`, 25 plans) and **Steps** (`domain/Recipe/Step/`, 18 categories). See [`.agents/recipes.md`](.agents/recipes.md) for details.
+2. **DDD**: Clear separation between domain, application, and infrastructure layers.
+3. **PHP-DI**: Dependency injection via `config/di.*.php` (11 config files). See [`documentation/architecture.md`](documentation/architecture.md).
+4. **Extension System**: From Teknoo East Foundation — modify behavior without editing core code. Enterprise extensions are mounted from a separate repo.
 
 ## API & Routes
 
@@ -83,12 +82,12 @@ config/routes/api/v1/
 └── admin/              # Admin endpoints: account, project, job, user
 ```
 
-Web routes in `config/routes/`: 10 Space route files (`space.account.yaml`, `space.admin.account.yaml`,
-`space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`, `space.project.yaml`,
-`space.settings.yaml`, `space.subscription.yaml`, `space.support.contact.yaml`) with 48 `path:` entries total.
+Web routes: 10 YAML files (`space.*.yaml`) in `config/routes/` with 48 `path:` entries total.
 
 **JWT Auth**: Generate from WebUI account settings or `POST /api/v1/login`. Use `Authorization: Bearer {token}`.
-Config via `SPACE_JWT_*` env vars. Templates: `.html.twig` (HTML) and `.json.twig` (API) in `appliance/templates/`.
+Config via `SPACE_JWT_*` env vars. Templates: `.html.twig` (HTML) and `.json.twig` (API).
+
+See [`documentation/api.md`](documentation/api.md) for full API docs; [`.agents/api.md`](.agents/api.md) for structure.
 
 ## Common Commands
 
@@ -101,41 +100,18 @@ All commands from project root via `./space.sh` or from `appliance/`.
 ./space.sh config               # Interactive config wizard
 ./space.sh create-admin email=user@example.com password=secret
 
-# Testing (full suite)
-./space.sh test                 # All tests (units + behavior, with coverage, multi-threaded)
-./space.sh test-mono-thread     # All tests in mono thread (units + behavior, with coverage)
-./space.sh test-without-coverage # All tests without coverage
-
-# Unit tests only
-./space.sh units-tests           # Unit tests with coverage
-./space.sh units-tests-without-coverage # Unit tests without coverage
-vendor/bin/phpunit tests/path/to/TestFile.php
-
-# Behavior tests only
-./space.sh behavior-test         # Behavior tests (Behat, multi-threaded)
-./space.sh behavior-test-mono-thread # Behavior tests (Behat, mono thread)
-vendor/bin/behat features/path/to/feature.feature
-
-# Quality Assurance
+# Testing
+./space.sh test                 # All tests (units + behavior, with coverage)
+./space.sh units-tests           # Unit tests
+./space.sh behavior-test         # Behat features
 ./space.sh qa                   # lint + phpstan + phpcs + audit
-./space.sh phpstan
-./space.sh phpcs
 
-# Cache
+# Cache & Docker
 ./space.sh warmup               # Clear and warm up cache
-
-# Docker
 ./space.sh build && ./space.sh start
 
-# Extensions
-./space.sh extension-list
-./space.sh extension-enable name=ExtensionName
-
 # Workers (async job processing)
-bin/console messenger:consume new_task        # Prepare deployments
-bin/console messenger:consume execute_job    # Execute deployments
-bin/console messenger:consume history_sent   # Persist histories
-bin/console messenger:consume job_done       # Persist final results
+bin/console messenger:consume new_task | execute_job | history_sent | job_done
 ```
 
 ## Development Guidelines
@@ -154,51 +130,21 @@ bin/console messenger:consume job_done       # Persist final results
 | Strict typing       | Always `declare(strict_types=1);`              |
 | Type declarations   | Full type hints on all params and return types |
 | Readonly properties | Use `readonly` where applicable                |
-| Immutability        | Use `Teknoo\Immutable` pattern where possible  |
 | Property promotion  | Use constructor property promotion             |
 
-### Editor Config
+### Configuration
 
-| Setting             | Value                  |
-|---------------------|------------------------|
-| Charset             | UTF-8                  |
-| Line endings        | LF                     |
-| PHP indent          | 4 spaces               |
-| YAML indent         | 2 spaces               |
-| Final newline       | Yes                    |
-| Trailing whitespace | Trimmed (except `.md`) |
-
-### Working with Recipes
-
-1. Create Steps in `domain/Recipe/Step/` (18 categories, granular operations)
-2. Compose Plans in `domain/Recipe/Plan/` (25 plans, workflow orchestration)
-3. Register in `config/di.recipe.*.php`
-
-See [.agents/EXAMPLES.md](.agents/EXAMPLES.md) for Plan and Step examples.
-
-### Configuration System
-
-- `documentation/configuration.md` — full environment variable reference table (extracted from `di.variables.from.envs.php`)
+- [`documentation/configuration.md`](documentation/configuration.md) — full environment variable reference table
 - `.env.local` — local config (not committed); `.env.local.dist` — template
 
-### Testing
+### Recipes, Testing, Forms, Security
 
-- Unit tests: test domain logic in isolation; Behat: full workflow/user scenarios
-- `APP_ENV=test` for test execution
-- JWT keypair for tests: `bin/console lexik:jwt:generate-keypair --skip-if-exists`
+See [`.agents/recipes.md`](.agents/recipes.md) · [`.agents/testing.md`](.agents/testing.md) ·
+[`.agents/forms.md`](.agents/forms.md) · [`.agents/security.md`](.agents/security.md)
 
-### Extension Development
+### Branches
 
-- Can add Symfony bundles, routes, templates; decorate Recipe Plans/Steps
-- Can extend PaaS compiler (hooks, container libraries)
-- Configure via `TEKNOO_EAST_EXTENSION_*` env vars
-- See [.agents/EXAMPLES.md#extension-example](.agents/EXAMPLES.md#extension-example)
-
-### Contribution Requirements
-
-- PSR-12 style ✅ · Type declarations ✅ · PHPStan max ✅
-- Tests for new functionality ✅ · 90% coverage ✅ · Behat for user features ✅
-- Branches: `hotfix/` or `feature/` — never PR directly from `master`
+`hotfix/` or `feature/` — never PR directly from `master`.
 
 ## Key Concepts
 
@@ -213,63 +159,29 @@ See [.agents/EXAMPLES.md](.agents/EXAMPLES.md) for Plan and Step examples.
 ### Deployment Flow
 
 1. User creates Job → `new_task` worker prepares it
-2. `execute_job` worker clones Git repo, runs PaaS compilation
-3. OCI images built (default: Buildah, configurable via `SPACE_IMG_BUILDER_CMD`)
-4. Resources deployed to the target cluster — Kubernetes API, or a Docker host over SSH/Ansible for
-   `docker-compose` clusters (target chosen at runtime by cluster `type`)
-5. `history_sent` / `job_done` workers persist results
+2. `execute_job` worker clones Git repo, runs PaaS compilation, builds images, deploys
+3. `history_sent` / `job_done` workers persist results
 
 ### PaaS Compilation
 
 Projects define deployments in `.paas.yaml`. The compiler: parses YAML → applies hooks
 (composer, npm, pip, make, etc.) → builds OCI images → generates deployment manifests.
-Platform-agnostic at domain level; platform-specific transcribers come from East PaaS (Kubernetes transcribers,
-and the docker-compose/Traefik driver + Ansible runner). Space adds type-aware account provisioning in
-`infrastructures/Kubernetes/` and `infrastructures/AnsibleDockerCompose/`, dispatched by cluster `type`.
+Platform-agnostic at domain level; platform-specific transcribers come from East PaaS.
 Supports "extends" for reusable components via container libraries.
 
 ## Workflow Orchestration
 
-### 0. Session Start
-
+### Session Start
 - Read `.agents/feedback/INDEX.md` — learn from past challenges
-- Check `.agents/tasks/lessons.md` if it exists — project-specific quick reference
-- Apply lessons to avoid past mistakes
-- Read `appliance/extensions/*/AGENTS.md` and `appliance/extensions/*/.agents/*.md` (if they
-  exist) — extension-specific directives that supplement the project-wide standards
 
-### 1. Plan Mode Default
-
+### Plan Mode
 - Enter plan mode for any non-trivial task (3+ steps or architectural decisions)
-- If something goes sideways: STOP and re-plan — don't keep pushing
+- If something goes sideways: STOP and re-plan
 - Use plan mode for verification steps, not just building
 
-### 2. Subagent Strategy
-
-- Offload research, exploration, and parallel analysis to subagents
-- One task per subagent for focused execution; throw more compute at complex problems
-
-### 3. Self-Improvement Loop
-
-- After any user correction: document pattern in `.agents/feedback/`
-- Optionally maintain `.agents/tasks/lessons.md` for quick project-specific reference
-- Review `.agents/feedback/INDEX.md` at every session start
-
-### 4. Verification Before Done
-
+### Verification Before Done
 - Never mark a task complete without proving it works
 - Run tests, check logs, demonstrate correctness
-- Ask: "Would a staff engineer approve this?"
-
-### 5. Demand Elegance (Balanced)
-
-- For non-trivial changes: pause and ask "is there a more elegant way?"
-- Skip for simple obvious fixes — don't over-engineer
-
-### 6. Autonomous Bug Fixing
-
-- When given a bug report: just fix it — no hand-holding needed
-- Point at logs, errors, failing tests → resolve them
 
 ## Task Management & Feedback Loop
 

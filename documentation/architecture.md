@@ -91,7 +91,22 @@ Space uses the **Recipe pattern** from Teknoo East Foundation for workflow orche
 - **Steps**: Individual operations implementing specific use cases
 - **EditablePlan**: Dynamic plans that can be modified through extensions during the service container compilation
 
-### 2. Messenger-Based Workers
+### 2. Loader/Writer Pattern
+
+Data persistence follows the **Loader/Writer pattern**: Loaders read entities from MongoDB and Writers persist
+changes. Each persisted entity has a one-to-one Loader–Writer pair.
+
+- **Loaders** (9 classes in `domain/Loader/`): implement `LoaderInterface`, fetch entities from MongoDB
+  repositories. Examples: `AccountDataLoader`, `UserDataLoader`, `ProjectMetadataLoader`.
+- **Writers** (10 classes in `domain/Writer/`): implement `WriterInterface`, persist entities via Doctrine ODM
+  repositories. Examples: `AccountDataWriter`, `UserDataWriter`, `ProjectMetadataWriter`.
+- **Meta Writers** (3 classes in `domain/Writer/Meta/`): `SpaceAccountWriter`, `SpaceUserWriter`,
+  `SpaceProjectWriter` — bridge East Foundation entities with Space's domain layer.
+
+Loaders and Writers are wired as services in `config/di.persistent_data.php` and injected into Recipe plans
+that need data access.
+
+### 3. Messenger-Based Workers
 
 The application uses Symfony Messenger for asynchronous processing:
 
@@ -100,7 +115,73 @@ The application uses Symfony Messenger for asynchronous processing:
 - **History Sent Worker**: Persists deployment history events
 - **Job Done Worker**: Finalizes completed deployments
 
-### 3. Multi-Tenancy Model
+### 4. PHP-DI Configuration
+
+Space uses 11 `di.*.php` files in `config/di/` for dependency injection:
+
+| File | Purpose |
+|------|---------|
+| `di.common.php` | Core services (logger, event dispatcher, Mercure hub) |
+| `di.hook.php` | East PaaS hook registration |
+| `di.recipe.plans.php` | 51 Recipe Plans |
+| `di.recipe.steps.php` | 56 Recipe Steps across 18 categories |
+| `di.variables.php` | Application variables |
+| `di.variables.clusters.php` | Cluster catalog |
+| `di.variables.east.common.php` | East Foundation common defaults |
+| `di.variables.east.paas.php` | East PaaS defaults |
+| `di.variables.from.envs.php` | Environment-variable-driven config |
+| `di.persistent_data.php` | MongoDB repositories, loaders, writers |
+| `di.persisted_vars.encryption.php` | PVar encryption service |
+
+Extensions register their own configuration via `di.php` files loaded by the Teknoo East Foundation extension
+system. See [infrastructure.md](infrastructure.md#php-di-container) for implementation details.
+
+### 5. Two-repo Layout
+
+Enterprise extensions are mounted from a separate repository (`space-app-enterprise`), not in the main
+`space-app` repository. Enterprise code commits happen in `space-app-enterprise`; plan-documentation Findings
+commits go to `space-app`. The extension loader discovers Enterprise bundles at runtime via Composer
+autoloading.
+
+### 6. Bowl Pattern — ProvisioningPlanBowl
+
+The `ProvisioningPlanBowl` (`infrastructures/Recipe/Bowl/`) resolves the correct account-provisioning plan
+at request time based on the cluster `type` (kubernetes vs docker-compose). This is necessary because a
+`RecipeBowl`'s recipe is fixed at container-build time, but the provisioning plan set differs per cluster
+type. Kubernetes resolves to the standard Kubernetes plan instances; docker-compose resolves to the
+Ansible-based provisioning plans.
+
+### 7. Access Control — ObjectAccessControl
+
+Recipe plans use `ObjectAccessControlInterface` and `ListObjectsAccessControlInterface` (from Teknoo East
+Common) for step-level access control. These interfaces are implemented by Symfony-based steps that
+delegate to the voter system. Single-entity checks use `ObjectAccessControlInterface`; collection-level
+checks use `ListObjectsAccessControlInterface`. See [domain.md#security-voters](domain.md#security-voters)
+for the full voter list.
+
+### 8. Liveness Pinging
+
+Workers and the web application use liveness pinging to detect frozen processes:
+
+- **PingFile** (`domain/Liveness/`): writes a timestamp to a file path (`SPACE_PING_FILE`) at regular
+  intervals (`SPACE_PING_SECONDS`).
+- **PingScheduler** (`domain/Liveness/`): schedules periodic ping writes.
+- **LivenessSubscriber** (`infrastructures/Symfony/Event/`): Symfony event subscriber that writes the
+  ping file on each HTTP request.
+
+External health checks can monitor the ping file's modification time to detect stuck workers.
+
+### 9. Mercure Publishers
+
+Real-time job status updates are broadcast via two Mercure publishers in
+`infrastructures/Symfony/Mercure/`:
+
+- **JobUrlPublisher**: publishes job URL updates to clients (triggers browser redirect to job page).
+- **TaskErrorPublisher**: publishes task error notifications for real-time error display.
+
+Both use the Mercure hub for Server-Sent Events (SSE) delivery to subscribed browsers.
+
+### 10. Multi-Tenancy Model
 
 Space implements a multi-tenancy architecture:
 
@@ -118,7 +199,7 @@ Account (Tenant)
 └── History
 ```
 
-### 4. Security & Authentication
+### 11. Security & Authentication
 
 - **OAuth2 Integration**: Third-party authentication support
 - **Multi-Factor Authentication (MFA)**: TOTP-based 2FA with QR code generation
@@ -126,7 +207,7 @@ Account (Tenant)
 - **Symfony Security**: Role-based access control (ROLE_USER, ROLE_ADMIN)
 - **Variable Encryption**: RSA/DSA encryption for sensitive persisted variables
 
-### 5. East PaaS Integration
+### 12. East PaaS Integration
 
 Space leverages **Teknoo East PaaS** for deployment orchestration:
 

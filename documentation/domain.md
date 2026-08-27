@@ -106,7 +106,7 @@ subclass (one-to-one) to extends User and add more properties like picture.
 
 ### Project (+ ProjectMetadata)
 
-Represents an application project to be deployed. **Projectt** class come from the Teknoo East PaaS library.
+Represents an application project to be deployed. **Project** class come from the Teknoo East PaaS library.
 **ProjectMetadata** is a subclass (one-to-one) to extends Project and add more properties, like project's url
 
 **Properties:**
@@ -114,7 +114,7 @@ Represents an application project to be deployed. **Projectt** class come from t
 - `id`: Unique identifier
 - `name`: Project name
 - `prefix`: To prefix all cluster's resources for this project when the namespace is shared
-- `imageRegistryy`: OCI image repository URL to push built images
+- `imageRegistry`: OCI image repository URL to push built images
 - `sourceRepository`: Git repository configuration
     - `pullUrl`: Git clone URL
     - `identity`: SSH key or credentials
@@ -578,6 +578,33 @@ Variables are merged with the following precedence (highest to lowest):
 - Name: Valid environment variable format
 - Secrets: Must specify encryption algorithm
 - Values: Non-empty for non-secret variables
+
+## Security Voters
+
+Space uses Symfony Security Voters for fine-grained authorization at the entity level. Voters are registered as
+services and checked by the `IsGranted` attribute or `AuthorizationChecker` during recipe steps and controllers.
+
+| Voter | Protects | Logic |
+|-------|----------|-------|
+| **AdminVoter** | Admin-only operations | Checks `ROLE_ADMIN` role |
+| **AccountVoter** | Account entities | Validates account ownership (user's account) |
+| **JobVoter** | Job entities | Validates job access via project ownership |
+| **ProjectVoter** | Project entities | Validates project access via account membership |
+| **UserVoter** | User entities | Validates user access (own profile or admin) |
+
+## ObjectAccessControl
+
+Recipe plans use step-level access control through the `ObjectAccessControlInterface` and
+`ListObjectsAccessControlInterface` contracts from Teknoo East Common. These interfaces are implemented by
+Symfony-based steps that delegate to the voter system:
+
+- **ObjectAccessControlInterface** — single-entity ACL check (e.g. "can the current user access this Job?").
+  Used in plans like `JobStart`, `JobGet`, `JobRestart`, `ProjectNew`, `AccountClusterNew`, etc.
+- **ListObjectsAccessControlInterface** — collection-level ACL check (e.g. "which Jobs can the current user list?").
+  Used in plans like `JobList`, `ProjectList`, `AccountClusterList`.
+
+Access control is baked into the recipe at step registration time (priority 20–30) so that unauthorized
+requests fail early before any business logic runs.
 
 ## Domain Services
 

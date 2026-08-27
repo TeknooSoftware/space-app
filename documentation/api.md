@@ -107,6 +107,35 @@ JWT tokens are configured via environment variables:
 - `SPACE_JWT_MAX_DAYS_TO_TIVE`: Maximum life in days for JWT token
 - `SPACE_JWT_ENABLE_IN_QUERY` *(optional)*: Allow JWT token to be passed via query string
 
+## Route File Organization
+
+API routes are organized in `config/routes/api/v1/` with 10 YAML files:
+
+- **unauthenticated/**: `login.yaml` (1 file — public login endpoint)
+- **authenticated/**: `account.yaml`, `job.yaml`, `jwt.yaml`, `project.yaml`, `settings.yaml` (5 files)
+- **admin/**: `account.yaml`, `job.yaml`, `project.yaml`, `user.yaml` (4 files)
+
+Web routes are in `config/routes/` with 10 YAML files (`space.account.yaml`, `space.admin.account.yaml`,
+`space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`, `space.project.yaml`,
+`space.settings.yaml`, `space.subscription.yaml`, `space.support.contact.yaml`) containing 48 `path:` entries.
+
+## JSON Template Structure
+
+API responses are rendered via JSON templates in `templates/TeknooSpace/api/`, organized by resource:
+
+- `Account/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`, `pending.html.twig`
+- `Job/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`, `pending.html.twig`
+- `Project/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
+- `AdminAccount/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
+- `AdminJob/`: `list.html.twig`, `get.html.twig`, `deleted.html.twig`
+- `AdminProject/`: `list.html.twig`, `get.html.twig`, `deleted.html.twig`
+- `AdminUser/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
+- `User/`: `get.html.twig`, `settings.html.twig`
+
+Each template renders a JSON object matching the API response format (`{"data": {...}}` or `{"error": {...}}`).
+Controllers call `renderView()` with the appropriate template, or use the `#[Template]` attribute for
+auto-rendering.
+
 ## API Endpoints
 
 The API is organized into authenticated user endpoints and admin endpoints.

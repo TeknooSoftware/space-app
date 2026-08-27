@@ -433,6 +433,66 @@ class ProjectContext implements Context
 }
 ```
 
+### Behat Feature Structure
+
+43 Behat feature files in `appliance/features/`:
+
+**API features** (32): `api.account`, `api.account.cluster`, `api.account.environments`,
+`api.account.variables`, `api.admin.account`, `api.admin.account.cluster`, `api.admin.account.environments`,
+`api.admin.account.variables`, `api.admin.job.k8s.*` (7 files), `api.admin.project`,
+`api.admin.project.refresh-credentials`, `api.admin.project.variables`, `api.admin.user`, `api.job.k8s.*` (7 files),
+`api.job.dc.start`, `api.jwt`, `api.login`, `api.project`, `api.project.refresh-credentials`,
+`api.project.variables`, `api.settings`
+
+**Web features** (10): `web.account`, `web.account.variables`, `web.job.start`,
+`web.job.start.with-vars-from-account`, `web.job.start.with-vars-from-project`, `web.login`,
+`web.project`, `web.project.variables`, `web.subscription`, `web.user.settings`
+
+**Worker hook** (1): `worker.hooks`
+
+### Test Traits
+
+12 Behat test traits in `tests/Behat/Traits/`:
+
+| Trait | Purpose |
+|-------|---------|
+| `ApiTrait` | API request helpers |
+| `BrowserActionTrait` | Browser action helpers |
+| `BrowserCrawlingTrait` | Browser crawling/navigation |
+| `BuilderTrait` | Git/build helpers |
+| `DockerComposeTrait` | Docker Compose cluster helpers |
+| `HttpTrait` | HTTP request/response helpers |
+| `JwtTrait` | JWT token generation |
+| `KubernetesTrait` | Kubernetes cluster helpers |
+| `NotificationTrait` | Notification/messaging helpers |
+| `PersistenceOperationTrait` | MongoDB persistence operations |
+| `PersistenceStepsTrait` | Persistence step definitions |
+| `WorkerTrait` | Worker/AMQP helpers |
+
+### PHPUnit Structure
+
+`appliance/tests/` mirrors `domain/` and `infrastructures/` directory structure. **280 test files** total.
+Test classes follow the namespace pattern `Teknoo\Space\Tests\{Layer}\{SubPath}`. For example:
+`tests/domain/Object/Persisted/AccountDataTest.php` tests `domain/Object/Persisted/AccountData.php`.
+
+### Form Types
+
+33 form types across 7 categories in `infrastructures/Symfony/Form/Type/`:
+
+- **Account**: `AccountType`, `AccountClusterType`, `AccountEnvironmentResumesType`, `SpaceAccountType`,
+  `AdminSpaceAccountType`, `SpaceSubscriptionType`, `VarsSetType`, `VarsType`, `CodeGeneratorType`
+- **Project**: `ProjectMetadataType`, `SpaceProjectType`, `VarsSetType`, `VarsType`
+- **Job**: `JobType`, `JobVarType`, `NewJobType`, `ApiNewJobType`
+- **User**: `UserType`, `AdminSpaceUserType`, `SpaceUserType`, `PasswordType`, `SpacePasswordType`,
+  `ApiKeysAuthType`, `JWTConfigurationType`
+- **Contact**: `SupportType`, `AttachmentType`
+- **Search**: `AccountSearchType`, `ProjectSearchType`, `UserSearchType`, `JobSearchType`,
+  `AccountClusterSearchType`, `MediaSearchType`
+- **AccountEnvironment**: `AccountEnvironmentResumesType`
+
+Custom data mappers in `infrastructures/Symfony/Form/DataMapper/`:
+`AbstractVarsMapper`, `AccountVarsMapper`, `ProjectVarsMapper`.
+
 ## Quality Assurance
 
 ### Running QA Checks
