@@ -1,4 +1,4 @@
-ARG MONGO_VERSION=8.3
+ARG MONGO_VERSION=7
 
 FROM mongo:$MONGO_VERSION
 
@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -ux ; \
     apt-get update ; \
-    apt-get dist-upgrade -y
+    apt-get dist-upgrade -y ; \
+    apt-get install -y netcat
 
 COPY init_mongo.js /docker-entrypoint-initdb.d/

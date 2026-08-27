@@ -193,6 +193,14 @@ class AccountCluster implements
         return $this;
     }
 
+    /*
+     * Not east, but quick hack to simplify twig
+     */
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
     public function setClientKey(#[SensitiveParameter] ?string $clientKey): AccountCluster
     {
         if (!empty($clientKey)) {

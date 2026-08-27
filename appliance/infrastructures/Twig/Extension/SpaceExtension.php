@@ -45,6 +45,6 @@ class SpaceExtension
     #[AsTwigFunction(name: 'space_extension', isSafe: ['html', 'json', 'js'], needsEnvironment: true)]
     public function runExtension(Environment $env, string $block, ?object $object = null): string
     {
-        return $this->twig->run($env, $block)->render();
+        return $this->twig->run($env, $block, $object)->render();
     }
 }

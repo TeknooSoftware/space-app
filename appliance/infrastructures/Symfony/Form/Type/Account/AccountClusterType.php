@@ -107,7 +107,7 @@ class AccountClusterType extends AbstractType
             'storageProvisioner',
             TextType::class,
             [
-                'required' => true,
+                'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.storage_provisioner',
             ],
         );
@@ -125,7 +125,7 @@ class AccountClusterType extends AbstractType
             'caCertificate',
             TextareaType::class,
             [
-                'required' => true,
+                'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.ca_certificate',
             ],
         );

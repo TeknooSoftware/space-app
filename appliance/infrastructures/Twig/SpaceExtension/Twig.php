@@ -95,7 +95,7 @@ class Twig implements ModuleInterface
             array_map(
                 fn (TemplateWrapper $template): string => $template->render(
                     [
-                        'currentObject' => $this->object
+                        'objectInstance' => $this->object
                     ]
                 ),
                 $this->templates,
