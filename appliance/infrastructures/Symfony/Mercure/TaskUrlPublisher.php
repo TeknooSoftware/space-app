@@ -67,12 +67,15 @@ class TaskUrlPublisher
 
         $update = new Update(
             topics: $url,
-            data: json_encode(array_filter([
-                'task_id' => $taskId,
-                'job_id' => $job?->getId(),
-                'project_id' => $project?->getId(),
-                'task_url' => $taskUrl,
-            ]),
+            data: json_encode(
+                array_filter(
+                    [
+                        'task_id' => $taskId,
+                        'job_id' => $job?->getId(),
+                        'project_id' => $project?->getId(),
+                        'task_url' => $taskUrl,
+                    ]
+                ),
                 JSON_THROW_ON_ERROR,
             ),
             id: $id,
