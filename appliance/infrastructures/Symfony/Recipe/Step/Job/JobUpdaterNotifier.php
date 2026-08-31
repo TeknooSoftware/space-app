@@ -28,7 +28,7 @@ namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -39,7 +39,7 @@ use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
 class JobUpdaterNotifier
 {
     public function __construct(
-        private readonly JobUrlPublisher $publisher,
+        private readonly TaskUrlPublisher $publisher,
         private readonly UrlGeneratorInterface $generator,
         private readonly string $pendingTaskRoute,
         private readonly string $getJobRoute,
@@ -60,7 +60,7 @@ class JobUpdaterNotifier
                 referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
             ),
             taskId: $taskId,
-            jobUrl: $this->generator->generate(
+            taskUrl: $this->generator->generate(
                 name: $this->getJobRoute,
                 parameters: [
                     'id' => $job->getId(),

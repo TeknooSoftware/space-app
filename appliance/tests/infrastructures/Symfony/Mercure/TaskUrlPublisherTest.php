@@ -30,20 +30,20 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mercure\HubInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 
 /**
- * Class JobUrlPublisherTest.
+ * Class TaskUrlPublisherTest.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
-#[CoversClass(JobUrlPublisher::class)]
-class JobUrlPublisherTest extends TestCase
+#[CoversClass(TaskUrlPublisher::class)]
+class TaskUrlPublisherTest extends TestCase
 {
-    private JobUrlPublisher $jobUrlPublisher;
+    private TaskUrlPublisher $taskUrlPublisher;
 
     private HubInterface&Stub $hub;
 
@@ -56,14 +56,14 @@ class JobUrlPublisherTest extends TestCase
 
         $this->hub = $this->createStub(HubInterface::class);
 
-        $this->jobUrlPublisher = new JobUrlPublisher($this->hub);
+        $this->taskUrlPublisher = new TaskUrlPublisher($this->hub);
     }
 
     public function testPublish(): void
     {
         $this->assertInstanceOf(
-            JobUrlPublisher::class,
-            $this->jobUrlPublisher->publish(
+            TaskUrlPublisher::class,
+            $this->taskUrlPublisher->publish(
                 'foo',
                 'bar',
                 'foo',

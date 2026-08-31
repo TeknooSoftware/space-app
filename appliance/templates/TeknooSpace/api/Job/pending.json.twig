@@ -6,7 +6,7 @@
 {% set object = {
     "id": newJobResult.task_id,
     "api_url": url("space_api_v1_job_get", {"projectId": newJobResult.project_id, "id": newJobResult.task_id}),
-    "user_url": newJobResult.job_url
+    "user_url": newJobResult.task_url
 } %}
 {{ object|space_api_object_serialization({}, "json", {"error": false}) }}
 {% endif %}

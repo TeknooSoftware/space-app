@@ -30,6 +30,7 @@ use Symfony\Component\Mercure\Update;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
 
+use function array_filter;
 use function json_encode;
 
 use const JSON_THROW_ON_ERROR;
@@ -40,7 +41,7 @@ use const JSON_THROW_ON_ERROR;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class JobUrlPublisher
+class TaskUrlPublisher
 {
     public function __construct(
         private readonly HubInterface $hub,
@@ -51,7 +52,7 @@ class JobUrlPublisher
     public function publish(
         string $url,
         string $taskId,
-        ?string $jobUrl,
+        ?string $taskUrl,
         ?Project $project = null,
         ?Job $job = null,
     ): static {
@@ -60,19 +61,18 @@ class JobUrlPublisher
         }
 
         $id = null;
-        if (null === $jobUrl) {
+        if (null === $taskUrl) {
             $id = $taskId;
         }
 
         $update = new Update(
             topics: $url,
-            data: json_encode(
-                [
-                    'task_id' => $taskId,
-                    'job_id' => $job?->getId(),
-                    'project_id' => $project?->getId(),
-                    'job_url' => $jobUrl,
-                ],
+            data: json_encode(array_filter([
+                'task_id' => $taskId,
+                'job_id' => $job?->getId(),
+                'project_id' => $project?->getId(),
+                'task_url' => $taskUrl,
+            ]),
                 JSON_THROW_ON_ERROR,
             ),
             id: $id,

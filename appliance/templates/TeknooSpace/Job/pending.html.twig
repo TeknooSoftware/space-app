@@ -67,7 +67,7 @@
             console.log(event.data);
             document.getElementById('text-pending').innerHTML = '<div class="alert alert-danger" role="alert">' + result.error_message + '</div>';
           } else {
-            document.location = result.job_url;
+            document.location = result.task_url;
           }
         }
         {% endif %}

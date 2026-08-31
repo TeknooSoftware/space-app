@@ -33,7 +33,7 @@ use Teknoo\Space\Contracts\DTO\NewTaskInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Task\NewTaskNotifierInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\OtherException;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\UnavailableException;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 use Teknoo\Space\Object\DTO\NewJob;
 use Throwable;
 
@@ -46,7 +46,7 @@ use Throwable;
 class NewTaskNotifier implements NewTaskNotifierInterface
 {
     public function __construct(
-        private readonly JobUrlPublisher $publisher,
+        private readonly TaskUrlPublisher $publisher,
         private readonly UrlGeneratorInterface $generator,
         private readonly string $pendingTaskRoute,
         private readonly string $projectJobeRoute,
@@ -67,7 +67,7 @@ class NewTaskNotifier implements NewTaskNotifierInterface
                     referenceType: UrlGeneratorInterface::ABSOLUTE_URL
                 ),
                 taskId: $task->taskId,
-                jobUrl: null,
+                taskUrl: null,
             );
         } catch (ExceptionInterface $mercureException) {
             $this->logger->critical(

@@ -176,7 +176,7 @@ External health checks can monitor the ping file's modification time to detect s
 Real-time job status updates are broadcast via two Mercure publishers in
 `infrastructures/Symfony/Mercure/`:
 
-- **JobUrlPublisher**: publishes job URL updates to clients (triggers browser redirect to job page).
+- **TaskUrlPublisher**: publishes job URL updates to clients (triggers browser redirect to job page).
 - **TaskErrorPublisher**: publishes task error notifications for real-time error display.
 
 Both use the Mercure hub for Server-Sent Events (SSE) delivery to subscribed browsers.

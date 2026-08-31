@@ -32,7 +32,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier;
 
 /**
@@ -48,7 +48,7 @@ class JobUpdaterNotifierTest extends TestCase
 {
     private JobUpdaterNotifier $jobUpdaterNotifier;
 
-    private JobUrlPublisher&Stub $publisher;
+    private TaskUrlPublisher&Stub $publisher;
 
     private UrlGeneratorInterface&Stub $generator;
 
@@ -63,7 +63,7 @@ class JobUpdaterNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createStub(JobUrlPublisher::class);
+        $this->publisher = $this->createStub(TaskUrlPublisher::class);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
         $this->pendingTaskRoute = '42';
         $this->getJobRoute = '42';

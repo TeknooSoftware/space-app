@@ -30,7 +30,7 @@ User creates job → NewTaskInterface → new_task queue
 
 ## Mercure Publishers
 
-Two publishers in `infrastructures/Symfony/Mercure/` broadcast real-time updates via SSE: **JobUrlPublisher**
+Two publishers in `infrastructures/Symfony/Mercure/` broadcast real-time updates via SSE: **TaskUrlPublisher**
 (triggers browser redirect after job completion) and **TaskErrorPublisher** (error notifications). Clients
 subscribe via the Mercure JS library with JWT auth.
 

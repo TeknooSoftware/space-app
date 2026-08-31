@@ -32,7 +32,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
@@ -50,7 +50,7 @@ class NewTaskNotifierTest extends TestCase
 {
     private NewTaskNotifier $newTaskNotifier;
 
-    private JobUrlPublisher&Stub $publisher;
+    private TaskUrlPublisher&Stub $publisher;
 
     private UrlGeneratorInterface&Stub $generator;
 
@@ -69,7 +69,7 @@ class NewTaskNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createStub(JobUrlPublisher::class);
+        $this->publisher = $this->createStub(TaskUrlPublisher::class);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
         $this->logger = $this->createStub(LoggerInterface::class);
         $this->pendingTaskRoute = '42';

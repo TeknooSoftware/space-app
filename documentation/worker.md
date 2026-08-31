@@ -685,7 +685,7 @@ bin/console messenger:consume execute_job --limit=1 -vvv
 Workers broadcast real-time job status updates via Mercure (Server-Sent Events). Publishers in
 `infrastructures/Symfony/Mercure/`:
 
-- **JobUrlPublisher**: Publishes job URL updates after job processing completes. Triggers browser
+- **TaskUrlPublisher**: Publishes job URL updates after job processing completes. Triggers browser
   redirect to the job detail page. Dispatched by `NewTaskHandler` and `ExecuteJobHandler`.
 - **TaskErrorPublisher**: Publishes task error notifications when a job fails or encounters errors.
   Used by the `TaskError` notifier for error broadcast.

@@ -129,8 +129,8 @@ services:
 
     #############
     # Mercure
-    Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher:
-        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
+    Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher:
+        class: 'Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher'
         arguments:
             - '@Symfony\Component\Mercure\HubInterface'
             - '%teknoo.space.mercure.publishing_enabled%'
@@ -207,7 +207,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher'
             - '@router'
             - 'space_job_new_pending'
             - 'space_job_list'
@@ -218,7 +218,7 @@ services:
         class: 'Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\JobUpdaterNotifier'
         public: true
         arguments:
-            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\JobUrlPublisher'
+            - '@Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher'
             - '@router'
             - 'space_job_new_pending'
             - 'space_job_get'
