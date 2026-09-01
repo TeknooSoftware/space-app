@@ -1,4 +1,3 @@
-
 space_admin_job_new:
     path: '/admin/project/{projectId}/job/new'
     methods: ['GET', 'POST', 'PUT']
