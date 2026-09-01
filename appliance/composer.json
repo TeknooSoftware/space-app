@@ -121,7 +121,7 @@
         "league/flysystem-memory": "^3.31",
         "masterminds/html5": "^2.11.0",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.2.11",
+        "phpstan/phpstan": "^2.2.12",
         "phpstan/phpstan-symfony": "^2.0.20",
         "phpunit/phpunit": "^13.3.2",
         "roave/security-advisories": "dev-latest",
