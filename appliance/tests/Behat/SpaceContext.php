@@ -519,6 +519,14 @@ class SpaceContext implements Context
         $this->defaultsMode = 'generic';
     }
 
+    #[Given('the project has a complete paas file with defaults and no isolation')]
+    public function theProjectHasACompletePaasFileWithDefaultsAndNoIsolation(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithDefaults/paas.with-no-isolation.yaml';
+        $this->quotasMode = '';
+        $this->defaultsMode = 'no-isolation';
+    }
+
     #[Given('the project has a complete paas file with defaults for the cluster')]
     public function theProjectHasACompletePaasFileWithDefaultsForCluster(): void
     {

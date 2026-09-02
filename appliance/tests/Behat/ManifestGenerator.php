@@ -701,7 +701,11 @@ EOF;
 
         $hostUsersInline = '';
         if ($useHostUsers) {
-            $hostUsersInline = ', "hostUsers": false';
+            if ('no-isolation' === $defaultsMods) {
+                $hostUsersInline = ', "hostUsers": true';
+            } else {
+                $hostUsersInline = ', "hostUsers": false';
+            }
         }
 
         $mountSubPath = '';
@@ -737,7 +741,7 @@ EOF;
         };
 
         $imagePullSecrets = match ($defaultsMods) {
-            'generic', 'cluster' => 'oci-registry-behat',
+            'generic', 'no-isolation', 'cluster' => 'oci-registry-behat',
             default => 'my-company-docker-config',
         };
 
