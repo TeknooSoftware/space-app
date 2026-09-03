@@ -44,7 +44,6 @@ space_api_v1_admin_account_status:
         loader: '@Teknoo\Space\Loader\Meta\SpaceAccountLoader'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         template: '@@TeknooSpace/Account/status.html.twig'
-        cleanHtml: "%teknoo.space.rendering.clean_html%"
 
 space_api_v1_admin_account_edit_environments:
     path: '/account/{id}/environments'
@@ -113,7 +112,6 @@ space_api_v1_admin_account_reinstall_registry:
         api: 'json'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
-        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_refresh_quota:
@@ -125,7 +123,6 @@ space_api_v1_admin_account_refresh_quota:
         api: 'json'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
-        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_environment_reinstall:
@@ -138,7 +135,6 @@ space_api_v1_admin_account_environment_reinstall:
         api: 'json'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
-        cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
         clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_clusters_list:

@@ -582,7 +582,7 @@ trait ApiTrait
         };
     }
 
-    private function submitValuesThroughAPI(string $url, ?TableNode $bodyFields, string $format = 'default'): void
+    public function submitValuesThroughAPI(string $url, ?TableNode $bodyFields, string $format = 'default'): void
     {
         $final = $this->encodeAPIBody($bodyFields, $format);
 

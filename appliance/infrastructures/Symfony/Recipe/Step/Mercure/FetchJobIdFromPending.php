@@ -84,7 +84,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
     ): FetchJobIdFromPendingInterface {
         if (false === $this->mercureEnabled) {
             $parametersBag->set(
-                'newJobResult',
+                'taskResult',
                 [
                     'task_id' => $taskId,
                     'error_code' => 500,
@@ -133,7 +133,7 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
 
                 // this is a special ServerSentEvent chunk holding the pushed message
                 if ($chunk instanceof ServerSentEvent) {
-                    $parametersBag->set('newJobResult', $chunk->getArrayData());
+                    $parametersBag->set('taskResult', $chunk->getArrayData());
                     $this->sseClient->reset();
 
                     $source = null;

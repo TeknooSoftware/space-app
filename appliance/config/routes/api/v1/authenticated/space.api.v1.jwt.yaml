@@ -10,4 +10,3 @@ space_api_v1_jwt_generate_token:
         objectClass: 'Teknoo\Space\Object\DTO\JWTConfiguration'
         template: '@@TeknooSpace/api/Jwt/jwt.form.json.twig'
         tokenTemplate: '@@TeknooSpace/api/Jwt/jwt.token.json.twig'
-        cleanHtml: "%teknoo.space.rendering.clean_html%"
