@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62dcc3198b90f8e833583af5ebcf473c",
+    "content-hash": "48c52e33d3b1eca54814466a436f30a2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -698,16 +698,16 @@
         },
         {
             "name": "doctrine/mongodb-odm",
-            "version": "2.17.0",
+            "version": "2.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "e8643c9b9a90abf93da3042ce37bb7659e20ac15"
+                "reference": "c2bb52d4498901d91b4014d86b193f5eca7885d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/e8643c9b9a90abf93da3042ce37bb7659e20ac15",
-                "reference": "e8643c9b9a90abf93da3042ce37bb7659e20ac15",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/c2bb52d4498901d91b4014d86b193f5eca7885d5",
+                "reference": "c2bb52d4498901d91b4014d86b193f5eca7885d5",
                 "shasum": ""
             },
             "require": {
@@ -798,7 +798,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/mongodb-odm/issues",
-                "source": "https://github.com/doctrine/mongodb-odm/tree/2.17.0"
+                "source": "https://github.com/doctrine/mongodb-odm/tree/2.17.1"
             },
             "funding": [
                 {
@@ -814,7 +814,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-01T10:01:25+00:00"
+            "time": "2026-09-03T12:19:37+00:00"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
