@@ -7,6 +7,16 @@ After each task: create `YYYY-MM-DD-task-name.md` here, then add an entry below.
 
 ## Recent Feedback Entries
 
+### 2026-09-03 — [API routes for the Enterprise "setup docker" flow](2026-09-03-enterprise-api-setup-docker.md)
+
+**Status**: ✅ Resolved — three admin API routes (confirm / pending / get) + JSON views on the existing
+Enterprise recipes; new `SetupDockerPending` plan with an Enterprise-topic instance of the core Mercure
+waiter; `SetupDockerJob` made normalizable. New 6-scenario Behat feature. Two latent bugs found on the way:
+a form-url-encoded API body must carry every form field (Symfony submits the whole form → 500 on the
+non-nullable `masterAddress`), and the Behat bootstrap-runner double was only installed for the first
+scenario of the run because the kernel is rebooted between scenarios. make qa + make test exit 0
+(1161 tests, 45/45 features).
+
 ### 2026-08-26 — [Stage 2: setup docker on the task worker](2026-08-26-setup-docker-task-worker.md)
 
 **Status**: ✅ Resolved — `SetupDockerDto`/`RunSetupDockerDto` + persisted `SetupDockerJob`; two-hop worker
@@ -77,6 +87,12 @@ dispatch, render-agnostic endpoint, out-of-band playbook run).
 
 - **`ParametersBag` is write-only from a step** (`set()` only, read via `transform()`), and a missing key
   is an *undefined* Twig variable, not null — so a partially-populated bag crashes the template. (2026-08-24)
+- **Behat doubles pushed with `$container->set()` must be re-pushed every scenario**: FriendsOfBehat's
+  SymfonyExtension reboots the kernel between scenarios, so a "install it once for the run" static guard
+  silently leaves every scenario after the first talking to the real service. (2026-09-03)
+- **API form bodies are not symmetric**: `FormHandling` does a partial `submit($json, false)` for
+  `application/json`, but defers to Symfony's request handler for form-url-encoded — which submits the whole
+  form, so any field absent from the body is set to `null`. Non-nullable DTO properties then 500. (2026-09-03)
 - **`createStub()` on an interface with PHP property hooks (`{ get; }`) is unproven** in this project; use
   an inline anonymous class with plain public properties instead. (2026-08-24)
 
