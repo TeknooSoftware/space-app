@@ -107,6 +107,8 @@ security:
         }
         #Account : 2fa
         - { path: '^/2fa/auth', roles: [IS_AUTHENTICATED_2FA_IN_PROGRESS], requires_channel: https }
+        #Api : admin area
+        - { path: '^/api/v1/admin', roles: [ROLE_ADMIN, ~ROLE_RECOVERY] }
         #Api
         - { path: '^/api', roles: [IS_AUTHENTICATED_FULLY, ~ROLE_RECOVERY] }
         #Default

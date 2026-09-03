@@ -7,6 +7,16 @@ After each task: create `YYYY-MM-DD-task-name.md` here, then add an entry below.
 
 ## Recent Feedback Entries
 
+### 2026-09-03 — [Letting ordinary users start an Enterprise docker host setup](2026-09-03-enterprise-user-setup-docker.md)
+
+**Status**: ✅ Resolved — the docker host setup can now be *started* by a member of the account owning the
+cluster, on web and API, not only by an admin: no recipe change, only a web route, three API routes, an
+audience-split confirm JSON view and a repointed Mercure `task_url`. Closed a real core hole on the way —
+`^/admin` never matched `/api/v1/admin`, so any `ROLE_USER` with a JWT could call every core admin API
+route; fixed with a `^/api/v1/admin` `access_control` rule. Also fixed two cluster Twig links that passed
+`{'id': …}` to a `{clusterId}` route and could not generate at all. Four Behat features (20 scenarios)
+including the denial cases. make qa + make test exit 0 (1161 tests, 47/47 features).
+
 ### 2026-09-03 — [API routes for the Enterprise "setup docker" flow](2026-09-03-enterprise-api-setup-docker.md)
 
 **Status**: ✅ Resolved — three admin API routes (confirm / pending / get) + JSON views on the existing

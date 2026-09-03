@@ -180,6 +180,20 @@ trait BrowserCrawlingTrait
         Assert::assertNotEmpty($nodeValue);
     }
 
+    /**
+     * An anonymous visitor bounced by the firewall lands on the login form without any `#login-error`
+     * node, so the assertion below cannot require one.
+     */
+    #[Then('it is redirected to the login page')]
+    public function itIsRedirectedToTheLoginPage(): void
+    {
+        $this->hasBeenUserRedirected();
+        Assert::assertEquals(
+            $this->getPathFromRoute('space_account_login'),
+            $this->currentUrl,
+        );
+    }
+
     #[Then('it is redirected to the login page with an error')]
     public function itIsRedirectedToTheLoginPageWithAnError(): void
     {
