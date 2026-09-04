@@ -58,6 +58,7 @@ use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Infrastructures\Symfony\Object\ApiKeysAuthUser;
 use Teknoo\Space\Object\Config\ConfigClusterInterface as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -477,6 +478,18 @@ trait PersistenceStepsTrait
             )
         );
 
+        //Docker Compose clusters take their deploy-time identity from the catalog configuration (SSH key +
+        //known_hosts), so resolve it here; Kubernetes scenarios never touch the catalog and keep the
+        //account-environment credentials.
+        $clusterConfig = null;
+        if ('docker-compose' === $this->overrideClusterType) {
+            /** @var ClusterCatalog $clustersCatalog */
+            $clustersCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
+            $clusterConfig = $clustersCatalog->getCluster(
+                $this->overrideClusterName ?? $this->defaultClusterName,
+            );
+        }
+
         $cluster = new Cluster();
         $cluster->setName($this->overrideClusterName ?? $this->defaultClusterName);
         $cluster->setType($this->overrideClusterType ?? $this->defaultClusterType);
@@ -487,14 +500,7 @@ trait PersistenceStepsTrait
         );
         $cluster->setEnvironment(new Environment('prod'));
         $cluster->setLocked(true);
-        $cluster->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+        $cluster->setIdentity($this->buildClusterIdentity($clusterConfig, $credential));
 
         $clusterDev = new Cluster();
         $clusterDev->setName($this->overrideClusterName ?? $this->defaultClusterName);
@@ -506,14 +512,7 @@ trait PersistenceStepsTrait
         );
         $clusterDev->setEnvironment(new Environment('dev'));
         $clusterDev->setLocked(true);
-        $clusterDev->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+        $clusterDev->setIdentity($this->buildClusterIdentity($clusterConfig, $credential));
 
         $project->setClusters([
             $cluster,
@@ -641,6 +640,27 @@ trait PersistenceStepsTrait
         return $cluster;
     }
 
+    private function buildClusterIdentity(
+        ?ClusterConfig $clusterConfig,
+        AccountEnvironment $credential,
+    ): ClusterCredentials {
+        //Docker Compose clusters connect over SSH: their deploy-time identity is the one their configuration
+        //exposes (private key in clientKey, known_hosts in caCertificate, optional SSH login in username),
+        //exactly like production - and exactly what the real DockerCompose\RunnerFactory consumes to
+        //materialize "--private-key" and resolve "--user". Any other cluster type keeps the Kubernetes-shaped
+        //credentials derived from the account environment, so those scenarios stay byte-for-byte identical.
+        if ($clusterConfig instanceof DockerComposeCluster) {
+            return $clusterConfig->getCredentials();
+        }
+
+        return new ClusterCredentials(
+            caCertificate: $credential->getCaCertificate(),
+            clientCertificate: $credential->getClientCertificate(),
+            clientKey: $credential->getClientKey(),
+            token: $credential->getToken()
+        );
+    }
+
     private function createCatalogCluster(
         Account $account,
         ClusterConfig $clusterConfig,
@@ -663,14 +683,7 @@ trait PersistenceStepsTrait
             $this->register($env);
         }
 
-        $cluster->setIdentity(
-            new ClusterCredentials(
-                caCertificate: $credential->getCaCertificate(),
-                clientCertificate: $credential->getClientCertificate(),
-                clientKey: $credential->getClientKey(),
-                token: $credential->getToken()
-            )
-        );
+        $cluster->setIdentity($this->buildClusterIdentity($clusterConfig, $credential));
 
         return $cluster;
     }
@@ -942,6 +955,10 @@ trait PersistenceStepsTrait
         );
 
         $this->persistAndRegister($cluster);
+
+        //Tell the docker-compose steps which SSH target this scenario deploys to, so the Ansible inventory
+        //rendered by the driver can be asserted.
+        $this->setExpectedComposeSshTarget("docker-host.{$slug}.behat", 22);
     }
 
     #[Given('an account environment on :clusterName for the environment :environmentName')]

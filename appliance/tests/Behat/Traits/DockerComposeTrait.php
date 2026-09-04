@@ -28,30 +28,37 @@ namespace Teknoo\Space\Tests\Behat\Traits;
 use Behat\Step\Given;
 use Behat\Step\Then;
 use FilesystemIterator;
+use JsonException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\MockObject\Generator\Generator;
+use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use SensitiveParameter;
 use SplFileInfo;
+use Symfony\Component\Process\Process;
 use Teknoo\East\Paas\Cluster\Directory;
-use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerFactoryInterface;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerInterface;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\Transcriber\TranscriberCollectionInterface;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Driver as DockerComposeDriver;
-use Teknoo\East\Paas\Object\ClusterCredentials;
-use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\East\Paas\Infrastructures\DockerCompose\RunnerFactory;
+use Teknoo\East\Paas\Infrastructures\DockerCompose\SymfonyProcessRunner;
 
+use function array_filter;
+use function array_map;
+use function array_values;
 use function basename;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
 use function getenv;
 use function is_dir;
+use function json_encode;
 use function ksort;
 use function mkdir;
 use function pathinfo;
+use function preg_match;
 use function preg_replace;
 use function reset;
 use function str_ends_with;
@@ -60,6 +67,7 @@ use function strtolower;
 use function substr;
 use function uniqid;
 
+use const JSON_THROW_ON_ERROR;
 use const PATHINFO_FILENAME;
 
 /**
@@ -67,10 +75,16 @@ use const PATHINFO_FILENAME;
  * Behat test (`vendor/teknoo/east-paas/tests/behat/FeatureContext.php::aDockerComposeOrchestrator`).
  *
  * The real `DockerCompose\Driver` runs against two in-memory Flysystem filesystems (never touching the disk),
- * and a fake `RunnerInterface`/`RunnerFactoryInterface` captures the artifacts the Driver produced (compose
- * specification, Ansible deploy/expose playbooks, referenced config/secret files, Traefik dynamic config)
- * instead of executing Ansible/SSH. Captured artifacts are golden-compared against
- * `tests/Behat/expected/compose/base/*`, mirroring how `KubernetesTrait` golden-compares manifests.
+ * and the whole runner layer above the process is the real one too: the real `RunnerFactory` resolves the SSH
+ * login user and materializes the SSH private key into that in-memory workspace, and the real
+ * `SymfonyProcessRunner` builds the `ansible-playbook` command line. Only the lowest seam - the Symfony
+ * `Process` - is mocked, so nothing is ever executed while the command line, the rendered inventory, the
+ * resolved SSH user and the materialized private key all become assertable (see `assertAnsibleRun()`).
+ *
+ * The artifacts the Driver produced (compose specification, Ansible deploy/expose playbooks, referenced
+ * config/secret files, Traefik dynamic config) are captured from the in-memory workspace when the mocked
+ * process is built, and golden-compared against `tests/Behat/expected/compose/base/*`, mirroring how
+ * `KubernetesTrait` golden-compares manifests.
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -78,6 +92,38 @@ use const PATHINFO_FILENAME;
  */
 trait DockerComposeTrait
 {
+    /**
+     * Deterministic name of the SSH private key file the real `RunnerFactory` materializes, making the
+     * "--private-key" argument assertable. It must not start with "space-behat-compose-", or
+     * `normalizeComposePlaybook()` would rewrite it and the artifact capture would mistake it for a working
+     * directory.
+     */
+    private const COMPOSE_KEY_FILE_NAME = 'space-behat-ansible-key';
+
+    /**
+     * Timeout handed to the real `RunnerFactory`, proving it reaches the (mocked) `Process` factory.
+     */
+    private const COMPOSE_ANSIBLE_TIMEOUT = 300.0;
+
+    /**
+     * SSH private key carried by the docker-compose clusters credentials (mirrors `.env.test` and the
+     * account-cluster fixture) and materialized by the real `RunnerFactory`.
+     */
+    private const COMPOSE_SSH_PRIVATE_KEY = 'fake-ssh-private-key';
+
+    /**
+     * SSH login user, resolved by the real `RunnerFactory` either from `ClusterCredentials::getUsername()`
+     * (account cluster) or from the "ssh://deployer@..." master address (catalog cluster).
+     */
+    private const COMPOSE_SSH_USER = 'deployer';
+
+    /**
+     * Address of the "Demo Compose Cluster" catalog entry, rendered into the Ansible inventory.
+     */
+    private const COMPOSE_SSH_HOST = 'docker-host.behat.test';
+
+    private const COMPOSE_SSH_PORT = 22;
+
     /**
      * @var array<string, string>
      */
@@ -93,16 +139,53 @@ trait DockerComposeTrait
      */
     private array $referencedFiles = [];
 
+    /**
+     * Every `ansible-playbook` invocation the real `SymfonyProcessRunner` built, in order.
+     *
+     * @var array<int, array{command: array<int, string>, timeout: float|null}>
+     */
+    private array $ansibleRuns = [];
+
+    /**
+     * Inventory rendered by the Driver for each stage, keyed by stage name ("deploy", "expose").
+     *
+     * @var array<string, string>
+     */
+    private array $ansibleInventories = [];
+
+    private ?string $ansibleKeyFileContent = null;
+
+    //Defaults are applied in aDockerComposeOrchestrator() rather than here: Symfony's ReflectionClassResource
+    //reflects this trait outside of any class, where "self::" cannot resolve a trait constant.
+    private string $expectedComposeSshHost = '';
+
+    private int $expectedComposeSshPort = 0;
+
+    /**
+     * Declare the SSH target the current scenario deploys to, when it is not the "Demo Compose Cluster"
+     * catalog entry (see the account-cluster docker-compose fixture).
+     */
+    public function setExpectedComposeSshTarget(string $host, int $port = 22): void
+    {
+        $this->expectedComposeSshHost = $host;
+        $this->expectedComposeSshPort = $port;
+    }
+
     #[Given('a docker-compose orchestrator')]
     public function aDockerComposeOrchestrator(): void
     {
         $this->composeArtifacts = [];
         $this->traefikArtifacts = [];
         $this->referencedFiles = [];
+        $this->ansibleRuns = [];
+        $this->ansibleInventories = [];
+        $this->ansibleKeyFileContent = null;
+        $this->expectedComposeSshHost = self::COMPOSE_SSH_HOST;
+        $this->expectedComposeSshPort = self::COMPOSE_SSH_PORT;
 
         //Drive the real DockerCompose Driver against an in-memory Flysystem instead of the disk-backed
-        //LocalFilesystemAdapter wired by di.php, so the scenario never alters the filesystem. The fake runner
-        //reads the artifacts the Driver wrote back from this same in-memory filesystem.
+        //LocalFilesystemAdapter wired by di.php, so the scenario never alters the filesystem. The mocked
+        //Ansible process reads the artifacts the Driver wrote back from this same in-memory filesystem.
         $workspaceFilesystem = new Filesystem(new InMemoryFilesystemAdapter());
 
         $templatesDir = $this->kernel->getProjectDir()
@@ -167,43 +250,68 @@ trait DockerComposeTrait
             }
         };
 
-        $runner = new class ($capture) implements RunnerInterface {
-            /**
-             * @param callable(string): void $capture
-             */
-            public function __construct(
-                private $capture,
-            ) {
+        //The only mocked seam of the runner layer: the Symfony Process. Everything above it (the real
+        //RunnerFactory resolving the SSH user and materializing the private key, and the real
+        //SymfonyProcessRunner building the `ansible-playbook` command line) is exercised for real, so the
+        //Driver's outputs are proven to reach the process layer.
+        $processFactory = function (array $command, ?float $timeout) use ($workspaceFilesystem, $capture): Process {
+            $this->ansibleRuns[] = ['command' => $command, 'timeout' => $timeout];
+
+            //$command[1] is the playbook absolute path, $command[3] the inventory one; both live in the per-run
+            //working directory, recovered with the same basename(dirname()) trick as $capture.
+            $stage = basename($command[1], '.yml');
+            $inventoryRelative = basename(dirname($command[3])) . '/inventory.ini';
+            if ($workspaceFilesystem->fileExists($inventoryRelative)) {
+                $this->ansibleInventories[$stage] = $workspaceFilesystem->read($inventoryRelative);
             }
 
-            public function run(
-                string $playbookPath,
-                string $inventoryPath,
-                array $extraVars,
-                #[SensitiveParameter] ?ClusterCredentials $credentials,
-                PromiseInterface $promise,
-            ): RunnerInterface {
-                ($this->capture)($playbookPath);
-
-                $promise->success('docker-compose fake runner: playbook captured, nothing executed');
-
-                return $this;
+            //The materialized SSH private key must be read here: RunnerFactory::__destruct() deletes it as soon
+            //as the factory goes out of scope.
+            if ($workspaceFilesystem->fileExists(self::COMPOSE_KEY_FILE_NAME)) {
+                $this->ansibleKeyFileContent = $workspaceFilesystem->read(self::COMPOSE_KEY_FILE_NAME);
             }
+
+            ($capture)($command[1]);
+
+            //A fresh double per call: the Driver runs two stages (deploy then expose) through two distinct
+            //runners.
+            $process = new Generator()->testDouble(
+                type: Process::class,
+                mockObject: true,
+                callOriginalConstructor: false,
+                callOriginalClone: false,
+            );
+
+            $process->expects(new AnyInvokedCountMatcher())->method('run');
+            $process->method('isSuccessful')->willReturn(true);
+            $process->method('getOutput')->willReturn('PLAY RECAP behat : ok=6 changed=4 failed=0');
+            $process->method('getErrorOutput')->willReturn('');
+
+            return $process;
         };
 
-        $runnerFactory = new class ($runner) implements RunnerFactoryInterface {
-            public function __construct(
-                private readonly RunnerInterface $runner,
-            ) {
-            }
-
-            public function __invoke(
-                string $url,
-                #[SensitiveParameter] ?ClusterCredentials $credentials,
-            ): RunnerInterface {
-                return $this->runner;
-            }
-        };
+        //The real factory, pointed at the same in-memory workspace so the private key never touches the disk,
+        //with a deterministic key file name making the "--private-key" argument assertable.
+        $runnerFactory = new RunnerFactory(
+            filesystem: $workspaceFilesystem,
+            tmpDir: '',
+            playbookBinary: 'ansible-playbook',
+            timeout: self::COMPOSE_ANSIBLE_TIMEOUT,
+            keyFileNameFactory: static fn (): string => self::COMPOSE_KEY_FILE_NAME,
+            //Only overridden to inject the mocked $processFactory: the runner itself is the real one.
+            runnerBuilder: static fn (
+                string $playbookBinary,
+                ?float $timeout,
+                ?string $sshUser,
+                ?string $privateKeyFile,
+            ): RunnerInterface => new SymfonyProcessRunner(
+                playbookBinary: $playbookBinary,
+                timeout: $timeout,
+                sshUser: $sshUser,
+                privateKeyFile: $privateKeyFile,
+                processFactory: $processFactory,
+            ),
+        );
 
         //Build the Driver directly with the in-memory filesystems and register it on the Directory, overriding
         //the disk-backed driver di.php would otherwise provide.
@@ -243,16 +351,20 @@ trait DockerComposeTrait
             $this->traefikArtifacts,
             'No Traefik artifact was expected (the job errored or was denied before deployment)',
         );
+        Assert::assertEmpty(
+            $this->ansibleRuns,
+            'No Ansible playbook run was expected (the job errored or was denied before deployment)',
+        );
     }
 
     #[Then('some docker compose configuration has been created')]
     public function someDockerComposeConfigurationHasBeenCreated(): void
     {
-        //The fake RunnerInterface captured the artifacts written by the driver into its working directory
+        //The mocked Ansible process captured the artifacts written by the driver into its working directory
         //(mirroring the $this->manifests capture for Kubernetes) instead of running Ansible/Docker.
         Assert::assertNotEmpty(
             $this->composeArtifacts,
-            'No Docker Compose artifact has been captured by the fake runner',
+            'No Docker Compose artifact has been captured by the mocked Ansible process',
         );
         Assert::assertArrayHasKey(
             'compose.yaml',
@@ -297,6 +409,8 @@ trait DockerComposeTrait
             $actualReferencedFiles,
             'The referenced config/secret files do not match the expected golden files',
         );
+
+        $this->assertAnsibleRun('deploy');
     }
 
     #[Then('some traefik configuration has been created')]
@@ -304,7 +418,7 @@ trait DockerComposeTrait
     {
         Assert::assertNotEmpty(
             $this->traefikArtifacts,
-            'No Traefik dynamic configuration artifact has been captured by the fake runner',
+            'No Traefik dynamic configuration artifact has been captured by the mocked Ansible process',
         );
 
         //The expose playbook must have been generated to drop the Traefik dynamic file in the watched directory.
@@ -341,6 +455,77 @@ trait DockerComposeTrait
             $expected['traefik'],
             (string) reset($this->traefikArtifacts),
             'The generated Traefik dynamic configuration does not match the expected golden file',
+        );
+
+        $this->assertAnsibleRun('expose');
+    }
+
+    /**
+     * Assert the real runner layer turned the Driver's outputs into the expected `ansible-playbook`
+     * invocation for the given stage: the exact argv (playbook, inventory, extra vars, SSH user, private
+     * key), the timeout, the rendered single-host inventory and the materialized SSH private key.
+     *
+     * @throws JsonException
+     */
+    private function assertAnsibleRun(string $stage): void
+    {
+        $runs = array_values(
+            array_filter(
+                $this->ansibleRuns,
+                static fn (array $run): bool => basename($run['command'][1]) === $stage . '.yml',
+            )
+        );
+
+        Assert::assertCount(
+            1,
+            $runs,
+            'Exactly one Ansible run was expected for the "' . $stage . '" stage',
+        );
+
+        $run = $runs[0];
+
+        Assert::assertSame(
+            self::COMPOSE_ANSIBLE_TIMEOUT,
+            $run['timeout'],
+            'The configured Ansible timeout has not been forwarded to the process',
+        );
+
+        //The project name is not hardcoded here: it is read back from the playbook already golden-compared by
+        //the caller, so a single golden set keeps covering every project name/prefix variant.
+        Assert::assertSame(
+            1,
+            preg_match('#^\s*paas_project:\s*"([^"]+)"#m', $this->composeArtifacts[$stage . '.yml'], $matches),
+            'The generated ' . $stage . '.yml playbook does not declare a paas_project var',
+        );
+
+        Assert::assertSame(
+            [
+                'ansible-playbook',
+                '__WORKDIR__/' . $stage . '.yml',
+                '--inventory',
+                '__WORKDIR__/inventory.ini',
+                '--extra-vars',
+                json_encode(['paas_project' => $matches[1]], JSON_THROW_ON_ERROR),
+                '--user',
+                self::COMPOSE_SSH_USER,
+                '--private-key',
+                '/' . self::COMPOSE_KEY_FILE_NAME,
+            ],
+            array_map($this->normalizeComposePlaybook(...), $run['command']),
+            'The `ansible-playbook` command line built for the "' . $stage . '" stage is not the expected one',
+        );
+
+        Assert::assertSame(
+            "[docker_host]\n{$this->expectedComposeSshHost} ansible_host={$this->expectedComposeSshHost}"
+            . " ansible_port={$this->expectedComposeSshPort}\n",
+            $this->ansibleInventories[$stage] ?? null,
+            'The Ansible inventory rendered for the "' . $stage . '" stage is not the expected one',
+        );
+
+        Assert::assertSame(
+            self::COMPOSE_SSH_PRIVATE_KEY,
+            $this->ansibleKeyFileContent,
+            'The SSH private key has not been materialized from the cluster credentials',
         );
     }
 
