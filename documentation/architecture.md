@@ -96,9 +96,9 @@ Space uses the **Recipe pattern** from Teknoo East Foundation for workflow orche
 Data persistence follows the **Loader/Writer pattern**: Loaders read entities from MongoDB and Writers persist
 changes. Each persisted entity has a one-to-one Loader–Writer pair.
 
-- **Loaders** (9 classes in `domain/Loader/`): implement `LoaderInterface`, fetch entities from MongoDB
+- **Loaders** (12 classes in `domain/Loader/`): implement `LoaderInterface`, fetch entities from MongoDB
   repositories. Examples: `AccountDataLoader`, `UserDataLoader`, `ProjectMetadataLoader`.
-- **Writers** (10 classes in `domain/Writer/`): implement `WriterInterface`, persist entities via Doctrine ODM
+- **Writers** (13 classes in `domain/Writer/`): implement `WriterInterface`, persist entities via Doctrine ODM
   repositories. Examples: `AccountDataWriter`, `UserDataWriter`, `ProjectMetadataWriter`.
 - **Meta Writers** (3 classes in `domain/Writer/Meta/`): `SpaceAccountWriter`, `SpaceUserWriter`,
   `SpaceProjectWriter` — bridge East Foundation entities with Space's domain layer.
@@ -255,7 +255,7 @@ Space leverages **Teknoo East PaaS** for deployment orchestration:
 ### Backend Stack
 
 - **PHP 8.4+**: Modern PHP with type safety and performance
-- **Symfony 6.4+/7.3+**: Web framework and components
+- **Symfony ^7.4||^8.1**: Web framework and components
 - **Doctrine ODM 3.5+**: MongoDB object-document mapper
 - **Teknoo Libraries**:
     - Immutable: Immutable object pattern

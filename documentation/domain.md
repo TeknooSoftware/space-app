@@ -40,7 +40,7 @@ Handles persisted variables and secrets at account and project levels.
 
 The **Account** is the primary aggregate root representing a tenant in the multi-tenant system.
 **Account** class come from the Teknoo East PaaS library. **AccountData** is a subclass (one-to-one) to extends
-Account and add more properties, about legal informationm and subscription plan.
+Account and add more properties, about legal information and subscription plan.
 
 **Properties:**
 

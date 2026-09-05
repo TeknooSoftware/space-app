@@ -42,7 +42,7 @@ Scheb 2FA bundle provides TOTP-based multi-factor authentication. Space generate
 Endroid QR Code integration (`infrastructures/Endroid/QrCode/QrCodeGenerator`) for authenticator app
 setup. Backup recovery codes are also generated.
 
-→ `documentation/architecture.md#11-security-authentication`
+→ `documentation/architecture.md#11-security-and-authentication`
 
 ## SSH Key-Only Auth for Docker-Compose
 
@@ -54,4 +54,4 @@ See `documentation/domain.md#accountcluster`.
 
 Enterprise may add additional voters or extend the authentication flow. The two-repo model means
 Enterprise security code lives in `space-app-enterprise`. See
-`documentation/architecture.md#two-repo-layout`.
+`documentation/architecture.md#5-two-repo-layout`.

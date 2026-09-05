@@ -40,7 +40,7 @@ See the full Step example in `.agents/EXAMPLES.md#recipe-step-example`.
 ## Registration
 
 - Plans: `config/di.recipe.plans.php` (51 plans)
-- Steps: `config/di.recipe.steps.php` (56 steps, 18 categories)
+- Steps: `config/di.recipe.steps.php` (56 steps, 17 categories)
 
 Extensions register via their own `di.php` files loaded by the East Foundation extension system.
 

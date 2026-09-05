@@ -45,4 +45,4 @@ promotion. PHPStan at max level enforces this convention.
 ## Enterprise Extension Reference
 
 Enterprise bundles may add their own Loaders/Writers/DTOs. They follow the same patterns — see
-`documentation/architecture.md#two-repo-layout` for the two-repo mounting model.
+`documentation/architecture.md#5-two-repo-layout` for the two-repo mounting model.

@@ -51,4 +51,4 @@ Full endpoint reference is in `documentation/api.md#api-endpoints`. Key patterns
 
 Enterprise may add additional API endpoints (e.g. Trivy audit, webhook endpoints). These are registered
 via Enterprise's own route YAML files in the `space-app-enterprise` repo. See
-`documentation/architecture.md#two-repo-layout`.
+`documentation/architecture.md#5-two-repo-layout`.

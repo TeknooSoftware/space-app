@@ -68,7 +68,7 @@ appliance/
 
 ### Architectural Patterns
 
-1. **Recipe Pattern**: Workflows composed of **Plans** (`domain/Recipe/Plan/`, 25 plans) and **Steps** (`domain/Recipe/Step/`, 18 categories). See [`.agents/recipes.md`](.agents/recipes.md) for details.
+1. **Recipe Pattern**: Workflows composed of **Plans** (`domain/Recipe/Plan/`, 25 plans) and **Steps** (`domain/Recipe/Step/`, 17 categories). See [`.agents/recipes.md`](.agents/recipes.md) for details.
 2. **DDD**: Clear separation between domain, application, and infrastructure layers.
 3. **PHP-DI**: Dependency injection via `config/di.*.php` (11 config files). See [`documentation/architecture.md`](documentation/architecture.md).
 4. **Extension System**: From Teknoo East Foundation — modify behavior without editing core code. Enterprise extensions are mounted from a separate repo.

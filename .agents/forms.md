@@ -47,4 +47,4 @@ the base layout; individual form types override blocks as needed.
 
 Enterprise may add form types for additional features (e.g. webhook configuration, Trivy audit settings).
 These follow the same `Type/` directory structure and data mapper conventions. See
-`documentation/architecture.md#two-repo-layout`.
+`documentation/architecture.md#5-two-repo-layout`.

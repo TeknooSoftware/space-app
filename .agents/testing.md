@@ -47,4 +47,4 @@ unit tests with `./space.sh units-tests`, or Behat with `./space.sh behavior-tes
 ## Enterprise Extension Reference
 
 Enterprise tests follow the same structure. Enterprise feature files live in the `space-app-enterprise`
-repo. See `documentation/architecture.md#two-repo-layout`.
+repo. See `documentation/architecture.md#5-two-repo-layout`.
