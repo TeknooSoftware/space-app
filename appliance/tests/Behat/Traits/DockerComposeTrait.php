@@ -174,9 +174,6 @@ trait DockerComposeTrait
     #[Given('a docker-compose orchestrator')]
     public function aDockerComposeOrchestrator(): void
     {
-        $this->composeArtifacts = [];
-        $this->traefikArtifacts = [];
-        $this->referencedFiles = [];
         $this->ansibleRuns = [];
         $this->ansibleInventories = [];
         $this->ansibleKeyFileContent = null;
