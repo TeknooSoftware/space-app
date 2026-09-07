@@ -30,7 +30,23 @@ MAKEFLAGS += --no-print-directory
 ##
 
 help: ## Show this help.
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | grep -v '^[[:space:]]' | awk '{gsub(/^[[:space:]]+/, ""); gsub(/[[:space:]]+$$/, ""); if ($$0 == "") {printf "\n"; next} if ($$0 ~ /^#/) {gsub(/^#+[[:space:]]*/, ""); printf "\n%s\n", $$0; next} if (match($$0, /^[a-zA-Z_-]+:/)) {target = substr($$0, 1, index($$0, ":") - 1); pos = index($$0, "##"); if (pos > 0) {desc = substr($$0, pos + 2)} else {desc = substr($$0, index($$0, ":") + 1)} gsub(/^[[:space:]]+/, "", target); gsub(/[[:space:]]+$$/, "", target); gsub(/^[[:space:]]+/, "", desc); printf "  %-35s %s\n", target, desc; next} printf "%s\n", $$0}'
+	@fgrep -h "##" $(MAKEFILE_LIST) | \
+		fgrep -v fgrep | \
+		sed -e 's/\\$$//' | \
+		grep -v '^[[:space:]]' | \
+		awk '{gsub(/^[[:space:]]+/, ""); gsub(/[[:space:]]+$$/, ""); \
+		if ($$0 == "") {if (!prev_blank) {printf "\n"; prev_blank=1}; next} \
+		prev_blank=0; if ($$0 ~ /^#/) {gsub(/^#+[[:space:]]*/, ""); \
+		if ($$0 != "") {printf "\n%s\n", $$0}; next} \
+		if (match($$0, /^[a-zA-Z_-]+:/)) { \
+		target = substr($$0, 1, index($$0, ":") - 1); \
+		pos = index($$0, "##"); \
+		if (pos > 0) {desc = substr($$0, pos + 2)} \
+		else {desc = substr($$0, index($$0, ":") + 1)} \
+		gsub(/^[[:space:]]+/, "", target); gsub(/[[:space:]]+$$/, "", target); \
+		gsub(/^[[:space:]]+/, "", desc); \
+		printf "  %-35s %s\n", target, desc; next} \
+		printf "%s\n", $$0}'
 
 verify: 	## Download dependencies via Composer and verify space installation
 verify: clean dev-install test-without-coverage qa-offline clean install
