@@ -115,7 +115,7 @@
         "twig/twig": "^3.28.0"
     },
     "require-dev": {
-        "behat/behat": "^3.32.0",
+        "behat/behat": "^3.33.0",
         "dmarynicz/behat-parallel-extension": "^1.2.0",
         "friends-of-behat/symfony-extension": "^2.7.0",
         "league/flysystem-memory": "^3.31",
