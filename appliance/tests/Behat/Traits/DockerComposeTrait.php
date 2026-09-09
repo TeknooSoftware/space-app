@@ -69,6 +69,7 @@ use function uniqid;
 
 use const JSON_THROW_ON_ERROR;
 use const PATHINFO_FILENAME;
+use const PHP_EOL;
 
 /**
  * Behat steps exercising a docker-compose deployment end-to-end, modelled on the East PaaS docker-compose
@@ -520,7 +521,7 @@ trait DockerComposeTrait
         );
 
         Assert::assertSame(
-            self::COMPOSE_SSH_PRIVATE_KEY,
+            self::COMPOSE_SSH_PRIVATE_KEY . PHP_EOL,
             $this->ansibleKeyFileContent,
             'The SSH private key has not been materialized from the cluster credentials',
         );
