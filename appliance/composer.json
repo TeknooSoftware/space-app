@@ -54,7 +54,7 @@
         "league/oauth2-google": "^5",
         "lexik/jwt-authentication-bundle": "^3.2.0",
         "lorenzo/pinky": "^1.1.0",
-        "monolog/monolog": "^3.11.0",
+        "monolog/monolog": "^3.12.0",
         "mrjoops/oauth2-jira": "^0.3.0",
         "omines/oauth2-gitlab": "^3.8.1",
         "php-di/php-di": "^7.1.1",
