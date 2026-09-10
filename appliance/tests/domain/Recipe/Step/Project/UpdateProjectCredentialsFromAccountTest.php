@@ -36,6 +36,7 @@ use Teknoo\East\Paas\Object\Project;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -254,7 +255,102 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->with('namespace1');
         $cluster->expects($this->once())
             ->method('setIdentity')
-            ->with($this->isInstanceOf(ClusterCredentials::class));
+            ->with($this->callback(static function (ClusterCredentials $identity): bool {
+                // Kubernetes has no SSH login: the username must stay empty.
+                self::assertSame('', $identity->getUsername());
+
+                return true;
+            }));
+
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($visitors) use ($project, $cluster) {
+                if (isset($visitors['imagesRegistry'])) {
+                    $visitors['imagesRegistry']($this->createStub(ImageRegistryInterface::class));
+                }
+
+                if (isset($visitors['clusters'])) {
+                    $visitors['clusters']([$cluster]);
+                }
+
+                return $project;
+            });
+
+        $this->assertInstanceOf(
+            UpdateProjectCredentialsFromAccount::class,
+            ($this->updateProjectCredentialsFromAccount)(
+                new SpaceProject($project),
+                $wallet,
+                $this->createStub(AccountRegistry::class),
+                $clusterCatalog,
+            )
+        );
+    }
+
+    public function testInvokeWithDockerComposeClusterCarriesTheDeploySshUsername(): void
+    {
+        // Refreshing a project's credentials must restore the SSH login of the unprivileged deploy user the
+        // docker host was bootstrapped with. It lives on the cluster, not on the AccountEnvironment: without
+        // it the runner falls back to the user embedded in the master address, and a cluster declaring a
+        // username but a bare address would deploy as the worker's own local user.
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv->method('getEnvName')->willReturn('prod');
+        $accountEnv->method('getClusterName')->willReturn('docker-cluster');
+        $accountEnv->method('getNamespace')->willReturn('acct-prod');
+        $accountEnv->method('getCaCertificate')->willReturn('known-hosts-line');
+        $accountEnv->method('getClientCertificate')->willReturn('');
+        $accountEnv->method('getClientKey')->willReturn('-----BEGIN OPENSSH PRIVATE KEY-----KEY');
+        $accountEnv->method('getToken')->willReturn('');
+
+        $wallet = new AccountWallet([$accountEnv]);
+
+        $clusterConfig = new DockerComposeCluster(
+            name: 'docker-cluster',
+            sluggyName: 'docker-cluster',
+            type: 'docker-compose',
+            masterAddress: 'ssh://docker-host.example.com:22',
+            dashboardAddress: '',
+            isExternal: true,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'paas',
+            caCertificate: 'known-hosts-line',
+        );
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with('docker-cluster')
+            ->willReturn($clusterConfig);
+
+        $environment = $this->createStub(Environment::class);
+        $environment->method('__toString')->willReturn('prod');
+
+        $cluster = $this->createMock(Cluster::class);
+        $cluster->method('__toString')->willReturn('docker-cluster');
+        $cluster->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($visitor, $callable) use ($cluster, $environment) {
+                $callable($environment);
+
+                return $cluster;
+            });
+        $cluster->expects($this->once())->method('setType')->with('docker-compose');
+        $cluster->expects($this->once())->method('useHierarchicalNamespaces')->with(false);
+        $cluster->expects($this->once())
+            ->method('setAddress')
+            ->with('ssh://docker-host.example.com:22');
+        $cluster->expects($this->once())->method('setLocked')->with(true);
+        $cluster->expects($this->once())->method('setNamespace')->with('acct-prod');
+        $cluster->expects($this->once())
+            ->method('setIdentity')
+            ->with($this->callback(static function (ClusterCredentials $identity): bool {
+                self::assertSame('paas', $identity->getUsername());
+                self::assertSame('-----BEGIN OPENSSH PRIVATE KEY-----KEY', $identity->getClientKey());
+                self::assertSame('known-hosts-line', $identity->getCaCertificate());
+
+                return true;
+            }));
 
         $project = $this->createMock(Project::class);
         $project->expects($this->once())

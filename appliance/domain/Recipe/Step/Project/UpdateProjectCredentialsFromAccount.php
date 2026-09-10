@@ -32,6 +32,7 @@ use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\XRegistryAuth;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
@@ -100,12 +101,20 @@ class UpdateProjectCredentialsFromAccount
                                     /** @var AccountEnvironment $accountEnvironment */
                                     $accountEnvironment = $accountWallet->get($clusterName, $environment);
                                     $cluster->setNamespace($accountEnvironment->getNamespace());
+                                    //Same split as in AddManagedEnvironmentToProject: the credentials come
+                                    //from the AccountEnvironment, the SSH login from the cluster.
+                                    $sshUsername = '';
+                                    if ($clusterConfig instanceof DockerComposeCluster) {
+                                        $sshUsername = $clusterConfig->username;
+                                    }
+
                                     $cluster->setIdentity(
                                         new ClusterCredentials(
                                             caCertificate: $accountEnvironment->getCaCertificate(),
                                             clientCertificate: $accountEnvironment->getClientCertificate(),
                                             clientKey: $accountEnvironment->getClientKey(),
                                             token: $accountEnvironment->getToken(),
+                                            username: $sshUsername,
                                         ),
                                     );
                                 },

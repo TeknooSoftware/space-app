@@ -32,6 +32,7 @@ use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Throwable;
@@ -102,14 +103,32 @@ class AddManagedEnvironmentToProject
             $newCluster->setLocked(true);
             $newCluster->setProject($spaceProject->project);
             $newCluster->setNamespace($accountEnv->getNamespace());
-            $newCluster->setIdentity(
-                new ClusterCredentials(
-                    caCertificate: $accountEnv->getCaCertificate(),
-                    clientCertificate: $accountEnv->getClientCertificate(),
-                    clientKey: $accountEnv->getClientKey(),
-                    token: $accountEnv->getToken(),
-                ),
-            );
+            //The per-environment credentials come from the AccountEnvironment, but the SSH login does not:
+            //it belongs to the cluster (the unprivileged deploy user the docker host was bootstrapped
+            //with) and is only carried by the config cluster. Kubernetes clusters have no SSH user and keep
+            //an empty one. Without this the runner falls back to the user embedded in masterAddress, so a
+            //cluster declaring a username but a bare address would deploy as the worker's own local user.
+            if ($clusterConfig instanceof DockerComposeCluster) {
+                $newCluster->setIdentity(
+                    new ClusterCredentials(
+                        caCertificate: $accountEnv->getCaCertificate(),
+                        clientCertificate: $accountEnv->getClientCertificate(),
+                        clientKey: $accountEnv->getClientKey(),
+                        token: $accountEnv->getToken(),
+                        username: $clusterConfig->username,
+                    ),
+                );
+            } else {
+                $newCluster->setIdentity(
+                    new ClusterCredentials(
+                        caCertificate: $accountEnv->getCaCertificate(),
+                        clientCertificate: $accountEnv->getClientCertificate(),
+                        clientKey: $accountEnv->getClientKey(),
+                        token: $accountEnv->getToken(),
+                        username: '',
+                    ),
+                );
+            }
 
             $spaceProject->project->visit(
                 visitors: 'clusters',

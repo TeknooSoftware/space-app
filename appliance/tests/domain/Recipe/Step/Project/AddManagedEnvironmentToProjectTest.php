@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Cluster as EastCluster;
+use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Project;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\ClusterCatalog;
@@ -330,6 +331,7 @@ class AddManagedEnvironmentToProjectTest extends TestCase
             dashboardAddress: '',
             isExternal: true,
             clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'paas',
             caCertificate: 'known-hosts-line',
         );
 
@@ -366,10 +368,94 @@ class AddManagedEnvironmentToProjectTest extends TestCase
 
         ($this->addManagedEnvironmentToProject)($manager, $spaceProject, $wallet, $clusterCatalog);
 
-        // The docker-compose environment is added to the project as an East Cluster (its SSH ClusterCredentials
-        // are built from the AccountEnvironment client_key/ca_certificate via the same generic mapping the
-        // Kubernetes path uses; East Cluster exposes no public identity getter to assert deeper here).
+        // The docker-compose environment is added to the project as an East Cluster: its SSH credentials come
+        // from the AccountEnvironment client_key/ca_certificate, but the SSH login is the cluster's own deploy
+        // user — the unprivileged account the docker host was bootstrapped with.
         $this->assertInstanceOf(EastCluster::class, $captured);
+
+        $identity = null;
+        $captured->visit('identity', static function ($value) use (&$identity): void {
+            $identity = $value;
+        });
+
+        $this->assertInstanceOf(ClusterCredentials::class, $identity);
+        $this->assertSame('paas', $identity->getUsername());
+        $this->assertSame('-----BEGIN OPENSSH PRIVATE KEY-----KEY', $identity->getClientKey());
+        $this->assertSame('known-hosts-line', $identity->getCaCertificate());
+    }
+
+    public function testInvokeLeavesTheSshUsernameEmptyForKubernetes(): void
+    {
+        // Kubernetes clusters have no SSH login: the username must stay empty so nothing is ever handed to an
+        // ansible runner that does not exist for that target.
+        $accountEnv = $this->createStub(AccountEnvironment::class);
+        $accountEnv->method('getEnvName')->willReturn('prod');
+        $accountEnv->method('getClusterName')->willReturn('cluster1');
+        $accountEnv->method('getNamespace')->willReturn('namespace1');
+        $accountEnv->method('getCaCertificate')->willReturn('ca-cert');
+        $accountEnv->method('getClientCertificate')->willReturn('client-cert');
+        $accountEnv->method('getClientKey')->willReturn('client-key');
+        $accountEnv->method('getToken')->willReturn('token');
+
+        $wallet = new AccountWallet([$accountEnv]);
+
+        $clusterConfig = new KubernetesCluster(
+            name: 'cluster1',
+            sluggyName: 'cluster1',
+            type: 'kubernetes',
+            masterAddress: 'https://cluster.example.com',
+            storageProvisioner: 'standard',
+            dashboardAddress: '',
+            kubernetesClient: fn () => $this->createStub(Client::class),
+            token: '',
+            supportRegistry: false,
+            useHnc: true,
+            isExternal: false,
+        );
+
+        $clusterCatalog = $this->createMock(ClusterCatalog::class);
+        $clusterCatalog->expects($this->once())
+            ->method('getCluster')
+            ->with('cluster1')
+            ->willReturn($clusterConfig);
+
+        $captured = null;
+        $project = $this->createMock(Project::class);
+        $project->expects($this->once())
+            ->method('visit')
+            ->with('clusters', $this->isCallable())
+            ->willReturnCallback(function ($visitors, $callable) use ($project) {
+                $callable([]);
+
+                return $project;
+            });
+        $project->expects($this->once())
+            ->method('setClusters')
+            ->with($this->callback(function (array $clusters) use (&$captured): bool {
+                $captured = $clusters[0] ?? null;
+
+                return true;
+            }));
+
+        $spaceProject = new SpaceProject($project);
+        $spaceProject->addClusterName = 'cluster1';
+        $spaceProject->addClusterEnv = 'prod';
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())->method('error');
+
+        ($this->addManagedEnvironmentToProject)($manager, $spaceProject, $wallet, $clusterCatalog);
+
+        $this->assertInstanceOf(EastCluster::class, $captured);
+
+        $identity = null;
+        $captured->visit('identity', static function ($value) use (&$identity): void {
+            $identity = $value;
+        });
+
+        $this->assertInstanceOf(ClusterCredentials::class, $identity);
+        $this->assertSame('', $identity->getUsername());
+        $this->assertSame('token', $identity->getToken());
     }
 
     public function testInvokeWithException(): void
