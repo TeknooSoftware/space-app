@@ -118,7 +118,7 @@ $parameters = [
     // docker-compose driver tunables (spec §7); each is optional — the vendored DockerCompose/di.php guards
     // every one with $container->has(...) and falls back to its own default when the param is absent.
     'teknoo.east.paas.docker-compose.ansible.binary' => env('SPACE_DC_ANSIBLE_BINARY', 'ansible-playbook'),
-    'teknoo.east.paas.docker-compose.timeout' => env('SPACE_DC_TIMEOUT', 300),
+    'teknoo.east.paas.docker-compose.timeout' => env('SPACE_DC_TIMEOUT', 900),
     'teknoo.east.paas.docker-compose.deploy_root' => env('SPACE_DC_DEPLOY_ROOT', '/opt/paas'),
     'teknoo.east.paas.docker-compose.network.driver' => env('SPACE_DC_NETWORK_DRIVER', 'bridge'),
     'teknoo.east.paas.docker-compose.traefik.container' => env('SPACE_DC_TRAEFIK_CONTAINER', 'traefik'),
