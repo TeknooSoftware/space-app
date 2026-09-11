@@ -9,31 +9,116 @@
 # Idempotent (install-if-absent / config-converge), rootless runtime, passwordless escalation only — never an
 # SSH or become password.
 #
-# Expected extraVars: registry_container, registry_image, registry_network, registry_port, registry_tls,
-# registry_htpasswd, registry_volume, deploy_root (optionally deploy_user).
+# CONNECTS AS THE DEPLOY USER. BuildRegistryInventory writes `ansible_user=<deploy user>`, and that account is
+# deliberately unprivileged: no sudoers entry, no `docker` group, locked password. Escalation is therefore
+# conditional — `become: "{{ deploy_user != ansible_facts['user_id'] }}"` — so the playbook is a no-op sudo
+# when it is already the deploy user (the normal case, where an unconditional `become: true` would simply be
+# refused) and still works if some other account ever drives it.
+#
+# SELF-CONTAINED ON PURPOSE: the PHP runner ships nothing but this single file (di.recipe.steps.php passes one
+# absolute playbook path to SymfonyProcessRunner, which execs `ansible-playbook <that path> ...`). The compose
+# file is therefore inlined as the `_registry_compose_config` var below and written with `copy: content:`,
+# rather than living in a sidecar .j2 that `template:` would have to resolve next to the playbook.
+#
+# NOTE: play vars below are plain literals on purpose. `foo: "{{ foo | default('bar') }}"` is a self-reference
+# and makes Ansible raise "Recursive loop detected in template" as soon as the key is NOT supplied through
+# --extra-vars. Extra vars already outrank play vars, so literals are all it takes.
+#
+# Expected extraVars: registry_container, registry_htpasswd, registry_volume (required), and optionally
+# registry_image, registry_network, registry_port, registry_tls, deploy_root. `deploy_user` is accepted too
+# but is normally omitted: it defaults to the account the playbook connected as.
 
 - name: Provision a per-account private OCI registry for docker-compose deployments
   hosts: registry_host
   gather_facts: true
 
   vars:
-    deploy_user: "{{ deploy_user | default('paas') }}"
-    deploy_root: "{{ deploy_root | default('/opt/paas') }}"
-    registry_image: "{{ registry_image | default('registry:2') }}"
-    registry_network: "{{ registry_network | default('space-registry') }}"
-    registry_port: "{{ registry_port | default(5000) }}"
-    registry_tls: "{{ registry_tls | default(false) }}"
-    deploy_home: "/home/{{ deploy_user }}"
-    registry_dir: "{{ deploy_root }}/{{ registry_container }}"
+    # The runner execs `ansible-playbook` with no ansible.cfg and no ANSIBLE_* environment, so controller
+    # options have to be declared here. `auto_silent` keeps the normal interpreter auto-discovery and only
+    # drops its warning.
+    ansible_python_interpreter: auto_silent
+
+    # Defaults to the account this playbook connected as, which by construction IS the deploy user:
+    # BuildRegistryInventory writes `ansible_user=<user of the cluster master address>`, and
+    # GenerateRegistryCredentials does not pass `deploy_user` at all. A hardcoded 'paas' would be wrong on
+    # every host whose deploy account is named otherwise, and would turn `_become` below into a sudo that
+    # the unprivileged deploy user cannot perform. An explicit extra var still overrides this.
+    deploy_user: "{{ ansible_facts['user_id'] }}"
+    deploy_root: /opt/paas
+    registry_image: "registry:2"
+    registry_network: space-registry
+    registry_port: 5000
+    registry_tls: false
+
+    # --- internals (not part of the extraVars contract) ---------------------------------------------
+    _become: "{{ deploy_user != ansible_facts['user_id'] }}"
+    _registry_dir: "{{ deploy_root }}/{{ registry_container }}"
+
+    # Rootless registry stack, written to {{ _registry_dir }}/registry.compose.yml and started with
+    # `docker compose` under the deploy user's rootless Docker. No host port is published: the registry is
+    # reachable by container name on the external `{{ registry_network }}` network only.
+    _registry_compose_config: |
+      services:
+        {{ registry_container }}:
+          image: "{{ registry_image }}"
+          container_name: "{{ registry_container }}"
+          restart: unless-stopped
+          environment:
+            REGISTRY_HTTP_ADDR: "0.0.0.0:{{ registry_port }}"
+            REGISTRY_AUTH: "htpasswd"
+            REGISTRY_AUTH_HTPASSWD_REALM: "Space Private Registry"
+            REGISTRY_AUTH_HTPASSWD_PATH: "/auth/htpasswd"
+      {% if registry_tls | bool %}
+            REGISTRY_HTTP_TLS_CERTIFICATE: "/certs/registry.crt"
+            REGISTRY_HTTP_TLS_KEY: "/certs/registry.key"
+      {% endif %}
+          volumes:
+            - "{{ registry_volume }}:/var/lib/registry"
+            - "{{ _registry_dir }}/auth:/auth:ro"
+      {% if registry_tls | bool %}
+            - "{{ _registry_dir }}/certs:/certs:ro"
+      {% endif %}
+          expose:
+            - "{{ registry_port }}"
+          networks:
+            - registry
+      volumes:
+        {{ registry_volume }}:
+      networks:
+        registry:
+          name: "{{ registry_network }}"
+          external: true
 
   tasks:
+    # --- 0. Resolve the deploy user's uid -----------------------------------------------------------
+    # `ansible_facts['user_uid']` is the uid of whoever connected, not of the deploy user, and its silent
+    # fallback to 1000 points DOCKER_HOST at a completely unrelated account's runtime directory. Ask passwd.
+    - name: Look up the deploy user account
+      ansible.builtin.getent:
+        database: passwd
+        key: "{{ deploy_user }}"
+        fail_key: false
+
+    - name: Fail if the deploy user could not be resolved in passwd
+      ansible.builtin.fail:
+        msg: >-
+          The deploy account '{{ deploy_user }}' is not present in the passwd database of this host, so the
+          rootless Docker socket path cannot be resolved. The host must be bootstrapped first.
+      when: not ((ansible_facts['getent_passwd'] | default({})).get(deploy_user))
+
+    # getent_passwd entries are [password, uid, gid, gecos, home, shell].
+    - name: Register the deploy user's uid
+      ansible.builtin.set_fact:
+        deploy_uid: "{{ (ansible_facts['getent_passwd'] | default({})).get(deploy_user)[1] }}"
+
+    # --- 1. Registry stack --------------------------------------------------------------------------
     - name: Ensure the external private registry network exists
-      become: true
+      become: "{{ _become }}"
       become_user: "{{ deploy_user }}"
       ansible.builtin.command:
         cmd: "docker network create {{ registry_network }}"
       environment:
-        DOCKER_HOST: "unix:///run/user/{{ ansible_facts['user_uid'] | default('1000') }}/docker.sock"
+        DOCKER_HOST: "unix:///run/user/{{ deploy_uid }}/docker.sock"
       register: registry_network_create
       changed_when: "registry_network_create.rc == 0"
       failed_when: >-
@@ -41,37 +126,61 @@
         and 'already exists' not in (registry_network_create.stderr | default(''))
 
     - name: Create the registry auth directory
-      become: true
+      become: "{{ _become }}"
       become_user: "{{ deploy_user }}"
       ansible.builtin.file:
-        path: "{{ registry_dir }}/auth"
+        path: "{{ _registry_dir }}/auth"
         state: directory
         mode: "0750"
 
     - name: Write the registry htpasswd file
-      become: true
+      become: "{{ _become }}"
       become_user: "{{ deploy_user }}"
       ansible.builtin.copy:
         content: "{{ registry_htpasswd }}\n"
-        dest: "{{ registry_dir }}/auth/htpasswd"
+        dest: "{{ _registry_dir }}/auth/htpasswd"
         mode: "0640"
 
     - name: Render the registry compose file
-      become: true
+      become: "{{ _become }}"
       become_user: "{{ deploy_user }}"
-      ansible.builtin.template:
-        src: registry.compose.yml.j2
-        dest: "{{ registry_dir }}/registry.compose.yml"
+      ansible.builtin.copy:
+        content: "{{ _registry_compose_config }}"
+        dest: "{{ _registry_dir }}/registry.compose.yml"
         mode: "0640"
 
     - name: Start / converge the private registry stack
-      become: true
+      become: "{{ _become }}"
       become_user: "{{ deploy_user }}"
       ansible.builtin.command:
         cmd: >-
           docker compose -p {{ registry_container }}
-          -f {{ registry_dir }}/registry.compose.yml up -d --remove-orphans
+          -f {{ _registry_dir }}/registry.compose.yml up -d --remove-orphans
       environment:
-        DOCKER_HOST: "unix:///run/user/{{ ansible_facts['user_uid'] | default('1000') }}/docker.sock"
+        DOCKER_HOST: "unix:///run/user/{{ deploy_uid }}/docker.sock"
       register: registry_up
       changed_when: "'Started' in (registry_up.stderr | default('')) or 'Created' in (registry_up.stderr | default(''))"
+
+    # --- 2. Readiness -------------------------------------------------------------------------------
+    # The step must fail loudly when the registry does not come up, instead of reporting success and letting
+    # the next deployment fail on an unreachable registry. container_name is pinned above, so the compose
+    # project prefix does not apply here.
+    - name: Read back the registry container state
+      become: "{{ _become }}"
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: docker inspect --format={% raw %}'{{.State.Status}}'{% endraw %} {{ registry_container }}
+      environment:
+        DOCKER_HOST: "unix:///run/user/{{ deploy_uid }}/docker.sock"
+      changed_when: false
+      register: registry_state
+
+    - name: Assert that the registry is running
+      ansible.builtin.assert:
+        that:
+          - (registry_state.stdout | trim) == 'running'
+        fail_msg: >-
+          The registry container '{{ registry_container }}' is '{{ registry_state.stdout | trim }}', not
+          'running'. Inspect it on the host with:
+          docker logs {{ registry_container }}
+        quiet: true

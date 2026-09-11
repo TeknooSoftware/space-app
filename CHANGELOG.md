@@ -1,5 +1,28 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta3] - 2026-09-11
+### Beta Release
+- Rename JobUrlPublisher to TaskUrlPublisher and `newJobResult` to `taskResult` in the pending API templates,
+  to complete the Job to Task renaming started in beta2
+- Restrict `/api/v1/admin` to ROLE_ADMIN and deny ROLE_RECOVERY
+- Remove the unused `cleanHtml` argument from the API v1 routes
+- Keep the SSH username in ClusterCredentials for Docker Compose clusters, in AddManagedEnvironmentToProject
+  and UpdateProjectCredentialsFromAccount
+- Expose the AccountCluster type to Twig and make the cluster form's credential fields optional
+- Increase the default `SPACE_DC_TIMEOUT` from 300 to 900 seconds
+- Add Behat coverage for Docker Compose deployments with user isolation disabled
+- Improve Docker Compose Behat tests and clean the Makefile output
+- Fix the development MongoDB Dockerfile
+- Update documentations
+- Update libs
+  - East PaaS 5.7 beta9
+  - Symfony 7.4.18/8.1.6
+  - Doctrine MongoDB ODM 2.17.1
+  - Illuminate 13.31
+  - Monolog 3.12
+  - Flysystem 3.36
+  - Behat 3.33, PHPUnit 13.3.3, PHPStan 2.2.13
+
 ## [2.5.0-beta2] - 2026-08-24
 ### Beta Release
 - Add NewTaskInterface, rework NewJob to follow t, Transform NewJobHandler/Worker to NewTask to allow execute any new task

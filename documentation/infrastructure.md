@@ -175,8 +175,10 @@ by the cluster `type`; Space only wires them and adds the type-aware account pro
   inventory, generate htpasswd credentials, and run the registry playbook via the East PaaS
   `RunnerFactoryInterface` (no custom runner).
 
-`templates/` — `registry.yml` (Ansible playbook, rootless, apt/dnf) and `registry.compose.yml.j2` render a
-dedicated `<namespace>-registry` container on an internal-only network.
+`templates/` — `registry.yml`, a single self-contained Ansible playbook (rootless) that renders a dedicated
+`<namespace>-registry` container on an internal-only network. The compose file is inlined in the playbook as
+the `_registry_compose_config` var and written with `copy: content:` — the PHP runner ships only the one
+playbook path, so no sidecar `.j2` would be resolvable next to it.
 
 #### Provisioning-plan selection
 
