@@ -29,12 +29,23 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Common\Contracts\Query\QueryElementInterface;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\LoadUserInSpace;
 use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Loader\Meta\SpaceUserLoader;
+use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\DTO\SpaceView;
 
 /**
  * Class LoadUserInSpaceTest.
@@ -51,9 +62,9 @@ class LoadUserInSpaceTest extends TestCase
 
     private TokenStorageInterface&Stub $tokenStorage;
 
-    private SpaceUserLoader&Stub $spaceUserLoader;
+    private SpaceUserLoader&MockObject $spaceUserLoader;
 
-    private SpaceAccountLoader&Stub $spaceAccountLoader;
+    private SpaceAccountLoader&MockObject $spaceAccountLoader;
 
     /**
      * {@inheritdoc}
@@ -63,8 +74,8 @@ class LoadUserInSpaceTest extends TestCase
         parent::setUp();
 
         $this->tokenStorage = $this->createStub(TokenStorageInterface::class);
-        $this->spaceUserLoader = $this->createStub(SpaceUserLoader::class);
-        $this->spaceAccountLoader = $this->createStub(SpaceAccountLoader::class);
+        $this->spaceUserLoader = $this->createMock(SpaceUserLoader::class);
+        $this->spaceAccountLoader = $this->createMock(SpaceAccountLoader::class);
         $this->loadUserInSpace = new LoadUserInSpace(
             $this->tokenStorage,
             $this->spaceUserLoader,
@@ -72,13 +83,161 @@ class LoadUserInSpaceTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    public function testInvokeWithoutToken(): void
     {
+        $this->spaceUserLoader
+            ->expects($this->never())
+            ->method('load');
+
+        $this->spaceAccountLoader
+            ->expects($this->never())
+            ->method('fetch');
+
         $this->assertInstanceOf(
             LoadUserInSpace::class,
             ($this->loadUserInSpace)(
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ParametersBag::class),
+            )
+        );
+    }
+
+    public function testInvokeWithoutUserInToken(): void
+    {
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($this->createStub(TokenInterface::class));
+
+        $this->spaceUserLoader
+            ->expects($this->never())
+            ->method('load');
+
+        $this->spaceAccountLoader
+            ->expects($this->never())
+            ->method('fetch');
+
+        $this->assertInstanceOf(
+            LoadUserInSpace::class,
+            ($this->loadUserInSpace)(
+                $this->createStub(ManagerInterface::class),
+                $this->createStub(ParametersBag::class),
+            )
+        );
+    }
+
+    private function prepareToken(): User
+    {
+        $user = (new User())->setId('user-id');
+        $symfonyUser = $this->createStub(AbstractUser::class);
+        $symfonyUser->method('getWrappedUser')->willReturn($user);
+
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($symfonyUser);
+
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($token);
+
+        return $user;
+    }
+
+    public function testInvoke(): void
+    {
+        $user = $this->prepareToken();
+        $account = new Account();
+
+        $this->spaceUserLoader
+            ->expects($this->once())
+            ->method('load')
+            ->with('user-id', $this->isInstanceOf(PromiseInterface::class))
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise) use ($user): LoaderInterface {
+                    $promise->success(new SpaceUser(user: $user));
+
+                    return $this->spaceUserLoader;
+                }
+            );
+
+        $this->spaceAccountLoader
+            ->expects($this->once())
+            ->method('fetch')
+            ->with($this->isInstanceOf(QueryElementInterface::class), $this->isInstanceOf(PromiseInterface::class))
+            ->willReturnCallback(
+                function (QueryElementInterface $query, PromiseInterface $promise) use ($account): LoaderInterface {
+                    $promise->success(new SpaceAccount(account: $account));
+
+                    return $this->spaceAccountLoader;
+                }
+            );
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->exactly(2))
+            ->method('updateWorkPlan')
+            ->willReturnSelf();
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with(
+                'space',
+                $this->callback(
+                    fn (SpaceView $view): bool => $view->user instanceof SpaceUser
+                        && $view->account instanceof SpaceAccount
+                        && $view->user->user === $user
+                        && $view->account->account === $account
+                )
+            )
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            LoadUserInSpace::class,
+            ($this->loadUserInSpace)(
+                $manager,
+                $bag,
+            )
+        );
+    }
+
+    public function testInvokeWithLoadFailure(): void
+    {
+        $this->prepareToken();
+
+        $this->spaceUserLoader
+            ->expects($this->once())
+            ->method('load')
+            ->willReturnCallback(
+                function (string $id, PromiseInterface $promise): LoaderInterface {
+                    $promise->fail(new RuntimeException('not found'));
+
+                    return $this->spaceUserLoader;
+                }
+            );
+
+        $this->spaceAccountLoader
+            ->expects($this->never())
+            ->method('fetch');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('error')
+            ->with($this->isInstanceOf(RuntimeException::class))
+            ->willReturnSelf();
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with('space', $this->isInstanceOf(SpaceView::class))
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            LoadUserInSpace::class,
+            ($this->loadUserInSpace)(
+                $manager,
+                $bag,
             )
         );
     }

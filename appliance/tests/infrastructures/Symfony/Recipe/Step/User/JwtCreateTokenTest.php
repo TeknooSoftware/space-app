@@ -25,13 +25,16 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\User;
 
+use DateTimeImmutable;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\User\JwtCreateToken;
 use Teknoo\Space\Object\DTO\JWTConfiguration;
@@ -51,9 +54,9 @@ class JwtCreateTokenTest extends TestCase
 
     private TokenStorageInterface&Stub $tokenStorage;
 
-    private JWTTokenManagerInterface&Stub $jWTTokenManagerInterface;
+    private JWTTokenManagerInterface&MockObject $jWTTokenManagerInterface;
 
-    private DatesService&Stub $datesService;
+    private DatesService $datesService;
 
     /**
      * {@inheritdoc}
@@ -63,8 +66,8 @@ class JwtCreateTokenTest extends TestCase
         parent::setUp();
 
         $this->tokenStorage = $this->createStub(TokenStorageInterface::class);
-        $this->jWTTokenManagerInterface = $this->createStub(JWTTokenManagerInterface::class);
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->jWTTokenManagerInterface = $this->createMock(JWTTokenManagerInterface::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01 00:00:00'));
         $this->jwtCreateToken = new JwtCreateToken(
             $this->jWTTokenManagerInterface,
             $this->tokenStorage,
@@ -73,13 +76,107 @@ class JwtCreateTokenTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    public function testInvokeWithoutToken(): void
     {
+        $this->jWTTokenManagerInterface
+            ->expects($this->never())
+            ->method('createFromPayload');
+
         $this->assertInstanceOf(
             JwtCreateToken::class,
             ($this->jwtCreateToken)(
                 $this->createStub(ParametersBag::class),
-                $this->createStub(JWTConfiguration::class),
+                new JWTConfiguration(),
+            )
+        );
+    }
+
+    public function testInvokeWithoutUserInToken(): void
+    {
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($this->createStub(TokenInterface::class));
+
+        $this->jWTTokenManagerInterface
+            ->expects($this->never())
+            ->method('createFromPayload');
+
+        $this->assertInstanceOf(
+            JwtCreateToken::class,
+            ($this->jwtCreateToken)(
+                $this->createStub(ParametersBag::class),
+                new JWTConfiguration(),
+            )
+        );
+    }
+
+    private function prepareToken(): AbstractUser
+    {
+        $symfonyUser = $this->createStub(AbstractUser::class);
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($symfonyUser);
+
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($token);
+
+        return $symfonyUser;
+    }
+
+    public function testInvokeWithoutExpirationDate(): void
+    {
+        $symfonyUser = $this->prepareToken();
+
+        $this->jWTTokenManagerInterface
+            ->expects($this->once())
+            ->method('createFromPayload')
+            ->with(
+                $symfonyUser,
+                ['exp' => (new DateTimeImmutable('2024-01-31 00:00:00'))->getTimestamp()],
+            )
+            ->willReturn('jwt-token');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with('jwtToken', 'jwt-token')
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            JwtCreateToken::class,
+            ($this->jwtCreateToken)(
+                $bag,
+                new JWTConfiguration(expirationDate: null),
+            )
+        );
+    }
+
+    public function testInvokeWithExpirationDate(): void
+    {
+        $symfonyUser = $this->prepareToken();
+
+        $this->jWTTokenManagerInterface
+            ->expects($this->once())
+            ->method('createFromPayload')
+            ->with(
+                $symfonyUser,
+                ['exp' => (new DateTimeImmutable('2024-01-02 00:00:00'))->getTimestamp()],
+            )
+            ->willReturn('jwt-token');
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with('jwtToken', 'jwt-token')
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            JwtCreateToken::class,
+            ($this->jwtCreateToken)(
+                $bag,
+                new JWTConfiguration(expirationDate: new DateTimeImmutable('2024-01-02 00:00:00')),
             )
         );
     }

@@ -33,6 +33,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Teknoo\East\CommonBundle\Object\UserWithRecoveryAccess;
 use Teknoo\Space\Infrastructures\Symfony\Security\Authentication\AuthenticationSuccessHandler;
 
 /**
@@ -78,5 +79,32 @@ class AuthenticationSuccessHandlerTest extends TestCase
                 $this->createStub(TokenInterface::class),
             )
         );
+    }
+
+    public function testOnAuthenticationSuccessWithRecoveryUser(): void
+    {
+        $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+        $urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with('space_change_password')
+            ->willReturn('/change-password');
+
+        $handler = new AuthenticationSuccessHandler(
+            $urlGenerator,
+            'space_dashboard',
+            'space_change_password'
+        );
+
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($this->createStub(UserWithRecoveryAccess::class));
+
+        $response = $handler->onAuthenticationSuccess(
+            $this->createStub(Request::class),
+            $token,
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/change-password', $response->getTargetUrl());
     }
 }

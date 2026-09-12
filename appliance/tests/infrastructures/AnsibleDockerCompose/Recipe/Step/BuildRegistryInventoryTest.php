@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\AnsibleDockerCompose\Recipe\Step;
 
+use DomainException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
@@ -98,6 +99,32 @@ class BuildRegistryInventoryTest extends TestCase
         $this->assertStringContainsString('ansible_user=deployer', $content);
 
         unlink($captured);
+    }
+
+    public function testInvokeThrowsOnUnparsableMasterAddress(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'dc',
+            sluggyName: 'dc',
+            type: 'docker-compose',
+            masterAddress: 'not-a-valid-url',
+            dashboardAddress: '',
+            isExternal: false,
+            clientKey: 'k',
+            supportRegistry: true,
+        );
+
+        $this->expectException(DomainException::class);
+
+        $step = new BuildRegistryInventory(
+            new Filesystem(new InMemoryFilesystemAdapter()),
+            sys_get_temp_dir(),
+        );
+
+        $step(
+            $this->createStub(ManagerInterface::class),
+            new ClusterCatalog(['dc' => $cluster], []),
+        );
     }
 
     public function testInvokeThrowsOnNonDockerComposeRegistryCluster(): void

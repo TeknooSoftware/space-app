@@ -35,6 +35,9 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
+use RuntimeException;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
+use Teknoo\Space\Object\Persisted\AccountData;
 
 /**
  * Class PrepareFormTest.
@@ -49,7 +52,7 @@ class PrepareFormTest extends TestCase
 {
     private PrepareForm $prepareForm;
 
-    private SubscriptionPlanCatalog&Stub $subscriptionPlanCatalog;
+    private SubscriptionPlanCatalog&MockObject $subscriptionPlanCatalog;
 
     /**
      * {@inheritdoc}
@@ -58,7 +61,7 @@ class PrepareFormTest extends TestCase
     {
         parent::setUp();
 
-        $this->subscriptionPlanCatalog = $this->createStub(SubscriptionPlanCatalog::class);
+        $this->subscriptionPlanCatalog = $this->createMock(SubscriptionPlanCatalog::class);
 
         $this->prepareForm = new PrepareForm(
             $this->subscriptionPlanCatalog,
@@ -67,6 +70,10 @@ class PrepareFormTest extends TestCase
 
     public function testInvoke(): void
     {
+        $this->subscriptionPlanCatalog
+            ->expects($this->never())
+            ->method('getSubscriptionPlan');
+
         $this->assertInstanceOf(
             PrepareForm::class,
             ($this->prepareForm)(
@@ -77,6 +84,93 @@ class PrepareFormTest extends TestCase
                     environments: []
                 ),
                 [],
+            )
+        );
+    }
+
+    public function testInvokeWithoutSpaceAccount(): void
+    {
+        $this->subscriptionPlanCatalog
+            ->expects($this->never())
+            ->method('getSubscriptionPlan');
+
+        $this->expectException(RuntimeException::class);
+        ($this->prepareForm)(
+            $this->createStub(ManagerInterface::class),
+            new ClusterCatalog([], []),
+            null,
+        );
+    }
+
+    public function testInvokeWithoutSubscriptionPlan(): void
+    {
+        $this->subscriptionPlanCatalog
+            ->expects($this->never())
+            ->method('getSubscriptionPlan');
+
+        $account = new Account();
+        $clusterCatalog = new ClusterCatalog([], []);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([
+                'formOptions' => [
+                    'foo' => 'bar',
+                    'subscriptionPlan' => null,
+                    'clusterCatalog' => $clusterCatalog,
+                ],
+            ])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            PrepareForm::class,
+            ($this->prepareForm)(
+                $manager,
+                $clusterCatalog,
+                new SpaceAccount(
+                    account: $account,
+                    accountData: new AccountData(account: $account, subscriptionPlan: ''),
+                ),
+                ['foo' => 'bar'],
+            )
+        );
+    }
+
+    public function testInvokeWithSubscriptionPlan(): void
+    {
+        $plan = new SubscriptionPlan('plan-id', 'Plan', []);
+        $this->subscriptionPlanCatalog
+            ->expects($this->once())
+            ->method('getSubscriptionPlan')
+            ->with('plan-id')
+            ->willReturn($plan);
+
+        $account = new Account();
+        $clusterCatalog = new ClusterCatalog([], []);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([
+                'formOptions' => [
+                    'subscriptionPlan' => $plan,
+                    'clusterCatalog' => $clusterCatalog,
+                ],
+            ])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            PrepareForm::class,
+            ($this->prepareForm)(
+                $manager,
+                $clusterCatalog,
+                new SpaceAccount(
+                    account: $account,
+                    accountData: new AccountData(account: $account, subscriptionPlan: 'plan-id'),
+                ),
             )
         );
     }

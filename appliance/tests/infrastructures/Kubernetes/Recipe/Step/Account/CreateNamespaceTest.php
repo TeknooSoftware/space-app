@@ -25,6 +25,10 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
 
+use DateTimeImmutable;
+use DateTimeInterface;
+use DomainException;
+use LogicException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -33,6 +37,8 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Kubernetes\Client;
+use Teknoo\Kubernetes\Model\NamespaceModel;
+use Teknoo\Kubernetes\Repository\NamespaceRepository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
@@ -58,7 +64,7 @@ class CreateNamespaceTest extends TestCase
 
     private string $registryRootNamespace;
 
-    private DatesService&Stub $datesService;
+    private DatesService $datesService;
 
     private bool $preferRealDate;
 
@@ -71,7 +77,7 @@ class CreateNamespaceTest extends TestCase
 
         $this->rootNamespace = '42';
         $this->registryRootNamespace = '42';
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
         $this->preferRealDate = true;
 
         $this->createNamespace = new CreateNamespace(
@@ -82,32 +88,160 @@ class CreateNamespaceTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    private function createClusterConfig(NamespaceRepository&MockObject $repository): ClusterConfig
     {
-        $clusterConfig = new ClusterConfig(
+        $client = $this->createStub(Client::class);
+        $client->method('__call')
+            ->willReturnCallback(
+                fn (string $name): NamespaceRepository => match ($name) {
+                    'namespaces' => $repository,
+                }
+            );
+
+        return new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createStub(Client::class),
+            kubernetesClient: $client,
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
             isExternal: false,
         );
+    }
+
+    private function createRepository(?NamespaceModel $existing, bool $applied): NamespaceRepository&MockObject
+    {
+        $repository = $this->createMock(NamespaceRepository::class);
+        $repository->expects($this->once())
+            ->method('setFieldSelector')
+            ->willReturnSelf();
+        $repository->expects($this->once())
+            ->method('first')
+            ->willReturn($existing);
+        $repository->expects($applied ? $this->once() : $this->never())
+            ->method('apply')
+            ->willReturn([]);
+
+        return $repository;
+    }
+
+    private function createAccount(): Account
+    {
+        return (new Account())->setId('acc-1')->setName('Acct');
+    }
+
+    public function testInvokeForRegistry(): void
+    {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with(
+                'teknoo.space.text.account.kubernetes.namespace',
+                $this->isInstanceOf(DateTimeInterface::class),
+                false,
+                ['namespace' => '42foo', 'for-registry' => 'true'],
+            )
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['kubeNamespace' => '42foo'])
+            ->willReturnSelf();
 
         $this->assertInstanceOf(
             CreateNamespace::class,
             ($this->createNamespace)(
-                manager: $this->createStub(ManagerInterface::class),
-                accountInstance: $this->createStub(Account::class),
-                accountHistory: $this->createStub(AccountHistory::class),
+                manager: $manager,
+                accountInstance: $this->createAccount(),
+                accountHistory: $accountHistory,
                 accountNamespace: 'foo',
-                clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
+                clusterCatalog: new ClusterCatalog(
+                    ['default' => $this->createClusterConfig($this->createRepository(null, true))],
+                    [],
+                ),
                 forRegistry: true,
             ),
+        );
+    }
+
+    public function testInvokeForEnvironmentWithAnOwnedNamespace(): void
+    {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with(
+                'teknoo.space.text.account.kubernetes.namespace',
+                $this->isInstanceOf(DateTimeInterface::class),
+                false,
+                ['namespace' => '42foo-prod', 'for-registry' => 'false'],
+            )
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['kubeNamespace' => '42foo-prod'])
+            ->willReturnSelf();
+
+        $existing = new NamespaceModel(['metadata' => ['name' => '42foo-prod', 'labels' => ['id' => 'acc-1']]]);
+
+        $this->assertInstanceOf(
+            CreateNamespace::class,
+            ($this->createNamespace)(
+                manager: $manager,
+                accountInstance: $this->createAccount(),
+                accountHistory: $accountHistory,
+                accountNamespace: 'foo',
+                clusterCatalog: new ClusterCatalog(
+                    ['default' => $this->createClusterConfig($this->createRepository($existing, true))],
+                    [],
+                ),
+                forRegistry: false,
+                clusterName: 'default',
+                envName: 'Prod',
+            ),
+        );
+    }
+
+    public function testInvokeThrowsWhenTheNamespaceIsOwnedByAnotherAccount(): void
+    {
+        $existing = new NamespaceModel(['metadata' => ['name' => '42foo-prod', 'labels' => ['id' => 'acc-2']]]);
+
+        $this->expectException(DomainException::class);
+
+        ($this->createNamespace)(
+            manager: $this->createStub(ManagerInterface::class),
+            accountInstance: $this->createAccount(),
+            accountHistory: $this->createStub(AccountHistory::class),
+            accountNamespace: 'foo',
+            clusterCatalog: new ClusterCatalog(
+                ['default' => $this->createClusterConfig($this->createRepository($existing, false))],
+                [],
+            ),
+            forRegistry: false,
+            clusterName: 'default',
+            envName: 'Prod',
+        );
+    }
+
+    public function testInvokeThrowsWithoutClusterNameForEnvironment(): void
+    {
+        $this->expectException(LogicException::class);
+
+        ($this->createNamespace)(
+            manager: $this->createStub(ManagerInterface::class),
+            accountInstance: $this->createAccount(),
+            accountHistory: $this->createStub(AccountHistory::class),
+            accountNamespace: 'foo',
+            clusterCatalog: new ClusterCatalog([], []),
+            forRegistry: false,
+            clusterName: null,
+            envName: 'Prod',
         );
     }
 

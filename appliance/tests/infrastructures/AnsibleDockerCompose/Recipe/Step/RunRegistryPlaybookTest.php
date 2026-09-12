@@ -27,9 +27,11 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\AnsibleDockerCompose\Recipe\St
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerFactoryInterface;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerInterface;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
@@ -95,6 +97,97 @@ class RunRegistryPlaybookTest extends TestCase
         );
 
         $this->assertInstanceOf(RunRegistryPlaybook::class, $result);
+    }
+
+    public function testInvokeStoresTheResultInTheWorkPlanOnSuccess(): void
+    {
+        $runner = $this->createMock(RunnerInterface::class);
+        $runner->expects($this->once())
+            ->method('run')
+            ->willReturnCallback(
+                function (
+                    string $playbook,
+                    string $inventory,
+                    array $extraVars,
+                    mixed $credentials,
+                    PromiseInterface $promise,
+                ) use ($runner): RunnerInterface {
+                    $promise->success(['changed' => 1]);
+
+                    return $runner;
+                }
+            );
+
+        $factory = $this->createStub(RunnerFactoryInterface::class);
+        $factory->method('__invoke')->willReturn($runner);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['registryInstallResult' => ['changed' => 1]])
+            ->willReturnSelf();
+        $manager->expects($this->never())
+            ->method('error');
+
+        $step = new RunRegistryPlaybook($factory, '/path/to/registry.yml');
+
+        $this->assertInstanceOf(
+            RunRegistryPlaybook::class,
+            $step(
+                manager: $manager,
+                clusterCatalog: $this->dockerComposeCatalog(),
+                inventoryPath: '/tmp/inventory.ini',
+                extraVars: [],
+            ),
+        );
+    }
+
+    public function testInvokeReportsTheErrorToTheManagerOnFailure(): void
+    {
+        $error = new RuntimeException('playbook failed');
+
+        $runner = $this->createMock(RunnerInterface::class);
+        $runner->expects($this->once())
+            ->method('run')
+            ->willReturnCallback(
+                function (
+                    string $playbook,
+                    string $inventory,
+                    array $extraVars,
+                    mixed $credentials,
+                    PromiseInterface $promise,
+                ) use (
+                    $runner,
+                    $error,
+                ): RunnerInterface {
+                    $promise->fail($error);
+
+                    return $runner;
+                }
+            );
+
+        $factory = $this->createStub(RunnerFactoryInterface::class);
+        $factory->method('__invoke')->willReturn($runner);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($error)
+            ->willReturnSelf();
+
+        $step = new RunRegistryPlaybook($factory, '/path/to/registry.yml');
+
+        $this->assertInstanceOf(
+            RunRegistryPlaybook::class,
+            $step(
+                manager: $manager,
+                clusterCatalog: $this->dockerComposeCatalog(),
+                inventoryPath: '/tmp/inventory.ini',
+                extraVars: [],
+            ),
+        );
     }
 
     public function testInvokeThrowsOnNonDockerComposeRegistryCluster(): void

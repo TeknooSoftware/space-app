@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
@@ -36,6 +37,11 @@ use Teknoo\East\FoundationBundle\Messenger\Client;
 use Teknoo\East\FoundationBundle\Messenger\Executor;
 use Teknoo\East\Foundation\Http\Message\MessageFactoryInterface;
 use Teknoo\East\Paas\Contracts\Security\EncryptionInterface;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\EncryptableVariableInterface;
+use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\Exception\BadEncryptionConfigurationException;
+use Teknoo\Space\Object\DTO\JobVar;
+use Throwable;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\Notifier\TaskError;
 use Teknoo\Space\Infrastructures\Symfony\Messenger\Handler\NewTaskHandler;
 use Teknoo\Recipe\BaseRecipeInterface;
@@ -184,6 +190,136 @@ class NewTaskHandlerTest extends TestCase
         $this->assertInstanceOf(
             NewTaskHandler::class,
             $handler(new NewJob(taskId: 'foo')),
+        );
+    }
+
+    private function createHandlerWithoutEncryption(
+        Executor $executor,
+        TaskError $jobError,
+        PersistedVariableEncryption $encryptionService,
+        StreamFactoryInterface $streamFactory,
+    ): NewTaskHandler {
+        $message = $this->createStub(MessageInterface::class);
+        $message->method('withBody')->willReturnSelf();
+        $message->method('withAddedHeader')->willReturnSelf();
+        $messageFactory = $this->createStub(MessageFactoryInterface::class);
+        $messageFactory->method('createMessage')->willReturn($message);
+
+        return new NewTaskHandler(
+            $executor,
+            $this->recipeRegistry,
+            $messageFactory,
+            $streamFactory,
+            $this->client,
+            $this->logger,
+            $jobError,
+            null,
+            $this->sleepService,
+            $encryptionService,
+            0,
+        );
+    }
+
+    private function createStreamFactoryExpecting(string $json): StreamFactoryInterface
+    {
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $streamFactory->expects($this->once())
+            ->method('createStream')
+            ->with($json);
+
+        return $streamFactory;
+    }
+
+    public function testInvokeWithPlainVariables(): void
+    {
+        $executor = $this->createMock(Executor::class);
+        $executor->expects($this->once())->method('execute');
+
+        $jobError = $this->createMock(TaskError::class);
+        $jobError->expects($this->never())->method('process');
+
+        $encryptionService = $this->createMock(PersistedVariableEncryption::class);
+        $encryptionService->expects($this->never())->method('decrypt');
+
+        $handler = $this->createHandlerWithoutEncryption(
+            $executor,
+            $jobError,
+            $encryptionService,
+            $this->createStreamFactoryExpecting('{"a":"b"}'),
+        );
+
+        $this->assertInstanceOf(
+            NewTaskHandler::class,
+            $handler(new NewJob(taskId: 'foo', variables: [new JobVar(name: 'a', value: 'b')])),
+        );
+    }
+
+    public function testInvokeWithEncryptedVariables(): void
+    {
+        $executor = $this->createMock(Executor::class);
+        $executor->expects($this->once())->method('execute');
+
+        $jobError = $this->createMock(TaskError::class);
+        $jobError->expects($this->never())->method('process');
+
+        $encryptionService = $this->createMock(PersistedVariableEncryption::class);
+        $encryptionService->expects($this->once())
+            ->method('decrypt')
+            ->willReturnCallback(
+                static function (
+                    EncryptableVariableInterface $variable,
+                    PromiseInterface $promise,
+                ) use ($encryptionService): PersistedVariableEncryption {
+                    $promise->success(new JobVar(name: 'a', value: 'decrypted'));
+
+                    return $encryptionService;
+                },
+            );
+
+        $handler = $this->createHandlerWithoutEncryption(
+            $executor,
+            $jobError,
+            $encryptionService,
+            $this->createStreamFactoryExpecting('{"a":"decrypted"}'),
+        );
+
+        $this->assertInstanceOf(
+            NewTaskHandler::class,
+            $handler(
+                new NewJob(
+                    taskId: 'foo',
+                    variables: [new JobVar(name: 'a', value: 'encrypted', encryptionAlgorithm: 'aes')],
+                ),
+            ),
+        );
+    }
+
+    public function testInvokeWithoutEncryptionButEncryptedTask(): void
+    {
+        $executor = $this->createMock(Executor::class);
+        $executor->expects($this->never())->method('execute');
+
+        $jobError = $this->createMock(TaskError::class);
+        $jobError->expects($this->once())
+            ->method('process')
+            ->with($this->isInstanceOf(BadEncryptionConfigurationException::class), 'foo');
+
+        $encryptionService = $this->createMock(PersistedVariableEncryption::class);
+        $encryptionService->expects($this->never())->method('decrypt');
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+        $streamFactory->expects($this->never())->method('createStream');
+
+        $handler = $this->createHandlerWithoutEncryption(
+            $executor,
+            $jobError,
+            $encryptionService,
+            $streamFactory,
+        );
+
+        $this->assertInstanceOf(
+            NewTaskHandler::class,
+            $handler((new NewJob(taskId: 'foo'))->cloneWith('content', 'aes-256-cbc')),
         );
     }
 }

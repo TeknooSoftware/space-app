@@ -76,4 +76,17 @@ class NewJobTypeTest extends TestCase
         );
         $this->assertTrue(true);
     }
+
+    public function testBuildFormInApiMode(): void
+    {
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->exactly(2))
+            ->method('add')
+            ->willReturnSelf();
+
+        $this->newJobType->buildForm(
+            $builder,
+            ['api' => 'json', 'environmentsList' => []],
+        );
+    }
 }

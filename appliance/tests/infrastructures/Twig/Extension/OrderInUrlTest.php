@@ -59,4 +59,23 @@ class OrderInUrlTest extends TestCase
             )
         );
     }
+
+    public function testOrderInUrlInvertsTheDirectionOfTheCurrentColumn(): void
+    {
+        $this->assertSame(
+            '?order=foo&direction=DESC',
+            $this->orderInUrl->orderInUrl(
+                ['order' => 'foo', 'direction' => 'ASC'],
+                'foo'
+            )
+        );
+
+        $this->assertSame(
+            '?order=foo&direction=ASC',
+            $this->orderInUrl->orderInUrl(
+                ['order' => 'foo', 'direction' => 'DESC'],
+                'foo'
+            )
+        );
+    }
 }

@@ -29,7 +29,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\Kubernetes\Client;
+use Teknoo\Kubernetes\Model\NamespaceModel;
+use Teknoo\Kubernetes\Repository\NamespaceRepository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
@@ -70,40 +74,138 @@ class DeleteNamespaceFromResumesTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    private function createWallet(Account $account): AccountWallet
     {
-        $account = $this->createStub(Account::class);
+        return new AccountWallet([
+            new AccountEnvironment(
+                $account,
+                'Foo',
+                'Prod',
+                'foo',
+                'foo',
+                'foo',
+                'foo',
+                'foo',
+                'foo',
+                'foo',
+                'foo',
+                [],
+            )->setId('foo'),
+        ]);
+    }
+
+    private function createSpaceAccount(Account $account): SpaceAccount
+    {
+        return new SpaceAccount(
+            account: $account,
+            environments: [
+                new AccountEnvironmentResume(
+                    'Foo',
+                    'Prod',
+                    'foo5',
+                )
+            ]
+        );
+    }
+
+    private function createCatalog(NamespaceRepository&MockObject $repository): ClusterCatalog
+    {
+        $client = $this->createStub(Client::class);
+        $client->method('__call')
+            ->willReturnCallback(
+                fn (string $name): NamespaceRepository => match ($name) {
+                    'namespaces' => $repository,
+                }
+            );
+
+        return new ClusterCatalog(
+            [
+                'foo' => new KubernetesCluster(
+                    name: 'foo',
+                    sluggyName: 'foo',
+                    type: 'foo',
+                    masterAddress: 'foo',
+                    storageProvisioner: 'foo',
+                    dashboardAddress: 'foo',
+                    kubernetesClient: $client,
+                    token: 'foo',
+                    supportRegistry: true,
+                    useHnc: false,
+                    isExternal: false,
+                ),
+            ],
+            ['Foo' => 'foo'],
+        );
+    }
+
+    public function testInvokeWithoutCatalog(): void
+    {
+        $account = (new Account())->setId('acc-1');
+
+        $this->expectException(RuntimeException::class);
+
+        ($this->deleteNamespaceFromResumes)(
+            $this->createWallet($account),
+            $this->createSpaceAccount($account),
+        );
+    }
+
+    public function testInvokeWhenTheNamespaceDoesNotExist(): void
+    {
+        $account = (new Account())->setId('acc-1');
+
+        $repository = $this->createMock(NamespaceRepository::class);
+        $repository->expects($this->once())->method('setLabelSelector')->willReturnSelf();
+        $repository->expects($this->once())->method('first')->willReturn(null);
+        $repository->expects($this->never())->method('delete');
 
         $this->assertInstanceOf(
             DeleteNamespaceFromResumes::class,
             ($this->deleteNamespaceFromResumes)(
-                new AccountWallet([
-                    new AccountEnvironment(
-                        $account,
-                        'Foo',
-                        'Prod',
-                        'foo',
-                        'foo',
-                        'foo',
-                        'foo',
-                        'foo',
-                        'foo',
-                        'foo',
-                        'foo',
-                        [],
-                    )->setId('foo'),
-                ]),
-                new SpaceAccount(
-                    account: $account,
-                    environments: [
-                        new AccountEnvironmentResume(
-                            'Foo',
-                            'Prod',
-                            'foo5',
-                        )
-                    ]
-                ),
-                new ClusterCatalog(['foo' => $this->createStub(KubernetesCluster::class)], ['Foo' => 'foo']),
+                $this->createWallet($account),
+                $this->createSpaceAccount($account),
+                $this->createCatalog($repository),
+            ),
+        );
+    }
+
+    public function testInvokeWhenTheNamespaceIsOwnedByAnotherAccount(): void
+    {
+        $account = (new Account())->setId('acc-1');
+
+        $repository = $this->createMock(NamespaceRepository::class);
+        $repository->expects($this->once())->method('setLabelSelector')->willReturnSelf();
+        $repository->expects($this->once())->method('first')->willReturn(
+            new NamespaceModel(['metadata' => ['name' => 'foo', 'labels' => ['id' => 'acc-2']]])
+        );
+        $repository->expects($this->never())->method('delete');
+
+        $this->assertInstanceOf(
+            DeleteNamespaceFromResumes::class,
+            ($this->deleteNamespaceFromResumes)(
+                $this->createWallet($account),
+                $this->createSpaceAccount($account),
+                $this->createCatalog($repository),
+            ),
+        );
+    }
+
+    public function testInvokeDeletesTheNamespace(): void
+    {
+        $account = (new Account())->setId('acc-1');
+
+        $model = new NamespaceModel(['metadata' => ['name' => 'foo', 'labels' => ['id' => 'acc-1']]]);
+        $repository = $this->createMock(NamespaceRepository::class);
+        $repository->expects($this->once())->method('setLabelSelector')->willReturnSelf();
+        $repository->expects($this->once())->method('first')->willReturn($model);
+        $repository->expects($this->once())->method('delete')->with($model)->willReturn([]);
+
+        $this->assertInstanceOf(
+            DeleteNamespaceFromResumes::class,
+            ($this->deleteNamespaceFromResumes)(
+                $this->createWallet($account),
+                $this->createSpaceAccount($account),
+                $this->createCatalog($repository),
             ),
         );
     }

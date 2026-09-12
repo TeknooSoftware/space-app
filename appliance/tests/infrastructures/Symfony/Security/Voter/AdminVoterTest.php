@@ -28,6 +28,9 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Voter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\Space\Infrastructures\Symfony\Security\Voter\AdminVoter;
 
 /**
@@ -65,5 +68,49 @@ class AdminVoterTest extends TestCase
                 ['foo' => 'bar'],
             ),
         );
+    }
+
+    /**
+     * @param string[] $roles
+     */
+    private function createToken(array $roles): TokenInterface
+    {
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($this->createStub(AbstractUser::class));
+        $token->method('getRoleNames')->willReturn($roles);
+
+        return $token;
+    }
+
+    public function testVoteGrantedWhenUserHasAdminRole(): void
+    {
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_GRANTED,
+            $this->adminVoter->vote(
+                $this->createToken(['ROLE_USER', $this->adminRoleName]),
+                'foo',
+                ['foo' => 'bar'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.granted.user_is_admin'], $vote->reasons);
+    }
+
+    public function testVoteAbstainWhenUserHasNotAdminRole(): void
+    {
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_ABSTAIN,
+            $this->adminVoter->vote(
+                $this->createToken(['ROLE_USER']),
+                'foo',
+                ['foo' => 'bar'],
+                $vote,
+            ),
+        );
+        $this->assertSame([], $vote->reasons);
     }
 }

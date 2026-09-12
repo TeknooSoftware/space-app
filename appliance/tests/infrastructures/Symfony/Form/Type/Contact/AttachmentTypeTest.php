@@ -28,8 +28,13 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Contact;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Contact\AttachmentType;
+use Teknoo\Space\Object\DTO\ContactAttachment;
 
 /**
  * Class AttachmentTypeTest.
@@ -69,5 +74,51 @@ class AttachmentTypeTest extends TestCase
             $this->createStub(OptionsResolver::class),
         );
         $this->assertTrue(true);
+    }
+
+    public function testBuildFormPostSubmitListener(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $this->attachmentType->buildForm($builder, []);
+
+        $this->assertCount(1, $listeners[FormEvents::POST_SUBMIT]);
+        $listener = $listeners[FormEvents::POST_SUBMIT][0];
+
+        $attachment = new ContactAttachment();
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('isValid')->willReturn(false);
+        $listener(new FormEvent($form, $attachment));
+        $this->assertSame('', $attachment->fileName);
+
+        $fileForm = $this->createStub(FormInterface::class);
+        $fileForm->method('getData')->willReturn(null);
+        $form = $this->createStub(FormInterface::class);
+        $form->method('isValid')->willReturn(true);
+        $form->method('get')->willReturn($fileForm);
+        $listener(new FormEvent($form, $attachment));
+        $this->assertSame('', $attachment->fileName);
+
+        $fileForm = $this->createStub(FormInterface::class);
+        $fileForm->method('getData')->willReturn(new UploadedFile(__FILE__, 'test.php', 'text/plain', null, true));
+        $form = $this->createStub(FormInterface::class);
+        $form->method('isValid')->willReturn(true);
+        $form->method('get')->willReturn($fileForm);
+        $listener(new FormEvent($form, $attachment));
+        $this->assertSame('test.php', $attachment->fileName);
+        $this->assertNotEmpty($attachment->mimeType);
+        $this->assertGreaterThan(0, $attachment->fileLength);
+        $this->assertStringContainsString('AttachmentTypeTest', $attachment->fileContent);
     }
 }

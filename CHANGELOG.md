@@ -19,6 +19,14 @@
 - Add Behat coverage for the East PaaS `v1.2` expose shortcuts (`services` declared in a container, `ingress` declared
   in a service), on Kubernetes and Docker Compose, from the API, the admin API and the web UI, including the error
   cases: shortcuts in a `v1.1` file, service or ingress duplicated by an explicit definition
+- Complete the PHPUnit suite to reach 100% line coverage of `domain/`, `src/`, `infrastructures/` and the
+  Enterprise extension classes; extension `config/` and `Tests/` directories are excluded from the coverage source
+  in `phpunit.dist.xml`
+- Fix `UserVoter` reason key on the granted path (`teknoo.space.vote.granted.is_require_user`)
+- Fix `SendEmail` attachments limit: `SPACE_MAIL_MAX_ATTACHMENTS` is now the real maximum (was `max + 2`)
+- Fix `Health` step reporting only the last Kubernetes cluster of the catalog
+- Fix the Enterprise `CreateRoleBinding` step storing the role name instead of the role binding name in the
+  environment metadata
 - Update documentations
 - Update libs
   - East PaaS 5.7 beta11

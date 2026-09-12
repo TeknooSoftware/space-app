@@ -31,6 +31,11 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder;
+use Scheb\TwoFactorBundle\Model\Google\TwoFactorInterface as TFIGoogle;
+use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface as TFGeneric;
+use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Exception\RuntimeException;
+use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Operation;
+use Teknoo\Space\Infrastructures\Twig\Extension\MFARoutesFinder\Provider;
 
 /**
  * Class MFARoutesFinderTest.
@@ -72,6 +77,47 @@ class MFARoutesFinderTest extends TestCase
                 $this->user,
                 MFARoutesFinder\Operation::DISABLE->value,
             ),
+        );
+    }
+
+    public function testFindForAGoogleUser(): void
+    {
+        $finder = new MFARoutesFinder(
+            'generic',
+            [
+                Provider::GOOGLE->value => [
+                    'enable' => 'google-enable',
+                ],
+            ]
+        );
+
+        $this->assertSame(
+            'google-enable',
+            $finder->find(
+                $this->createStubForIntersectionOfInterfaces([UserInterface::class, TFIGoogle::class]),
+                Operation::ENABLE->value,
+            ),
+        );
+    }
+
+    public function testFindForAGenericTotpUser(): void
+    {
+        $this->assertSame(
+            'foo',
+            $this->mFARoutesFinder->find(
+                $this->createStubForIntersectionOfInterfaces([UserInterface::class, TFGeneric::class]),
+                Operation::DISABLE->value,
+            ),
+        );
+    }
+
+    public function testFindWithAMissingRoute(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No route for "generic" with "enable"');
+        $this->mFARoutesFinder->find(
+            $this->user,
+            Operation::ENABLE->value,
         );
     }
 }

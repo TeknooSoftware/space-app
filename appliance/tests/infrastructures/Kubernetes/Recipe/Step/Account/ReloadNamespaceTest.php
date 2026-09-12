@@ -26,16 +26,10 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
-use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
-use Teknoo\Space\Object\Config\ClusterCatalog;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class ReloadNamespaceTest.
@@ -50,8 +44,6 @@ class ReloadNamespaceTest extends TestCase
 {
     private ReloadNamespace $reloadNamespace;
 
-    private Client&Stub $client;
-
     /**
      * {@inheritdoc}
      */
@@ -59,36 +51,22 @@ class ReloadNamespaceTest extends TestCase
     {
         parent::setUp();
 
-        $this->client = $this->createStub(Client::class);
-        $catalog = $this->createMock(ClusterCatalog::class);
-        $catalog->method('getCluster')
-            ->willReturn(
-                new ClusterConfig(
-                    name: 'foo',
-                    sluggyName: 'foo',
-                    type: 'foo',
-                    masterAddress: 'foo',
-                    storageProvisioner: 'foo',
-                    dashboardAddress: 'foo',
-                    kubernetesClient: $this->client,
-                    token: 'foo',
-                    supportRegistry: true,
-                    useHnc: false,
-                    isExternal: false,
-                )
-            );
-
         $this->reloadNamespace = new ReloadNamespace();
     }
 
-    #[AllowMockObjectsWithoutExpectations]
     public function testInvoke(): void
     {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['accountNamespace' => 'ns'])
+            ->willReturnSelf();
+
         $this->assertInstanceOf(
             ReloadNamespace::class,
             ($this->reloadNamespace)(
-                manager: $this->createStub(ManagerInterface::class),
-                account: $this->createStub(Account::class),
+                manager: $manager,
+                account: (new Account())->setName('foo')->setNamespace('ns'),
             ),
         );
     }

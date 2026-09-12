@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -52,7 +53,7 @@ class CreateDockerSecretTest extends TestCase
 {
     private CreateDockerSecret $createDockerSecret;
 
-    private DatesService&Stub $datesService;
+    private DatesService $datesService;
 
     private bool $preferRealDate;
 
@@ -63,7 +64,7 @@ class CreateDockerSecretTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
         $this->preferRealDate = true;
         $this->createDockerSecret = new CreateDockerSecret(
             $this->datesService,
@@ -76,6 +77,11 @@ class CreateDockerSecretTest extends TestCase
 
     public function testInvoke(): void
     {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
         $clusterConfig = new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
@@ -94,7 +100,7 @@ class CreateDockerSecretTest extends TestCase
             CreateDockerSecret::class,
             ($this->createDockerSecret)(
                 $this->createStub(Account::class),
-                $this->createStub(AccountHistory::class),
+                $accountHistory,
                 $this->createStub(AccountRegistry::class),
                 'foo',
                 'foo',

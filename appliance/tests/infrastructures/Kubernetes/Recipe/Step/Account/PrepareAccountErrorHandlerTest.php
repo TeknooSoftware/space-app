@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Account;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -48,9 +50,9 @@ class PrepareAccountErrorHandlerTest extends TestCase
 {
     private PrepareAccountErrorHandler $prepareAccountErrorHandler;
 
-    private DatesService&Stub $datesService;
+    private DatesService $datesService;
 
-    private AccountHistoryWriter&Stub $writer;
+    private AccountHistoryWriter&MockObject $writer;
 
     private bool $preferRealDate;
 
@@ -61,8 +63,8 @@ class PrepareAccountErrorHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createStub(DatesService::class);
-        $this->writer = $this->createStub(AccountHistoryWriter::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
+        $this->writer = $this->createMock(AccountHistoryWriter::class);
         $this->preferRealDate = true;
         $this->prepareAccountErrorHandler = new PrepareAccountErrorHandler(
             $this->datesService,
@@ -73,12 +75,22 @@ class PrepareAccountErrorHandlerTest extends TestCase
 
     public function testInvoke(): void
     {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with('foo', $this->isInstanceOf(DateTimeInterface::class), false)
+            ->willReturnSelf();
+
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->with($accountHistory)
+            ->willReturnSelf();
         $this->assertInstanceOf(
             PrepareAccountErrorHandler::class,
             ($this->prepareAccountErrorHandler)(
                 new \Exception('foo'),
                 $this->createStub(ManagerInterface::class),
-                $this->createStub(AccountHistory::class),
+                $accountHistory,
             )
         );
     }

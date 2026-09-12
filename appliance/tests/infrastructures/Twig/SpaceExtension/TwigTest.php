@@ -33,6 +33,7 @@ use Teknoo\East\Foundation\Extension\ManagerInterface;
 use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig;
 use Twig\Environment;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Twig\Loader\ArrayLoader;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -87,5 +88,22 @@ class TwigTest extends TestCase
     public function testRender(): void
     {
         $this->assertIsString($this->twig->render());
+    }
+
+    public function testLoadAndRenderWithATemplate(): void
+    {
+        $this->manager
+            ->expects($this->once())
+            ->method('execute')
+            ->willReturnSelf();
+
+        $ext = $this->twig->run(
+            new Environment(new ArrayLoader(['tpl.twig' => 'hello {{ objectInstance.name }}'])),
+            'boo',
+            (object) ['name' => 'world'],
+        );
+
+        $this->assertSame($ext, $ext->load(fn (?string $block): string => 'tpl.twig'));
+        $this->assertSame('hello world', $ext->render());
     }
 }

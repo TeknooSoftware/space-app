@@ -25,13 +25,19 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Registry;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\Kubernetes\Client;
+use Teknoo\Kubernetes\Collection\PodCollection;
+use Teknoo\Kubernetes\Model\Pod;
+use Teknoo\Kubernetes\Repository\PodRepository;
+use Teknoo\Kubernetes\Repository\Repository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
@@ -68,7 +74,7 @@ class CreateRegistryDeploymentTest extends TestCase
 
     private string $clusterIssuer;
 
-    private DatesService|MockObject $datesService;
+    private DatesService $datesService;
 
     private bool $preferRealDate;
 
@@ -95,7 +101,7 @@ class CreateRegistryDeploymentTest extends TestCase
         $this->tlsSecretName = '42';
         $this->registryUrl = '42';
         $this->clusterIssuer = '42';
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
         $this->preferRealDate = true;
         $this->ingressClass = '42';
         $this->spaceRegistryUrl = '42';
@@ -119,31 +125,107 @@ class CreateRegistryDeploymentTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    private function createClusterConfig(Client $client): ClusterConfig
     {
-        $clusterConfig = new ClusterConfig(
+        return new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createStub(Client::class),
+            kubernetesClient: $client,
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
             isExternal: false,
         );
+    }
+
+    public function testInvokeDeletesExistingPodsAndRecordsTheHistory(): void
+    {
+        $pod = new Pod(['metadata' => ['name' => 'bar-registry-pod']]);
+
+        $collection = $this->createMock(PodCollection::class);
+        $collection->expects($this->once())
+            ->method('all')
+            ->willReturn([$pod]);
+
+        $podRepository = $this->createMock(PodRepository::class);
+        $podRepository->expects($this->once())
+            ->method('setLabelSelector')
+            ->willReturnSelf();
+        $podRepository->expects($this->once())
+            ->method('find')
+            ->willReturn($collection);
+        $podRepository->expects($this->once())
+            ->method('delete')
+            ->with($pod)
+            ->willReturn([]);
+
+        $defaultRepository = $this->createStub(Repository::class);
+        $client = $this->createStub(Client::class);
+        $client->method('__call')
+            ->willReturnCallback(
+                fn (string $name): Repository => match ($name) {
+                    'pods' => $podRepository,
+                    default => $defaultRepository,
+                }
+            );
+
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->willReturnSelf();
+        $manager->expects($this->never())
+            ->method('error');
 
         $this->assertInstanceOf(
             CreateRegistryDeployment::class,
             ($this->createRegistryAccount)(
-                manager: $this->createStub(ManagerInterface::class),
+                manager: $manager,
+                kubeNamespace: 'foo',
+                accountNamespace: 'bar',
+                accountHistory: $accountHistory,
+                persistentVolumeClaimName: 'foo',
+                clusterCatalog: new ClusterCatalog(['defaults' => $this->createClusterConfig($client)], []),
+            ),
+        );
+    }
+
+    public function testInvokeReportsTheErrorToTheManager(): void
+    {
+        $error = new RuntimeException('boom');
+        $client = $this->createStub(Client::class);
+        $client->method('__call')
+            ->willReturnCallback(
+                fn (string $name): Repository => match ($name) {
+                    'secrets' => throw $error,
+                }
+            );
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
+        $manager->expects($this->once())
+            ->method('error')
+            ->with($error)
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            CreateRegistryDeployment::class,
+            ($this->createRegistryAccount)(
+                manager: $manager,
                 kubeNamespace: 'foo',
                 accountNamespace: 'bar',
                 accountHistory: $this->createStub(AccountHistory::class),
                 persistentVolumeClaimName: 'foo',
-                clusterCatalog: new ClusterCatalog(['defaults' => $clusterConfig], []),
+                clusterCatalog: new ClusterCatalog(['defaults' => $this->createClusterConfig($client)], []),
             ),
         );
     }

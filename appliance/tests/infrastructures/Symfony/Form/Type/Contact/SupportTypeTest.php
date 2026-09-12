@@ -28,8 +28,13 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Contact;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Contact\SupportType;
+use Teknoo\Space\Object\DTO\Contact;
 
 /**
  * Class SupportTypeTest.
@@ -69,5 +74,35 @@ class SupportTypeTest extends TestCase
             $this->createStub(OptionsResolver::class),
         );
         $this->assertTrue(true);
+    }
+
+    public function testBuildFormWithManagerPostSubmitListener(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $contact = new Contact(fromName: 'foo', fromEmail: 'foo@bar', subject: 'sub', message: 'msg');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([Contact::class => $contact])
+            ->willReturnSelf();
+
+        $this->supportType->buildForm($builder, ['manager' => $manager]);
+
+        $this->assertCount(1, $listeners[FormEvents::POST_SUBMIT]);
+        $listeners[FormEvents::POST_SUBMIT][0](
+            new FormEvent($this->createStub(FormInterface::class), $contact),
+        );
     }
 }

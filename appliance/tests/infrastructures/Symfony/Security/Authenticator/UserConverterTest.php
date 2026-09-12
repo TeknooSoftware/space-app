@@ -26,10 +26,12 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Authenticator;
 
 use League\OAuth2\Client\Provider\GenericResourceOwner;
+use League\OAuth2\Client\Provider\GoogleUser;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Common\Object\User;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Security\Authenticator\UserConverter;
 
@@ -87,6 +89,53 @@ class UserConverterTest extends TestCase
             $this->userConverter->convertToUser(
                 $this->owner,
                 $this->promise
+            )
+        );
+    }
+
+    private function createGoogleUser(): GoogleUser
+    {
+        return new GoogleUser([
+            'sub' => '123',
+            'name' => 'foo bar',
+            'given_name' => 'bar',
+            'family_name' => 'foo',
+            'email' => 'foo@bar',
+        ]);
+    }
+
+    public function testExtractEmailWithManagedResource(): void
+    {
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())->method('success')->with('foo@bar');
+        $promise->expects($this->never())->method('fail');
+
+        $this->assertInstanceOf(
+            UserConverter::class,
+            $this->userConverter->extractEmail(
+                $this->createGoogleUser(),
+                $promise
+            )
+        );
+    }
+
+    public function testConvertToUserWithManagedResource(): void
+    {
+        $promise = $this->createMock(PromiseInterface::class);
+        $promise->expects($this->once())
+            ->method('success')
+            ->with($this->callback(
+                fn (User $user): bool => 'foo@bar' === $user->getEmail()
+                    && 'foo' === $user->getLastName()
+                    && 'bar' === $user->getFirstName(),
+            ));
+        $promise->expects($this->never())->method('fail');
+
+        $this->assertInstanceOf(
+            UserConverter::class,
+            $this->userConverter->convertToUser(
+                $this->createGoogleUser(),
+                $promise
             )
         );
     }

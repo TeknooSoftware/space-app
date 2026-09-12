@@ -31,6 +31,7 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\ApiCollectionSerializing;
+use ArrayIterator;
 
 /**
  * Class ApiCollectionSerializingTest.
@@ -65,6 +66,39 @@ class ApiCollectionSerializingTest extends TestCase
     {
         $this->assertIsString(
             $this->collectionSerializing->serialize([], 1, 2),
+        );
+    }
+
+    public function testSerializeAGenerator(): void
+    {
+        $this->serializer
+            ->method('serialize')
+            ->willReturnCallback(
+                fn (mixed $data): string => json_encode($data, JSON_THROW_ON_ERROR)
+            );
+
+        $generator = (static function (): iterable {
+            yield 'a';
+            yield 'b';
+        })();
+
+        $this->assertSame(
+            '{"meta":{"totalPages":2,"page":1,"count":2},"data":["a","b"]}',
+            $this->collectionSerializing->serialize($generator, 1, 2),
+        );
+    }
+
+    public function testSerializeACountableIterator(): void
+    {
+        $this->serializer
+            ->method('serialize')
+            ->willReturnCallback(
+                fn (mixed $data): string => json_encode($data, JSON_THROW_ON_ERROR)
+            );
+
+        $this->assertSame(
+            '{"meta":{"totalPages":3,"page":2,"count":3,"foo":"bar"},"data":["a","b","c"]}',
+            $this->collectionSerializing->serialize(new ArrayIterator(['a', 'b', 'c']), 2, 3, meta: ['foo' => 'bar']),
         );
     }
 }

@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Teknoo\Space\Infrastructures\Twig\Extension\FormError;
+use Symfony\Component\Form\FormError as SfFormError;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * Class FormErrorTest.
@@ -69,5 +71,33 @@ class FormErrorTest extends TestCase
         // No 'errors' key or not iterable -> should return empty array
         $result = $this->formError->getFieldErrors($formView);
         $this->assertSame([], is_array($result) ? $result : iterator_to_array($result));
+    }
+
+    public function testGetFormErrorWithErrors(): void
+    {
+        $rootForm = $this->createStub(FormInterface::class);
+        $rootForm->method('getPropertyPath')->willReturn(new PropertyPath('root'));
+        $rootForm->method('getParent')->willReturn(null);
+
+        $childForm = $this->createStub(FormInterface::class);
+        $childForm->method('getPropertyPath')->willReturn(new PropertyPath('child'));
+        $childForm->method('getParent')->willReturn($rootForm);
+
+        $rootError = new SfFormError('root error');
+        $rootError->setOrigin($rootForm);
+
+        $childError = new SfFormError('child error');
+        $childError->setOrigin($childForm);
+
+        $formView = new FormView();
+        $formView->vars['errors'] = [$rootError, $childError];
+
+        $this->assertSame(
+            [
+                '.' => 'root error',
+                '.child' => 'child error',
+            ],
+            iterator_to_array($this->formError->getFieldErrors($formView)),
+        );
     }
 }

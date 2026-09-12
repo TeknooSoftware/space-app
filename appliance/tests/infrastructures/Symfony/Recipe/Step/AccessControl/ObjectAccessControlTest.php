@@ -36,6 +36,11 @@ use Teknoo\East\Common\Contracts\Object\ObjectInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\AbstractAccessControl;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\ObjectAccessControl;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
+use Teknoo\Space\Infrastructures\Symfony\Security\Exception\UnAuthorizedException;
 
 /**
  * Class ObjectAccessControlTest.
@@ -84,6 +89,81 @@ class ObjectAccessControlTest extends TestCase
                 $this->createStub(MessageInterface::class),
                 $this->createStub(ObjectInterface::class),
             )
+        );
+    }
+
+    public function testInvokeWithoutUserInToken(): void
+    {
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($this->createStub(TokenInterface::class));
+
+        $this->authorizationChecker
+            ->method('isGranted')
+            ->willReturn(true);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->never())
+            ->method('updateWorkPlan');
+
+        $this->assertInstanceOf(
+            ObjectAccessControl::class,
+            ($this->objectAccessControl)(
+                $manager,
+                $this->createStub(MessageInterface::class),
+                $this->createStub(ObjectInterface::class),
+            )
+        );
+    }
+
+    public function testInvokeWithUserInToken(): void
+    {
+        $user = new User();
+        $symfonyUser = $this->createStub(AbstractUser::class);
+        $symfonyUser->method('getWrappedUser')->willReturn($user);
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($symfonyUser);
+
+        $this->tokenStorage
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->authorizationChecker
+            ->method('isGranted')
+            ->willReturn(true);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([
+                UserInterface::class => $symfonyUser,
+                User::class => $user,
+            ])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            ObjectAccessControl::class,
+            ($this->objectAccessControl)(
+                $manager,
+                $this->createStub(MessageInterface::class),
+                $this->createStub(ObjectInterface::class),
+            )
+        );
+    }
+
+    public function testInvokeWhenNotGranted(): void
+    {
+        $this->authorizationChecker
+            ->method('isGranted')
+            ->willReturn(false);
+
+        $this->expectException(UnAuthorizedException::class);
+        ($this->objectAccessControl)(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(MessageInterface::class),
+            $this->createStub(ObjectInterface::class),
         );
     }
 }

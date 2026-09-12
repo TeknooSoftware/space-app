@@ -30,8 +30,13 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
+use Symfony\Component\Mercure\Exception\RuntimeException as MercureRuntimeException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Contracts\DTO\NewTaskInterface;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\OtherException;
+use Teknoo\Space\Infrastructures\Symfony\Mercure\Exception\UnavailableException;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Task\NewTaskNotifier;
 use Teknoo\Space\Object\DTO\JobVar;
@@ -50,11 +55,11 @@ class NewTaskNotifierTest extends TestCase
 {
     private NewTaskNotifier $newTaskNotifier;
 
-    private TaskUrlPublisher&Stub $publisher;
+    private TaskUrlPublisher&MockObject $publisher;
 
     private UrlGeneratorInterface&Stub $generator;
 
-    private LoggerInterface&Stub $logger;
+    private LoggerInterface&MockObject $logger;
 
     private string $pendingTaskRoute;
 
@@ -69,12 +74,12 @@ class NewTaskNotifierTest extends TestCase
     {
         parent::setUp();
 
-        $this->publisher = $this->createStub(TaskUrlPublisher::class);
+        $this->publisher = $this->createMock(TaskUrlPublisher::class);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
-        $this->logger = $this->createStub(LoggerInterface::class);
-        $this->pendingTaskRoute = '42';
-        $this->listJobRoute = '42';
-        $this->spaceDashoardRoute = '42';
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->pendingTaskRoute = 'pending_route';
+        $this->listJobRoute = 'list_job_route';
+        $this->spaceDashoardRoute = 'dashboard_route';
         $this->newTaskNotifier = new NewTaskNotifier(
             $this->publisher,
             $this->generator,
@@ -94,12 +99,110 @@ class NewTaskNotifierTest extends TestCase
             ],
         );
 
+        $this->generator
+            ->method('generate')
+            ->willReturn('https://foo/pending/foo');
+
+        $this->publisher
+            ->expects($this->once())
+            ->method('publish')
+            ->with('https://foo/pending/foo', 'foo', null);
+
+        $this->logger
+            ->expects($this->never())
+            ->method('critical');
+
         $this->assertInstanceOf(
             NewTaskNotifier::class,
             ($this->newTaskNotifier)(
                 $newJob,
                 $this->createStub(ManagerInterface::class),
             )
+        );
+    }
+
+    public function testInvokeWhenMercureIsUnavailableForANewJob(): void
+    {
+        $newJob = new NewJob(taskId: 'foo', projectId: 'project-id', accountId: 'account-id');
+
+        $this->publisher
+            ->expects($this->once())
+            ->method('publish')
+            ->willThrowException(new MercureRuntimeException('hub down', 503));
+
+        $this->logger
+            ->expects($this->once())
+            ->method('critical')
+            ->with($this->isInstanceOf(UnavailableException::class));
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([
+                'route' => 'list_job_route',
+                'routeParameters' => [
+                    'projectId' => 'project-id',
+                    'accountId' => 'account-id',
+                ],
+            ])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            NewTaskNotifier::class,
+            ($this->newTaskNotifier)(
+                $newJob,
+                $manager,
+            )
+        );
+    }
+
+    public function testInvokeWhenMercureIsUnavailableForAnotherTask(): void
+    {
+        $task = $this->createStub(NewTaskInterface::class);
+
+        $this->publisher
+            ->expects($this->once())
+            ->method('publish')
+            ->willThrowException(new MercureRuntimeException('hub down', 503));
+
+        $this->logger
+            ->expects($this->once())
+            ->method('critical')
+            ->with($this->isInstanceOf(UnavailableException::class));
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['route' => 'dashboard_route'])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            NewTaskNotifier::class,
+            ($this->newTaskNotifier)(
+                $task,
+                $manager,
+            )
+        );
+    }
+
+    public function testInvokeWhenPublishingFailsForAnotherReason(): void
+    {
+        $this->publisher
+            ->expects($this->once())
+            ->method('publish')
+            ->willThrowException(new RuntimeException('boom', 42));
+
+        $this->logger
+            ->expects($this->never())
+            ->method('critical');
+
+        $this->expectException(OtherException::class);
+        $this->expectExceptionCode(42);
+        ($this->newTaskNotifier)(
+            new NewJob(taskId: 'foo'),
+            $this->createStub(ManagerInterface::class),
         );
     }
 }

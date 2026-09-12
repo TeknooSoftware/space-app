@@ -240,6 +240,7 @@ class AccountClusterTest extends TestCase
         $result = $this->accountCluster->setType($newType);
 
         $this->assertInstanceOf(AccountCluster::class, $result);
+        $this->assertSame($newType, $result->getType());
     }
 
     #[AllowMockObjectsWithoutExpectations]

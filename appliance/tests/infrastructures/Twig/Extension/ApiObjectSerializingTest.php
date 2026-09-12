@@ -31,6 +31,8 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\SerializerInterface;
 use Teknoo\Space\Infrastructures\Twig\Extension\ApiObjectSerializing;
+use stdClass;
+use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
 
 /**
  * Class ApiObjectSerializingTest.
@@ -65,6 +67,46 @@ class ApiObjectSerializingTest extends TestCase
     {
         $this->assertIsString(
             $this->objectSerializing->serialize(new \stdClass()),
+        );
+    }
+
+    private function createIdentifiedObject(): IdentifiedObjectInterface
+    {
+        return new class extends stdClass implements IdentifiedObjectInterface {
+            public function getId(): string
+            {
+                return 'object-id';
+            }
+        };
+    }
+
+    public function testSerializeAnIdentifiedObject(): void
+    {
+        $object = $this->createIdentifiedObject();
+
+        $this->serializer
+            ->method('serialize')
+            ->willReturnCallback(
+                fn (mixed $data): string => json_encode($data['meta'], JSON_THROW_ON_ERROR)
+            );
+
+        $this->assertSame(
+            '{"id":"object-id","@class":"stdClass","foo":"bar"}',
+            $this->objectSerializing->serialize($object, meta: ['foo' => 'bar']),
+        );
+    }
+
+    public function testSerializeAnArrayWithAParentObject(): void
+    {
+        $this->serializer
+            ->method('serialize')
+            ->willReturnCallback(
+                fn (mixed $data): string => json_encode($data, JSON_THROW_ON_ERROR)
+            );
+
+        $this->assertSame(
+            '{"meta":{"id":"object-id","@class":"stdClass"},"data":{"a":1}}',
+            $this->objectSerializing->serialize(['a' => 1], parentObject: $this->createIdentifiedObject()),
         );
     }
 }

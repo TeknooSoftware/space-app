@@ -27,11 +27,14 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 
 /**
  * Class HealthTest.
@@ -65,6 +68,63 @@ class HealthTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ParametersBag::class),
             )
+        );
+    }
+
+    private function createCluster(string $name, Client $client): KubernetesCluster
+    {
+        return new KubernetesCluster(
+            name: $name,
+            sluggyName: $name,
+            type: 'kubernetes',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $client,
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: false,
+            isExternal: false,
+        );
+    }
+
+    public function testInvokeCollectsHealthOfEachKubernetesCluster(): void
+    {
+        $healthyClient = $this->createStub(Client::class);
+        $healthyClient->method('health')->willReturn('ok');
+        $healthyClient->method('version')->willReturn(['gitVersion' => 'v1.30.0']);
+
+        $error = new RuntimeException('unreachable');
+        $brokenClient = $this->createStub(Client::class);
+        $brokenClient->method('health')->willThrowException($error);
+
+        $health = new Health(
+            new ClusterCatalog(
+                [
+                    'healthy' => $this->createCluster('healthy', $healthyClient),
+                    'broken' => $this->createCluster('broken', $brokenClient),
+                ],
+                [],
+            ),
+        );
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->once())
+            ->method('set')
+            ->with(
+                'k8s',
+                [
+                    'healthy' => ['health' => 'ok', 'version' => ['gitVersion' => 'v1.30.0']],
+                    'broken' => ['error' => $error],
+                ],
+            );
+
+        $this->assertInstanceOf(
+            Health::class,
+            $health(
+                $this->createStub(ManagerInterface::class),
+                $bag,
+            ),
         );
     }
 

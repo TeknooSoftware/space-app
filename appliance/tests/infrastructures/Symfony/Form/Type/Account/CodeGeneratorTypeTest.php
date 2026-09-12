@@ -29,7 +29,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\CodeGeneratorType;
 use Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator;
 
@@ -68,5 +73,76 @@ class CodeGeneratorTypeTest extends TestCase
             ['foo' => 'bar'],
         );
         $this->assertTrue(true);
+    }
+
+    /**
+     * @return array<string, array<int, callable>>
+     */
+    private function buildFormAndCaptureListeners(): array
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $this->codeGeneratorType->buildForm($builder, []);
+
+        return $listeners;
+    }
+
+    public function testBuildFormPreSubmitListenerWithoutCompany(): void
+    {
+        $listeners = $this->buildFormAndCaptureListeners();
+        $this->assertCount(1, $listeners[FormEvents::PRE_SUBMIT]);
+        $listener = $listeners[FormEvents::PRE_SUBMIT][0];
+
+        $event = new FormEvent($this->createStub(FormInterface::class), ['company' => '']);
+        $listener($event);
+        $this->assertSame(['company' => ''], $event->getData());
+    }
+
+    public function testBuildFormPreSubmitListenerGeneratesCode(): void
+    {
+        $this->codeGenerator->method('generateCode')
+            ->willReturnCallback(
+                function (string $value, PromiseInterface $promise): CodeGenerator {
+                    $promise->success('CODE');
+
+                    return $this->codeGenerator;
+                }
+            );
+
+        $listeners = $this->buildFormAndCaptureListeners();
+        $listener = $listeners[FormEvents::PRE_SUBMIT][0];
+
+        $event = new FormEvent($this->createStub(FormInterface::class), ['company' => 'Teknoo']);
+        $listener($event);
+        $this->assertSame(['company' => 'Teknoo', 'code' => 'CODE'], $event->getData());
+    }
+
+    public function testBuildFormPreSubmitListenerWhenGenerationFails(): void
+    {
+        $this->codeGenerator->method('generateCode')
+            ->willReturnCallback(
+                function (string $value, PromiseInterface $promise): CodeGenerator {
+                    $promise->fail(new RuntimeException('failed'));
+
+                    return $this->codeGenerator;
+                }
+            );
+
+        $listeners = $this->buildFormAndCaptureListeners();
+        $listener = $listeners[FormEvents::PRE_SUBMIT][0];
+
+        $event = new FormEvent($this->createStub(FormInterface::class), ['company' => 'Teknoo']);
+        $listener($event);
+        $this->assertSame(['company' => 'Teknoo'], $event->getData());
     }
 }

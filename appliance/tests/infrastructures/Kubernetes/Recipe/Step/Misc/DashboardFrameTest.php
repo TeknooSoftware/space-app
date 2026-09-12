@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
+use BadMethodCallException;
 use Http\Client\Common\HttpMethodsClientInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -35,6 +36,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
@@ -116,13 +118,32 @@ class DashboardFrameTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    private function createServerRequest(): ServerRequestInterface&Stub
     {
         $sRequest = $this->createStub(ServerRequestInterface::class);
         $sRequest->method('getMethod')->willReturn('GET');
 
-        $finalResponse = $this->createStub(ResponseInterface::class);
+        return $sRequest;
+    }
+
+    private function createAdmin(): User&Stub
+    {
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')->willReturn(['ROLE_ADMIN']);
+
+        return $user;
+    }
+
+    /**
+     * @param array<string, string[]> $headers
+     */
+    private function prepareDashboardResponse(string $expectedUri, array $headers = []): ResponseInterface&MockObject
+    {
+        $finalResponse = $this->createMock(ResponseInterface::class);
         $finalResponse->method('withBody')->willReturnSelf();
+        $finalResponse->expects(empty($headers) ? $this->never() : $this->once())
+            ->method('withHeader')
+            ->willReturnSelf();
         $this->responseFactory
             ->method('createResponse')
             ->willReturn($finalResponse);
@@ -133,33 +154,226 @@ class DashboardFrameTest extends TestCase
         $response->method('getBody')->willReturn(
             $this->createStub(StreamInterface::class)
         );
+        $response->method('getHeader')
+            ->willReturnCallback(fn (string $name): array => $headers[$name] ?? []);
 
         $this->httpMethodsClient
             ->method('send')
-            ->willReturn($response);
+            ->willReturnCallback(
+                function (string $method, string $uri) use ($expectedUri, $response): ResponseInterface {
+                    $this->assertSame('GET', $method);
+                    $this->assertSame($expectedUri, $uri);
+
+                    return $response;
+                }
+            );
+
+        return $finalResponse;
+    }
+
+    private function createWallet(bool $has, bool $withEnvironment): AccountWallet&Stub
+    {
+        $environment = null;
+        if ($withEnvironment) {
+            $environment = $this->createStub(AccountEnvironment::class);
+            $environment->method('getNamespace')->willReturn('space-ns');
+            $environment->method('getToken')->willReturn('env-token');
+        }
 
         $wallet = $this->createStub(AccountWallet::class);
-        $wallet
-            ->method('has')
-            ->willReturn(true);
-        $wallet
-            ->method('get')
-            ->willReturn($this->createStub(AccountEnvironment::class));
+        $wallet->method('has')->willReturn($has);
+        $wallet->method('get')->willReturn($environment);
+
+        return $wallet;
+    }
+
+    public function testInvokeForNonAdminWithDefaultWildcard(): void
+    {
+        $finalResponse = $this->prepareDashboardResponse(
+            'foo#/workloads?namespace=space-ns',
+            ['content-type' => ['text/html']],
+        );
+
+        $client = $this->createMock(EastClient::class);
+        $client->expects($this->once())
+            ->method('acceptResponse')
+            ->with($finalResponse)
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            DashboardFrame::class,
+            ($this->dashboardFrame)(
+                manager: $this->createStub(ManagerInterface::class),
+                client: $client,
+                serverRequest: $this->createServerRequest(),
+                user: $this->createStub(User::class),
+                clusterCatalog: $this->clusterCatalog,
+                clusterName: 'clusterName',
+                wildcard: '',
+                account: $this->createStub(Account::class),
+                accountWallet: $this->createWallet(true, true),
+                envName: 'prod',
+            )
+        );
+    }
+
+    public function testInvokeForAdminWithAnchoredWildcard(): void
+    {
+        $this->prepareDashboardResponse('foo#/workloads?namespace=_all');
 
         $this->assertInstanceOf(
             DashboardFrame::class,
             ($this->dashboardFrame)(
                 manager: $this->createStub(ManagerInterface::class),
                 client: $this->createStub(EastClient::class),
-                serverRequest: $sRequest,
-                user: $this->createStub(User::class),
+                serverRequest: $this->createServerRequest(),
+                user: $this->createAdmin(),
                 clusterCatalog: $this->clusterCatalog,
                 clusterName: 'clusterName',
-                wildcard: '*',
-                account: $this->createStub(Account::class),
-                accountWallet: $wallet,
-                envName: 'prod',
+                wildcard: '#/workloads',
             )
+        );
+    }
+
+    public function testInvokeForAdminWithConfigJson(): void
+    {
+        $this->prepareDashboardResponse('fooassets/config/config.json');
+
+        $this->assertInstanceOf(
+            DashboardFrame::class,
+            ($this->dashboardFrame)(
+                manager: $this->createStub(ManagerInterface::class),
+                client: $this->createStub(EastClient::class),
+                serverRequest: $this->createServerRequest(),
+                user: $this->createAdmin(),
+                clusterCatalog: $this->clusterCatalog,
+                clusterName: 'clusterName',
+                wildcard: 'config/config.json',
+            )
+        );
+    }
+
+    public function testInvokeForAssetsConfigJsonReturnsNotFound(): void
+    {
+        $this->streamFactory->method('createStream')
+            ->willReturn($this->createStub(StreamInterface::class));
+
+        $client = $this->createMock(EastClient::class);
+        $client->expects($this->once())
+            ->method('acceptResponse')
+            ->with($this->callback(fn (ResponseInterface $response): bool => 404 === $response->getStatusCode()))
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            DashboardFrame::class,
+            ($this->dashboardFrame)(
+                manager: $this->createStub(ManagerInterface::class),
+                client: $client,
+                serverRequest: $this->createServerRequest(),
+                user: $this->createStub(User::class),
+                clusterCatalog: $this->clusterCatalog,
+                clusterName: 'assets',
+                wildcard: 'config.json',
+            )
+        );
+    }
+
+    public function testInvokeRendersAnErrorWhenTheDashboardIsUnreachable(): void
+    {
+        $this->httpMethodsClient
+            ->method('send')
+            ->willThrowException(new RuntimeException('unreachable'));
+
+        $errorResponse = $this->createStub(ResponseInterface::class);
+        $errorResponse->method('withHeader')->willReturnSelf();
+        $errorResponse->method('withBody')->willReturnSelf();
+        $this->responseFactory
+            ->method('createResponse')
+            ->willReturn($errorResponse);
+
+        $this->assertInstanceOf(
+            DashboardFrame::class,
+            ($this->dashboardFrame)(
+                manager: $this->createStub(ManagerInterface::class),
+                client: $this->createStub(EastClient::class),
+                serverRequest: $this->createServerRequest(),
+                user: $this->createAdmin(),
+                clusterCatalog: $this->clusterCatalog,
+                clusterName: 'clusterName',
+                wildcard: '#/workloads',
+            )
+        );
+    }
+
+    public function testInvokeThrowsForNonAdminWithoutWallet(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createStub(User::class),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: '#/workloads',
+            accountWallet: null,
+            envName: 'prod',
+        );
+    }
+
+    public function testInvokeThrowsForNonAdminWithoutEnvName(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(400);
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createStub(User::class),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: '#/workloads',
+            accountWallet: $this->createWallet(true, true),
+            envName: null,
+        );
+    }
+
+    public function testInvokeThrowsForNonAdminWhenTheClusterIsNotInTheWallet(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createStub(User::class),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: '#/workloads',
+            accountWallet: $this->createWallet(false, false),
+            envName: 'prod',
+        );
+    }
+
+    public function testInvokeThrowsForNonAdminWhenTheEnvironmentIsMissing(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createStub(User::class),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: '#/workloads',
+            accountWallet: $this->createWallet(true, false),
+            envName: 'prod',
         );
     }
 

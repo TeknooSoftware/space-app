@@ -79,7 +79,7 @@ class UserVoter implements VoterInterface
             return VoterInterface::ACCESS_DENIED;
         }
 
-        $vote?->addReason('teknoo.space.vote.denied.is_require_user');
+        $vote?->addReason('teknoo.space.vote.granted.is_require_user');
 
         return VoterInterface::ACCESS_GRANTED;
     }

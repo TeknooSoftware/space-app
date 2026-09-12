@@ -28,7 +28,15 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Voter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\Recipe\Promise\PromiseInterface;
+use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Infrastructures\Symfony\Security\Voter\AccountVoter;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 
 /**
  * Class AccountVoterTest.
@@ -62,5 +70,99 @@ class AccountVoterTest extends TestCase
                 ['foo' => 'bar'],
             )
         );
+    }
+
+    private function createToken(?User $user): TokenInterface
+    {
+        $token = $this->createStub(TokenInterface::class);
+        if (null === $user) {
+            $token->method('getUser')->willReturn(null);
+
+            return $token;
+        }
+
+        $wrappedUser = $this->createStub(AbstractUser::class);
+        $wrappedUser->method('getWrappedUser')->willReturn($user);
+        $token->method('getUser')->willReturn($wrappedUser);
+
+        return $token;
+    }
+
+    public function testVoteDeniedWhenAnonymous(): void
+    {
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_DENIED,
+            $this->accountVoter->vote(
+                $this->createToken(null),
+                new SpaceAccount(),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.denied.user_anonymous'], $vote->reasons);
+    }
+
+    public function testVoteGrantedWithSpaceAccountWhenUserInAccount(): void
+    {
+        $user = (new User())->setId('user-1');
+        $account = (new Account())->setName('foo')->setUsers([$user]);
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_GRANTED,
+            $this->accountVoter->vote(
+                $this->createToken($user),
+                new SpaceAccount(account: $account),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.granted.user_in_account'], $vote->reasons);
+    }
+
+    public function testVoteGrantedWithAccountComponent(): void
+    {
+        $user = (new User())->setId('user-1');
+        $subject = $this->createMock(AccountComponentInterface::class);
+        $subject->expects($this->once())
+            ->method('verifyAccessToUser')
+            ->willReturnCallback(
+                function (User $u, PromiseInterface $promise) use ($subject, $user): AccountComponentInterface {
+                    $this->assertSame($user, $u);
+                    $promise->success(true);
+
+                    return $subject;
+                },
+            );
+
+        $this->assertSame(
+            VoterInterface::ACCESS_GRANTED,
+            $this->accountVoter->vote(
+                $this->createToken($user),
+                $subject,
+                ['foo'],
+            ),
+        );
+    }
+
+    public function testVoteAbstainWhenUserNotInAccount(): void
+    {
+        $user = (new User())->setId('user-1');
+        $other = (new User())->setId('user-2');
+        $account = (new Account())->setName('foo')->setUsers([$other]);
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_ABSTAIN,
+            $this->accountVoter->vote(
+                $this->createToken($user),
+                $account,
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame([], $vote->reasons);
     }
 }
