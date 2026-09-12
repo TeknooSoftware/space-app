@@ -146,6 +146,8 @@ class SpaceContext implements Context
 
     private bool $jobsEnabled = false;
 
+    private bool $exposeShortcutsEnabled = false;
+
     private string $defaultsMode = '';
 
     private bool $hasBeenRedirected = false;
@@ -313,6 +315,7 @@ class SpaceContext implements Context
         $this->apiPendingJobUrl = null;
         $this->clearJobMemory = false;
         $this->jobsEnabled = false;
+        $this->exposeShortcutsEnabled = false;
         $this->timeoutService->disable();
 
         $envVarsNames = [
@@ -579,6 +582,38 @@ class SpaceContext implements Context
         $this->paasFile = __DIR__ . '/Project/WithJobs/paas.wrong-version.yaml';
         $this->quotasMode = '';
         $this->jobsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts')]
+    public function aProjectWithAPaasFileUsingExposeShortcuts(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExposeShortcuts/paas.yaml';
+        $this->quotasMode = '';
+        $this->exposeShortcutsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts with wrong version')]
+    public function aProjectWithAPaasFileUsingExposeShortcutsWithWrongVersion(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExposeShortcuts/paas.wrong-version.yaml';
+        $this->quotasMode = '';
+        $this->exposeShortcutsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts with a duplicated service')]
+    public function aProjectWithAPaasFileUsingExposeShortcutsWithADuplicatedService(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExposeShortcuts/paas.with-duplicated-service.yaml';
+        $this->quotasMode = '';
+        $this->exposeShortcutsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts with a duplicated ingress')]
+    public function aProjectWithAPaasFileUsingExposeShortcutsWithADuplicatedIngress(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExposeShortcuts/paas.with-duplicated-ingress.yaml';
+        $this->quotasMode = '';
+        $this->exposeShortcutsEnabled = true;
     }
 
     #[Given('the project has a complete paas file without resources')]

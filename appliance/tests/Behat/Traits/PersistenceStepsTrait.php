@@ -1476,9 +1476,45 @@ trait PersistenceStepsTrait
             match ($type) {
                 'job' => "jobs': This element is not expected",
                 'conditions' => "if{ENV=prod}' is not a valid value of the atomic type",
+                'expose shortcuts' => "services': This element is not expected",
                 default => throw new LogicException('Unknown type in test'),
             },
             (string) ($history->getExtra()['result'][0] ?? ''),
+        );
+    }
+
+    #[Then('job must be finished with an error about expose shortcuts not allowed in v1.1')]
+    public function jobMustBeErrorAboutExposeShortcutsNotAllowedInV1dot1(): void
+    {
+        //Behat placeholders capture a single word, so the two-words type is forwarded explicitly.
+        $this->jobMustBeErrorAboutJobNotAllowedInV1('expose shortcuts');
+    }
+
+    #[Then('job must be finished with an error about a duplicated :type')]
+    public function jobMustBeErrorAboutDuplicatedExposition(string $type): void
+    {
+        $jobs = $this->listObjects(JobOrigin::class);
+        Assert::assertNotEmpty($jobs);
+
+        /** @var JobOrigin $job */
+        $job = current($jobs);
+        Assert::assertInstanceOf(JobOrigin::class, $job);
+
+        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
+        Assert::assertEquals(
+            DispatchResultInterface::class,
+            ($history = $job->getHistory())->getMessage(),
+        );
+
+        //The AlreadyDefinedException is wrapped by the CompileDeployment step into a compilation error, its
+        //message is the second entry of the result, after the compilation error translation key (like quotas).
+        Assert::assertStringContainsString(
+            match ($type) {
+                'service' => 'Service demo-nginx is already defined in the deployment',
+                'ingress' => 'Ingress demo-nginx is already defined in the deployment',
+                default => throw new LogicException('Unknown type in test'),
+            },
+            (string) ($history->getExtra()['result'][1] ?? ''),
         );
     }
 

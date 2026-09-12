@@ -168,7 +168,9 @@ See [`.agents/recipes.md`](.agents/recipes.md) · [`.agents/testing.md`](.agents
 Projects define deployments in `.paas.yaml`. The compiler: parses YAML → applies hooks
 (composer, npm, pip, make, etc.) → builds OCI images → generates deployment manifests.
 Platform-agnostic at domain level; platform-specific transcribers come from East PaaS.
-Supports "extends" for reusable components via container libraries.
+Supports "extends" for reusable components via container libraries. Since PaaS file `v1.2`, `services` can be
+declared inside a container and `ingress` inside a service (expose shortcuts), compiled to the same deployment as
+explicit `services`/`ingresses`.
 
 ## Workflow Orchestration
 

@@ -1114,3 +1114,150 @@ Feature: Web interface to create new job and deploy project
     And it is forwared to job page
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the UI, execute a job from an owned project, with prefix, a valid paas file, using
+  expose shortcuts (v1.2)
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And It goes to projects list page
+    And it goes to project page of "my project"
+    When it runs a job
+    And it submits the form:
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.taskId            | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then it obtains a deployment page
+    And Space executes the job
+    And it is forwared to job page
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the UI, execute a job from an owned project, with prefix, a valid paas file, using
+  expose shortcuts (v1.2) and encrypted messages between workers
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And It goes to projects list page
+    And it goes to project page of "my project"
+    When it runs a job
+    And it submits the form:
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.taskId            | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then it obtains a deployment page
+    And Space executes the job
+    And it is forwared to job page
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the UI, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2)
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And It goes to projects list page
+    And it goes to project page of "my project"
+    When it runs a job
+    And it submits the form:
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.taskId            | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then it obtains a deployment page
+    And Space executes the job
+    And it is forwared to job page
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the UI, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2)
+  and encrypted messages between workers
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And It goes to projects list page
+    And it goes to project page of "my project"
+    When it runs a job
+    And it submits the form:
+      | field                     | value                   |
+      | new_job._token            | <auto>                  |
+      | new_job.projectId         | <auto>                  |
+      | new_job.taskId            | <auto>                  |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then it obtains a deployment page
+    And Space executes the job
+    And it is forwared to job page
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"

@@ -39,7 +39,8 @@ Test classes follow the namespace pattern `Teknoo\Space\Tests\{Layer}\{SubPath}`
 
 ## Fixtures & Running
 
-PAAS YAML fixtures in `tests/` cover 6 build scenarios. Run all tests with `./space.sh test`,
+PAAS YAML fixtures in `tests/Behat/Project/` cover 7 build scenarios (basic, conditions, defaults, extends, HTTPS
+backend, jobs, `v1.2` expose shortcuts). Run all tests with `./space.sh test`,
 unit tests with `./space.sh units-tests`, or Behat with `./space.sh behavior-test`.
 
 → `documentation/development.md#running-tests` · `documentation/development.md#writing-behavior-tests`

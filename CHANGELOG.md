@@ -16,7 +16,12 @@
   control step); `PrepareAccountTrait` is removed, `LoadHistory` works without a `ParametersBag`
 - Docker Compose quota refresh records in the history that it is not applicable
 - Add Behat step `Space executes the pending tasks` and update the account scenarios accordingly
+- Add Behat coverage for the East PaaS `v1.2` expose shortcuts (`services` declared in a container, `ingress` declared
+  in a service), on Kubernetes and Docker Compose, from the API, the admin API and the web UI, including the error
+  cases: shortcuts in a `v1.1` file, service or ingress duplicated by an explicit definition
 - Update documentations
+- Update libs
+  - East PaaS 5.7 beta11
 
 ## [2.5.0-beta3] - 2026-09-11
 ### Beta Release

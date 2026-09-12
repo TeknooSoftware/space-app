@@ -2066,6 +2066,439 @@ Feature: API endpoints to create new job and deploy project
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using
+  expose shortcuts (v1.2) via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using
+  expose shortcuts (v1.2) via a request with a form url encoded body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using
+  expose shortcuts (v1.2), encrypted messages between workers, via a request with a json body
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using
+  expose shortcuts (v1.2), encrypted messages between workers, via a request with a form url encoded body
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2)
+  via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2)
+  via a request with a form url encoded body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2),
+  encrypted messages between workers, via a request with a json body
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2),
+  encrypted messages between workers, via a request with a form url encoded body
+    Given A Space app instance
+    And encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file with wrong PaaS version,
+  using expose shortcuts via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts with wrong version
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    But job must be finished with an error about expose shortcuts not allowed in v1.1
+    And no Kubernetes manifests must not be created
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file using expose shortcuts
+  with a service duplicated by an explicit definition via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts with a duplicated service
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    But job must be finished with an error about a duplicated service
+    And no Kubernetes manifests must not be created
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file using expose shortcuts
+  with an ingress duplicated by an explicit definition via a request with a json body
+    Given A Space app instance
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts with a duplicated ingress
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    But job must be finished with an error about a duplicated ingress
+    And no Kubernetes manifests must not be created
+
   Scenario: From the API, execute a job from an owned project with Traefik ingress controller, with a valid paas file,
   jobs via a request with a json body
     Given A Space app instance

@@ -171,6 +171,7 @@ trait KubernetesTrait
             jobsEnabled: $this->jobsEnabled,
             ingressProvider: $this->ingressProvider,
             versionLevel: $versionLevel,
+            exposeShortcuts: $this->exposeShortcutsEnabled,
         );
 
         Assert::assertEquals(
