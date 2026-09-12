@@ -50,6 +50,7 @@ Feature: API admin endpoints to administrate accounts
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
@@ -81,6 +82,7 @@ Feature: API admin endpoints to administrate accounts
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
     And with the subscription plan "test-1"
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
@@ -110,6 +112,7 @@ Feature: API admin endpoints to administrate accounts
     Then get a JSON reponse
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
@@ -141,6 +144,7 @@ Feature: API admin endpoints to administrate accounts
     And the serialized account "Test Behat" for admin
     And there is an account in the memory
     And with the subscription plan "test-1"
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "behat" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
 
@@ -274,6 +278,7 @@ Feature: API admin endpoints to administrate accounts
     When the API is called to reinstall the account registry
     Then get a JSON reponse
     And the serialized success result
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
     And the old account registry object has been deleted and remplaced

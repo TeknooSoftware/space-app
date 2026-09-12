@@ -1,5 +1,23 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta4] - 2026-09-11
+### Beta Release
+- Account provisioning (registry install/reinstall, environment install/reinstall, quota refresh) is no longer
+  executed by the web server: each operation is queued as a `NewTaskInterface` task
+  (`Object\DTO\Task\{InstallRegistryTask,ReinstallRegistryTask,RefreshQuotaTask,InstallEnvironmentTask,ReinstallEnvironmentTask}`)
+  through `CallNewTask` and applied by the `new_task` worker via the new `AccountProvisioningTask` plan,
+  registered in `NewTaskRecipeRegistry`. The web request records a "task queued" line in the account history and
+  redirects to the account page as before; the worker updates the `AccountHistory`, `AccountEnvironment` and
+  `AccountRegistry`
+- The three admin routes (`space_admin_account_environment_reinstall`, `space_admin_account_registry_reinstall`,
+  `space_admin_account_refresh_quota` and their API twins) share the new `AccountTaskDispatch` plan; the API
+  response now includes the `taskId`
+- The Kubernetes and Docker Compose provisioning plans are pure sub-recipes (no HTTP scaffolding, no access
+  control step); `PrepareAccountTrait` is removed, `LoadHistory` works without a `ParametersBag`
+- Docker Compose quota refresh records in the history that it is not applicable
+- Add Behat step `Space executes the pending tasks` and update the account scenarios accordingly
+- Update documentations
+
 ## [2.5.0-beta3] - 2026-09-11
 ### Beta Release
 - Rename JobUrlPublisher to TaskUrlPublisher and `newJobResult` to `taskResult` in the pending API templates,

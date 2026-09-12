@@ -28,7 +28,6 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\AnsibleDockerCompose\Recipe\Pl
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
@@ -45,44 +44,70 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
 #[CoversClass(AccountRegistryInstall::class)]
 class AccountRegistryInstallTest extends TestCase
 {
-    private AccountRegistryInstall $plan;
+    private AccountRegistryInstall $accountRegistryInstall;
 
     private RecipeInterface&Stub $recipe;
 
+    private LoadAccountClusters&Stub $loadAccountClusters;
+
+    private BuildRegistryInventory&Stub $buildRegistryInventory;
+
+    private GenerateRegistryCredentials&Stub $generateRegistryCredentials;
+
+    private RunRegistryPlaybook&Stub $runRegistryPlaybook;
+
+    private PersistRegistryCredential&Stub $persistRegistryCredential;
+
+    private PrepareAccountErrorHandler&Stub $errorHandler;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->loadAccountClusters = $this->createStub(LoadAccountClusters::class);
+        $this->buildRegistryInventory = $this->createStub(BuildRegistryInventory::class);
+        $this->generateRegistryCredentials = $this->createStub(GenerateRegistryCredentials::class);
+        $this->runRegistryPlaybook = $this->createStub(RunRegistryPlaybook::class);
+        $this->persistRegistryCredential = $this->createStub(PersistRegistryCredential::class);
+        $this->errorHandler = $this->createStub(PrepareAccountErrorHandler::class);
 
-        $this->plan = new AccountRegistryInstall(
+        $this->accountRegistryInstall = new AccountRegistryInstall(
             recipe: $this->recipe,
-            loadAccountClusters: $this->createStub(LoadAccountClusters::class),
-            buildRegistryInventory: $this->createStub(BuildRegistryInventory::class),
-            generateRegistryCredentials: $this->createStub(GenerateRegistryCredentials::class),
-            runRegistryPlaybook: $this->createStub(RunRegistryPlaybook::class),
-            persistRegistryCredential: $this->createStub(PersistRegistryCredential::class),
-            errorHandler: $this->createStub(PrepareAccountErrorHandler::class),
-            objectAccessControl: $this->createStub(ObjectAccessControlInterface::class),
+            loadAccountClusters: $this->loadAccountClusters,
+            buildRegistryInventory: $this->buildRegistryInventory,
+            generateRegistryCredentials: $this->generateRegistryCredentials,
+            runRegistryPlaybook: $this->runRegistryPlaybook,
+            persistRegistryCredential: $this->persistRegistryCredential,
+            errorHandler: $this->errorHandler,
         );
     }
 
     public function testConstruct(): void
     {
-        $this->assertInstanceOf(AccountRegistryInstall::class, $this->plan);
+        $this->assertInstanceOf(
+            AccountRegistryInstall::class,
+            $this->accountRegistryInstall,
+        );
     }
 
     public function testPrepare(): void
     {
         $this->assertInstanceOf(
             EditablePlanInterface::class,
-            $this->plan->train($this->createStub(ChefInterface::class)),
+            $this->accountRegistryInstall->train(
+                $this->createStub(ChefInterface::class),
+            )
         );
     }
 }

@@ -107,35 +107,33 @@ space_api_v1_admin_account_reinstall_registry:
     methods: ['POST']
     schemes: ['https']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.registry.reinstall'
-        allowEmptyCredentials: true
+        _controller: 'teknoo.space.endpoint.admin.account.task'
+        taskClass: 'Teknoo\Space\Object\DTO\Task\ReinstallRegistryTask'
         api: 'json'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
-        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_refresh_quota:
     path: '/account/{id}/quota/refresh'
     methods: ['POST']
     schemes: ['https']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.quota.refresh'
+        _controller: 'teknoo.space.endpoint.admin.account.task'
+        taskClass: 'Teknoo\Space\Object\DTO\Task\RefreshQuotaTask'
         api: 'json'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
-        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_environment_reinstall:
     path: '/account/{id}/environment/{envName}/{clusterName}/reinstall'
     methods: ['POST']
     schemes: ['https']
     defaults:
-        _controller: 'teknoo.space.endpoint.admin.account.environment.reinstall'
-        allowEmptyCredentials: true
+        _controller: 'teknoo.space.endpoint.admin.account.task'
+        taskClass: 'Teknoo\Space\Object\DTO\Task\ReinstallEnvironmentTask'
         api: 'json'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
-        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_account_clusters_list:
     path: '/account/{accountId}/clusters'

@@ -396,6 +396,14 @@ General-purpose view data container.
 
 Encapsulates data for creating a new deployment job.
 
+### Task DTOs (`Object/DTO/Task/`)
+
+`NewTaskInterface` implementations queued to the `new_task` worker for account provisioning:
+`InstallRegistryTask`, `ReinstallRegistryTask`, `RefreshQuotaTask`, `InstallEnvironmentTask`,
+`ReinstallEnvironmentTask`. They share `AbstractAccountTask` (task id, account id, optional environment name and
+cluster name) and only carry identifiers: the worker reloads the objects. They are deliberately not
+`ObjectInterface`s.
+
 ### JobVarsSet
 
 Collection of job variables.

@@ -319,6 +319,12 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 
 - `POST /api/v1/admin/account/{id}/environment/{envName}/{clusterName}/reinstall`
 
+These three actions are asynchronous: the response `{"meta": {...}, "success": true, "taskId": "..."}` only
+means the task has been queued to the `new_task` worker (and recorded in the account history). The result, or
+the error, is appended to the account history once the worker has run. Creating an account or adding an
+environment to it queues the registry / environment install the same way: a just-added environment is returned
+without `accountEnvironmentId` until the worker has provisioned it.
+
 #### Admin - Account Cluster Management
 
 **List Account Clusters**

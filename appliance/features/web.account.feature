@@ -104,6 +104,7 @@ Feature: Web interface to manage account's settings
       | space_account.environments.1.envName     | prod              |
       | space_account.environments.2.clusterName | Demo Kube Cluster |
       | space_account.environments.2.envName     | testing           |
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted

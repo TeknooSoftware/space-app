@@ -56,6 +56,7 @@ use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\BuildRegistryI
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\GenerateRegistryCredentials;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\PersistSshIdentity;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\SkipQuotaRefresh;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
@@ -130,6 +131,9 @@ use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrep
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 use Teknoo\Space\Recipe\Step\Subscription\CreateAccount;
 use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
+use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
+use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
+use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
@@ -318,6 +322,31 @@ return [
         return new ReinstallAccountErrorHandler(
             $container->get(DatesService::class),
             $container->get(AccountHistoryWriter::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
+    AddTaskToHistory::class => static function (ContainerInterface $container): AddTaskToHistory {
+        return new AddTaskToHistory(
+            $container->get(AccountHistoryWriter::class),
+            $container->get(DatesService::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
+    AccountTaskErrorHandler::class => static function (ContainerInterface $container): AccountTaskErrorHandler {
+        return new AccountTaskErrorHandler(
+            $container->get(DatesService::class),
+            $container->get(AccountHistoryWriter::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
+    PrepareAccountTask::class => create(),
+
+    SkipQuotaRefresh::class => static function (ContainerInterface $container): SkipQuotaRefresh {
+        return new SkipQuotaRefresh(
+            $container->get(DatesService::class),
             !empty($container->get('teknoo.space.prefer-real-date')),
         );
     },

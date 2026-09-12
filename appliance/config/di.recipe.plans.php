@@ -51,6 +51,7 @@ use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditAccountEndPointInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditProjectEndPointInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
+use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Recipe\Plan\AbstractEditObjectEndPoint;
 use Teknoo\East\Paas\Recipe\Plan\NewAccountEndPoint;
 use Teknoo\East\Paas\Recipe\Plan\NewJob;
@@ -87,6 +88,7 @@ use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\BuildRegistryI
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\GenerateRegistryCredentials;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\PersistSshIdentity;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\SkipQuotaRefresh;
 use Teknoo\Space\Infrastructures\Recipe\Bowl\ProvisioningPlanBowl;
 use Teknoo\Space\Cluster\Contract\ProvisioningPlanDirectoryInterface;
 use Teknoo\Space\Cluster\ProvisioningPlanDirectory;
@@ -114,6 +116,11 @@ use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\NewJob as NewJobDto;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\DTO\Task\InstallEnvironmentTask;
+use Teknoo\Space\Object\DTO\Task\InstallRegistryTask;
+use Teknoo\Space\Object\DTO\Task\RefreshQuotaTask;
+use Teknoo\Space\Object\DTO\Task\ReinstallEnvironmentTask;
+use Teknoo\Space\Object\DTO\Task\ReinstallRegistryTask;
 use Teknoo\Space\Service\NewTaskRecipeRegistry;
 use Teknoo\Space\Recipe\Plan\AccountClusterDelete;
 use Teknoo\Space\Recipe\Plan\AccountClusterEdit;
@@ -121,6 +128,7 @@ use Teknoo\Space\Recipe\Plan\AccountClusterList;
 use Teknoo\Space\Recipe\Plan\AccountClusterNew;
 use Teknoo\Space\Recipe\Plan\AccountEditSettings;
 use Teknoo\Space\Recipe\Plan\AccountStatus;
+use Teknoo\Space\Recipe\Plan\AccountTaskDispatch;
 use Teknoo\Space\Recipe\Plan\AdminAccountStatus;
 use Teknoo\Space\Recipe\Plan\Contact;
 use Teknoo\Space\Recipe\Plan\Dashboard;
@@ -135,6 +143,7 @@ use Teknoo\Space\Recipe\Plan\ProjectList;
 use Teknoo\Space\Recipe\Plan\ProjectNew;
 use Teknoo\Space\Recipe\Plan\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Plan\Subscription;
+use Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask;
 use Teknoo\Space\Recipe\Plan\UserCreateJwtToken;
 use Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken;
 use Teknoo\Space\Recipe\Plan\UserDeleteApiToken;
@@ -186,6 +195,9 @@ use Teknoo\Space\Recipe\Step\ProjectMetadata\LoadProjectMetadata;
 use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrepareRedirection;
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
+use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
+use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
+use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
 
 use function DI\create;
 use function DI\decorate;
@@ -251,27 +263,15 @@ return [
             diGet(CreateSecretServiceAccountToken::class),
             diGet(PersistEnvironment::class),
             diGet(PrepareAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     K8sEnvReinstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(LoadObject::class),
-            diGet(AccountPrepareRedirection::class),
-            diGet(SetRedirectClientAtEnd::class),
-            diGet(LoadHistory::class),
-            diGet(LoadEnvironments::class),
-            diGet(LoadRegistryCredential::class),
-            diGet(ReloadNamespace::class),
             diGet(FindEnvironmentInWallet::class),
             diGet(RemoveEnvironment::class),
             diGet(K8sEnvInstall::class),
-            diGet(UpdateAccountHistory::class),
-            diGet(JumpIf::class),
-            diGet(Render::class),
             diGet(ReinstallAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     K8sRegistryInstall::class => create()
@@ -283,47 +283,24 @@ return [
             diGet(CreateRegistryDeployment::class),
             diGet(PersistRegistryCredential::class),
             diGet(PrepareAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
             diGet('teknoo.east.paas.default_storage_size'),
         ),
 
     K8sRegistryReinstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(LoadObject::class),
-            diGet(AccountPrepareRedirection::class),
-            diGet(SetRedirectClientAtEnd::class),
-            diGet(LoadHistory::class),
-            diGet(LoadRegistryCredential::class),
-            diGet(ReloadNamespace::class),
             diGet(RemoveRegistryCredential::class),
             diGet(K8sRegistryInstall::class),
-            diGet(UpdateAccountHistory::class),
-            diGet(JumpIf::class),
-            diGet(Render::class),
             diGet(ReinstallAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
-            diGet('teknoo.east.paas.default_storage_size'),
         ),
 
     K8sRefreshQuota::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(LoadObject::class),
-            diGet(AccountPrepareRedirection::class),
-            diGet(SetRedirectClientAtEnd::class),
-            diGet(LoadHistory::class),
-            diGet(LoadEnvironments::class),
-            diGet(LoadAccountClusters::class),
-            diGet(ReloadNamespace::class),
             diGet(ReloadEnvironement::class),
             diGet(SelectClusterConfig::class),
             diGet(CreateQuota::class),
-            diGet(UpdateAccountHistory::class),
-            diGet(JumpIf::class),
-            diGet(Render::class),
             diGet(ReinstallAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     DcEnvInstall::class => create()
@@ -334,40 +311,22 @@ return [
             diGet(PersistSshIdentity::class),
             diGet(PersistEnvironment::class),
             diGet(PrepareAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     DcEnvReinstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(LoadObject::class),
-            diGet(AccountPrepareRedirection::class),
-            diGet(SetRedirectClientAtEnd::class),
-            diGet(LoadHistory::class),
-            diGet(LoadEnvironments::class),
             diGet(FindEnvironmentInWallet::class),
             diGet(RemoveEnvironment::class),
             diGet(DcEnvInstall::class),
-            diGet(UpdateAccountHistory::class),
-            diGet(JumpIf::class),
-            diGet(Render::class),
             diGet(ReinstallAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     DcRefreshQuota::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(LoadObject::class),
-            diGet(AccountPrepareRedirection::class),
-            diGet(SetRedirectClientAtEnd::class),
-            diGet(LoadHistory::class),
-            diGet(LoadEnvironments::class),
-            diGet(UpdateAccountHistory::class),
-            diGet(JumpIf::class),
-            diGet(Render::class),
+            diGet(SkipQuotaRefresh::class),
             diGet(ReinstallAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     DcRegistryInstall::class => create()
@@ -379,25 +338,14 @@ return [
             diGet(RunRegistryPlaybook::class),
             diGet(PersistRegistryCredential::class),
             diGet(PrepareAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     DcRegistryReinstall::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(LoadObject::class),
-            diGet(AccountPrepareRedirection::class),
-            diGet(SetRedirectClientAtEnd::class),
-            diGet(LoadHistory::class),
-            diGet(LoadRegistryCredential::class),
-            diGet(ReloadNamespace::class),
             diGet(RemoveRegistryCredential::class),
             diGet(DcRegistryInstall::class),
-            diGet(UpdateAccountHistory::class),
-            diGet(JumpIf::class),
-            diGet(Render::class),
             diGet(ReinstallAccountErrorHandler::class),
-            diGet(ObjectAccessControlInterface::class),
         ),
 
     // Provisioning-plan directory: kubernetes returns the existing (unchanged) plan instances; docker-compose
@@ -458,6 +406,133 @@ return [
             ProvisioningPlanBowl::ROLE_REFRESH_QUOTA,
         ),
 
+    'teknoo.space.provisioning.bowl.environment_install' => create(ProvisioningPlanBowl::class)
+        ->constructor(
+            diGet(ProvisioningPlanDirectoryInterface::class),
+            ProvisioningPlanBowl::ROLE_ENVIRONMENT_INSTALL,
+        ),
+
+    // Worker-side plans of the account provisioning tasks: one per task class, each wrapping the type-dispatch
+    // bowl of its role. `NewTaskHandler` reaches them through the `NewTaskRecipeRegistry` below.
+    'teknoo.space.task.plan.registry_install' => create(AccountProvisioningTask::class)
+        ->constructor(
+            recipe: diGet(OriginalRecipeInterface::class),
+            taskClass: InstallRegistryTask::class,
+            loadObject: diGet(LoadObject::class),
+            accountLoader: diGet(AccountLoader::class),
+            clusterCatalog: diGet('teknoo.space.clusters_catalog'),
+            loadHistory: diGet(LoadHistory::class),
+            loadAccountClusters: diGet(LoadAccountClusters::class),
+            reloadNamespace: diGet(ReloadNamespace::class),
+            provisioningBowl: diGet('teknoo.space.provisioning.bowl.registry_install'),
+            updateAccountHistory: diGet(UpdateAccountHistory::class),
+            errorHandler: diGet(AccountTaskErrorHandler::class),
+        ),
+
+    'teknoo.space.task.plan.registry_reinstall' => create(AccountProvisioningTask::class)
+        ->constructor(
+            recipe: diGet(OriginalRecipeInterface::class),
+            taskClass: ReinstallRegistryTask::class,
+            loadObject: diGet(LoadObject::class),
+            accountLoader: diGet(AccountLoader::class),
+            clusterCatalog: diGet('teknoo.space.clusters_catalog'),
+            loadHistory: diGet(LoadHistory::class),
+            loadAccountClusters: diGet(LoadAccountClusters::class),
+            reloadNamespace: diGet(ReloadNamespace::class),
+            provisioningBowl: diGet('teknoo.space.provisioning.bowl.registry_reinstall'),
+            updateAccountHistory: diGet(UpdateAccountHistory::class),
+            errorHandler: diGet(AccountTaskErrorHandler::class),
+            loadRegistryCredential: diGet(LoadRegistryCredential::class),
+        ),
+
+    'teknoo.space.task.plan.refresh_quota' => create(AccountProvisioningTask::class)
+        ->constructor(
+            recipe: diGet(OriginalRecipeInterface::class),
+            taskClass: RefreshQuotaTask::class,
+            loadObject: diGet(LoadObject::class),
+            accountLoader: diGet(AccountLoader::class),
+            clusterCatalog: diGet('teknoo.space.clusters_catalog'),
+            loadHistory: diGet(LoadHistory::class),
+            loadAccountClusters: diGet(LoadAccountClusters::class),
+            reloadNamespace: diGet(ReloadNamespace::class),
+            provisioningBowl: diGet('teknoo.space.provisioning.bowl.refresh_quota'),
+            updateAccountHistory: diGet(UpdateAccountHistory::class),
+            errorHandler: diGet(AccountTaskErrorHandler::class),
+            loadEnvironments: diGet(LoadEnvironments::class),
+        ),
+
+    'teknoo.space.task.plan.environment_install' => create(AccountProvisioningTask::class)
+        ->constructor(
+            recipe: diGet(OriginalRecipeInterface::class),
+            taskClass: InstallEnvironmentTask::class,
+            loadObject: diGet(LoadObject::class),
+            accountLoader: diGet(AccountLoader::class),
+            clusterCatalog: diGet('teknoo.space.clusters_catalog'),
+            loadHistory: diGet(LoadHistory::class),
+            loadAccountClusters: diGet(LoadAccountClusters::class),
+            reloadNamespace: diGet(ReloadNamespace::class),
+            provisioningBowl: diGet('teknoo.space.provisioning.bowl.environment_install'),
+            updateAccountHistory: diGet(UpdateAccountHistory::class),
+            errorHandler: diGet(AccountTaskErrorHandler::class),
+            loadEnvironments: diGet(LoadEnvironments::class),
+            loadRegistryCredential: diGet(LoadRegistryCredential::class),
+        ),
+
+    'teknoo.space.task.plan.environment_reinstall' => create(AccountProvisioningTask::class)
+        ->constructor(
+            recipe: diGet(OriginalRecipeInterface::class),
+            taskClass: ReinstallEnvironmentTask::class,
+            loadObject: diGet(LoadObject::class),
+            accountLoader: diGet(AccountLoader::class),
+            clusterCatalog: diGet('teknoo.space.clusters_catalog'),
+            loadHistory: diGet(LoadHistory::class),
+            loadAccountClusters: diGet(LoadAccountClusters::class),
+            reloadNamespace: diGet(ReloadNamespace::class),
+            provisioningBowl: diGet('teknoo.space.provisioning.bowl.environment_reinstall'),
+            updateAccountHistory: diGet(UpdateAccountHistory::class),
+            errorHandler: diGet(AccountTaskErrorHandler::class),
+            loadEnvironments: diGet(LoadEnvironments::class),
+            loadRegistryCredential: diGet(LoadRegistryCredential::class),
+        ),
+
+    // HTTP entry point of the admin provisioning actions (environment reinstall, registry reinstall, quota
+    // refresh): the route's `taskClass` default selects the task queued to the `new_task` worker.
+    AccountTaskDispatch::class => create()
+        ->constructor(
+            diGet(OriginalRecipeInterface::class),
+            diGet(LoadObject::class),
+            diGet(ObjectAccessControlInterface::class),
+            diGet(LoadHistory::class),
+            diGet(PrepareAccountTask::class),
+            diGet(CallNewTaskInterface::class),
+            diGet(AddTaskToHistory::class),
+            diGet(AccountPrepareRedirection::class),
+            diGet(JumpIf::class),
+            diGet(SetRedirectClientAtEnd::class),
+            diGet(Render::class),
+            diGet(RenderError::class),
+            diGet('teknoo.east.common.get_default_error_template'),
+        ),
+
+    // `PrepareAccountTask` bound to a task class, for the account creation and edition flows
+    'teknoo.space.task.step.prepare_registry_install' => static function (ContainerInterface $container): Step {
+        return new Step(
+            step: $container->get(PrepareAccountTask::class),
+            with: [
+                'taskClass' => new Value(InstallRegistryTask::class),
+            ],
+        );
+    },
+
+    'teknoo.space.task.step.prepare_environment_install' => static function (ContainerInterface $container): Step {
+        return new Step(
+            step: $container->get(PrepareAccountTask::class),
+            with: [
+                'taskClass' => new Value(InstallEnvironmentTask::class),
+            ],
+        );
+    },
+
     'teknoo.space.account.endpoint.new.additional_steps' => [
         //After ObjectAccessControlInterface
         ExtractFromAccountDTO::class => 54,
@@ -467,9 +542,10 @@ return [
 
         //After SaveObject
         CreateAccountHistory::class => 61,
-        //Type-dispatch bowl: kubernetes → K8s registry install, docker-compose → Ansible registry install.
-        'teknoo.space.provisioning.bowl.registry_install' => 62,
-        UpdateAccountHistory::class => 69,
+        //Queue the registry install to the `new_task` worker (the cluster type is resolved there)
+        'teknoo.space.task.step.prepare_registry_install' => 62,
+        CallNewTaskInterface::class => 63,
+        AddTaskToHistory::class => 64,
 
         //After RedirectClientInterface
     ],
@@ -596,21 +672,26 @@ return [
                 position: 65,
             );
 
+            //Queue the environment install to the `new_task` worker (the cluster type is resolved there)
             $steps->add(
-                action: new ProvisioningPlanBowl(
-                    directory: $container->get(ProvisioningPlanDirectoryInterface::class),
-                    role: ProvisioningPlanBowl::ROLE_ENVIRONMENT_INSTALL,
-                    repeat: 0,
-                ),
+                action: $container->get('teknoo.space.task.step.prepare_environment_install'),
                 position: 66,
             );
 
             $steps->add(
-                action: new EndLooping(),
+                action: $container->get(CallNewTaskInterface::class),
                 position: 67,
             );
 
-            $steps->add($container->get(UpdateAccountHistory::class), 68);
+            $steps->add(
+                action: $container->get(AddTaskToHistory::class),
+                position: 68,
+            );
+
+            $steps->add(
+                action: new EndLooping(),
+                position: 69,
+            );
             //After FormHandlingInterface::class . ':refresh'
 
             return $steps;
@@ -1071,6 +1152,14 @@ return [
         ContainerInterface $container,
     ): NewTaskRecipeRegistry {
         return (new NewTaskRecipeRegistry())
-            ->register(NewJobDto::class, $container->get(NewJobInterface::class));
+            ->register(NewJobDto::class, $container->get(NewJobInterface::class))
+            ->register(InstallRegistryTask::class, $container->get('teknoo.space.task.plan.registry_install'))
+            ->register(ReinstallRegistryTask::class, $container->get('teknoo.space.task.plan.registry_reinstall'))
+            ->register(RefreshQuotaTask::class, $container->get('teknoo.space.task.plan.refresh_quota'))
+            ->register(InstallEnvironmentTask::class, $container->get('teknoo.space.task.plan.environment_install'))
+            ->register(
+                ReinstallEnvironmentTask::class,
+                $container->get('teknoo.space.task.plan.environment_reinstall'),
+            );
     },
 ];

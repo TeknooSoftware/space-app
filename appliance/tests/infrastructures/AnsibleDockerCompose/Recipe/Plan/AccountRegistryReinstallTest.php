@@ -28,22 +28,12 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\AnsibleDockerCompose\Recipe\Pl
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
-use Teknoo\East\Common\Recipe\Step\JumpIf;
-use Teknoo\East\Common\Recipe\Step\LoadObject;
-use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountRegistryInstall;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 
 /**
@@ -51,50 +41,58 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
  *
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
+ * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author Richard Déloge <richard@teknoo.software>
  *
  */
 #[CoversClass(AccountRegistryReinstall::class)]
 class AccountRegistryReinstallTest extends TestCase
 {
-    private AccountRegistryReinstall $plan;
+    private AccountRegistryReinstall $accountRegistryReinstall;
 
     private RecipeInterface&Stub $recipe;
 
+    private RemoveRegistryCredential&Stub $removeRegistryCredential;
+
+    private AccountRegistryInstall&Stub $accountRegistryInstall;
+
+    private ReinstallAccountErrorHandler&Stub $errorHandler;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->recipe = $this->createStub(RecipeInterface::class);
+        $this->removeRegistryCredential = $this->createStub(RemoveRegistryCredential::class);
+        $this->accountRegistryInstall = $this->createStub(AccountRegistryInstall::class);
+        $this->errorHandler = $this->createStub(ReinstallAccountErrorHandler::class);
 
-        $this->plan = new AccountRegistryReinstall(
+        $this->accountRegistryReinstall = new AccountRegistryReinstall(
             recipe: $this->recipe,
-            loadObject: $this->createStub(LoadObject::class),
-            prepareRedirection: $this->createStub(PrepareRedirection::class),
-            redirectClient: $this->createStub(SetRedirectClientAtEnd::class),
-            loadHistory: $this->createStub(LoadHistory::class),
-            loadRegistryCredential: $this->createStub(LoadRegistryCredential::class),
-            reloadNamespace: $this->createStub(ReloadNamespace::class),
-            removeRegistryCredential: $this->createStub(RemoveRegistryCredential::class),
-            accountRegistryInstall: $this->createStub(AccountRegistryInstall::class),
-            updateAccountHistory: $this->createStub(UpdateAccountHistory::class),
-            jumpIf: $this->createStub(JumpIf::class),
-            render: $this->createStub(Render::class),
-            errorHandler: $this->createStub(ReinstallAccountErrorHandler::class),
-            objectAccessControl: $this->createStub(ObjectAccessControlInterface::class),
+            removeRegistryCredential: $this->removeRegistryCredential,
+            accountRegistryInstall: $this->accountRegistryInstall,
+            errorHandler: $this->errorHandler,
         );
     }
 
     public function testConstruct(): void
     {
-        $this->assertInstanceOf(AccountRegistryReinstall::class, $this->plan);
+        $this->assertInstanceOf(
+            AccountRegistryReinstall::class,
+            $this->accountRegistryReinstall,
+        );
     }
 
     public function testPrepare(): void
     {
         $this->assertInstanceOf(
             EditablePlanInterface::class,
-            $this->plan->train($this->createStub(ChefInterface::class)),
+            $this->accountRegistryReinstall->train(
+                $this->createStub(ChefInterface::class),
+            )
         );
     }
 }

@@ -20,34 +20,26 @@
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-
 declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
-use Teknoo\East\Common\Recipe\Step\JumpIf;
-use Teknoo\East\Common\Recipe\Step\LoadObject;
-use Teknoo\East\Common\Recipe\Step\Render;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\SkipQuotaRefresh;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Plan\Traits\PrepareAccountTrait;
-use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
-use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Docker-compose "refresh quota" — a **documented no-op** beyond reloading the account and touching history.
- * A Docker host has no Kubernetes `ResourceQuota` object to reconcile (docker-compose uses the global OCI
- * registry and no per-account K8s objects), so there is nothing to refresh. Kept for parity with the
- * Kubernetes plan set so the provisioning-plan directory can resolve `refreshQuota('docker-compose')`.
+ * Docker-compose "refresh quota" — a **documented no-op**: a Docker host has no Kubernetes `ResourceQuota`
+ * object to reconcile, so there is nothing to refresh. The plan only records that in the account history
+ * ({@see SkipQuotaRefresh}). Kept for parity with the Kubernetes plan set so the provisioning-plan directory
+ * can resolve `refreshQuota('docker-compose')`. Executed in the `new_task` worker through the
+ * `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask` plan.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -57,32 +49,21 @@ use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 class AccountRefreshQuota implements EditablePlanInterface
 {
     use EditablePlanTrait;
-    use PrepareAccountTrait;
 
     public function __construct(
         RecipeInterface $recipe,
-        private readonly LoadObject $loadObject,
-        private readonly PrepareRedirection $prepareRedirection,
-        private readonly SetRedirectClientAtEnd $redirectClient,
-        private readonly LoadHistory $loadHistory,
-        private readonly LoadEnvironments $loadEnvironments,
-        private readonly UpdateAccountHistory $updateAccountHistory,
-        private readonly JumpIf $jumpIf,
-        private readonly Render $render,
+        private readonly SkipQuotaRefresh $skipQuotaRefresh,
         private readonly ReinstallAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
-        $recipe = $recipe->require(new Ingredient('string', 'id'));
+        $recipe = $recipe->require(new Ingredient(Account::class));
+        $recipe = $recipe->require(new Ingredient(AccountHistory::class));
 
-        $recipe = $this->prepareRecipeForAccount($recipe);
-
-        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 120);
+        $recipe = $recipe->cook($this->skipQuotaRefresh, SkipQuotaRefresh::class, [], 80);
 
         return $recipe->onError(new Bowl($this->errorHandler, []));
     }

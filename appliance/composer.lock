@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9b22eda875361f1304196b0f779bf72",
+    "content-hash": "0bd0a17464d66f2ce430702cb9b51b59",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11519,16 +11519,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.7.0-beta10",
+            "version": "5.7.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "87efef3b3342b4f6edc932523855b4eea1276b70"
+                "reference": "c28c621343d0c8833de26675783c897fddb72c28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/87efef3b3342b4f6edc932523855b4eea1276b70",
-                "reference": "87efef3b3342b4f6edc932523855b4eea1276b70",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/c28c621343d0c8833de26675783c897fddb72c28",
+                "reference": "c28c621343d0c8833de26675783c897fddb72c28",
                 "shasum": ""
             },
             "require": {
@@ -11676,20 +11676,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-09-11T13:22:38+00:00"
+            "time": "2026-09-12T15:00:05+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.7.0-beta10",
+            "version": "5.7.0-beta11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "7cd0478e1043da14930b537145f79e67e7bb8979"
+                "reference": "4599d15f2c8a7f2486e9a988088de50919c347c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/7cd0478e1043da14930b537145f79e67e7bb8979",
-                "reference": "7cd0478e1043da14930b537145f79e67e7bb8979",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/4599d15f2c8a7f2486e9a988088de50919c347c8",
+                "reference": "4599d15f2c8a7f2486e9a988088de50919c347c8",
                 "shasum": ""
             },
             "require": {
@@ -11727,7 +11727,7 @@
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
                 "teknoo/east-common-symfony": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2",
-                "teknoo/east-paas": "^5.7.0-beta10",
+                "teknoo/east-paas": "^5.7.0-beta11",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
                 "teknoo/recipe": "^7.2.2",
@@ -11789,7 +11789,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-09-11T13:23:32+00:00"
+            "time": "2026-09-12T19:06:29+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13991,12 +13991,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "55a9238f51c5449fdaa650fb03322dfca498a2e5"
+                "reference": "320c728c28346390c380a9876d6572a6c80cdd87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/55a9238f51c5449fdaa650fb03322dfca498a2e5",
-                "reference": "55a9238f51c5449fdaa650fb03322dfca498a2e5",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/320c728c28346390c380a9876d6572a6c80cdd87",
+                "reference": "320c728c28346390c380a9876d6572a6c80cdd87",
                 "shasum": ""
             },
             "conflict": {
@@ -14756,7 +14756,7 @@
                 "sheng/yiicms": "<1.2.1",
                 "shlinkio/shlink": "<=5.0.1",
                 "shopper/cart": "<2.8",
-                "shopper/framework": "<2.8",
+                "shopper/framework": "<2.9.2",
                 "shopware/core": "<6.6.10.18-dev|>=6.7,<6.7.10.1-dev",
                 "shopware/platform": "<6.6.10.18-dev|>=6.7,<6.7.10.1-dev",
                 "shopware/production": "<=6.3.5.2",
@@ -15129,7 +15129,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-09T20:29:53+00:00"
+            "time": "2026-09-11T23:00:23+00:00"
         },
         {
             "name": "sebastian/cli-parser",

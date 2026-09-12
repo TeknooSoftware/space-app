@@ -104,6 +104,7 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.code                                     | NWQ4MTC1       |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page
@@ -149,6 +150,7 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.code                                     | NWQ4MTC1       |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page
@@ -191,6 +193,7 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page
@@ -234,6 +237,7 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
     Then An account "My Company" is created
     And an user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page

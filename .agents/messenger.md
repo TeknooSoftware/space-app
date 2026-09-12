@@ -8,7 +8,7 @@ Four independent Symfony Messenger workers, each consuming from its own RabbitMQ
 
 | Worker | Queue | Purpose |
 |--------|-------|---------|
-| **NewTaskHandler** | `new_task` | Initialize new deployment jobs |
+| **NewTaskHandler** | `new_task` | Run any `NewTaskInterface`: initialize new deployment jobs, apply account provisioning tasks (registry/environment install or reinstall, quota refresh), Enterprise docker host setup |
 | **ExecuteJobHandler** | `execute_job` | Build and deploy (clone, compile, build images, transcribe) |
 | **HistorySentHandler** | `history_sent` | Persist deployment history events |
 | **JobDoneHandler** | `job_done` | Finalize completed jobs |
@@ -24,6 +24,14 @@ User creates job → NewTaskInterface → new_task queue
     → ExecuteJobHandler → JobDone → job_done queue
       → HistorySentHandler persists events
       → JobDoneHandler finalizes job status
+```
+
+Account provisioning (account created, environment added, admin reinstall / quota refresh):
+
+```
+HTTP → PrepareAccountTask → CallNewTask → AddTaskToHistory ("queued" line) → redirect/render
+  → new_task queue → NewTaskHandler → AccountProvisioningTask (loads Account, history, clusters, wallet,
+    registry) → ProvisioningPlanBowl (K8s or Docker Compose plan) → AccountHistory updated
 ```
 
 → `documentation/worker.md#message-flow`

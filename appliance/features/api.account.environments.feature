@@ -38,6 +38,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company"
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
@@ -69,6 +70,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | environments.2.envName              | testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company"
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
@@ -125,6 +127,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | environments.1.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, create an environmnt on a managed cluster and exceeding quota, via a request with a form
@@ -156,6 +159,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, create an environment on a managed cluster and exceeding quota, via a request with a json
@@ -187,6 +191,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, create a new environment, on an account cluster, via a request with a form url encoded body
@@ -217,6 +222,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company"
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Cluster Company" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And no Kubernetes manifests must not be created on "Demo Kube Cluster"
@@ -250,6 +256,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | environments.2.envName              | testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company"
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Cluster Company" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And no Kubernetes manifests must not be created on "Demo Kube Cluster"
@@ -285,6 +292,7 @@ Feature: API endpoints to manage account's environments where deploy projects
       | space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, create an environment on an account cluster and exceeding quota, via a request with a json
@@ -317,4 +325,5 @@ Feature: API endpoints to manage account's environments where deploy projects
       | space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created

@@ -215,4 +215,39 @@ class LoadHistoryTest extends TestCase
 
         $this->assertInstanceOf(LoadHistory::class, $result);
     }
+
+    public function testInvokeWithoutBagInAWorker(): void
+    {
+        $account = $this->createStub(Account::class);
+        $history = $this->createStub(History::class);
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('passMeYouHistory')
+            ->willReturnCallback(function ($callback) use ($history, $accountHistory) {
+                $callback($history);
+                return $accountHistory;
+            });
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([AccountHistory::class => $accountHistory]);
+
+        $this->loader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(function ($query, $promise) use ($accountHistory) {
+                $promise->success($accountHistory);
+                return $this->loader;
+            });
+
+        $this->writer->expects($this->never())
+            ->method('save');
+
+        $result = ($this->loadHistory)(
+            manager: $manager,
+            accountInstance: $account,
+        );
+
+        $this->assertInstanceOf(LoadHistory::class, $result);
+    }
 }

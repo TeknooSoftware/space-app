@@ -71,6 +71,7 @@ use function json_decode;
 use function json_encode;
 use function str_contains;
 use function str_starts_with;
+use function strlen;
 use function strtolower;
 use function trim;
 
@@ -1155,6 +1156,12 @@ trait ApiTrait
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
 
+        // The provisioning is queued to the `new_task` worker: the response carries the generated task id
+        Assert::assertIsArray($unserialized);
+        Assert::assertNotEmpty($unserialized['taskId'] ?? null);
+        Assert::assertSame(48, strlen((string) $unserialized['taskId']));
+        unset($unserialized['taskId']);
+
         Assert::assertEquals(
             [
                 'meta' => [
@@ -1697,6 +1704,29 @@ trait ApiTrait
 
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
+
+        if ('environments' === $view) {
+            // An environment added by this request is only queued to the `new_task` worker: the response
+            // already lists it, without id, while nothing is persisted yet
+            $persisted = array_map(
+                static fn (AccountEnvironmentResume $resume): string => $resume->clusterName . '/' . $resume->envName,
+                $environments,
+            );
+
+            foreach (($unserialized['data']['environments'] ?? []) as $pending) {
+                if (
+                    !empty($pending['accountEnvironmentId'])
+                    || in_array(($pending['clusterName'] ?? '') . '/' . ($pending['envName'] ?? ''), $persisted, true)
+                ) {
+                    continue;
+                }
+
+                $environments[] = new AccountEnvironmentResume(
+                    clusterName: (string) ($pending['clusterName'] ?? ''),
+                    envName: (string) ($pending['envName'] ?? ''),
+                );
+            }
+        }
 
         $normalized = $this->normalizer->normalize(
             [

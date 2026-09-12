@@ -26,10 +26,8 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
@@ -58,7 +56,7 @@ use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 #[CoversClass(AccountEnvironmentInstall::class)]
 class AccountEnvironmentInstallTest extends TestCase
 {
-    private AccountEnvironmentInstall $accountInstall;
+    private AccountEnvironmentInstall $accountEnvironmentInstall;
 
     private RecipeInterface&Stub $recipe;
 
@@ -84,8 +82,6 @@ class AccountEnvironmentInstallTest extends TestCase
 
     private PrepareAccountErrorHandler&Stub $errorHandler;
 
-    private ObjectAccessControlInterface&Stub $objectAccessControlInterface;
-
     /**
      * {@inheritdoc}
      */
@@ -105,9 +101,8 @@ class AccountEnvironmentInstallTest extends TestCase
         $this->createSecret = $this->createStub(CreateSecretServiceAccountToken::class);
         $this->persistCredentials = $this->createStub(PersistEnvironment::class);
         $this->errorHandler = $this->createStub(PrepareAccountErrorHandler::class);
-        $this->objectAccessControlInterface = $this->createStub(ObjectAccessControlInterface::class);
 
-        $this->accountInstall = new AccountEnvironmentInstall(
+        $this->accountEnvironmentInstall = new AccountEnvironmentInstall(
             recipe: $this->recipe,
             loadAccountClusters: $this->loadAccountClusters,
             createNamespace: $this->createNamespace,
@@ -120,7 +115,6 @@ class AccountEnvironmentInstallTest extends TestCase
             createSecret: $this->createSecret,
             persistCredentials: $this->persistCredentials,
             errorHandler: $this->errorHandler,
-            objectAccessControl: $this->objectAccessControlInterface,
         );
     }
 
@@ -128,7 +122,7 @@ class AccountEnvironmentInstallTest extends TestCase
     {
         $this->assertInstanceOf(
             AccountEnvironmentInstall::class,
-            $this->accountInstall,
+            $this->accountEnvironmentInstall,
         );
     }
 
@@ -136,7 +130,7 @@ class AccountEnvironmentInstallTest extends TestCase
     {
         $this->assertInstanceOf(
             EditablePlanInterface::class,
-            $this->accountInstall->train(
+            $this->accountEnvironmentInstall->train(
                 $this->createStub(ChefInterface::class),
             )
         );

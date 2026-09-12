@@ -163,7 +163,8 @@ by the cluster `type`; Space only wires them and adds the type-aware account pro
 - `AccountEnvironmentInstall` / `AccountEnvironmentReinstall` — persist the SSH identity and the compose
   namespace (no Kubernetes namespace / service account / role / quota). The SSH private key is supplied, never
   minted.
-- `AccountRefreshQuota` — a documented no-op (a Docker host has no Kubernetes `ResourceQuota`), kept for parity.
+- `AccountRefreshQuota` — a documented no-op (a Docker host has no Kubernetes `ResourceQuota`), kept for parity;
+  its only step, `SkipQuotaRefresh`, records that fact in the account history.
 - `AccountRegistryInstall` / `AccountRegistryReinstall` — provision a **per-account private OCI registry** on the
   Docker host over Ansible.
 
@@ -186,6 +187,12 @@ playbook path, so no sidecar `.j2` would be resolvable next to it.
 `ProvisioningPlanBowl` (`appliance/infrastructures/Recipe/Bowl/`) resolves the right plan **at request time**
 from the workplan's cluster type — because a `RecipeBowl`'s recipe is otherwise fixed at container-build time.
 Kubernetes resolves to the unchanged Kubernetes plan instances, so its behaviour is byte-for-byte identical.
+
+Both plan sets are pure provisioning sub-recipes: they require the `Account`, `AccountHistory`, the cluster
+catalog (and the environments wallet / `envName` / `clusterName` where relevant) to be already in the workplan.
+They are executed in the `new_task` worker by `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask`,
+which loads those objects from the task's `accountId`. Account clusters are loaded *before* the bowl, because
+the bowl needs them to resolve the cluster type.
 
 ### 4. Symfony Integration
 
@@ -211,8 +218,11 @@ Located in `appliance/infrastructures/Symfony/Messenger/Handler/`:
 
 **NewTaskHandler**
 
-- Handles: any `NewTaskInterface` message (currently `NewJob`)
-- Action: Initializes deployment workflow
+- Handles: any `NewTaskInterface` message — `NewJob`, the account provisioning tasks
+  (`Teknoo\Space\Object\DTO\Task\{InstallRegistryTask,ReinstallRegistryTask,RefreshQuotaTask,InstallEnvironmentTask,ReinstallEnvironmentTask}`)
+  and the Enterprise `SetupDockerDto`
+- Action: resolves the plan from the task class through `NewTaskRecipeRegistry` and executes it in-process
+  (a job is then dispatched to `execute_job`; an account provisioning task is fully applied here)
 - Transport: RabbitMQ (`new_task` queue)
 
 **ExecuteJobHandler**

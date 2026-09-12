@@ -37,6 +37,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | admin_space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company" for admin
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
@@ -66,6 +67,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | environments.2.envName              | Testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company" for admin
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Demo Kube Cluster" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And the old account environment account "space-client-my-company-dev" must be deleted
@@ -147,6 +149,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | admin_space_account.environments.2.envName              | Testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, as Admin, create an environment on a managed cluster and exceeding quota, via a request with
@@ -176,6 +179,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, as Admin, create a new environment, on an account cluster, via a request with a form
@@ -205,6 +209,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | admin_space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company" for admin
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Cluster Company" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And no Kubernetes manifests must not be created on "Demo Kube Cluster"
@@ -236,6 +241,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | environments.2.envName              | Testing           |
     Then get a JSON reponse
     And the serialized account's environments of "My Company" for admin
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-testing" dedicated to "Cluster Company" is applied and populated
     And a Kubernetes namespaces "space-client-my-company-dev" must be deleted on "Demo Kube Cluster"
     And no Kubernetes manifests must not be created on "Demo Kube Cluster"
@@ -269,6 +275,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | admin_space_account.environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, as Admin, create an environmnt on an account cluster and exceeding quota, via a request with
@@ -299,6 +306,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
       | environments.2.envName              | testing           |
     Then get a JSON reponse
     But the user must have a 400 error
+    And Space executes the pending tasks
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, as Admin, refresh account's quota on its environments
@@ -319,6 +327,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
     When the API is called to refresh quota of account's environment
     Then get a JSON reponse
     And the serialized success result
+    And Space executes the pending tasks
     And a Kubernetes manifests dedicated to quota for the last account has been applied
     And no Kubernetes manifests must not be deleted
     And no object has been deleted
@@ -341,6 +350,7 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
     When the API is called to reinstall the account's environment "prod" on "Demo Kube Cluster"
     Then get a JSON reponse
     And the serialized success result
+    And Space executes the pending tasks
     And a Kubernetes namespace for "my-company-prod" dedicated to "Demo Kube Cluster" is applied and populated
     And no Kubernetes manifests must not be deleted
     And the old account environment "space-client-my-company-prod" object has been deleted and remplaced

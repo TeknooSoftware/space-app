@@ -40,9 +40,6 @@ parameters:
             message: '#SpaceAccount#'
             path:  domain/Recipe/Step/Account/LoadAccountFromRequest.php
         -
-            message: '#is not nullable#'
-            path:  domain/Recipe/Plan/Traits/PrepareAccountTrait.php
-        -
             message: '#BatchManipulationManagerInterface::deleteQuery#'
             path:  domain/Writer/Meta/
         -

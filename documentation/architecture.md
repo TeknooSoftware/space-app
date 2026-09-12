@@ -151,6 +151,14 @@ at request time based on the cluster `type` (kubernetes vs docker-compose). This
 type. Kubernetes resolves to the standard Kubernetes plan instances; docker-compose resolves to the
 Ansible-based provisioning plans.
 
+The bowls are no longer executed inside the web request: each provisioning role is queued as a
+`Teknoo\Space\Object\DTO\Task\*` task (a `NewTaskInterface`) through `CallNewTask`, and the `new_task`
+worker runs the matching `Recipe\Plan\Task\AccountProvisioningTask` instance, which loads the account, its
+history, clusters, environments and registry before delegating to the bowl. The admin routes
+(`space_admin_account_*_reinstall`, `space_admin_account_refresh_quota` and their API twins) share one HTTP
+plan, `Recipe\Plan\AccountTaskDispatch`, whose route default `taskClass` selects the task; account creation
+and edition queue `InstallRegistryTask` / `InstallEnvironmentTask` from their step lists.
+
 ### 7. Access Control — ObjectAccessControl
 
 Recipe plans use `ObjectAccessControlInterface` and `ListObjectsAccessControlInterface` (from Teknoo East

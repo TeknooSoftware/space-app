@@ -26,25 +26,14 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
-use Teknoo\East\Common\Recipe\Step\JumpIf;
-use Teknoo\East\Common\Recipe\Step\LoadObject;
-use Teknoo\East\Common\Recipe\Step\Render;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRegistryReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
-use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
-use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 
 /**
@@ -63,33 +52,11 @@ class AccountRegistryReinstallTest extends TestCase
 
     private RecipeInterface&Stub $recipe;
 
-    private LoadObject&Stub $loadObject;
-
-    private PrepareRedirection&Stub $prepareRedirection;
-
-    private SetRedirectClientAtEnd&Stub $redirectClient;
-
-    private LoadHistory&Stub $loadHistory;
-
-    private LoadRegistryCredential&Stub $loadRegistryCredential;
-
-    private RemoveRegistryCredential&Stub $removeRegistryCredentials;
+    private RemoveRegistryCredential&Stub $removeRegistryCredential;
 
     private AccountRegistryInstall&Stub $accountRegistryInstall;
 
-    private ReloadNamespace&Stub $reloadNamespace;
-
-    private UpdateAccountHistory&Stub $updateAccountHistory;
-
-    private JumpIf&Stub $jumpIf;
-
-    private Render&Stub $render;
-
     private ReinstallAccountErrorHandler&Stub $errorHandler;
-
-    private ObjectAccessControlInterface&Stub $objectAccessControl;
-
-    private string $defaultStorageSizeToClaim;
 
     /**
      * {@inheritdoc}
@@ -99,37 +66,15 @@ class AccountRegistryReinstallTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createStub(RecipeInterface::class);
-        $this->loadObject = $this->createStub(LoadObject::class);
-        $this->prepareRedirection = $this->createStub(PrepareRedirection::class);
-        $this->redirectClient = $this->createStub(SetRedirectClientAtEnd::class);
-        $this->loadHistory = $this->createStub(LoadHistory::class);
-        $this->loadRegistryCredential = $this->createStub(LoadRegistryCredential::class);
-        $this->removeRegistryCredentials = $this->createStub(RemoveRegistryCredential::class);
-        $this->reloadNamespace = $this->createStub(ReloadNamespace::class);
+        $this->removeRegistryCredential = $this->createStub(RemoveRegistryCredential::class);
         $this->accountRegistryInstall = $this->createStub(AccountRegistryInstall::class);
-        $this->updateAccountHistory = $this->createStub(UpdateAccountHistory::class);
-        $this->jumpIf = $this->createStub(JumpIf::class);
-        $this->render = $this->createStub(Render::class);
         $this->errorHandler = $this->createStub(ReinstallAccountErrorHandler::class);
-        $this->objectAccessControl = $this->createStub(ObjectAccessControlInterface::class);
-        $this->defaultStorageSizeToClaim = '42';
 
         $this->accountRegistryReinstall = new AccountRegistryReinstall(
             recipe: $this->recipe,
-            loadObject: $this->loadObject,
-            prepareRedirection: $this->prepareRedirection,
-            redirectClient: $this->redirectClient,
-            loadHistory: $this->loadHistory,
-            loadRegistryCredential: $this->loadRegistryCredential,
-            reloadNamespace: $this->reloadNamespace,
-            removeRegistryCredential: $this->removeRegistryCredentials,
+            removeRegistryCredential: $this->removeRegistryCredential,
             accountRegistryInstall: $this->accountRegistryInstall,
-            updateAccountHistory: $this->updateAccountHistory,
-            jumpIf: $this->jumpIf,
-            render: $this->render,
             errorHandler: $this->errorHandler,
-            objectAccessControl: $this->objectAccessControl,
-            defaultStorageSizeToClaim: $this->defaultStorageSizeToClaim,
         );
     }
 

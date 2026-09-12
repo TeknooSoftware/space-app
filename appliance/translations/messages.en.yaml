@@ -120,6 +120,7 @@ teknoo.space.error.500.description: "Sorry, an error was occurred on the server.
 teknoo.space.error.500.title: 'Server error!'
 teknoo.space.error.500.upper: 'Oh no!'
 teknoo.space.error.code_not_accepted: "Subscription code is not accepted"
+teknoo.space.error.task.invalid_class: "The requested task is not a valid account task"
 teknoo.space.error.contact.bot_forbidden: "Ungranted bot"
 teknoo.space.error.contact.file_too_large: 'File too large, max size is 200k'
 teknoo.space.error.contact.invalid_file_type: 'Invalid file type, accepts only texte file and images'
@@ -202,6 +203,8 @@ teknoo.space.text.2fa.provider.totp_custom: 'Custom TOTP'
 teknoo.space.text.2fa.provider: 'Provider'
 teknoo.space.text.2fa: 'Authentication 2FA'
 teknoo.space.text.account.create: 'Account created'
+teknoo.space.text.account.task.queued: 'Provisioning task queued to the worker'
+teknoo.space.text.account.docker_compose.quota_not_applicable: 'Quota refresh is not applicable to a Docker Compose cluster'
 teknoo.space.text.account.kubernetes.credential_persisted: 'Credential persisted'
 teknoo.space.text.account.kubernetes.credential_updated: 'Credential updated'
 teknoo.space.text.account.kubernetes.dockersecret: "Kubernetes Dockersercret created"

@@ -158,7 +158,8 @@ See [`.agents/recipes.md`](.agents/recipes.md) · [`.agents/testing.md`](.agents
 
 ### Deployment Flow
 
-1. User creates Job → `new_task` worker prepares it
+1. User creates Job → `new_task` worker prepares it (the same worker also applies the account provisioning
+   tasks: registry / environment install or reinstall, quota refresh)
 2. `execute_job` worker clones Git repo, runs PaaS compilation, builds images, deploys
 3. `history_sent` / `job_done` workers persist results
 

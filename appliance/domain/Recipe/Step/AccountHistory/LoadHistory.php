@@ -54,13 +54,14 @@ class LoadHistory
     public function __invoke(
         ManagerInterface $manager,
         Account $accountInstance,
-        ParametersBag $bag,
+        ?ParametersBag $bag = null,
     ): self {
         $passHistory = static function (AccountHistory $accountHistory) use ($manager, $bag): void {
-            $bag->set('accountHistory', $accountHistory);
+            //The bag is only available in HTTP flows, not in the workers
+            $bag?->set('accountHistory', $accountHistory);
             $accountHistory->passMeYouHistory(
                 static function (History $history) use ($bag): void {
-                    $bag->set('accountHistoryRoot', $history);
+                    $bag?->set('accountHistoryRoot', $history);
                 }
             );
 

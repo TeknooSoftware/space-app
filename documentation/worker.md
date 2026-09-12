@@ -11,17 +11,25 @@ Space includes four types of workers, each with a specific responsibility:
 
 ### 1. New Task Worker
 
-**Purpose**: Initialize new deployment jobs
+**Purpose**: Run every `NewTaskInterface` task queued by the web application
 
 **Queue**: `new_task`
 
 **Responsibilities**:
 
-- Receive new job creation requests
-- Validate job parameters
-- Store job metadata in MongoDB
-- Dispatch job to Execute Job Worker
-- Publish real-time updates via Mercure (if enabled)
+- Receive new job creation requests (`NewJob`): validate the job, store its metadata in MongoDB and dispatch
+  it to the Execute Job Worker; publish real-time updates via Mercure (if enabled)
+- Run the account provisioning tasks (`Teknoo\Space\Object\DTO\Task\*`), directly and without a second hop
+  since they are short: `InstallRegistryTask` (queued when an account is created), `InstallEnvironmentTask`
+  (queued when an environment is added to an account), `ReinstallEnvironmentTask`, `ReinstallRegistryTask` and
+  `RefreshQuotaTask` (queued by the admin account actions). The worker reloads the account, its history,
+  clusters, environments and registry, resolves the Kubernetes or Docker Compose provisioning plan from the
+  cluster type, applies it and records the result (or the error) in the `AccountHistory`. The web request only
+  writes a "task queued" line in that history and redirects to the account page.
+- Run the Enterprise `SetupDockerDto` task (first hop of a Docker host bootstrap)
+
+`NewTaskHandler` resolves the plan of a task from its class through `NewTaskRecipeRegistry`
+(`config/di.recipe.plans.php`; extensions decorate it to register their own tasks).
 
 **Command**:
 
@@ -137,6 +145,19 @@ bin/console messenger:consume job_done
 6. History Worker persists events
         ↓
 7. Job Done Worker finalizes job
+```
+
+Account provisioning follows a shorter path, entirely handled by the New Task Worker:
+
+```
+1. Account created / environment added / admin reinstall or quota refresh (Web UI/API)
+        ↓
+2. Install*Task / Reinstall*Task / RefreshQuotaTask → new_task queue ("task queued" line in AccountHistory)
+        ↓
+3. New Task Worker runs AccountProvisioningTask
+   ├→ loads Account, AccountHistory, clusters, environments, registry
+   ├→ ProvisioningPlanBowl picks the Kubernetes or Docker Compose plan
+   └→ persists AccountEnvironment / AccountRegistry and the result in AccountHistory
 ```
 
 ### Worker Process Lifecycle
