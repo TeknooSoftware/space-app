@@ -273,9 +273,11 @@ Environnements variables configuration
     * 2FA
         * `SPACE_2FA_PROVIDER` : (string) Two factor provider to use (e.g. `google` or `generic`). `google` by default.
           *Optional*
-    * Redis (sessions)
-        * `SPACE_REDIS_HOST` : (string) Redis host used for sessions. *Optional*
-        * `SPACE_REDIS_PORT` : (int) Redis port used for sessions. `6379` by default. *Optional*
+    * Valkey (sessions)
+        * `SPACE_VALKEY_HOST` : (string) Valkey host used for sessions. *Optional*
+        * `SPACE_VALKEY_PORT` : (int) Valkey port used for sessions. `6379` by default. *Optional*
+        * `SPACE_REDIS_HOST` / `SPACE_REDIS_PORT` : *Deprecated*, still read as a fallback when the
+          `SPACE_VALKEY_*` variables are not set.
     * Mailer.
         * `MAILER_DSN` : (string) Email transport configuration (Symfony Mailer DSN). *Optional*
         * `MAILER_SENDER_ADDRESS` : (string) Default sender email address. *Optional*

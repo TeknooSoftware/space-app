@@ -32,7 +32,7 @@ DOCKER_COMPOSE_OVERRIDE_FILE='../compose.override.yml'
 DOCKER_COMPOSE_FILE='../compose.yml'
 SESSION_FILE='config/packages/framework.session.backend.yaml'
 FILE_SESSION_FILE='config/packages/framework.session.backend.file.yaml.dist'
-REDIS_SESSION_FILE='config/packages/framework.session.backend.redis.yaml.dist'
+VALKEY_SESSION_FILE='config/packages/framework.session.backend.valkey.yaml.dist'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
@@ -284,7 +284,7 @@ mailerDSN=$(readAMandatoryResponse "Mailer DSN" "null://null")
 mailerSenderAddress=$(readAMandatoryResponse "Mailer sender adress")
 jwtMaxAgeDelay=$(readAMandatoryResponse "JWT: Max days to live")
 oauthEnabled=$(readForYesOrNoToBool "OAuth Enabled [y/n]")
-redisEnabled=$(readForYesOrNoToBool "Redis Enabled [y/n]")
+valkeyEnabled=$(readForYesOrNoToBool "Valkey Enabled [y/n]")
 enableExtensions=$(readForYesOrNoToBool "Enable extension [y/n]")
 
 if [ "$enableExtensions" = "1" ]; then
@@ -299,8 +299,8 @@ oauthServerType=""
 oauthServerUrl=""
 oauthClientId=""
 oauthClientSecret=""
-redisHost=""
-redisPort=""
+valkeyHost=""
+valkeyPort=""
 
 if [ "$oauthEnabled" = "1" ]; then
   oauthServerType=$(readAMandatoryResponse "OAuth Server Type [digital_ocean/github/gitlab/google/jira/microsoft/generic]")
@@ -311,11 +311,11 @@ if [ "$oauthEnabled" = "1" ]; then
   oauthClientSecret=$(readAMandatoryResponse "OAuth Client Secret")
 fi
 
-if [ "$redisEnabled" = "1" ]; then
-  redisHost=$(readAMandatoryResponse "Redis Host")
-  redisPort=$(readAMandatoryResponse "Redis Port")
+if [ "$valkeyEnabled" = "1" ]; then
+  valkeyHost=$(readAMandatoryResponse "Valkey Host")
+  valkeyPort=$(readAMandatoryResponse "Valkey Port")
 
-  cp "$REDIS_SESSION_FILE" "$SESSION_FILE"
+  cp "$VALKEY_SESSION_FILE" "$SESSION_FILE"
 else
   cp "$FILE_SESSION_FILE" "$SESSION_FILE"
 fi
@@ -603,8 +603,8 @@ if [ "$useDockerComposeTarget" = "y" ]; then
     setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CERTRESOLVER" "$dcTraefikCertResolver"
   fi
 fi
-updateFile "$ENV_LOCAL_FILE" "SPACE_REDIS_HOST" "$redisHost"
-updateFile "$ENV_LOCAL_FILE" "SPACE_REDIS_PORT" "$redisPort"
+updateFile "$ENV_LOCAL_FILE" "SPACE_VALKEY_HOST" "$valkeyHost"
+updateFile "$ENV_LOCAL_FILE" "SPACE_VALKEY_PORT" "$valkeyPort"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/messages/private.pem"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/messages/public.pem"
@@ -672,8 +672,8 @@ if [ "$useDockerCompose" = "y" ]; then
       setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CERTRESOLVER" "$dcTraefikCertResolver"
     fi
   fi
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_REDIS_HOST" "$redisHost"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_REDIS_PORT" "$redisPort"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_VALKEY_HOST" "$valkeyHost"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_VALKEY_PORT" "$valkeyPort"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/messages/private.pem"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/messages/public.pem"

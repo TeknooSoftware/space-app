@@ -2,6 +2,11 @@
 
 ## [2.5.0-beta4] - 2026-09-11
 ### Beta Release
+- Replace Redis by Valkey (BSD licensed, Redis protocol compatible) for the session storage: `build.dev/valkey`
+  image (`valkey/valkey:9.1-alpine`), `valkey` compose service and network, new `SPACE_VALKEY_HOST` /
+  `SPACE_VALKEY_PORT` variables and `framework.session.backend.valkey.yaml.dist`; `SPACE_REDIS_HOST` /
+  `SPACE_REDIS_PORT` are deprecated but still read as a fallback. The PHP side is unchanged (`phpredis` client,
+  Symfony `RedisSessionHandler`)
 - Move account provisioning (registry and environment install/reinstall, quota refresh) from the web server to
   the `new_task` worker: each operation is a `NewTaskInterface` task (`Object\DTO\Task\*`) queued with
   `CallNewTask` and run by the new `AccountProvisioningTask` plan; the web request only records a "task queued"

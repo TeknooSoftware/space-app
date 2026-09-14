@@ -288,11 +288,12 @@ Worker also needs them to deploy jobs on `docker-compose` clusters.
 
 ### Optional Components
 
-#### Redis
+#### Valkey
 
-**Purpose:** Session storage and caching (alternative to MongoDB sessions)
+**Purpose:** Session storage (alternative to file sessions)
 
-**Version:** Redis 6.0+
+**Version:** Valkey 8.0+ (accessed through the `phpredis` extension; any Redis protocol compatible
+server, e.g. Redis 7.2, also works)
 
 #### SMTP Server
 

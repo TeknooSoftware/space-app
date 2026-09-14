@@ -46,8 +46,11 @@ parameters:
     teknoo.space.default.mercure.publishing_enabled: true
     teknoo.space.default.messenger.dsn: 'in-memory://'
     teknoo.space.default.new_task.waiting_time: 5
-    teknoo.space.default.redis.host: ''
-    teknoo.space.default.redis.port: 6379
+    teknoo.space.default.valkey.host: ''
+    teknoo.space.default.valkey.port: 6379
+    # Deprecated fallbacks: the session backend reads SPACE_VALKEY_*, then SPACE_REDIS_*, then the values above
+    teknoo.space.default.redis.host: '%env(string:default:teknoo.space.default.valkey.host:SPACE_REDIS_HOST)%'
+    teknoo.space.default.redis.port: '%env(int:default:teknoo.space.default.valkey.port:SPACE_REDIS_PORT)%'
     teknoo.space.default.subscription.plan_default: ''
     teknoo.space.default.support.contact: ''
     teknoo.space.default.user.2fa.provider: 'google_authenticator'

@@ -33,7 +33,7 @@ the variables below; the compose files at the repository root apply this split p
 | `TEKNOO_PAAS_SECURITY_*` (message encryption) | public key only | public + private keys | public + private keys | public + private keys |
 | `SPACE_PERSISTED_VAR_SECURITY_*` | public key, `AGENT_MODE=0` | public + private keys, `AGENT_MODE=1` | no | no |
 | `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN` | yes | yes (`NewJob` updates) | no | no |
-| `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_REDIS_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS` | yes | no | no | no |
+| `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS` | yes | no | no | no |
 | Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`, `SPACE_KUBERNETES_MASTER`/`DASHBOARD`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE` | yes (dashboard, account clusters, namespace naming) | yes | `SPACE_KUBERNETES_CLIENT_*` only | no |
 | `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_OCI_GLOBAL_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME` | no | yes | no | no |
 | `SPACE_STORAGE_CLASS`, `SPACE_STORAGE_DEFAULT_SIZE`, `SPACE_JOB_ROOT`, `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`, `SPACE_DC_ANSIBLE_BINARY`, `SPACE_DC_TIMEOUT`, `SPACE_DC_DEPLOY_ROOT` | no | yes | yes | no |
@@ -281,28 +281,38 @@ SPACE_2FA_PROVIDER=google
 
 ## Session Storage
 
-### Redis (sessions)
+### Valkey (sessions)
 
-#### SPACE_REDIS_HOST
+Space stores HTTP sessions in a [Valkey](https://valkey.io/) server (BSD licensed, Redis protocol
+compatible), accessed through the `phpredis` extension and Symfony's `RedisSessionHandler`.
+
+#### SPACE_VALKEY_HOST
 
 - **Type**: String (hostname)
 - **Optional**: Yes
-- **Description**: Redis host used for sessions
+- **Description**: Valkey host used for sessions
 
 ```bash
-SPACE_REDIS_HOST=redis
+SPACE_VALKEY_HOST=valkey
 ```
 
-#### SPACE_REDIS_PORT
+#### SPACE_VALKEY_PORT
 
 - **Type**: Integer
 - **Optional**: Yes
 - **Default**: `6379`
-- **Description**: Redis port used for sessions
+- **Description**: Valkey port used for sessions
 
 ```bash
-SPACE_REDIS_PORT=6379
+SPACE_VALKEY_PORT=6379
 ```
+
+#### SPACE_REDIS_HOST / SPACE_REDIS_PORT (deprecated)
+
+- **Optional**: Yes
+- **Description**: Former names of `SPACE_VALKEY_HOST` / `SPACE_VALKEY_PORT`. They are still read as a
+  fallback when the `SPACE_VALKEY_*` variables are not set or empty, so existing deployments keep
+  working. New configurations must use the `SPACE_VALKEY_*` names.
 
 ## Authentication
 

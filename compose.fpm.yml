@@ -2,7 +2,7 @@ networks:
     backend: ~
     bdd: ~
     amqp: ~
-    redis: ~
+    valkey: ~
 volumes:
     caddy_data:
     caddy_config:
@@ -72,7 +72,7 @@ services:
             - bdd
             - backend
             - amqp
-            - redis
+            - valkey
         links:
             - db
         volumes:
@@ -93,8 +93,8 @@ services:
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
             - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
             - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
-            - SPACE_REDIS_HOST=redis
-            - SPACE_REDIS_PORT=6379
+            - SPACE_VALKEY_HOST=valkey
+            - SPACE_VALKEY_PORT=6379
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
             - PHP_XDEBUG_HOST=172.17.0.1
         healthcheck:
@@ -106,7 +106,7 @@ services:
         depends_on:
             db:
                 condition: service_healthy
-            redis:
+            valkey:
                 condition: service_healthy
             mercure:
                 condition: service_started
@@ -276,11 +276,11 @@ services:
             - backend
         volumes:
             - ./appliance/public:/var/www/space/public
-    redis:
+    valkey:
         build:
-            context: build.dev/redis
+            context: build.dev/valkey
         networks:
-            - redis
+            - valkey
         healthcheck:
             test: ["CMD", "sh", "-c", "nc -z localhost 6379 || exit 1"]
             interval: 30s

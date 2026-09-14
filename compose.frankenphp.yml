@@ -2,7 +2,7 @@ networks:
     backend: ~
     bdd: ~
     amqp: ~
-    redis: ~
+    valkey: ~
 volumes:
     mongo_data:
 services:
@@ -52,7 +52,7 @@ services:
             - bdd
             - backend
             - amqp
-            - redis
+            - valkey
         links:
             - db
         volumes:
@@ -77,8 +77,8 @@ services:
             - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
             - SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
             - SPACE_PERSISTED_VAR_AGENT_MODE=0
-            - SPACE_REDIS_HOST=redis
-            - SPACE_REDIS_PORT=6379
+            - SPACE_VALKEY_HOST=valkey
+            - SPACE_VALKEY_PORT=6379
             - TEKNOO_EAST_EXTENSION_FILE=/var/www/space/extensions/enabled.json
         healthcheck:
             test: ["CMD-SHELL", "curl -fk https://localhost:443 || exit 1"]
@@ -89,7 +89,7 @@ services:
         depends_on:
             db:
                 condition: service_healthy
-            redis:
+            valkey:
                 condition: service_healthy
     cli_new_task:
         build:
@@ -245,11 +245,11 @@ services:
                 condition: service_healthy
             amqp:
                 condition: service_healthy
-    redis:
+    valkey:
         build:
-            context: build.dev/redis
+            context: build.dev/valkey
         networks:
-            - redis
+            - valkey
         healthcheck:
             test: ["CMD", "sh", "-c", "nc -z localhost 6379 || exit 1"]
             interval: 30s

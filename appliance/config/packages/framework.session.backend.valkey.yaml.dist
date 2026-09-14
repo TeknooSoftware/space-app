@@ -9,7 +9,7 @@ services:
         public: false
 
     #####################
-    # Redis
+    # Valkey (through the phpredis client; SPACE_REDIS_* are read as a deprecated fallback)
     Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
         arguments:
             - '@Redis'
@@ -20,5 +20,5 @@ services:
         class: 'Redis'
         calls:
             - connect:
-                - '%env(string:default:teknoo.space.default.redis.host:SPACE_REDIS_HOST)%'
-                - '%env(int:default:teknoo.space.default.redis.port:SPACE_REDIS_PORT)%'
+                - '%env(string:default:teknoo.space.default.redis.host:SPACE_VALKEY_HOST)%'
+                - '%env(int:default:teknoo.space.default.redis.port:SPACE_VALKEY_PORT)%'
