@@ -2,43 +2,55 @@
 
 ## [2.5.0-beta4] - 2026-09-11
 ### Beta Release
-- Replace Redis by Valkey (BSD licensed, Redis protocol compatible) for the session storage: `build.dev/valkey`
-  image (`valkey/valkey:9.1-alpine`), `valkey` compose service and network, new `SPACE_VALKEY_HOST` /
-  `SPACE_VALKEY_PORT` variables and `framework.session.backend.valkey.yaml.dist`; `SPACE_REDIS_HOST` /
-  `SPACE_REDIS_PORT` are deprecated but still read as a fallback. The PHP side is unchanged (`phpredis` client,
-  Symfony `RedisSessionHandler`)
-- Move account provisioning (registry and environment install/reinstall, quota refresh) from the web server to
-  the `new_task` worker: each operation is a `NewTaskInterface` task (`Object\DTO\Task\*`) queued with
-  `CallNewTask` and run by the new `AccountProvisioningTask` plan; the web request only records a "task queued"
-  line in the account history
-- Move environment removal to the `new_task` worker too: `DeleteEnvironmentsTask` and its
-  `AccountEnvironmentsDeletionTask` plan delete the Kubernetes namespaces of the removed environments
-  (`DeleteNamespaces` step); `DeleteNamespaceFromResumes` is removed
-- Share the new `AccountTaskDispatch` plan between the three admin provisioning routes and their API twins;
-  the API response now includes the `taskId`
-- Make the Kubernetes and Docker Compose provisioning plans pure sub-recipes (no HTTP scaffolding, no access
-  control); remove `PrepareAccountTrait`, let `LoadHistory` work without a `ParametersBag`
-- Record in the history that a quota refresh is not applicable to a Docker Compose cluster
-- Rebalance the environment variables per service in the compose files and in the php-fpm pool whitelist:
-  the OCI registry, cluster issuer, registry root namespace, HNC, storage, job root and Kubernetes version level
-  settings leave the `web` service; `cli_new_task` receives the clusters catalog, Kubernetes client, namespaces,
-  OCI registry, storage and Docker Compose settings
-- Add `ansible-core` and `openssh-client` to the `php-cli` image (Docker Compose registry provisioning runs in
-  the `new_task` worker) and generate its `en_US.UTF-8` locale
-- Document which process reads which variable and where the asymmetric keys go (message encryption: public key
-  on the web, key pair on the workers; persisted variables: public key on the web, key pair on `new_task`)
-- Add Behat step `Space executes the pending tasks` and update the account scenarios
-- Add Behat coverage for the East PaaS `v1.2` expose shortcuts, on Kubernetes and Docker Compose, including
-  the error cases
-- Complete the PHPUnit suite to 100% line coverage of `domain/`, `src/`, `infrastructures/` and the Enterprise
-  extension
-- Fix `UserVoter` reason key on the granted path
-- Fix `SendEmail` attachments limit (`SPACE_MAIL_MAX_ATTACHMENTS` is now the real maximum)
-- Fix `Health` step reporting only the last Kubernetes cluster of the catalog
-- Fix the Enterprise `CreateRoleBinding` step storing the role name instead of the role binding name
+- **Cluster operations leave the web process.** The web server no longer talks to Kubernetes or to a Docker host
+  to provision an account: this work is now queued as tasks and executed by the `new_task` worker, and the web
+  request only records a "task queued" line in the account history
+  - Registry install / reinstall, environment install / reinstall and quota refresh are `NewTaskInterface` tasks
+    (`Object\DTO\Task\*`) queued by `CallNewTask` and run by the new `AccountProvisioningTask` plan
+  - Removing an environment from an account is a task too: `DeleteEnvironmentsTask` and its
+    `AccountEnvironmentsDeletionTask` plan delete the Kubernetes namespaces in the worker
+    (`DeleteNamespaces` step replaces `DeleteNamespaceFromResumes`)
+  - The three admin provisioning pages and their API twins share the new `AccountTaskDispatch` plan; the API
+    response now returns the `taskId`
+  - The Kubernetes and Docker Compose provisioning plans are now pure sub-recipes without HTTP or access
+    control concerns (`PrepareAccountTrait` removed, `LoadHistory` no longer needs a `ParametersBag`)
+  - A quota refresh on a Docker Compose cluster is recorded in the history as not applicable
+- **Replace Redis by Valkey** as the session store, because of the Redis licence change. Valkey is BSD licensed
+  and speaks the Redis protocol, so nothing changes in PHP (`phpredis` extension and Symfony `RedisSessionHandler`
+  are kept)
+  - The dev stack now builds a `valkey` service from `build.dev/valkey` (`valkey/valkey:9.1-alpine`) instead of
+    the `redis` one
+  - New environment variables `SPACE_VALKEY_HOST` and `SPACE_VALKEY_PORT`; the session backend template is now
+    `framework.session.backend.valkey.yaml.dist` and `bin/config.sh` asks for Valkey
+  - `SPACE_REDIS_HOST` and `SPACE_REDIS_PORT` are **deprecated** but still read when the `SPACE_VALKEY_*`
+    variables are not set, so existing installations keep working without any change
+- **Each service only receives the variables it needs** (compose files and php-fpm pool whitelist)
+  - The `web` service loses the OCI registry, cluster issuer, registry root namespace, HNC, storage, job root
+    and Kubernetes version level settings
+  - The `cli_new_task` worker gains the clusters catalog, Kubernetes client, namespaces, OCI registry, storage
+    and Docker Compose (`SPACE_DC_*`) settings
+  - The `php-cli` image now ships `ansible-core` and `openssh-client` (Docker Compose provisioning runs in the
+    worker) and an `en_US.UTF-8` locale
+  - The documentation lists which process reads which variable and where the asymmetric keys go: message
+    encryption needs the public key on the web and the key pair on the workers; persisted variables need the
+    public key on the web and the key pair on `new_task` only
+- **Tests**
+  - New Behat step `Space executes the pending tasks`; account scenarios updated accordingly
+  - Behat coverage of the East PaaS `v1.2` expose shortcuts, on Kubernetes and Docker Compose, including the
+    error cases
+  - PHPUnit suite completed to 100% line coverage of `domain/`, `src/`, `infrastructures/` and the Enterprise
+    extension
+- **Fixes**
+  - `UserVoter` returned the wrong reason key on the granted path
+  - `SendEmail` did not enforce `SPACE_MAIL_MAX_ATTACHMENTS` as the real maximum
+  - `Health` step reported only the last Kubernetes cluster of the catalog
+  - Enterprise `CreateRoleBinding` step stored the role name instead of the role binding name
 - Update documentations
 - Update libs
   - East PaaS 5.7 beta11
+  - Teknoo States 7.1.10
+  - Symfony Monolog Bundle 4.1.0
+  - PHPStan 2.2.14
 
 ## [2.5.0-beta3] - 2026-09-11
 ### Beta Release
