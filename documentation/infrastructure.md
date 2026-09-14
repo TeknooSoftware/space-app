@@ -194,6 +194,12 @@ They are executed in the `new_task` worker by `Teknoo\Space\Recipe\Plan\Task\Acc
 which loads those objects from the task's `accountId`. Account clusters are loaded *before* the bowl, because
 the bowl needs them to resolve the cluster type.
 
+Removing an environment is a task too (`DeleteEnvironmentsTask` → `Recipe\Plan\Task\AccountEnvironmentsDeletionTask`):
+the web request only drops the `AccountEnvironment` documents, and the `new_task` worker deletes the Kubernetes
+namespaces (`DeleteNamespaces` step, skipped with a history line on Docker Compose clusters). The web server
+therefore no longer performs any provisioning call; it still opens Kubernetes clients for the dashboard health
+overview, the dashboard frame and the account clusters.
+
 ### 4. Symfony Integration
 
 Located in `appliance/infrastructures/Symfony/`:

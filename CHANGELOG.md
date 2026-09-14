@@ -15,6 +15,21 @@
 - The Kubernetes and Docker Compose provisioning plans are pure sub-recipes (no HTTP scaffolding, no access
   control step); `PrepareAccountTrait` is removed, `LoadHistory` works without a `ParametersBag`
 - Docker Compose quota refresh records in the history that it is not applicable
+- Environment removal from the account edition forms is no longer applied on the cluster by the web server: the
+  request drops the `AccountEnvironment` documents and queues a `DeleteEnvironmentsTask` (`PrepareDeleteEnvironmentsTask`
+  → `CallNewTask`), applied by the `new_task` worker via the new `AccountEnvironmentsDeletionTask` plan and its
+  `DeleteNamespaces` step (Kubernetes namespace deleted when labelled with the account id; Docker Compose clusters
+  only get a history line). `DeleteNamespaceFromResumes` is removed
+- Rebalance the environment variables of the compose files per service: the `web` service no longer receives the
+  OCI registry, cluster issuer, registry root namespace, HNC, storage class, job root and Kubernetes version level
+  settings; the `cli_new_task` service now receives the clusters catalog, the Kubernetes client, namespaces, OCI
+  registry, storage and Docker Compose settings it needs to provision accounts
+- `build.dev/php-cli` image now ships `ansible-core` and `openssh-client`, required by the `new_task` worker to
+  provision the per-account registry of Docker Compose clusters; the `en_US.UTF-8` locale it declares is now
+  really generated (Ansible refused to start on the unsupported locale)
+- Document which process reads which environment variable (`documentation/configuration.md`,
+  `documentation/worker.md`, `README.md`) and the asymmetric keys split (message encryption: public key on the web,
+  key pair on every worker; persisted variables: public key on the web, key pair and agent mode on `new_task` only)
 - Add Behat step `Space executes the pending tasks` and update the account scenarios accordingly
 - Add Behat coverage for the East PaaS `v1.2` expose shortcuts (`services` declared in a container, `ingress` declared
   in a service), on Kubernetes and Docker Compose, from the API, the admin API and the web UI, including the error

@@ -68,7 +68,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRoleBinding;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaces;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
@@ -106,6 +106,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\ExtractResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PrepareDeleteEnvironmentsTask;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
@@ -193,10 +194,12 @@ return [
         );
     },
 
-    DeleteNamespaceFromResumes::class => create()
-        ->constructor(
-            get('teknoo.space.clusters_catalog'),
-        ),
+    DeleteNamespaces::class => static function (ContainerInterface $container): DeleteNamespaces {
+        return new DeleteNamespaces(
+            $container->get(DatesService::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
 
     ReloadNamespace::class => create(),
 
@@ -343,6 +346,8 @@ return [
     },
 
     PrepareAccountTask::class => create(),
+
+    PrepareDeleteEnvironmentsTask::class => create(),
 
     SkipQuotaRefresh::class => static function (ContainerInterface $container): SkipQuotaRefresh {
         return new SkipQuotaRefresh(

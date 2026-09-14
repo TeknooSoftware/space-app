@@ -28,6 +28,7 @@ namespace Teknoo\Space\App\Config;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\NewJobInterface;
 use Teknoo\Space\Object\DTO\NewJob as NewJobDto;
+use Teknoo\Space\Object\DTO\Task\DeleteEnvironmentsTask;
 use Teknoo\Space\Object\DTO\Task\InstallEnvironmentTask;
 use Teknoo\Space\Object\DTO\Task\InstallRegistryTask;
 use Teknoo\Space\Object\DTO\Task\RefreshQuotaTask;
@@ -48,6 +49,10 @@ return [
             ->register(
                 ReinstallEnvironmentTask::class,
                 $container->get('teknoo.space.task.plan.environment_reinstall'),
+            )
+            ->register(
+                DeleteEnvironmentsTask::class,
+                $container->get('teknoo.space.task.plan.environments_delete'),
             );
     },
 ];

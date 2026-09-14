@@ -233,7 +233,10 @@ Environnements variables configuration
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON` : (json string).
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (json file).
     * Persited variable Encryption :
-        * Encryptions of persisted variables between servers and agents or workers :
+        * Encryptions of persisted variables between servers and agents or workers : the web server only
+          encrypts (public key, `SPACE_PERSISTED_VAR_AGENT_MODE=0`), the `new_task` worker is the only process
+          decrypting them (private key, `SPACE_PERSISTED_VAR_AGENT_MODE=1`); the other workers need none of
+          these keys.
         * `SPACE_PERSISTED_VAR_AGENT_MODE`: *optional* To force the agent mode.
           (by default it is enable only with cli sapi)
         * `SPACE_PERSISTED_VAR_SECURITY_ALGORITHM` (with `rsa` ou `dsa`).
@@ -315,54 +318,14 @@ Environnements variables configuration
         * Microsoft:
             * `OAUTH_MS_CLIENT_ID` : (string) OAuth client id for Microsoft.
             * `OAUTH_MS_CLIENT_SECRET` : (string) OAuth client secret for Microsoft.
-    * OCI images building :
-        * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
-          This url will be prefixed by the account slug.
-        * `SPACE_OCI_REGISTRY_TLS_SECRET` : (string) name of the secret storing TLS certificate in the kubernetes
-          cluster
-          `registry-certs` by default.
-        * `SPACE_OCI_REGISTRY_PVC_SIZE` : (string) size claimed by the PVC dedicated to the private registry of each
-          account
-          `4Gi` by default.
-        * `SPACE_OCI_GLOBAL_REGISTRY_URL` : (string) url of the global oci image registry, reachable by all deployment
-          on
-          this instance.
-        * `SPACE_OCI_GLOBAL_REGISTRY_USERNAME` : (string) username to access to this registry.
-        * `SPACE_OCI_GLOBAL_REGISTRY_PWD` : (string) password to access to this registry.
-    * Kubernetes :
+    * Kubernetes (shared with the `new_task` worker: the web server still opens Kubernetes clients for the
+      dashboard health overview, the dashboard frame and the account clusters) :
         * `SPACE_KUBERNETES_CLIENT_TIMEOUT` : (int) max time in seconds allowed for each Kubernetes's API query.
           `3` by default. *Optional*
         * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
           `1` by default. *Optional*
-        * `SPACE_KUBERNETES_VERSION_LEVEL` : (string) Target Kubernetes API level used by the manifest transcribers.
-          `1.30` by default. `1.32`+ emits native image-volume sources instead of init-container + emptyDir.
-          `1.36`+ adds `hostUsers: false` to pod specs. *Optional*
         * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
           account. `space-client-` by default. *Optional*
-        * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace dedicated
-          to registry for each client account. `space-registry-` by default. *Optional*
-        * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
-          `nfs.csi.k8s.io` by default. *Optional*
-        * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
-        * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value ofingressClassName` in
-          ingresses.
-          `public` by default. *Optional*
-        * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
-          `lets-encrypt` by default. *Optional*
-        * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
-          account token creation. `5` by default. *Optional*
-        * Ingress provider mapping **(Only one of these options)** *Optional* :
-            * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
-            * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
-            * Dictionary's structure : `{'pattern': 'type'}` where :
-                * `pattern` : (string) Regular expression to match against the ingress class name.
-                * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`, `traefik2`,
-                  `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
         * Managed kubernetes cluster :
             * One cluster (legacy):
                 * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
@@ -407,31 +370,6 @@ Environnements variables configuration
                           provisions a per-account private OCI registry container on the same Docker host over
                           Ansible (see the `SPACE_DC_REGISTRY_*` settings below).
 
-    * Docker Compose : *Optional — only used when a cluster has `type: docker-compose`. All keys optional;
-      library defaults shown. When `support_registry` is enabled, a per-account private OCI registry is
-      provisioned on the Docker host over Ansible; otherwise deployments can use the global OCI registry
-      (`SPACE_OCI_GLOBAL_REGISTRY_*`).*
-        * `SPACE_DC_ANSIBLE_BINARY` : (string) ansible-playbook binary. `ansible-playbook` by default.
-        * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `300` by default.
-        * `SPACE_DC_DEPLOY_ROOT` : (string) deploy root on the target host. `/opt/paas` by default.
-        * `SPACE_DC_NETWORK_DRIVER` : (string) docker network driver. `bridge` by default.
-        * `SPACE_DC_TRAEFIK_CONTAINER` : (string) Traefik container name. `traefik` by default.
-        * `SPACE_DC_TRAEFIK_DYNAMIC_DIR` : (string) Traefik dynamic config dir. `/etc/traefik/dynamic` by
-          default.
-        * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir. `/etc/traefik/certs` by default.
-        * `SPACE_DC_TRAEFIK_CERTRESOLVER` : (string) Traefik cert resolver name. No default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEB` : (string) HTTP entrypoint. `web` by default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE` : (string) HTTPS entrypoint. `websecure` by default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` : (string) TCP entrypoint. `tcp` by default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` : (string) UDP entrypoint. `udp` by default.
-        * `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` : (int/bool) skip TLS verify for HTTPS backends.
-          `false` by default.
-        * `SPACE_DC_REGISTRY_IMAGE` : (string) per-account registry image. `registry:2` by default.
-        * `SPACE_DC_REGISTRY_NETWORK` : (string) internal-only Docker network for the registry. `space-registry`
-          by default.
-        * `SPACE_DC_REGISTRY_PORT` : (int) registry port on the internal network. `5000` by default.
-        * `SPACE_DC_REGISTRY_TLS` : (int/bool) enable TLS on the per-account registry. `false` by default.
-
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a
           valid code. *Optional*
@@ -474,6 +412,77 @@ Environnements variables configuration
           the final job page when it is started. *Optional*
         * `MERCURE_PUBLISH_URL` : (string) Mercure url to push the job page url to follow the deployment. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+
+    * New task worker (account provisioning, `messenger:consume new_task`) : this worker installs and reinstalls
+      the per-account registries and environments, refreshes quotas and tears down removed environments, so it
+      needs the whole Kubernetes block of the web configuration (clusters catalog or default cluster, client
+      settings, `SPACE_KUBERNETES_ROOT_NAMESPACE`), the persisted variables private key (see Global
+      configuration), `SPACE_JOB_ROOT` (see Execute job below), plus :
+        * `SPACE_NEW_TASK_WAITING_TIME` : (int) seconds to wait before processing a task. *Optional*
+        * Kubernetes :
+            * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace dedicated
+              to registry for each client account. `space-registry-` by default. *Optional*
+            * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
+              `nfs.csi.k8s.io` by default. *Optional*
+            * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
+            * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value ofingressClassName` in
+              ingresses.
+              `public` by default. *Optional*
+            * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
+              `lets-encrypt` by default. *Optional*
+            * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
+              account token creation. `5` by default. *Optional*
+            * Ingress provider mapping **(Only one of these options)** *Optional* :
+                * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
+                * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
+                * Dictionary's structure : `{'pattern': 'type'}` where :
+                    * `pattern` : (string) Regular expression to match against the ingress class name.
+                    * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`, `traefik2`,
+                      `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
+        * OCI registries (per-account private registry provisioning, global registry credentials) :
+            * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
+              This url will be prefixed by the account slug.
+            * `SPACE_OCI_REGISTRY_TLS_SECRET` : (string) name of the secret storing TLS certificate in the kubernetes
+              cluster
+              `registry-certs` by default.
+            * `SPACE_OCI_REGISTRY_PVC_SIZE` : (string) size claimed by the PVC dedicated to the private registry of each
+              account
+              `4Gi` by default.
+            * `SPACE_OCI_GLOBAL_REGISTRY_URL` : (string) url of the global oci image registry, reachable by all deployment
+              on
+              this instance.
+            * `SPACE_OCI_GLOBAL_REGISTRY_USERNAME` : (string) username to access to this registry.
+            * `SPACE_OCI_GLOBAL_REGISTRY_PWD` : (string) password to access to this registry.
+        * Docker Compose : *Optional — only used when a cluster has `type: docker-compose`. All keys optional;
+          library defaults shown. When `support_registry` is enabled, a per-account private OCI registry is
+          provisioned on the Docker host over Ansible; otherwise deployments can use the global OCI registry
+          (`SPACE_OCI_GLOBAL_REGISTRY_*`).*
+            * `SPACE_DC_ANSIBLE_BINARY` : (string) ansible-playbook binary. `ansible-playbook` by default.
+            * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `300` by default.
+            * `SPACE_DC_DEPLOY_ROOT` : (string) deploy root on the target host. `/opt/paas` by default.
+            * `SPACE_DC_NETWORK_DRIVER` : (string) docker network driver. `bridge` by default.
+            * `SPACE_DC_TRAEFIK_CONTAINER` : (string) Traefik container name. `traefik` by default.
+            * `SPACE_DC_TRAEFIK_DYNAMIC_DIR` : (string) Traefik dynamic config dir. `/etc/traefik/dynamic` by
+              default.
+            * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir. `/etc/traefik/certs` by default.
+            * `SPACE_DC_TRAEFIK_CERTRESOLVER` : (string) Traefik cert resolver name. No default.
+            * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEB` : (string) HTTP entrypoint. `web` by default.
+            * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE` : (string) HTTPS entrypoint. `websecure` by default.
+            * `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` : (string) TCP entrypoint. `tcp` by default.
+            * `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` : (string) UDP entrypoint. `udp` by default.
+            * `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` : (int/bool) skip TLS verify for HTTPS backends.
+              `false` by default.
+            * `SPACE_DC_REGISTRY_IMAGE` : (string) per-account registry image. `registry:2` by default.
+            * `SPACE_DC_REGISTRY_NETWORK` : (string) internal-only Docker network for the registry. `space-registry`
+              by default.
+            * `SPACE_DC_REGISTRY_PORT` : (int) registry port on the internal network. `5000` by default.
+            * `SPACE_DC_REGISTRY_TLS` : (int/bool) enable TLS on the per-account registry. `false` by default.
+
 
     * Healthcheck (for all workers, agents and builders) :
         * `SPACE_PING_FILE` : (string) file used by Space's workers and builder to indicate the state of health, read by
@@ -531,6 +540,9 @@ Environnements variables configuration
               `3` by default. *Optional*
             * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
               `1` by default. *Optional*
+            * `SPACE_KUBERNETES_VERSION_LEVEL` : (string) Target Kubernetes API level used by the manifest transcribers.
+              `1.30` by default. `1.32`+ emits native image-volume sources instead of init-container + emptyDir.
+              `1.36`+ adds `hostUsers: false` to pod specs. *Optional*
             * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
               `nfs.csi.k8s.io` by default. *Optional*
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `ingressClassName` in
@@ -548,6 +560,9 @@ Environnements variables configuration
 
 Worker Commands
 ---------------
+
+The `new_task` worker host needs `ansible-playbook` (`ansible-core`) and an SSH client when a cluster of the
+catalog is a `docker-compose` one (the per-account registry is provisioned on the Docker host over Ansible).
 
 To launch workers on your environment if you does not use docker compose :
 

@@ -102,7 +102,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRoleBinding;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaces;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
@@ -114,6 +114,7 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\DTO\Task\DeleteEnvironmentsTask;
 use Teknoo\Space\Object\DTO\Task\InstallEnvironmentTask;
 use Teknoo\Space\Object\DTO\Task\InstallRegistryTask;
 use Teknoo\Space\Object\DTO\Task\RefreshQuotaTask;
@@ -140,6 +141,7 @@ use Teknoo\Space\Recipe\Plan\ProjectList;
 use Teknoo\Space\Recipe\Plan\ProjectNew;
 use Teknoo\Space\Recipe\Plan\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Plan\Subscription;
+use Teknoo\Space\Recipe\Plan\Task\AccountEnvironmentsDeletionTask;
 use Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask;
 use Teknoo\Space\Recipe\Plan\UserCreateJwtToken;
 use Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken;
@@ -165,6 +167,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\ExtractResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PrepareDeleteEnvironmentsTask;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
@@ -492,6 +495,20 @@ return [
             loadRegistryCredential: diGet(LoadRegistryCredential::class),
         ),
 
+    // Worker-side plan of the environments removal task (queued by the account edition flows)
+    'teknoo.space.task.plan.environments_delete' => create(AccountEnvironmentsDeletionTask::class)
+        ->constructor(
+            recipe: diGet(OriginalRecipeInterface::class),
+            loadObject: diGet(LoadObject::class),
+            accountLoader: diGet(AccountLoader::class),
+            clusterCatalog: diGet('teknoo.space.clusters_catalog'),
+            loadHistory: diGet(LoadHistory::class),
+            loadAccountClusters: diGet(LoadAccountClusters::class),
+            deleteNamespaces: diGet(DeleteNamespaces::class),
+            updateAccountHistory: diGet(UpdateAccountHistory::class),
+            errorHandler: diGet(AccountTaskErrorHandler::class),
+        ),
+
     // HTTP entry point of the admin provisioning actions (environment reinstall, registry reinstall, quota
     // refresh): the route's `taskClass` default selects the task queued to the `new_task` worker.
     AccountTaskDispatch::class => create()
@@ -631,7 +648,12 @@ return [
             $steps->add($container->get(CreateAccountHistory::class), 58);
 
             //After SaveObject
-            $steps->add($container->get(DeleteNamespaceFromResumes::class), 61);
+            //Queue the cluster tear down of the removed environments to the `new_task` worker: the three
+            //steps share the position 61 and keep their insertion order; the first one jumps to
+            //DeleteEnvFromResumes when nothing was removed
+            $steps->add($container->get(PrepareDeleteEnvironmentsTask::class), 61);
+            $steps->add($container->get(CallNewTaskInterface::class), 61);
+            $steps->add($container->get(AddTaskToHistory::class), 61);
             $steps->add($container->get(DeleteEnvFromResumes::class), 61);
             $steps->add($container->get(LoadRegistryCredential::class), 61);
 

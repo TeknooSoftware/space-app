@@ -9,7 +9,8 @@ Thin reference for the Recipe pattern. **See `documentation/` for full details.*
   at run time based on cluster `type` (kubernetes vs docker-compose). Required because a `RecipeBowl`'s
   recipe is fixed at container-build time. Executed in the `new_task` worker by
   `Recipe/Plan/Task/AccountProvisioningTask`, never in the web request; the web side only queues a
-  `Object/DTO/Task/*` task with `CallNewTask`.
+  `Object/DTO/Task/*` task with `CallNewTask`. Environment removal follows the same rule
+  (`DeleteEnvironmentsTask` → `Recipe/Plan/Task/AccountEnvironmentsDeletionTask`, `DeleteNamespaces` step).
 
 → `documentation/architecture.md#6-bowl-pattern-provisioningplanbowl`
 

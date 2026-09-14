@@ -26,6 +26,10 @@ Space includes four types of workers, each with a specific responsibility:
   clusters, environments and registry, resolves the Kubernetes or Docker Compose provisioning plan from the
   cluster type, applies it and records the result (or the error) in the `AccountHistory`. The web request only
   writes a "task queued" line in that history and redirects to the account page.
+- Tear down the environments removed from an account (`DeleteEnvironmentsTask`, queued by the account edition
+  flows once the `AccountEnvironment` documents are dropped): the `AccountEnvironmentsDeletionTask` plan deletes
+  the Kubernetes namespace of each removed environment when it is labelled with the account id, and records in
+  the `AccountHistory` what was deleted, not found, or not applicable (Docker Compose clusters)
 - Run the Enterprise `SetupDockerDto` task (first hop of a Docker host bootstrap)
 
 `NewTaskHandler` resolves the plan of a task from its class through `NewTaskRecipeRegistry`
@@ -42,6 +46,8 @@ bin/console messenger:consume new_task
 - CPU: Low (1-2 cores)
 - RAM: 64 - 256 MB
 - Concurrency: 1-2 instances recommended
+- **Requires**: `ansible-playbook` (`ansible-core`) and an SSH client when a cluster of the catalog is a
+  `docker-compose` one (the per-account registry is provisioned on the Docker host over Ansible)
 
 ### 2. Execute Job Worker
 
@@ -160,6 +166,10 @@ Account provisioning follows a shorter path, entirely handled by the New Task Wo
    └→ persists AccountEnvironment / AccountRegistry and the result in AccountHistory
 ```
 
+Removing environments from an account follows the same path: the web request drops the `AccountEnvironment`
+documents and queues one `DeleteEnvironmentsTask` listing them (name, cluster, namespace); the New Task Worker
+runs `AccountEnvironmentsDeletionTask` (`DeleteNamespaces` step) and records the outcome in the `AccountHistory`.
+
 ### Worker Process Lifecycle
 
 ```
@@ -201,6 +211,59 @@ MESSENGER_HISTORY_SENT_DSN=amqp://...
 MESSENGER_JOB_DONE_DSN=amqp://...
 ```
 
+**New Task Worker Specific** (account provisioning runs here, not in the web server):
+
+```bash
+# Clusters: the catalog (or the legacy single cluster), exactly as configured on the web server
+SPACE_CLUSTER_CATALOG_JSON=...          # or SPACE_CLUSTER_CATALOG_FILE, or the SPACE_CLUSTER_NAME / SPACE_CLUSTER_TYPE /
+                                        # SPACE_KUBERNETES_MASTER / SPACE_KUBERNETES_CREATE_TOKEN / SPACE_KUBERNETES_CA_VALUE set
+SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+SPACE_KUBERNETES_CLUSTER_USE_HNC=0
+SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
+SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE=space-registry-
+SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME=5
+SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS=public
+SPACE_CLUSTER_ISSUER=lets-encrypt
+# Per-account registry (Kubernetes) and global registry credentials
+SPACE_OCI_REGISTRY_IMAGE=registry:latest
+SPACE_OCI_REGISTRY_URL=...
+SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
+SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
+SPACE_OCI_REGISTRY_REQUESTS_CPU=10m
+SPACE_OCI_REGISTRY_REQUESTS_MEMORY=32Mi
+SPACE_OCI_REGISTRY_LIMITS_CPU=100m
+SPACE_OCI_REGISTRY_LIMITS_MEMORY=256Mi
+SPACE_OCI_GLOBAL_REGISTRY_URL=...
+SPACE_OCI_GLOBAL_REGISTRY_USERNAME=...
+SPACE_OCI_GLOBAL_REGISTRY_PWD=...
+SPACE_STORAGE_CLASS=nfs.csi.k8s.io
+SPACE_STORAGE_DEFAULT_SIZE=3Gi
+SPACE_JOB_ROOT=/tmp                     # Ansible inventories and Kubernetes client temporary files
+# Docker Compose clusters only (per-account registry provisioned over Ansible; library defaults shown)
+SPACE_DC_ANSIBLE_BINARY=ansible-playbook
+SPACE_DC_TIMEOUT=900
+SPACE_DC_DEPLOY_ROOT=/opt/paas
+SPACE_DC_REGISTRY_IMAGE=registry:2
+SPACE_DC_REGISTRY_NETWORK=space-registry
+SPACE_DC_REGISTRY_PORT=5000
+SPACE_DC_REGISTRY_TLS=false
+# Persisted variables: this worker is the only process decrypting them (NewJob variables)
+SPACE_PERSISTED_VAR_AGENT_MODE=1
+SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
+SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/etc/space/keys/variables/public.pem
+SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/etc/space/keys/variables/private.pem
+SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=...
+SPACE_NEW_TASK_WAITING_TIME=5
+MERCURE_PUBLISH_URL=...                 # NewJob real-time updates
+MERCURE_JWT_TOKEN=...
+```
+
+The web server keeps only what its own pages need: the clusters catalog (dashboard health overview, dashboard
+frame, account clusters), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE` (namespace name computed
+at account creation) and the persisted variables **public** key (`SPACE_PERSISTED_VAR_AGENT_MODE=0`). The OCI
+registry, cluster issuer, HNC, storage and `SPACE_DC_*` settings are no longer read by the web server.
+
 **Execute Job Worker Specific**:
 
 ```bash
@@ -210,11 +273,19 @@ SPACE_GIT_TIMEOUT=600
 SPACE_IMG_BUILDER_CMD=buildah
 SPACE_IMG_BUILDER_TIMEOUT=1800
 SPACE_IMG_BUILDER_PLATFORMS=linux/amd64
-SPACE_KUBERNETES_MASTER=https://...
-SPACE_KUBERNETES_CREATE_TOKEN=...
-# For docker-compose deployment targets, the SPACE_DC_* variables apply instead
+SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+SPACE_KUBERNETES_VERSION_LEVEL=1.30
+SPACE_STORAGE_CLASS=nfs.csi.k8s.io
+SPACE_STORAGE_DEFAULT_SIZE=3Gi
+# The job carries its own cluster credentials: no SPACE_KUBERNETES_MASTER / SPACE_KUBERNETES_CREATE_TOKEN here.
+# For docker-compose deployment targets, the SPACE_DC_* variables apply
 # (see documentation/configuration.md — Docker Compose Configuration).
 ```
+
+**Message encryption (all processes)**: `TEKNOO_PAAS_SECURITY_*`. The web server only encrypts (public key);
+every worker decrypts what it receives and encrypts what it forwards, so each worker needs both the public and
+the private key.
 
 **Health Check**:
 To configure health check to kill the agent if it freeze

@@ -45,13 +45,9 @@ services:
             - SPACE_JWT_MAX_DAYS_TO_TIVE=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
             - SPACE_KUBERNETES_CA_VALUE=
-            - SPACE_KUBERNETES_CLUSTER_USE_HNC=0
             - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
             - SPACE_KUBERNETES_DASHBOARD=https://ToChange!
             - SPACE_KUBERNETES_MASTER=https://ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
-            - SPACE_OCI_REGISTRY_URL=.ToChange!
             - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
             - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem
             - SPACE_SUPPORT_CONTACT=support@teknoo.space
@@ -63,7 +59,6 @@ services:
             - PHP_XDEBUG_HOST=172.17.0.1
     cli_new_task:
         environment:
-
             - APP_ENV=dev
             - APP_SECRET=ToChange!
             - MERCURE_JWT_TOKEN=ToChange!
@@ -72,7 +67,16 @@ services:
             - MESSENGER_EXECUTE_JOB_DSN=ToChange!
             - MESSENGER_HISTORY_SENT_DSN=ToChange!
             - MONGODB_SERVER=ToChange!
+            - SPACE_CLUSTER_NAME=ToChange!
+            - SPACE_CLUSTER_TYPE=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
+            - SPACE_KUBERNETES_CA_VALUE=
+            - SPACE_KUBERNETES_CLUSTER_USE_HNC=0
+            - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
+            - SPACE_KUBERNETES_MASTER=https://ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
+            - SPACE_OCI_REGISTRY_URL=.ToChange!
             - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
             - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/variables/private.pem
             - SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
@@ -84,6 +88,14 @@ services:
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=/var/www/space/var/keys/messages/private.pem
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
+            # Docker Compose clusters only (library defaults shown, see appliance/.env.local.dist)
+            #- SPACE_DC_ANSIBLE_BINARY=ansible-playbook
+            #- SPACE_DC_TIMEOUT=900
+            #- SPACE_DC_DEPLOY_ROOT=/opt/paas
+            #- SPACE_DC_REGISTRY_IMAGE=registry:2
+            #- SPACE_DC_REGISTRY_NETWORK=space-registry
+            #- SPACE_DC_REGISTRY_PORT=5000
+            #- SPACE_DC_REGISTRY_TLS=false
             - PHP_XDEBUG_HOST=172.17.0.1
     cli_job_done:
         environment:

@@ -41,7 +41,7 @@ This document outlines all necessary prerequisites for running Space in developm
 
 **Recommended Worker Distribution:**
 
-- 1-2 instances for New Job Worker
+- 1-2 instances for New Task Worker
 - 2-4 instances for Execute Job Worker (build-intensive)
 - 1-2 instances for History Worker
 - 1-2 instances for Job Done Worker
@@ -222,6 +222,16 @@ post_max_size = 100M
 - Container runtime: Optional (can work standalone)
 
 **Note:** Buildah is only required on worker servers that execute deployment jobs (Execute Job Worker).
+
+#### Ansible and SSH client (Docker Compose clusters only)
+
+**Version:** `ansible-core` 2.15+ (no Galaxy collection needed) and OpenSSH client
+
+**Purpose:** Provisioning of the per-account OCI registry on a Docker host (`registry.yml` playbook over SSH)
+
+**Note:** Only required on worker servers running the New Task Worker (`messenger:consume new_task`), and only
+when a cluster of the catalog is a `docker-compose` one. The web server never runs Ansible. The Execute Job
+Worker also needs them to deploy jobs on `docker-compose` clusters.
 
 #### Mercure (Optional but Recommended)
 

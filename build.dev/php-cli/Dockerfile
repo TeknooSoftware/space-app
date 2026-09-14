@@ -10,6 +10,7 @@ RUN set -eux ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
+            ansible-core \
             apt-transport-https \
             ca-certificates \
             curl \
@@ -33,6 +34,7 @@ RUN set -eux ; \
             locales \
             musl-dev \
             nano  \
+            openssh-client \
             sudo  \
             tzdata  \
             wget \
@@ -84,6 +86,7 @@ RUN set -eux ; \
     pie install php-amqp/php-amqp ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
+    sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; \
     locale-gen ; \
     mkdir -p /run/php/ ; \
     addgroup --gid 1000 spacegroup ; \
