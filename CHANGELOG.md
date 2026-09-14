@@ -2,46 +2,35 @@
 
 ## [2.5.0-beta4] - 2026-09-11
 ### Beta Release
-- Account provisioning (registry install/reinstall, environment install/reinstall, quota refresh) is no longer
-  executed by the web server: each operation is queued as a `NewTaskInterface` task
-  (`Object\DTO\Task\{InstallRegistryTask,ReinstallRegistryTask,RefreshQuotaTask,InstallEnvironmentTask,ReinstallEnvironmentTask}`)
-  through `CallNewTask` and applied by the `new_task` worker via the new `AccountProvisioningTask` plan,
-  registered in `NewTaskRecipeRegistry`. The web request records a "task queued" line in the account history and
-  redirects to the account page as before; the worker updates the `AccountHistory`, `AccountEnvironment` and
-  `AccountRegistry`
-- The three admin routes (`space_admin_account_environment_reinstall`, `space_admin_account_registry_reinstall`,
-  `space_admin_account_refresh_quota` and their API twins) share the new `AccountTaskDispatch` plan; the API
-  response now includes the `taskId`
-- The Kubernetes and Docker Compose provisioning plans are pure sub-recipes (no HTTP scaffolding, no access
-  control step); `PrepareAccountTrait` is removed, `LoadHistory` works without a `ParametersBag`
-- Docker Compose quota refresh records in the history that it is not applicable
-- Environment removal from the account edition forms is no longer applied on the cluster by the web server: the
-  request drops the `AccountEnvironment` documents and queues a `DeleteEnvironmentsTask` (`PrepareDeleteEnvironmentsTask`
-  → `CallNewTask`), applied by the `new_task` worker via the new `AccountEnvironmentsDeletionTask` plan and its
-  `DeleteNamespaces` step (Kubernetes namespace deleted when labelled with the account id; Docker Compose clusters
-  only get a history line). `DeleteNamespaceFromResumes` is removed
-- Rebalance the environment variables of the compose files per service: the `web` service no longer receives the
-  OCI registry, cluster issuer, registry root namespace, HNC, storage class, job root and Kubernetes version level
-  settings; the `cli_new_task` service now receives the clusters catalog, the Kubernetes client, namespaces, OCI
-  registry, storage and Docker Compose settings it needs to provision accounts
-- `build.dev/php-cli` image now ships `ansible-core` and `openssh-client`, required by the `new_task` worker to
-  provision the per-account registry of Docker Compose clusters; the `en_US.UTF-8` locale it declares is now
-  really generated (Ansible refused to start on the unsupported locale)
-- Document which process reads which environment variable (`documentation/configuration.md`,
-  `documentation/worker.md`, `README.md`) and the asymmetric keys split (message encryption: public key on the web,
-  key pair on every worker; persisted variables: public key on the web, key pair and agent mode on `new_task` only)
-- Add Behat step `Space executes the pending tasks` and update the account scenarios accordingly
-- Add Behat coverage for the East PaaS `v1.2` expose shortcuts (`services` declared in a container, `ingress` declared
-  in a service), on Kubernetes and Docker Compose, from the API, the admin API and the web UI, including the error
-  cases: shortcuts in a `v1.1` file, service or ingress duplicated by an explicit definition
-- Complete the PHPUnit suite to reach 100% line coverage of `domain/`, `src/`, `infrastructures/` and the
-  Enterprise extension classes; extension `config/` and `Tests/` directories are excluded from the coverage source
-  in `phpunit.dist.xml`
-- Fix `UserVoter` reason key on the granted path (`teknoo.space.vote.granted.is_require_user`)
-- Fix `SendEmail` attachments limit: `SPACE_MAIL_MAX_ATTACHMENTS` is now the real maximum (was `max + 2`)
+- Move account provisioning (registry and environment install/reinstall, quota refresh) from the web server to
+  the `new_task` worker: each operation is a `NewTaskInterface` task (`Object\DTO\Task\*`) queued with
+  `CallNewTask` and run by the new `AccountProvisioningTask` plan; the web request only records a "task queued"
+  line in the account history
+- Move environment removal to the `new_task` worker too: `DeleteEnvironmentsTask` and its
+  `AccountEnvironmentsDeletionTask` plan delete the Kubernetes namespaces of the removed environments
+  (`DeleteNamespaces` step); `DeleteNamespaceFromResumes` is removed
+- Share the new `AccountTaskDispatch` plan between the three admin provisioning routes and their API twins;
+  the API response now includes the `taskId`
+- Make the Kubernetes and Docker Compose provisioning plans pure sub-recipes (no HTTP scaffolding, no access
+  control); remove `PrepareAccountTrait`, let `LoadHistory` work without a `ParametersBag`
+- Record in the history that a quota refresh is not applicable to a Docker Compose cluster
+- Rebalance the environment variables per service in the compose files and in the php-fpm pool whitelist:
+  the OCI registry, cluster issuer, registry root namespace, HNC, storage, job root and Kubernetes version level
+  settings leave the `web` service; `cli_new_task` receives the clusters catalog, Kubernetes client, namespaces,
+  OCI registry, storage and Docker Compose settings
+- Add `ansible-core` and `openssh-client` to the `php-cli` image (Docker Compose registry provisioning runs in
+  the `new_task` worker) and generate its `en_US.UTF-8` locale
+- Document which process reads which variable and where the asymmetric keys go (message encryption: public key
+  on the web, key pair on the workers; persisted variables: public key on the web, key pair on `new_task`)
+- Add Behat step `Space executes the pending tasks` and update the account scenarios
+- Add Behat coverage for the East PaaS `v1.2` expose shortcuts, on Kubernetes and Docker Compose, including
+  the error cases
+- Complete the PHPUnit suite to 100% line coverage of `domain/`, `src/`, `infrastructures/` and the Enterprise
+  extension
+- Fix `UserVoter` reason key on the granted path
+- Fix `SendEmail` attachments limit (`SPACE_MAIL_MAX_ATTACHMENTS` is now the real maximum)
 - Fix `Health` step reporting only the last Kubernetes cluster of the catalog
-- Fix the Enterprise `CreateRoleBinding` step storing the role name instead of the role binding name in the
-  environment metadata
+- Fix the Enterprise `CreateRoleBinding` step storing the role name instead of the role binding name
 - Update documentations
 - Update libs
   - East PaaS 5.7 beta11
