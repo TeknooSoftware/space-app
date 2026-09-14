@@ -2,6 +2,10 @@
 
 ## [2.5.0-beta4] - 2026-09-11
 ### Beta Release
+- Fix "Nesting level too deep" when saving an `AccountHistory`: the mongodb extension 2.x refuses BSON documents
+  nested deeper than 100 levels, and the history chain (`History.previous`, one embedded level per entry) was
+  kept at 150 entries. The account history is now limited to `AccountHistory::HISTORY_LIMIT` (90) entries;
+  existing longer histories are truncated on their next update, no migration needed
 - **Cluster operations leave the web process.** The web server no longer talks to Kubernetes or to a Docker host
   to provision an account: this work is now queued as tasks and executed by the `new_task` worker, and the web
   request only records a "task queued" line in the account history

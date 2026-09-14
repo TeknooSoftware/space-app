@@ -107,7 +107,7 @@ class AccountHistoryTest extends TestCase
         $history = $this->createMock(History::class);
         $history->expects($this->once())
             ->method('limit')
-            ->with(150)
+            ->with(AccountHistory::HISTORY_LIMIT)
             ->willReturnSelf();
 
         $result = $this->accountHistory->setHistory($history);
