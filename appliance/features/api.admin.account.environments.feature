@@ -332,6 +332,86 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
     And no Kubernetes manifests must not be deleted
     And no object has been deleted
 
+  Scenario: From the API, as Admin, refresh account's quota on its environments spread over several clusters
+    Given A Space app instance
+    And A memory document database
+    And a kubernetes client
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And an account clusters "Cluster Company" and a slug "cluster-company"
+    And an account environment on "Cluster Company" for the environment "testing"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to refresh quota of account's environment
+    Then get a JSON reponse
+    And the serialized success result
+    And Space executes the pending tasks
+    And a Kubernetes manifests dedicated to quota for the last account has been applied
+    And no Kubernetes manifests must not be deleted
+    And no object has been deleted
+
+  Scenario: From the API, as Admin, refresh account's quota on its environments, some on a Docker Compose cluster
+    Given A Space app instance
+    And A memory document database
+    And a kubernetes client
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And an account clusters "Docker Host" and a slug "docker-host" on docker compose
+    And an account environment on "Docker Host" for the environment "staging"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to refresh quota of account's environment
+    Then get a JSON reponse
+    And the serialized success result
+    And Space executes the pending tasks
+    And a Kubernetes manifests dedicated to quota for the last account has been applied
+    And no docker compose configuration must be created
+    And the account history must record the quota refresh skipped for "staging" on "Docker Host"
+    And no Kubernetes manifests must not be deleted
+    And no object has been deleted
+
+  Scenario: From the API, as Admin, refresh account's quota twice, both tasks consumed by the same worker
+    Given A Space app instance
+    And A memory document database
+    And a kubernetes client
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And an account clusters "Cluster Company" and a slug "cluster-company"
+    And an account environment on "Cluster Company" for the environment "testing"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to refresh quota of account's environment
+    Then get a JSON reponse
+    And the serialized success result
+    When the API is called to refresh quota of account's environment
+    Then get a JSON reponse
+    And the serialized success result
+    And Space executes the pending tasks
+    And a Kubernetes manifests dedicated to quota for the last account has been applied 2 times
+    And no Kubernetes manifests must not be deleted
+    And no object has been deleted
+
   Scenario: From the API, as Admin, reinstall an account's environment
     Given A Space app instance
     And A memory document database

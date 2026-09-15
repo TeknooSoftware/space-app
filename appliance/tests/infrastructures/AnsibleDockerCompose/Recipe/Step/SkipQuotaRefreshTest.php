@@ -61,14 +61,19 @@ class SkipQuotaRefreshTest extends TestCase
         $accountHistory = $this->createMock(AccountHistory::class);
         $accountHistory->expects($this->once())
             ->method('addToHistory')
-            ->with('teknoo.space.text.account.docker_compose.quota_not_applicable', $date, false)
+            ->with(
+                'teknoo.space.text.account.docker_compose.quota_not_applicable',
+                $date,
+                false,
+                ['environment' => 'staging', 'cluster' => 'docker-host'],
+            )
             ->willReturnSelf();
 
         $step = new SkipQuotaRefresh($datesService, true);
 
         $this->assertInstanceOf(
             SkipQuotaRefresh::class,
-            $step($accountHistory),
+            $step($accountHistory, 'staging', 'docker-host'),
         );
     }
 }

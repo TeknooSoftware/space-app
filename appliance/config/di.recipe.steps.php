@@ -107,7 +107,9 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PrepareDeleteEnvironmentsTask;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\EndLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\StartLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
@@ -218,6 +220,10 @@ return [
     ReloadNamespace::class => create(),
 
     ReloadEnvironement::class => create(),
+
+    StartLoopingOnWallet::class => create(),
+
+    EndLoopingOnWallet::class => create(),
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
         return new CreateServiceAccount(

@@ -30,8 +30,9 @@ use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
  * A Docker host has no `ResourceQuota` to reconcile, so a quota refresh on a docker-compose cluster has
- * nothing to apply. This step only records that fact in the account history, so the operator does not read
- * a silent success. The history is persisted by the task plan's `UpdateAccountHistory`.
+ * nothing to apply. This step only records that fact, for the current environment (`envName` on `clusterName`),
+ * in the account history, so the operator does not read a silent success. The history is persisted by the task
+ * plan's `UpdateAccountHistory`.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -48,13 +49,19 @@ class SkipQuotaRefresh
 
     public function __invoke(
         AccountHistory $accountHistory,
+        string $envName,
+        string $clusterName,
     ): self {
         $this->datesService->passMeTheDate(
-            static function (DateTimeInterface $dateTime) use ($accountHistory): void {
+            static function (DateTimeInterface $dateTime) use ($accountHistory, $envName, $clusterName): void {
                 $accountHistory->addToHistory(
                     'teknoo.space.text.account.docker_compose.quota_not_applicable',
                     $dateTime,
                     false,
+                    [
+                        'environment' => $envName,
+                        'cluster' => $clusterName,
+                    ],
                 );
             },
             $this->preferRealDate,

@@ -114,10 +114,8 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
-use Teknoo\Space\Object\DTO\Task\DeleteEnvironmentsTask;
 use Teknoo\Space\Object\DTO\Task\InstallEnvironmentTask;
 use Teknoo\Space\Object\DTO\Task\InstallRegistryTask;
-use Teknoo\Space\Object\DTO\Task\RefreshQuotaTask;
 use Teknoo\Space\Object\DTO\Task\ReinstallEnvironmentTask;
 use Teknoo\Space\Object\DTO\Task\ReinstallRegistryTask;
 use Teknoo\Space\Recipe\Plan\AccountClusterDelete;
@@ -143,6 +141,7 @@ use Teknoo\Space\Recipe\Plan\RefreshProjectCredentials;
 use Teknoo\Space\Recipe\Plan\Subscription;
 use Teknoo\Space\Recipe\Plan\Task\AccountEnvironmentsDeletionTask;
 use Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask;
+use Teknoo\Space\Recipe\Plan\Task\AccountRefreshQuotaTask;
 use Teknoo\Space\Recipe\Plan\UserCreateJwtToken;
 use Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken;
 use Teknoo\Space\Recipe\Plan\UserDeleteApiToken;
@@ -163,6 +162,7 @@ use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\DeleteEnvFromResumes;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\EndLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ExtractResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
@@ -170,6 +170,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PrepareDeleteEnvironmentsTask;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\StartLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
@@ -297,7 +298,6 @@ return [
     K8sRefreshQuota::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
-            diGet(ReloadEnvironement::class),
             diGet(SelectClusterConfig::class),
             diGet(CreateQuota::class),
             diGet(ReinstallAccountErrorHandler::class),
@@ -445,20 +445,24 @@ return [
             loadRegistryCredential: diGet(LoadRegistryCredential::class),
         ),
 
-    'teknoo.space.task.plan.refresh_quota' => create(AccountProvisioningTask::class)
+    // The quota refresh spans every environment of the account: its plan loops over the wallet and dispatches
+    // the single-environment quota plan per cluster type at each iteration.
+    'teknoo.space.task.plan.refresh_quota' => create(AccountRefreshQuotaTask::class)
         ->constructor(
             recipe: diGet(OriginalRecipeInterface::class),
-            taskClass: RefreshQuotaTask::class,
             loadObject: diGet(LoadObject::class),
             accountLoader: diGet(AccountLoader::class),
             clusterCatalog: diGet('teknoo.space.clusters_catalog'),
             loadHistory: diGet(LoadHistory::class),
             loadAccountClusters: diGet(LoadAccountClusters::class),
+            loadEnvironments: diGet(LoadEnvironments::class),
             reloadNamespace: diGet(ReloadNamespace::class),
+            startLoopingOnWallet: diGet(StartLoopingOnWallet::class),
+            reloadEnvironement: diGet(ReloadEnvironement::class),
             provisioningBowl: diGet('teknoo.space.provisioning.bowl.refresh_quota'),
+            endLoopingOnWallet: diGet(EndLoopingOnWallet::class),
             updateAccountHistory: diGet(UpdateAccountHistory::class),
             errorHandler: diGet(AccountTaskErrorHandler::class),
-            loadEnvironments: diGet(LoadEnvironments::class),
         ),
 
     'teknoo.space.task.plan.environment_install' => create(AccountProvisioningTask::class)

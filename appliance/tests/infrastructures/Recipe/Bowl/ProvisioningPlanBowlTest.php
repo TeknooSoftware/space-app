@@ -181,6 +181,28 @@ class ProvisioningPlanBowlTest extends TestCase
         $this->assertInstanceOf(BowlInterface::class, $result);
     }
 
+    public function testExecuteRefusesAQuotaRefreshWithoutClusterName(): void
+    {
+        $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);
+        $directory->expects($this->never())
+            ->method('refreshQuota');
+
+        $bowl = new ProvisioningPlanBowl($directory, ProvisioningPlanBowl::ROLE_REFRESH_QUOTA, 0);
+
+        //The quota refresh is dispatched once per environment: without the environment's clusterName the
+        //registry cluster fallback would silently target the wrong cluster type.
+        $workPlan = [
+            'clusterCatalog' => new ClusterCatalog(
+                ['foo' => $this->clusterOfType('kubernetes', true)],
+                [],
+            ),
+        ];
+
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
+    }
+
     public function testExecuteThrowsWhenClusterContextIsMissing(): void
     {
         $bowl = new ProvisioningPlanBowl(

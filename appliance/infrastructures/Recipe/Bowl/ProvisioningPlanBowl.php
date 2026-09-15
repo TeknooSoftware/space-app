@@ -88,10 +88,16 @@ class ProvisioningPlanBowl implements BowlInterface
             );
         }
 
-        // Environment-scoped roles carry a clusterName; account-scoped roles (registry install/reinstall,
-        // quota refresh) do not, so fall back to the account's registry cluster to resolve the type.
+        // Environment-scoped roles (environment install/reinstall, and the quota refresh, executed once per
+        // environment by its task plan) carry a clusterName; the registry roles are account-scoped and resolve
+        // the type from the account's registry cluster. A quota refresh without clusterName would silently pick
+        // the registry cluster for an environment hosted elsewhere, so it is refused.
         if (is_string($clusterName)) {
             $cluster = $catalog->getCluster($clusterName);
+        } elseif (self::ROLE_REFRESH_QUOTA === $this->role) {
+            throw new UnsupportedClusterTypeException(
+                'Unable to resolve the cluster type: missing clusterName in the work plan for a quota refresh'
+            );
         } else {
             $cluster = $catalog->getClusterForRegistry();
         }

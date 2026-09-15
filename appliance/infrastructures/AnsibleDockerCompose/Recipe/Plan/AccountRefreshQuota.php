@@ -35,11 +35,12 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccount
 use Teknoo\Space\Object\Persisted\AccountHistory;
 
 /**
- * Docker-compose "refresh quota" — a **documented no-op**: a Docker host has no Kubernetes `ResourceQuota`
- * object to reconcile, so there is nothing to refresh. The plan only records that in the account history
+ * Docker-compose "refresh quota" of a single environment — a **documented no-op**: a Docker host has no
+ * Kubernetes `ResourceQuota` object to reconcile, so there is nothing to refresh. The plan only records that,
+ * for the current environment (`envName` on `clusterName`), in the account history
  * ({@see SkipQuotaRefresh}). Kept for parity with the Kubernetes plan set so the provisioning-plan directory
  * can resolve `refreshQuota('docker-compose')`. Executed in the `new_task` worker through the
- * `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask` plan.
+ * `Teknoo\Space\Recipe\Plan\Task\AccountRefreshQuotaTask` plan, once per environment of the account.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -62,6 +63,8 @@ class AccountRefreshQuota implements EditablePlanInterface
     {
         $recipe = $recipe->require(new Ingredient(Account::class));
         $recipe = $recipe->require(new Ingredient(AccountHistory::class));
+        $recipe = $recipe->require(new Ingredient('string', 'envName'));
+        $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
 
         $recipe = $recipe->cook($this->skipQuotaRefresh, SkipQuotaRefresh::class, [], 80);
 

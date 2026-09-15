@@ -48,6 +48,7 @@ use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\GitRepository;
+use Teknoo\East\Paas\Object\History;
 use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
@@ -62,6 +63,7 @@ use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\ApiKeyToken;
@@ -1005,6 +1007,38 @@ trait PersistenceStepsTrait
         $accountEnvironment->setId($this->generateId());
 
         $this->persistAndRegister($accountEnvironment);
+    }
+
+    #[Then('the account history must record the quota refresh skipped for :environment on :cluster')]
+    public function theAccountHistoryMustRecordTheQuotaRefreshSkippedForOn(string $environment, string $cluster): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $found = false;
+        /** @var AccountHistory $accountHistory */
+        foreach ($this->listObjects(AccountHistory::class) as $accountHistory) {
+            $accountHistory->passMeYouHistory(
+                static function (History $history) use (&$found, $environment, $cluster): void {
+                    while (null !== $history) {
+                        if (
+                            'teknoo.space.text.account.docker_compose.quota_not_applicable' === $history->getMessage()
+                            && ($history->getExtra()['environment'] ?? null) === $environment
+                            && ($history->getExtra()['cluster'] ?? null) === $cluster
+                        ) {
+                            $found = true;
+                        }
+
+                        $history = $history->getPrevious();
+                    }
+                }
+            );
+        }
+
+        Assert::assertTrue(
+            $found,
+            "The account history does not record the skipped quota refresh of `$environment` on `$cluster`",
+        );
     }
 
     #[Then('the project must be persisted')]

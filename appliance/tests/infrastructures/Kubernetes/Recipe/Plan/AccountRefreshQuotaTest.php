@@ -34,7 +34,6 @@ use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRefreshQuota;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
@@ -53,8 +52,6 @@ class AccountRefreshQuotaTest extends TestCase
 
     private RecipeInterface&Stub $recipe;
 
-    private ReloadEnvironement&Stub $reloadEnvironement;
-
     private SelectClusterConfig&Stub $selectClusterConfig;
 
     private CreateQuota&Stub $createQuota;
@@ -69,14 +66,12 @@ class AccountRefreshQuotaTest extends TestCase
         parent::setUp();
 
         $this->recipe = $this->createStub(RecipeInterface::class);
-        $this->reloadEnvironement = $this->createStub(ReloadEnvironement::class);
         $this->selectClusterConfig = $this->createStub(SelectClusterConfig::class);
         $this->createQuota = $this->createStub(CreateQuota::class);
         $this->errorHandler = $this->createStub(ReinstallAccountErrorHandler::class);
 
         $this->accountRefreshQuota = new AccountRefreshQuota(
             recipe: $this->recipe,
-            reloadEnvironement: $this->reloadEnvironement,
             selectClusterConfig: $this->selectClusterConfig,
             createQuota: $this->createQuota,
             errorHandler: $this->errorHandler,

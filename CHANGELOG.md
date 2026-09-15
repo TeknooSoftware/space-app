@@ -2,6 +2,13 @@
 
 ## [2.5.0-beta4] - 2026-09-15
 ### Beta Release
+- Fix the admin quota refresh, broken since the account provisioning moved to the `new_task` worker: the refresh
+  now loads every environment of the account and re-applies the quota on each one (cluster + namespace), dispatching
+  the Kubernetes or Docker Compose quota plan per environment's cluster instead of resolving the cluster type once
+  from the registry cluster (which skipped or aborted the refresh on multi-cluster and mixed accounts). The loop
+  state now lives in the workplan (`WalletCursor` with `StartLoopingOnWallet` / `EndLoopingOnWallet`) instead of a
+  step singleton, so a long-running worker refreshes the quota on every task, not only on the first one it consumes.
+  The Docker Compose "not applicable" history line now names the skipped environment and cluster.
 - Align with East PaaS 5.7.0-beta13 (Docker Compose driver producing a stack that really runs): the Behat golden
   files of the docker-compose deployments are regenerated (per-key Compose `secrets`/`configs`, per-container
   `env_file`, Compose resource units, `<project>-private` network, service DNS aliases, project-prefixed Traefik

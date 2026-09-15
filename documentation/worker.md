@@ -166,6 +166,15 @@ Account provisioning follows a shorter path, entirely handled by the New Task Wo
    └→ persists AccountEnvironment / AccountRegistry and the result in AccountHistory
 ```
 
+The quota refresh is the one account-wide provisioning task: a quota applies to every environment of the account
+(an environment is a cluster plus a namespace), so `RefreshQuotaTask` runs `AccountRefreshQuotaTask` instead, which
+loads the account, its history, clusters and environments, then loops over the whole wallet. At each iteration the
+`ProvisioningPlanBowl` picks the Kubernetes or Docker Compose single-environment quota plan for *that* environment's
+cluster: the `ResourceQuota` is re-applied on every Kubernetes namespace, and a "not applicable" line is recorded in
+the `AccountHistory` for each environment hosted on a Docker Compose cluster. The loop position lives in the
+workplan (`WalletCursor`), never in a step instance, because the same plan instance serves every task consumed by
+a long-running worker.
+
 Removing environments from an account follows the same path: the web request drops the `AccountEnvironment`
 documents and queues one `DeleteEnvironmentsTask` listing them (name, cluster, namespace); the New Task Worker
 runs `AccountEnvironmentsDeletionTask` (`DeleteNamespaces` step) and records the outcome in the `AccountHistory`.
