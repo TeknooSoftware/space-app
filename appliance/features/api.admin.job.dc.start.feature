@@ -48,6 +48,7 @@ Feature: API admin endpoints to create new job and deploy a project on a docker-
     And job must be successful finished
     And some docker compose configuration has been created
     And some traefik configuration has been created
+    And the docker compose deployment history must warn about the host ports of "php-service"
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, as Admin, execute a job from a project, with prefix, a valid paas file, encrypted messages
@@ -91,6 +92,7 @@ Feature: API admin endpoints to create new job and deploy a project on a docker-
     And job must be successful finished
     And some docker compose configuration has been created
     And some traefik configuration has been created
+    And the docker compose deployment history must warn about the host ports of "php-service"
     And no Kubernetes manifests must not be created
 
   Scenario: From the API, as Admin, re-execute a job from a project, with prefix, a valid paas file, encrypted messages
@@ -123,6 +125,133 @@ Feature: API admin endpoints to create new job and deploy a project on a docker-
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some docker compose configuration has been created
+    And some traefik configuration has been created
+    And no Kubernetes manifests must not be created
+
+  Scenario: From the API, as Admin, execute a job from a project, without prefix, a valid paas file, via a request with
+  a json body
+    Given A Space app instance
+    And a docker-compose orchestrator
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project"
+    And the project has a complete paas file
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some docker compose configuration has been created
+    And some traefik configuration has been created
+    And no Kubernetes manifests must not be created
+
+  Scenario: From the API, as Admin, execute a job from a project, with the prefix "demo", a valid paas file, via a request with
+  a json body
+    Given A Space app instance
+    And a docker-compose orchestrator
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project" and a prefix "demo"
+    And the project has a complete paas file
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON reponse
+    And a pending job id with admin route
+    When the API is called to pending job status api
+    Then get a JSON reponse
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON reponse
+    And the serialized job
+    And job must be successful finished
+    And some docker compose configuration has been created
+    And some traefik configuration has been created
+    And no Kubernetes manifests must not be created
+
+  Scenario: From the API, as Admin, execute a job from a project, without prefix, a valid paas file using extends, via a request with
+  a json body
+    Given A Space app instance
+    And a docker-compose orchestrator
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And extensions libraries provided by administrators
+    And A memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a standard project "my project"
+    And the project has a complete paas file using extends
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to create a new job as admin with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
     Then get a JSON reponse
     And a pending job id with admin route
     When the API is called to pending job status api

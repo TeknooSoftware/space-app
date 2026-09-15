@@ -945,7 +945,9 @@ trait PersistenceStepsTrait
             masterAddress: "ssh://deployer@docker-host.{$slug}.behat:22",
             storageProvisioner: '',
             dashboardAddress: '',
-            caCertificate: \base64_encode('behatKnownHosts'),
+            //Docker-compose clusters keep the SSH host public key (known_hosts) as-is in the CA field, unlike the
+            //Kubernetes CA which is base64-encoded: the RunnerFactory binds it verbatim to the host.
+            caCertificate: 'behatKnownHosts',
             token: '',
             supportRegistry: false,
             registryUrl: null,
@@ -956,9 +958,9 @@ trait PersistenceStepsTrait
 
         $this->persistAndRegister($cluster);
 
-        //Tell the docker-compose steps which SSH target this scenario deploys to, so the Ansible inventory
-        //rendered by the driver can be asserted.
-        $this->setExpectedComposeSshTarget("docker-host.{$slug}.behat", 22);
+        //Tell the docker-compose steps which SSH target this scenario deploys to (and the host public key its
+        //credentials carry), so the Ansible inventory and the known_hosts rendered by the driver can be asserted.
+        $this->setExpectedComposeSshTarget("docker-host.{$slug}.behat", 22, 'behatKnownHosts');
     }
 
     #[Given('an account environment on :clusterName for the environment :environmentName')]

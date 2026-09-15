@@ -163,14 +163,28 @@ return [
             get('teknoo.east.paas.worker.tmp_dir'),
         ),
 
-    GenerateRegistryCredentials::class => create()
-        ->constructor(
-            get('teknoo.east.paas.docker-compose.registry.image'),
-            get('teknoo.east.paas.docker-compose.registry.network'),
-            get('teknoo.east.paas.docker-compose.registry.port'),
-            get('teknoo.east.paas.docker-compose.registry.tls'),
-            get('teknoo.east.paas.docker-compose.deploy_root'),
-        ),
+    //A closure: `teknoo.east.paas.docker-compose.traefik.default_certresolver` is only declared when the
+    //SPACE_DC_TRAEFIK_CERTRESOLVER env var is set (see di.variables.east.paas.php), `get()` would throw.
+    GenerateRegistryCredentials::class => static function (ContainerInterface $container): GenerateRegistryCredentials {
+        $certresolver = null;
+        if ($container->has('teknoo.east.paas.docker-compose.traefik.default_certresolver')) {
+            $certresolver = (string) $container->get('teknoo.east.paas.docker-compose.traefik.default_certresolver');
+        }
+
+        return new GenerateRegistryCredentials(
+            registryImage: (string) $container->get('teknoo.east.paas.docker-compose.registry.image'),
+            registryNetwork: (string) $container->get('teknoo.east.paas.docker-compose.registry.network'),
+            registryPort: (int) $container->get('teknoo.east.paas.docker-compose.registry.port'),
+            registryTls: (bool) $container->get('teknoo.east.paas.docker-compose.registry.tls'),
+            deployRoot: (string) $container->get('teknoo.east.paas.docker-compose.deploy_root'),
+            traefikContainer: (string) $container->get('teknoo.east.paas.docker-compose.traefik.container'),
+            traefikDynamicDir: (string) $container->get('teknoo.east.paas.docker-compose.traefik.dynamic_dir'),
+            traefikEntrypointWebsecure: (string) $container->get(
+                'teknoo.east.paas.docker-compose.traefik.entrypoint.websecure',
+            ),
+            traefikDefaultCertresolver: $certresolver,
+        );
+    },
 
     RunRegistryPlaybook::class => create()
         ->constructor(

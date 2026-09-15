@@ -30,8 +30,11 @@ use Psr\Container\ContainerInterface;
 use function DI\env;
 use function DI\get;
 use function dirname;
+use function filter_var;
 use function preg_match;
 use function strtolower;
+
+use const FILTER_VALIDATE_BOOL;
 
 $parameters = [
     //East PaaS Configuration
@@ -132,15 +135,14 @@ $parameters = [
         'SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE',
         'websecure'
     ),
-    'teknoo.east.paas.docker-compose.traefik.entrypoint.tcp' => env('SPACE_DC_TRAEFIK_ENTRYPOINT_TCP', 'tcp'),
-    'teknoo.east.paas.docker-compose.traefik.entrypoint.udp' => env('SPACE_DC_TRAEFIK_ENTRYPOINT_UDP', 'udp'),
     'teknoo.east.paas.docker-compose.https_backend.insecure_skip_verify' => env(
         'SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY',
         false
     ),
 
-    // Per-account private registry (docker-compose): a dedicated `registry` container provisioned over Ansible,
-    // reachable only over the external private network by its container name (no public route). TLS optional.
+    // Per-account private registry (docker-compose): a dedicated `registry` container provisioned over Ansible on
+    // the external private network, exposed by the host's Traefik (websecure) as `<namespace>-registry.<host>`.
+    // TLS between Traefik and the registry container optional.
     'teknoo.east.paas.docker-compose.registry.image' => env('SPACE_DC_REGISTRY_IMAGE', 'registry:2'),
     'teknoo.east.paas.docker-compose.registry.network' => env('SPACE_DC_REGISTRY_NETWORK', 'space-registry'),
     'teknoo.east.paas.docker-compose.registry.port' => env('SPACE_DC_REGISTRY_PORT', 5000),
@@ -153,5 +155,19 @@ if (!empty($_ENV['SPACE_DC_TRAEFIK_CERTRESOLVER'])) {
     $parameters['teknoo.east.paas.docker-compose.traefik.default_certresolver']
         = $_ENV['SPACE_DC_TRAEFIK_CERTRESOLVER'];
 }
+
+// Declare the per-project network `internal: true` (no egress from the containers, only reachable through Traefik;
+// published host ports of public services are then unreachable). Off by default, like Kubernetes pods. Resolved
+// here (not through env()) so "false" is a boolean false, not a non-empty string.
+$parameters['teknoo.east.paas.docker-compose.network.internal'] = filter_var(
+    $_ENV['SPACE_DC_NETWORK_INTERNAL'] ?? false,
+    FILTER_VALIDATE_BOOL,
+);
+
+// The certs directory as seen by the Traefik process (path referenced by the generated dynamic files): the host
+// directory `traefik.certs_dir`, bind-mounted at this path in the Traefik container. Defaults to the same path.
+$parameters['teknoo.east.paas.docker-compose.traefik.certs_mount_dir'] = (string) (
+    $_ENV['SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR'] ?? ($_ENV['SPACE_DC_TRAEFIK_CERTS_DIR'] ?? '/etc/traefik/certs')
+);
 
 return $parameters;

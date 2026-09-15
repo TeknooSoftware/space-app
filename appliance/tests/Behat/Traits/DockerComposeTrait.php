@@ -44,11 +44,15 @@ use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\Transcriber\Transcr
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Driver as DockerComposeDriver;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\RunnerFactory;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\SymfonyProcessRunner;
+use Teknoo\East\Paas\Object\Job as JobOrigin;
+use Teknoo\East\Paas\Recipe\Step\Worker\Deploying;
 
 use function array_filter;
 use function array_map;
 use function array_values;
 use function basename;
+use function count;
+use function current;
 use function dirname;
 use function file_get_contents;
 use function file_put_contents;
@@ -57,10 +61,16 @@ use function is_dir;
 use function json_encode;
 use function ksort;
 use function mkdir;
+use function sys_get_temp_dir;
+use function unlink;
 use function pathinfo;
 use function preg_match;
 use function preg_replace;
 use function reset;
+use function rmdir;
+use function scandir;
+use function str_contains;
+use function str_starts_with;
 use function str_ends_with;
 use function strlen;
 use function strtolower;
@@ -78,9 +88,10 @@ use const PHP_EOL;
  * The real `DockerCompose\Driver` runs against two in-memory Flysystem filesystems (never touching the disk),
  * and the whole runner layer above the process is the real one too: the real `RunnerFactory` resolves the SSH
  * login user and materializes the SSH private key into that in-memory workspace, and the real
- * `SymfonyProcessRunner` builds the `ansible-playbook` command line. Only the lowest seam - the Symfony
- * `Process` - is mocked, so nothing is ever executed while the command line, the rendered inventory, the
- * resolved SSH user and the materialized private key all become assertable (see `assertAnsibleRun()`).
+ * `SymfonyProcessRunner` builds the `ansible-playbook` command line and its environment. Only the lowest
+ * seam - the Symfony `Process` - is mocked, so nothing is ever executed while the command line, the Ansible
+ * environment (no colors, strict host key checking), the rendered inventory, the resolved SSH user, the
+ * materialized private key and the materialized `known_hosts` all become assertable (see `assertAnsibleRun()`).
  *
  * The artifacts the Driver produced (compose specification, Ansible deploy/expose playbooks, referenced
  * config/secret files, Traefik dynamic config) are captured from the in-memory workspace when the mocked
@@ -102,6 +113,13 @@ trait DockerComposeTrait
     private const COMPOSE_KEY_FILE_NAME = 'space-behat-ansible-key';
 
     /**
+     * Deterministic name of the `known_hosts` file the real `RunnerFactory` materializes from the cluster
+     * credentials' CA certificate field (second file written after the private key), making the
+     * `ANSIBLE_SSH_COMMON_ARGS` environment variable assertable.
+     */
+    private const COMPOSE_KNOWN_HOSTS_FILE_NAME = 'space-behat-ansible-known-hosts';
+
+    /**
      * Timeout handed to the real `RunnerFactory`, proving it reaches the (mocked) `Process` factory.
      */
     private const COMPOSE_ANSIBLE_TIMEOUT = 300.0;
@@ -117,6 +135,12 @@ trait DockerComposeTrait
      * (account cluster) or from the "ssh://deployer@..." master address (catalog cluster).
      */
     private const COMPOSE_SSH_USER = 'deployer';
+
+    /**
+     * SSH host public key carried by the "Demo Compose Cluster" catalog entry (`ssh.known_hosts` in `.env.test`),
+     * bound by the real `RunnerFactory` to the cluster host in the materialized `known_hosts` file.
+     */
+    private const COMPOSE_SSH_KNOWN_HOSTS = 'fake-known-hosts';
 
     /**
      * Address of the "Demo Compose Cluster" catalog entry, rendered into the Ansible inventory.
@@ -141,11 +165,18 @@ trait DockerComposeTrait
     private array $referencedFiles = [];
 
     /**
-     * Every `ansible-playbook` invocation the real `SymfonyProcessRunner` built, in order.
+     * Every `ansible-playbook` invocation the real `SymfonyProcessRunner` built, in order, with the environment
+     * it set on the process.
      *
-     * @var array<int, array{command: array<int, string>, timeout: float|null}>
+     * @var array<int, array{command: array<int, string>, timeout: float|null, env: array<string, string>}>
      */
     private array $ansibleRuns = [];
+
+    /**
+     * In-memory workspace of the Driver and of the RunnerFactory, kept to assert the per-run working directory
+     * is removed once the playbooks ran.
+     */
+    private ?Filesystem $composeWorkspaceFilesystem = null;
 
     /**
      * Inventory rendered by the Driver for each stage, keyed by stage name ("deploy", "expose").
@@ -156,20 +187,26 @@ trait DockerComposeTrait
 
     private ?string $ansibleKeyFileContent = null;
 
+    private ?string $ansibleKnownHostsContent = null;
+
     //Defaults are applied in aDockerComposeOrchestrator() rather than here: Symfony's ReflectionClassResource
     //reflects this trait outside of any class, where "self::" cannot resolve a trait constant.
     private string $expectedComposeSshHost = '';
 
     private int $expectedComposeSshPort = 0;
 
+    private string $expectedComposeKnownHosts = '';
+
     /**
      * Declare the SSH target the current scenario deploys to, when it is not the "Demo Compose Cluster"
-     * catalog entry (see the account-cluster docker-compose fixture).
+     * catalog entry (see the account-cluster docker-compose fixture), with the SSH host public key its
+     * credentials carry.
      */
-    public function setExpectedComposeSshTarget(string $host, int $port = 22): void
+    public function setExpectedComposeSshTarget(string $host, int $port = 22, string $knownHosts = ''): void
     {
         $this->expectedComposeSshHost = $host;
         $this->expectedComposeSshPort = $port;
+        $this->expectedComposeKnownHosts = $knownHosts;
     }
 
     #[Given('a docker-compose orchestrator')]
@@ -178,13 +215,16 @@ trait DockerComposeTrait
         $this->ansibleRuns = [];
         $this->ansibleInventories = [];
         $this->ansibleKeyFileContent = null;
+        $this->ansibleKnownHostsContent = null;
         $this->expectedComposeSshHost = self::COMPOSE_SSH_HOST;
         $this->expectedComposeSshPort = self::COMPOSE_SSH_PORT;
+        $this->expectedComposeKnownHosts = self::COMPOSE_SSH_KNOWN_HOSTS;
 
         //Drive the real DockerCompose Driver against an in-memory Flysystem instead of the disk-backed
         //LocalFilesystemAdapter wired by di.php, so the scenario never alters the filesystem. The mocked
         //Ansible process reads the artifacts the Driver wrote back from this same in-memory filesystem.
         $workspaceFilesystem = new Filesystem(new InMemoryFilesystemAdapter());
+        $this->composeWorkspaceFilesystem = $workspaceFilesystem;
 
         $templatesDir = $this->kernel->getProjectDir()
             . '/vendor/teknoo/east-paas/infrastructures/DockerCompose/templates';
@@ -253,7 +293,8 @@ trait DockerComposeTrait
         //SymfonyProcessRunner building the `ansible-playbook` command line) is exercised for real, so the
         //Driver's outputs are proven to reach the process layer.
         $processFactory = function (array $command, ?float $timeout) use ($workspaceFilesystem, $capture): Process {
-            $this->ansibleRuns[] = ['command' => $command, 'timeout' => $timeout];
+            $runIndex = count($this->ansibleRuns);
+            $this->ansibleRuns[] = ['command' => $command, 'timeout' => $timeout, 'env' => []];
 
             //$command[1] is the playbook absolute path, $command[3] the inventory one; both live in the per-run
             //working directory, recovered with the same basename(dirname()) trick as $capture.
@@ -263,10 +304,13 @@ trait DockerComposeTrait
                 $this->ansibleInventories[$stage] = $workspaceFilesystem->read($inventoryRelative);
             }
 
-            //The materialized SSH private key must be read here: RunnerFactory::__destruct() deletes it as soon
-            //as the factory goes out of scope.
+            //The materialized SSH private key and known_hosts must be read here: RunnerFactory::__destruct()
+            //deletes them as soon as the factory goes out of scope.
             if ($workspaceFilesystem->fileExists(self::COMPOSE_KEY_FILE_NAME)) {
                 $this->ansibleKeyFileContent = $workspaceFilesystem->read(self::COMPOSE_KEY_FILE_NAME);
+            }
+            if ($workspaceFilesystem->fileExists(self::COMPOSE_KNOWN_HOSTS_FILE_NAME)) {
+                $this->ansibleKnownHostsContent = $workspaceFilesystem->read(self::COMPOSE_KNOWN_HOSTS_FILE_NAME);
             }
 
             ($capture)($command[1]);
@@ -281,6 +325,16 @@ trait DockerComposeTrait
             );
 
             $process->expects(new AnyInvokedCountMatcher())->method('run');
+            //The real SymfonyProcessRunner sets the non-interactive Ansible environment (no colors, host key
+            //checking) on the process: capture it in the run record so it can be asserted.
+            $process->method('setEnv')->willReturnCallback(
+                function (array $env) use ($runIndex, $process): Process {
+                    /** @var array<string, string> $env */
+                    $this->ansibleRuns[$runIndex]['env'] = $env;
+
+                    return $process;
+                },
+            );
             $process->method('isSuccessful')->willReturn(true);
             $process->method('getOutput')->willReturn('PLAY RECAP behat : ok=6 changed=4 failed=0');
             $process->method('getErrorOutput')->willReturn('');
@@ -289,25 +343,36 @@ trait DockerComposeTrait
         };
 
         //The real factory, pointed at the same in-memory workspace so the private key never touches the disk,
-        //with a deterministic key file name making the "--private-key" argument assertable.
+        //with deterministic file names making the "--private-key" argument and the known_hosts path
+        //assertable. The factory materializes the private key first, then the known_hosts built from the
+        //credentials' CA certificate field: the name factory is called once per file, in that order, for each
+        //stage (deploy, expose) - a single constant name would make the second write overwrite the private key.
+        $materializedFiles = 0;
         $runnerFactory = new RunnerFactory(
             filesystem: $workspaceFilesystem,
             tmpDir: '',
             playbookBinary: 'ansible-playbook',
             timeout: self::COMPOSE_ANSIBLE_TIMEOUT,
-            keyFileNameFactory: static fn (): string => self::COMPOSE_KEY_FILE_NAME,
+            keyFileNameFactory: static function () use (&$materializedFiles): string {
+                return match ($materializedFiles++ % 2) {
+                    0 => self::COMPOSE_KEY_FILE_NAME,
+                    default => self::COMPOSE_KNOWN_HOSTS_FILE_NAME,
+                };
+            },
             //Only overridden to inject the mocked $processFactory: the runner itself is the real one.
             runnerBuilder: static fn (
                 string $playbookBinary,
                 ?float $timeout,
                 ?string $sshUser,
                 ?string $privateKeyFile,
+                ?string $knownHostsFile = null,
             ): RunnerInterface => new SymfonyProcessRunner(
                 playbookBinary: $playbookBinary,
                 timeout: $timeout,
                 sshUser: $sshUser,
                 privateKeyFile: $privateKeyFile,
                 processFactory: $processFactory,
+                knownHostsFile: $knownHostsFile,
             ),
         );
 
@@ -391,6 +456,11 @@ trait DockerComposeTrait
             'The generated compose.yaml does not match the expected golden file',
         );
 
+        //The generated Compose Specification must also be accepted by the real Compose (schema validation:
+        //resource keys and units, secrets/configs mounts...), when a Docker CLI with the compose plugin is
+        //available on the machine running the suite.
+        $this->validateComposeFileWithDocker();
+
         //The deploy playbook is compared after normalizing the per-run working directory (uniqid) baked into
         //its "src" paths; everything else (vars block, paas_files/paas_reset_volumes/paas_jobs, tasks) is golden.
         Assert::assertSame(
@@ -409,6 +479,7 @@ trait DockerComposeTrait
         );
 
         $this->assertAnsibleRun('deploy');
+        $this->assertComposeWorkingDirectoriesRemoved();
     }
 
     #[Then('some traefik configuration has been created')]
@@ -456,6 +527,140 @@ trait DockerComposeTrait
         );
 
         $this->assertAnsibleRun('expose');
+        $this->assertComposeWorkingDirectoriesRemoved();
+    }
+
+    #[Then('the docker compose deployment history must warn about the host ports of :service')]
+    public function theDockerComposeDeploymentHistoryMustWarnAboutTheHostPortsOf(string $service): void
+    {
+        $jobs = $this->listObjects(JobOrigin::class);
+        Assert::assertNotEmpty($jobs);
+
+        /** @var JobOrigin $job */
+        $job = current($jobs);
+        Assert::assertInstanceOf(JobOrigin::class, $job);
+
+        //The Driver reports the warnings collected by the Accumulator (here: a public service on a replicated
+        //pod cannot publish host ports) in the deploy result, dispatched to the job history by the Deploying
+        //step. Walk the history chain back to that entry.
+        $history = $job->getHistory();
+        $warnings = null;
+        while (null !== $history) {
+            if (Deploying::class . ':Result' === $history->getMessage()) {
+                $warnings = $history->getExtra()['warnings'] ?? [];
+
+                break;
+            }
+
+            $history = $history->getPrevious();
+        }
+
+        Assert::assertIsArray($warnings, 'The deployment result is missing from the job history');
+        Assert::assertNotEmpty($warnings, 'The deployment result carries no warning');
+
+        $found = false;
+        foreach ($warnings as $warning) {
+            if (str_contains((string) $warning, "`{$service}`") && str_contains((string) $warning, 'host ports')) {
+                $found = true;
+            }
+        }
+
+        Assert::assertTrue(
+            $found,
+            "No warning about the host ports of the service `{$service}` in "
+                . json_encode($warnings, JSON_THROW_ON_ERROR),
+        );
+    }
+
+    /**
+     * The per-run working directory holds the secret values, the TLS private keys and the SSH inventory: the
+     * Driver must remove it from the worker once the playbook ran, whatever the outcome. The private key and
+     * known_hosts files are removed by the RunnerFactory destructor.
+     */
+    private function assertComposeWorkingDirectoriesRemoved(): void
+    {
+        Assert::assertNotNull($this->composeWorkspaceFilesystem);
+
+        $leftovers = [];
+        foreach ($this->composeWorkspaceFilesystem->listContents('', false) as $item) {
+            $name = basename($item->path());
+            if (str_starts_with($name, 'space-behat-compose-')) {
+                $leftovers[] = $name;
+            }
+        }
+
+        Assert::assertSame(
+            [],
+            $leftovers,
+            'The per-run working directories must be removed from the worker once the playbooks ran',
+        );
+    }
+
+    /**
+     * Run `docker compose config` on the generated Compose Specification (with its referenced files) to prove
+     * the real Compose accepts it. Skipped when no docker CLI with the compose plugin is available.
+     */
+    private function validateComposeFileWithDocker(): void
+    {
+        static $dockerAvailable = null;
+        if (null === $dockerAvailable) {
+            $probe = new Process(['docker', 'compose', 'version']);
+            $probe->run();
+            $dockerAvailable = $probe->isSuccessful();
+        }
+
+        if (!$dockerAvailable) {
+            return;
+        }
+
+        $dir = sys_get_temp_dir() . '/space-behat-compose-check-' . uniqid('', true);
+        mkdir($dir, 0o700, true);
+
+        try {
+            file_put_contents($dir . '/compose.yaml', $this->composeArtifacts['compose.yaml']);
+            foreach ($this->referencedFiles as $relative => $content) {
+                $path = $dir . '/' . $relative;
+                if (!is_dir(dirname($path))) {
+                    mkdir(dirname($path), 0o700, true);
+                }
+
+                file_put_contents($path, $content);
+            }
+
+            $process = new Process(
+                ['docker', 'compose', '--project-directory', $dir, '-f', $dir . '/compose.yaml', 'config', '-q'],
+                $dir,
+            );
+            $process->run();
+
+            Assert::assertTrue(
+                $process->isSuccessful(),
+                'The generated compose.yaml is rejected by `docker compose config`: '
+                    . $process->getErrorOutput() . $process->getOutput(),
+            );
+        } finally {
+            $this->removeComposeDirectory($dir);
+        }
+    }
+
+    private function removeComposeDirectory(string $dir): void
+    {
+        foreach ((array) scandir($dir) as $entry) {
+            if ('.' === $entry || '..' === $entry) {
+                continue;
+            }
+
+            $path = $dir . '/' . $entry;
+            if (is_dir($path)) {
+                $this->removeComposeDirectory($path);
+
+                continue;
+            }
+
+            unlink($path);
+        }
+
+        rmdir($dir);
     }
 
     /**
@@ -524,6 +729,26 @@ trait DockerComposeTrait
             self::COMPOSE_SSH_PRIVATE_KEY . PHP_EOL,
             $this->ansibleKeyFileContent,
             'The SSH private key has not been materialized from the cluster credentials',
+        );
+
+        //The credentials' CA certificate field carries the SSH host public key: the factory binds it to the
+        //cluster host in a known_hosts file, and the runner enforces a strict host key checking against it.
+        Assert::assertSame(
+            "{$this->expectedComposeSshHost} {$this->expectedComposeKnownHosts}" . PHP_EOL,
+            $this->ansibleKnownHostsContent,
+            'The SSH known_hosts has not been materialized from the cluster credentials',
+        );
+
+        Assert::assertSame(
+            [
+                'ANSIBLE_NOCOLOR' => '1',
+                'ANSIBLE_FORCE_COLOR' => '0',
+                'ANSIBLE_HOST_KEY_CHECKING' => 'True',
+                'ANSIBLE_SSH_COMMON_ARGS' => '-o UserKnownHostsFile=/' . self::COMPOSE_KNOWN_HOSTS_FILE_NAME
+                    . ' -o StrictHostKeyChecking=yes',
+            ],
+            $run['env'],
+            'The Ansible environment set on the "' . $stage . '" process is not the expected one',
         );
     }
 
@@ -644,6 +869,11 @@ trait DockerComposeTrait
         }
         foreach ($this->traefikArtifacts as $content) {
             file_put_contents($dir . '/traefik.yml', $content);
+        }
+        //The referenced files tree is rebuilt from scratch: a stale file (a removed key, a renamed secret)
+        //would otherwise stay in the golden set and fail the comparison.
+        if (is_dir($dir . '/refs')) {
+            $this->removeComposeDirectory($dir . '/refs');
         }
         foreach ($this->referencedFiles as $relative => $content) {
             $target = $dir . '/refs/' . $relative;

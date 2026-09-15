@@ -32,6 +32,7 @@ use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 
 use function bin2hex;
 use function hash;
+use function parse_url;
 use function password_hash;
 use function random_bytes;
 
@@ -41,9 +42,16 @@ use const PASSWORD_BCRYPT;
  * Mint the per-account private registry credentials (username = account namespace, random password, bcrypt
  * htpasswd line) and a dedicated container name, then stage both the credential fields consumed by
  * {@see \Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential} and the Ansible `extraVars` used by
- * the registry playbook. The registry is reachable only over the external private network by its container name,
- * mirroring the Kubernetes {@see \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\
- * CreateRegistryDeployment} but provisioned over SSH/Ansible on the remote Docker host.
+ * the registry playbook.
+ *
+ * The registry container lives on the external private network, but neither the worker (Buildah push) nor the
+ * Docker host daemon (`docker compose up` pull) can resolve a container name: the registry is therefore exposed by
+ * the host's Traefik on the `websecure` entrypoint under the per-account host name
+ * `<namespace>-registry.<docker host>` (a DNS record for this name, or a wildcard on the host, must exist), which is
+ * the `registryUrl` the projects push to and the Compose stack pulls from. The playbook then logs the deploy user
+ * in on that registry so the pull is authenticated. This mirrors the Kubernetes
+ * {@see \Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment} (registry behind
+ * an Ingress) but provisioned over SSH/Ansible on the remote Docker host.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -64,7 +72,32 @@ class GenerateRegistryCredentials
         private readonly int|string $registryPort,
         private readonly bool $registryTls,
         private readonly string $deployRoot,
+        private readonly string $traefikContainer = 'traefik',
+        private readonly string $traefikDynamicDir = '/etc/traefik/dynamic',
+        private readonly string $traefikEntrypointWebsecure = 'websecure',
+        private readonly ?string $traefikDefaultCertresolver = null,
     ) {
+    }
+
+    /**
+     * Host of the docker host management address (`ssh://user@host:port`), the registry FQDN is built on it.
+     * Same rule as {@see BuildRegistryInventory}: the host is required, the user and the port are ignored.
+     */
+    private function extractHost(string $masterAddress): string
+    {
+        $parts = parse_url($masterAddress);
+        $host = '';
+        if (false !== $parts) {
+            $host = (string)($parts['host'] ?? '');
+        }
+
+        if ('' === $host) {
+            throw new UnsupportedClusterTypeException(
+                "Invalid docker host address '{$masterAddress}': unable to parse the host to name the registry",
+            );
+        }
+
+        return $host;
     }
 
     public function __invoke(
@@ -88,7 +121,31 @@ class GenerateRegistryCredentials
         $password = hash('sha256', bin2hex(random_bytes(32)) . $accountNamespace);
         $htpasswd = $username . ':' . password_hash($password, PASSWORD_BCRYPT);
 
-        $registryUrl = $containerName . ':' . $port;
+        $registryHost = $containerName . '.' . $this->extractHost($cluster->masterAddress);
+        //Bare host, no scheme and no port: `Image::getUrl()` prefixes the image names with it and Buildah logs in
+        //on it, Traefik terminates the TLS on the websecure entrypoint.
+        $registryUrl = $registryHost;
+
+        $extraVars = [
+            'registry_container' => $containerName,
+            'registry_host' => $registryHost,
+            'registry_image' => $this->registryImage,
+            'registry_network' => $this->registryNetwork,
+            'registry_port' => $port,
+            'registry_tls' => $this->registryTls,
+            'registry_account' => $username,
+            'registry_password' => $password,
+            'registry_htpasswd' => $htpasswd,
+            'registry_volume' => $volumeName,
+            'deploy_root' => $this->deployRoot,
+            'traefik_container' => $this->traefikContainer,
+            'traefik_dynamic_dir' => $this->traefikDynamicDir,
+            'traefik_entrypoint_websecure' => $this->traefikEntrypointWebsecure,
+        ];
+
+        if (!empty($this->traefikDefaultCertresolver)) {
+            $extraVars['traefik_default_certresolver'] = $this->traefikDefaultCertresolver;
+        }
 
         $manager->updateWorkPlan([
             'registryUrl' => $registryUrl,
@@ -97,16 +154,7 @@ class GenerateRegistryCredentials
             'registryConfigName' => $configName,
             'kubeNamespace' => $accountNamespace,
             'persistentVolumeClaimName' => $volumeName,
-            'extraVars' => [
-                'registry_container' => $containerName,
-                'registry_image' => $this->registryImage,
-                'registry_network' => $this->registryNetwork,
-                'registry_port' => $port,
-                'registry_tls' => $this->registryTls,
-                'registry_htpasswd' => $htpasswd,
-                'registry_volume' => $volumeName,
-                'deploy_root' => $this->deployRoot,
-            ],
+            'extraVars' => $extraVars,
         ]);
 
         return $this;

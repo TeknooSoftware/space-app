@@ -173,13 +173,17 @@ by the cluster `type`; Space only wires them and adds the type-aware account pro
 - `PersistSshIdentity` — guards `instanceof DockerComposeCluster`, stages the SSH key + known_hosts + compose
   namespace onto the workplan for the reused `PersistEnvironment` step.
 - `BuildRegistryInventory`, `GenerateRegistryCredentials`, `RunRegistryPlaybook` — build the single-host
-  inventory, generate htpasswd credentials, and run the registry playbook via the East PaaS
-  `RunnerFactoryInterface` (no custom runner).
+  inventory, generate htpasswd credentials and the registry host name `<namespace>-registry.<docker host>` (the
+  account `registryUrl`, pushed to by the worker and pulled from by the host), and run the registry playbook via
+  the East PaaS `RunnerFactoryInterface` (no custom runner).
 
 `templates/` — `registry.yml`, a single self-contained Ansible playbook (rootless) that renders a dedicated
-`<namespace>-registry` container on an internal-only network. The compose file is inlined in the playbook as
-the `_registry_compose_config` var and written with `copy: content:` — the PHP runner ships only the one
-playbook path, so no sidecar `.j2` would be resolvable next to it.
+`<namespace>-registry` container on the internal-only registry network, exposes it through the host's Traefik
+(connects Traefik to that network, drops a `<namespace>-registry.yml` dynamic file in the watched directory) and
+logs the deploy user in on it (`docker login`, so `docker compose up` can pull). The compose and Traefik files are
+inlined in the playbook as the `_registry_compose_config` / `_registry_traefik_config` vars and written with
+`copy: content:` — the PHP runner ships only the one playbook path, so no sidecar `.j2` would be resolvable next
+to it.
 
 #### Provisioning-plan selection
 

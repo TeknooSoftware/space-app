@@ -1,7 +1,31 @@
 # Teknoo Software - Space - Change Log
 
-## [2.5.0-beta4] - 2026-09-11
+## [2.5.0-beta4] - 2026-09-15
 ### Beta Release
+- Align with East PaaS 5.7.0-beta13 (Docker Compose driver producing a stack that really runs): the Behat golden
+  files of the docker-compose deployments are regenerated (per-key Compose `secrets`/`configs`, per-container
+  `env_file`, Compose resource units, `<project>-private` network, service DNS aliases, project-prefixed Traefik
+  resources, rewritten deploy playbook), the generated `compose.yaml` is validated with `docker compose config`
+  when Docker is available, and the suite now asserts the non-interactive Ansible run (no colors, strict host key
+  checking against the `known_hosts` materialized from the cluster host key), the removal of the per-run working
+  directory and the warning stored in the job history when a public service of a replicated pod cannot publish
+  host ports. Golden files can be regenerated with `SPACE_DC_DUMP_GOLDEN=1` (with `variables_order=EGPCS`).
+- Docker Compose per-account registry: the registry container was only reachable by its container name on the
+  internal registry network, which neither the worker (image push) nor the Docker host daemon (image pull at
+  `docker compose up`) can resolve, and nobody logged the deploy user in. The registry is now exposed through the
+  host's Traefik (`websecure`) as `<namespace>-registry.<docker host>` — the account `registryUrl` — and the
+  registry playbook connects Traefik to the registry network, publishes the Traefik dynamic file and logs the
+  deploy user in on the registry. A DNS record for that name and a certificate on Traefik (ACME resolver or
+  declared certificate) are required.
+- New variables `SPACE_DC_NETWORK_INTERNAL` (project networks with no egress, default `false`) and
+  `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR` (certs directory as seen by the Traefik container, default
+  `SPACE_DC_TRAEFIK_CERTS_DIR`). `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` / `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` are
+  removed: public TCP/UDP services are published as host ports by Compose, not routed by Traefik. The documented
+  default of `SPACE_DC_TIMEOUT` is `900`.
+- Enterprise docker host bootstrap: the Traefik container is now named after `SPACE_DC_TRAEFIK_CONTAINER`
+  (`container_name`), as required by the `docker network connect` run by the deploy and registry playbooks (the
+  Compose-generated `traefik-traefik-1` name made them fail); the TCP/UDP entrypoints and ports are removed, the
+  certs directory is bind-mounted at `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR`.
 - Fix "Nesting level too deep" when saving an `AccountHistory`: the mongodb extension 2.x refuses BSON documents
   nested deeper than 100 levels, and the history chain (`History.previous`, one embedded level per entry) was
   kept at 150 entries. The account history is now limited to `AccountHistory::HISTORY_LIMIT` (90) entries;

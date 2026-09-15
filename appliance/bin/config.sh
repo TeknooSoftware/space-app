@@ -246,14 +246,14 @@ dcAnsibleBinary=""
 dcTimeout=""
 dcDeployRoot=""
 dcNetworkDriver=""
+dcNetworkInternal=""
 dcTraefikContainer=""
 dcTraefikDynamicDir=""
 dcTraefikCertsDir=""
+dcTraefikCertsMountDir=""
 dcTraefikCertResolver=""
 dcTraefikEntrypointWeb=""
 dcTraefikEntrypointWebSecure=""
-dcTraefikEntrypointTcp=""
-dcTraefikEntrypointUdp=""
 dcHttpsBackendInsecureSkipVerify=""
 dcRegistryImage=""
 dcRegistryNetwork=""
@@ -262,17 +262,17 @@ dcRegistryTls=""
 useDockerComposeTarget=$(readForYesOrNo "Configure a Docker Compose deployment target (SPACE_DC_*) [y/n]")
 if [ "$useDockerComposeTarget" = "y" ]; then
   dcAnsibleBinary=$(readAMandatoryResponse "Docker Compose: ansible-playbook binary" "ansible-playbook")
-  dcTimeout=$(readAMandatoryResponse "Docker Compose: Ansible run timeout (seconds)" "300")
+  dcTimeout=$(readAMandatoryResponse "Docker Compose: Ansible run timeout (seconds)" "900")
   dcDeployRoot=$(readAMandatoryResponse "Docker Compose: deploy root on the host" "/opt/paas")
   dcNetworkDriver=$(readAMandatoryResponse "Docker Compose: network driver" "bridge")
+  dcNetworkInternal=$(readForYesOrNoToBool "Docker Compose: internal project networks, no egress from the containers [y/n]")
   dcTraefikContainer=$(readAMandatoryResponse "Docker Compose: Traefik container name" "traefik")
   dcTraefikDynamicDir=$(readAMandatoryResponse "Docker Compose: Traefik dynamic config dir" "/etc/traefik/dynamic")
   dcTraefikCertsDir=$(readAMandatoryResponse "Docker Compose: Traefik certificates dir" "/etc/traefik/certs")
+  dcTraefikCertsMountDir=$(readAMandatoryResponse "Docker Compose: Traefik certificates dir as seen by the Traefik container" "$dcTraefikCertsDir")
   read -r -p "Docker Compose: Traefik default certresolver (leave empty to keep library default) : " dcTraefikCertResolver
   dcTraefikEntrypointWeb=$(readAMandatoryResponse "Docker Compose: Traefik web entrypoint" "web")
   dcTraefikEntrypointWebSecure=$(readAMandatoryResponse "Docker Compose: Traefik websecure entrypoint" "websecure")
-  dcTraefikEntrypointTcp=$(readAMandatoryResponse "Docker Compose: Traefik tcp entrypoint" "tcp")
-  dcTraefikEntrypointUdp=$(readAMandatoryResponse "Docker Compose: Traefik udp entrypoint" "udp")
   dcHttpsBackendInsecureSkipVerify=$(readAMandatoryResponse "Docker Compose: skip TLS verify on HTTPS backends [true/false]" "false")
   dcRegistryImage=$(readAMandatoryResponse "Docker Compose: per-account registry image" "registry:2")
   dcRegistryNetwork=$(readAMandatoryResponse "Docker Compose: per-account registry network" "space-registry")
@@ -587,13 +587,13 @@ if [ "$useDockerComposeTarget" = "y" ]; then
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TIMEOUT" "$dcTimeout"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_DEPLOY_ROOT" "$dcDeployRoot"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_NETWORK_DRIVER" "$dcNetworkDriver"
+  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_NETWORK_INTERNAL" "$dcNetworkInternal"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CONTAINER" "$dcTraefikContainer"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_DYNAMIC_DIR" "$dcTraefikDynamicDir"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CERTS_DIR" "$dcTraefikCertsDir"
+  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR" "$dcTraefikCertsMountDir"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEB" "$dcTraefikEntrypointWeb"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE" "$dcTraefikEntrypointWebSecure"
-  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_TCP" "$dcTraefikEntrypointTcp"
-  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_UDP" "$dcTraefikEntrypointUdp"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY" "$dcHttpsBackendInsecureSkipVerify"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_REGISTRY_IMAGE" "$dcRegistryImage"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_REGISTRY_NETWORK" "$dcRegistryNetwork"
@@ -656,13 +656,13 @@ if [ "$useDockerCompose" = "y" ]; then
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TIMEOUT" "$dcTimeout"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_DEPLOY_ROOT" "$dcDeployRoot"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_NETWORK_DRIVER" "$dcNetworkDriver"
+    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_NETWORK_INTERNAL" "$dcNetworkInternal"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CONTAINER" "$dcTraefikContainer"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_DYNAMIC_DIR" "$dcTraefikDynamicDir"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CERTS_DIR" "$dcTraefikCertsDir"
+    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR" "$dcTraefikCertsMountDir"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEB" "$dcTraefikEntrypointWeb"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE" "$dcTraefikEntrypointWebSecure"
-    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_TCP" "$dcTraefikEntrypointTcp"
-    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_UDP" "$dcTraefikEntrypointUdp"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY" "$dcHttpsBackendInsecureSkipVerify"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_REGISTRY_IMAGE" "$dcRegistryImage"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_REGISTRY_NETWORK" "$dcRegistryNetwork"

@@ -465,23 +465,26 @@ Environnements variables configuration
           provisioned on the Docker host over Ansible; otherwise deployments can use the global OCI registry
           (`SPACE_OCI_GLOBAL_REGISTRY_*`).*
             * `SPACE_DC_ANSIBLE_BINARY` : (string) ansible-playbook binary. `ansible-playbook` by default.
-            * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `300` by default.
+            * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `900` by default.
             * `SPACE_DC_DEPLOY_ROOT` : (string) deploy root on the target host. `/opt/paas` by default.
             * `SPACE_DC_NETWORK_DRIVER` : (string) docker network driver. `bridge` by default.
+            * `SPACE_DC_NETWORK_INTERNAL` : (bool) declare the project networks `internal` (no egress). `false` by
+              default.
             * `SPACE_DC_TRAEFIK_CONTAINER` : (string) Traefik container name. `traefik` by default.
             * `SPACE_DC_TRAEFIK_DYNAMIC_DIR` : (string) Traefik dynamic config dir. `/etc/traefik/dynamic` by
               default.
-            * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir. `/etc/traefik/certs` by default.
+            * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir on the host. `/etc/traefik/certs` by default.
+            * `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR` : (string) the same dir as seen by the Traefik container. Same as
+              `SPACE_DC_TRAEFIK_CERTS_DIR` by default.
             * `SPACE_DC_TRAEFIK_CERTRESOLVER` : (string) Traefik cert resolver name. No default.
             * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEB` : (string) HTTP entrypoint. `web` by default.
             * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE` : (string) HTTPS entrypoint. `websecure` by default.
-            * `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` : (string) TCP entrypoint. `tcp` by default.
-            * `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` : (string) UDP entrypoint. `udp` by default.
             * `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` : (int/bool) skip TLS verify for HTTPS backends.
               `false` by default.
             * `SPACE_DC_REGISTRY_IMAGE` : (string) per-account registry image. `registry:2` by default.
             * `SPACE_DC_REGISTRY_NETWORK` : (string) internal-only Docker network for the registry. `space-registry`
-              by default.
+              by default. The registry is exposed through the host's Traefik as `<namespace>-registry.<docker host>`
+              (DNS record and certificate required).
             * `SPACE_DC_REGISTRY_PORT` : (int) registry port on the internal network. `5000` by default.
             * `SPACE_DC_REGISTRY_TLS` : (int/bool) enable TLS on the per-account registry. `false` by default.
 

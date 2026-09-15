@@ -867,12 +867,12 @@ SPACE_DC_ANSIBLE_BINARY=ansible-playbook
 
 - **Type**: Integer (seconds)
 - **Optional**: Yes
-- **Default**: `300`
+- **Default**: `900`
 - **Maps to**: `teknoo.east.paas.docker-compose.timeout`
 - **Description**: Timeout for a single playbook run
 
 ```bash
-SPACE_DC_TIMEOUT=600
+SPACE_DC_TIMEOUT=900
 ```
 
 #### SPACE_DC_DEPLOY_ROOT
@@ -897,6 +897,20 @@ SPACE_DC_DEPLOY_ROOT=/opt/paas
 
 ```bash
 SPACE_DC_NETWORK_DRIVER=bridge
+```
+
+#### SPACE_DC_NETWORK_INTERNAL
+
+- **Type**: Boolean
+- **Optional**: Yes
+- **Default**: `false`
+- **Maps to**: `teknoo.east.paas.docker-compose.network.internal`
+- **Description**: Declare each project network (`<project>-private`) as `internal: true`: the containers have no
+  egress and are only reachable through Traefik. Off by default (like Kubernetes pods, the containers keep an
+  egress). When enabled, the host ports published by public services are **not** reachable.
+
+```bash
+SPACE_DC_NETWORK_INTERNAL=false
 ```
 
 #### SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY
@@ -943,10 +957,25 @@ SPACE_DC_TRAEFIK_DYNAMIC_DIR=/etc/traefik/dynamic
 - **Optional**: Yes
 - **Default**: `/etc/traefik/certs`
 - **Maps to**: `teknoo.east.paas.docker-compose.traefik.certs_dir`
-- **Description**: Directory holding TLS certificates for Traefik
+- **Description**: Directory on the Docker host where the TLS certificates of the ingresses are pushed (the Traefik
+  container bind-mounts it, see `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR`)
 
 ```bash
 SPACE_DC_TRAEFIK_CERTS_DIR=/etc/traefik/certs
+```
+
+#### SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR
+
+- **Type**: String (path)
+- **Optional**: Yes
+- **Default**: the value of `SPACE_DC_TRAEFIK_CERTS_DIR`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.certs_mount_dir`
+- **Description**: The certificates directory as seen by the Traefik process, i.e. the path where the host
+  directory above is bind-mounted in the Traefik container. The generated dynamic files reference the certificates
+  under this path. Only set it when the mount target differs from the host path.
+
+```bash
+SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR=/etc/traefik/certs
 ```
 
 #### SPACE_DC_TRAEFIK_CERTRESOLVER
@@ -986,37 +1015,30 @@ SPACE_DC_TRAEFIK_ENTRYPOINT_WEB=web
 SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE=websecure
 ```
 
-#### SPACE_DC_TRAEFIK_ENTRYPOINT_TCP
-
-- **Type**: String
-- **Optional**: Yes
-- **Default**: `tcp`
-- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.tcp`
-- **Description**: Traefik entrypoint name for raw TCP services
-
-```bash
-SPACE_DC_TRAEFIK_ENTRYPOINT_TCP=tcp
-```
-
-#### SPACE_DC_TRAEFIK_ENTRYPOINT_UDP
-
-- **Type**: String
-- **Optional**: Yes
-- **Default**: `udp`
-- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.udp`
-- **Description**: Traefik entrypoint name for UDP services
-
-```bash
-SPACE_DC_TRAEFIK_ENTRYPOINT_UDP=udp
-```
+> Public TCP/UDP services of the deployed projects are published as host ports by their Compose stack (`ports:`),
+> not routed by Traefik: there is no TCP/UDP entrypoint to configure (the former `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP`
+> and `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` variables are ignored). A public service on a replicated pod cannot publish
+> host ports; the deployment succeeds with a warning in the job history, expose it through an ingress instead.
 
 ### Per-Account Registry Settings (docker-compose)
 
 When a docker-compose cluster has `support_registry: true` (the default), Space provisions a **per-account
 private OCI registry** as a dedicated `<namespace>-registry` container on the same Docker host, over Ansible.
-It is reachable only over an internal Docker network by its container name (no public route), authenticated with
-htpasswd, and TLS is optional. This is the docker-compose equivalent of the Kubernetes-hosted per-account
-registry — docker-compose clusters do **not** require the Kubernetes-only OCI registry settings below.
+The container is attached to an internal Docker network (`SPACE_DC_REGISTRY_NETWORK`, no host port) and is
+**exposed by the host's Traefik** on the `websecure` entrypoint under the host name
+`<namespace>-registry.<docker host>` (the host of the cluster `master` address): this name is the account
+`registryUrl`, the worker pushes the built images to it and the Docker host pulls them from it at
+`docker compose up` (a container name would be resolvable by neither). The registry playbook also connects Traefik
+to the registry network, drops the Traefik dynamic file `<namespace>-registry.yml` in `SPACE_DC_TRAEFIK_DYNAMIC_DIR`
+and logs the deploy user in on the registry (`~/.docker/config.json`) so the pull is authenticated (htpasswd).
+
+Prerequisites on the Docker host: a DNS record for `<namespace>-registry.<docker host>` (a wildcard `*.<docker host>`
+covers every account) pointing to the host, and a valid certificate for it on Traefik — either an ACME resolver
+(`SPACE_DC_TRAEFIK_CERTRESOLVER`, the certificate is issued on the first request) or a certificate declared in
+Traefik for that name; the worker (`buildah login`/`push`) and the Docker daemon verify it. TLS between Traefik
+and the registry container is optional (`SPACE_DC_REGISTRY_TLS`). This is the docker-compose equivalent of the
+Kubernetes-hosted per-account registry (behind an Ingress) — docker-compose clusters do **not** require the
+Kubernetes-only OCI registry settings below.
 
 #### SPACE_DC_REGISTRY_IMAGE
 
@@ -1036,7 +1058,8 @@ SPACE_DC_REGISTRY_IMAGE=registry:2
 - **Optional**: Yes
 - **Default**: `space-registry`
 - **Maps to**: `teknoo.east.paas.docker-compose.registry.network`
-- **Description**: Name of the external, internal-only Docker network the registry is attached to
+- **Description**: Name of the external, internal-only Docker network the registry is attached to (Traefik is
+  connected to it to reach the registry)
 
 ```bash
 SPACE_DC_REGISTRY_NETWORK=space-registry
@@ -1060,7 +1083,8 @@ SPACE_DC_REGISTRY_PORT=5000
 - **Optional**: Yes
 - **Default**: `false`
 - **Maps to**: `teknoo.east.paas.docker-compose.registry.tls`
-- **Description**: Enable TLS on the per-account registry container
+- **Description**: Enable TLS on the per-account registry container itself (between Traefik and the registry; the
+  public side is always HTTPS through Traefik)
 
 ```bash
 SPACE_DC_REGISTRY_TLS=false
