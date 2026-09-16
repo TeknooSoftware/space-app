@@ -101,6 +101,55 @@ class BuildRegistryInventoryTest extends TestCase
         unlink($captured);
     }
 
+    /**
+     * The inventory names the host the registry playbook will run on: it must be the cluster recorded in the
+     * account registry, not whichever Docker host comes first in the catalog.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $buildCluster = static fn (string $name, string $host): DockerComposeCluster => new DockerComposeCluster(
+            name: $name,
+            sluggyName: $name,
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@' . $host . ':2222',
+            dashboardAddress: '',
+            isExternal: false,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'deployer',
+            caCertificate: 'known-hosts',
+            supportRegistry: true,
+        );
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $buildCluster('first', 'first.example.com'),
+                'recorded' => $buildCluster('recorded', 'recorded.example.com'),
+            ],
+            [],
+        );
+
+        $captured = null;
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(function (array $workPlan) use (&$captured): bool {
+                $captured = $workPlan['inventoryPath'] ?? null;
+
+                return true;
+            }))
+            ->willReturnSelf();
+
+        $filesystem = new Filesystem(new LocalFilesystemAdapter(sys_get_temp_dir()));
+        $step = new BuildRegistryInventory($filesystem, sys_get_temp_dir());
+        $step($manager, $catalog, 'recorded');
+
+        $content = (string) file_get_contents((string) $captured);
+        $this->assertStringContainsString('recorded.example.com', $content);
+        $this->assertStringNotContainsString('first.example.com', $content);
+
+        unlink((string) $captured);
+    }
+
     public function testInvokeThrowsOnUnparsableMasterAddress(): void
     {
         $cluster = new DockerComposeCluster(

@@ -198,6 +198,64 @@ class CreateRegistryDeploymentTest extends TestCase
         );
     }
 
+    /**
+     * The registry deployment, its service and its ingress are created on the cluster recorded in the account
+     * registry: resolving the first registry-capable cluster would rebuild the registry somewhere else.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $buildClient = function (bool $used): Client {
+            $podRepository = $this->createMock(PodRepository::class);
+            $podRepository->expects($used ? $this->once() : $this->never())
+                ->method('setLabelSelector')
+                ->willReturnSelf();
+            $podRepository->method('find')
+                ->willReturn($this->createStub(PodCollection::class));
+
+            $defaultRepository = $this->createStub(Repository::class);
+            $client = $this->createStub(Client::class);
+            $client->method('__call')
+                ->willReturnCallback(
+                    fn (string $name): Repository => match ($name) {
+                        'pods' => $podRepository,
+                        default => $defaultRepository,
+                    }
+                );
+
+            return $client;
+        };
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $this->createClusterConfig($buildClient(false)),
+                'recorded' => $this->createClusterConfig($buildClient(true)),
+            ],
+            [],
+        );
+
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+
+        $this->assertInstanceOf(
+            CreateRegistryDeployment::class,
+            ($this->createRegistryAccount)(
+                manager: $manager,
+                kubeNamespace: 'foo',
+                accountNamespace: 'bar',
+                accountHistory: $accountHistory,
+                persistentVolumeClaimName: 'foo',
+                clusterCatalog: $catalog,
+                registryClusterName: 'recorded',
+            ),
+        );
+    }
+
     public function testInvokeReportsTheErrorToTheManager(): void
     {
         $error = new RuntimeException('boom');

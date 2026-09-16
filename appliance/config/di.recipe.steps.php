@@ -113,6 +113,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\StartLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
@@ -400,6 +401,8 @@ return [
 
     DeleteEnvFromResumes::class => create()
         ->constructor(get(AccountEnvironmentWriter::class)),
+
+    SelectRegistryCluster::class => create(),
 
     LoadRegistryCredential::class => create()
         ->constructor(get(AccountRegistryLoader::class)),

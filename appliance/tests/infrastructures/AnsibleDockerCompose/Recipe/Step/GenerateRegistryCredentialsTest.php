@@ -80,6 +80,49 @@ class GenerateRegistryCredentialsTest extends TestCase
         );
     }
 
+    /**
+     * The registry URL is derived from the Docker host: resolving the wrong cluster would publish the registry
+     * at the wrong address, so the cluster recorded in the account registry must win over the catalog order.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $buildCluster = static fn (string $name, string $host): DockerComposeCluster => new DockerComposeCluster(
+            name: $name,
+            sluggyName: $name,
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@' . $host . ':22',
+            dashboardAddress: '',
+            isExternal: false,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'deployer',
+            caCertificate: 'known-hosts',
+            supportRegistry: true,
+        );
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $buildCluster('first', 'first.example.com'),
+                'recorded' => $buildCluster('recorded', 'recorded.example.com'),
+            ],
+            [],
+        );
+
+        $captured = null;
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(function (array $workPlan) use (&$captured): bool {
+                $captured = $workPlan;
+
+                return true;
+            }))
+            ->willReturnSelf();
+
+        ($this->buildStep())($manager, $catalog, 'acct', 'recorded');
+
+        $this->assertSame('acct-registry.recorded.example.com', $captured['registryUrl']);
+    }
+
     public function testInvokeStagesCredentialsAndExtraVars(): void
     {
         $captured = null;

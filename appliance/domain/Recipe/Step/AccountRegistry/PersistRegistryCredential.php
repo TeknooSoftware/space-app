@@ -62,6 +62,7 @@ class PersistRegistryCredential
         string $registryPassword,
         string $persistentVolumeClaimName,
         AccountHistory $accountHistory,
+        ?string $registryClusterName = null,
     ): self {
         if ($object instanceof SpaceAccount) {
             $object = $object->account;
@@ -79,6 +80,7 @@ class PersistRegistryCredential
             registryConfigName: $registryConfigName,
             registryPassword: $registryPassword,
             persistentVolumeClaimName: $persistentVolumeClaimName,
+            clusterName: $registryClusterName,
         );
 
         $this->writer->save($accountRegistry);

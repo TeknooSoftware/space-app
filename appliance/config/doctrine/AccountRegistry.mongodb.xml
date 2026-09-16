@@ -18,6 +18,7 @@
                name="persistent_volume_claim_name"
                type="string"
                nullable="false"/>
+        <field field-name="clusterName" name="cluster_name" type="string" nullable="true"/>
         <field field-name="createdAt" name="created_at" type="date" nullable="false"/>
         <field field-name="updatedAt" name="updated_at" type="date"/>
         <reference-one field="account" target-document="Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account">

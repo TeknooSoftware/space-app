@@ -42,6 +42,7 @@ use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
 
 /**
@@ -71,6 +72,7 @@ class AccountProvisioningTaskTest extends TestCase
             errorHandler: $this->createStub(AccountTaskErrorHandler::class),
             loadEnvironments: $withOptionalLoaders ? $this->createStub(LoadEnvironments::class) : null,
             loadRegistryCredential: $withOptionalLoaders ? $this->createStub(LoadRegistryCredential::class) : null,
+            selectRegistryCluster: $withOptionalLoaders ? $this->createStub(SelectRegistryCluster::class) : null,
         );
     }
 

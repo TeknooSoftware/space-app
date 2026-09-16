@@ -2,6 +2,17 @@
 
 ## [2.5.0-beta4] - 2026-09-15
 ### Beta Release
+- `AccountRegistry` now records the cluster hosting the registry (`cluster_name`, nullable for compatibility with
+  existing installations). The registry install picks the first cluster declaring the registry support and stores
+  its name; every later operation, the admin reinstall in particular, reuses the recorded cluster instead of
+  re-picking the first one, so a registry is no longer rebuilt on another cluster while its URL, namespace and
+  volume stay on the original one. A registry without a recorded cluster keeps the previous behaviour and gets its
+  cluster recorded on the next reinstall; a recorded cluster missing from the catalog fails the task with an
+  explicit error in the account history.
+- An account cluster of type `docker-compose` no longer forces the registry support on: the value ticked on the
+  cluster form is honoured, as it already was for Kubernetes clusters. Previously any docker-compose cluster of an
+  account was a registry candidate and, account clusters being scanned first, shadowed the platform registry
+  cluster.
 - Fix the admin quota refresh, broken since the account provisioning moved to the `new_task` worker: the refresh
   now loads every environment of the account and re-applies the quota on each one (cluster + namespace), dispatching
   the Kubernetes or Docker Compose quota plan per environment's cluster instead of resolving the cluster type once

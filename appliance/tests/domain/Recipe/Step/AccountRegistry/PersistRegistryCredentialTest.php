@@ -96,6 +96,89 @@ class PersistRegistryCredentialTest extends TestCase
         );
     }
 
+    /**
+     * The registry is bound to the cluster it was installed on: the resolved cluster name must be carried by the
+     * persisted object so a later reinstall targets that same cluster.
+     */
+    public function testInvokeRecordsTheResolvedRegistryClusterName(): void
+    {
+        $account = $this->createStub(Account::class);
+
+        $saved = null;
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (AccountRegistry $registry) use (&$saved): AccountRegistryWriter {
+                $saved = $registry;
+
+                return $this->writer;
+            });
+
+        $this->datesService->expects($this->once())
+            ->method('passMeTheDate')
+            ->willReturnCallback(function ($callback): DatesService {
+                $callback(new DateTime('2026-09-16'));
+
+                return $this->datesService;
+            });
+
+        ($this->persistRegistryCredential)(
+            manager: $this->createStub(ManagerInterface::class),
+            object: $account,
+            kubeNamespace: 'test-namespace',
+            registryUrl: 'https://registry.example.com',
+            registryAccountName: 'user123',
+            registryConfigName: 'config123',
+            registryPassword: 'secret',
+            persistentVolumeClaimName: 'pvc-123',
+            accountHistory: $this->createStub(AccountHistory::class),
+            registryClusterName: 'Registry Cluster',
+        );
+
+        $this->assertInstanceOf(AccountRegistry::class, $saved);
+        $this->assertSame('Registry Cluster', $saved->getClusterName());
+    }
+
+    /**
+     * Without a resolved cluster the registry stays "legacy": the name is null and the next reinstall falls back
+     * to the first cluster supporting the registry, then records it.
+     */
+    public function testInvokeWithoutARegistryClusterNameKeepsItNull(): void
+    {
+        $account = $this->createStub(Account::class);
+
+        $saved = null;
+        $this->writer->expects($this->once())
+            ->method('save')
+            ->willReturnCallback(function (AccountRegistry $registry) use (&$saved): AccountRegistryWriter {
+                $saved = $registry;
+
+                return $this->writer;
+            });
+
+        $this->datesService->expects($this->once())
+            ->method('passMeTheDate')
+            ->willReturnCallback(function ($callback): DatesService {
+                $callback(new DateTime('2026-09-16'));
+
+                return $this->datesService;
+            });
+
+        ($this->persistRegistryCredential)(
+            manager: $this->createStub(ManagerInterface::class),
+            object: $account,
+            kubeNamespace: 'test-namespace',
+            registryUrl: 'https://registry.example.com',
+            registryAccountName: 'user123',
+            registryConfigName: 'config123',
+            registryPassword: 'secret',
+            persistentVolumeClaimName: 'pvc-123',
+            accountHistory: $this->createStub(AccountHistory::class),
+        );
+
+        $this->assertInstanceOf(AccountRegistry::class, $saved);
+        $this->assertNull($saved->getClusterName());
+    }
+
     public function testInvokeWithNonAccountObject(): void
     {
         $object = $this->createStub(ObjectInterface::class);

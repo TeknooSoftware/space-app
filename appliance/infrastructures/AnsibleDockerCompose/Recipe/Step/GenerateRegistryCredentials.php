@@ -104,8 +104,11 @@ class GenerateRegistryCredentials
         ManagerInterface $manager,
         ClusterCatalog $clusterCatalog,
         string $accountNamespace,
+        ?string $registryClusterName = null,
     ): self {
-        $cluster = $clusterCatalog->getClusterForRegistry();
+        //The registry cluster is resolved once per task by `SelectRegistryCluster`; falls back to the
+        //first cluster supporting the registry when the task did not resolve it.
+        $cluster = $clusterCatalog->getClusterForRegistry($registryClusterName);
 
         if (!$cluster instanceof DockerComposeCluster) {
             throw new UnsupportedClusterTypeException('This step only supports docker-compose clusters');

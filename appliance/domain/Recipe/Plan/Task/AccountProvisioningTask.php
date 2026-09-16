@@ -42,6 +42,7 @@ use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
 
 /**
@@ -54,8 +55,9 @@ use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
  * The task only carries identifiers, so this plan rebuilds the workplan the provisioning plans expect:
  * the account (under the `Account` key, required by the sub-plans' ingredients), its history, the cluster
  * catalog extended with the account's own clusters — it must be loaded *before* the bowl, which resolves the
- * cluster type from it —, then, per role, the environments wallet and the registry credential, and the
- * account namespace. The history is persisted at the end whatever happened in the sub-plan.
+ * cluster type from it —, then, per role, the environments wallet, the registry credential and the name of the
+ * cluster hosting the registry, and the account namespace. The history is persisted at the end whatever
+ * happened in the sub-plan.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -84,6 +86,7 @@ class AccountProvisioningTask implements EditablePlanInterface
         private readonly AccountTaskErrorHandler $errorHandler,
         private readonly ?LoadEnvironments $loadEnvironments = null,
         private readonly ?LoadRegistryCredential $loadRegistryCredential = null,
+        private readonly ?SelectRegistryCluster $selectRegistryCluster = null,
     ) {
         $this->fill($recipe);
 
@@ -117,6 +120,12 @@ class AccountProvisioningTask implements EditablePlanInterface
 
         if (null !== $this->loadRegistryCredential) {
             $recipe = $recipe->cook($this->loadRegistryCredential, LoadRegistryCredential::class, [], 35);
+        }
+
+        //The registry roles resolve their cluster before the bowl, which needs its type to pick the Kubernetes
+        //or Docker Compose plan.
+        if (null !== $this->selectRegistryCluster) {
+            $recipe = $recipe->cook($this->selectRegistryCluster, SelectRegistryCluster::class, [], 37);
         }
 
         $recipe = $recipe->cook($this->reloadNamespace, ReloadNamespace::class, [], 40);

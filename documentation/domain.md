@@ -241,6 +241,8 @@ Represents a private OCI image registry for an account.
 - `registryConfigName`: Resource's name to store Registry credential
 - `registryAccountName`, `registryPassword`: Registry credentials
 - `persistentVolumeClaimName`: Name of the volume claim in the cluster
+- `clusterName`: Cluster hosting the registry, as named in the clusters catalog. Nullable: registries created
+  before this field existed have no recorded cluster
 
 **Relationships:**
 
@@ -256,6 +258,10 @@ Represents a private OCI image registry for an account.
   provisioned on the Docker host over Ansible (internal-only network, htpasswd auth, optional TLS)
 - Registry is shared for all environments and clusters
 - Registry can be present on a different Kubernetes cluster
+- The hosting cluster is chosen once, at install, as the first cluster of the account's catalog declaring the
+  registry support, and recorded in `clusterName`. Every later operation, a reinstall in particular, reuses that
+  cluster: a registry is never moved silently. A registry without a recorded cluster falls back to the first
+  cluster supporting the registry, and the name is recorded on the next reinstall
 
 ### AccountHistory
 

@@ -173,6 +173,7 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\StartLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ApiKey\RemoveKey;
@@ -427,6 +428,7 @@ return [
             provisioningBowl: diGet('teknoo.space.provisioning.bowl.registry_install'),
             updateAccountHistory: diGet(UpdateAccountHistory::class),
             errorHandler: diGet(AccountTaskErrorHandler::class),
+            selectRegistryCluster: diGet(SelectRegistryCluster::class),
         ),
 
     'teknoo.space.task.plan.registry_reinstall' => create(AccountProvisioningTask::class)
@@ -443,6 +445,7 @@ return [
             updateAccountHistory: diGet(UpdateAccountHistory::class),
             errorHandler: diGet(AccountTaskErrorHandler::class),
             loadRegistryCredential: diGet(LoadRegistryCredential::class),
+            selectRegistryCluster: diGet(SelectRegistryCluster::class),
         ),
 
     // The quota refresh spans every environment of the account: its plan loops over the wallet and dispatches

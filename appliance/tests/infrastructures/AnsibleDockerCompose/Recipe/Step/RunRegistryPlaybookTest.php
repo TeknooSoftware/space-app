@@ -99,6 +99,52 @@ class RunRegistryPlaybookTest extends TestCase
         $this->assertInstanceOf(RunRegistryPlaybook::class, $result);
     }
 
+    /**
+     * The playbook runs over SSH on the registry host: targeting the first Docker host of the catalog instead of
+     * the cluster recorded in the account registry would provision the registry on the wrong machine.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $buildCluster = static fn (string $name, string $host): DockerComposeCluster => new DockerComposeCluster(
+            name: $name,
+            sluggyName: $name,
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@' . $host . ':22',
+            dashboardAddress: '',
+            isExternal: false,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'deployer',
+            caCertificate: 'known-hosts',
+            supportRegistry: true,
+        );
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $buildCluster('first', 'first.example.com'),
+                'recorded' => $buildCluster('recorded', 'recorded.example.com'),
+            ],
+            [],
+        );
+
+        $factory = $this->createMock(RunnerFactoryInterface::class);
+        $factory->expects($this->once())
+            ->method('__invoke')
+            ->with('ssh://deployer@recorded.example.com:22', $this->anything())
+            ->willReturn($this->createStub(RunnerInterface::class));
+
+        $step = new RunRegistryPlaybook($factory, '/path/to/registry.yml');
+
+        $result = $step(
+            manager: $this->createStub(ManagerInterface::class),
+            clusterCatalog: $catalog,
+            inventoryPath: '/tmp/inventory.ini',
+            extraVars: [],
+            registryClusterName: 'recorded',
+        );
+
+        $this->assertInstanceOf(RunRegistryPlaybook::class, $result);
+    }
+
     public function testInvokeStoresTheResultInTheWorkPlanOnSuccess(): void
     {
         $runner = $this->createMock(RunnerInterface::class);

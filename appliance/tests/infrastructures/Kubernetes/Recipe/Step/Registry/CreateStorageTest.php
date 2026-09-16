@@ -108,6 +108,60 @@ class CreateStorageTest extends TestCase
         );
     }
 
+    /**
+     * The registry cluster comes from `SelectRegistryCluster`, not from the catalog order: an account whose
+     * registry lives on the second cluster must keep provisioning its storage there.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
+        $buildCluster = static fn (string $name, Client $client): ClusterConfig => new ClusterConfig(
+            name: $name,
+            sluggyName: $name,
+            type: 'kubernetes',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $client,
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: false,
+            isExternal: false,
+        );
+
+        $firstClient = $this->createMock(Client::class);
+        $firstClient->expects($this->never())->method('setNamespace');
+
+        $recordedClient = $this->createMock(Client::class);
+        $recordedClient->expects($this->once())->method('setNamespace');
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $buildCluster('first', $firstClient),
+                'recorded' => $buildCluster('recorded', $recordedClient),
+            ],
+            [],
+        );
+
+        $this->assertInstanceOf(
+            CreateStorage::class,
+            ($this->createStorage)(
+                manager: $this->createStub(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountHistory: $accountHistory,
+                storageSizeToClaim: 'foo',
+                clusterCatalog: $catalog,
+                accountRegistry: $this->createStub(AccountRegistry::class),
+                registryClusterName: 'recorded',
+            )
+        );
+    }
+
     public function testInvokeThrowsOnNonKubernetesCluster(): void
     {
         $nonK8s = new class implements ConfigClusterInterface {

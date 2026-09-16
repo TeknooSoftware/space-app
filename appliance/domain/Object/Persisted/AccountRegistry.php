@@ -65,6 +65,13 @@ class AccountRegistry implements
 
     private string $persistentVolumeClaimName = '';
 
+    /**
+     * Name of the cluster hosting this registry, as known by the `ClusterCatalog`. Nullable: registries created
+     * before this field existed have no recorded cluster, and fall back to the first cluster supporting the
+     * registry feature until the next reinstall records the name.
+     */
+    private ?string $clusterName = null;
+
     public function __construct(
         Account $account,
         string $registryNamespace,
@@ -74,6 +81,7 @@ class AccountRegistry implements
         #[SensitiveParameter]
         string $registryPassword,
         string $persistentVolumeClaimName,
+        ?string $clusterName = null,
     ) {
         $this->uniqueConstructorCheck();
 
@@ -84,6 +92,7 @@ class AccountRegistry implements
         $this->registryAccountName = $registryAccountName;
         $this->registryPassword = $registryPassword;
         $this->persistentVolumeClaimName = $persistentVolumeClaimName;
+        $this->clusterName = $clusterName;
     }
 
     public function getAccount(): Account
@@ -119,6 +128,11 @@ class AccountRegistry implements
     public function getPersistentVolumeClaimName(): string
     {
         return $this->persistentVolumeClaimName;
+    }
+
+    public function getClusterName(): ?string
+    {
+        return $this->clusterName;
     }
 
     public function updateRegistry(

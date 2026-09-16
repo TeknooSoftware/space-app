@@ -166,6 +166,14 @@ Account provisioning follows a shorter path, entirely handled by the New Task Wo
    └→ persists AccountEnvironment / AccountRegistry and the result in AccountHistory
 ```
 
+The registry tasks resolve their cluster before the type dispatch: `SelectRegistryCluster` reads the cluster
+recorded in the account's `AccountRegistry` (or, for a first install and for registries predating that field, the
+first cluster of the catalog declaring the registry support) and publishes it as `registryClusterName`. The bowl
+and every registry step use that name, and `PersistRegistryCredential` stores it on the rebuilt registry, so a
+reinstall always lands on the cluster hosting the registry URL, namespace and volume. A recorded cluster missing
+from the catalog fails the task and is reported in the `AccountHistory`, rather than rebuilding the registry
+elsewhere.
+
 The quota refresh is the one account-wide provisioning task: a quota applies to every environment of the account
 (an environment is a cluster plus a namespace), so `RefreshQuotaTask` runs `AccountRefreshQuotaTask` instead, which
 loads the account, its history, clusters and environments, then loops over the whole wallet. At each iteration the

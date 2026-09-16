@@ -62,6 +62,8 @@ class AccountRegistryTest extends TestCase
 
     private string $persistentVolumeClaimName;
 
+    private string $clusterName;
+
     /**
      * {@inheritdoc}
      */
@@ -76,6 +78,7 @@ class AccountRegistryTest extends TestCase
         $this->registryConfigName = '42';
         $this->registryPassword = '42';
         $this->persistentVolumeClaimName = '42';
+        $this->clusterName = 'Demo Kube Cluster';
         $this->accountRegistry = new AccountRegistry(
             $this->account,
             $this->registryNamespace,
@@ -84,7 +87,34 @@ class AccountRegistryTest extends TestCase
             $this->registryConfigName,
             $this->registryPassword,
             $this->persistentVolumeClaimName,
+            $this->clusterName,
         );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testGetClusterName(): void
+    {
+        $this->assertEquals($this->clusterName, $this->accountRegistry->getClusterName());
+    }
+
+    /**
+     * A registry created before the cluster name was recorded hydrates the field to null: the provisioning
+     * steps then fall back to the first cluster supporting the registry.
+     */
+    #[AllowMockObjectsWithoutExpectations]
+    public function testGetClusterNameIsNullForALegacyRegistry(): void
+    {
+        $registry = new AccountRegistry(
+            $this->account,
+            $this->registryNamespace,
+            $this->registryUrl,
+            $this->registryAccountName,
+            $this->registryConfigName,
+            $this->registryPassword,
+            $this->persistentVolumeClaimName,
+        );
+
+        $this->assertNull($registry->getClusterName());
     }
 
     #[AllowMockObjectsWithoutExpectations]

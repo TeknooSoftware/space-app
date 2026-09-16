@@ -181,6 +181,38 @@ class ProvisioningPlanBowlTest extends TestCase
         $this->assertInstanceOf(BowlInterface::class, $result);
     }
 
+    /**
+     * A registry reinstall must resolve its type from the cluster recorded in the account registry (published as
+     * `registryClusterName` by `SelectRegistryCluster`), not from the first registry-capable cluster.
+     */
+    public function testExecuteResolvesRegistryRolesFromTheResolvedRegistryCluster(): void
+    {
+        $plan = $this->createStub(EditablePlanInterface::class);
+
+        $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);
+        $directory->expects($this->once())
+            ->method('registryReinstall')
+            ->with('docker-compose')
+            ->willReturn($plan);
+
+        $bowl = new ProvisioningPlanBowl($directory, ProvisioningPlanBowl::ROLE_REGISTRY_REINSTALL, 0);
+
+        $workPlan = [
+            'clusterCatalog' => new ClusterCatalog(
+                [
+                    'first' => $this->clusterOfType('kubernetes', true),
+                    'recorded' => $this->clusterOfType('docker-compose', true),
+                ],
+                [],
+            ),
+            'registryClusterName' => 'recorded',
+        ];
+
+        $result = $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
+
+        $this->assertInstanceOf(BowlInterface::class, $result);
+    }
+
     public function testExecuteRefusesAQuotaRefreshWithoutClusterName(): void
     {
         $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);

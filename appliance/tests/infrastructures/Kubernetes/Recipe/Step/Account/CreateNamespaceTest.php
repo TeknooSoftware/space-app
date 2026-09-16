@@ -169,6 +169,48 @@ class CreateNamespaceTest extends TestCase
         );
     }
 
+    /**
+     * The registry namespace must be created on the cluster resolved by `SelectRegistryCluster` (the one
+     * recorded in the account registry), not on the first cluster supporting the registry.
+     */
+    public function testInvokeForRegistryUsesTheResolvedRegistryCluster(): void
+    {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['kubeNamespace' => '42foo'])
+            ->willReturnSelf();
+
+        $firstRepository = $this->createMock(NamespaceRepository::class);
+        $firstRepository->expects($this->never())->method('setFieldSelector');
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $this->createClusterConfig($firstRepository),
+                'recorded' => $this->createClusterConfig($this->createRepository(null, true)),
+            ],
+            [],
+        );
+
+        $this->assertInstanceOf(
+            CreateNamespace::class,
+            ($this->createNamespace)(
+                manager: $manager,
+                accountInstance: $this->createAccount(),
+                accountHistory: $accountHistory,
+                accountNamespace: 'foo',
+                clusterCatalog: $catalog,
+                forRegistry: true,
+                registryClusterName: 'recorded',
+            ),
+        );
+    }
+
     public function testInvokeForEnvironmentWithAnOwnedNamespace(): void
     {
         $accountHistory = $this->createMock(AccountHistory::class);

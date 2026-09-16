@@ -282,3 +282,53 @@ Feature: API admin endpoints to administrate accounts
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests must not be deleted
     And the old account registry object has been deleted and remplaced
+
+  Scenario: From the API, as Admin, reinstall account's registry when the account owns another registry cluster
+    Given A Space app instance
+    And A memory document database
+    And a kubernetes client
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And an account clusters "Cluster Company" and a slug "cluster-company"
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to reinstall the account registry
+    Then get a JSON reponse
+    And the serialized success result
+    And Space executes the pending tasks
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
+    And no Kubernetes manifests must not be created on "Cluster Company"
+    And no Kubernetes manifests must not be deleted
+    And the old account registry object has been deleted and remplaced
+    And the account registry is recorded on the cluster "Demo Kube Cluster"
+
+  Scenario: From the API, as Admin, reinstall an account's registry that does not record its cluster
+    Given A Space app instance
+    And A memory document database
+    And a kubernetes client
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication enable for last user
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And the account registry does not record its cluster
+    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    Then it must redirected to the TOTP code page
+    When the user enter a valid TOTP code
+    And get a JWT token for the user
+    And the user logs out
+    When the API is called to reinstall the account registry
+    Then get a JSON reponse
+    And the serialized success result
+    And Space executes the pending tasks
+    And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
+    And no Kubernetes manifests must not be deleted
+    And the account registry is recorded on the cluster "Demo Kube Cluster"

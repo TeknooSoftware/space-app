@@ -160,6 +160,7 @@ trait PersistenceStepsTrait
             registryConfigName: $sac . '-docker-config',
             registryPassword: $sac . '-foobar',
             persistentVolumeClaimName: $sac . '-pvc',
+            clusterName: 'Demo Kube Cluster',
         );
         $accountRegistry->setId($this->generateId());
 
@@ -1351,6 +1352,59 @@ trait PersistenceStepsTrait
         }
     }
 
+    /**
+     * Registries created before the cluster name was recorded hydrate `clusterName` to null: the provisioning
+     * falls back to the first cluster supporting the registry, and records its name on the next reinstall.
+     */
+    #[Given('the account registry does not record its cluster')]
+    public function theAccountRegistryDoesNotRecordItsCluster(): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        /** @var AccountRegistry $registry */
+        foreach ($this->listObjects(AccountRegistry::class) as $registry) {
+            if ($registry->getAccount() !== $account) {
+                continue;
+            }
+
+            $legacy = new AccountRegistry(
+                account: $account,
+                registryNamespace: $registry->getRegistryNamespace(),
+                registryUrl: $registry->getRegistryUrl(),
+                registryAccountName: $registry->getRegistryAccountName(),
+                registryConfigName: $registry->getRegistryConfigName(),
+                registryPassword: $registry->getRegistryPassword(),
+                persistentVolumeClaimName: $registry->getPersistentVolumeClaimName(),
+            );
+            $legacy->setId($registry->getId());
+
+            $this->persistAndRegister($legacy);
+
+            return;
+        }
+
+        Assert::fail('Missing AccountRegistry');
+    }
+
+    #[Then('the account registry is recorded on the cluster :clusterName')]
+    public function theAccountRegistryIsRecordedOnTheCluster(string $clusterName): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        /** @var AccountRegistry $registry */
+        foreach ($this->listObjects(AccountRegistry::class) as $registry) {
+            if ($registry->getAccount() === $account) {
+                Assert::assertSame($clusterName, $registry->getClusterName());
+
+                return;
+            }
+        }
+
+        Assert::fail('Missing AccountRegistry');
+    }
+
     #[Then('the old account registry object has been deleted and remplaced')]
     public function theOldAccountRegistryObjectHasBeenDeletedAndRemplaced(): void
     {
@@ -1370,6 +1424,12 @@ trait PersistenceStepsTrait
                 Assert::assertEquals(
                     $oldAR->getRegistryNamespace(),
                     $ar->getRegistryNamespace(),
+                );
+
+                //A registry stays on the cluster it was installed on: a reinstall must not move it.
+                Assert::assertEquals(
+                    $oldAR->getClusterName(),
+                    $ar->getClusterName(),
                 );
 
                 return;

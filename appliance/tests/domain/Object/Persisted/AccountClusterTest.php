@@ -375,13 +375,40 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(DockerComposeCluster::class, $result);
         $this->assertNotInstanceOf(KubernetesCluster::class, $result);
         $this->assertSame('ssh://deployer@docker-host.example.com:22', $result->masterAddress);
-        $this->assertTrue($result->supportRegistry);
+        //The registry support is what the operator ticked on the cluster form, like for a Kubernetes cluster:
+        //a Docker host must not claim the account registry just by being the first cluster of the account.
+        $this->assertFalse($result->supportRegistry);
 
         $credentials = $result->getCredentials();
         $this->assertSame('-----BEGIN OPENSSH PRIVATE KEY-----KEY', $credentials->getClientKey());
         $this->assertSame('host ssh-ed25519 AAAA', $credentials->getCaCertificate());
         $this->assertSame('deployer', $credentials->getUsername());
         $this->assertSame('', $credentials->getPassword());
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterForDockerComposeSupportingTheRegistry(): void
+    {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: 'DC',
+            slug: 'dc',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@docker-host.example.com:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            caCertificate: 'host ssh-ed25519 AAAA',
+            supportRegistry: true,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'deployer',
+        );
+
+        $result = $accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $result);
+        $this->assertTrue($result->supportRegistry);
     }
 
     #[AllowMockObjectsWithoutExpectations]
