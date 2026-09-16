@@ -102,7 +102,10 @@ class SpaceProjectWriter implements WriterInterface
             static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                 new RuntimeException(
                     message: 'teknoo.space.error.space_project.project.persisting',
-                    code: $error->getCode() > 0 ? $error->getCode() : 500,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 500,
+                    },
                     previous: $error,
                 )
             ),
@@ -139,7 +142,10 @@ class SpaceProjectWriter implements WriterInterface
                 static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                     new RuntimeException(
                         message: 'teknoo.space.error.space_project.project.deleting',
-                        code: $error->getCode() > 0 ? $error->getCode() : 500,
+                        code: match (true) {
+                            $error->getCode() > 0 => $error->getCode(),
+                            default => 500,
+                        },
                         previous: $error,
                     )
                 ),

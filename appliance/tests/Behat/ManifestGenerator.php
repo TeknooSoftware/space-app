@@ -695,8 +695,12 @@ EOF;
 
         // With the v1.2 expose shortcuts, services are generated from the container ({pod}-{container}) and the
         // ingress is named after its service, the compiled deployment is otherwise identical to the explicit one.
-        $phpServiceName = $exposeShortcuts ? 'php-pods-php-run' : 'php-service';
-        $demoServiceName = $exposeShortcuts ? 'demo-nginx' : 'demo';
+        $phpServiceName = 'php-service';
+        $demoServiceName = 'demo';
+        if ($exposeShortcuts) {
+            $phpServiceName = 'php-pods-php-run';
+            $demoServiceName = 'demo-nginx';
+        }
 
         $servicePrefix = '';
         $serviceSuffix = '';
@@ -961,8 +965,15 @@ EOF;
 JSON;
         }
 
-        $translationVolumeEntry = $useImageVolumes
-            ? <<<JSON
+        $translationVolumeEntry = <<<JSON
+{
+                                "name": "extra-myproject-volume",
+                                "emptyDir": []
+                            }
+JSON;
+
+        if ($useImageVolumes) {
+            $translationVolumeEntry = <<<JSON
 {
                                 "name": "extra-myproject-volume",
                                 "image": {
@@ -970,15 +981,13 @@ JSON;
                                     "pullPolicy": "Always"
                                 }
                             }
-JSON
-            : <<<JSON
-{
-                                "name": "extra-myproject-volume",
-                                "emptyDir": []
-                            }
 JSON;
+        }
 
-        $statefulSetInitContainerBlock = $useImageVolumes ? '' : <<<JSON
+        $statefulSetInitContainerBlock = '';
+
+        if (!$useImageVolumes) {
+            $statefulSetInitContainerBlock = <<<JSON
 ,
                         "initContainers": [
                             {
@@ -1001,9 +1010,17 @@ JSON;
                             }
                         ]
 JSON;
+        }
 
-        $statefulSetVolumeEntry = $useImageVolumes
-            ? <<<JSON
+        $statefulSetVolumeEntry = <<<JSON
+{
+                                "name": "extra-{$jobId}-volume",
+                                "emptyDir": []
+                            }
+JSON;
+
+        if ($useImageVolumes) {
+            $statefulSetVolumeEntry = <<<JSON
 {
                                 "name": "extra-{$jobId}-volume",
                                 "image": {
@@ -1011,13 +1028,8 @@ JSON;
                                     "pullPolicy": "Always"
                                 }
                             }
-JSON
-            : <<<JSON
-{
-                                "name": "extra-{$jobId}-volume",
-                                "emptyDir": []
-                            }
 JSON;
+        }
 
         $jobsManifest = '';
         if ($jobsEnabled) {

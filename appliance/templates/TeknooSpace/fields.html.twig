@@ -47,17 +47,17 @@
     {% set parent_label_class = parent_label_class|default(label_attr.class|default('')) %}
     {% if 'checkbox-custom' in parent_label_class %}
         {% set attr = attr|merge({class: (attr.class|default('') ~ ' custom-control-input')|trim}) %}
-        <div class="custom-control custom-checkbox{{ 'checkbox-inline' in parent_label_class ? ' custom-control-inline' }}">
+        <div class="custom-control custom-checkbox{% if 'checkbox-inline' in parent_label_class %} custom-control-inline{% endif %}">
             {{- parent() -}}
         </div>
     {% elseif 'switch-custom' in parent_label_class %}
         {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) %}
-        <div class="form-check form-switch{{ 'switch-inline' in parent_label_class ? ' custom-control-inline' }}">
+        <div class="form-check form-switch{% if 'switch-inline' in parent_label_class %} custom-control-inline{% endif %}">
             {{- parent() -}}
         </div>
     {% else %}
         {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) %}
-        <div class="form-check{{ 'checkbox-inline' in parent_label_class ? ' form-check-inline' }}">
+        <div class="form-check{% if 'checkbox-inline' in parent_label_class %} form-check-inline{% endif %}">
             {{- parent() -}}
         </div>
     {% endif %}

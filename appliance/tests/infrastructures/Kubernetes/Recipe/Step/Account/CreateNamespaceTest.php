@@ -122,7 +122,12 @@ class CreateNamespaceTest extends TestCase
         $repository->expects($this->once())
             ->method('first')
             ->willReturn($existing);
-        $repository->expects($applied ? $this->once() : $this->never())
+        $applyExpectation = $this->never();
+        if ($applied) {
+            $applyExpectation = $this->once();
+        }
+
+        $repository->expects($applyExpectation)
             ->method('apply')
             ->willReturn([]);
 

@@ -30,8 +30,12 @@
                     {% endif %}
 
                     {# Display current two-factor provider #}
+                    {% set formAction = path(checkPathRoute) %}
+                    {% if checkPathUrl %}
+                        {% set formAction = checkPathUrl %}
+                    {% endif %}
                     <form class="form"
-                          action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
+                          action="{{ formAction }}" method="post">
                         <h5 class="mb-3 text-center">{{ 'teknoo.space.text.2fa'|trans }}</h5>
                         <div class="form-floating mb-2">
                             <input

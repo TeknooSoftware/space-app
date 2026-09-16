@@ -58,9 +58,21 @@ class AccountProvisioningTaskTest extends TestCase
 {
     private function buildPlan(bool $withOptionalLoaders): AccountProvisioningTask
     {
+        $taskClass = InstallRegistryTask::class;
+        $loadEnvironments = null;
+        $loadRegistryCredential = null;
+        $selectRegistryCluster = null;
+
+        if ($withOptionalLoaders) {
+            $taskClass = ReinstallEnvironmentTask::class;
+            $loadEnvironments = $this->createStub(LoadEnvironments::class);
+            $loadRegistryCredential = $this->createStub(LoadRegistryCredential::class);
+            $selectRegistryCluster = $this->createStub(SelectRegistryCluster::class);
+        }
+
         return new AccountProvisioningTask(
             recipe: $this->createStub(RecipeInterface::class),
-            taskClass: $withOptionalLoaders ? ReinstallEnvironmentTask::class : InstallRegistryTask::class,
+            taskClass: $taskClass,
             loadObject: $this->createStub(LoadObject::class),
             accountLoader: $this->createStub(LoaderInterface::class),
             clusterCatalog: $this->createStub(ClusterCatalog::class),
@@ -70,9 +82,9 @@ class AccountProvisioningTaskTest extends TestCase
             provisioningBowl: $this->createStub(BowlInterface::class),
             updateAccountHistory: $this->createStub(UpdateAccountHistory::class),
             errorHandler: $this->createStub(AccountTaskErrorHandler::class),
-            loadEnvironments: $withOptionalLoaders ? $this->createStub(LoadEnvironments::class) : null,
-            loadRegistryCredential: $withOptionalLoaders ? $this->createStub(LoadRegistryCredential::class) : null,
-            selectRegistryCluster: $withOptionalLoaders ? $this->createStub(SelectRegistryCluster::class) : null,
+            loadEnvironments: $loadEnvironments,
+            loadRegistryCredential: $loadRegistryCredential,
+            selectRegistryCluster: $selectRegistryCluster,
         );
     }
 

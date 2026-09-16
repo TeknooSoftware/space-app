@@ -74,9 +74,14 @@ class ApiKeysAuthenticatedUserProviderTest extends TestCase
 
     private function createUser(?ApiKeyToken $token): User
     {
+        $tokens = [];
+        if (null !== $token) {
+            $tokens = [$token];
+        }
+
         $user = (new User())->setEmail('foo@bar');
         $user->setAuthData([
-            new ApiKeysAuth(null === $token ? [] : [$token]),
+            new ApiKeysAuth($tokens),
         ]);
 
         return $user;

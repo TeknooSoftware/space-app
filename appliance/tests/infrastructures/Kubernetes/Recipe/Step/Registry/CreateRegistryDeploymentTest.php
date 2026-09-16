@@ -206,7 +206,12 @@ class CreateRegistryDeploymentTest extends TestCase
     {
         $buildClient = function (bool $used): Client {
             $podRepository = $this->createMock(PodRepository::class);
-            $podRepository->expects($used ? $this->once() : $this->never())
+            $labelSelectorExpectation = $this->never();
+            if ($used) {
+                $labelSelectorExpectation = $this->once();
+            }
+
+            $podRepository->expects($labelSelectorExpectation)
                 ->method('setLabelSelector')
                 ->willReturnSelf();
             $podRepository->method('find')

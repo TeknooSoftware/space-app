@@ -70,7 +70,11 @@ class FormErrorTest extends TestCase
         $formView = new FormView();
         // No 'errors' key or not iterable -> should return empty array
         $result = $this->formError->getFieldErrors($formView);
-        $this->assertSame([], is_array($result) ? $result : iterator_to_array($result));
+        if (!is_array($result)) {
+            $result = iterator_to_array($result);
+        }
+
+        $this->assertSame([], $result);
     }
 
     public function testGetFormErrorWithErrors(): void

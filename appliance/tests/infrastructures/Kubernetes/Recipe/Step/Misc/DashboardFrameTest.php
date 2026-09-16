@@ -141,7 +141,12 @@ class DashboardFrameTest extends TestCase
     {
         $finalResponse = $this->createMock(ResponseInterface::class);
         $finalResponse->method('withBody')->willReturnSelf();
-        $finalResponse->expects(empty($headers) ? $this->never() : $this->once())
+        $withHeaderExpectation = $this->never();
+        if (!empty($headers)) {
+            $withHeaderExpectation = $this->once();
+        }
+
+        $finalResponse->expects($withHeaderExpectation)
             ->method('withHeader')
             ->willReturnSelf();
         $this->responseFactory
