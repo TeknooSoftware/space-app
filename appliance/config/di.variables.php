@@ -35,24 +35,16 @@ use function array_map;
 use function DI\env;
 use function sys_get_temp_dir;
 
-/*
- * MercureBundle turns the hub's protocol version into a `ProtocolVersion` enum case while the Symfony
- * container is compiled, so it can be neither a `%env()%` placeholder nor a `DI\env()` definition,
- * which produces one: the variable is read here, like the `SPACE_DC_*` ones of
- * di.variables.east.paas.php. An unknown value is rejected, with the list of the allowed ones, by the
- * enum node of the bundle when `config/packages/mercure.yaml` is processed.
- */
-$mercureProtocolVersion = ProtocolVersion::tryFrom((string) ($_ENV['MERCURE_PROTOCOL_VERSION'] ?? ''));
-if (empty($mercureProtocolVersion)) {
-    $mercureProtocolVersion = ProtocolVersion::Legacy->value;
-}
+$mercureProtocolVersion = ProtocolVersion::tryFrom(
+    (string) ($_ENV['MERCURE_PROTOCOL_VERSION'] ?? '')
+) ?? ProtocolVersion::Legacy;
 
 return [
     //App variables
     'teknoo.space.hostname' => env('SPACE_HOSTNAME', 'localhost'),
     'teknoo.space.job_root' => env('SPACE_JOB_ROOT', sys_get_temp_dir()),
 
-    'teknoo.space.mercure.protocol_version' => $mercureProtocolVersion,
+    'teknoo.space.mercure.protocol_version' => $mercureProtocolVersion->value,
 
     'teknoo.space.subscription_plan_catalog' => static function (
         ContainerInterface $container

@@ -1691,7 +1691,7 @@ MERCURE_JWT_ISSUER=https://space.example.com
 
 - **Type**: String, `0.x` or `1.0`
 - **Optional**: Yes
-- **Default**: `0.x`
+- **Default**: `0.x`, which an empty or unrecognized value also falls back to
 - **Description**: The Mercure protocol spoken by the hub. It must match the hub actually deployed,
   and the two Docker Compose topologies do not run the same one:
 

@@ -2,6 +2,20 @@
 
 ## [2.5.0-beta4] - 2026-09-15
 ### Beta Release
+- Support of the **Mercure hub 1.0** protocol, selected by the new `MERCURE_PROTOCOL_VERSION` env var
+  (`0.x` by default). It is read at container compilation, so it needs a warmup after a change and the
+  same value on every PHP process.
+- New env var `MERCURE_JWT_ISSUER` (default `https://localhost`), the `iss` claim of the generated
+  tokens, matched by a 1.0 hub against its trusted issuer and ignored by a 0.x one.
+- `compose.fpm.yml` and the legacy stack run `dunglas/mercure:v1` (`MERCURE_IMAGE_TAG` to override) in
+  `1.0`; their unread `ALLOW_ANONYMOUS`, `CORS_ALLOWED_ORIGINS` and `PUBLISH_ALLOWED_ORIGINS` are
+  removed. The FrankenPHP stacks stay in `0.x`, their hub being the Mercure 0.24 module embedded in the
+  image.
+- Fix: the pending pages granted the subscription cookie on the hub URL instead of the topic, and
+  `FetchJobIdFromPending` minted a token authorizing nothing; both only worked through the `anonymous`
+  directive of the hub.
+- Fix: the legacy stack published to `https://localhost/.well-known/mercure`, which its containers
+  cannot reach; it now uses `http://mercure:8181/.well-known/mercure`.
 - The `traefik2` ingress provider type no longer writes any backend annotation. It mapped `https-backend`
   to `traefik.ingress.kubernetes.io/router.entrypoints`, which selects the router's entrypoint and not the
   backend scheme: `false` pinned the router to `web` (the host then answered `404` on 443), `true` pinned
