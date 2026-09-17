@@ -49,7 +49,7 @@
         "league/flysystem": "^3.36.0",
         "league/flysystem-local": "^3.35.3",
         "league/mime-type-detection": "^1.17",
-        "league/oauth2-client": "^2.9.0",
+        "league/oauth2-client": "^2.9.1",
         "league/oauth2-github": "^3.1.1",
         "league/oauth2-google": "^5",
         "lexik/jwt-authentication-bundle": "^3.2.0",
