@@ -28,11 +28,11 @@ the variables below; the compose files at the repository root apply this split p
 
 | Variables                                                                                                                                                                                                                                                                 | Web                                                 | new_task                              | execute_job                               | history_sent / job_done |
 |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------|-------------------------|
-| `APP_*`, `MONGODB_*`, `TEKNOO_EAST_EXTENSION_*`, `SPACE_HOSTNAME`                                                                                                                                                                                                         | yes                                                 | yes                                   | yes (no MongoDB for `execute_job`)        | yes                     |
+| `APP_*`, `MONGODB_*`, `TEKNOO_EAST_EXTENSION_*`, `SPACE_HOSTNAME`, `MERCURE_PROTOCOL_VERSION` (compile-time, same value everywhere)                                                                                                                                                                                                         | yes                                                 | yes                                   | yes (no MongoDB for `execute_job`)        | yes                     |
 | `MESSENGER_*_DSN`                                                                                                                                                                                                                                                         | `new_task` (producer)                               | `execute_job`, `history_sent`         | `execute_job`, `history_sent`, `job_done` | its own transport       |
 | `TEKNOO_PAAS_SECURITY_*` (message encryption)                                                                                                                                                                                                                             | public key only                                     | public + private keys                 | public + private keys                     | public + private keys   |
 | `SPACE_PERSISTED_VAR_SECURITY_*`                                                                                                                                                                                                                                          | public key, `AGENT_MODE=0`                          | public + private keys, `AGENT_MODE=1` | no                                        | no                      |
-| `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN`                                                                                                                                                                                                                                | yes                                                 | yes (`NewJob` updates)                | no                                        | no                      |
+| `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN`, `MERCURE_JWT_ISSUER`                                                                                                                                                                                                                                | yes                                                 | yes (`NewJob` updates)                | no                                        | no                      |
 | `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS`                                                            | yes                                                 | no                                    | no                                        | no                      |
 | Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`, `SPACE_KUBERNETES_MASTER`/`DASHBOARD`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE`                                                              | yes (dashboard, account clusters, namespace naming) | yes                                   | `SPACE_KUBERNETES_CLIENT_*` only          | no                      |
 | `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_OCI_GLOBAL_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME` | no                                                  | yes                                   | no                                        | no                      |
@@ -1674,6 +1674,64 @@ MERCURE_SUBSCRIBER_URL=https://mercure.example.com/.well-known/mercure
 MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
+#### MERCURE_JWT_ISSUER
+
+- **Type**: String (URL)
+- **Optional**: Yes
+- **Default**: `https://localhost`
+- **Description**: `iss` claim of the tokens minted for the hub. Only read by a Mercure **1.0** hub,
+  where RFC 9068 access tokens require it and where it must match the issuer the hub trusts
+  (its `issuer` directive, `MERCURE_TRUSTED_ISSUERS` in the official image). A 0.x hub ignores it.
+
+```bash
+MERCURE_JWT_ISSUER=https://space.example.com
+```
+
+#### MERCURE_PROTOCOL_VERSION
+
+- **Type**: String, `0.x` or `1.0`
+- **Optional**: Yes
+- **Default**: `0.x`
+- **Description**: The Mercure protocol spoken by the hub. It must match the hub actually deployed,
+  and the two Docker Compose topologies do not run the same one:
+
+| Stack | Hub | `MERCURE_PROTOCOL_VERSION` |
+|---|---|---|
+| `compose.yml` (default), `compose.frankenphp.yml` | Caddy module embedded in `dunglas/frankenphp`, still Mercure 0.24 | unset, i.e. `0.x` |
+| `compose.fpm.yml`, and its legacy httpd variant `compose.legacy.override.yml` | dedicated `dunglas/mercure:v1` container | `1.0`, set on every PHP service |
+
+The FrankenPHP stacks will move to `1.0` as soon as FrankenPHP ships a Mercure 1.0 module (it embeds
+`github.com/dunglas/mercure v0.24.2` today). The hub tag stays overridable with
+`MERCURE_IMAGE_TAG=v0.24` to roll the FPM stack back, which then also means setting
+`MERCURE_PROTOCOL_VERSION=0.x` on its PHP services.
+
+```bash
+MERCURE_PROTOCOL_VERSION=1.0
+```
+
+**This variable is read while the Symfony container is compiled**, in `appliance/config/di.variables.php`,
+and not at runtime like every other one: MercureBundle turns the value into a `ProtocolVersion` enum
+case during compilation, so an `%env()%` placeholder, which only gets its value at runtime, can not be
+used. Two consequences: a `./space.sh warmup` is required after changing it (it is already part of the
+install flow), and it must carry the same value for every PHP process of a stack — all the more so with
+Docker Compose, where `var/cache` is shared through the mounted volume, including when switching from
+one stack to the other.
+
+On the FPM and legacy stacks the workers publish through the internal
+`http://mercure:8181/.well-known/mercure` while the browser subscribes through the httpd proxy at
+`https://localhost/hub/.well-known/mercure`. A 1.0 hub derives the audience it expects from each
+request, so the two URLs differing would make every publication fail with a `401`; the hub therefore
+pins `resource_identifier` to the public URL, which is also the `aud` claim of the generated tokens.
+`MERCURE_TRUSTED_ISSUERS` on the hub and `MERCURE_JWT_ISSUER` on the PHP services must likewise be
+the same value.
+
+Switching the parameter to `1.0` changes three things at once, and all of them are handled by the
+code: the subscription query parameter becomes `match` instead of `topic`, the generated JWT becomes
+an RFC 9068 access token carrying `authorization_details` (hence `MERCURE_JWT_ISSUER`), and the
+subscriber cookie is renamed `__Secure-mercure_access_token`, which requires the hub public URL to be
+served over HTTPS. Switch it only once **every** process talks to a 1.0 hub, and update the hub
+configuration accordingly (`issuer` block instead of `publisher_jwt`/`subscriber_jwt`).
+
 ### Job Notification
 
 #### SPACE_NEW_TASK_WAITING_TIME
@@ -1820,6 +1878,8 @@ SPACE_MERCURE_PUBLISHING_ENABLED=1
 MERCURE_PUBLISH_URL=http://mercure:3000/.well-known/mercure
 MERCURE_SUBSCRIBER_URL=https://mercure.example.com/.well-known/mercure
 MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+MERCURE_JWT_ISSUER=https://space.example.com
+MERCURE_PROTOCOL_VERSION=1.0
 ###< mercure ###
 
 ###> extensions ###

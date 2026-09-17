@@ -291,6 +291,11 @@ Environnements variables configuration
           the final job page when it is started. *Optional*
         * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+        * `MERCURE_JWT_ISSUER` : (string) `iss` claim of the generated tokens, read by a Mercure 1.0 hub only,
+          where it must match the issuer it trusts. *Optional*
+        * `MERCURE_PROTOCOL_VERSION` : (string) `0.x` (default) or `1.0`, the protocol spoken by the hub. Read
+          while the container is compiled, so it needs a warmup after a change and the same value on every
+          PHP process. *Optional*
     * JWT :
         * `SPACE_JWT_SECRET_KEY` : (string) Path to the private key used to sign JWT tokens.
         * `SPACE_JWT_PUBLIC_KEY` : (string) Path to the public key used to verify JWT tokens.
@@ -414,6 +419,11 @@ Environnements variables configuration
           the final job page when it is started. *Optional*
         * `MERCURE_PUBLISH_URL` : (string) Mercure url to push the job page url to follow the deployment. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+        * `MERCURE_JWT_ISSUER` : (string) `iss` claim of the generated tokens, read by a Mercure 1.0 hub only,
+          where it must match the issuer it trusts. *Optional*
+        * `MERCURE_PROTOCOL_VERSION` : (string) `0.x` (default) or `1.0`, the protocol spoken by the hub. Read
+          while the container is compiled, so it needs a warmup after a change and the same value on every
+          PHP process. *Optional*
 
     * New task worker (account provisioning, `messenger:consume new_task`) : this worker installs and reinstalls
       the per-account registries and environments, refreshes quotas and tears down removed environments, so it

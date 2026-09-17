@@ -9,19 +9,25 @@ volumes:
     mongo_data:
 services:
     mercure:
-        image: dunglas/mercure:latest
+        # Mercure 1.0 hub. The stacks running a dedicated hub container (this one and the legacy
+        # httpd one) speak the 1.0 protocol; the FrankenPHP stacks stay on 0.x because their hub
+        # is the Caddy module embedded in the image, still a 0.24 one. Both sides must agree, so
+        # every PHP service of this stack sets MERCURE_PROTOCOL_VERSION=1.0 below. The tag is kept
+        # overridable (MERCURE_IMAGE_TAG=v0.24) for a rollback to the 0.x protocol, which then also
+        # means setting MERCURE_PROTOCOL_VERSION back to `0.x` on those services.
+        image: dunglas/mercure:${MERCURE_IMAGE_TAG:-v1}
         ports:
             - 8181:8181
         environment:
             SERVER_NAME: ':8181'
+            # Binds the `iss` claim the hub accepts: must match MERCURE_JWT_ISSUER of the PHP services
+            MERCURE_TRUSTED_ISSUERS: 'https://localhost'
             MERCURE_PUBLISHER_JWT_ALG: 'HS256'
             MERCURE_SUBSCRIBER_JWT_ALG: 'HS256'
-            PUBLISH_ALLOWED_ORIGINS: '*'
-            ALLOW_ANONYMOUS: 1
             MERCURE_EXTRA_DIRECTIVES: |
+                resource_identifier https://localhost/hub/.well-known/mercure
                 cors_origins https://localhost
                 anonymous
-            CORS_ALLOWED_ORIGINS: '*'
         volumes:
             - caddy_data:/data
             - caddy_config:/config
@@ -79,6 +85,7 @@ services:
             - ./appliance/:/var/www/space
         working_dir: /var/www/space
         environment:
+            - MERCURE_PROTOCOL_VERSION=1.0
             - TEKNOO_EAST_EXTENSION_FILE=/var/www/space/extensions/enabled.json
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - MAILER_REPLY_TO_NAME=Teknoo Space - Support
@@ -124,6 +131,7 @@ services:
         working_dir: /var/www/space
         command: ["bin/console", "messenger:consume", "-vv", "new_task"]
         environment:
+            - MERCURE_PROTOCOL_VERSION=1.0
             - MONGODB_NAME=teknoo_space
             - SPACE_CLUSTER_ISSUER=lets-encrypt
             - SPACE_HOSTNAME=localhost
@@ -177,6 +185,7 @@ services:
         working_dir: /var/www/space
         command: ["bin/console", "messenger:consume", "-vv", "job_done"]
         environment:
+            - MERCURE_PROTOCOL_VERSION=1.0
             - MONGODB_NAME=teknoo_space
             - SPACE_HOSTNAME=localhost
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
@@ -210,6 +219,7 @@ services:
         working_dir: /var/www/space
         command: ["bin/console", "messenger:consume", "-vv", "history_sent"]
         environment:
+            - MERCURE_PROTOCOL_VERSION=1.0
             - MONGODB_NAME=teknoo_space
             - SPACE_HOSTNAME=localhost
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
@@ -241,6 +251,7 @@ services:
         working_dir: /var/www/space
         command: ["bin/console", "messenger:consume", "-vv", "execute_job"]
         environment:
+            - MERCURE_PROTOCOL_VERSION=1.0
             - SPACE_HOSTNAME=localhost
             - SPACE_JOB_ROOT=/tmp
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem

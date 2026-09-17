@@ -62,6 +62,9 @@ services:
             - MAILER_FORBIDDEN_WORDS=.ru,dating,ericjones,SpellPerfect,bit.ly,love,sex,btc,crypto,misspelled,http://,https://bul.tc
             - MAILER_REPLY_TO_NAME=Teknoo Space - Support
             - MAILER_SENDER_NAME=Teknoo Space App
+            # The hub is the Caddy Mercure module embedded in the FrankenPHP image, still a
+            # 0.24 one, so this stack speaks the 0.x protocol: MERCURE_PROTOCOL_VERSION is
+            # left unset, its default being `0.x`.
             - MERCURE_PUBLISHER_JWT_ALG=HS256
             - MERCURE_SUBSCRIBER_JWT_ALG=HS256
             - MONGODB_NAME=teknoo_space

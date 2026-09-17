@@ -42,6 +42,10 @@ Two publishers in `infrastructures/Symfony/Mercure/` broadcast real-time updates
 (triggers browser redirect after job completion) and **TaskErrorPublisher** (error notifications). Clients
 subscribe via the Mercure JS library with JWT auth.
 
+The protocol version spoken by the hub comes from the `MERCURE_PROTOCOL_VERSION` env var (`0.x` by default,
+`1.0` supported), read at container compilation in `config/di.variables.php` because MercureBundle resolves
+it there — hence a warmup after a change, and the same value on every PHP process.
+
 → `documentation/worker.md#mercure-real-time-updates` · `documentation/architecture.md#9-mercure-publishers`
 
 ## Liveness Pinging

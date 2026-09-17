@@ -29,6 +29,8 @@ use Symfony\Component\HttpClient\Chunk\ServerSentEvent;
 use Symfony\Component\HttpClient\EventSourceHttpClient;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\HubRegistry;
+use Symfony\Component\Mercure\Jwt\Grant;
+use Symfony\Component\Mercure\ProtocolVersion;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Teknoo\East\Common\View\ParametersBag;
@@ -58,21 +60,32 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
     ) {
     }
 
+    private function getTopicUrl(string $taskId): string
+    {
+        return $this->urlGenerator->generate(
+            name: $this->topicRoute,
+            parameters: [
+                'taskId' => $taskId,
+            ],
+            referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+    }
+
     private function getMercureUrl(
         HubInterface $hub,
+        string $topicUrl,
         string $taskId,
     ): string {
+        // The Mercure protocol 1.0 replaced the `topic` query parameter by matcher-typed ones,
+        // `match` being the exact matcher. `lastEventID` is kept by both versions.
+        $matcher = match ($hub->getProtocolVersion()) {
+            ProtocolVersion::V1 => 'match',
+            ProtocolVersion::Legacy => 'topic',
+        };
+
         $url = $hub->getPublicUrl();
 
-        $url .= '?topic=' . rawurlencode(
-            $this->urlGenerator->generate(
-                name: $this->topicRoute,
-                parameters: [
-                    'taskId' => $taskId,
-                ],
-                referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
-            )
-        );
+        $url .= '?' . $matcher . '=' . rawurlencode($topicUrl);
 
         return $url . ('&lastEventID=' . $taskId);
     }
@@ -96,8 +109,16 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
         }
 
         $hub = $this->hubRegistry->getHub();
-        $url = $this->getMercureUrl($hub, $taskId);
-        $jwt = $hub->getFactory()?->create();
+        $topicUrl = $this->getTopicUrl($taskId);
+        $url = $this->getMercureUrl($hub, $topicUrl, $taskId);
+        // Grant the subscription on the topic actually listened to: without it the token
+        // authorizes nothing and the connection only works on a hub allowing anonymous
+        // subscribers to public updates.
+        $jwt = $hub->getFactory()?->create(
+            [
+                new Grant([Grant::ACTION_SUBSCRIBE], [$topicUrl]),
+            ],
+        );
 
         $this->sseClient->reset();
         $source = $this->sseClient->connect(

@@ -3,10 +3,6 @@ services:
         build:
             args:
                 MONGO_VERSION: 8.3
-    mercure:
-        environment:
-            - MERCURE_PUBLISHER_JWT_KEY=ToChange!
-            - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
     web:
         environment:
             - APP_ENV=dev

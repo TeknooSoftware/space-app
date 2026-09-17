@@ -3,8 +3,20 @@ mercure:
         default:
             url: '%env(MERCURE_PUBLISH_URL)%'
             public_url: '%env(MERCURE_SUBSCRIBER_URL)%'
+            # Driven by the MERCURE_PROTOCOL_VERSION environment variable, read in
+            # `config/di.variables.php`: MercureBundle turns this value into a `ProtocolVersion`
+            # enum case while the container is compiled, so an `%env()%` placeholder, which only
+            # gets its value at runtime, can not be used here.
+            protocol_version: '%teknoo.space.mercure.protocol_version%'
             jwt:
                 secret: '%env(MERCURE_JWT_TOKEN)%'
                 publish: [ '*' ]
                 subscribe: [ '*' ]
                 algorithm: 'hmac.sha256'
+                # Required by the RFC 9068 access tokens of the Mercure protocol 1.0, and ignored
+                # by a 0.x hub, which only reads the `mercure` claim. `iss` must match the issuer
+                # trusted by the hub; `aud` is derived from `public_url`.
+                claims:
+                    iss: '%env(default:teknoo.space.default.mercure.jwt_issuer:MERCURE_JWT_ISSUER)%'
+                    sub: 'teknoo-space'
+                    client_id: 'teknoo-space'

@@ -37,7 +37,9 @@ use Symfony\Component\HttpClient\EventSourceHttpClient;
 use Symfony\Component\HttpClient\Response\ResponseStream;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\HubRegistry;
+use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Mercure\Jwt\TokenFactoryInterface;
+use Symfony\Component\Mercure\ProtocolVersion;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\HttpClient\ChunkInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -73,6 +75,15 @@ class FetchJobIdFromPendingTest extends TestCase
 
     private string $pendingTaskRoute;
 
+    private string $topicUrl;
+
+    private ?string $requestedUrl = null;
+
+    /**
+     * @var array<int, Grant>
+     */
+    private array $requestedGrants = [];
+
     /**
      * {@inheritdoc}
      */
@@ -80,13 +91,12 @@ class FetchJobIdFromPendingTest extends TestCase
     {
         parent::setUp();
 
-        $hubMock = $this->createStub(HubInterface::class);
-        $tokenFactory = $this->createStub(TokenFactoryInterface::class);
-        $tokenFactory->method('create')->willReturn('mock-jwt-token');
-        $hubMock->method('getFactory')->willReturn($tokenFactory);
+        $this->topicUrl = 'https://localhost/job/pending/foo';
+        $this->hub = $this->createHubRegistry(ProtocolVersion::Legacy);
 
-        $this->hub = new HubRegistry($hubMock);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
+        $this->generator->method('generate')->willReturn($this->topicUrl);
+
         $this->sseClient = new EventSourceHttpClient(
             $this->httpClient = $this->createStub(HttpClientInterface::class),
         );
@@ -106,9 +116,36 @@ class FetchJobIdFromPendingTest extends TestCase
 
         $this->httpClient
             ->method('request')
-            ->willReturn($this->response);
+            ->willReturnCallback(
+                function (string $method, string $url): ResponseInterface {
+                    $this->requestedUrl = $url;
+
+                    return $this->response;
+                }
+            );
 
         $this->pendingTaskRoute = 'foo';
+    }
+
+    private function createHubRegistry(ProtocolVersion $protocolVersion): HubRegistry
+    {
+        $tokenFactory = $this->createStub(TokenFactoryInterface::class);
+        $tokenFactory
+            ->method('create')
+            ->willReturnCallback(
+                function (array $grants = [], array $additionalClaims = []): string {
+                    $this->requestedGrants = $grants;
+
+                    return 'mock-jwt-token';
+                }
+            );
+
+        $hubMock = $this->createStub(HubInterface::class);
+        $hubMock->method('getFactory')->willReturn($tokenFactory);
+        $hubMock->method('getProtocolVersion')->willReturn($protocolVersion);
+        $hubMock->method('getPublicUrl')->willReturn('https://localhost/.well-known/mercure');
+
+        return new HubRegistry($hubMock);
     }
 
     /**
@@ -292,6 +329,66 @@ class FetchJobIdFromPendingTest extends TestCase
             $this->createStub(ManagerInterface::class),
             $this->createStub(ParametersBag::class),
             'foo',
+        );
+    }
+
+    public function testInvokeSubscribesToTheTopicWithTheLegacyProtocol(): void
+    {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        ($this->buildStep())(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+
+        $this->assertSame(
+            'https://localhost/.well-known/mercure'
+                . '?topic=' . rawurlencode($this->topicUrl)
+                . '&lastEventID=foo',
+            $this->requestedUrl,
+        );
+
+        $this->assertEquals(
+            [new Grant([Grant::ACTION_SUBSCRIBE], [$this->topicUrl])],
+            $this->requestedGrants,
+        );
+    }
+
+    public function testInvokeSubscribesToTheTopicWithTheProtocolOneDotZero(): void
+    {
+        $this->hub = $this->createHubRegistry(ProtocolVersion::V1);
+
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        ($this->buildStep())(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+
+        $this->assertSame(
+            'https://localhost/.well-known/mercure'
+                . '?match=' . rawurlencode($this->topicUrl)
+                . '&lastEventID=foo',
+            $this->requestedUrl,
+        );
+
+        $this->assertEquals(
+            [new Grant([Grant::ACTION_SUBSCRIBE], [$this->topicUrl])],
+            $this->requestedGrants,
         );
     }
 }

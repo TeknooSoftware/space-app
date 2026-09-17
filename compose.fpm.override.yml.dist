@@ -15,6 +15,10 @@ services:
             - MAILER_DSN=ToChange!
             - MAILER_REPLY_TO_ADDRESS=ToChange!
             - MAILER_SENDER_ADDRESS=ToChange!
+            # MERCURE_JWT_ISSUER must match the `MERCURE_TRUSTED_ISSUERS` of the mercure service,
+            # and MERCURE_SUBSCRIBER_URL its `resource_identifier` directive: the hub of this stack
+            # speaks the Mercure 1.0 protocol, so set teknoo.space.mercure.protocol_version to `1.0`.
+            - MERCURE_JWT_ISSUER=ToChange!
             - MERCURE_JWT_TOKEN=ToChange!
             - MERCURE_PUBLISH_URL=ToChange!
             - MERCURE_SUBSCRIBER_URL=ToChange!
@@ -61,6 +65,10 @@ services:
         environment:
             - APP_ENV=dev
             - APP_SECRET=ToChange!
+            # MERCURE_JWT_ISSUER must match the `MERCURE_TRUSTED_ISSUERS` of the mercure service,
+            # and MERCURE_SUBSCRIBER_URL its `resource_identifier` directive: the hub of this stack
+            # speaks the Mercure 1.0 protocol, so set teknoo.space.mercure.protocol_version to `1.0`.
+            - MERCURE_JWT_ISSUER=ToChange!
             - MERCURE_JWT_TOKEN=ToChange!
             - MERCURE_PUBLISH_URL=ToChange!
             - MERCURE_SUBSCRIBER_URL=ToChange!

@@ -805,6 +805,11 @@ The Mercure hub delivers SSE events to subscribed browsers, enabling live dashbo
 polling. Clients subscribe via the Mercure JavaScript library using the hub URL and JWT authorization
 token.
 
+The protocol spoken by the hub is driven by the `MERCURE_PROTOCOL_VERSION` environment variable
+(`0.x` by default, see [configuration.md](configuration.md)). It is read while the Symfony container
+is compiled and must carry the same value for the web process and for every worker: a Mercure 1.0 hub
+rejects the 0.x tokens, and vice versa.
+
 ## Related Documentation
 
 - [Configuration Guide](configuration.md) - Worker configuration options

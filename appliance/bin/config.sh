@@ -218,6 +218,9 @@ else
 fi
 
 mercureJwtToken=$(readAMandatoryResponse "Mercure JWT Token")
+# Read by a Mercure 1.0 hub only (the `iss` claim of RFC 9068 access tokens), but harmless on a 0.x one
+mercureJwtIssuer=$(readAMandatoryResponse "Mercure trusted issuer (iss claim)" "$mercureSubscribeUrl")
+mercureProtocolVersion=$(readAMandatoryResponse "Mercure protocol spoken by the hub (0.x or 1.0)" "0.x")
 useCatalog=$(readForYesOrNoToBool "Use Cluster Catalog ? [y/n]")
 if [ "$useCatalog" = "0" ]; then
   kubernetesApi=$(readAMandatoryResponse "Kubernetes API Url")
@@ -558,6 +561,8 @@ fi
 updateFile "$ENV_LOCAL_FILE" "APP_ENV" "$APP_ENV"
 updateFile "$ENV_LOCAL_FILE" "MAILER_REPLY_TO_ADDRESS" "$mailerSenderAddress"
 updateFile "$ENV_LOCAL_FILE" "MAILER_SENDER_ADDRESS" "$mailerSenderAddress"
+setEnvVar "$ENV_LOCAL_FILE" "MERCURE_JWT_ISSUER" "$mercureJwtIssuer"
+setEnvVar "$ENV_LOCAL_FILE" "MERCURE_PROTOCOL_VERSION" "$mercureProtocolVersion"
 updateFile "$ENV_LOCAL_FILE" "MERCURE_PUBLISH_URL" "$mercurePublishUrl"
 updateFile "$ENV_LOCAL_FILE" "MERCURE_SUBSCRIBER_URL" "$mercureSubscribeUrl"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_ENABLED" "$oauthEnabled"
