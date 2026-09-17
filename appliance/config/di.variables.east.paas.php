@@ -84,14 +84,26 @@ $parameters = [
 
             $key = match ($providerTypeFound) {
                 'traefik', 'traefik1' => 'ingress.kubernetes.io/protocol',
-                'traefik2' => 'traefik.ingress.kubernetes.io/router.entrypoints',
+                //Traefik v2/v3 has no Ingress annotation describing the backend scheme, it reads it from
+                //the Service. Nothing can be written here, and above all not
+                //`traefik.ingress.kubernetes.io/router.entrypoints`, which was used until now: that
+                //annotation pins the router to a single entrypoint, so `web` left the host without any
+                //HTTPS router (404 on 443) and `websecure` without any HTTP one. Absent, the router is
+                //published on every entrypoint, which is what the nginx controller used to do.
+                //`traefik3` is an alias: v2 and v3 share the same `traefik.ingress.kubernetes.io/*`
+                //annotations, and without it a cluster declared `traefik3` would silently fall in the
+                //nginx branch below.
+                'traefik2', 'traefik3' => null,
                 'haproxy' => 'haproxy.org/server-ssl',
                 'aws' => 'alb.ingress.kubernetes.io/backend-protocol',
                 'gce' => 'cloud.google.com/app-protocols',
                 default => 'nginx.ingress.kubernetes.io/backend-protocol'
             };
 
-            if ('nginx.ingress.kubernetes.io/backend-protocol' === $key && !$isHttpsBackend) {
+            if (
+                null === $key
+                || ('nginx.ingress.kubernetes.io/backend-protocol' === $key && !$isHttpsBackend)
+            ) {
                 return [];
             }
 
@@ -100,10 +112,6 @@ $parameters = [
                     'traefik', 'traefik1' => match ($isHttpsBackend) {
                         true => 'https',
                         false => 'http'
-                    },
-                    'traefik2' => match ($isHttpsBackend) {
-                        true => 'websecure',
-                        false => 'web'
                     },
                     'haproxy' => match ($isHttpsBackend) {
                         true => 'true',

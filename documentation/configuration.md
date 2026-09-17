@@ -26,20 +26,20 @@ Space runs one web server and four workers (`new_task`, `execute_job`, `history_
 [worker.md](worker.md)). Since account provisioning moved to the `new_task` worker, each process only needs
 the variables below; the compose files at the repository root apply this split per service.
 
-| Variables | Web | new_task | execute_job | history_sent / job_done |
-|---|---|---|---|---|
-| `APP_*`, `MONGODB_*`, `TEKNOO_EAST_EXTENSION_*`, `SPACE_HOSTNAME` | yes | yes | yes (no MongoDB for `execute_job`) | yes |
-| `MESSENGER_*_DSN` | `new_task` (producer) | `execute_job`, `history_sent` | `execute_job`, `history_sent`, `job_done` | its own transport |
-| `TEKNOO_PAAS_SECURITY_*` (message encryption) | public key only | public + private keys | public + private keys | public + private keys |
-| `SPACE_PERSISTED_VAR_SECURITY_*` | public key, `AGENT_MODE=0` | public + private keys, `AGENT_MODE=1` | no | no |
-| `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN` | yes | yes (`NewJob` updates) | no | no |
-| `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS` | yes | no | no | no |
-| Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`, `SPACE_KUBERNETES_MASTER`/`DASHBOARD`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE` | yes (dashboard, account clusters, namespace naming) | yes | `SPACE_KUBERNETES_CLIENT_*` only | no |
-| `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_OCI_GLOBAL_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME` | no | yes | no | no |
-| `SPACE_STORAGE_CLASS`, `SPACE_STORAGE_DEFAULT_SIZE`, `SPACE_JOB_ROOT`, `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`, `SPACE_DC_ANSIBLE_BINARY`, `SPACE_DC_TIMEOUT`, `SPACE_DC_DEPLOY_ROOT` | no | yes | yes | no |
-| `SPACE_KUBERNETES_VERSION_LEVEL`, `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_*`, `SPACE_INGRESS_PROVIDER_*`, `SPACE_HOOKS_COLLECTION_*`, `SPACE_PAAS_*`, `SPACE_GIT_TIMEOUT`, `SPACE_IMG_BUILDER_*`, other `SPACE_DC_*` | no | no | yes | no |
-| `SPACE_WORKER_TIME_LIMIT` | no | yes | yes | `history_sent` |
-| `SPACE_PING_FILE`, `SPACE_PING_SECONDS` | no | yes | yes | yes |
+| Variables                                                                                                                                                                                                                                                                 | Web                                                 | new_task                              | execute_job                               | history_sent / job_done |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------|-------------------------|
+| `APP_*`, `MONGODB_*`, `TEKNOO_EAST_EXTENSION_*`, `SPACE_HOSTNAME`                                                                                                                                                                                                         | yes                                                 | yes                                   | yes (no MongoDB for `execute_job`)        | yes                     |
+| `MESSENGER_*_DSN`                                                                                                                                                                                                                                                         | `new_task` (producer)                               | `execute_job`, `history_sent`         | `execute_job`, `history_sent`, `job_done` | its own transport       |
+| `TEKNOO_PAAS_SECURITY_*` (message encryption)                                                                                                                                                                                                                             | public key only                                     | public + private keys                 | public + private keys                     | public + private keys   |
+| `SPACE_PERSISTED_VAR_SECURITY_*`                                                                                                                                                                                                                                          | public key, `AGENT_MODE=0`                          | public + private keys, `AGENT_MODE=1` | no                                        | no                      |
+| `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN`                                                                                                                                                                                                                                | yes                                                 | yes (`NewJob` updates)                | no                                        | no                      |
+| `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS`                                                            | yes                                                 | no                                    | no                                        | no                      |
+| Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`, `SPACE_KUBERNETES_MASTER`/`DASHBOARD`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE`                                                              | yes (dashboard, account clusters, namespace naming) | yes                                   | `SPACE_KUBERNETES_CLIENT_*` only          | no                      |
+| `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_OCI_GLOBAL_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME` | no                                                  | yes                                   | no                                        | no                      |
+| `SPACE_STORAGE_CLASS`, `SPACE_STORAGE_DEFAULT_SIZE`, `SPACE_JOB_ROOT`, `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`, `SPACE_DC_ANSIBLE_BINARY`, `SPACE_DC_TIMEOUT`, `SPACE_DC_DEPLOY_ROOT`                                                                                    | no                                                  | yes                                   | yes                                       | no                      |
+| `SPACE_KUBERNETES_VERSION_LEVEL`, `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_*`, `SPACE_INGRESS_PROVIDER_*`, `SPACE_HOOKS_COLLECTION_*`, `SPACE_PAAS_*`, `SPACE_GIT_TIMEOUT`, `SPACE_IMG_BUILDER_*`, other `SPACE_DC_*`                                                | no                                                  | no                                    | yes                                       | no                      |
+| `SPACE_WORKER_TIME_LIMIT`                                                                                                                                                                                                                                                 | no                                                  | yes                                   | yes                                       | `history_sent`          |
+| `SPACE_PING_FILE`, `SPACE_PING_SECONDS`                                                                                                                                                                                                                                   | no                                                  | yes                                   | yes                                       | yes                     |
 
 ## Core Configuration
 
@@ -584,8 +584,8 @@ SPACE_CLUSTER_CATALOG_JSON='[{
 }]'
 ```
 
-**Docker Compose cluster entry** — a cluster with `"type": "docker-compose"` targets a remote Docker host over
-**SSH** (key-only authentication, no password, all operations rootless) instead of a Kubernetes API. It carries
+**Docker Compose cluster entry** — a cluster with `"type": "docker-compose"` targets a remote Docker host over **SSH**
+(key-only authentication, no password, all operations rootless) instead of a Kubernetes API. It carries
 an `ssh` block rather than `create_account`/`storage_provisioner`/`use_hnc`:
 
 ```bash
@@ -801,6 +801,27 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE=/opt/space/config/ingress-anno
 
 Define ingress provider type based on ingress class name pattern matching.
 
+The resolved type only decides **which annotation declares an `https-backend: true` ingress to its
+controller**. It never decides on which entrypoint or port an ingress is published:
+
+| Type                                   | Annotation added on the Ingress when `https-backend: true` |
+|----------------------------------------|------------------------------------------------------------|
+| `nginx` (and any unmatched class)      | `nginx.ingress.kubernetes.io/backend-protocol: HTTPS`      |
+| `traefik`, `traefik1`                  | `ingress.kubernetes.io/protocol: https`                    |
+| `traefik2`, `traefik3` (Traefik v2/v3) | _none_                                                     |
+| `haproxy`                              | `haproxy.org/server-ssl: true`                             |
+| `aws`                                  | `alb.ingress.kubernetes.io/backend-protocol: HTTPS`        |
+| `gce`                                  | `cloud.google.com/app-protocols: HTTPS`                    |
+
+Traefik v2/v3 exposes no Ingress annotation for the backend scheme — it reads it from the Service — so
+`traefik2` writes nothing, and `https-backend` has no effect for that type. `traefik3` is accepted as an
+alias of `traefik2`: both versions share the same `traefik.ingress.kubernetes.io/*` annotations, and
+without the alias a cluster declared `traefik3` would silently fall back to the `nginx` annotations.
+`traefik.ingress.kubernetes.io/router.entrypoints` must **never** be used as a substitute: it pins the
+router to a single entrypoint, so `web` leaves the host with no HTTPS router at all (`404` on 443) and
+`websecure` leaves it with no HTTP one. Without that annotation the router is published on every
+entrypoint, which is the behaviour the nginx controller had.
+
 Use **one** of these options:
 
 #### SPACE_INGRESS_PROVIDER_JSON
@@ -809,8 +830,8 @@ Use **one** of these options:
 - **Optional**: Yes
 - **Description**: Maps ingress class name patterns (regex) to provider types
 - **Format**: `{"pattern": "type", ...}`
-  - `pattern`: Regular expression to match against ingress class name
-  - `type`: Provider type - one of: `nginx`, `traefik`, `traefik1`, `traefik2`, `haproxy`, `aws`, `gce`
+    - `pattern`: Regular expression to match against ingress class name
+    - `type`: Provider type - one of: `nginx`, `traefik`, `traefik1`, `traefik2`, `traefik3`, `haproxy`, `aws`, `gce`
 - **Default**: `nginx` (used when no match found or invalid type)
 
 ```bash
@@ -1024,8 +1045,8 @@ SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE=websecure
 
 When a docker-compose cluster has `support_registry: true` (the default), Space provisions a **per-account
 private OCI registry** as a dedicated `<namespace>-registry` container on the same Docker host, over Ansible.
-The container is attached to an internal Docker network (`SPACE_DC_REGISTRY_NETWORK`, no host port) and is
-**exposed by the host's Traefik** on the `websecure` entrypoint under the host name
+The container is attached to an internal Docker network (`SPACE_DC_REGISTRY_NETWORK`, no host port) and is **exposed by
+the host's Traefik** on the `websecure` entrypoint under the host name
 `<namespace>-registry.<docker host>` (the host of the cluster `master` address): this name is the account
 `registryUrl`, the worker pushes the built images to it and the Docker host pulls them from it at
 `docker compose up` (a container name would be resolvable by neither). The registry playbook also connects Traefik
@@ -1430,7 +1451,10 @@ SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.json
                 "require": "2Gi"
             }
         ],
-        "clusters": ["production", "staging"]
+        "clusters": [
+            "production",
+            "staging"
+        ]
     }
 ]
 ```

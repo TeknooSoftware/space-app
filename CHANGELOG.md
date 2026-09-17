@@ -2,6 +2,17 @@
 
 ## [2.5.0-beta4] - 2026-09-15
 ### Beta Release
+- The `traefik2` ingress provider type no longer writes any backend annotation. It mapped `https-backend`
+  to `traefik.ingress.kubernetes.io/router.entrypoints`, which selects the router's entrypoint and not the
+  backend scheme: `false` pinned the router to `web` (the host then answered `404` on 443), `true` pinned
+  it to `websecure` (`404` on 80). Traefik v2/v3 reads the backend scheme from the Service, so no ingress
+  annotation can carry it; without `entryPoints` the router is published on all of them.
+- `traefik3` is accepted as an alias of `traefik2` in `SPACE_INGRESS_PROVIDER_JSON`. Both versions share
+  the same `traefik.ingress.kubernetes.io/*` annotations; `traefik3` previously matched no branch and fell
+  back to the nginx annotations.
+- New `tests/config/IngressBackendAnnotationsMapperTest.php`: covers the backend annotations mapper for
+  every provider type and asserts `router.entrypoints` is never written. `traefik2` was the only type no
+  test exercised.
 - `AccountRegistry` now records the cluster hosting the registry (`cluster_name`, nullable for compatibility with
   existing installations). The registry install picks the first cluster declaring the registry support and stores
   its name; every later operation, the admin reinstall in particular, reuses the recorded cluster instead of
