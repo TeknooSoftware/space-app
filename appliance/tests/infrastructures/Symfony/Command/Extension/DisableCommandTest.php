@@ -50,7 +50,9 @@ use function unlink;
 #[CoversClass(DisableCommand::class)]
 class DisableCommandTest extends TestCase
 {
-    private const string ENABLED_FILE = 'var/tests/extension-disable.json';
+    private const string ENABLED_FILE = 'enabled.json';
+
+    private const string SPACE_PATH = __DIR__ . '/../../../../../var/tests/extension-disable-space/';
 
     private DisableCommand $disableCommand;
 
@@ -75,13 +77,17 @@ class DisableCommandTest extends TestCase
         $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = self::ENABLED_FILE;
         unset($_ENV['TEKNOO_EAST_EXTENSION_DISABLED'], $_ENV['TEKNOO_EAST_EXTENSION_LOADER']);
 
-        $this->spacePath = __DIR__ . '/../../../../../';
-        if (!is_dir($this->spacePath . 'var/tests')) {
-            mkdir($this->spacePath . 'var/tests', 0777, true);
+        // Fixture extension, not autoloadable: the PSR-4 prefix Teknoo\Space\Extensions\ points on
+        // the `extensions/` directory of the appliance, which is not versioned.
+        require_once __DIR__ . '/../../../../fixtures/extension/space/extensions/Sample/Extension.php';
+
+        $this->spacePath = self::SPACE_PATH;
+        if (!is_dir($this->spacePath . 'extensions/Sample')) {
+            mkdir($this->spacePath . 'extensions/Sample', 0777, true);
         }
         file_put_contents(
             $this->spacePath . self::ENABLED_FILE,
-            '["Teknoo\\\\Space\\\\Extensions\\\\Enterprise\\\\Extension"]',
+            '["Teknoo\\\\Space\\\\Extensions\\\\Sample\\\\Extension"]',
         );
 
         $this->disableCommand = new DisableCommand($this->spacePath);
@@ -140,7 +146,7 @@ class DisableCommandTest extends TestCase
 
         $this->assertSame(
             Command::FAILURE,
-            $this->disableCommand->run($this->createInput('Enterprise'), $output),
+            $this->disableCommand->run($this->createInput('Sample'), $output),
         );
         $this->assertStringContainsString('Extensions are disabled.', $output->fetch());
     }
@@ -152,7 +158,7 @@ class DisableCommandTest extends TestCase
 
         $this->assertSame(
             Command::FAILURE,
-            $this->disableCommand->run($this->createInput('Enterprise'), $output),
+            $this->disableCommand->run($this->createInput('Sample'), $output),
         );
         $this->assertStringContainsString('only available with the FileLoader', $output->fetch());
     }
@@ -179,17 +185,17 @@ class DisableCommandTest extends TestCase
         $this->assertStringContainsString('Extension Unknown is not available.', $output->fetch());
     }
 
-    public function testExecuteWithEnterpriseAndCacheWarmup(): void
+    public function testExecuteWithSampleAndCacheWarmup(): void
     {
         $this->disableCommand->setApplication($this->createApplicationWithWarmup(Command::SUCCESS));
         $output = new BufferedOutput();
 
         $this->assertSame(
             Command::SUCCESS,
-            $this->disableCommand->run($this->createInput('Enterprise'), $output),
+            $this->disableCommand->run($this->createInput('Sample'), $output),
         );
         $content = $output->fetch();
-        $this->assertStringContainsString('Extension Enterprise is disabled.', $content);
+        $this->assertStringContainsString('Extension Sample is disabled.', $content);
         $this->assertStringContainsString('Cache warmup successful', $content);
         $this->assertSame(
             '[]',
@@ -197,27 +203,27 @@ class DisableCommandTest extends TestCase
         );
     }
 
-    public function testExecuteWithEnterpriseWhenCacheWarmupFails(): void
+    public function testExecuteWithSampleWhenCacheWarmupFails(): void
     {
         $this->disableCommand->setApplication($this->createApplicationWithWarmup(Command::FAILURE));
         $output = new BufferedOutput();
 
         $this->assertSame(
             Command::SUCCESS,
-            $this->disableCommand->run($this->createInput('Enterprise'), $output),
+            $this->disableCommand->run($this->createInput('Sample'), $output),
         );
         $content = $output->fetch();
-        $this->assertStringContainsString('Extension Enterprise is disabled.', $content);
+        $this->assertStringContainsString('Extension Sample is disabled.', $content);
         $this->assertStringContainsString('Error during cache warmup', $content);
     }
 
-    public function testExecuteWithEnterpriseWithoutApplication(): void
+    public function testExecuteWithSampleWithoutApplication(): void
     {
         $output = new BufferedOutput();
 
         $this->assertSame(
             Command::SUCCESS,
-            $this->disableCommand->run($this->createInput('Enterprise'), $output),
+            $this->disableCommand->run($this->createInput('Sample'), $output),
         );
         $this->assertStringContainsString('Error during cache warmup', $output->fetch());
     }
