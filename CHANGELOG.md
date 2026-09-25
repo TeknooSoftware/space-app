@@ -1,6 +1,6 @@
 # Teknoo Software - Space - Change Log
 
-## [2.5.0-beta4] - 2026-09-15
+## [2.5.0-beta4] - 2026-09-25
 ### Beta Release
 - **Cluster operations move to the `new_task` worker**: the web process no longer talks to Kubernetes or to a
   Docker host, it queues a task and records a "task queued" line in the account history
