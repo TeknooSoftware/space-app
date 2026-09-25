@@ -220,6 +220,14 @@ trait PersistenceOperationTrait
         return $this->objects[$className] ?? [];
     }
 
+    /**
+     * @return array<object>
+     */
+    public function listRemovedObjects(string $className): array
+    {
+        return $this->removedObjects[$className] ?? [];
+    }
+
     public function getObjectUniqueId(object $object): string
     {
         if ($object instanceof IdentifiedObjectInterface) {

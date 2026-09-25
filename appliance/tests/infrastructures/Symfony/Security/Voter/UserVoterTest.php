@@ -28,7 +28,12 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Voter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\Space\Infrastructures\Symfony\Security\Voter\UserVoter;
+use Teknoo\Space\Object\DTO\SpaceUser;
 
 /**
  * Class UserVoterTest.
@@ -62,5 +67,94 @@ class UserVoterTest extends TestCase
                 ['foo' => 'bar'],
             )
         );
+    }
+
+    private function createWrappedUser(User $user): AbstractUser
+    {
+        $wrappedUser = $this->createStub(AbstractUser::class);
+        $wrappedUser->method('getWrappedUser')->willReturn($user);
+
+        return $wrappedUser;
+    }
+
+    private function createToken(?User $user): TokenInterface
+    {
+        $token = $this->createStub(TokenInterface::class);
+        if (null === $user) {
+            $token->method('getUser')->willReturn(null);
+
+            return $token;
+        }
+
+        $token->method('getUser')->willReturn($this->createWrappedUser($user));
+
+        return $token;
+    }
+
+    public function testVoteDeniedWhenAnonymous(): void
+    {
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_DENIED,
+            $this->userVoter->vote(
+                $this->createToken(null),
+                new User(),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.denied.user_anonymous'], $vote->reasons);
+    }
+
+    public function testVoteGrantedWithAbstractUserSubject(): void
+    {
+        $user = (new User())->setId('user-1');
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_GRANTED,
+            $this->userVoter->vote(
+                $this->createToken($user),
+                $this->createWrappedUser((new User())->setId('user-1')),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.granted.is_require_user'], $vote->reasons);
+    }
+
+    public function testVoteGrantedWithSpaceUserSubject(): void
+    {
+        $user = (new User())->setId('user-1');
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_GRANTED,
+            $this->userVoter->vote(
+                $this->createToken($user),
+                new SpaceUser(user: $user),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.granted.is_require_user'], $vote->reasons);
+    }
+
+    public function testVoteDeniedWhenNotSameUser(): void
+    {
+        $user = (new User())->setId('user-1');
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_DENIED,
+            $this->userVoter->vote(
+                $this->createToken($user),
+                (new User())->setId('user-2'),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.denied.is_not_require_user'], $vote->reasons);
     }
 }

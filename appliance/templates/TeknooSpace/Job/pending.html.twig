@@ -49,14 +49,18 @@
 
 {% block javascript_additonals %}
     {% set taskId = app.request.attributes.get('taskId') %}
+    {#- The topic is also the subscription granted in the authorization cookie: without it the
+        cookie would authorize nothing on this topic and the page would only work on a hub
+        allowing anonymous subscribers. -#}
+    {% set topicUrl = url('space_job_new_pending', {'taskId': taskId }) %}
     <script nonce="{{ space_nonce() }}">
         {% if mercureEnabled %}
         const eventSource = new EventSource(
           "{{ mercure(
-              url('space_job_new_pending', {'taskId': taskId }),
+              topicUrl,
               {
                   'lastEventId': taskId,
-                  'subscribe': mercureUrl
+                  'subscribe': topicUrl
               }
           )|escape('js') }}"
         );

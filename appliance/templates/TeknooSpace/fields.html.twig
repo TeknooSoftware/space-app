@@ -2,7 +2,22 @@
 {% use "bootstrap_5_layout.html.twig" %}
 
 {% block form_label %}
-    {% if  required %}
+    {% if clusterTypeLabels is defined %}
+        {# One label per cluster type, shown by space.js like the fields of a cluster #}
+        {% set typedLabel = '' %}
+        {% for clusterType, clusterTypeLabel in clusterTypeLabels %}
+            {% set typedLabel = typedLabel
+                ~ '<span class="cluster-field cluster-field-for-' ~ clusterType|e('html_attr') ~ '">'
+                ~ clusterTypeLabel|trans(label_translation_parameters, translation_domain)|e
+                ~ '</span>' %}
+        {% endfor %}
+        {% if required %}
+            {% set typedLabel = typedLabel ~ '&nbsp;<span class="text-danger">*</span>' %}
+        {% endif %}
+        {% set label = typedLabel %}
+        {% set label_html = true %}
+        {% set translation_domain = false %}
+    {% elseif required %}
         {% if label is not same as(false) and label is empty %}
             {% if label_format is not empty %}
                 {% set label = label_format|replace({
@@ -47,17 +62,17 @@
     {% set parent_label_class = parent_label_class|default(label_attr.class|default('')) %}
     {% if 'checkbox-custom' in parent_label_class %}
         {% set attr = attr|merge({class: (attr.class|default('') ~ ' custom-control-input')|trim}) %}
-        <div class="custom-control custom-checkbox{{ 'checkbox-inline' in parent_label_class ? ' custom-control-inline' }}">
+        <div class="custom-control custom-checkbox{% if 'checkbox-inline' in parent_label_class %} custom-control-inline{% endif %}">
             {{- parent() -}}
         </div>
     {% elseif 'switch-custom' in parent_label_class %}
         {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) %}
-        <div class="form-check form-switch{{ 'switch-inline' in parent_label_class ? ' custom-control-inline' }}">
+        <div class="form-check form-switch{% if 'switch-inline' in parent_label_class %} custom-control-inline{% endif %}">
             {{- parent() -}}
         </div>
     {% else %}
         {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) %}
-        <div class="form-check{{ 'checkbox-inline' in parent_label_class ? ' form-check-inline' }}">
+        <div class="form-check{% if 'checkbox-inline' in parent_label_class %} form-check-inline{% endif %}">
             {{- parent() -}}
         </div>
     {% endif %}
@@ -68,20 +83,47 @@
         <div class="row">
             {{ form_row(form.name, {"colClass": "col-6"}) }}
             {{ form_row(form.environment.name, {"colClass": "col-6"}) }}
-            {{ form_row(form.type, {"colClass": "col-6"}) }}
-            {{ form_row(form.address, {"colClass": "col-6"}) }}
-            {{ form_row(form.namespace, {"colClass": "col-9"}) }}
-            {{ form_row(form.useHierarchicalNamespaces, {
-                "colClass": "col-3 align-self-center pt-4",
-                'label_attr':{
-                    'class': 'switch-custom'
+            {{ form_row(form.type, {"colClass": "col-6 cluster-type"}) }}
+            {{ form_row(form.address, {
+                "colClass": "col-6",
+                "clusterTypeLabels": {
+                    "kubernetes": "teknoo.space.form.project.cluster.kubernetes.address",
+                    "docker-compose": "teknoo.space.form.project.cluster.docker_compose.address"
                 }
             }) }}
-            {{ form_row(form.identity.caCertificate, {"colClass": "col-12"}) }}
-            {{ form_row(form.identity.clientCertificate, {"colClass": "col-12"}) }}
-            {{ form_row(form.identity.clientKey, {"colClass": "col-12"}) }}
+            {{ form_row(form.namespace, {"colClass": "col"}) }}
+            {% if hncFieldVisible %}
+                {{ form_row(form.useHierarchicalNamespaces, {
+                    "colClass": "col-3 align-self-center pt-4",
+                    'label_attr':{
+                        'class': 'switch-custom'
+                    }
+                }) }}
+            {% else %}
+                <input type="hidden" name="{{ form.useHierarchicalNamespaces.vars.full_name }}" value="{{ form.useHierarchicalNamespaces.vars.value }}"{% if not form.useHierarchicalNamespaces.vars.checked %} disabled{% endif %}>
+                {% do form.useHierarchicalNamespaces.setRendered %}
+            {% endif %}
+            {{ form_row(form.identity.caCertificate, {
+                "colClass": "col-12",
+                "clusterTypeLabels": {
+                    "kubernetes": "teknoo.space.form.project.cluster.kubernetes.ca_certificate",
+                    "docker-compose": "teknoo.space.form.project.cluster.docker_compose.ca_certificate"
+                }
+            }) }}
+            {{ form_row(form.identity.clientCertificate, {"colClass": "col-12 cluster-field cluster-field-for-kubernetes"}) }}
+            {{ form_row(form.identity.clientKey, {
+                "colClass": "col-12",
+                "clusterTypeLabels": {
+                    "kubernetes": "teknoo.space.form.project.cluster.kubernetes.client_key",
+                    "docker-compose": "teknoo.space.form.project.cluster.docker_compose.client_key"
+                }
+            }) }}
+            {{ form_row(form.identity.username, {
+                "colClass": "col cluster-field cluster-field-for-docker-compose",
+                'label': 'teknoo.space.form.project.cluster.username'
+            }) }}
             {% if is_granted('ROLE_ADMIN') %}
-                {{ form_row(form.identity.token, {"colClass": "col-9"}) }}
+                {{ form_row(form.identity.token, {"colClass": "col cluster-field cluster-field-for-kubernetes"}) }}
                 {{ form_row(
                     form.identity.clear, {
                         "colClass": "col-1 align-self-center pt-4",
@@ -97,7 +139,7 @@
                         }
                     }) }}
             {% else %}
-                {{ form_row(form.identity.token, {"colClass": "col-10"}) }}
+                {{ form_row(form.identity.token, {"colClass": "col cluster-field cluster-field-for-kubernetes"}) }}
                 {{ form_row(
                     form.identity.clear, {
                         "colClass": "col-1 align-self-center pt-4",

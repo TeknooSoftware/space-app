@@ -15,16 +15,23 @@ Multi-agent coordination hub for the Space project.
 ├── forms.md               # Symfony forms (types, data mappers, templates)
 ├── feedback/
 │   ├── INDEX.md           # Read at every session start — central knowledge base
-│   ├── README.md          # Feedback system quick reference
 │   └── *.md               # Individual feedback reports (versioned)
 └── tasks/                 # Session-specific task tracking (gitignored)
     ├── todo.md            # Optional: current task checkboxes
     └── lessons.md         # Optional: project-specific quick reference
 ```
 
-**Extension Directives**: Enabled extensions may have their own
-`appliance/extensions/*/.agents/*.md` files. These extend or refine the
-coordination system for extension-specific workflows.
+**Extension Directives**: Each enabled extension ships `appliance/extensions/*/AGENTS.md`, and may add a
+`documentation/` directory beside it for deep-dives. An extension documents itself there; this hub and the
+appliance's own documentation stay about the appliance. Extensions do **not** have their own `.agents/`
+directory.
+
+## Path convention
+
+A path written in backticks — `documentation/worker.md#worker-types`, `appliance/config/di.recipe.steps.php` —
+is **relative to the repository root**, wherever the file mentioning it lives. Markdown links, on the other
+hand, are relative to the file, so they work when the page is browsed on the forge. An extension's
+`AGENTS.md` writes `../../../.agents/…` for the same reason.
 
 ## File Roles
 
@@ -46,7 +53,7 @@ coordination system for extension-specific workflows.
 ## Navigation
 
 - **New session**: read [../AGENTS.md](../AGENTS.md) → read `appliance/extensions/*/AGENTS.md`
-  (if any) → read [feedback/INDEX.md](feedback/INDEX.md)
+  (if an extension is enabled and relevant) → read [feedback/INDEX.md](feedback/INDEX.md)
 - **Writing code**: refer to [EXAMPLES.md](EXAMPLES.md)
 - **Working with domain layer**: [conventions.md](conventions.md)
 - **Creating Plans/Steps**: [recipes.md](recipes.md)

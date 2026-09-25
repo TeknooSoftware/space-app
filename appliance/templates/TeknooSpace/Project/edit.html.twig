@@ -38,10 +38,10 @@
                 {{ form_row(formView.project.sourceRepository.pullUrl, {"largeRow": true}) }}
                 {{ form_row(formView.project.sourceRepository.defaultBranch) }}
                 {{ form_row(formView.project.sourceRepository.identity.name) }}
-                {{ form_row(formView.project.sourceRepository.identity.privateKey, {"colClass": "col-11"}) }}
+                {{ form_row(formView.project.sourceRepository.identity.privateKey, {"colClass": "col-10"}) }}
                 {{ form_row(
                     formView.project.sourceRepository.identity.clear, {
-                        "colClass": "col-1 `align-self-center` pt-4",
+                        "colClass": "col-2 `align-self-center` pt-4",
                         'label_attr': {
                             'class': 'switch-custom'
                         }
@@ -56,10 +56,10 @@
                 {{ form_row(formView.project.imagesRegistry.apiUrl) }}
                 {{ form_row(formView.project.imagesRegistry.identity.auth) }}
                 {{ form_row(formView.project.imagesRegistry.identity.username) }}
-                {{ form_row(formView.project.imagesRegistry.identity.password, {"colClass": "col-5"}) }}
+                {{ form_row(formView.project.imagesRegistry.identity.password, {"colClass": "col-4"}) }}
                 {{ form_row(
                     formView.project.imagesRegistry.identity.clear, {
-                        "colClass": "col-1 align-self-center pt-4",
+                        "colClass": "col-2 align-self-center pt-4",
                         'label_attr': {
                             'class': 'switch-custom'
                         }

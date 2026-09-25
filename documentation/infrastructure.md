@@ -160,10 +160,13 @@ by the cluster `type`; Space only wires them and adds the type-aware account pro
 
 `Recipe/Plan/` — docker-compose equivalents of the Kubernetes account plans:
 
-- `AccountEnvironmentInstall` / `AccountEnvironmentReinstall` — persist the SSH identity and the compose
-  namespace (no Kubernetes namespace / service account / role / quota). The SSH private key is supplied, never
-  minted.
-- `AccountRefreshQuota` — a documented no-op (a Docker host has no Kubernetes `ResourceQuota`), kept for parity.
+- `AccountEnvironmentInstall` / `AccountEnvironmentReinstall` — log the deploy user of the Docker host in on the
+  account registry and the global Space registry (the counterpart of the Kubernetes pull secret), then persist the
+  SSH identity and the compose namespace (no Kubernetes namespace / service account / role / quota). The SSH
+  private key is supplied, never minted. An environment installed before this login existed gets it on a
+  reinstall.
+- `AccountRefreshQuota` — a documented no-op (a Docker host has no Kubernetes `ResourceQuota`), kept for parity;
+  its only step, `SkipQuotaRefresh`, records that fact in the account history.
 - `AccountRegistryInstall` / `AccountRegistryReinstall` — provision a **per-account private OCI registry** on the
   Docker host over Ansible.
 
@@ -171,14 +174,30 @@ by the cluster `type`; Space only wires them and adds the type-aware account pro
 
 - `PersistSshIdentity` — guards `instanceof DockerComposeCluster`, stages the SSH key + known_hosts + compose
   namespace onto the workplan for the reused `PersistEnvironment` step.
-- `BuildRegistryInventory`, `GenerateRegistryCredentials`, `RunRegistryPlaybook` — build the single-host
-  inventory, generate htpasswd credentials, and run the registry playbook via the East PaaS
-  `RunnerFactoryInterface` (no custom runner).
+- `GenerateRegistryCredentials`, `RunRegistryPlaybook` — generate htpasswd credentials and the registry host name
+  `<namespace>-registry.<docker host>` (the account `registryUrl`, pushed to by the worker and pulled from by the
+  host), and run the registry playbook through `PlaybookRunner`.
+- `LogDeployUserInRegistries` — Docker Compose counterpart of the Kubernetes `CreateDockerSecret`, run by the
+  environment install: runs `registries-login.yml` on the environment's Docker host, with the same inventory and SSH
+  user as the East PaaS deploy playbook, to log the deploy user in on the account registry (wherever it is hosted)
+  and on the global Space registry (`SPACE_OCI_GLOBAL_REGISTRY_*`, skipped when its url or username is empty).
+  Records `docker_compose.registries_login` in the account history, with the registry hosts only.
+
+`PlaybookRunner` — runs every playbook Space ships itself, through the East PaaS `RunnerFactoryInterface` (no
+custom runner). It writes the single-host inventory in the East PaaS deploy format (group `docker_host`, the SSH
+user and key passed by the runner, never written in the inventory) under the worker tmp dir, named after the
+playbook, and removes it once the playbook has run, whatever the outcome. The result or the error goes to the
+caller's promise.
 
 `templates/` — `registry.yml`, a single self-contained Ansible playbook (rootless) that renders a dedicated
-`<namespace>-registry` container on an internal-only network. The compose file is inlined in the playbook as
-the `_registry_compose_config` var and written with `copy: content:` — the PHP runner ships only the one
-playbook path, so no sidecar `.j2` would be resolvable next to it.
+`<namespace>-registry` container on the internal-only registry network, exposes it through the host's Traefik (connects
+Traefik to that network, drops a `<namespace>-registry.yml` dynamic file in the watched directory) and
+logs the deploy user in on it (`docker login`, so `docker compose up` can pull). The compose and Traefik files are
+inlined in the playbook as the `_registry_compose_config` / `_registry_traefik_config` vars and written with
+`copy: content:` — the PHP runner ships only the one playbook path, so no sidecar `.j2` would be resolvable next
+to it. `registries-login.yml`, as self-contained, runs `docker login --password-stdin` (`no_log`) for each entry of
+its `registries` extra var, as the deploy user with no `become` and no `DOCKER_HOST`: the same docker context and
+the same `~/.docker/config.json` as the `docker compose up` of the deploy playbook.
 
 #### Provisioning-plan selection
 
@@ -186,6 +205,18 @@ playbook path, so no sidecar `.j2` would be resolvable next to it.
 `ProvisioningPlanBowl` (`appliance/infrastructures/Recipe/Bowl/`) resolves the right plan **at request time**
 from the workplan's cluster type — because a `RecipeBowl`'s recipe is otherwise fixed at container-build time.
 Kubernetes resolves to the unchanged Kubernetes plan instances, so its behaviour is byte-for-byte identical.
+
+Both plan sets are pure provisioning sub-recipes: they require the `Account`, `AccountHistory`, the cluster
+catalog (and the environments wallet / `envName` / `clusterName` where relevant) to be already in the workplan.
+They are executed in the `new_task` worker by `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask`,
+which loads those objects from the task's `accountId`. Account clusters are loaded *before* the bowl, because
+the bowl needs them to resolve the cluster type.
+
+Removing an environment is a task too (`DeleteEnvironmentsTask` → `Recipe\Plan\Task\AccountEnvironmentsDeletionTask`):
+the web request only drops the `AccountEnvironment` documents, and the `new_task` worker deletes the Kubernetes
+namespaces (`DeleteNamespaces` step, skipped with a history line on Docker Compose clusters). The web server
+therefore no longer performs any provisioning call; it still opens Kubernetes clients for the dashboard health
+overview, the dashboard frame and the account clusters.
 
 ### 4. Symfony Integration
 
@@ -211,15 +242,18 @@ Located in `appliance/infrastructures/Symfony/Messenger/Handler/`:
 
 **NewTaskHandler**
 
-- Handles: any `NewTaskInterface` message (currently `NewJob`)
-- Action: Initializes deployment workflow
+- Handles: any `NewTaskInterface` message — `NewJob`, the account provisioning tasks
+  (`Teknoo\Space\Object\DTO\Task\{InstallRegistryTask,ReinstallRegistryTask,RefreshQuotaTask,InstallEnvironmentTask,ReinstallEnvironmentTask,DeleteEnvironmentsTask}`),
+  and any task an enabled extension registers
+- Action: resolves the plan from the task class through `NewTaskRecipeRegistry` and executes it in-process (a job is
+  then dispatched to `execute_job`; an account provisioning task is fully applied here)
 - Transport: RabbitMQ (`new_task` queue)
 
-**ExecuteJobHandler**
+**RunJobHandler**
 
-- Handles: `ExecuteJobMessage`
+- Handles: East PaaS `MessageJob`
 - Action: Executes deployment via East PaaS
-- Transport: RabbitMQ (`execute_job` queue)
+- Transport: `execute_job` queue, `max_retries: 0`
 
 **HistorySentHandler**
 
@@ -227,7 +261,7 @@ Located in `appliance/infrastructures/Symfony/Messenger/Handler/`:
 - Action: Persists deployment events
 - Transport: RabbitMQ (`history_sent` queue)
 
-**JobDoneHandler**
+**JobDoneHandler** (from East PaaS, not a Space class)
 
 - Handles: `JobDoneMessage`
 - Action: Finalizes completed jobs
@@ -360,13 +394,25 @@ Located in `appliance/infrastructures/Twig/`:
 
 ### 6. Endroid QR Code Integration
 
-Located in `appliance/infrastructures/Endroid/QrCode/`:
+Located in `appliance/infrastructures/Endroid/QrCode/`, which holds exactly one class:
 
-**QrCodeGenerator**
+**`Recipe/Step/BuildQrCode`**
 
-- Generates QR codes for TOTP setup
-- Formats for authenticator apps
-- Provides backup codes
+- Recipe step that renders the TOTP enrolment QR code for an authenticator app
+- Backup codes are produced by the Scheb 2FA bundle, not here
+
+### 7. Recipe Bowl
+
+Located in `appliance/infrastructures/Recipe/Bowl/`:
+
+**`ProvisioningPlanBowl`**
+
+- Resolves the account-provisioning plan at **run time** from the cluster `type` (`kubernetes` or
+  `docker-compose`), which a `RecipeBowl` cannot do — its recipe is fixed at container build time
+- Executed by `domain/Recipe/Plan/Task/AccountProvisioningTask` in the `new_task` worker, never in a web
+  request
+- The cluster type is resolved at the scope of the resource it targets: `LoadAccountClusters` runs in the
+  caller, and the quota refresh loops per environment rather than resolving once
 
 ## Message Transports
 
@@ -390,11 +436,13 @@ Located in `appliance/infrastructures/Endroid/QrCode/`:
 - Persistent messages survive crashes
 - Acknowledgment ensures delivery
 
-**Dead Letter Queues**
+**Retries and failures**
 
-- Failed messages routed to DLQ
-- Manual inspection and retry
-- Prevents message loss
+- `new_task` retries up to 3 times; `execute_job` has `max_retries: 0` — a failed deployment is reported in the
+  job history, not retried behind the user's back.
+- **No `failure_transport` is configured**: there is no dead-letter queue. A message the broker cannot deliver
+  is lost from Symfony's point of view, and the trace of the failure lives in the `AccountHistory` / job
+  history instead.
 
 ## Configuration Management
 
@@ -404,7 +452,7 @@ Space uses PHP-DI for dependency injection:
 
 **Configuration Files**
 
-- `config/di/*.php`: Service definitions
+- `config/di.*.php`: Service definitions (directly in `config/`, not in a `config/di/` subdirectory)
 - Autowiring for standard services
 - Manual wiring for complex dependencies
 
@@ -422,12 +470,14 @@ data access.
 
 ### PHP-DI Config Files
 
-The 11 `di.*.php` files in `config/di/` are loaded by PHP-DI at container build time:
+The `di.*.php` files sit **directly in `appliance/config/`** — there is no `config/di/` directory — and are
+loaded by PHP-DI at container build time:
 
 - `di.common.php`: Core services
 - `di.hook.php`: Hook registration
-- `di.recipe.plans.php`: Plan definitions (51 plans)
-- `di.recipe.steps.php`: Step definitions (56 steps, 18 categories)
+- `di.services.php`: Application services
+- `di.recipe.plans.php`: Plan definitions, plus the steps a single plan uses
+- `di.recipe.steps.php`: Step definitions
 - `di.variables.php`, `di.variables.clusters.php`, `di.variables.east.common.php`,
   `di.variables.east.paas.php`, `di.variables.from.envs.php`: Variable configurations
 - `di.persistent_data.php`: MongoDB repositories, loaders, writers
@@ -435,9 +485,9 @@ The 11 `di.*.php` files in `config/di/` are loaded by PHP-DI at container build 
 
 Extensions add their own services via `di.php` files loaded by the Teknoo East Foundation extension system.
 
-### Two-repo Layout
+### Extension Repositories
 
-Enterprise extensions are mounted from the `space-app-enterprise` repository. The extension loader
-discovers Enterprise bundles at runtime via Composer autoloading. Enterprise code lives in a separate
-Git repository; plan-doc Findings commits go to `space-app`.
+An extension ships from its own Git repository and is mounted at runtime under `appliance/extensions/`, a
+path this repository gitignores. The extension loader discovers the mounted bundles through Composer
+autoloading. What an extension adds is documented by that extension, not here.
 

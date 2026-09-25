@@ -55,11 +55,11 @@ This is the `Standard` version of Space. It is released under the 3-Clause BSD l
 
 A free support is available by Github issues of this repository.
 About priority support, please contact us at <contact@teknoo.software>.
-A commercial `Enterprise` version is planned with some additional features.
+A commercial `Enterprise` edition, currently in alpha, adds some additional features (see below).
 
 Support this project
 ---------------------
-This project is free and will remain free. It is fully supported by commercial activities of SASU Teknoo Software and 
+This project is free and will remain free. It is fully supported by commercial activities of SASU Teknoo Software and
 EIRL Richard DELOGE and by the `Enterprise` edition sales.
 If you like it and help me maintain it and evolve it, don't hesitate to support me on
 [Patreon](https://patreon.com/teknoo_software) or [Github](https://github.com/sponsors/TeknooSoftware).
@@ -106,16 +106,36 @@ License
 -------
 Space is licensed under the 3-Clause BSD License - see the licenses folder for details.
 
+Documentation
+-------------
+
+The full documentation lives in [documentation/](documentation/README.md), which indexes it and suggests a
+reading order. The short version:
+
+* [requirements.md](documentation/requirements.md) : hardware, PHP version and extensions, services, ports, TLS.
+* [installation.md](documentation/installation.md) : Docker Compose stacks, and a manual production install.
+* [configuration.md](documentation/configuration.md) : every environment variable, and which process reads it.
+* [architecture.md](documentation/architecture.md) : layering, the Recipe pattern, PHP-DI, the extension system.
+* [domain.md](documentation/domain.md) : accounts, projects, jobs, environments, clusters, voters.
+* [infrastructure.md](documentation/infrastructure.md) : Doctrine, Kubernetes, Docker Compose/Ansible, Symfony.
+* [worker.md](documentation/worker.md) : the asynchronous workers, how to run and supervise them.
+* [api.md](documentation/api.md) : REST API — authentication, endpoints, responses.
+* [development.md](documentation/development.md) : working on Space itself, tests, QA, writing an extension.
+
+Contributors and AI agents should also read [AGENTS.md](AGENTS.md) and the coordination hub in
+[.agents/](.agents/README.md).
+
 Requirements
 ------------
 
 This applications requires
 
-    * PHP 8.4+
+    * PHP 8.5+
     * A PHP autoloader (Composer is recommended)
     * A webserver (like Httpd/nginx + PHP-FPM)
     * A MongoDB server (for the web interfaces and all workers except the builder)
-    * A AMQP server, like RabbitMQ for the coomunication between components
+    * A Valkey server (or any Redis protocol compatible server) to store the HTTP sessions
+    * An AMQP server, like RabbitMQ, for the communication between components
     * A mercure server for the web interface and new job worker.
     * Buildah (Only for the builder)
 
@@ -127,9 +147,9 @@ This application is bundled with :
     * Teknoo/East-Foundation
     * Teknoo/East-Common
     * Teknoo/East-PaaS
-    * Teknoo/Kubernetes Clent
-    * Symfony 6.4+ or 7.3+
-    * Doctrine ODM 3.5+ / MongoDB
+    * Teknoo/Kubernetes Client
+    * Symfony 7.4 LTS or 8.x
+    * Doctrine MongoDB ODM 2.17+ / MongoDB
     * FlySystem
     * Buildah
 
@@ -139,9 +159,10 @@ Extensions
 Space comes from an extension system, provided by `Teknoo East Foundation` since the 8 version. The extension allows
 developpers to add more features and alter the Space behavior easily than edit Space's environments variables. Notably
 extensions can :
+
 * Add more Symfony Bundles.
 * Complete the PHP-DI configuration.
-* including :   
+* including :
 * Add more Recipe's steps, decorate bundled EditabledPlan and add more Plan.
 * Add/Complete `Teknoo East PaaS` compiler. (By decorating `CompilerCollectionInterface`).
 * Update the hooks collection, like `SPACE_HOOKS_COLLECTION_JSON`.
@@ -205,8 +226,10 @@ You can also use the `make` command directly under the folder `application` but 
     * `phpcs`:         To check if the code follow the PSR 12.
     * `audit`:         Run an audit on vendors to detect CVE and deprecated libraries.
 * **Testing**:
-    * `test`:                  Run all tests (units tests and behavior tests, with a code coverage) to check if the installation can work properly.
-    * `test-mono-thread`:      Run all tests in a mono thread (units tests and behavior tests, with a code coverage) to check if the installation can work properly.
+    * `test`:                  Run all tests (units tests and behavior tests, with a code coverage) to check if the
+      installation can work properly.
+    * `test-mono-thread`:      Run all tests in a mono thread (units tests and behavior tests, with a code coverage) to
+      check if the installation can work properly.
     * `test-without-coverage`: Run all tests (units tests and behavior tests without a code coverage).
     * `units-tests`:           Run only unit tests with a code coverage.
     * `units-tests-without-coverage`: Run only unit tests without code coverage.
@@ -221,6 +244,10 @@ You can also use the `make` command directly under the folder `application` but 
 Environnements variables configuration
 --------------------------------------
 
+The list below is the quick reference. [documentation/configuration.md](documentation/configuration.md) is the
+complete one: it documents each variable's type, default and effect, and states **which process reads what** —
+the web application and the four workers do not receive the same set.
+
 * Global configuration :
     * `SPACE_HOSTNAME` : (string) url of the Space instance.
     * East PaaS Encryption :
@@ -233,9 +260,12 @@ Environnements variables configuration
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_JSON` : (json string).
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE` : (json file).
     * Persited variable Encryption :
-        * Encryptions of persisted variables between servers and agents or workers :
-        * `SPACE_PERSISTED_VAR_AGENT_MODE`: *optional* To force the agent mode.
-          (by default it is enable only with cli sapi)
+        * Encryptions of persisted variables between servers and agents or workers : the web server only
+          encrypts (public key, `SPACE_PERSISTED_VAR_AGENT_MODE=0`), the `new_task` worker is the only process
+          decrypting them (private key, `SPACE_PERSISTED_VAR_AGENT_MODE=1`); the other workers need none of
+          these keys.
+        * `SPACE_PERSISTED_VAR_AGENT_MODE`: *optional* To force the agent mode. (by default it is enable only with cli
+          sapi)
         * `SPACE_PERSISTED_VAR_SECURITY_ALGORITHM` (with `rsa` ou `dsa`).
         * `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY` to define the private key location in the filesystem (to decrypt).
         * (optional) `SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE` about the passphrase to unlock the private
@@ -263,16 +293,19 @@ Environnements variables configuration
     * Symfony
         * `APP_SECRET` : (string) `framework.secret` value.
         * `APP_REMEMBER_SECRET` : (string) `remember_me.secret` value in Symfony firewall.
-        * `MESSENGER_NEW_TASK_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new deployment
+        * `MESSENGER_NEW_TASK_DSN` : (string) Messenger DSN to push to event bus (like AMQP) to dispatch a new
+          deployment
           request.
     * Support
         * `SPACE_SUPPORT_CONTACT` : (string) Email address (or URI) for support contact displayed in the UI. *Optional*
     * 2FA
         * `SPACE_2FA_PROVIDER` : (string) Two factor provider to use (e.g. `google` or `generic`). `google` by default.
           *Optional*
-    * Redis (sessions)
-        * `SPACE_REDIS_HOST` : (string) Redis host used for sessions. *Optional*
-        * `SPACE_REDIS_PORT` : (int) Redis port used for sessions. `6379` by default. *Optional*
+    * Valkey (sessions)
+        * `SPACE_VALKEY_HOST` : (string) Valkey host used for sessions. *Optional*
+        * `SPACE_VALKEY_PORT` : (int) Valkey port used for sessions. `6379` by default. *Optional*
+        * `SPACE_REDIS_HOST` / `SPACE_REDIS_PORT` : *Deprecated*, still read as a fallback when the
+          `SPACE_VALKEY_*` variables are not set.
     * Mailer.
         * `MAILER_DSN` : (string) Email transport configuration (Symfony Mailer DSN). *Optional*
         * `MAILER_SENDER_ADDRESS` : (string) Default sender email address. *Optional*
@@ -286,6 +319,11 @@ Environnements variables configuration
           the final job page when it is started. *Optional*
         * `MERCURE_SUBSCRIBER_URL` : (string) Mercure url used by browser to fetch the job page url. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+        * `MERCURE_JWT_ISSUER` : (string) `iss` claim of the generated tokens, read by a Mercure 1.0 hub only,
+          where it must match the issuer it trusts. *Optional*
+        * `MERCURE_PROTOCOL_VERSION` : (string) `0.x` (default) or `1.0`, the protocol spoken by the hub. Read
+          while the container is compiled, so it needs a warmup after a change and the same value on every
+          PHP process. *Optional*
     * JWT :
         * `SPACE_JWT_SECRET_KEY` : (string) Path to the private key used to sign JWT tokens.
         * `SPACE_JWT_PUBLIC_KEY` : (string) Path to the public key used to verify JWT tokens.
@@ -315,54 +353,14 @@ Environnements variables configuration
         * Microsoft:
             * `OAUTH_MS_CLIENT_ID` : (string) OAuth client id for Microsoft.
             * `OAUTH_MS_CLIENT_SECRET` : (string) OAuth client secret for Microsoft.
-    * OCI images building :
-        * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
-        * `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
-          This url will be prefixed by the account slug.
-        * `SPACE_OCI_REGISTRY_TLS_SECRET` : (string) name of the secret storing TLS certificate in the kubernetes
-          cluster
-          `registry-certs` by default.
-        * `SPACE_OCI_REGISTRY_PVC_SIZE` : (string) size claimed by the PVC dedicated to the private registry of each
-          account
-          `4Gi` by default.
-        * `SPACE_OCI_GLOBAL_REGISTRY_URL` : (string) url of the global oci image registry, reachable by all deployment
-          on
-          this instance.
-        * `SPACE_OCI_GLOBAL_REGISTRY_USERNAME` : (string) username to access to this registry.
-        * `SPACE_OCI_GLOBAL_REGISTRY_PWD` : (string) password to access to this registry.
-    * Kubernetes :
+    * Kubernetes (shared with the `new_task` worker: the web server still opens Kubernetes clients for the
+      dashboard health overview, the dashboard frame and the account clusters) :
         * `SPACE_KUBERNETES_CLIENT_TIMEOUT` : (int) max time in seconds allowed for each Kubernetes's API query.
           `3` by default. *Optional*
         * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
           `1` by default. *Optional*
-        * `SPACE_KUBERNETES_VERSION_LEVEL` : (string) Target Kubernetes API level used by the manifest transcribers.
-          `1.30` by default. `1.32`+ emits native image-volume sources instead of init-container + emptyDir.
-          `1.36`+ adds `hostUsers: false` to pod specs. *Optional*
         * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
           account. `space-client-` by default. *Optional*
-        * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace dedicated
-          to registry for each client account. `space-registry-` by default. *Optional*
-        * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
-          `nfs.csi.k8s.io` by default. *Optional*
-        * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
-        * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value ofingressClassName` in
-          ingresses.
-          `public` by default. *Optional*
-        * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
-          `lets-encrypt` by default. *Optional*
-        * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
-          account token creation. `5` by default. *Optional*
-        * Ingress provider mapping **(Only one of these options)** *Optional* :
-            * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
-            * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
-            * Dictionary's structure : `{'pattern': 'type'}` where :
-                * `pattern` : (string) Regular expression to match against the ingress class name.
-                * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`, `traefik2`,
-                  `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
         * Managed kubernetes cluster :
             * One cluster (legacy):
                 * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
@@ -383,8 +381,7 @@ Environnements variables configuration
                     * `dashboard` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
                       Space dashboard. *Optional*
                     * `create_account.token`: (string) Service account's token dedicated to creation of new client
-                      account
-                      (namespace, role, etc..).
+                      account (namespace, role, etc..).
                     * `create_account.ca_cert` : (string) Default CA for custom TLS certificate of the K8S API Service.
                       *Optional*
                     * `name` : (string) name of the default Kubernetes cluster in the project's form.
@@ -407,31 +404,6 @@ Environnements variables configuration
                           provisions a per-account private OCI registry container on the same Docker host over
                           Ansible (see the `SPACE_DC_REGISTRY_*` settings below).
 
-    * Docker Compose : *Optional — only used when a cluster has `type: docker-compose`. All keys optional;
-      library defaults shown. When `support_registry` is enabled, a per-account private OCI registry is
-      provisioned on the Docker host over Ansible; otherwise deployments can use the global OCI registry
-      (`SPACE_OCI_GLOBAL_REGISTRY_*`).*
-        * `SPACE_DC_ANSIBLE_BINARY` : (string) ansible-playbook binary. `ansible-playbook` by default.
-        * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `300` by default.
-        * `SPACE_DC_DEPLOY_ROOT` : (string) deploy root on the target host. `/opt/paas` by default.
-        * `SPACE_DC_NETWORK_DRIVER` : (string) docker network driver. `bridge` by default.
-        * `SPACE_DC_TRAEFIK_CONTAINER` : (string) Traefik container name. `traefik` by default.
-        * `SPACE_DC_TRAEFIK_DYNAMIC_DIR` : (string) Traefik dynamic config dir. `/etc/traefik/dynamic` by
-          default.
-        * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir. `/etc/traefik/certs` by default.
-        * `SPACE_DC_TRAEFIK_CERTRESOLVER` : (string) Traefik cert resolver name. No default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEB` : (string) HTTP entrypoint. `web` by default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE` : (string) HTTPS entrypoint. `websecure` by default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` : (string) TCP entrypoint. `tcp` by default.
-        * `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` : (string) UDP entrypoint. `udp` by default.
-        * `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` : (int/bool) skip TLS verify for HTTPS backends.
-          `false` by default.
-        * `SPACE_DC_REGISTRY_IMAGE` : (string) per-account registry image. `registry:2` by default.
-        * `SPACE_DC_REGISTRY_NETWORK` : (string) internal-only Docker network for the registry. `space-registry`
-          by default.
-        * `SPACE_DC_REGISTRY_PORT` : (int) registry port on the internal network. `5000` by default.
-        * `SPACE_DC_REGISTRY_TLS` : (int/bool) enable TLS on the per-account registry. `false` by default.
-
     * Subscription
         * `SPACE_CODE_SUBSCRIPTION_REQUIRED` : (int/bool) to restrict user's subscriptions only for users with a
           valid code. *Optional*
@@ -446,8 +418,8 @@ Environnements variables configuration
                 * `envsCountAllowed` : (int) count of managed clusters's namespace/env allowed for this plan
                 * `quotas[].category` : (string) `compute` or `memory` - Category of the quota
                 * `quotas[].type` : (string) name of the quota
-                * `quotas[].capacity` : (string) total of capacity allowed for an account
-                  (sum of all containers's `limit`)
+                * `quotas[].capacity` : (string) total of capacity allowed for an account (sum of all containers's
+                  `limit`)
                 * `quotas[].require` : (string) *Optional* Total of requires / requests allowed for an account
                 * `clusters`: (string[]) *Optional* List of clusters allowed with this plan (available later)
 
@@ -474,6 +446,87 @@ Environnements variables configuration
           the final job page when it is started. *Optional*
         * `MERCURE_PUBLISH_URL` : (string) Mercure url to push the job page url to follow the deployment. *Optional*
         * `MERCURE_JWT_TOKEN` : (string) Token to authenticate request. *Optional*
+        * `MERCURE_JWT_ISSUER` : (string) `iss` claim of the generated tokens, read by a Mercure 1.0 hub only,
+          where it must match the issuer it trusts. *Optional*
+        * `MERCURE_PROTOCOL_VERSION` : (string) `0.x` (default) or `1.0`, the protocol spoken by the hub. Read
+          while the container is compiled, so it needs a warmup after a change and the same value on every
+          PHP process. *Optional*
+
+    * New task worker (account provisioning, `messenger:consume new_task`) : this worker installs and reinstalls
+      the per-account registries and environments, refreshes quotas and tears down removed environments, so it
+      needs the whole Kubernetes block of the web configuration (clusters catalog or default cluster, client
+      settings, `SPACE_KUBERNETES_ROOT_NAMESPACE`), the persisted variables private key (see Global
+      configuration), `SPACE_JOB_ROOT` (see Execute job below), plus :
+        * `SPACE_NEW_TASK_WAITING_TIME` : (int) seconds to wait before processing a task. *Optional*
+        * Kubernetes :
+            * `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace
+              dedicated
+              to registry for each client account. `space-registry-` by default. *Optional*
+            * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
+              `nfs.csi.k8s.io` by default. *Optional*
+            * `SPACE_STORAGE_DEFAULT_SIZE` : (string) Default size to use in PVC. `3Gi` by default. *Optional*
+            * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value ofingressClassName` in
+              ingresses.
+              `public` by default. *Optional*
+            * `SPACE_CLUSTER_ISSUER` : (string) Default value of `cert-manager.io/cluster-issuer` in ingresses.
+              `lets-encrypt` by default. *Optional*
+            * `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME` : (int) max waiting time in seconds about the service
+              account token creation. `5` by default. *Optional*
+            * Ingress provider mapping **(Only one of these options)** *Optional* :
+                * `SPACE_INGRESS_PROVIDER_JSON` : (json string).
+                * `SPACE_INGRESS_PROVIDER_FILE` : (json file).
+                * Dictionary's structure : `{'pattern': 'type'}` where :
+                    * `pattern` : (string) Regular expression to match against the ingress class name.
+                    * `type` : (string) Ingress provider type. Valid values: `nginx`, `traefik`, `traefik1`, `traefik2`,
+                      `haproxy`, `aws`, or `gce`. Defaults to `nginx` if no match or invalid type.
+        * OCI registries (per-account private registry provisioning, global registry credentials) :
+            * `SPACE_OCI_REGISTRY_IMAGE` : (string) image of the registry `registry:latest` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_REQUESTS_CPU` : (string) vcore requests for the registry `10m` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_REQUESTS_MEMORY` : (string) memory requests for the registry `30Mi` by default.
+              *Optional*
+            * `SPACE_OCI_REGISTRY_LIMITS_CPU` : (string) vcore limits, `100m` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_LIMITS_MEMORY` : (string) memory limits `256Mi` by default. *Optional*
+            * `SPACE_OCI_REGISTRY_URL` : (string) url for each private registry of each account.
+              This url will be prefixed by the account slug.
+            * `SPACE_OCI_REGISTRY_TLS_SECRET` : (string) name of the secret storing TLS certificate in the kubernetes
+              cluster
+              `registry-certs` by default.
+            * `SPACE_OCI_REGISTRY_PVC_SIZE` : (string) size claimed by the PVC dedicated to the private registry of each
+              account
+              `4Gi` by default.
+            * `SPACE_OCI_GLOBAL_REGISTRY_URL` : (string) url of the global oci image registry, reachable by all
+              deployment
+              on
+              this instance.
+            * `SPACE_OCI_GLOBAL_REGISTRY_USERNAME` : (string) username to access to this registry.
+            * `SPACE_OCI_GLOBAL_REGISTRY_PWD` : (string) password to access to this registry.
+        * Docker Compose : *Optional — only used when a cluster has `type: docker-compose`. All keys optional;
+          library defaults shown. When `support_registry` is enabled, a per-account private OCI registry is
+          provisioned on the Docker host over Ansible; otherwise deployments can use the global OCI registry (
+          `SPACE_OCI_GLOBAL_REGISTRY_*`).*
+            * `SPACE_DC_ANSIBLE_BINARY` : (string) ansible-playbook binary. `ansible-playbook` by default.
+            * `SPACE_DC_TIMEOUT` : (int) playbook run timeout in seconds. `900` by default.
+            * `SPACE_DC_DEPLOY_ROOT` : (string) deploy root on the target host. `/opt/paas` by default.
+            * `SPACE_DC_NETWORK_DRIVER` : (string) docker network driver. `bridge` by default.
+            * `SPACE_DC_NETWORK_INTERNAL` : (bool) declare the project networks `internal` (no egress). `false` by
+              default.
+            * `SPACE_DC_TRAEFIK_CONTAINER` : (string) Traefik container name. `traefik` by default.
+            * `SPACE_DC_TRAEFIK_DYNAMIC_DIR` : (string) Traefik dynamic config dir. `/etc/traefik/dynamic` by
+              default.
+            * `SPACE_DC_TRAEFIK_CERTS_DIR` : (string) Traefik certs dir on the host. `/etc/traefik/certs` by default.
+            * `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR` : (string) the same dir as seen by the Traefik container. Same as
+              `SPACE_DC_TRAEFIK_CERTS_DIR` by default.
+            * `SPACE_DC_TRAEFIK_CERTRESOLVER` : (string) Traefik cert resolver name. No default.
+            * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEB` : (string) HTTP entrypoint. `web` by default.
+            * `SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE` : (string) HTTPS entrypoint. `websecure` by default.
+            * `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` : (int/bool) skip TLS verify for HTTPS backends.
+              `false` by default.
+            * `SPACE_DC_REGISTRY_IMAGE` : (string) per-account registry image. `registry:2` by default.
+            * `SPACE_DC_REGISTRY_NETWORK` : (string) internal-only Docker network for the registry. `space-registry`
+              by default. The registry is exposed through the host's Traefik as `<namespace>-registry.<docker host>`
+              (DNS record and certificate required).
+            * `SPACE_DC_REGISTRY_PORT` : (int) registry port on the internal network. `5000` by default.
+            * `SPACE_DC_REGISTRY_TLS` : (int/bool) enable TLS on the per-account registry. `false` by default.
 
     * Healthcheck (for all workers, agents and builders) :
         * `SPACE_PING_FILE` : (string) file used by Space's workers and builder to indicate the state of health, read by
@@ -531,6 +584,9 @@ Environnements variables configuration
               `3` by default. *Optional*
             * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
               `1` by default. *Optional*
+            * `SPACE_KUBERNETES_VERSION_LEVEL` : (string) Target Kubernetes API level used by the manifest transcribers.
+              `1.30` by default. `1.32`+ emits native image-volume sources instead of init-container + emptyDir.
+              `1.36`+ adds `hostUsers: false` to pod specs. *Optional*
             * `SPACE_STORAGE_CLASS` : (string) Default storage class name to use in PVC.
               `nfs.csi.k8s.io` by default. *Optional*
             * `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`: (string) Default value of `ingressClassName` in
@@ -549,12 +605,18 @@ Environnements variables configuration
 Worker Commands
 ---------------
 
+The `new_task` worker host needs `ansible-playbook` (`ansible-core`) and an SSH client when a cluster of the
+catalog is a `docker-compose` one (the per-account registry is provisioned on the Docker host over Ansible).
+
 To launch workers on your environment if you does not use docker compose :
 
 * worker to prepare a new job : `bin/console messenger:consume new_task`
 * worker to persist histories of jobs : `bin/console messenger:consume history_sent`
 * worker to persist final results of jobs : `bin/console messenger:consume job_done`
 * worker to execute jobs : `bin/console messenger:consume execute_job`
+
+See [documentation/worker.md](documentation/worker.md) for systemd and supervisor units, sizing, monitoring and
+troubleshooting. An enabled extension may add transports of its own; see that extension's documentation.
 
 Contribute :)
 -------------

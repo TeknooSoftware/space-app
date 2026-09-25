@@ -9,6 +9,7 @@ twig:
         authenticationUtils: '@Symfony\Component\Security\Http\Authentication\AuthenticationUtils'
         mercureUrl: '%env(MERCURE_SUBSCRIBER_URL)%'
         mercureEnabled: '%teknoo.space.mercure.publishing_enabled%'
+        hncFieldVisible: '%teknoo.space.ui.hnc_field_visible%'
         supportContact: '%teknoo.space.support.contact%'
         assetsVersion: '%teknoo.space.assets.version%'
         oauth:

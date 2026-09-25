@@ -89,7 +89,10 @@ class SpaceProjectLoader implements LoaderInterface
             static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_project.project_metadata.fetching',
-                    code: $error->getCode() > 0 ? $error->getCode() : 404,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 404,
+                    },
                     previous: $error,
                 )
             ),
@@ -112,7 +115,10 @@ class SpaceProjectLoader implements LoaderInterface
             static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_project.project.fetching',
-                    code: $error->getCode() > 0 ? $error->getCode() : 404,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 404,
+                    },
                     previous: $error,
                 )
             ),
@@ -160,7 +166,10 @@ class SpaceProjectLoader implements LoaderInterface
             static fn (Throwable $error, PromiseInterface $next): PromiseInterface => $next->fail(
                 new DomainException(
                     message: 'teknoo.space.error.space_project.project_metadata.fetching',
-                    code: $error->getCode() > 0 ? $error->getCode() : 404,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 404,
+                    },
                     previous: $error,
                 )
             ),

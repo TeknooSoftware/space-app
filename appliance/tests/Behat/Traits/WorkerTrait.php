@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\Traits;
 
 use Behat\Step\Then;
+use Behat\Step\When;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\Space\Service\PersistedVariableEncryption;
@@ -64,5 +65,19 @@ trait WorkerTrait
         $jobDoneTransport->process();
 
         $service->setAgentMode(false);
+    }
+
+    /**
+     * Drain only the `new_task` transport: the account provisioning tasks (registry / environment install or
+     * reinstall, quota refresh) are executed directly by `NewTaskHandler`, without a second hop.
+     */
+    #[When('Space executes the pending tasks')]
+    public function spaceExecutesThePendingTasks(): void
+    {
+        $newTaskTransport = $this->testTransport->get('new_task');
+
+        $newTaskTransport->throwExceptions();
+
+        $newTaskTransport->process();
     }
 }

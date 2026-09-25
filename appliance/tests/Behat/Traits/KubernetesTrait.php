@@ -32,7 +32,6 @@ use Http\Discovery\Strategy\CommonClassesStrategy;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
-use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
@@ -103,6 +102,37 @@ trait KubernetesTrait
         return $host;
     }
 
+    private function isKubernetesCluster(string $clusterName, ?Account $account): bool
+    {
+        $clusterCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
+        /** @var ConfigClusterInterface $clusterInstance */
+        foreach ($clusterCatalog as $clusterInstance) {
+            if ($clusterInstance->name === $clusterName) {
+                return 'kubernetes' === $clusterInstance->type;
+            }
+        }
+
+        $type = null;
+        if ($account instanceof Account) {
+            /** @var AccountCluster $accountClusterInstance */
+            foreach ($this->listObjects(AccountCluster::class) as $accountClusterInstance) {
+                if (
+                    $accountClusterInstance->getAccount() === $account
+                    && $clusterName === (string) $accountClusterInstance
+                ) {
+                    $accountClusterInstance->visit(
+                        'type',
+                        static function ($value) use (&$type): void {
+                            $type = $value;
+                        }
+                    );
+                }
+            }
+        }
+
+        return 'kubernetes' === $type;
+    }
+
     #[Given('A kubernetes client')]
     public function aKubernetesClient(): void
     {
@@ -141,12 +171,7 @@ trait KubernetesTrait
         string $cluster,
         ?string $effectiveVersion = null,
     ): void {
-        $jobs = $this->listObjects(JobOrigin::class);
-        Assert::assertNotEmpty($jobs);
-
-        /** @var JobOrigin $job */
-        $job = current($jobs);
-        Assert::assertInstanceOf(JobOrigin::class, $job);
+        $job = $this->firstJob();
 
         $host = $this->getHostFromClusterName($cluster, $job?->getProject()->getAccount());
 
@@ -171,6 +196,7 @@ trait KubernetesTrait
             jobsEnabled: $this->jobsEnabled,
             ingressProvider: $this->ingressProvider,
             versionLevel: $versionLevel,
+            exposeShortcuts: $this->exposeShortcutsEnabled,
         );
 
         Assert::assertEquals(
@@ -179,14 +205,14 @@ trait KubernetesTrait
         );
     }
 
-    #[Then('no Kubernetes manifests must not be created')]
-    public function noKubernetesManifestsMustNotBeCreated(): void
+    #[Then('no Kubernetes manifests have been created')]
+    public function noKubernetesManifestsHaveBeenCreated(): void
     {
         Assert::assertEmpty($this->manifests);
     }
 
-    #[Then('no Kubernetes manifests must not be created on :cluster')]
-    public function noKubernetesManifestsMustNotBeCreatedOn(string $cluster): void
+    #[Then('no Kubernetes manifests have been created on :cluster')]
+    public function noKubernetesManifestsHaveBeenCreatedOn(string $cluster): void
     {
         $host = $this->getHostFromClusterName($cluster, $this->recall(Account::class));
         if (isset($this->manifests[$host])) {
@@ -194,8 +220,8 @@ trait KubernetesTrait
         }
     }
 
-    #[Then('no Kubernetes manifests must not be deleted')]
-    public function noKubernetesManifestsMustNotBeDeleted(): void
+    #[Then('no Kubernetes manifests have been deleted')]
+    public function noKubernetesManifestsHaveBeenDeleted(): void
     {
         Assert::assertEmpty($this->deletedManifests);
     }
@@ -230,8 +256,14 @@ trait KubernetesTrait
         );
     }
 
+    /**
+     * A quota refresh applies the account's quotas on every environment (cluster + namespace) of the account, so
+     * the expected manifests are grouped by cluster host and compared host by host. When the refresh ran several
+     * times in the same worker (`$times`), each namespace holds that many identical `ResourceQuota` manifests.
+     */
     #[Then('a Kubernetes manifests dedicated to quota for the last account has been applied')]
-    public function aKubernetesManifestsDedicatedToQuotaForTheLastAccountHasBeenApplied(): void
+    #[Then('a Kubernetes manifests dedicated to quota for the last account has been applied :times times')]
+    public function aKubernetesManifestsDedicatedToQuotaForTheLastAccountHasBeenApplied(int $times = 1): void
     {
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
@@ -249,11 +281,18 @@ trait KubernetesTrait
 
         /** @var AccountEnvironment $ae */
         foreach ($this->listObjects(AccountEnvironment::class) as $ae) {
-            if ($ae->getAccount() === $account) {
+            //Only Kubernetes clusters hold a ResourceQuota: the environments hosted on a Docker Compose cluster are
+            //skipped by the refresh (and recorded as such in the account history).
+            if (
+                $ae->getAccount() === $account
+                && $this->isKubernetesCluster($ae->getClusterName(), $account)
+            ) {
                 $host = $this->getHostFromClusterName($ae->getClusterName(), $account);
                 $namespacesByHosts[$host][] = $ae->getNamespace();
             }
         }
+
+        Assert::assertNotEmpty($namespacesByHosts, 'The account has no environment to refresh the quota on');
 
         foreach ($namespacesByHosts as $host => $namespaces) {
             $expected = trim(
@@ -264,7 +303,30 @@ trait KubernetesTrait
                 )
             );
 
-            $json = trim(json_encode($this->manifests[$host], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+            Assert::assertArrayHasKey($host, $this->manifests, "No manifest has been applied on the cluster $host");
+
+            $applied = [];
+            foreach ($this->manifests[$host] as $uri => $manifests) {
+                Assert::assertCount(
+                    $times,
+                    $manifests,
+                    "The quota of $uri on $host must have been applied $times time(s)",
+                );
+                $distinct = array_unique(
+                    array_map(
+                        static fn (array $manifest): string => json_encode($manifest, JSON_THROW_ON_ERROR),
+                        $manifests,
+                    ),
+                );
+                Assert::assertCount(
+                    1,
+                    $distinct,
+                    "All the quota manifests applied on $uri on $host must be identical",
+                );
+                $applied[$uri] = [current($manifests)];
+            }
+
+            $json = trim(json_encode($applied, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
             Assert::assertEquals(
                 $expected,
                 $json,

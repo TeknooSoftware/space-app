@@ -2,19 +2,6 @@
 
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
-{% macro printHistory(history, index) %}
-    <tr {% if index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
-        <td>{{ history.date|date('Y M d H:i:s') }}</td>
-        <td>{{ history.message|trans }}</td>
-        <td>
-            <pre>{{ history.extra|json_encode }}</pre>
-        </td>
-    </tr>
-    {% if history.previous is not empty %}
-        {{ _self.printHistory(history.previous, index+1) }}
-    {% endif %}
-{% endmacro %}
-
 {% block title %}{{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }} - {% endblock %}
 {%- block instanceMainTitle -%}
     <i class="uil uil-data-sharing"></i> {{ 'teknoo.space.title.admin_account.edit'|trans }} : {{ objectInstance }}
@@ -23,6 +10,12 @@
 {% block breadcrumbListLink path('_teknoo_paas_admin_account_list') %}
 {% block breadcrumbFormTitle %}{{ 'teknoo.space.title.admin_account.edit'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ objectInstance }}{% endblock %}
+
+{% block topHeaderButton %}
+    <li class="list-inline-item mb-0 ms-1">
+        {% include '@TeknooSpace/Parts/refresh.button.html.twig' %}
+    </li>
+{% endblock %}
 
 {% block crudFormFields %}
     <div class="row">
@@ -108,41 +101,7 @@
 {% endblock %}
 
 {% block blockExtra %}
-    {% if accountHistoryRoot is defined and accountHistoryRoot is not empty %}
-        <div class="col-12 mb-4">
-            <div class="accordion" id="account-history">
-                <div class="accordion-item rounded">
-                    <h2 class="accordion-header" id="headingHistory">
-                        <button class="accordion-button collapsed border-0 bg-light"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#collapseHistory"
-                                aria-expanded="true"
-                                aria-controls="collapseOne">
-                            {{ 'teknoo.space.title.admin_account.history'|trans }}
-                        </button>
-                    </h2>
-                    <div id="collapseHistory" class="accordion-collapse border-0 collapse accordion-vh-limited" aria-labelledby="headingHistory"
-                         data-bs-parent="#account-history">
-                        <div class="accordion-body text-muted table-responsive bg-white shadow rounded">
-                            <table class="table mb-0 table-center">
-                                <thead class="bg-light">
-                                <tr>
-                                    <th>{{ 'teknoo.space.text.admin_account.history.date'|trans }}</th>
-                                    <th>{{ 'teknoo.space.text.admin_account.history.message'|trans }}</th>
-                                    <th>{{ 'teknoo.space.text.admin_account.history.extra'|trans }}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {{ _self.printHistory(accountHistoryRoot, 1) }}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
+    {% include '@TeknooSpace/Account/history.accordion.html.twig' %}
 {% endblock %}
 
 {% block btnExtraBottom %}

@@ -70,4 +70,16 @@ class TaskErrorPublisherTest extends TestCase
             )
         );
     }
+
+    public function testPublishWhenDisabled(): void
+    {
+        $hub = $this->createMock(HubInterface::class);
+        $hub->expects($this->never())->method('publish');
+
+        $publisher = new TaskErrorPublisher($hub, false);
+        $this->assertInstanceOf(
+            TaskErrorPublisher::class,
+            $publisher->publish('foo', 'bar', new Exception('foo')),
+        );
+    }
 }

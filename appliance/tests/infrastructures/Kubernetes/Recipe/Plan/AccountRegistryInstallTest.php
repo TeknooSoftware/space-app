@@ -26,10 +26,8 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
@@ -53,7 +51,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 #[CoversClass(AccountRegistryInstall::class)]
 class AccountRegistryInstallTest extends TestCase
 {
-    private AccountRegistryInstall $accountInstall;
+    private AccountRegistryInstall $accountRegistryInstall;
 
     private RecipeInterface&Stub $recipe;
 
@@ -65,11 +63,9 @@ class AccountRegistryInstallTest extends TestCase
 
     private CreateRegistryDeployment&Stub $createRegistryAccount;
 
-    private PersistRegistryCredential&Stub $persistRegistryCredentials;
+    private PersistRegistryCredential&Stub $persistRegistryCredential;
 
     private PrepareAccountErrorHandler&Stub $errorHandler;
-
-    private ObjectAccessControlInterface&Stub $objectAccessControlInterface;
 
     private string $defaultStorageSizeToClaim;
 
@@ -85,20 +81,18 @@ class AccountRegistryInstallTest extends TestCase
         $this->createNamespace = $this->createStub(CreateNamespace::class);
         $this->createStorage = $this->createStub(CreateStorage::class);
         $this->createRegistryAccount = $this->createStub(CreateRegistryDeployment::class);
-        $this->persistRegistryCredentials = $this->createStub(PersistRegistryCredential::class);
+        $this->persistRegistryCredential = $this->createStub(PersistRegistryCredential::class);
         $this->errorHandler = $this->createStub(PrepareAccountErrorHandler::class);
-        $this->objectAccessControlInterface = $this->createStub(ObjectAccessControlInterface::class);
         $this->defaultStorageSizeToClaim = '42';
 
-        $this->accountInstall = new AccountRegistryInstall(
+        $this->accountRegistryInstall = new AccountRegistryInstall(
             recipe: $this->recipe,
             loadAccountClusters: $this->loadAccountClusters,
             createNamespace: $this->createNamespace,
             createStorage: $this->createStorage,
             createRegistryAccount: $this->createRegistryAccount,
-            persistRegistryCredential: $this->persistRegistryCredentials,
+            persistRegistryCredential: $this->persistRegistryCredential,
             errorHandler: $this->errorHandler,
-            objectAccessControl: $this->objectAccessControlInterface,
             defaultStorageSizeToClaim: $this->defaultStorageSizeToClaim,
         );
     }
@@ -107,7 +101,7 @@ class AccountRegistryInstallTest extends TestCase
     {
         $this->assertInstanceOf(
             AccountRegistryInstall::class,
-            $this->accountInstall,
+            $this->accountRegistryInstall,
         );
     }
 
@@ -115,7 +109,7 @@ class AccountRegistryInstallTest extends TestCase
     {
         $this->assertInstanceOf(
             EditablePlanInterface::class,
-            $this->accountInstall->train(
+            $this->accountRegistryInstall->train(
                 $this->createStub(ChefInterface::class),
             )
         );

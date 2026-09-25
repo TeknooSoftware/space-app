@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
@@ -59,7 +58,6 @@ class AccountRegistryInstall implements EditablePlanInterface
         private readonly CreateRegistryDeployment $createRegistryAccount,
         private readonly PersistRegistryCredential $persistRegistryCredential,
         private readonly PrepareAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
         string $defaultStorageSizeToClaim,
     ) {
         $this->fill($recipe);
@@ -73,8 +71,6 @@ class AccountRegistryInstall implements EditablePlanInterface
         $recipe = $recipe->require(new Ingredient(AccountHistory::class));
         $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
         $recipe = $recipe->require(new Ingredient('string', 'storageSizeToClaim'));
-
-        $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);
 
         $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
 

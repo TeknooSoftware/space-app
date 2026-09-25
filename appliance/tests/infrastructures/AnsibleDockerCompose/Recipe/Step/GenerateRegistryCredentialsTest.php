@@ -65,7 +65,7 @@ class GenerateRegistryCredentialsTest extends TestCase
         return new ClusterCatalog(['dc' => $cluster], []);
     }
 
-    private function buildStep(): GenerateRegistryCredentials
+    private function buildStep(?string $certresolver = null): GenerateRegistryCredentials
     {
         return new GenerateRegistryCredentials(
             registryImage: 'registry:2',
@@ -73,7 +73,54 @@ class GenerateRegistryCredentialsTest extends TestCase
             registryPort: 5000,
             registryTls: false,
             deployRoot: '/opt/paas',
+            traefikContainer: 'traefik',
+            traefikDynamicDir: '/etc/traefik/dynamic',
+            traefikEntrypointWebsecure: 'websecure',
+            traefikDefaultCertresolver: $certresolver,
         );
+    }
+
+    /**
+     * The registry URL is derived from the Docker host: resolving the wrong cluster would publish the registry
+     * at the wrong address, so the cluster recorded in the account registry must win over the catalog order.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $buildCluster = static fn (string $name, string $host): DockerComposeCluster => new DockerComposeCluster(
+            name: $name,
+            sluggyName: $name,
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@' . $host . ':22',
+            dashboardAddress: '',
+            isExternal: false,
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            username: 'deployer',
+            caCertificate: 'known-hosts',
+            supportRegistry: true,
+        );
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $buildCluster('first', 'first.example.com'),
+                'recorded' => $buildCluster('recorded', 'recorded.example.com'),
+            ],
+            [],
+        );
+
+        $captured = null;
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(function (array $workPlan) use (&$captured): bool {
+                $captured = $workPlan;
+
+                return true;
+            }))
+            ->willReturnSelf();
+
+        ($this->buildStep())($manager, $catalog, 'acct', 'recorded');
+
+        $this->assertSame('acct-registry.recorded.example.com', $captured['registryUrl']);
     }
 
     public function testInvokeStagesCredentialsAndExtraVars(): void
@@ -92,7 +139,8 @@ class GenerateRegistryCredentialsTest extends TestCase
         $result = ($this->buildStep())($manager, $this->dockerComposeCatalog(), 'acct');
 
         $this->assertInstanceOf(GenerateRegistryCredentials::class, $result);
-        $this->assertSame('acct-registry:5000', $captured['registryUrl']);
+        //Bare host name (no scheme, no port): the registry is exposed by the host's Traefik on websecure
+        $this->assertSame('acct-registry.host.example.com', $captured['registryUrl']);
         $this->assertSame('acct', $captured['registryAccountName']);
         $this->assertSame('acct-docker-config', $captured['registryConfigName']);
         $this->assertSame('acct', $captured['kubeNamespace']);
@@ -101,6 +149,13 @@ class GenerateRegistryCredentialsTest extends TestCase
 
         $extraVars = $captured['extraVars'];
         $this->assertSame('acct-registry', $extraVars['registry_container']);
+        $this->assertSame('acct-registry.host.example.com', $extraVars['registry_host']);
+        $this->assertSame('acct', $extraVars['registry_account']);
+        $this->assertSame($captured['registryPassword'], $extraVars['registry_password']);
+        $this->assertSame('traefik', $extraVars['traefik_container']);
+        $this->assertSame('/etc/traefik/dynamic', $extraVars['traefik_dynamic_dir']);
+        $this->assertSame('websecure', $extraVars['traefik_entrypoint_websecure']);
+        $this->assertArrayNotHasKey('traefik_default_certresolver', $extraVars);
         $this->assertSame('registry:2', $extraVars['registry_image']);
         $this->assertSame('space-registry', $extraVars['registry_network']);
         $this->assertSame(5000, $extraVars['registry_port']);
@@ -108,6 +163,48 @@ class GenerateRegistryCredentialsTest extends TestCase
         $this->assertSame('acct-registry-data', $extraVars['registry_volume']);
         $this->assertSame('/opt/paas', $extraVars['deploy_root']);
         $this->assertTrue(str_starts_with((string) $extraVars['registry_htpasswd'], 'acct:'));
+    }
+
+    public function testInvokeForwardsTheCertresolverWhenConfigured(): void
+    {
+        $captured = null;
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(function (array $workPlan) use (&$captured): bool {
+                $captured = $workPlan;
+
+                return true;
+            }))
+            ->willReturnSelf();
+
+        ($this->buildStep('letsencrypt'))($manager, $this->dockerComposeCatalog(), 'acct');
+
+        $this->assertSame('letsencrypt', $captured['extraVars']['traefik_default_certresolver']);
+    }
+
+    public function testInvokeThrowsOnAMasterAddressWithoutHost(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'dc',
+            sluggyName: 'dc',
+            type: 'docker-compose',
+            masterAddress: 'host.example.com',
+            dashboardAddress: '',
+            isExternal: false,
+            clientKey: 'KEY',
+            username: 'deployer',
+            caCertificate: '',
+            supportRegistry: true,
+        );
+
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        ($this->buildStep())(
+            $this->createStub(ManagerInterface::class),
+            new ClusterCatalog(['dc' => $cluster], []),
+            'acct',
+        );
     }
 
     public function testInvokeThrowsOnNonDockerComposeRegistryCluster(): void

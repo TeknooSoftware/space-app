@@ -39,6 +39,7 @@ use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\LoginUser;
+use Teknoo\Space\Infrastructures\Symfony\Security\Exception\AutoLoginUnavailableException;
 
 /**
  * Class LoginUserTest.
@@ -103,6 +104,16 @@ class LoginUserTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ClientInterface::class),
             )
+        );
+    }
+
+    public function testInvokeWithoutStoredPassword(): void
+    {
+        $this->expectException(AutoLoginUnavailableException::class);
+        ($this->loginUser)(
+            new User(),
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ClientInterface::class),
         );
     }
 }

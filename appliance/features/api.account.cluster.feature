@@ -1,6 +1,7 @@
+@api
 Feature: API endpoints to create custom clusters on accounts available to account's environment where deploy projects
   In order to manage account's clusters
-  As an user of an account
+  As a user of an account
   I want to manage and create custom cluster for my account
 
   On space, users on a same account can define clusters to use with their environments and for all projects.
@@ -9,39 +10,31 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
   on these cluster like defined clusted, and environments hosted on these clusters must be used like environments on
   defined clusters. But users of anothers accounts can only access to other accounts'clusters.
 
+  Background:
+    Given a Space app instance
+    And a memory document database
+
   Scenario: From the API, list accounts clusters of user's account
-    Given A Space app instance
-    And A memory document database
-    And an account for "My First Company" with the account namespace "my-first-company"
-    And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    Given an account for "My First Company" with the account namespace "my-first-company"
+    And a user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
     And "5" accounts clusters "cluster A X" and a slug "a-cluster"
     And an account for "My Other Company" with the account namespace "my-other-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And "5" accounts clusters "cluster B X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to list of accounts clusters
-    Then get a JSON reponse
+    Then get a JSON response
     And is a serialized collection of "5" items on "1" pages
-    And the a list of serialized owned accounts clusters
+    And the list of serialized owned accounts clusters
 
   Scenario: From the API, create an account cluster, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create an account cluster:
       | field                              | value                   |
       | account_cluster.name               | Behats Test             |
@@ -55,22 +48,16 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | account_cluster.supportRegistry    | 1                       |
       | account_cluster.registryUrl        | https://registry.local  |
       | account_cluster.useHnc             | 0                       |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized created account cluster "Behats Test"
     And there is an account cluster in the memory for this account
 
   Scenario: From the API, create an account cluster, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create an account cluster with a json body:
       | field              | value                   |
       | name               | Behats Test             |
@@ -84,59 +71,41 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | supportRegistry    | 1                       |
       | registryUrl        | https://registry.local  |
       | useHnc             | 0                       |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized created account cluster "Behats Test"
     And there is an account cluster in the memory for this account
 
-  Scenario: From the api, get an owned account cluster
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, get an owned account cluster
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account clusters "my cluster" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to get the last account cluster
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized account cluster "my cluster"
 
-  Scenario: From the api, get an non-owned account cluster and get an error
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, get a non-owned account cluster and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to get the last account cluster
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
 
-  Scenario: From the api, edit an owned account cluster, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, edit an owned account cluster, via a request with a form url encoded body
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to edit an account cluster:
       | field                              | value                   |
       | account_cluster.name               | Behats Test             |
@@ -150,24 +119,18 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | account_cluster.supportRegistry    | 1                       |
       | account_cluster.registryUrl        | https://registry.local  |
       | account_cluster.useHnc             | 0                       |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized updated account cluster "Behats Test"
 
-  Scenario: From the api, edit an non-owned account cluster, via a request with a form url encoded body and get an error
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, edit a non-owned account cluster, via a request with a form url encoded body and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to edit an account cluster:
       | field                              | value                   |
       | account_cluster.name               | Behats Test             |
@@ -181,22 +144,16 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | account_cluster.supportRegistry    | 1                       |
       | account_cluster.registryUrl        | https://registry.local  |
       | account_cluster.useHnc             | 0                       |
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
 
   Scenario: From the API, edit an owned account cluster, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to edit an account cluster with a json body:
       | field              | value                   |
       | name               | Behats Test             |
@@ -210,24 +167,18 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | supportRegistry    | 1                       |
       | registryUrl        | https://registry.local  |
       | useHnc             | 0                       |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized updated account cluster "Behats Test"
 
-  Scenario: From the API, edit an non-owned account cluster, via a request with a json body and get and error
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, edit a non-owned account cluster, via a request with a json body and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to edit an account cluster with a json body:
       | field                              | value                   |
       | account_cluster.name               | Behats Test             |
@@ -241,81 +192,57 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | account_cluster.supportRegistry    | 1                       |
       | account_cluster.registryUrl        | https://registry.local  |
       | account_cluster.useHnc             | 0                       |
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
 
   Scenario: From the API, delete an owned account cluster
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last account cluster
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized deleted account cluster
     And the account cluster is deleted
 
-  Scenario: From the api, delete an non-owned account cluster and get an error
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, delete a non-owned account cluster and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last account cluster
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
     And the account cluster is not deleted
 
   Scenario: From the API, delete an owned account cluster, via a request with DELETE method
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last account cluster with DELETE method
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized deleted account cluster
     And the account cluster is deleted
 
-  Scenario: From the API, delete an non-owned account cluster via a request with DELETE method and get an error
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, delete a non-owned account cluster via a request with DELETE method and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And an account clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last account cluster with DELETE method
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
     And the account cluster is not deleted

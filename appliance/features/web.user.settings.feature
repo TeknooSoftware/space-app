@@ -1,6 +1,7 @@
+@web
 Feature: Web interface to manage its user's settings
   In order to manage user's setting
-  As an user of an account
+  As a user of an account
   I want to manage my own user setting like my email or credentials
 
   On a space instance, each user can edit its own settings, like its firstname, lastname, email and photo.
@@ -8,15 +9,13 @@ Feature: Web interface to manage its user's settings
   and other 2FA authentication.
 
   Scenario: From the UI, update my user settings
-    Given A Space app instance
-    And A memory document database
+    Given a Space app instance
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     And It goes to user settings
     Then the user obtains the form:
       | field                                          | value               |
@@ -67,8 +66,6 @@ Feature: Web interface to manage its user's settings
       | space_user.user.storedPassword.password.first  | Test3@Test          |
       | space_user.user.storedPassword.password.second | Test3@Test          |
     When the user logs out
-    And the user sign in with "dupont@teknoo.space" and the password "Test3@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
+    Given the user is signed in with "dupont@teknoo.space" and the password "Test3@Test"
     Then it is redirected to the dashboard
     And a new session is open

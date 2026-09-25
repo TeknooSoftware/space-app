@@ -12,6 +12,12 @@
 {% block breadcrumbFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ objectInstance.account }}{% endblock %}
 
+{% block topHeaderButton %}
+    <li class="list-inline-item mb-0 ms-1">
+        {% include '@TeknooSpace/Parts/refresh.button.html.twig' %}
+    </li>
+{% endblock %}
+
 {% block crudFormFields %}
     <div class="row">
         {{ form_row(formView.account.name, {'label': 'teknoo.space.label.account.name'}) }}
@@ -69,6 +75,10 @@
             {{ 'teknoo.space.action.add_account_environment'|trans }}
         </button>
     {% endif %}
+{% endblock %}
+
+{% block blockExtra %}
+    {% include '@TeknooSpace/Account/history.accordion.html.twig' %}
 {% endblock %}
 
 {% block btnExtraBottom %}

@@ -322,3 +322,50 @@ class LoadEnvironments
 - `manager->updateWorkPlan()` — adds/updates data in workflow context
 - `manager->error()` — signals failure up the chain
 - `Promise` — handles async success/error callbacks
+
+## Async Task DTO Example
+
+An asynchronous task is a DTO implementing `NewTaskInterface`. The HTTP request builds one and hands it to the
+`new_task` worker through `CallNewTask`; `NewTaskHandler` resolves the matching plan from
+`Teknoo\Space\Service\NewTaskRecipeRegistry` and runs it. Account provisioning, environment deletion and quota
+refresh all work this way — see `domain/Object/DTO/Task/` and the shared base `AbstractAccountTask`.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Teknoo\Space\Object\DTO\Task;
+
+/**
+ * Carries only identifiers: the worker reloads the account, its history, clusters, environments and registry
+ * itself. `envName` / `clusterName` are exported to the workplan only when set, so ProvisioningPlanBowl falls
+ * back to the account's registry cluster for account-level tasks.
+ */
+final class InstallEnvironmentTask extends AbstractAccountTask
+{
+}
+```
+
+Three rules this pattern lives by:
+
+1. **A task DTO must not implement `ObjectInterface`.** A recipe ingredient matches by workplan key, but a step
+   parameter matches by instance and the first match wins — an `ObjectInterface` task would shadow the loaded
+   account in every step typed on it.
+2. **Even a secret-less task honours the full `Encryption` round trip** (`SensitiveContentInterface`): an agent
+   configured with encryption refuses an unencrypted message.
+3. **`export()` strips persisted objects and Doctrine proxies** before serialization; `toArray()` emits only
+   the keys that are set.
+
+Queueing one, from a web recipe step:
+
+```php
+$manager->updateWorkPlan([
+    NewTaskInterface::class => new InstallEnvironmentTask(
+        accountId: $account->getId(),
+        envName: $environmentName,
+    ),
+]);
+```
+
+then `CallNewTask` dispatches it and `AddTaskToHistory` writes the "queued" line the user sees immediately.

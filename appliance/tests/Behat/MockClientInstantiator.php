@@ -97,7 +97,13 @@ class MockClientInstantiator implements InstantiatorInterface
                     $qs = [];
                     parse_str($query, $qs);
                     if (!empty($qs['labelSelector'])) {
-                        foreach ($this->testsContext->listObjects(AccountEnvironment::class) as $env) {
+                        //Environments removed by the web request are still looked up by the `new_task` worker
+                        //(their namespace still exists on the cluster until the worker deletes it)
+                        $environments = [
+                            ...$this->testsContext->listObjects(AccountEnvironment::class),
+                            ...$this->testsContext->listRemovedObjects(AccountEnvironment::class),
+                        ];
+                        foreach ($environments as $env) {
                             if ('name=' . $env->getNamespace() === $qs['labelSelector']) {
                                 return new JsonResponse(
                                     [

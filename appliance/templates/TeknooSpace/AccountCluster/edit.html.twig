@@ -64,14 +64,19 @@
             }
             }
         ) }}
-        {{ form_row(
-            formView.useHnc,
-            {
-                'label_attr': {
-                'class': 'switch-custom'
-            }
-            }
-        ) }}
+        {% if hncFieldVisible %}
+            {{ form_row(
+                formView.useHnc,
+                {
+                    'label_attr': {
+                    'class': 'switch-custom'
+                }
+                }
+            ) }}
+        {% else %}
+            <input type="hidden" name="{{ formView.useHnc.vars.full_name }}" value="{{ formView.useHnc.vars.value }}"{% if not formView.useHnc.vars.checked %} disabled{% endif %}>
+            {% do formView.useHnc.setRendered %}
+        {% endif %}
     </div>
 
 {% endblock %}

@@ -76,10 +76,13 @@ class CreateNamespace
         bool $forRegistry,
         ?string $clusterName = null,
         ?string $envName = null,
+        ?string $registryClusterName = null,
     ): self {
         if ($forRegistry) {
             $namespaceValue = $this->registryRootNamespace . $accountNamespace;
-            $registryCluster = $clusterCatalog->getClusterForRegistry();
+            //The registry cluster is resolved once per task by `SelectRegistryCluster`; falls back to the
+            //first cluster supporting the registry when the task did not resolve it.
+            $registryCluster = $clusterCatalog->getClusterForRegistry($registryClusterName);
             if (!$registryCluster instanceof KubernetesCluster) {
                 throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
             }

@@ -31,6 +31,7 @@ use OTPHP\TOTP;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Object\TOTPAuth;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 
 use function array_shift;
 use function explode;
@@ -251,6 +252,40 @@ trait BrowserActionTrait
         $this->formName = 'space_project';
     }
 
+    /**
+     * Open directly, without following a link, the edit page of the last object of `$className`.
+     *
+     * @param class-string $className
+     */
+    private function openEditPageOfLast(string $route, string $className, string $formName): void
+    {
+        $this->isAFinalResponse();
+
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute(
+                route: $route,
+                parameters: [
+                    'id' => $this->recall($className)?->getId(),
+                ],
+            ),
+        );
+
+        $this->formName = $formName;
+    }
+
+    #[When('it goes to the admin project page')]
+    public function itGoesToTheAdminProjectPage(): void
+    {
+        $this->openEditPageOfLast('_teknoo_paas_admin_project_edit', Project::class, 'space_project');
+    }
+
+    #[When('it opens the account cluster page')]
+    public function itOpensTheAccountClusterPage(): void
+    {
+        $this->openEditPageOfLast('space_account_clusters_edit', AccountCluster::class, 'account_cluster');
+    }
+
     #[When('It goes to project page of :projectName of :accountName')]
     public function itGoesToProjectPageOfOf(string $projectName, string $accountName): void
     {
@@ -307,8 +342,8 @@ trait BrowserActionTrait
         $this->formName = 'project_vars';
     }
 
-    #[When('an user go to subscription page')]
-    public function anUserGoToSubscriptionPage(): void
+    #[When('a user goes to the subscription page')]
+    public function aUserGoesToTheSubscriptionPage(): void
     {
         $url = $this->getPathFromRoute(
             route: 'space_subscription',
@@ -329,8 +364,8 @@ trait BrowserActionTrait
         $this->formName = 'space_user';
     }
 
-    #[When('an user go to recovery request page')]
-    public function anUserGoToRecoveryRequestPage(): void
+    #[When('a user goes to the recovery request page')]
+    public function aUserGoesToTheRecoveryRequestPage(): void
     {
         $url = $this->getPathFromRoute(
             route: '_teknoo_common_user_recovery',

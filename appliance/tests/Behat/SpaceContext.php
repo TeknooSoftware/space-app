@@ -37,6 +37,7 @@ use Doctrine\ODM\MongoDB\Query\Query;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\Persistence\ObjectManager;
 use phpseclib4\Crypt\RSA;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator\Generator;
 use PHPUnit\Framework\MockObject\Rule\AnyInvokedCount as AnyInvokedCountMatcher;
 use PHPUnit\TextUI\Configuration\Builder as PhpUnitConfigBuilder;
@@ -62,10 +63,12 @@ use Teknoo\East\Paas\Infrastructures\PhpSecLib\Configuration\Algorithm;
 use Teknoo\East\Paas\Job\History\SerialGenerator;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceSubscriptionType;
 use Teknoo\Space\Tests\Behat\Traits\ApiTrait;
+use Teknoo\Space\Tests\Behat\Traits\AuthenticationTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserActionTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserCrawlingTrait;
 use Teknoo\Space\Tests\Behat\Traits\BuilderTrait;
 use Teknoo\Space\Tests\Behat\Traits\DockerComposeTrait;
+use Teknoo\Space\Tests\Behat\Traits\HistoryReaderTrait;
 use Teknoo\Space\Tests\Behat\Traits\HttpTrait;
 use Teknoo\Space\Tests\Behat\Traits\JwtTrait;
 use Teknoo\Space\Tests\Behat\Traits\KubernetesTrait;
@@ -92,10 +95,12 @@ use function strtolower;
 class SpaceContext implements Context
 {
     use ApiTrait;
+    use AuthenticationTrait;
     use BrowserActionTrait;
     use BrowserCrawlingTrait;
     use BuilderTrait;
     use DockerComposeTrait;
+    use HistoryReaderTrait;
     use HttpTrait;
     use JwtTrait;
     use KubernetesTrait;
@@ -145,6 +150,8 @@ class SpaceContext implements Context
     private string $quotasMode = '';
 
     private bool $jobsEnabled = false;
+
+    private bool $exposeShortcutsEnabled = false;
 
     private string $defaultsMode = '';
 
@@ -313,6 +320,7 @@ class SpaceContext implements Context
         $this->apiPendingJobUrl = null;
         $this->clearJobMemory = false;
         $this->jobsEnabled = false;
+        $this->exposeShortcutsEnabled = false;
         $this->timeoutService->disable();
 
         $envVarsNames = [
@@ -330,6 +338,7 @@ class SpaceContext implements Context
             'SPACE_INGRESS_PROVIDER_JSON',
             'SPACE_INGRESS_PROVIDER_FILE',
             'SPACE_KUBERNETES_VERSION_LEVEL',
+            'SPACE_SHOW_HNC_FIELD',
         ];
 
         foreach ($envVarsNames as $name) {
@@ -581,6 +590,37 @@ class SpaceContext implements Context
         $this->jobsEnabled = true;
     }
 
+    /**
+     * The paas files of the East PaaS `v1.2` expose shortcuts, which change the names of the generated service and
+     * ingress manifests.
+     */
+    private function useExposeShortcutsPaasFile(string $fileName): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithExposeShortcuts/' . $fileName;
+        Assert::assertFileExists($this->paasFile);
+
+        $this->quotasMode = '';
+        $this->exposeShortcutsEnabled = true;
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts')]
+    public function aProjectWithAPaasFileUsingExposeShortcuts(): void
+    {
+        $this->useExposeShortcutsPaasFile('paas.yaml');
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts with wrong version')]
+    public function aProjectWithAPaasFileUsingExposeShortcutsWithWrongVersion(): void
+    {
+        $this->useExposeShortcutsPaasFile('paas.wrong-version.yaml');
+    }
+
+    #[Given('the project has a complete paas file using expose shortcuts with a duplicated :type')]
+    public function aProjectWithAPaasFileUsingExposeShortcutsWithADuplicated(string $type): void
+    {
+        $this->useExposeShortcutsPaasFile('paas.with-duplicated-' . $type . '.yaml');
+    }
+
     #[Given('the project has a complete paas file without resources')]
     public function aProjectWithAPaasFileWithoutResource(): void
     {
@@ -625,6 +665,13 @@ class SpaceContext implements Context
     public function aClusterSupportingHierarchicalNamespace(): void
     {
         $this->useHnc = true;
+    }
+
+    #[Given('the hierarchical namespaces field is shown in the web interface')]
+    public function theHierarchicalNamespacesFieldIsShownInTheWebInterface(): void
+    {
+        //Must precede the first request of the scenario: the form extension is built once per kernel
+        $_ENV['SPACE_SHOW_HNC_FIELD'] = '1';
     }
 
     #[Given('a subscription restriction')]

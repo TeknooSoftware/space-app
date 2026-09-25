@@ -48,8 +48,9 @@ As Claude Code, you have unique capabilities that other agents may not have. Use
 1. **Read First**
     - **ALWAYS** read [AGENTS.md](AGENTS.md) at the start of a session — this is the universal standards
       document. Follow its instructions, which include reading extension-level `AGENTS.md` files
-      (`appliance/extensions/*/AGENTS.md`) and extension `.agents/` documentation whenever an extension
-      is enabled and relevant to the task.
+      (`appliance/extensions/*/AGENTS.md`) and the `documentation/` directory an extension may ship beside
+      it, whenever that extension is enabled and relevant to the task. Extensions have no `.agents/` directory
+      of their own — this hub is shared.
     - **ALWAYS** read `.agents/feedback/INDEX.md` to learn from past challenges
     - Check if other agents have left notes in `.agents/` directory
 

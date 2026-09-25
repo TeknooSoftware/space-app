@@ -86,7 +86,12 @@ class ListCommand extends Command
             $availablesExtensions = $this->listAvailablesExtensions();
             $rows = [];
             foreach ($availablesExtensions as $classExtension => $extension) {
-                $rows[] = [$extension, isset($enabledExtensions[(string) $classExtension]) ? 'Yes' : 'No'];
+                $enabled = 'No';
+                if (isset($enabledExtensions[(string) $classExtension])) {
+                    $enabled = 'Yes';
+                }
+
+                $rows[] = [$extension, $enabled];
             }
 
             $table->setRows($rows);

@@ -38,8 +38,8 @@ Handles persisted variables and secrets at account and project levels.
 
 ### Account (+ AccountData)
 
-The **Account** is the primary aggregate root representing a tenant in the multi-tenant system.
-**Account** class come from the Teknoo East PaaS library. **AccountData** is a subclass (one-to-one) to extends
+The **Account** is the primary aggregate root representing a tenant in the multi-tenant system. **Account** class come
+from the Teknoo East PaaS library. **AccountData** is a subclass (one-to-one) to extends
 Account and add more properties, about legal information and subscription plan.
 
 **Properties:**
@@ -241,6 +241,8 @@ Represents a private OCI image registry for an account.
 - `registryConfigName`: Resource's name to store Registry credential
 - `registryAccountName`, `registryPassword`: Registry credentials
 - `persistentVolumeClaimName`: Name of the volume claim in the cluster
+- `clusterName`: Cluster hosting the registry, as named in the clusters catalog. Nullable: registries created
+  before this field existed have no recorded cluster
 
 **Relationships:**
 
@@ -256,6 +258,10 @@ Represents a private OCI image registry for an account.
   provisioned on the Docker host over Ansible (internal-only network, htpasswd auth, optional TLS)
 - Registry is shared for all environments and clusters
 - Registry can be present on a different Kubernetes cluster
+- The hosting cluster is chosen once, at install, as the first cluster of the account's catalog declaring the
+  registry support, and recorded in `clusterName`. Every later operation, a reinstall in particular, reuses that
+  cluster: a registry is never moved silently. A registry without a recorded cluster falls back to the first
+  cluster supporting the registry, and the name is recorded on the next reinstall
 
 ### AccountHistory
 
@@ -298,6 +304,23 @@ Represents a configuration variable that can be persisted and optionally encrypt
 - Project variables override account variables
 - Job variables override project variables
 
+### ApiKeysAuth (+ ApiKeyToken)
+
+The API credentials of a user. `ApiKeysAuth` is an authentication method attached to the user and holds a
+collection of `ApiKeyToken`; each token has a `name`, its clear `token` (shown once, at creation), a
+`tokenHash` for verification, a `createdAt` and an optional `expiresAt`.
+
+A token is not a session: it is exchanged for a JWT at `POST /api/v1/login`, with
+`username` = `"<token name>:<user email>"` and `token` = the clear value. The JWT, not the token, authenticates
+the subsequent calls. Users manage their tokens from the web UI (`space_my_settings_list_api_keys` at
+`/my-settings/api-keys`, and `space_my_settings_remove_api_keys` to revoke one).
+
+**Business Rules:**
+
+- A token name is unique within a user's keyring; a token can be revoked, never edited.
+- An expired token stops being exchangeable; expiry is optional.
+- Only the hash is usable after creation — the clear value is never displayed twice.
+
 ### Configuration Objects
 
 #### Cluster configuration (ConfigClusterInterface)
@@ -330,8 +353,8 @@ the catalog (`di.variables.clusters.php`) and when converting an `AccountCluster
   password, no token).
 
 Kubernetes-only Recipe steps narrow the injected instance with `instanceof KubernetesCluster` and throw
-`UnsupportedClusterTypeException` when routed a non-Kubernetes cluster; catalog-iterating *display* steps
-(e.g. dashboard health, job defaults) skip non-Kubernetes clusters instead of throwing.
+`UnsupportedClusterTypeException` when routed a non-Kubernetes cluster; catalog-iterating *display* steps (e.g.
+dashboard health, job defaults) skip non-Kubernetes clusters instead of throwing.
 
 #### SubscriptionPlan
 
@@ -396,6 +419,18 @@ General-purpose view data container.
 
 Encapsulates data for creating a new deployment job.
 
+### Task DTOs (`Object/DTO/Task/`)
+
+`NewTaskInterface` implementations queued to the `new_task` worker: `InstallRegistryTask`,
+`ReinstallRegistryTask`, `RefreshQuotaTask`, `InstallEnvironmentTask`, `ReinstallEnvironmentTask` for account
+provisioning, and `DeleteEnvironmentsTask` for environment removal (which runs
+`AccountEnvironmentsDeletionTask` and its `DeleteNamespaces` step).
+
+They share `AbstractAccountTask` (task id, account id, optional environment name and cluster name) and only
+carry identifiers: the worker reloads the objects. They are deliberately not `ObjectInterface`s — a recipe
+ingredient matches by workplan key, but a step parameter matches by instance and the first match wins, so an
+`ObjectInterface` task would shadow the loaded account.
+
 ### JobVarsSet
 
 Collection of job variables.
@@ -432,35 +467,23 @@ Search query parameters.
 
 Query objects represent read operations following CQRS-like patterns.
 
-### Account Queries
+They live in `domain/Query/`, one subdirectory per entity. Several are named `LoadFromAccountQuery`: they
+are distinct classes in distinct namespaces, so always qualify which one you mean.
 
-- `FetchAccountFromUser`: Retrieve user's account
-
-### User Queries
-
-- `SearchQuery`: Search users with filters
-
-### Project Queries
-
-- `CountProjectsInAccount`: Count account's projects
-
-### Environment Queries
-
-- `LoadFromAccountQuery`: Load account environments
-
-### Cluster Queries
-
-- `LoadFromAccountQuery`: Load account clusters
-
-### Variable Queries
-
-- `LoadFromProjectQuery`: Load project variables
-- `LoadFromAccountQuery`: Load account variables
-- `DeleteVariablesQuery`: Remove variables
-
-### Registry Queries
-
-- `LoadFromAccountQuery`: Load account registry
+| Subdirectory                | Query                                          | Purpose                                |
+|-----------------------------|------------------------------------------------|----------------------------------------|
+| `Account/`                  | `FetchAccountFromUser`                         | Retrieve a user's account              |
+| `AccountCluster/`           | `LoadFromAccountQuery`                         | Load an account's clusters             |
+| `AccountData/`              | `LoadFromAccountQuery`                         | Load the Space-side data of an account |
+| `AccountEnvironment/`       | `LoadFromAccountQuery`                         | Load an account's environments         |
+| `AccountHistory/`           | `LoadFromAccountQuery`                         | Load an account's history              |
+| `AccountRegistry/`          | `LoadFromAccountQuery`                         | Load an account's registry             |
+| `AccountPersistedVariable/` | `LoadFromAccountQuery`, `DeleteVariablesQuery` | Load / remove account variables        |
+| `Project/`                  | `CountProjectsInAccount`                       | Count an account's projects            |
+| `ProjectMetadata/`          | `LoadFromProjectQuery`                         | Load a project's metadata              |
+| `ProjectPersistedVariable/` | `LoadFromProjectQuery`, `DeleteVariablesQuery` | Load / remove project variables        |
+| `User/`                     | `SearchQuery`                                  | Search users with filters              |
+| `UserData/`                 | `LoadFromUserQuery`                            | Load the Space-side data of a user     |
 
 ## Contracts (Domain Services)
 
@@ -584,13 +607,13 @@ Variables are merged with the following precedence (highest to lowest):
 Space uses Symfony Security Voters for fine-grained authorization at the entity level. Voters are registered as
 services and checked by the `IsGranted` attribute or `AuthorizationChecker` during recipe steps and controllers.
 
-| Voter | Protects | Logic |
-|-------|----------|-------|
-| **AdminVoter** | Admin-only operations | Checks `ROLE_ADMIN` role |
-| **AccountVoter** | Account entities | Validates account ownership (user's account) |
-| **JobVoter** | Job entities | Validates job access via project ownership |
-| **ProjectVoter** | Project entities | Validates project access via account membership |
-| **UserVoter** | User entities | Validates user access (own profile or admin) |
+| Voter            | Protects              | Logic                                           |
+|------------------|-----------------------|-------------------------------------------------|
+| **AdminVoter**   | Admin-only operations | Checks `ROLE_ADMIN` role                        |
+| **AccountVoter** | Account entities      | Validates account ownership (user's account)    |
+| **JobVoter**     | Job entities          | Validates job access via project ownership      |
+| **ProjectVoter** | Project entities      | Validates project access via account membership |
+| **UserVoter**    | User entities         | Validates user access (own profile or admin)    |
 
 ## ObjectAccessControl
 

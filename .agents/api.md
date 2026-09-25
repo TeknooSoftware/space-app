@@ -4,30 +4,47 @@ Thin reference for the API layer. **See `documentation/` for full details.**
 
 ## Route File Organization
 
-**API v1 routes** (`config/routes/api/v1/`): 10 YAML files across 3 subdirectories:
-- **unauthenticated/**: `login.yaml` (public login endpoint)
-- **authenticated/**: `account.yaml`, `job.yaml`, `jwt.yaml`, `project.yaml`, `settings.yaml` (5 files)
-- **admin/**: `account.yaml`, `job.yaml`, `project.yaml`, `user.yaml` (4 files)
+**API v1 routes** (`config/routes/api/v1/`): 10 YAML files across 3 subdirectories. Every file is prefixed
+`space.api.v1.` — the bare names (`account.yaml`, `job.yaml`, …) do not exist:
+
+- **unauthenticated/**: `space.api.v1.login.yaml`
+- **authenticated/**: `space.api.v1.account.yaml`, `.job.yaml`, `.jwt.yaml`, `.project.yaml`, `.settings.yaml`
+- **admin/**: `space.api.v1.account.yaml`, `.job.yaml`, `.project.yaml`, `.user.yaml`
+
+The `/api/v1` and `/api/v1/admin` prefixes are **not** in these files: they come from the loader
+`config/routes/api.yaml`, which imports the three directories under their prefix.
 
 **Web routes** (`config/routes/`): 10 YAML files (`space.account.yaml`, `space.admin.account.yaml`,
 `space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`,
 `space.project.yaml`, `space.settings.yaml`, `space.subscription.yaml`,
-`space.support.contact.yaml`) containing 48 `path:` entries.
+`space.support.contact.yaml`) containing 48 `path:` entries. The same directory also holds the
+framework and vendor route files (`api.yaml`, `connect.oauth.yaml`, `east.common.include.yaml`,
+`east.paas.include.yaml`, four `east.paas.overwrite.*.yaml`, `scheb_2fa.yaml`, `symfony.framework.yaml`,
+`web_profiler.yaml`).
 
 → `documentation/api.md#route-file-organization`
 
 ## JSON Template Structure
 
-API responses are rendered via JSON templates in `templates/TeknooSpace/api/`, organized by resource:
+API responses are rendered by Twig templates in `templates/TeknooSpace/api/`. They are **`.json.twig`**, never
+`.html.twig`, and the file names differ per resource — a single object is usually `item`, not `get`:
 
-- **Account/**: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`, `pending.html.twig`
-- **Job/**: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`, `pending.html.twig`
-- **Project/**: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
-- **AdminAccount/**, **AdminJob/**, **AdminProject/**, **AdminUser/**: list/get/deleted variants
-- **User/**: `get.html.twig`, `settings.html.twig`
+| Directory         | Templates                                              |
+|-------------------|--------------------------------------------------------|
+| `Account/`        | `environments`, `settings`, `status`, `variables`      |
+| `AccountCluster/` | `deleted`, `item`, `list`                              |
+| `Job/`            | `deleted`, `get`, `list`, `new`, `pending`             |
+| `Jwt/`            | `jwt.form`, `jwt.token`                                |
+| `Project/`        | `deleted`, `item`, `list`, `variables`                 |
+| `User/`           | `settings`                                             |
+| `AdminAccount/`   | `deleted`, `environments`, `item`, `list`, `variables` |
+| `AdminJob/`       | `deleted`, `get`, `list`, `new`, `pending`             |
+| `AdminUser/`      | `deleted`, `item`, `list`                              |
 
-Each template renders `{"data": {...}}` or `{"error": {...}}`. Controllers call `renderView()` with the
-appropriate template, or use `#[Template]` for auto-rendering.
+There is no `AdminProject/` directory: admin project responses reuse the non-admin `Project/` templates.
+
+Each template renders `{"data": {...}}` or `{"error": {...}}`. The template to use is named in the route
+`defaults`, alongside `api: 'json'`.
 
 → `documentation/api.md#json-template-structure`
 
@@ -43,12 +60,14 @@ appropriate template, or use `#[Template]` for auto-rendering.
 ## API Endpoints
 
 Full endpoint reference is in `documentation/api.md#api-endpoints`. Key patterns:
+
 - User endpoints: `/api/v1/project/{projectId}/job/new`, `/api/v1/account/settings`
 - Admin endpoints: `/api/v1/admin/account/{id}/...`, `/api/v1/admin/users`
 - All admin routes prefixed with `/api/v1/admin`
+- `/healthy` (`config/routes/space.health.yaml`) is the liveness endpoint, outside `/api/v1`
 
-## Enterprise Extension Reference
+## Extensions
 
-Enterprise may add additional API endpoints (e.g. Trivy audit, webhook endpoints). These are registered
-via Enterprise's own route YAML files in the `space-app-enterprise` repo. See
-`documentation/architecture.md#5-two-repo-layout`.
+An extension ships its own route YAML files in its `routes/` directory. They are imported **without a
+prefix**, so an extension route spells its path in full — including any `/admin` segment. Which routes an
+extension adds is documented by that extension, not here.

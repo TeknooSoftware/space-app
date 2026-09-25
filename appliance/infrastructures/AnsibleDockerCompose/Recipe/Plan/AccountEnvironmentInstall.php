@@ -25,13 +25,13 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\LogDeployUserInRegistries;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\PersistSshIdentity;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
 use Teknoo\Space\Object\Config\ClusterCatalog;
@@ -42,8 +42,10 @@ use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 
 /**
  * Docker-compose environment provisioning. Unlike the Kubernetes plan there is no namespace/service-account/
- * role/quota to mint: provisioning persists the admin-supplied SSH identity + the compose namespace onto the
- * `AccountEnvironment`. The SSH private key is supplied, never generated. **Zero Kubernetes API calls.**
+ * role/quota to mint: provisioning logs the deploy user of the Docker host in on the account and Space registries
+ * (the counterpart of the Kubernetes pull secret), then persists the admin-supplied SSH identity + the compose
+ * namespace onto the `AccountEnvironment`. The SSH private key is supplied, never generated.
+ * **Zero Kubernetes API calls.**
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -59,9 +61,9 @@ class AccountEnvironmentInstall implements EditablePlanInterface
         private readonly LoadAccountClusters $loadAccountClusters,
         private readonly SelectClusterConfig $selectClusterConfig,
         private readonly PersistSshIdentity $persistSshIdentity,
+        private readonly LogDeployUserInRegistries $logDeployUserInRegistries,
         private readonly PersistEnvironment $persistCredentials,
         private readonly PrepareAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
     }
@@ -75,13 +77,13 @@ class AccountEnvironmentInstall implements EditablePlanInterface
         $recipe = $recipe->require(new Ingredient('string', 'envName'));
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
 
-        $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);
-
         $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
 
         $recipe = $recipe->cook($this->selectClusterConfig, SelectClusterConfig::class, [], 30);
 
         $recipe = $recipe->cook($this->persistSshIdentity, PersistSshIdentity::class, [], 40);
+
+        $recipe = $recipe->cook($this->logDeployUserInRegistries, LogDeployUserInRegistries::class, [], 80);
 
         $recipe = $recipe->cook($this->persistCredentials, PersistEnvironment::class, [], 100);
 

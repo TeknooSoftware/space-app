@@ -1,6 +1,7 @@
-Feature: API endpoints to manage variables and secrets usable in all deploymnets jobs of account's projects
+@api
+Feature: API endpoints to manage variables and secrets usable in all deployments jobs of account's projects
   In order to manage account's variables
-  As an user of an account
+  As a user of an account
   I want to manage variables and secrets available for all projects of my account
 
   On Space, Job deployment can use variables in theirs configurations. Variables must be defined before each run, but
@@ -8,18 +9,16 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
   Variables can be a secret. According to the Space configuration secrets can be encrypted before be stored in the Space
   database and decrypted on the worker on the job execution.
 
+  Background:
+    Given a Space app instance
+    And a memory document database
+
   Scenario: From the API, create new account variable, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables:
       | field                                     | value  |
       | account_vars.sets.0.envName               | prod   |
@@ -42,20 +41,14 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, create new account variable, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body:
       | field                        | value  |
       | sets.0.envName               | prod   |
@@ -78,14 +71,12 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, Update or delete accounts variables, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |
@@ -95,11 +86,7 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value6 | dev         |
       | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables:
       | field                                        | value    |
       | account_vars.sets.prod.envName               | prod     |
@@ -136,14 +123,12 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value7   | dev         |
       | fff | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, Update or delete accounts variables, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |
@@ -153,11 +138,7 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value6 | dev         |
       | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body:
       | field                           | value    |
       | sets.prod.envName               | prod     |
@@ -194,21 +175,15 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value7   | dev         |
       | fff | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, create new account encrypted secret, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables:
       | field                                     | value  |
       | account_vars.sets.0.envName               | prod   |
@@ -231,21 +206,15 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, create new account encrypted secret, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body:
       | field                        | value  |
       | sets.0.envName               | prod   |
@@ -268,15 +237,13 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, Update or delete encrypted accounts secrets, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |
@@ -286,11 +253,7 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value6 | dev         |
       | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables:
       | field                                        | value    |
       | account_vars.sets.prod.envName               | prod     |
@@ -327,15 +290,13 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value7   | dev         |
       | fff | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, Update or delete encrypted accounts secrets, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |
@@ -345,11 +306,7 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value6 | dev         |
       | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body:
       | field                           | value    |
       | sets.prod.envName               | prod     |
@@ -386,14 +343,12 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value7   | dev         |
       | fff | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, get accounts variables ans secrets of my account
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
       | aaa | var1 | 0      | value1 | prod        |
@@ -401,12 +356,8 @@ Feature: API endpoints to manage variables and secrets usable in all deploymnets
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to get account's variables
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized accounts variables
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted

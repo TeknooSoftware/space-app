@@ -48,6 +48,14 @@ class AccountHistory implements
 {
     use ObjectTrait;
 
+    /**
+     * The mongodb extension (2.x, BSON_MAX_NESTING_LEVEL) refuses to encode a BSON document nested deeper
+     * than 100 levels. Each History entry is one embedded document level ("previous" chain), on top of the
+     * update wrapper, the "history" field and the "extra" payload of the oldest entry, so the chain must
+     * stay well below that limit.
+     */
+    public const int HISTORY_LIMIT = 90;
+
     protected ?History $history = null;
 
     public function __construct(
@@ -71,7 +79,7 @@ class AccountHistory implements
 
     public function setHistory(?History $history): self
     {
-        $this->history = $history?->limit(150);
+        $this->history = $history?->limit(self::HISTORY_LIMIT);
 
         return $this;
     }

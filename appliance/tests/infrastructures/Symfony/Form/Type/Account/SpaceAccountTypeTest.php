@@ -28,8 +28,13 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Account;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\SpaceAccountType;
+use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\SubscriptionPlan;
 
 /**
  * Class SpaceAccountTypeTest.
@@ -70,5 +75,58 @@ class SpaceAccountTypeTest extends TestCase
             $this->createStub(OptionsResolver::class),
         );
         $this->assertTrue(true);
+    }
+
+    public function testBuildFormWithEnvManagementAndPreSubmitListener(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $options = [
+            'api' => null,
+            'enableEnvManagement' => true,
+            'subscriptionPlan' => new SubscriptionPlan('id', 'name', [], envsCountAllowed: 3),
+            'clusterCatalog' => new ClusterCatalog([], []),
+            'doctrine_type' => 'mongodb',
+            'namespaceIsReadonly' => false,
+        ];
+        $this->spaceAccountType->buildForm($builder, $options);
+
+        $options['subscriptionPlan'] = new SubscriptionPlan('id', 'name', [], envsCountAllowed: 0);
+        $this->spaceAccountType->buildForm($builder, $options);
+
+        $this->assertCount(2, $listeners[FormEvents::PRE_SUBMIT]);
+        $listener = $listeners[FormEvents::PRE_SUBMIT][0];
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('remove')
+            ->with('environments')
+            ->willReturnSelf();
+
+        $event = new FormEvent($form, 'notArray');
+        $listener($event);
+        $this->assertSame('notArray', $event->getData());
+
+        $event = new FormEvent($form, ['environments' => ['x']]);
+        $listener($event);
+        $this->assertSame(['environments' => ['x']], $event->getData());
+
+        $event = new FormEvent($form, []);
+        $listener($event);
+        $this->assertSame([], $event->getData());
+
+        $event = new FormEvent($form, ['environments' => 'notArray']);
+        $listener($event);
+        $this->assertSame(['environments' => []], $event->getData());
     }
 }

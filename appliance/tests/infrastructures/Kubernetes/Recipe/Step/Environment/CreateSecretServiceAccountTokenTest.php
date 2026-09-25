@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -33,6 +35,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Foundation\Time\SleepServiceInterface;
 use Teknoo\Kubernetes\Client;
+use Teknoo\Kubernetes\Model\Secret;
 use Teknoo\Kubernetes\Repository\SecretRepository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
@@ -55,7 +58,9 @@ class CreateSecretServiceAccountTokenTest extends TestCase
 
     private Client&Stub $client;
 
-    private DatesService&Stub $datesService;
+    private SecretRepository&Stub $secretRepository;
+
+    private DatesService $datesService;
 
     private SleepServiceInterface&Stub $sleepService;
 
@@ -70,16 +75,17 @@ class CreateSecretServiceAccountTokenTest extends TestCase
     {
         parent::setUp();
 
+        $this->secretRepository = $this->createStub(SecretRepository::class);
         $this->client = $this->createStub(Client::class);
         $this->client
             ->method('__call')
             ->willReturnCallback(
                 fn (string $name): Stub => match ($name) {
-                    'secrets' => $this->createStub(SecretRepository::class),
+                    'secrets' => $this->secretRepository,
                 }
             );
 
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
         $this->sleepService = $this->createStub(SleepServiceInterface::class);
         $this->secretWaitingTime = 42;
         $this->preferRealDate = true;
@@ -91,9 +97,9 @@ class CreateSecretServiceAccountTokenTest extends TestCase
         );
     }
 
-    public function testInvoke(): void
+    private function createClusterConfig(): ClusterConfig
     {
-        $clusterConfig = new ClusterConfig(
+        return new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
             type: 'foo',
@@ -106,16 +112,67 @@ class CreateSecretServiceAccountTokenTest extends TestCase
             useHnc: false,
             isExternal: false,
         );
+    }
+
+    public function testInvokeWhenTheSecretIsNeverAvailable(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('error')
+            ->willReturnSelf();
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
 
         $this->assertInstanceOf(
             CreateSecretServiceAccountToken::class,
             ($this->createSecret)(
-                manager: $this->createStub(ManagerInterface::class),
+                manager: $manager,
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
                 serviceName: 'foo',
                 accountHistory: $this->createStub(AccountHistory::class),
-                clusterConfig: $clusterConfig,
+                clusterConfig: $this->createClusterConfig(),
+            )
+        );
+    }
+
+    public function testInvokeWhenTheSecretIsAvailable(): void
+    {
+        $this->secretRepository->method('exists')->willReturn(true);
+        $this->secretRepository->method('setLabelSelector')->willReturnSelf();
+        $this->secretRepository->method('first')->willReturn(
+            new Secret([
+                'metadata' => ['name' => 'foo-secret'],
+                'data' => [
+                    'token' => base64_encode('a-token'),
+                    'ca.crt' => base64_encode('a-ca'),
+                ],
+            ])
+        );
+
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->with('teknoo.space.text.account.kubernetes.secret', $this->isInstanceOf(DateTimeInterface::class))
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('error');
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['token' => 'a-token', 'caCertificate' => 'a-ca'])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            CreateSecretServiceAccountToken::class,
+            ($this->createSecret)(
+                manager: $manager,
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                serviceName: 'foo',
+                accountHistory: $accountHistory,
+                clusterConfig: $this->createClusterConfig(),
             )
         );
     }

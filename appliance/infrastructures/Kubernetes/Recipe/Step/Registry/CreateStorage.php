@@ -87,8 +87,11 @@ class CreateStorage
         string $storageSizeToClaim,
         ClusterCatalog $clusterCatalog,
         ?AccountRegistry $accountRegistry = null,
+        ?string $registryClusterName = null,
     ): self {
-        $clusterRegistry = $clusterCatalog->getClusterForRegistry();
+        //The registry cluster is resolved once per task by `SelectRegistryCluster`; falls back to the
+        //first cluster supporting the registry when the task did not resolve it.
+        $clusterRegistry = $clusterCatalog->getClusterForRegistry($registryClusterName);
         if (!$clusterRegistry instanceof KubernetesCluster) {
             throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
         }

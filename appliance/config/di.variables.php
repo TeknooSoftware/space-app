@@ -27,6 +27,7 @@ namespace Teknoo\Space\App\Config;
 
 use ArrayObject;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Mercure\ProtocolVersion;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 
@@ -34,10 +35,16 @@ use function array_map;
 use function DI\env;
 use function sys_get_temp_dir;
 
+$mercureProtocolVersion = ProtocolVersion::tryFrom(
+    (string) ($_ENV['MERCURE_PROTOCOL_VERSION'] ?? '')
+) ?? ProtocolVersion::Legacy;
+
 return [
     //App variables
     'teknoo.space.hostname' => env('SPACE_HOSTNAME', 'localhost'),
     'teknoo.space.job_root' => env('SPACE_JOB_ROOT', sys_get_temp_dir()),
+
+    'teknoo.space.mercure.protocol_version' => $mercureProtocolVersion->value,
 
     'teknoo.space.subscription_plan_catalog' => static function (
         ContainerInterface $container
