@@ -32,7 +32,7 @@ DOCKER_COMPOSE_OVERRIDE_FILE='../compose.override.yml'
 DOCKER_COMPOSE_FILE='../compose.yml'
 SESSION_FILE='config/packages/framework.session.backend.yaml'
 FILE_SESSION_FILE='config/packages/framework.session.backend.file.yaml.dist'
-REDIS_SESSION_FILE='config/packages/framework.session.backend.redis.yaml.dist'
+VALKEY_SESSION_FILE='config/packages/framework.session.backend.valkey.yaml.dist'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
@@ -218,6 +218,9 @@ else
 fi
 
 mercureJwtToken=$(readAMandatoryResponse "Mercure JWT Token")
+# Read by a Mercure 1.0 hub only (the `iss` claim of RFC 9068 access tokens), but harmless on a 0.x one
+mercureJwtIssuer=$(readAMandatoryResponse "Mercure trusted issuer (iss claim)" "$mercureSubscribeUrl")
+mercureProtocolVersion=$(readAMandatoryResponse "Mercure protocol spoken by the hub (0.x or 1.0)" "0.x")
 useCatalog=$(readForYesOrNoToBool "Use Cluster Catalog ? [y/n]")
 if [ "$useCatalog" = "0" ]; then
   kubernetesApi=$(readAMandatoryResponse "Kubernetes API Url")
@@ -246,14 +249,14 @@ dcAnsibleBinary=""
 dcTimeout=""
 dcDeployRoot=""
 dcNetworkDriver=""
+dcNetworkInternal=""
 dcTraefikContainer=""
 dcTraefikDynamicDir=""
 dcTraefikCertsDir=""
+dcTraefikCertsMountDir=""
 dcTraefikCertResolver=""
 dcTraefikEntrypointWeb=""
 dcTraefikEntrypointWebSecure=""
-dcTraefikEntrypointTcp=""
-dcTraefikEntrypointUdp=""
 dcHttpsBackendInsecureSkipVerify=""
 dcRegistryImage=""
 dcRegistryNetwork=""
@@ -262,17 +265,17 @@ dcRegistryTls=""
 useDockerComposeTarget=$(readForYesOrNo "Configure a Docker Compose deployment target (SPACE_DC_*) [y/n]")
 if [ "$useDockerComposeTarget" = "y" ]; then
   dcAnsibleBinary=$(readAMandatoryResponse "Docker Compose: ansible-playbook binary" "ansible-playbook")
-  dcTimeout=$(readAMandatoryResponse "Docker Compose: Ansible run timeout (seconds)" "300")
+  dcTimeout=$(readAMandatoryResponse "Docker Compose: Ansible run timeout (seconds)" "900")
   dcDeployRoot=$(readAMandatoryResponse "Docker Compose: deploy root on the host" "/opt/paas")
   dcNetworkDriver=$(readAMandatoryResponse "Docker Compose: network driver" "bridge")
+  dcNetworkInternal=$(readForYesOrNoToBool "Docker Compose: internal project networks, no egress from the containers [y/n]")
   dcTraefikContainer=$(readAMandatoryResponse "Docker Compose: Traefik container name" "traefik")
   dcTraefikDynamicDir=$(readAMandatoryResponse "Docker Compose: Traefik dynamic config dir" "/etc/traefik/dynamic")
   dcTraefikCertsDir=$(readAMandatoryResponse "Docker Compose: Traefik certificates dir" "/etc/traefik/certs")
+  dcTraefikCertsMountDir=$(readAMandatoryResponse "Docker Compose: Traefik certificates dir as seen by the Traefik container" "$dcTraefikCertsDir")
   read -r -p "Docker Compose: Traefik default certresolver (leave empty to keep library default) : " dcTraefikCertResolver
   dcTraefikEntrypointWeb=$(readAMandatoryResponse "Docker Compose: Traefik web entrypoint" "web")
   dcTraefikEntrypointWebSecure=$(readAMandatoryResponse "Docker Compose: Traefik websecure entrypoint" "websecure")
-  dcTraefikEntrypointTcp=$(readAMandatoryResponse "Docker Compose: Traefik tcp entrypoint" "tcp")
-  dcTraefikEntrypointUdp=$(readAMandatoryResponse "Docker Compose: Traefik udp entrypoint" "udp")
   dcHttpsBackendInsecureSkipVerify=$(readAMandatoryResponse "Docker Compose: skip TLS verify on HTTPS backends [true/false]" "false")
   dcRegistryImage=$(readAMandatoryResponse "Docker Compose: per-account registry image" "registry:2")
   dcRegistryNetwork=$(readAMandatoryResponse "Docker Compose: per-account registry network" "space-registry")
@@ -284,7 +287,7 @@ mailerDSN=$(readAMandatoryResponse "Mailer DSN" "null://null")
 mailerSenderAddress=$(readAMandatoryResponse "Mailer sender adress")
 jwtMaxAgeDelay=$(readAMandatoryResponse "JWT: Max days to live")
 oauthEnabled=$(readForYesOrNoToBool "OAuth Enabled [y/n]")
-redisEnabled=$(readForYesOrNoToBool "Redis Enabled [y/n]")
+valkeyEnabled=$(readForYesOrNoToBool "Valkey Enabled [y/n]")
 enableExtensions=$(readForYesOrNoToBool "Enable extension [y/n]")
 
 if [ "$enableExtensions" = "1" ]; then
@@ -299,8 +302,8 @@ oauthServerType=""
 oauthServerUrl=""
 oauthClientId=""
 oauthClientSecret=""
-redisHost=""
-redisPort=""
+valkeyHost=""
+valkeyPort=""
 
 if [ "$oauthEnabled" = "1" ]; then
   oauthServerType=$(readAMandatoryResponse "OAuth Server Type [digital_ocean/github/gitlab/google/jira/microsoft/generic]")
@@ -311,11 +314,11 @@ if [ "$oauthEnabled" = "1" ]; then
   oauthClientSecret=$(readAMandatoryResponse "OAuth Client Secret")
 fi
 
-if [ "$redisEnabled" = "1" ]; then
-  redisHost=$(readAMandatoryResponse "Redis Host")
-  redisPort=$(readAMandatoryResponse "Redis Port")
+if [ "$valkeyEnabled" = "1" ]; then
+  valkeyHost=$(readAMandatoryResponse "Valkey Host")
+  valkeyPort=$(readAMandatoryResponse "Valkey Port")
 
-  cp "$REDIS_SESSION_FILE" "$SESSION_FILE"
+  cp "$VALKEY_SESSION_FILE" "$SESSION_FILE"
 else
   cp "$FILE_SESSION_FILE" "$SESSION_FILE"
 fi
@@ -558,6 +561,8 @@ fi
 updateFile "$ENV_LOCAL_FILE" "APP_ENV" "$APP_ENV"
 updateFile "$ENV_LOCAL_FILE" "MAILER_REPLY_TO_ADDRESS" "$mailerSenderAddress"
 updateFile "$ENV_LOCAL_FILE" "MAILER_SENDER_ADDRESS" "$mailerSenderAddress"
+setEnvVar "$ENV_LOCAL_FILE" "MERCURE_JWT_ISSUER" "$mercureJwtIssuer"
+setEnvVar "$ENV_LOCAL_FILE" "MERCURE_PROTOCOL_VERSION" "$mercureProtocolVersion"
 updateFile "$ENV_LOCAL_FILE" "MERCURE_PUBLISH_URL" "$mercurePublishUrl"
 updateFile "$ENV_LOCAL_FILE" "MERCURE_SUBSCRIBER_URL" "$mercureSubscribeUrl"
 updateFile "$ENV_LOCAL_FILE" "OAUTH_ENABLED" "$oauthEnabled"
@@ -587,13 +592,13 @@ if [ "$useDockerComposeTarget" = "y" ]; then
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TIMEOUT" "$dcTimeout"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_DEPLOY_ROOT" "$dcDeployRoot"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_NETWORK_DRIVER" "$dcNetworkDriver"
+  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_NETWORK_INTERNAL" "$dcNetworkInternal"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CONTAINER" "$dcTraefikContainer"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_DYNAMIC_DIR" "$dcTraefikDynamicDir"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CERTS_DIR" "$dcTraefikCertsDir"
+  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR" "$dcTraefikCertsMountDir"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEB" "$dcTraefikEntrypointWeb"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE" "$dcTraefikEntrypointWebSecure"
-  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_TCP" "$dcTraefikEntrypointTcp"
-  setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_UDP" "$dcTraefikEntrypointUdp"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY" "$dcHttpsBackendInsecureSkipVerify"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_REGISTRY_IMAGE" "$dcRegistryImage"
   setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_REGISTRY_NETWORK" "$dcRegistryNetwork"
@@ -603,8 +608,8 @@ if [ "$useDockerComposeTarget" = "y" ]; then
     setEnvVar "$ENV_LOCAL_FILE" "SPACE_DC_TRAEFIK_CERTRESOLVER" "$dcTraefikCertResolver"
   fi
 fi
-updateFile "$ENV_LOCAL_FILE" "SPACE_REDIS_HOST" "$redisHost"
-updateFile "$ENV_LOCAL_FILE" "SPACE_REDIS_PORT" "$redisPort"
+updateFile "$ENV_LOCAL_FILE" "SPACE_VALKEY_HOST" "$valkeyHost"
+updateFile "$ENV_LOCAL_FILE" "SPACE_VALKEY_PORT" "$valkeyPort"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/messages/private.pem"
 updateFile "$ENV_LOCAL_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/messages/public.pem"
@@ -656,13 +661,13 @@ if [ "$useDockerCompose" = "y" ]; then
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TIMEOUT" "$dcTimeout"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_DEPLOY_ROOT" "$dcDeployRoot"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_NETWORK_DRIVER" "$dcNetworkDriver"
+    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_NETWORK_INTERNAL" "$dcNetworkInternal"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CONTAINER" "$dcTraefikContainer"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_DYNAMIC_DIR" "$dcTraefikDynamicDir"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CERTS_DIR" "$dcTraefikCertsDir"
+    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR" "$dcTraefikCertsMountDir"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEB" "$dcTraefikEntrypointWeb"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE" "$dcTraefikEntrypointWebSecure"
-    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_TCP" "$dcTraefikEntrypointTcp"
-    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_ENTRYPOINT_UDP" "$dcTraefikEntrypointUdp"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY" "$dcHttpsBackendInsecureSkipVerify"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_REGISTRY_IMAGE" "$dcRegistryImage"
     setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_REGISTRY_NETWORK" "$dcRegistryNetwork"
@@ -672,8 +677,8 @@ if [ "$useDockerCompose" = "y" ]; then
       setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_DC_TRAEFIK_CERTRESOLVER" "$dcTraefikCertResolver"
     fi
   fi
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_REDIS_HOST" "$redisHost"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_REDIS_PORT" "$redisPort"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_VALKEY_HOST" "$valkeyHost"
+  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_VALKEY_PORT" "$valkeyPort"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_ALGORITHM" "rsa"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PRIVATE_KEY" "var/keys/messages/private.pem"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "TEKNOO_PAAS_SECURITY_PUBLIC_KEY" "var/keys/messages/public.pem"

@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Registry;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -53,7 +54,7 @@ class CreateStorageTest extends TestCase
 {
     private CreateStorage $createStorage;
 
-    private DatesService&Stub $datesService;
+    private DatesService $datesService;
 
     private bool $preferRealDate;
 
@@ -64,7 +65,7 @@ class CreateStorageTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
         $this->preferRealDate = true;
         $this->createStorage = new CreateStorage(
             $this->datesService,
@@ -74,6 +75,11 @@ class CreateStorageTest extends TestCase
 
     public function testInvoke(): void
     {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
         $clusterConfig = new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
@@ -94,10 +100,64 @@ class CreateStorageTest extends TestCase
                 manager: $this->createStub(ManagerInterface::class),
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
-                accountHistory: $this->createStub(AccountHistory::class),
+                accountHistory: $accountHistory,
                 storageSizeToClaim: 'foo',
                 clusterCatalog: new ClusterCatalog(['default' => $clusterConfig], []),
                 accountRegistry: $this->createStub(AccountRegistry::class),
+            )
+        );
+    }
+
+    /**
+     * The registry cluster comes from `SelectRegistryCluster`, not from the catalog order: an account whose
+     * registry lives on the second cluster must keep provisioning its storage there.
+     */
+    public function testInvokeUsesTheResolvedRegistryClusterInsteadOfTheFirstOne(): void
+    {
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
+        $buildCluster = static fn (string $name, Client $client): ClusterConfig => new ClusterConfig(
+            name: $name,
+            sluggyName: $name,
+            type: 'kubernetes',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $client,
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: false,
+            isExternal: false,
+        );
+
+        $firstClient = $this->createMock(Client::class);
+        $firstClient->expects($this->never())->method('setNamespace');
+
+        $recordedClient = $this->createMock(Client::class);
+        $recordedClient->expects($this->once())->method('setNamespace');
+
+        $catalog = new ClusterCatalog(
+            [
+                'first' => $buildCluster('first', $firstClient),
+                'recorded' => $buildCluster('recorded', $recordedClient),
+            ],
+            [],
+        );
+
+        $this->assertInstanceOf(
+            CreateStorage::class,
+            ($this->createStorage)(
+                manager: $this->createStub(ManagerInterface::class),
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountHistory: $accountHistory,
+                storageSizeToClaim: 'foo',
+                clusterCatalog: $catalog,
+                accountRegistry: $this->createStub(AccountRegistry::class),
+                registryClusterName: 'recorded',
             )
         );
     }

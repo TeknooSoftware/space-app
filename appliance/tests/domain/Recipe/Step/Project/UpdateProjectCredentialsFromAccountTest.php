@@ -255,9 +255,9 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
             ->with('namespace1');
         $cluster->expects($this->once())
             ->method('setIdentity')
-            ->with($this->callback(static function (ClusterCredentials $identity): bool {
+            ->with($this->callback(function (ClusterCredentials $identity): bool {
                 // Kubernetes has no SSH login: the username must stay empty.
-                self::assertSame('', $identity->getUsername());
+                $this->assertSame('', $identity->getUsername());
 
                 return true;
             }));
@@ -344,10 +344,10 @@ class UpdateProjectCredentialsFromAccountTest extends TestCase
         $cluster->expects($this->once())->method('setNamespace')->with('acct-prod');
         $cluster->expects($this->once())
             ->method('setIdentity')
-            ->with($this->callback(static function (ClusterCredentials $identity): bool {
-                self::assertSame('paas', $identity->getUsername());
-                self::assertSame('-----BEGIN OPENSSH PRIVATE KEY-----KEY', $identity->getClientKey());
-                self::assertSame('known-hosts-line', $identity->getCaCertificate());
+            ->with($this->callback(function (ClusterCredentials $identity): bool {
+                $this->assertSame('paas', $identity->getUsername());
+                $this->assertSame('-----BEGIN OPENSSH PRIVATE KEY-----KEY', $identity->getClientKey());
+                $this->assertSame('known-hosts-line', $identity->getCaCertificate());
 
                 return true;
             }));

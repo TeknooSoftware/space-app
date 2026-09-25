@@ -1,34 +1,35 @@
+@api
 Feature: API endpoints to create new job and deploy project
   In order to deploy project
-  As an user of an account
-  I want to create new jobs from account's projets to deploy them
+  As a user of an account
+  I want to create new jobs from account's projects to deploy them
 
   To run a job, Space will clone the project from its cloning url, install all dependencies and do some other configured
   stuff in the `.paas.yaml` file, build OCI images, push them to the private OCI registry of the account, generate new
   Kubernetes manifest and apply them to the cluster.
   Clusters are defined from the environment passed on the job creation, from the clusters list defined in the project.
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, simulate a too long image
-  building and get and error
-    Given A Space app instance
-    And a kubernetes client
+  Background:
+    Given a Space app instance
+
+
+
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, simulate a too long image building and get an error
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file
     And simulate a too long image building
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -36,38 +37,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     But job must be finished with an error about a timeout
-    And no Kubernetes manifests must not be created
+    And no Kubernetes manifests have been created
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, via a request with a
-  form url encoded body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, via a request with a form url encoded body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -75,39 +70,34 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
+    And the serialized job history is humanized
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, on a Kubernetes 1.36 cluster, execute a job from an owned project with prefix and a valid
-  paas file and obtain manifests using image volumes and hostUsers false
-    Given A Space app instance
-    And the kubernetes cluster runs version "1.36"
+  Scenario Outline: From the API, on a Kubernetes <version> cluster, execute a job from an owned project with prefix and a valid paas file
+    Given the kubernetes cluster runs version "<version>"
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -115,80 +105,39 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
-    And some Kubernetes v1.36 manifests have been created and executed on "Demo Kube Cluster"
+    And some Kubernetes v<version> manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, on a Kubernetes 1.35 cluster, execute a job from an owned project with prefix and a valid
-  paas file and obtain manifests using image volumes without hostUsers
-    Given A Space app instance
-    And the kubernetes cluster runs version "1.35"
-    And a kubernetes client
-    And a job workspace agent
-    And a git cloning agent
-    And a composer hook as hook builder
-    And an OCI builder
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to create a new job:
-      | field                     | value                   |
-      | new_job.envName           | prod                    |
-      | new_job.variables.0.name  | FOO                     |
-      | new_job.variables.0.value | BAR                     |
-      | new_job.variables.1.name  | SERVER_SCRIPT           |
-      | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
-    And a pending job id
-    When the API is called to pending job status api
-    Then get a JSON reponse
-    And a pending job status without a job id
-    When Space executes the job
-    And the API is called to get the last generated job
-    Then get a JSON reponse
-    And the serialized job
-    And job must be successful finished
-    And some Kubernetes v1.35 manifests have been created and executed on "Demo Kube Cluster"
+    Examples:
+      | version |
+      | 1.36    |
+      | 1.35    |
 
-  Scenario: From the API, on a Kubernetes 1.36 cluster reporting a 1.30 gitVersion, execute a job from an owned
-  project with prefix and a valid paas file and obtain manifests clamped to 1.30 behavior
-    Given A Space app instance
-    And the kubernetes cluster runs version "1.36"
+  Scenario: From the API, on a Kubernetes 1.36 cluster reporting a 1.30 gitVersion, execute a job from an owned project with prefix and a valid paas file and obtain manifests clamped to 1.30 behavior
+    Given the kubernetes cluster runs version "1.36"
     And the kubernetes cluster reports gitVersion "v1.30.5"
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -196,40 +145,34 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes v1.30 manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, on a Kubernetes 1.36 cluster that cannot return its version, execute a job from an owned
-  project with prefix and a valid paas file and obtain manifests using the configured 1.36 behavior
-    Given A Space app instance
-    And the kubernetes cluster runs version "1.36"
+  Scenario: From the API, on a Kubernetes 1.36 cluster that cannot return its version, execute a job from an owned project with prefix and a valid paas file and obtain manifests using the configured 1.36 behavior
+    Given the kubernetes cluster runs version "1.36"
     And the kubernetes cluster cannot return its version
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -237,39 +180,33 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes v1.36 manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, encrypted messages
-  between workers, via a request with a form url encoded body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -277,40 +214,34 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, re-execute a job from an owned project, with prefix, a valid paas file, encrypted messages
-  between workers, via a request with a form url encoded body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, re-execute a job from an owned project, with prefix, a valid paas file, encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And "1" jobs for the project
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to restart a the job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -318,40 +249,34 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an non-owned project, with prefix, a valid paas file, via a request with a
-  form url encoded body and get an error
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from a non-owned project, with prefix, a valid paas file, via a request with a form url encoded body and get an error
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -359,29 +284,23 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, via a request with
-  a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -389,39 +308,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, encrypted messages
-  between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -429,39 +342,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, without defined resources,
-  a valid paas file, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, without defined resources, a valid paas file, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -469,40 +376,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, without defined resources,
-  a valid paas file, encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, without defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file without resources
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -510,39 +411,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with partial defined
-  resources, a valid paas file, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with partial defined resources, a valid paas file, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -550,40 +445,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with partial defined
-  resources, a valid paas file, encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with partial defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with partial resources
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -591,39 +480,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with full defined
-  resources, a valid paas file, encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with full defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -631,40 +514,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with fully defined
-  resources, a valid paas file, encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with fully defined resources, a valid paas file, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with resources
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -672,39 +549,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with required resources
-  exceeded quota, a valid paas file, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with required resources exceeded quota, a valid paas file, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -712,40 +583,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And it has an error about a quota exceeded
-    And no Kubernetes manifests must not be created
+    And no Kubernetes manifests have been created
 
-  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with required resources
-  exceeded quota, a valid paas file, encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, defined quota, with required resources exceeded quota, a valid paas file, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And quotas defined for this account
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with limited quota
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -753,38 +618,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And it has an error about a quota exceeded
-    And no Kubernetes manifests must not be created
+    And no Kubernetes manifests have been created
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default generic
-  values for variables and all variables are not filled via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default generic values for variables and all variables are not filled via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -792,40 +651,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default generic
-  values for variables, encrypted messages between workers and all variables are not filled via a request
-  with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default generic values for variables, encrypted messages between workers and all variables are not filled via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -833,39 +685,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default and no
-  isolation for variables and all variables are not filled via a request with a json body
-    Given A Space app instance
-    And the kubernetes cluster runs version "1.36"
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default and no isolation for variables and all variables are not filled via a request with a json body
+    Given the kubernetes cluster runs version "1.36"
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults and no isolation
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -873,38 +719,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default and no
-  isolation on 1.36 kubernetes for variables and all variables are not filled via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default and no isolation on 1.36 kubernetes for variables and all variables are not filled via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults and no isolation
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -912,38 +752,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default values for
-  variables dedicated to the cluster and all variables are not filled via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default values for variables dedicated to the cluster and all variables are not filled via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -951,40 +785,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default values for
-  variables dedicated to the cluster, encrypted messages between workers and all variables are not filled via a
-  request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file with default values for variables dedicated to the cluster, encrypted messages between workers and all variables are not filled via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with defaults for the cluster
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -992,40 +819,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an non-owned project, with prefix, a valid paas file, via a request with a
-  form url encoded body and get an error
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from a non-owned project, with prefix, a valid paas file, via a request with a json body and get an error
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "my-company"
-    And an user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1033,31 +854,25 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     But an 403 error
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file using extends, simulate a too
-  long image building and get and error
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with a valid paas file using extends, simulate a too long image building and get an error
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
     And extensions libraries provided by administrators
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file using extends
     And simulate a too long image building
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1065,39 +880,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     But job must be finished with an error about a timeout
-    And no Kubernetes manifests must not be created
+    And no Kubernetes manifests have been created
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file using extends, via a
-  request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file using extends, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
     And extensions libraries provided by administrators
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using extends
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1105,39 +914,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, without prefix, a valid paas file, on cluster supporting
-  hierarchical namespace, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, without prefix, a valid paas file, on cluster supporting hierarchical namespace, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
     And a cluster supporting hierarchical namespace
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1145,40 +948,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, without prefix, a valid paas file using extends,
-  on cluster supporting hierarchical namespace, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, without prefix, a valid paas file using extends, on cluster supporting hierarchical namespace, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
     And extensions libraries provided by administrators
     And a cluster supporting hierarchical namespace
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file using extends
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1186,39 +983,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, on cluster supporting
-  hierarchical namespace, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, on cluster supporting hierarchical namespace, via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
     And a cluster supporting hierarchical namespace
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "demo"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1226,40 +1017,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file using extends,
-  on cluster supporting hierarchical namespace, via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file using extends, on cluster supporting hierarchical namespace, via a request with a json body
+    Given a kubernetes client
     And extensions libraries provided by administrators
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
     And a cluster supporting hierarchical namespace
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using extends
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1267,40 +1052,34 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, on an account cluster
-  via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, on an account cluster via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
     And an account clusters "Cluster Company" and a slug "my-company-cluster"
     And an account environment on "Cluster Company" for the environment "prod"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix" on "Cluster Company" for "prod"
     And the project has a complete paas file
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1308,38 +1087,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Cluster Company"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file with wrong PaaS version,
-  using conditions via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file with wrong PaaS version, using conditions via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using conditions with wrong version
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1351,38 +1124,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.2.value | prod                    |
       | variables.3.name  | PHP_VERSION             |
       | variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     But job must be finished with an error about a conditions allowed in v1
-    And no Kubernetes manifests must not be created
+    And no Kubernetes manifests have been created
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions
-  via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1394,38 +1161,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.2.value | prod                    |
       | variables.3.name  | PHP_VERSION             |
       | variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions
-  via a request with a form url encoded body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions via a request with a form url encoded body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1437,39 +1198,33 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.2.value | prod                    |
       | new_job.variables.3.name  | PHP_VERSION             |
       | new_job.variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions,
-  encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1481,39 +1236,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.2.value | prod                    |
       | variables.3.name  | PHP_VERSION             |
       | variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions,
-  encrypted messages between workers, via a request with a form url encoded body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using conditions, encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1525,38 +1274,32 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.2.value | prod                    |
       | new_job.variables.3.name  | PHP_VERSION             |
       | new_job.variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file with wrong PaaS version,
-  jobs via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file with wrong PaaS version, jobs via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with jobs with wrong version
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1564,38 +1307,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     But job must be finished with an error about a job allowed in v1
-    And no Kubernetes manifests must not be created
+    And no Kubernetes manifests have been created
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs
-  via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1603,38 +1340,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs
-  via a request with a form url encoded body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs via a request with a form url encoded body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1642,39 +1373,33 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs,
-  encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1682,39 +1407,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs,
-  encrypted messages between workers, via a request with a form url encoded body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, jobs, encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1722,38 +1441,32 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions
-  via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1765,38 +1478,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.2.value | prod                    |
       | variables.3.name  | PHP_VERSION             |
       | variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions
-  via a request with a form url encoded body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions via a request with a form url encoded body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1808,39 +1515,33 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.2.value | prod                    |
       | new_job.variables.3.name  | PHP_VERSION             |
       | new_job.variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions,
-  encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1852,39 +1553,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.2.value | prod                    |
       | variables.3.name  | PHP_VERSION             |
       | variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions,
-  encrypted messages between workers, via a request with a form url encoded body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using conditions, encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file using conditions
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1896,38 +1591,32 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.2.value | prod                    |
       | new_job.variables.3.name  | PHP_VERSION             |
       | new_job.variables.3.value | 7.4                     |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs
-  via a request with a json body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -1935,38 +1624,32 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs
-  via a request with a form url encoded body
-    Given A Space app instance
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs via a request with a form url encoded body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -1974,39 +1657,33 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs,
-  encrypted messages between workers, via a request with a json body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs, encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -2014,39 +1691,33 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs,
-  encrypted messages between workers, via a request with a form url encoded body
-    Given A Space app instance
-    And encryption capacities between servers and agents
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, jobs, encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has a complete paas file with jobs
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job:
       | field                     | value                   |
       | new_job.envName           | prod                    |
@@ -2054,39 +1725,32 @@ Feature: API endpoints to create new job and deploy project
       | new_job.variables.0.value | BAR                     |
       | new_job.variables.1.name  | SERVER_SCRIPT           |
       | new_job.variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project with Traefik ingress controller, with a valid paas file,
-  jobs via a request with a json body
-    Given A Space app instance
-    And a custom backend protocol annotation mapper
-    And a kubernetes client
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using expose shortcuts (v1.2) via a request with a json body
+    Given a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file with "Traefik" HTTPS backend
+    And the project has a complete paas file using expose shortcuts
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -2094,39 +1758,66 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project with Nginx ingress controller, with a valid paas file,
-  jobs via a request with a json body
-    Given A Space app instance
-    And a custom backend protocol annotation mapper
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using expose shortcuts (v1.2) via a request with a form url encoded body
+    Given a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using expose shortcuts (v1.2), encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file with "Public" HTTPS backend
+    And the project has a complete paas file using expose shortcuts
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -2134,39 +1825,66 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project with HAProxy ingress controller, with a valid paas file,
-  jobs via a request with a json body
-    Given A Space app instance
-    And a custom backend protocol annotation mapper
+  Scenario: From the API, execute a job from an owned project, with prefix, a valid paas file, using expose shortcuts (v1.2), encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file with "HAP" HTTPS backend
+    And the project has a complete paas file using expose shortcuts
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2) via a request with a json body
+    Given a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -2174,40 +1892,274 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project with Traefik ingress controller, with a valid paas file,
-  encrypted messages between workers, jobs via a request with a json body
-    Given A Space app instance
-    And a custom backend protocol annotation mapper
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2) via a request with a form url encoded body
+    Given a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2), encrypted messages between workers, via a request with a json body
+    Given encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with a valid paas file, using expose shortcuts (v1.2), encrypted messages between workers, via a request with a form url encoded body
+    Given encryption capacities between servers and agents
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project"
+    And the project has a complete paas file using expose shortcuts
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job:
+      | field                     | value                   |
+      | new_job.envName           | prod                    |
+      | new_job.variables.0.name  | FOO                     |
+      | new_job.variables.0.value | BAR                     |
+      | new_job.variables.1.name  | SERVER_SCRIPT           |
+      | new_job.variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file with wrong PaaS version, using expose shortcuts via a request with a json body
+    Given a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts with wrong version
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    But job must be finished with an error about expose shortcuts not allowed in v1.1
+    And no Kubernetes manifests have been created
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file using expose shortcuts with a service duplicated by an explicit definition via a request with a json body
+    Given a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts with a duplicated service
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    But job must be finished with an error about a duplicated service
+    And no Kubernetes manifests have been created
+
+  Scenario: From the API, execute a job from an owned project, with prefix, a wrong paas file using expose shortcuts with an ingress duplicated by an explicit definition via a request with a json body
+    Given a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file using expose shortcuts with a duplicated ingress
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    But job must be finished with an error about a duplicated ingress
+    And no Kubernetes manifests have been created
+
+  Scenario Outline: From the API, execute a job from an owned project, with a "<backend>" HTTPS backend, jobs, via a request with a json body
+    Given a custom backend protocol annotation mapper
+    And a kubernetes client
+    And a job workspace agent
+    And a git cloning agent
+    And a composer hook as hook builder
+    And an OCI builder
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And a standard project "my project" and a prefix "a-prefix"
+    And the project has a complete paas file with "<backend>" HTTPS backend
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a new job with a json body:
+      | field             | value                   |
+      | envName           | prod                    |
+      | variables.0.name  | FOO                     |
+      | variables.0.value | BAR                     |
+      | variables.1.name  | SERVER_SCRIPT           |
+      | variables.1.value | /opt/app/src/server.php |
+    Then get a JSON response
+    And a pending job id
+    When the API is called to pending job status api
+    Then get a JSON response
+    And a pending job status without a job id
+    When Space executes the job
+    And the API is called to get the last generated job
+    Then get a JSON response
+    And the serialized job
+    And job must be successful finished
+    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+
+    Examples:
+      | backend |
+      | Traefik |
+      | Public  |
+      | HAP     |
+
+  Scenario Outline: From the API, execute a job from an owned project, with a "<backend>" HTTPS backend, jobs, encrypted messages between workers, via a request with a json body
+    Given a custom backend protocol annotation mapper
     And encryption capacities between servers and agents
     And a kubernetes client
     And a job workspace agent
     And a git cloning agent
     And a composer hook as hook builder
     And an OCI builder
-    And A memory document database
+    And a memory document database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file with "Traefik" HTTPS backend
+    And the project has a complete paas file with "<backend>" HTTPS backend
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to create a new job with a json body:
       | field             | value                   |
       | envName           | prod                    |
@@ -2215,96 +2167,20 @@ Feature: API endpoints to create new job and deploy project
       | variables.0.value | BAR                     |
       | variables.1.name  | SERVER_SCRIPT           |
       | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job id
     When the API is called to pending job status api
-    Then get a JSON reponse
+    Then get a JSON response
     And a pending job status without a job id
     When Space executes the job
     And the API is called to get the last generated job
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized job
     And job must be successful finished
     And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
 
-  Scenario: From the API, execute a job from an owned project with Nginx ingress controller, with a valid paas file,
-  encrypted messages between workers, jobs via a request with a json body
-    Given A Space app instance
-    And a custom backend protocol annotation mapper
-    And encryption capacities between servers and agents
-    And a kubernetes client
-    And a job workspace agent
-    And a git cloning agent
-    And a composer hook as hook builder
-    And an OCI builder
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file with "Public" HTTPS backend
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to create a new job with a json body:
-      | field             | value                   |
-      | envName           | prod                    |
-      | variables.0.name  | FOO                     |
-      | variables.0.value | BAR                     |
-      | variables.1.name  | SERVER_SCRIPT           |
-      | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
-    And a pending job id
-    When the API is called to pending job status api
-    Then get a JSON reponse
-    And a pending job status without a job id
-    When Space executes the job
-    And the API is called to get the last generated job
-    Then get a JSON reponse
-    And the serialized job
-    And job must be successful finished
-    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
-
-  Scenario: From the API, execute a job from an owned project with HAProxy ingress controller, with a valid paas file,
-  encrypted messages between workers, jobs via a request with a json body
-    Given A Space app instance
-    And a custom backend protocol annotation mapper
-    And encryption capacities between servers and agents
-    And a kubernetes client
-    And a job workspace agent
-    And a git cloning agent
-    And a composer hook as hook builder
-    And an OCI builder
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And a standard project "my project" and a prefix "a-prefix"
-    And the project has a complete paas file with "HAP" HTTPS backend
-    And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
-    When the API is called to create a new job with a json body:
-      | field             | value                   |
-      | envName           | prod                    |
-      | variables.0.name  | FOO                     |
-      | variables.0.value | BAR                     |
-      | variables.1.name  | SERVER_SCRIPT           |
-      | variables.1.value | /opt/app/src/server.php |
-    Then get a JSON reponse
-    And a pending job id
-    When the API is called to pending job status api
-    Then get a JSON reponse
-    And a pending job status without a job id
-    When Space executes the job
-    And the API is called to get the last generated job
-    Then get a JSON reponse
-    And the serialized job
-    And job must be successful finished
-    And some Kubernetes manifests have been created and executed on "Demo Kube Cluster"
+    Examples:
+      | backend |
+      | Traefik |
+      | Public  |
+      | HAP     |

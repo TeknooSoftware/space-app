@@ -109,32 +109,49 @@ JWT tokens are configured via environment variables:
 
 ## Route File Organization
 
-API routes are organized in `config/routes/api/v1/` with 10 YAML files:
+API routes are organized in `config/routes/api/v1/` with 10 YAML files. Every file name is prefixed
+`space.api.v1.`:
 
-- **unauthenticated/**: `login.yaml` (1 file — public login endpoint)
-- **authenticated/**: `account.yaml`, `job.yaml`, `jwt.yaml`, `project.yaml`, `settings.yaml` (5 files)
-- **admin/**: `account.yaml`, `job.yaml`, `project.yaml`, `user.yaml` (4 files)
+- **unauthenticated/**: `space.api.v1.login.yaml` (1 file — public login endpoint)
+- **authenticated/**: `space.api.v1.account.yaml`, `.job.yaml`, `.jwt.yaml`, `.project.yaml`, `.settings.yaml`
+  (5 files)
+- **admin/**: `space.api.v1.account.yaml`, `.job.yaml`, `.project.yaml`, `.user.yaml` (4 files)
 
-Web routes are in `config/routes/` with 10 YAML files (`space.account.yaml`, `space.admin.account.yaml`,
-`space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`, `space.project.yaml`,
-`space.settings.yaml`, `space.subscription.yaml`, `space.support.contact.yaml`) containing 48 `path:` entries.
+The `/api/v1` and `/api/v1/admin` prefixes are not written in those files: `config/routes/api.yaml` imports
+each directory under its prefix.
+
+Web routes are in `config/routes/` with 10 `space.*.yaml` files (`space.account.yaml`,
+`space.admin.account.yaml`, `space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`,
+`space.job.yaml`, `space.project.yaml`, `space.settings.yaml`, `space.subscription.yaml`,
+`space.support.contact.yaml`) containing 48 `path:` entries. The same directory holds 11 more YAML files
+wiring the framework and the vendor bundles: `api.yaml`, `connect.oauth.yaml`, `east.common.include.yaml`,
+`east.paas.include.yaml`, the four `east.paas.overwrite.*.yaml`, `scheb_2fa.yaml`, `symfony.framework.yaml`
+and `web_profiler.yaml`.
+
+`space.health.yaml` exposes `GET /healthy`, the liveness endpoint used by the container health checks. It sits
+outside `/api/v1` and needs no credentials.
 
 ## JSON Template Structure
 
-API responses are rendered via JSON templates in `templates/TeknooSpace/api/`, organized by resource:
+API responses are rendered by Twig templates in `templates/TeknooSpace/api/`, organized by resource. They
+carry the **`.json.twig`** extension, and a single object is usually `item`, not `get`:
 
-- `Account/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`, `pending.html.twig`
-- `Job/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`, `pending.html.twig`
-- `Project/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
-- `AdminAccount/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
-- `AdminJob/`: `list.html.twig`, `get.html.twig`, `deleted.html.twig`
-- `AdminProject/`: `list.html.twig`, `get.html.twig`, `deleted.html.twig`
-- `AdminUser/`: `list.html.twig`, `new.html.twig`, `get.html.twig`, `deleted.html.twig`
-- `User/`: `get.html.twig`, `settings.html.twig`
+| Directory         | Templates                                              |
+|-------------------|--------------------------------------------------------|
+| `Account/`        | `environments`, `settings`, `status`, `variables`      |
+| `AccountCluster/` | `deleted`, `item`, `list`                              |
+| `Job/`            | `deleted`, `get`, `list`, `new`, `pending`             |
+| `Jwt/`            | `jwt.form`, `jwt.token`                                |
+| `Project/`        | `deleted`, `item`, `list`, `variables`                 |
+| `User/`           | `settings`                                             |
+| `AdminAccount/`   | `deleted`, `environments`, `item`, `list`, `variables` |
+| `AdminJob/`       | `deleted`, `get`, `list`, `new`, `pending`             |
+| `AdminUser/`      | `deleted`, `item`, `list`                              |
+
+There is no `AdminProject/` directory: the admin project endpoints reuse the `Project/` templates.
 
 Each template renders a JSON object matching the API response format (`{"data": {...}}` or `{"error": {...}}`).
-Controllers call `renderView()` with the appropriate template, or use the `#[Template]` attribute for
-auto-rendering.
+The template to use is named in the route `defaults`, next to `api: 'json'`.
 
 ## API Endpoints
 
@@ -255,6 +272,10 @@ rootless) rather than a Kubernetes token.
 
 - `GET /api/v1/project/{projectId}/job/{id}`
 
+In every serialized job, each entry of `history` (and of its `previous` chain) carries a `humanized_message` next to
+its unchanged `message`. The `message` is most of the time the class name of the step that wrote the entry, and
+`humanized_message` is its readable label from the translation catalogue, or the raw message when it has none.
+
 **Restart Job**
 
 - `POST /api/v1/project/{projectId}/job/{jobId}/restart`
@@ -318,6 +339,12 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 **Reinstall Account Environment**
 
 - `POST /api/v1/admin/account/{id}/environment/{envName}/{clusterName}/reinstall`
+
+These three actions are asynchronous: the response `{"meta": {...}, "success": true, "taskId": "..."}` only
+means the task has been queued to the `new_task` worker (and recorded in the account history). The result, or
+the error, is appended to the account history once the worker has run. Creating an account or adding an
+environment to it queues the registry / environment install the same way: a just-added environment is returned
+without `accountEnvironmentId` until the worker has provisioned it.
 
 #### Admin - Account Cluster Management
 

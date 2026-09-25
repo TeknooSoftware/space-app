@@ -32,6 +32,7 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\Recipe\BaseRecipeInterface;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Service\NewTaskRecipeRegistry;
+use stdClass;
 
 /**
  * Class NewTaskRecipeRegistryTest.
@@ -90,5 +91,12 @@ class NewTaskRecipeRegistryTest extends TestCase
         $this->expectException(DomainException::class);
 
         $this->registry->get(NewJob::class);
+    }
+
+    public function testRegisterThrowsADomainExceptionForANonTaskClass(): void
+    {
+        $this->expectException(DomainException::class);
+
+        $this->registry->register(stdClass::class, $this->recipe);
     }
 }

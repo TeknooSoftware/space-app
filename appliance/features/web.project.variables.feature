@@ -1,24 +1,25 @@
-Feature: Web interface to manage variables and secrets usable in all deploymnets jobs of project
+@web
+Feature: Web interface to manage variables and secrets usable in all deployments jobs of project
   In order to manage project's variables
-  As an user of an account
-  I want to manage variables and secrets available fo a project
+  As a user of an account
+  I want to manage variables and secrets available for a project
 
   On Space, Job deployment can use variables in theirs configurations. Variables must be defined before each run, but
   they can be persisted on projects or centralized on the account to be share on all projects of the account.
   Variables can be a secret. According to the Space configuration secrets can be encrypted before be stored in the Space
   database and decrypted on the worker on the job execution.
 
+  Background:
+    Given a Space app instance
+    And a memory document database
+
   Scenario: From the UI, create new variables on my project
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     And It goes to projects list page
     And it goes to project page of "my project"
     And open the project variables page
@@ -68,11 +69,9 @@ Feature: Web interface to manage variables and secrets usable in all deploymnets
       | project_vars.sets.dev.variables.0.value      | value3 |
 
   Scenario: From the UI, update or delete variables on my project
-    Given A Space app instance
-    And A memory document database
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -83,9 +82,7 @@ Feature: Web interface to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value6 | dev         |
       | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     And It goes to projects list page
     And it goes to project page of "my project"
     And open the project variables page
@@ -179,17 +176,13 @@ Feature: Web interface to manage variables and secrets usable in all deploymnets
       | project_vars.sets.dev.variables.0.value      | value3.1 |
 
   Scenario: From the UI, create new encrypted secret on my project
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     And It goes to projects list page
     And it goes to project page of "my project"
     And open the project variables page
@@ -239,12 +232,10 @@ Feature: Web interface to manage variables and secrets usable in all deploymnets
       | project_vars.sets.dev.variables.0.value      | value3 |
 
   Scenario: From the UI, update or delete encrypted secrets on my project
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And a standard project "my project"
     And the project has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -255,9 +246,7 @@ Feature: Web interface to manage variables and secrets usable in all deploymnets
       | eee | var6 | 1      | value6 | dev         |
       | fff | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     And It goes to projects list page
     And it goes to project page of "my project"
     And open the project variables page

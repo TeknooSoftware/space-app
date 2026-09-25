@@ -28,6 +28,12 @@ namespace Teknoo\Space\Tests\Unit\App;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Teknoo\Space\App\Kernel;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
+use Symfony\Component\Routing\Loader\PhpFileLoader;
+use Symfony\Component\Routing\RouteCollection;
+use Teknoo\East\Foundation\Extension\Manager;
 
 #[CoversClass(Kernel::class)]
 class KernelTest extends TestCase
@@ -51,6 +57,41 @@ class KernelTest extends TestCase
     {
         foreach ($this->buildKernel()->registerBundles() as $bundle) {
             $this->assertIsObject($bundle);
+        }
+    }
+
+    public function testConfigureRoutes(): void
+    {
+        $oldDisabledValue = $_ENV['TEKNOO_EAST_EXTENSION_DISABLED'] ?? null;
+        $_ENV['TEKNOO_EAST_EXTENSION_DISABLED'] = '1';
+
+        try {
+            $loader = $this->createMock(PhpFileLoader::class);
+            $loader
+                ->expects($this->atLeastOnce())
+                ->method('import')
+                ->willReturn(new RouteCollection());
+
+            $routes = new RoutingConfigurator(
+                new RouteCollection(),
+                $loader,
+                __FILE__,
+                __FILE__,
+                'test',
+            );
+
+            $method = new ReflectionMethod(Kernel::class, 'configureRoutes');
+            $method->invoke($this->buildKernel(), $routes);
+
+            $this->assertInstanceOf(RoutingConfigurator::class, $routes);
+        } finally {
+            if (null === $oldDisabledValue) {
+                unset($_ENV['TEKNOO_EAST_EXTENSION_DISABLED']);
+            } else {
+                $_ENV['TEKNOO_EAST_EXTENSION_DISABLED'] = $oldDisabledValue;
+            }
+
+            Manager::reset();
         }
     }
 }

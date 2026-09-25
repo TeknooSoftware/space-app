@@ -28,8 +28,13 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Search;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Search\AccountSearchType;
+use Teknoo\Space\Object\DTO\Search;
 
 /**
  * Class AccountSearchTypeTest.
@@ -75,5 +80,33 @@ class AccountSearchTypeTest extends TestCase
             $this->createStub(OptionsResolver::class),
         );
         $this->assertTrue(true);
+    }
+
+    public function testBuildFormWithManagerPostSubmitListener(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with($this->callback(fn (array $workPlan): bool => isset($workPlan['criteria'])))
+            ->willReturnSelf();
+
+        $this->accountSearchType->buildForm($builder, ['manager' => $manager]);
+
+        $this->assertCount(1, $listeners[FormEvents::POST_SUBMIT]);
+        $listeners[FormEvents::POST_SUBMIT][0](
+            new FormEvent($this->createStub(FormInterface::class), new Search('foo')),
+        );
     }
 }

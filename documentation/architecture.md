@@ -117,31 +117,37 @@ The application uses Symfony Messenger for asynchronous processing:
 
 ### 4. PHP-DI Configuration
 
-Space uses 11 `di.*.php` files in `config/di/` for dependency injection:
+Space uses `di.*.php` files for dependency injection. They sit **directly in `appliance/config/`** — there is
+no `config/di/` directory:
 
-| File | Purpose |
-|------|---------|
-| `di.common.php` | Core services (logger, event dispatcher, Mercure hub) |
-| `di.hook.php` | East PaaS hook registration |
-| `di.recipe.plans.php` | 51 Recipe Plans |
-| `di.recipe.steps.php` | 56 Recipe Steps across 18 categories |
-| `di.variables.php` | Application variables |
-| `di.variables.clusters.php` | Cluster catalog |
-| `di.variables.east.common.php` | East Foundation common defaults |
-| `di.variables.east.paas.php` | East PaaS defaults |
-| `di.variables.from.envs.php` | Environment-variable-driven config |
-| `di.persistent_data.php` | MongoDB repositories, loaders, writers |
-| `di.persisted_vars.encryption.php` | PVar encryption service |
+| File                               | Purpose                                                       |
+|------------------------------------|---------------------------------------------------------------|
+| `di.common.php`                    | Core services (logger, event dispatcher, Mercure hub)         |
+| `di.hook.php`                      | East PaaS hook registration                                   |
+| `di.services.php`                  | Application services                                          |
+| `di.recipe.plans.php`              | Recipe Plan definitions — and the steps used by a single plan |
+| `di.recipe.steps.php`              | Recipe Step definitions                                       |
+| `di.variables.php`                 | Application variables                                         |
+| `di.variables.clusters.php`        | Cluster catalog                                               |
+| `di.variables.east.common.php`     | East Foundation common defaults                               |
+| `di.variables.east.paas.php`       | East PaaS defaults                                            |
+| `di.variables.from.envs.php`       | Environment-variable-driven config                            |
+| `di.persistent_data.php`           | MongoDB repositories, loaders, writers                        |
+| `di.persisted_vars.encryption.php` | Persisted-variable encryption service                         |
 
 Extensions register their own configuration via `di.php` files loaded by the Teknoo East Foundation extension
 system. See [infrastructure.md](infrastructure.md#php-di-container) for implementation details.
 
-### 5. Two-repo Layout
+### 5. Extension Repositories
 
-Enterprise extensions are mounted from a separate repository (`space-app-enterprise`), not in the main
-`space-app` repository. Enterprise code commits happen in `space-app-enterprise`; plan-documentation Findings
-commits go to `space-app`. The extension loader discovers Enterprise bundles at runtime via Composer
+An extension is not committed to this repository. It ships from a repository of its own and is mounted at
+runtime under `appliance/extensions/`, which `appliance/.gitignore` ignores — so `git status` here never
+reports a change made inside one. The extension loader discovers the mounted bundles through Composer
 autoloading.
+
+The consequence for this documentation: what an extension adds is described **by that extension**, in its own
+`AGENTS.md` and `documentation/`, never here. An installation running without it must not be reading about
+features it does not have.
 
 ### 6. Bowl Pattern — ProvisioningPlanBowl
 
@@ -150,6 +156,14 @@ at request time based on the cluster `type` (kubernetes vs docker-compose). This
 `RecipeBowl`'s recipe is fixed at container-build time, but the provisioning plan set differs per cluster
 type. Kubernetes resolves to the standard Kubernetes plan instances; docker-compose resolves to the
 Ansible-based provisioning plans.
+
+The bowls are no longer executed inside the web request: each provisioning role is queued as a
+`Teknoo\Space\Object\DTO\Task\*` task (a `NewTaskInterface`) through `CallNewTask`, and the `new_task`
+worker runs the matching `Recipe\Plan\Task\AccountProvisioningTask` instance, which loads the account, its
+history, clusters, environments and registry before delegating to the bowl. The admin routes
+(`space_admin_account_*_reinstall`, `space_admin_account_refresh_quota` and their API twins) share one HTTP
+plan, `Recipe\Plan\AccountTaskDispatch`, whose route default `taskClass` selects the task; account creation
+and edition queue `InstallRegistryTask` / `InstallEnvironmentTask` from their step lists.
 
 ### 7. Access Control — ObjectAccessControl
 
@@ -254,9 +268,11 @@ Space leverages **Teknoo East PaaS** for deployment orchestration:
 
 ### Backend Stack
 
-- **PHP 8.4+**: Modern PHP with type safety and performance
-- **Symfony ^7.4||^8.1**: Web framework and components
-- **Doctrine ODM 3.5+**: MongoDB object-document mapper
+- **PHP 8.5+**: Modern PHP with type safety and performance
+- **Symfony 7.4 LTS and 8.x**: both maintained branches are supported; the constraints in
+  `appliance/composer.json` are declared per component, and an update must never drop one of the two branches
+- **Doctrine MongoDB ODM 2.17+**: MongoDB object-document mapper (`doctrine/mongodb-odm`; the `^3.5`
+  constraint in `composer.json` belongs to `doctrine/common`, a different package)
 - **Teknoo Libraries**:
     - Immutable: Immutable object pattern
     - States: State pattern implementation
@@ -414,9 +430,11 @@ over SSH; workers run Ansible to apply the Compose/Traefik stack). The target is
 
 ### Planned Enhancements
 
-- **Enterprise Edition**: Additional features (BigBang library, Trivy audit, backup, AI assistant, webhooks)
-- **Additional Drivers**: Support for non-Kubernetes clusters
+- **Additional Drivers**: Support for non-Kubernetes clusters beyond Docker Compose
 - **Advanced Monitoring**: Enhanced observability and metrics
+
+Commercial extensions are not a future consideration either: the extension system described above is live,
+and an enabled extension documents its own features.
 
 ### Extensibility Points
 

@@ -20,16 +20,11 @@
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-
 declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
-use Teknoo\East\Common\Recipe\Step\JumpIf;
-use Teknoo\East\Common\Recipe\Step\LoadObject;
-use Teknoo\East\Common\Recipe\Step\Render;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Bowl\RecipeBowl;
 use Teknoo\Recipe\EditablePlanInterface;
@@ -37,20 +32,18 @@ use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Recipe\Plan\Traits\PrepareAccountTrait;
-use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
-use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
-use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 
 /**
  * Docker-compose environment reinstall: remove the persisted environment then re-run the docker-compose
- * {@see AccountEnvironmentInstall}. Mirrors the Kubernetes reinstall's admin web-flow but drops the K8s-only
- * steps (namespace reload, per-account registry) — **zero Kubernetes API calls**.
+ * {@see AccountEnvironmentInstall}. Mirrors the Kubernetes reinstall but drops the K8s-only steps —
+ * **zero Kubernetes API calls**. Executed in the `new_task` worker through the
+ * `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask` plan, which loads the account, its history,
+ * clusters, environments and registry before delegating here.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -60,36 +53,26 @@ use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 class AccountEnvironmentReinstall implements EditablePlanInterface
 {
     use EditablePlanTrait;
-    use PrepareAccountTrait;
 
     public function __construct(
         RecipeInterface $recipe,
-        private readonly LoadObject $loadObject,
-        private readonly PrepareRedirection $prepareRedirection,
-        private readonly SetRedirectClientAtEnd $redirectClient,
-        private readonly LoadHistory $loadHistory,
-        private readonly LoadEnvironments $loadEnvironments,
         private readonly FindEnvironmentInWallet $findEnvironmentInWallet,
         private readonly RemoveEnvironment $removeEnvironment,
         private readonly AccountEnvironmentInstall $accountEnvironmentInstall,
-        private readonly UpdateAccountHistory $updateAccountHistory,
-        private readonly JumpIf $jumpIf,
-        private readonly Render $render,
         private readonly ReinstallAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
         $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
-        $recipe = $recipe->require(new Ingredient('string', 'id'));
+        $recipe = $recipe->require(new Ingredient(Account::class));
+        $recipe = $recipe->require(new Ingredient(AccountHistory::class));
+        $recipe = $recipe->require(new Ingredient(AccountWallet::class));
+        $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
         $recipe = $recipe->require(new Ingredient('string', 'envName'));
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
-
-        $recipe = $this->prepareRecipeForAccount($recipe);
 
         $recipe = $recipe->cook($this->findEnvironmentInWallet, FindEnvironmentInWallet::class, [], 80);
 
@@ -101,8 +84,6 @@ class AccountEnvironmentReinstall implements EditablePlanInterface
             [],
             100
         );
-
-        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 110);
 
         return $recipe->onError(new Bowl($this->errorHandler, []));
     }

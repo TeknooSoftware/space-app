@@ -1,0 +1,47 @@
+---
+# Teknoo Space — log the deploy user of a Docker host in on the OCI registries (docker-compose deploy target).
+#
+# Docker Compose counterpart of the Kubernetes pull secret created by `CreateDockerSecret`: run by
+# `LogDeployUserInRegistries` when an account environment is installed or reinstalled on a docker-compose cluster,
+# it logs the deploy user in on the account registry and on the global Space registry, so the `docker compose up`
+# run later by the East PaaS deploy playbook can pull the images of the account wherever its registry is hosted
+# (on this Docker host through `registry.yml`, or on another cluster).
+#
+# CONNECTS AS THE DEPLOY USER, EXACTLY LIKE THE EAST PAAS DEPLOY PLAYBOOK: same single-host `docker_host` inventory,
+# same SSH user (the runner passes `--user` from the cluster credentials), no `become` and no `DOCKER_HOST`. `docker
+# login` therefore goes through the same docker context as `docker compose up` in `deploy.yml` (the rootless one on
+# a bootstrapped host) and stores the credentials in the same `~/.docker/config.json`. A successful login is the
+# readiness check: the daemon validates the credentials against each registry before storing them.
+#
+# SELF-CONTAINED ON PURPOSE: the PHP runner ships nothing but this single file (`ansible-playbook <that path> ...`).
+#
+# NOTE: play vars below are plain literals on purpose. `foo: "{{ foo | default('bar') }}"` is a self-reference
+# and makes Ansible raise "Recursive loop detected in template" as soon as the key is NOT supplied through
+# --extra-vars. Extra vars already outrank play vars, so literals are all it takes.
+#
+# Expected extraVars: registries — a list of `{host, username, password}`, one entry per registry to log in on.
+
+- name: Log the deploy user in on the OCI registries of the account
+  hosts: docker_host
+  gather_facts: false
+
+  vars:
+    # The runner execs `ansible-playbook` with no ansible.cfg (its ANSIBLE_* environment only covers colors and
+    # the SSH host key checking), so the other controller options have to be declared here. `auto_silent`
+    # keeps the normal interpreter auto-discovery and only drops its warning.
+    ansible_python_interpreter: auto_silent
+    registries: []
+
+  tasks:
+    # Retried: a registry exposed behind an ACME resolver may still be issuing its certificate.
+    - name: Log the deploy user in on each registry
+      ansible.builtin.command:
+        cmd: docker login {{ item.host }} --username {{ item.username }} --password-stdin
+        stdin: "{{ item.password }}"
+      loop: "{{ registries }}"
+      register: registries_login
+      until: registries_login.rc == 0
+      retries: 3
+      delay: 5
+      changed_when: true
+      no_log: true

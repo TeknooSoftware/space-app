@@ -15,13 +15,31 @@ http://localhost {
   redir https://{host}{uri} 301
 }
 
-https://localhost {
+# The Mercure hub is embedded in this container, so `https://localhost` only reaches it from the
+# `web` service itself. The worker containers publish their updates from another container, where
+# `localhost` is themselves: the site block must therefore also answer to a name routable on the
+# Compose networks. `INTERNAL_SERVER_NAME` holds that name, and defaults to the `web` service of
+# the stacks shipped with the application.
+https://localhost, {$INTERNAL_SERVER_NAME:https://web} {
     tls internal
 
     root * /var/www/space/public
 
     encode zstd gzip
 
+    # Mercure 0.x directives: the hub embedded in the `dunglas/frankenphp` image is still a 0.24
+    # one. When FrankenPHP ships the Mercure 1.0 module, `publisher_jwt`/`subscriber_jwt` become
+    # unknown directives (a fatal error, no longer a warning) and must be replaced by an issuer
+    # block, while teknoo.space.mercure.protocol_version is switched to `1.0`:
+    #
+    #     issuer {$MERCURE_TRUSTED_ISSUERS:https://localhost} {
+    #         publisher {
+    #             jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+    #         }
+    #         subscriber {
+    #             jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+    #         }
+    #     }
     mercure {
         publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
         subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}

@@ -28,7 +28,14 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Security\Voter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\CommonBundle\Object\AbstractUser;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\Project;
 use Teknoo\Space\Infrastructures\Symfony\Security\Voter\ProjectVoter;
+use Teknoo\Space\Object\DTO\SpaceProject;
 
 /**
  * Class ProjectVoterTest.
@@ -62,5 +69,82 @@ class ProjectVoterTest extends TestCase
                 ['foo' => 'bar'],
             )
         );
+    }
+
+    private function createToken(?User $user): TokenInterface
+    {
+        $token = $this->createStub(TokenInterface::class);
+        if (null === $user) {
+            $token->method('getUser')->willReturn(null);
+
+            return $token;
+        }
+
+        $wrappedUser = $this->createStub(AbstractUser::class);
+        $wrappedUser->method('getWrappedUser')->willReturn($user);
+        $token->method('getUser')->willReturn($wrappedUser);
+
+        return $token;
+    }
+
+    private function createProject(Account $account): Project
+    {
+        $project = $this->createStub(Project::class);
+        $project->method('getAccount')->willReturn($account);
+
+        return $project;
+    }
+
+    public function testVoteDeniedWhenAnonymous(): void
+    {
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_DENIED,
+            $this->projectVoter->vote(
+                $this->createToken(null),
+                $this->createProject(new Account()),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.denied.user_anonymous'], $vote->reasons);
+    }
+
+    public function testVoteGrantedWithSpaceProjectWhenUserInAccount(): void
+    {
+        $user = (new User())->setId('user-1');
+        $account = (new Account())->setName('foo')->setUsers([$user]);
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_GRANTED,
+            $this->projectVoter->vote(
+                $this->createToken($user),
+                new SpaceProject($this->createProject($account)),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame(['teknoo.space.vote.granted.user_in_account'], $vote->reasons);
+    }
+
+    public function testVoteAbstainWhenUserNotInAccount(): void
+    {
+        $user = (new User())->setId('user-1');
+        $other = (new User())->setId('user-2');
+        $account = (new Account())->setName('foo')->setUsers([$other]);
+        $vote = new Vote();
+
+        $this->assertSame(
+            VoterInterface::ACCESS_ABSTAIN,
+            $this->projectVoter->vote(
+                $this->createToken($user),
+                $this->createProject($account),
+                ['foo'],
+                $vote,
+            ),
+        );
+        $this->assertSame([], $vote->reasons);
     }
 }

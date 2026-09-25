@@ -27,15 +27,18 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Job;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Contracts\DBSource\ManagerInterface as DbSourceManager;
+use Teknoo\East\Common\Contracts\Object\ObjectInterface;
+use Teknoo\East\Common\Contracts\Writer\WriterInterface;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Job\PersistJobVar;
 use Teknoo\Space\Object\DTO\JobVar;
 use Teknoo\Space\Object\DTO\NewJob;
 use Teknoo\Space\Object\DTO\SpaceProject;
+use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Writer\ProjectPersistedVariableWriter;
 
 /**
@@ -51,9 +54,9 @@ class PersistJobVarTest extends TestCase
 {
     private PersistJobVar $persistJobVar;
 
-    private DbSourceManager&Stub $manager;
+    private DbSourceManager&MockObject $manager;
 
-    private ProjectPersistedVariableWriter&Stub $writer;
+    private ProjectPersistedVariableWriter&MockObject $writer;
 
     /**
      * {@inheritdoc}
@@ -62,16 +65,20 @@ class PersistJobVarTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = $this->createStub(DbSourceManager::class);
-        $this->writer = $this->createStub(ProjectPersistedVariableWriter::class);
+        $this->manager = $this->createMock(DbSourceManager::class);
+        $this->writer = $this->createMock(ProjectPersistedVariableWriter::class);
         $this->persistJobVar = new PersistJobVar(
             $this->writer,
             $this->manager,
         );
     }
 
-    public function testInvoke(): void
+    public function testInvokeWithoutPersistableVariable(): void
     {
+        $this->manager->expects($this->once())->method('openBatch')->willReturnSelf();
+        $this->manager->expects($this->once())->method('closeBatch')->willReturnSelf();
+        $this->writer->expects($this->never())->method('save');
+
         $newJob = new NewJob(
             variables: [
                 new JobVar('foo'),
@@ -85,5 +92,55 @@ class PersistJobVarTest extends TestCase
                 new SpaceProject($this->createStub(Project::class)),
             )
         );
+    }
+
+    public function testInvokeWithPersistableVariables(): void
+    {
+        $this->manager->expects($this->once())->method('openBatch')->willReturnSelf();
+        $this->manager->expects($this->once())->method('closeBatch')->willReturnSelf();
+
+        $saved = [];
+        $this->writer
+            ->expects($this->exactly(2))
+            ->method('save')
+            ->willReturnCallback(
+                function (ObjectInterface $object, PromiseInterface $promise) use (&$saved): WriterInterface {
+                    $saved[] = $object;
+                    $promise->success($object);
+
+                    return $this->writer;
+                }
+            );
+
+        $newJob = new NewJob(
+            envName: 'prod',
+            variables: [
+                new JobVar(id: 'i1', name: 'n1', value: 'v1', persisted: true, secret: true, canPersist: true),
+                new JobVar(
+                    id: 'i2',
+                    name: 'n2',
+                    value: 'v2',
+                    persisted: true,
+                    secret: true,
+                    encryptionAlgorithm: 'aes',
+                    canPersist: true,
+                ),
+                new JobVar(id: 'i3', name: 'n3', value: 'v3', persisted: true, canPersist: false),
+            ],
+        );
+
+        $this->assertInstanceOf(
+            PersistJobVar::class,
+            ($this->persistJobVar)(
+                $this->createStub(ManagerInterface::class),
+                $newJob,
+                new SpaceProject($this->createStub(Project::class)),
+            )
+        );
+
+        $this->assertCount(2, $saved);
+        $this->assertContainsOnlyInstancesOf(ProjectPersistedVariable::class, $saved);
+        $this->assertSame('n1', $saved[0]->getName());
+        $this->assertSame('prod', $saved[0]->getEnvName());
     }
 }

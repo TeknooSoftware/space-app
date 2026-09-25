@@ -278,7 +278,7 @@ class AccountCluster implements
             clientKey: (string) $this->clientKey,
             username: (string) $this->username,
             caCertificate: $this->caCertificate,
-            supportRegistry: true,
+            supportRegistry: $this->supportRegistry,
         );
     }
 

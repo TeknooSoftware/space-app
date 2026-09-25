@@ -92,6 +92,50 @@ class ProvisioningPlanBowlTest extends TestCase
         $this->assertInstanceOf(BowlInterface::class, $result);
     }
 
+    public function testExecuteResolvesTheEnvironmentReinstallPlanByClusterType(): void
+    {
+        $plan = $this->createStub(EditablePlanInterface::class);
+
+        $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);
+        $directory->expects($this->once())
+            ->method('environmentReinstall')
+            ->with('kubernetes')
+            ->willReturn($plan);
+
+        $bowl = new ProvisioningPlanBowl($directory, ProvisioningPlanBowl::ROLE_ENVIRONMENT_REINSTALL, 0);
+
+        $workPlan = [
+            'clusterCatalog' => new ClusterCatalog(['foo' => $this->clusterOfType('kubernetes')], []),
+            'clusterName' => 'foo',
+        ];
+
+        $result = $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
+
+        $this->assertInstanceOf(BowlInterface::class, $result);
+    }
+
+    public function testExecuteResolvesTheRefreshQuotaPlanByClusterType(): void
+    {
+        $plan = $this->createStub(EditablePlanInterface::class);
+
+        $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);
+        $directory->expects($this->once())
+            ->method('refreshQuota')
+            ->with('kubernetes')
+            ->willReturn($plan);
+
+        $bowl = new ProvisioningPlanBowl($directory, ProvisioningPlanBowl::ROLE_REFRESH_QUOTA, 0);
+
+        $workPlan = [
+            'clusterCatalog' => new ClusterCatalog(['foo' => $this->clusterOfType('kubernetes')], []),
+            'clusterName' => 'foo',
+        ];
+
+        $result = $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
+
+        $this->assertInstanceOf(BowlInterface::class, $result);
+    }
+
     public function testExecuteResolvesRegistryInstallForDockerCompose(): void
     {
         $plan = $this->createStub(EditablePlanInterface::class);
@@ -135,6 +179,60 @@ class ProvisioningPlanBowlTest extends TestCase
         $result = $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
 
         $this->assertInstanceOf(BowlInterface::class, $result);
+    }
+
+    /**
+     * A registry reinstall must resolve its type from the cluster recorded in the account registry (published as
+     * `registryClusterName` by `SelectRegistryCluster`), not from the first registry-capable cluster.
+     */
+    public function testExecuteResolvesRegistryRolesFromTheResolvedRegistryCluster(): void
+    {
+        $plan = $this->createStub(EditablePlanInterface::class);
+
+        $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);
+        $directory->expects($this->once())
+            ->method('registryReinstall')
+            ->with('docker-compose')
+            ->willReturn($plan);
+
+        $bowl = new ProvisioningPlanBowl($directory, ProvisioningPlanBowl::ROLE_REGISTRY_REINSTALL, 0);
+
+        $workPlan = [
+            'clusterCatalog' => new ClusterCatalog(
+                [
+                    'first' => $this->clusterOfType('kubernetes', true),
+                    'recorded' => $this->clusterOfType('docker-compose', true),
+                ],
+                [],
+            ),
+            'registryClusterName' => 'recorded',
+        ];
+
+        $result = $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
+
+        $this->assertInstanceOf(BowlInterface::class, $result);
+    }
+
+    public function testExecuteRefusesAQuotaRefreshWithoutClusterName(): void
+    {
+        $directory = $this->createMock(ProvisioningPlanDirectoryInterface::class);
+        $directory->expects($this->never())
+            ->method('refreshQuota');
+
+        $bowl = new ProvisioningPlanBowl($directory, ProvisioningPlanBowl::ROLE_REFRESH_QUOTA, 0);
+
+        //The quota refresh is dispatched once per environment: without the environment's clusterName the
+        //registry cluster fallback would silently target the wrong cluster type.
+        $workPlan = [
+            'clusterCatalog' => new ClusterCatalog(
+                ['foo' => $this->clusterOfType('kubernetes', true)],
+                [],
+            ),
+        ];
+
+        $this->expectException(UnsupportedClusterTypeException::class);
+
+        $bowl->execute($this->createStub(ChefInterface::class), $workPlan);
     }
 
     public function testExecuteThrowsWhenClusterContextIsMissing(): void

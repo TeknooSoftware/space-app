@@ -30,6 +30,8 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Symfony\Service\Account\CodeGenerator;
 
+use function strlen;
+
 /**
  * Class CodeGeneratorTest.
  *
@@ -76,6 +78,34 @@ class CodeGeneratorTest extends TestCase
                 'foo',
                 $this->createStub(PromiseInterface::class),
             )
+        );
+    }
+
+    public function testVerifyWithGeneratedCode(): void
+    {
+        $generated = null;
+        $generatePromise = $this->createMock(PromiseInterface::class);
+        $generatePromise->expects($this->once())
+            ->method('success')
+            ->willReturnCallback(
+                static function (string $code) use (&$generated, $generatePromise): PromiseInterface {
+                    $generated = $code;
+
+                    return $generatePromise;
+                },
+            );
+
+        $this->codeGenerator->generateCode('foo', $generatePromise);
+        $this->assertIsString($generated);
+        $this->assertSame(8, strlen($generated));
+
+        $verifyPromise = $this->createMock(PromiseInterface::class);
+        $verifyPromise->expects($this->once())->method('success')->with($generated);
+        $verifyPromise->expects($this->never())->method('fail');
+
+        $this->assertInstanceOf(
+            CodeGenerator::class,
+            $this->codeGenerator->verify('foo', $generated, $verifyPromise),
         );
     }
 }

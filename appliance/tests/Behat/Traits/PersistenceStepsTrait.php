@@ -48,6 +48,7 @@ use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\GitRepository;
+use Teknoo\East\Paas\Object\History;
 use Teknoo\East\Paas\Object\ImageRegistry;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
@@ -62,6 +63,7 @@ use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
 use Teknoo\Space\Object\Persisted\AccountRegistry;
 use Teknoo\Space\Object\Persisted\ApiKeyToken;
@@ -158,6 +160,7 @@ trait PersistenceStepsTrait
             registryConfigName: $sac . '-docker-config',
             registryPassword: $sac . '-foobar',
             persistentVolumeClaimName: $sac . '-pvc',
+            clusterName: 'Demo Kube Cluster',
         );
         $accountRegistry->setId($this->generateId());
 
@@ -176,7 +179,8 @@ trait PersistenceStepsTrait
     }
 
     #[Given('an :role, called :lastName :firstName with the :email with the password :password')]
-    public function anUserCalledWithTheWithThePassword(
+    #[Given('a :role, called :lastName :firstName with the :email with the password :password')]
+    public function theRoleCalledWithTheEmailAndThePassword(
         string $lastName,
         string $firstName,
         string $email,
@@ -263,8 +267,8 @@ trait PersistenceStepsTrait
         );
     }
 
-    #[Given('the 2FA authentication enable for last user')]
-    public function theFaAuthenticationEnableForLastUser(): void
+    #[Given('the 2FA authentication is enabled for the last user')]
+    public function theTwoFaAuthenticationIsEnabledForTheLastUser(): void
     {
         $totpAlgorithm = 'sha1';
         $totpDigits = 6;
@@ -696,11 +700,16 @@ trait PersistenceStepsTrait
         $accountCluster = $this->recall(AccountCluster::class);
 
         $cluster = new Cluster();
+        $type = '';
         $caCertificate = '';
         $token = '';
+        $username = '';
         $accountCluster->visit([
             'name' => $cluster->setName(...),
-            'type' => $cluster->setType(...),
+            'type' => function (string $v) use (&$type, $cluster): void {
+                $type = $v;
+                $cluster->setType($v);
+            },
             'masterAddress' => $cluster->setAddress(...),
             'useHnc' => $cluster->useHierarchicalNamespaces(...),
             'caCertificate' => function (string $v) use (&$caCertificate): void {
@@ -709,7 +718,15 @@ trait PersistenceStepsTrait
             'token' => function (string $v) use (&$token): void {
                 $token = $v;
             },
+            'username' => function (?string $v) use (&$username): void {
+                $username = (string) $v;
+            },
         ]);
+
+        //As in production, only a Docker Compose cluster carries its SSH login into the project's cluster
+        if ('docker-compose' !== $type) {
+            $username = '';
+        }
 
         $account->namespaceIsItDefined(
             fn (string $ns, string $pf): Cluster => $cluster->setNamespace($pf . $ns . '-' . $envName)
@@ -723,6 +740,7 @@ trait PersistenceStepsTrait
                 clientCertificate: '',
                 clientKey: '',
                 token: $token,
+                username: $username,
             ),
         );
 
@@ -945,7 +963,9 @@ trait PersistenceStepsTrait
             masterAddress: "ssh://deployer@docker-host.{$slug}.behat:22",
             storageProvisioner: '',
             dashboardAddress: '',
-            caCertificate: \base64_encode('behatKnownHosts'),
+            //Docker-compose clusters keep the SSH host public key (known_hosts) as-is in the CA field, unlike the
+            //Kubernetes CA which is base64-encoded: the RunnerFactory binds it verbatim to the host.
+            caCertificate: 'behatKnownHosts',
             token: '',
             supportRegistry: false,
             registryUrl: null,
@@ -956,9 +976,9 @@ trait PersistenceStepsTrait
 
         $this->persistAndRegister($cluster);
 
-        //Tell the docker-compose steps which SSH target this scenario deploys to, so the Ansible inventory
-        //rendered by the driver can be asserted.
-        $this->setExpectedComposeSshTarget("docker-host.{$slug}.behat", 22);
+        //Tell the docker-compose steps which SSH target this scenario deploys to (and the host public key its
+        //credentials carry), so the Ansible inventory and the known_hosts rendered by the driver can be asserted.
+        $this->setExpectedComposeSshTarget("docker-host.{$slug}.behat", 22, 'behatKnownHosts');
     }
 
     #[Given('an account environment on :clusterName for the environment :environmentName')]
@@ -1003,6 +1023,66 @@ trait PersistenceStepsTrait
         $accountEnvironment->setId($this->generateId());
 
         $this->persistAndRegister($accountEnvironment);
+    }
+
+    /**
+     * Whether an entry of the persisted account histories records `$message` with an `extra` accepted by
+     * `$extraMatches`.
+     *
+     * @param callable(array<string, mixed>): bool $extraMatches
+     */
+    private function accountHistoryRecords(string $message, callable $extraMatches): bool
+    {
+        $found = false;
+        /** @var AccountHistory $accountHistory */
+        foreach ($this->listObjects(AccountHistory::class) as $accountHistory) {
+            $accountHistory->passMeYouHistory(
+                function (History $history) use (&$found, $message, $extraMatches): void {
+                    foreach ($this->historyEntries($history) as $entry) {
+                        if ($message === $entry->getMessage() && $extraMatches($entry->getExtra())) {
+                            $found = true;
+                        }
+                    }
+                }
+            );
+        }
+
+        return $found;
+    }
+
+    #[Then('the account history must record the quota refresh skipped for :environment on :cluster')]
+    public function theAccountHistoryMustRecordTheQuotaRefreshSkippedForOn(string $environment, string $cluster): void
+    {
+        Assert::assertTrue(
+            $this->accountHistoryRecords(
+                'teknoo.space.text.account.docker_compose.quota_not_applicable',
+                static fn (array $extra): bool => ($extra['environment'] ?? null) === $environment
+                    && ($extra['cluster'] ?? null) === $cluster,
+            ),
+            "The account history does not record the skipped quota refresh of `$environment` on `$cluster`",
+        );
+    }
+
+    #[Then('the account history must record the registries login for :environment on :cluster')]
+    public function theAccountHistoryMustRecordTheRegistriesLoginForOn(string $environment, string $cluster): void
+    {
+        $accountRegistry = $this->recall(AccountRegistry::class);
+        Assert::assertInstanceOf(AccountRegistry::class, $accountRegistry);
+
+        //Only the registry hosts are recorded, never a credential
+        $expectedExtra = [
+            'environment' => $environment,
+            'cluster' => $cluster,
+            'registries' => [$accountRegistry->getRegistryUrl()],
+        ];
+
+        Assert::assertTrue(
+            $this->accountHistoryRecords(
+                'teknoo.space.text.account.docker_compose.registries_login',
+                static fn (array $extra): bool => $extra === $expectedExtra,
+            ),
+            "The account history does not record the registries login for `$environment` on `$cluster`",
+        );
     }
 
     #[Then('the project must be persisted')]
@@ -1052,6 +1132,52 @@ trait PersistenceStepsTrait
         Assert::assertNotEquals(
             $this->originalProjectName,
             (string) $project,
+        );
+    }
+
+    /**
+     * The cluster of the last project, which must have only one.
+     */
+    private function lastProjectSingleCluster(): Cluster
+    {
+        /** @var Project $project */
+        $project = $this->recall(Project::class);
+
+        $clusters = [];
+        $project->visit(
+            'clusters',
+            static function (iterable $projectClusters) use (&$clusters): void {
+                foreach ($projectClusters as $cluster) {
+                    $clusters[] = $cluster;
+                }
+            },
+        );
+
+        Assert::assertCount(1, $clusters, 'The project must have a single cluster');
+        Assert::assertInstanceOf(Cluster::class, $clusters[0]);
+
+        return $clusters[0];
+    }
+
+    #[Then("the SSH username of the last project's cluster is :username")]
+    public function theSshUsernameOfTheLastProjectsClusterIs(string $username): void
+    {
+        $this->lastProjectSingleCluster()->visit(
+            'identity',
+            static function (ClusterCredentials $identity) use ($username): void {
+                Assert::assertEquals($username, $identity->getUsername());
+            },
+        );
+    }
+
+    #[Then("the last project's cluster uses hierarchical namespaces")]
+    public function theLastProjectsClusterUsesHierarchicalNamespaces(): void
+    {
+        $this->lastProjectSingleCluster()->visit(
+            'useHierarchicalNamespaces',
+            static function (bool $useHnc): void {
+                Assert::assertTrue($useHnc);
+            },
         );
     }
 
@@ -1277,8 +1403,8 @@ trait PersistenceStepsTrait
         );
     }
 
-    #[Then('there is an user in the memory')]
-    public function thereIsAnUserInTheMemory(): void
+    #[Then('there is a user in the memory')]
+    public function thereIsAUserInTheMemory(): void
     {
         Assert::assertCount(
             2,
@@ -1315,6 +1441,57 @@ trait PersistenceStepsTrait
         }
     }
 
+    /**
+     * Registries created before the cluster name was recorded hydrate `clusterName` to null: the provisioning
+     * falls back to the first cluster supporting the registry, and records its name on the next reinstall.
+     */
+    /**
+     * The persisted registry of the account, looked up in the persisted objects rather than recalled: after a
+     * reinstall, the recalled registry is the replaced one.
+     */
+    private function findAccountRegistryOf(AccountOrigin $account): AccountRegistry
+    {
+        /** @var AccountRegistry $registry */
+        foreach ($this->listObjects(AccountRegistry::class) as $registry) {
+            if ($registry->getAccount() === $account) {
+                return $registry;
+            }
+        }
+
+        Assert::fail('Missing AccountRegistry');
+    }
+
+    #[Given('the account registry does not record its cluster')]
+    public function theAccountRegistryDoesNotRecordItsCluster(): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $registry = $this->findAccountRegistryOf($account);
+
+        $legacy = new AccountRegistry(
+            account: $account,
+            registryNamespace: $registry->getRegistryNamespace(),
+            registryUrl: $registry->getRegistryUrl(),
+            registryAccountName: $registry->getRegistryAccountName(),
+            registryConfigName: $registry->getRegistryConfigName(),
+            registryPassword: $registry->getRegistryPassword(),
+            persistentVolumeClaimName: $registry->getPersistentVolumeClaimName(),
+        );
+        $legacy->setId($registry->getId());
+
+        $this->persistAndRegister($legacy);
+    }
+
+    #[Then('the account registry is recorded on the cluster :clusterName')]
+    public function theAccountRegistryIsRecordedOnTheCluster(string $clusterName): void
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        Assert::assertSame($clusterName, $this->findAccountRegistryOf($account)->getClusterName());
+    }
+
     #[Then('the old account registry object has been deleted and remplaced')]
     public function theOldAccountRegistryObjectHasBeenDeletedAndRemplaced(): void
     {
@@ -1328,19 +1505,17 @@ trait PersistenceStepsTrait
             break;
         }
 
-        /** @var AccountRegistry $ar */
-        foreach ($this->listObjects(AccountRegistry::class) as $ar) {
-            if ($ar->getAccount() === $account) {
-                Assert::assertEquals(
-                    $oldAR->getRegistryNamespace(),
-                    $ar->getRegistryNamespace(),
-                );
+        $ar = $this->findAccountRegistryOf($account);
+        Assert::assertEquals(
+            $oldAR->getRegistryNamespace(),
+            $ar->getRegistryNamespace(),
+        );
 
-                return;
-            }
-        }
-
-        Assert::fail('Missing AccountRegistry');
+        //A registry stays on the cluster it was installed on: a reinstall must not move it.
+        Assert::assertEquals(
+            $oldAR->getClusterName(),
+            $ar->getClusterName(),
+        );
     }
 
     #[Then('the old account environment :namespace object has been deleted and remplaced')]
@@ -1417,38 +1592,44 @@ trait PersistenceStepsTrait
         );
     }
 
-    #[Then('job must be successful finished')]
-    public function jobMustBeSuccessfulFinished(): void
+    /**
+     * The first job persisted during the scenario: a scenario deploys a single one.
+     */
+    private function firstJob(): JobOrigin
     {
         $jobs = $this->listObjects(JobOrigin::class);
         Assert::assertNotEmpty($jobs);
 
-        /** @var JobOrigin $job */
         $job = current($jobs);
         Assert::assertInstanceOf(JobOrigin::class, $job);
 
-        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
-        Assert::assertEquals(
-            DispatchResultInterface::class,
-            $job->getHistory()->getMessage(),
-        );
+        return $job;
+    }
+
+    /**
+     * The last entry of the history of the job, which must be final and hold the dispatched result.
+     */
+    private function finalJobHistory(): History
+    {
+        $history = $this->firstJob()->getHistory();
+        Assert::assertInstanceOf(History::class, $history);
+
+        Assert::assertTrue($history->isFinal(), 'History is not final');
+        Assert::assertEquals(DispatchResultInterface::class, $history->getMessage());
+
+        return $history;
+    }
+
+    #[Then('job must be successful finished')]
+    public function jobMustBeSuccessfulFinished(): void
+    {
+        $this->finalJobHistory();
     }
 
     #[Then('job must be finished with an error about a timeout')]
     public function jobMustBeErrorAboutTimeout(): void
     {
-        $jobs = $this->listObjects(JobOrigin::class);
-        Assert::assertNotEmpty($jobs);
-
-        /** @var JobOrigin $job */
-        $job = current($jobs);
-        Assert::assertInstanceOf(JobOrigin::class, $job);
-
-        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
-        Assert::assertEquals(
-            DispatchResultInterface::class,
-            ($history = $job->getHistory())->getMessage(),
-        );
+        $history = $this->finalJobHistory();
 
         Assert::assertStringContainsString(
             "Error, time limit exceeded",
@@ -1459,26 +1640,40 @@ trait PersistenceStepsTrait
     #[Then('job must be finished with an error about a :type allowed in v1')]
     public function jobMustBeErrorAboutJobNotAllowedInV1(string $type): void
     {
-        $jobs = $this->listObjects(JobOrigin::class);
-        Assert::assertNotEmpty($jobs);
-
-        /** @var JobOrigin $job */
-        $job = current($jobs);
-        Assert::assertInstanceOf(JobOrigin::class, $job);
-
-        Assert::assertTrue($job->getHistory()->isFinal(), 'History is not final');
-        Assert::assertEquals(
-            DispatchResultInterface::class,
-            ($history = $job->getHistory())->getMessage(),
-        );
+        $history = $this->finalJobHistory();
 
         Assert::assertStringContainsString(
             match ($type) {
                 'job' => "jobs': This element is not expected",
                 'conditions' => "if{ENV=prod}' is not a valid value of the atomic type",
+                'expose shortcuts' => "services': This element is not expected",
                 default => throw new LogicException('Unknown type in test'),
             },
             (string) ($history->getExtra()['result'][0] ?? ''),
+        );
+    }
+
+    #[Then('job must be finished with an error about expose shortcuts not allowed in v1.1')]
+    public function jobMustBeErrorAboutExposeShortcutsNotAllowedInV1dot1(): void
+    {
+        //Behat placeholders capture a single word, so the two-words type is forwarded explicitly.
+        $this->jobMustBeErrorAboutJobNotAllowedInV1('expose shortcuts');
+    }
+
+    #[Then('job must be finished with an error about a duplicated :type')]
+    public function jobMustBeErrorAboutDuplicatedExposition(string $type): void
+    {
+        $history = $this->finalJobHistory();
+
+        //The AlreadyDefinedException is wrapped by the CompileDeployment step into a compilation error, its
+        //message is the second entry of the result, after the compilation error translation key (like quotas).
+        Assert::assertStringContainsString(
+            match ($type) {
+                'service' => 'Service demo-nginx is already defined in the deployment',
+                'ingress' => 'Ingress demo-nginx is already defined in the deployment',
+                default => throw new LogicException('Unknown type in test'),
+            },
+            (string) ($history->getExtra()['result'][1] ?? ''),
         );
     }
 
@@ -1494,8 +1689,8 @@ trait PersistenceStepsTrait
         );
     }
 
-    #[Then('an user :email is created')]
-    public function anUserIsCreated(string $email): void
+    #[Then('a user :email is created')]
+    public function aUserIsCreated(string $email): void
     {
         $users = $this->listObjects(User::class);
         Assert::assertNotEmpty($users);

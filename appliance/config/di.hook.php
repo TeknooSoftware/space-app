@@ -42,6 +42,8 @@ use function is_a;
 use function is_string;
 
 return [
+    'teknoo.space.hooks_collection.default_timeout' => 240.0,
+
     HooksCollectionInterface::class => static function (ContainerInterface $container): HooksCollectionInterface {
         $definitions = [];
         if ($container->has('teknoo.space.hooks_collection.definitions')) {
@@ -49,7 +51,7 @@ return [
         }
 
         $factory = $container->get(ProcessFactoryInterface::class);
-        $defaultTimeout = 240.0;
+        $defaultTimeout = (float) $container->get('teknoo.space.hooks_collection.default_timeout');
 
         $collections = [];
         foreach ($definitions as $definition) {

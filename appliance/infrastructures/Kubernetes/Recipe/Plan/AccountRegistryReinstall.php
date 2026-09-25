@@ -20,16 +20,11 @@
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-
 declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
-use Teknoo\East\Common\Recipe\Step\JumpIf;
-use Teknoo\East\Common\Recipe\Step\LoadObject;
-use Teknoo\East\Common\Recipe\Step\Render;
+use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\Bowl\RecipeBowl;
 use Teknoo\Recipe\EditablePlanInterface;
@@ -37,17 +32,16 @@ use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReinstallAccountErrorHandler;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\ReloadNamespace;
-use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Recipe\Plan\Traits\PrepareAccountTrait;
-use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
-use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
-use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Object\Persisted\AccountHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 
 /**
+ * Kubernetes per-account registry reinstall: remove the persisted registry credential then re-run the
+ * Kubernetes {@see AccountRegistryInstall} (which carries its own default storage size to claim). Executed in
+ * the `new_task` worker through the `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask` plan, which
+ * loads the account, its history, clusters and registry before delegating here.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
@@ -56,39 +50,22 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 class AccountRegistryReinstall implements EditablePlanInterface
 {
     use EditablePlanTrait;
-    use PrepareAccountTrait;
 
     public function __construct(
         RecipeInterface $recipe,
-        private readonly LoadObject $loadObject,
-        private readonly PrepareRedirection $prepareRedirection,
-        private readonly SetRedirectClientAtEnd $redirectClient,
-        private readonly LoadHistory $loadHistory,
-        private readonly LoadRegistryCredential $loadRegistryCredential,
-        private readonly ReloadNamespace $reloadNamespace,
         private readonly RemoveRegistryCredential $removeRegistryCredential,
         private readonly AccountRegistryInstall $accountRegistryInstall,
-        private readonly UpdateAccountHistory $updateAccountHistory,
-        private readonly JumpIf $jumpIf,
-        private readonly Render $render,
         private readonly ReinstallAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
-        string $defaultStorageSizeToClaim,
     ) {
         $this->fill($recipe);
-        $this->addToWorkplan('storageSizeToClaim', $defaultStorageSizeToClaim);
     }
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
-        $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
         $recipe = $recipe->require(new Ingredient(ClusterCatalog::class, 'clusterCatalog'));
-        $recipe = $recipe->require(new Ingredient('string', 'id'));
-        $recipe = $recipe->require(new Ingredient('string', 'storageSizeToClaim'));
-
-        $recipe = $this->prepareRecipeForAccount($recipe);
-
-        $recipe = $recipe->cook($this->reloadNamespace, ReloadNamespace::class, [], 70);
+        $recipe = $recipe->require(new Ingredient(Account::class));
+        $recipe = $recipe->require(new Ingredient(AccountHistory::class));
+        $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
 
         $recipe = $recipe->cook($this->removeRegistryCredential, RemoveRegistryCredential::class, [], 80);
 
@@ -98,8 +75,6 @@ class AccountRegistryReinstall implements EditablePlanInterface
             [],
             90
         );
-
-        $recipe = $recipe->cook($this->updateAccountHistory, UpdateAccountHistory::class, [], 100);
 
         return $recipe->onError(new Bowl($this->errorHandler, []));
     }

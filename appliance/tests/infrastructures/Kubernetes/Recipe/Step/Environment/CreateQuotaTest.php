@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Environment;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -32,7 +33,10 @@ use PHPUnit\Framework\TestCase;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
 use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\AccountQuota;
 use Teknoo\Kubernetes\Client;
+use Teknoo\Kubernetes\Model\ResourceQuota;
+use Teknoo\Kubernetes\Repository\ResourceQuotaRepository;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateQuota;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
@@ -52,7 +56,7 @@ class CreateQuotaTest extends TestCase
 {
     private CreateQuota $createQuota;
 
-    private DatesService&Stub $datesService;
+    private DatesService $datesService;
 
     private bool $preferRealDate;
 
@@ -63,36 +67,141 @@ class CreateQuotaTest extends TestCase
     {
         parent::setUp();
 
-        $this->datesService = $this->createStub(DatesService::class);
+        $this->datesService = (new DatesService())->setCurrentDate(new DateTimeImmutable('2024-01-01'));
         $this->preferRealDate = true;
         $this->createQuota = new CreateQuota($this->datesService, $this->preferRealDate);
     }
 
-    public function testInvoke(): void
+    private function createClusterConfig(ResourceQuotaRepository&MockObject $repository): ClusterConfig
     {
-        $clusterConfig = new ClusterConfig(
+        $client = $this->createStub(Client::class);
+        $client->method('__call')
+            ->willReturnCallback(
+                fn (string $name): ResourceQuotaRepository => match ($name) {
+                    'resourceQuotas' => $repository,
+                }
+            );
+
+        return new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
             type: 'foo',
             masterAddress: 'foo',
             storageProvisioner: 'foo',
             dashboardAddress: 'foo',
-            kubernetesClient: $this->createStub(Client::class),
+            kubernetesClient: $client,
             token: 'foo',
             supportRegistry: true,
             useHnc: false,
             isExternal: false,
         );
+    }
+
+    private function createAccountWithQuotas(): Account
+    {
+        return (new Account())->setName('foo')->setQuotas([
+            new AccountQuota('compute', 'cpu', '2', '1'),
+            new AccountQuota('storage', 'storage', '10Gi', '5Gi'),
+            new AccountQuota('count', 'pods', '10', '5'),
+        ]);
+    }
+
+    public function testInvokeCreatesTheQuota(): void
+    {
+        $repository = $this->createMock(ResourceQuotaRepository::class);
+        $repository->expects($this->once())
+            ->method('exists')
+            ->with('foo-quota')
+            ->willReturn(false);
+        $repository->expects($this->once())
+            ->method('create')
+            ->with($this->callback(
+                fn (ResourceQuota $model): bool => $model->toArray()['spec']['hard'] === [
+                    'requests.cpu' => '1',
+                    'limits.cpu' => '2',
+                    'requests.storage' => '5Gi',
+                    'pods' => '5',
+                ]
+            ))
+            ->willReturn([]);
+        $repository->expects($this->never())
+            ->method('update');
+
+        $accountHistory = $this->createMock(AccountHistory::class);
+        $accountHistory->expects($this->once())
+            ->method('addToHistory')
+            ->willReturnSelf();
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['quotaName' => 'foo-quota'])
+            ->willReturnSelf();
 
         $this->assertInstanceOf(
             CreateQuota::class,
             ($this->createQuota)(
-                manager: $this->createStub(ManagerInterface::class),
+                manager: $manager,
                 kubeNamespace: 'foo',
                 accountNamespace: 'foo',
-                accountInstance: $this->createStub(Account::class),
+                accountInstance: $this->createAccountWithQuotas(),
+                accountHistory: $accountHistory,
+                clusterConfig: $this->createClusterConfig($repository),
+            )
+        );
+    }
+
+    public function testInvokeUpdatesTheExistingQuota(): void
+    {
+        $repository = $this->createMock(ResourceQuotaRepository::class);
+        $repository->expects($this->once())
+            ->method('exists')
+            ->with('foo-quota')
+            ->willReturn(true);
+        $repository->expects($this->never())
+            ->method('create');
+        $repository->expects($this->once())
+            ->method('update')
+            ->willReturn(['status' => 'Success']);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with(['quotaName' => 'foo-quota'])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            CreateQuota::class,
+            ($this->createQuota)(
+                manager: $manager,
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountInstance: $this->createAccountWithQuotas(),
                 accountHistory: $this->createStub(AccountHistory::class),
-                clusterConfig: $clusterConfig,
+                clusterConfig: $this->createClusterConfig($repository),
+            )
+        );
+    }
+
+    public function testInvokeWithoutQuotasDoesNothing(): void
+    {
+        $repository = $this->createMock(ResourceQuotaRepository::class);
+        $repository->expects($this->never())
+            ->method('exists');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
+
+        $this->assertInstanceOf(
+            CreateQuota::class,
+            ($this->createQuota)(
+                manager: $manager,
+                kubeNamespace: 'foo',
+                accountNamespace: 'foo',
+                accountInstance: (new Account())->setName('foo')->setQuotas([]),
+                accountHistory: $this->createStub(AccountHistory::class),
+                clusterConfig: $this->createClusterConfig($repository),
             )
         );
     }

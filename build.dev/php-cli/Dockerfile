@@ -10,6 +10,7 @@ RUN set -eux ; \
     apt-get update ; \
     apt-get dist-upgrade -y  ; \
     apt-get install -y  \
+            ansible-core \
             apt-transport-https \
             ca-certificates \
             curl \
@@ -33,6 +34,7 @@ RUN set -eux ; \
             locales \
             musl-dev \
             nano  \
+            openssh-client \
             sudo  \
             tzdata  \
             wget \
@@ -84,13 +86,20 @@ RUN set -eux ; \
     pie install php-amqp/php-amqp ; \
     apt-get clean ; \
     ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1 ; \
+    sed -i 's/^# *en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen ; \
     locale-gen ; \
     mkdir -p /run/php/ ; \
     addgroup --gid 1000 spacegroup ; \
-    adduser --no-create-home --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
+    # A real home, recorded in /etc/passwd and not only in the HOME variable: the `new_task` worker runs \
+    # `ansible-playbook` for the account provisioning, which needs a writable ~/.ansible (local temp and SSH \
+    # control sockets) and ~/.ssh. \
+    adduser --home /home/spaceuser --disabled-password --disabled-login --uid 1000 --gid 1000 --system spaceuser ; \
+    chown -R spaceuser:spacegroup /home/spaceuser ; \
     mkdir -p /var/www ; \
     chown spaceuser:spacegroup /var/www
 
 ADD 99-space.ini /usr/local/etc/php/conf.d/
+
+ENV HOME=/home/spaceuser
 
 USER spaceuser:spacegroup

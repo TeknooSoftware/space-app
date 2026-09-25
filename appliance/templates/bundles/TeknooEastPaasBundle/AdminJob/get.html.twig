@@ -3,24 +3,32 @@
 {% extends '@TeknooSpace/dashboard.form.html.twig' %}
 
 {% macro displayJobHistory(history) %}
-    <tr>
+    {% set humanizedMessage = history.message|trans %}
+    {% set isWarning = history.message ends with ':Warning'
+        or (history.extra.warnings is defined and history.extra.warnings is not empty) %}
+    <tr{% if isWarning %} class="text-warning"{% endif %}>
         <td class="col-1">{{ history.date|date('Y-m-d H:i:s') }}</td>
-        <td class="col-10">{{ history.message }}</td>
+        <td class="col-10">
+            {{ humanizedMessage }}
+            {% if humanizedMessage != history.message %}
+                <div class="small fst-italic text-muted text-break">{{ history.message }}</div>
+            {% endif %}
+        </td>
         <td class="col-1">{% if history.isFinal %}{{ 'teknoo.space.text.job_yes'|trans }}{% endif %}</td>
     </tr>
     {% if history.extra is not empty %}
-        <tr>
+        <tr{% if isWarning %} class="text-warning"{% endif %}>
             <td colspan="3" class="col-12">
                 {% if history.extra.result.message is defined %}
                     {{ history.extra.result.message|trans|nl2br }}
-                {% elseif history.extra.result is defined %}
+                {% elseif history.extra.result is defined and history.extra.result is iterable %}
                     <pre class="text-breakspace">
                         {{ history.extra.result|json_encode(constant('JSON_PRETTY_PRINT')) }}
                     </pre>
+                {% elseif history.extra.result is defined %}
+                    <pre class="text-breakspace">{{ history.extra.result }}</pre>
                 {% else %}
-                    <pre class="text-breakspace">
-                        {{ history.extra|json_encode(constant('JSON_PRETTY_PRINT')) }}
-                    </pre>
+                    <pre class="text-breakspace">{{ history.extra|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
                 {% endif %}
             </td>
         </tr>

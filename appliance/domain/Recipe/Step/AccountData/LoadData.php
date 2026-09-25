@@ -59,7 +59,10 @@ class LoadData
             $errorCallback = static fn (Throwable $error): ChefInterface => $manager->error(
                 new DomainException(
                     message: 'teknoo.space.error.space_account.account_data.fetching',
-                    code: $error->getCode() > 0 ? $error->getCode() : 404,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 404,
+                    },
                     previous: $error,
                 )
             );

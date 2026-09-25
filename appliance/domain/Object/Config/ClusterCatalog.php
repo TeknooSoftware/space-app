@@ -51,8 +51,17 @@ class ClusterCatalog implements IteratorAggregate
     ) {
     }
 
-    public function getClusterForRegistry(): ConfigClusterInterface
+    /**
+     * Returns the cluster hosting the account registry: the one explicitly named when the registry already
+     * records where it was installed, otherwise the first cluster declaring the registry support. An explicit
+     * name that is unknown to the catalog raises, so a registry is never silently moved to another cluster.
+     */
+    public function getClusterForRegistry(?string $clusterName = null): ConfigClusterInterface
     {
+        if (null !== $clusterName && '' !== $clusterName) {
+            return $this->getCluster($clusterName);
+        }
+
         foreach ($this->clusters as $cluster) {
             if ($cluster->supportRegistry) {
                 return $cluster;

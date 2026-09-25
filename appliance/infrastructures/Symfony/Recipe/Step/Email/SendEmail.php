@@ -102,7 +102,7 @@ class SendEmail implements SendEmailInterface
 
         $attachmentCount = 0;
         foreach ($contact->attachments as $attachment) {
-            if ($this->mailMaxAttachments < $attachmentCount) {
+            if ($this->mailMaxAttachments < ++$attachmentCount) {
                 throw new InvalidArgumentException('teknoo.space.error.contact.too_many_attachments');
             }
 
@@ -120,8 +120,6 @@ class SendEmail implements SendEmailInterface
                 name: $attachment->fileName,
                 contentType: $attachment->mimeType,
             );
-
-            ++$attachmentCount;
         }
 
         return $email;

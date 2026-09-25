@@ -56,15 +56,23 @@ Run the command and follow instructions to configure:
 ./space.sh build
 ```
 
-This command builds all necessary Docker images including:
+This command builds all necessary Docker images (`build.dev/`):
 
-- PHP-FPM for web server
-- PHP-CLI for workers
-- PHP-Buildah for image building
-- Apache HTTP server
+- **FrankenPHP** for the web service — the default stack, Caddy with PHP embedded, and an embedded Mercure hub
+- PHP-FPM for the web service, on the `compose.fpm.yml` stack
+- PHP-CLI for the workers
+- PHP-Buildah for the `execute_job` worker: PHP plus a rootless `buildah` / `containerd` /
+  `nerdctl` runtime, `ansible-core`, the `space-run` hook launcher and the `builder-init.sh`
+  entrypoint (see [development.md](development.md))
+- Apache HTTP server, on the legacy stack
 - MongoDB
 - RabbitMQ
-- Mercure (optional)
+- Valkey, for HTTP sessions
+
+Four compose stacks ship with the project, and they are not interchangeable: `compose.yml` /
+`compose.frankenphp.yml` (the default), `compose.fpm.yml` (PHP-FPM with a standalone Mercure hub) and
+`compose.legacy.override.yml`. The Mercure protocol version differs between them — see
+[configuration.md](configuration.md).
 
 ### 1.4. Start Services
 
@@ -96,8 +104,8 @@ This command:
 
 Open your browser and navigate to:
 
-- **Web UI**: http://localhost
-- **RabbitMQ Management**: http://localhost:15672 (guest/guest)
+- **Web UI**: https://localhost (the stack serves TLS; a self-signed certificate is generated)
+- **RabbitMQ Management**: http://localhost:15672 (`space` / `space_pwd`)
 
 The Docker Compose setup is now complete. For production deployment, use Method 2.
 
@@ -113,16 +121,21 @@ sudo apt-get update
 
 # Install PHP and extensions
 sudo apt-get install -y \
-    php8.4-cli php8.4-fpm \
-    php8.4-mongodb php8.4-curl php8.4-mbstring \
-    php8.4-xml php8.4-zip php8.4-gd \
-    php8.4-intl php8.4-bcmath
+    php8.5-cli php8.5-fpm \
+    php8.5-mongodb php8.5-curl php8.5-mbstring \
+    php8.5-xml php8.5-zip php8.5-gd \
+    php8.5-intl php8.5-bcmath \
+    php8.5-amqp php8.5-redis
 
 # Install system tools
 sudo apt-get install -y \
     git curl wget unzip \
     nginx \
     buildah
+
+# Required on any host running the new_task or execute_job workers:
+# they drive docker-compose clusters over SSH with Ansible
+sudo apt-get install -y ansible-core openssh-client
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
@@ -136,20 +149,25 @@ sudo mv composer.phar /usr/local/bin/composer
 sudo dnf install -y epel-release
 sudo dnf install -y https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 
-# Enable PHP 8.4
-sudo dnf module enable php:remi-8.4
+# Enable PHP 8.5
+sudo dnf module enable php:remi-8.5
 
 # Install PHP and extensions
 sudo dnf install -y \
     php-cli php-fpm \
     php-mongodb php-mbstring php-xml \
-    php-gd php-intl php-bcmath php-sodium
+    php-gd php-intl php-bcmath php-sodium \
+    php-amqp php-redis
 
 # Install system tools
 sudo dnf install -y \
     git curl wget unzip \
     nginx \
     buildah
+
+# Required on any host running the new_task or execute_job workers:
+# they drive docker-compose clusters over SSH with Ansible
+sudo dnf install -y ansible-core openssh-clients
 
 # Install Composer
 curl -sS https://getcomposer.org/installer | php
@@ -248,7 +266,33 @@ sudo rabbitmqctl set_permissions -p / space_user ".*" ".*" ".*"
 sudo rabbitmqctl set_user_tags space_user administrator
 ```
 
-### 2.4. Clone Space Repository
+### 2.4. Install and Configure Valkey
+
+Space stores HTTP sessions in Valkey (BSD licensed, Redis protocol compatible), reached through the `phpredis`
+extension. **Without it the application has no session backend and no one can stay signed in.**
+
+**Install Valkey:**
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install -y valkey-server
+
+# RHEL/Rocky
+sudo dnf install -y valkey
+```
+
+**Start Valkey:**
+
+```bash
+sudo systemctl enable valkey
+sudo systemctl start valkey
+```
+
+Point Space at it with `SPACE_VALKEY_HOST` and `SPACE_VALKEY_PORT` (see
+[configuration.md](configuration.md#session-storage)). A Redis server answers the same protocol if you already
+run one.
+
+### 2.5. Clone Space Repository
 
 ```bash
 # Create application directory
@@ -260,14 +304,14 @@ cd /opt/space
 git clone https://github.com/TeknooSoftware/space-app.git .
 ```
 
-### 2.4. Configure
+### 2.6. Configure
 
 ```bash
 cd /opt/space/appliance
 ./space.sh configure
 ```
 
-### 2.5. Install Space Dependencies
+### 2.7. Install Space Dependencies
 
 ```bash
 cd /opt/space
@@ -276,7 +320,7 @@ cd /opt/space
 
 This installs all PHP dependencies via Composer.
 
-### 2.6. Configure Web Server
+### 2.8. Configure Web Server
 
 #### Nginx Configuration
 
@@ -304,7 +348,7 @@ server {
     }
 
     location ~ ^/index\.php(/|$) {
-        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php8.5-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
@@ -525,9 +569,11 @@ Log in with the administrator credentials created in step 2.11.
 
 Set up regular backups for:
 
-1. **MongoDB Database**:
+1. **MongoDB Database** — Space ships the command, use it rather than calling `mongodump` by hand; it reads
+   the configured connection and writes a single archive:
    ```bash
-   mongodump --uri="mongodb://space_user:password@localhost:27017/space" --out=/backup/mongodb/$(date +%Y%m%d)
+   ./space.sh db-backup
+   ./space.sh db-restore   # restore from an archive
    ```
 
 2. **Configuration Files**:

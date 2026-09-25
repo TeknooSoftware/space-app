@@ -4,18 +4,23 @@ Thin reference for the form layer. **See `documentation/` for full details.**
 
 ## Form Type Organization
 
-33+ form types across 7 categories in `infrastructures/Symfony/Form/Type/`:
+Form types live in `infrastructures/Symfony/Form/Type/`, one subdirectory per category:
 
-- **Account** (9): `AccountType`, `AccountClusterType`, `SpaceAccountType`, `VarsSetType`, `VarsType`,
-  `CodeGeneratorType`, `AdminSpaceAccountType`, `SpaceSubscriptionType`, `AccountEnvironmentResumesType`
-- **Project** (4): `ProjectMetadataType`, `SpaceProjectType`, `VarsSetType`, `VarsType`
-- **Job** (4): `JobType`, `JobVarType`, `NewJobType`, `ApiNewJobType`
-- **User** (9): `UserType`, `AdminSpaceUserType`, `SpaceUserType`, `PasswordType`, `SpacePasswordType`,
+- **Account**: `AccountType`, `AccountClusterType`, `SpaceAccountType`, `AdminSpaceAccountType`,
+  `SpaceSubscriptionType`, `CodeGeneratorType`, `VarsSetType`, `VarsType`
+- **AccountData**: `AccountDataType`
+- **AccountEnvironment**: `AccountEnvironmentResumesType`
+- **Project**: `SpaceProjectType`, `VarsSetType`, `VarsType`
+- **ProjectMetadata**: `ProjectMetadataType`
+- **Job**: `NewJobType`, `ApiNewJobType`, `JobVarType` — there is no `JobType`
+- **User**: `UserType`, `SpaceUserType`, `AdminSpaceUserType`, `PasswordType`, `SpacePasswordType`,
   `ApiKeysAuthType`, `JWTConfigurationType`
-- **Contact** (2): `SupportType`, `AttachmentType`
-- **Search** (6): `AccountSearchType`, `ProjectSearchType`, `UserSearchType`, `JobSearchType`,
-  `AccountClusterSearchType`, `MediaSearchType`
-- **AccountEnvironment** (1): `AccountEnvironmentResumesType`
+- **Contact**: `SupportType`, `AttachmentType`
+- **Search**: `AccountSearchType`, `AccountClusterSearchType`, `JobSearchType`, `MediaSearchType`,
+  `ProjectSearchType`, `UserSearchType`, plus the shared `DefaultSearchTrait`
+
+`VarsSetType` and `VarsType` exist twice, once under `Account/` and once under `Project/`: they are distinct
+classes in distinct namespaces, not a duplication to factor out.
 
 → `documentation/development.md#form-types`
 
@@ -29,22 +34,24 @@ Custom data mappers in `infrastructures/Symfony/Form/DataMapper/`:
 
 These handle the `VarsSetType` → `VarsType` nested form structure for variable CRUD.
 
-## Form Templates
+## Form Templates & Theming
 
-- **fields.html.twig** — Bootstrap 5 field rendering theme
-- **fields_light.html.twig** — simplified field rendering (no Bootstrap classes)
+- **`templates/TeknooSpace/fields.html.twig`** — Bootstrap 5 field rendering theme
+- **`templates/TeknooSpace/fields_light.html.twig`** — simplified field rendering (no Bootstrap classes)
 
-Applied via `{% form_theme form '...' %}` or globally in `config/packages/twig.yaml`.
+Themes are applied **per template**, not globally: `config/packages/twig.yaml` has no `form_themes` key. The
+rendering templates declare them, e.g. `templates/TeknooSpace/dashboard.form.html.twig:30`:
+
+```twig
+{% form_theme formView with ['bootstrap_5_layout.html.twig', '@TeknooSpace/fields.html.twig'] %}
+```
+
+The base page layout is `templates/TeknooSpace/dashboard.layout.html.twig`; the form page extends it through
+`dashboard.form.html.twig` and the list page through `dashboard.list.html.twig`.
 
 → `documentation/development.md#form-types`
 
-## Bootstrap 5 Form Theme
+## Extensions
 
-All forms use Bootstrap 5 styling through custom form themes. The `_space_layout.html.twig` file provides
-the base layout; individual form types override blocks as needed.
-
-## Enterprise Extension Reference
-
-Enterprise may add form types for additional features (e.g. webhook configuration, Trivy audit settings).
-These follow the same `Type/` directory structure and data mapper conventions. See
-`documentation/architecture.md#5-two-repo-layout`.
+An extension may ship form types of its own. They follow the same `Type/` structure and are registered by the
+extension's bundle, not from `config/` here.

@@ -16,6 +16,20 @@ function addSubForm(collectionHolder) {
   while (dom.hasChildNodes()) collectionHolder.appendChild(dom.firstChild);
 }
 
+// Hide the fields and the labels of a cluster not used by its type. Fields stay submitted: a locked cluster checks
+// every value.
+function refreshClusterSubForm(subform) {
+  let typeSelect = subform.querySelector('.cluster-type select');
+  if (null === typeSelect) {
+    return;
+  }
+
+  let type = typeSelect.value;
+  subform.querySelectorAll('.cluster-field').forEach(function (field) {
+    field.classList.toggle('d-none', !field.classList.contains('cluster-field-for-' + type));
+  });
+}
+
 document.addEventListener("DOMContentLoaded",function () {
   document.addEventListener('click',function (event) {
     let button = event.target.closest('button');
@@ -36,6 +50,7 @@ document.addEventListener("DOMContentLoaded",function () {
 
       // add a new sub form
       addSubForm(collectionHolder);
+      collectionHolder.querySelectorAll('.cluster-subform').forEach(refreshClusterSubForm);
 
       return false;
     }
@@ -63,6 +78,17 @@ document.addEventListener("DOMContentLoaded",function () {
     }
 
     return false;
+  });
+
+  document.querySelectorAll('.cluster-subform').forEach(refreshClusterSubForm);
+
+  document.addEventListener('change', function (event) {
+    let typeRow = event.target.closest('.cluster-type');
+    if (null === typeRow) {
+      return;
+    }
+
+    refreshClusterSubForm(typeRow.closest('.cluster-subform'));
   });
 
   document.querySelectorAll('form').forEach(function (form) {

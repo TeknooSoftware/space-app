@@ -25,14 +25,12 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Ingredient\Ingredient;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\BuildRegistryInventory;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\GenerateRegistryCredentials;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
@@ -60,12 +58,10 @@ class AccountRegistryInstall implements EditablePlanInterface
     public function __construct(
         RecipeInterface $recipe,
         private readonly LoadAccountClusters $loadAccountClusters,
-        private readonly BuildRegistryInventory $buildRegistryInventory,
         private readonly GenerateRegistryCredentials $generateRegistryCredentials,
         private readonly RunRegistryPlaybook $runRegistryPlaybook,
         private readonly PersistRegistryCredential $persistRegistryCredential,
         private readonly PrepareAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
     }
@@ -77,11 +73,7 @@ class AccountRegistryInstall implements EditablePlanInterface
         $recipe = $recipe->require(new Ingredient(AccountHistory::class));
         $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
 
-        $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);
-
         $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
-
-        $recipe = $recipe->cook($this->buildRegistryInventory, BuildRegistryInventory::class, [], 20);
 
         $recipe = $recipe->cook($this->generateRegistryCredentials, GenerateRegistryCredentials::class, [], 30);
 

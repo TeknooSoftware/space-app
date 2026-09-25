@@ -35,6 +35,7 @@ use Teknoo\East\Paas\Compilation\CompiledDeployment\Expose\IngressPath;
 use Teknoo\East\Paas\Compilation\CompiledDeployment\Value\DefaultsBag;
 use Teknoo\East\Paas\Contracts\Compilation\CompiledDeploymentInterface;
 use Teknoo\Kubernetes\Client as KubeClient;
+use Teknoo\Kubernetes\Model\Model;
 use Teknoo\Kubernetes\Repository\IngressRepository;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
@@ -126,6 +127,82 @@ class IngressTranscriberTest extends TestCase
                 useHierarchicalNamespaces: false,
             )
         );
+    }
+
+    public function testClusterIssuerAnnotationIsRemovedWhenLetsencryptIsNotRequested(): void
+    {
+        $kubeClient = $this->createStub(KubeClient::class);
+        $cd = $this->createStub(CompiledDeploymentInterface::class);
+
+        $cd->method('foreachIngress')
+            ->willReturnCallback(function (callable $callback) use ($cd): CompiledDeploymentInterface {
+                $callback(
+                    new Ingress(
+                        'foo1',
+                        'foo.com',
+                        null,
+                        'sr1',
+                        80,
+                        [],
+                        'cert',
+                        false,
+                    ),
+                    'a-prefix',
+                );
+                $callback(
+                    new Ingress(
+                        'foo2',
+                        'foo.com',
+                        null,
+                        'sr1',
+                        80,
+                        [],
+                        'cert',
+                        false,
+                        ['letsencrypt' => true],
+                    ),
+                    'a-prefix',
+                );
+
+                return $cd;
+            });
+
+        $applied = [];
+        $repoIngress = $this->createStub(IngressRepository::class);
+        $repoIngress->method('apply')
+            ->willReturnCallback(function (Model $model) use (&$applied): array {
+                $applied[] = $model->toArray();
+
+                return ['foo'];
+            });
+
+        $kubeClient
+            ->method('__call')
+            ->willReturnMap([
+                ['ingresses', [], $repoIngress],
+            ]);
+
+        $this->assertInstanceOf(
+            IngressTranscriber::class,
+            (new IngressTranscriber(
+                'provider',
+                'foo',
+                80,
+                ['cert-manager.io/cluster-issuer' => 'letsencrypt-prod'],
+            ))->transcribe(
+                compiledDeployment: $cd,
+                client: $kubeClient,
+                promise: $this->createStub(PromiseInterface::class),
+                defaultsBag: $this->createStub(DefaultsBag::class),
+                namespace: 'default_namespace',
+                useHierarchicalNamespaces: false,
+            )
+        );
+
+        $this->assertCount(2, $applied);
+        $this->assertArrayHasKey('tls', $applied[0]['spec']);
+        $this->assertArrayNotHasKey('cert-manager.io/cluster-issuer', $applied[0]['metadata']['annotations']);
+        $this->assertSame('letsencrypt-prod', $applied[1]['metadata']['annotations']['cert-manager.io/cluster-issuer']);
     }
 
     public function testError(): void

@@ -41,7 +41,7 @@ This document outlines all necessary prerequisites for running Space in developm
 
 **Recommended Worker Distribution:**
 
-- 1-2 instances for New Job Worker
+- 1-2 instances for New Task Worker
 - 2-4 instances for Execute Job Worker (build-intensive)
 - 1-2 instances for History Worker
 - 1-2 instances for Job Done Worker
@@ -99,10 +99,15 @@ This document outlines all necessary prerequisites for running Space in developm
 
 #### PHP
 
-**Version:** PHP 8.4 or higher
+**Version:** PHP 8.5 or higher
+
+**Symfony:** both maintained branches are supported — the **7.4 LTS** branch and the **8.x** branch. The
+constraints in `appliance/composer.json` are declared per component, so a dependency update must never drop
+one of the two.
 
 **Required Extensions:**
 
+- `ext-amqp`: AMQP client — hard requirement of `composer.json`, the workers do not boot without it
 - `ext-bcmath`: Arbitrary precision mathematics
 - `ext-ctype`: Character type checking
 - `ext-curl`: HTTP client functionality
@@ -118,6 +123,7 @@ This document outlines all necessary prerequisites for running Space in developm
 - `ext-openssl`: OpenSSL cryptography
 - `ext-pcre`: Regular expressions
 - `ext-pdo`: Database abstraction
+- `ext-redis` (phpredis): session storage in Valkey
 - `ext-simplexml`: Simple XML parsing
 - `ext-sodium`: Modern cryptography
 - `ext-xml`: XML parsing
@@ -154,6 +160,8 @@ post_max_size = 100M
 
 **Supported:**
 
+- **FrankenPHP 1.x** — the default stack (`compose.yml` / `compose.frankenphp.yml`), Caddy with PHP embedded;
+  it also carries an embedded Mercure hub
 - **Apache HTTP Server 2.4+** with mod_rewrite
     - Or with PHP-FPM via proxy
 - **Nginx 1.18+** with PHP-FPM
@@ -174,7 +182,7 @@ post_max_size = 100M
 
 #### MongoDB
 
-**Version:** MongoDB 5= or higher (7 recommended)
+**Version:** MongoDB 5 or higher — the shipped image defaults to 7 (`MONGO_VERSION`)
 
 **Required Features:**
 
@@ -193,7 +201,7 @@ post_max_size = 100M
 
 #### RabbitMQ
 
-**Version:** RabbitMQ 3.9+ (3.11+ recommended)
+**Version:** RabbitMQ 3.9 or higher — the shipped image is `rabbitmq:4.3-management-alpine`
 
 **Required Plugins:**
 
@@ -223,9 +231,23 @@ post_max_size = 100M
 
 **Note:** Buildah is only required on worker servers that execute deployment jobs (Execute Job Worker).
 
+#### Ansible and SSH client (Docker Compose clusters only)
+
+**Version:** `ansible-core` 2.15+ (no Galaxy collection needed) and OpenSSH client
+
+**Purpose:** Provisioning of the per-account OCI registry on a Docker host (`registry.yml` playbook over SSH)
+
+**Note:** Only required on worker servers running the New Task Worker (`messenger:consume new_task`), and only
+when a cluster of the catalog is a `docker-compose` one. The web server never runs Ansible. The Execute Job
+Worker also needs them to deploy jobs on `docker-compose` clusters.
+
 #### Mercure (Optional but Recommended)
 
-**Version:** Mercure 0.20+
+**Version:** Mercure **1.0** for the stacks running a dedicated hub container (`compose.fpm.yml` and
+its legacy httpd variant, which use `dunglas/mercure:v1`), Mercure **0.24** for the FrankenPHP stacks,
+whose hub is the Caddy module embedded in the image and is not a 1.0 one yet. The protocol is selected
+by the `MERCURE_PROTOCOL_VERSION` environment variable and must match the hub actually deployed, see
+[configuration.md](configuration.md).
 
 **Purpose:** Real-time Server-Sent Events (SSE) for live updates
 
@@ -278,11 +300,13 @@ post_max_size = 100M
 
 ### Optional Components
 
-#### Redis
+#### Valkey
 
-**Purpose:** Session storage and caching (alternative to MongoDB sessions)
+**Purpose:** Session storage (alternative to file sessions)
 
-**Version:** Redis 6.0+
+**Version:** Valkey 8.0 or higher — the shipped image is `valkey/valkey:9.1-alpine3.24` (accessed through the `phpredis`
+extension; any Redis protocol compatible
+server, e.g. Redis 7.2, also works)
 
 #### SMTP Server
 

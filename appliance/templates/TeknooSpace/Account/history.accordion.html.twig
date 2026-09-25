@@ -1,0 +1,54 @@
+{# templates/TeknooSpace/Account/history.accordion.html.twig #}
+
+{% macro printHistory(history, index) %}
+    <tr {% if index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
+        <td>{{ history.date|date('Y M d H:i:s') }}</td>
+        <td>{{ history.message|trans }}</td>
+        <td>
+            <pre>{{ history.extra|json_encode }}</pre>
+        </td>
+    </tr>
+    {% if history.previous is not empty %}
+        {{ _self.printHistory(history.previous, index+1) }}
+    {% endif %}
+{% endmacro %}
+
+{% if accountHistoryRoot is defined and accountHistoryRoot is not empty %}
+    <div class="col-12 mb-4">
+        <div class="accordion" id="account-history">
+            <div class="accordion-item rounded">
+                <h2 class="accordion-header d-flex align-items-center bg-light" id="headingHistory">
+                    <button class="accordion-button collapsed border-0 bg-light"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseHistory"
+                            aria-expanded="true"
+                            aria-controls="collapseOne">
+                        {{ 'teknoo.space.title.admin_account.history'|trans }}
+                    </button>
+                    {# Hidden by space.css while the button above is collapsed #}
+                    <span class="space-history-refresh px-2">
+                        {% include '@TeknooSpace/Parts/refresh.button.html.twig' %}
+                    </span>
+                </h2>
+                <div id="collapseHistory" class="accordion-collapse border-0 collapse accordion-vh-limited" aria-labelledby="headingHistory"
+                     data-bs-parent="#account-history">
+                    <div class="accordion-body text-muted table-responsive bg-white shadow rounded">
+                        <table class="table mb-0 table-center">
+                            <thead class="bg-light">
+                            <tr>
+                                <th>{{ 'teknoo.space.text.admin_account.history.date'|trans }}</th>
+                                <th>{{ 'teknoo.space.text.admin_account.history.message'|trans }}</th>
+                                <th>{{ 'teknoo.space.text.admin_account.history.extra'|trans }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{ _self.printHistory(accountHistoryRoot, 1) }}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

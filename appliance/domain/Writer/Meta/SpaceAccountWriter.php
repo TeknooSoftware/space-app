@@ -115,7 +115,10 @@ class SpaceAccountWriter implements WriterInterface
             static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                 new RuntimeException(
                     message: 'teknoo.space.error.space_account.account.persisting',
-                    code: $error->getCode() > 0 ? $error->getCode() : 500,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 500,
+                    },
                     previous: $error,
                 )
             ),
@@ -173,7 +176,10 @@ class SpaceAccountWriter implements WriterInterface
                 static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                     new RuntimeException(
                         message: 'teknoo.space.error.space_account.account.deleting',
-                        code: $error->getCode() > 0 ? $error->getCode() : 500,
+                        code: match (true) {
+                            $error->getCode() > 0 => $error->getCode(),
+                            default => 500,
+                        },
                         previous: $error,
                     )
                 ),

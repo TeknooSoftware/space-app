@@ -25,9 +25,13 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Command\Extension;
 
+use DomainException;
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Teknoo\East\Foundation\Extension\FileLoader;
 use Teknoo\Space\Infrastructures\Symfony\Command\Extension\ListCommand;
@@ -40,9 +44,15 @@ use Teknoo\Space\Infrastructures\Symfony\Command\Extension\ListCommand;
 #[CoversClass(ListCommand::class)]
 class ListCommandTest extends TestCase
 {
+    private const string SPACE_PATH = __DIR__ . '/../../../../fixtures/extension/space/';
+
     private ListCommand $listCommand;
 
     private mixed $oldEnvValue = null;
+
+    private mixed $oldDisabledValue = null;
+
+    private mixed $oldLoaderValue = null;
 
     /**
      * {@inheritdoc}
@@ -51,15 +61,25 @@ class ListCommandTest extends TestCase
     {
         parent::setUp();
 
-        $this->oldEnvValue = $_ENV['TEKNOO_EAST_EXTENSION_FILE'] ?? null;
-        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'tests/fixtures/extension/list.json';
+        // Fixtures extensions, not autoloadable: the PSR-4 prefix Teknoo\Space\Extensions\ points
+        // on the `extensions/` directory of the appliance, which is not versioned.
+        require_once self::SPACE_PATH . 'extensions/FakeNotAnExtension/Extension.php';
+        require_once self::SPACE_PATH . 'extensions/Sample/Extension.php';
 
-        $this->listCommand = new ListCommand(__DIR__ . '/../../../../../');
+        $this->oldEnvValue = $_ENV['TEKNOO_EAST_EXTENSION_FILE'] ?? null;
+        $this->oldDisabledValue = $_ENV['TEKNOO_EAST_EXTENSION_DISABLED'] ?? null;
+        $this->oldLoaderValue = $_ENV['TEKNOO_EAST_EXTENSION_LOADER'] ?? null;
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'list.json';
+        unset($_ENV['TEKNOO_EAST_EXTENSION_DISABLED'], $_ENV['TEKNOO_EAST_EXTENSION_LOADER']);
+
+        $this->listCommand = new ListCommand(self::SPACE_PATH);
     }
 
     protected function tearDown(): void
     {
         $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = $this->oldEnvValue;
+        $_ENV['TEKNOO_EAST_EXTENSION_DISABLED'] = $this->oldDisabledValue;
+        $_ENV['TEKNOO_EAST_EXTENSION_LOADER'] = $this->oldLoaderValue;
         parent::tearDown();
     }
 
@@ -76,5 +96,109 @@ class ListCommandTest extends TestCase
                 $this->createStub(OutputInterface::class),
             )
         );
+    }
+
+    public function testExecuteWhenExtensionsAreDisabled(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_DISABLED'] = '1';
+        $output = new BufferedOutput();
+
+        $this->assertSame(
+            Command::FAILURE,
+            $this->listCommand->run($this->createStub(InputInterface::class), $output),
+        );
+        $this->assertStringContainsString('Extensions are disabled.', $output->fetch());
+    }
+
+    public function testExecuteWithAnotherLoader(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'enabled-one.json';
+        $_ENV['TEKNOO_EAST_EXTENSION_LOADER'] = 'Other';
+        $output = new BufferedOutput();
+
+        $this->assertSame(
+            Command::SUCCESS,
+            $this->listCommand->run($this->createStub(InputInterface::class), $output),
+        );
+        $content = $output->fetch();
+        $this->assertStringContainsString('only enabled extensions can be shown', $content);
+        $this->assertStringContainsString('Teknoo\Space\Extensions\Sample\Extension', $content);
+        $this->assertStringContainsString('Yes', $content);
+    }
+
+    public function testExecuteWithFileLoaderListsAvailableExtensions(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'enabled-one.json';
+        $_ENV['TEKNOO_EAST_EXTENSION_LOADER'] = FileLoader::class;
+        $output = new BufferedOutput();
+
+        $this->assertSame(
+            Command::SUCCESS,
+            $this->listCommand->run($this->createStub(InputInterface::class), $output),
+        );
+        $content = $output->fetch();
+        $this->assertStringContainsString('Sample', $content);
+        $this->assertStringContainsString('Yes', $content);
+    }
+
+    public function testExecuteWithNonStringFileName(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = ['a'];
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->listCommand->run(
+            $this->createStub(InputInterface::class),
+            $this->createStub(OutputInterface::class),
+        );
+    }
+
+    public function testExecuteWithMissingFile(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'missing.json';
+
+        $this->expectException(DomainException::class);
+        $this->listCommand->run(
+            $this->createStub(InputInterface::class),
+            $this->createStub(OutputInterface::class),
+        );
+    }
+
+    public function testExecuteWithNonArrayFile(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'not-array.json';
+        $output = new BufferedOutput();
+
+        $this->assertSame(
+            Command::SUCCESS,
+            $this->listCommand->run($this->createStub(InputInterface::class), $output),
+        );
+        $content = $output->fetch();
+        $this->assertStringContainsString('Sample', $content);
+        $this->assertStringContainsString('No', $content);
+    }
+
+    public function testExecuteWithInvalidFile(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'invalid.json';
+
+        $this->expectException(DomainException::class);
+        $this->listCommand->run(
+            $this->createStub(InputInterface::class),
+            $this->createStub(OutputInterface::class),
+        );
+    }
+
+    public function testExecuteIgnoresDirectoriesWithoutValidExtensionClass(): void
+    {
+        $_ENV['TEKNOO_EAST_EXTENSION_FILE'] = 'enabled.json';
+        $output = new BufferedOutput();
+
+        $this->assertSame(
+            Command::SUCCESS,
+            $this->listCommand->run($this->createStub(InputInterface::class), $output),
+        );
+        $content = $output->fetch();
+        $this->assertStringNotContainsString('Ghost', $content);
+        $this->assertStringNotContainsString('FakeNotAnExtension', $content);
     }
 }

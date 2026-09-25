@@ -61,11 +61,9 @@ class Health implements HealthInterface
 
             $client = $cluster->getKubernetesClient();
             try {
-                $values = [
-                    $cluster->sluggyName => [
-                        'health' => $client->health(),
-                        'version' => $client->version(),
-                    ],
+                $values[$cluster->sluggyName] = [
+                    'health' => $client->health(),
+                    'version' => $client->version(),
                 ];
             } catch (Throwable $error) {
                 $values[$cluster->sluggyName]['error'] = $error;

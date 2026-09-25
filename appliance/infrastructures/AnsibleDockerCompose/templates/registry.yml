@@ -1,15 +1,19 @@
 ---
 # Teknoo Space — per-account private OCI registry provisioning playbook (docker-compose deploy target).
 #
-# Runs a dedicated rootless `registry` container for one account on the remote Docker host, reachable only over
-# the external private network by its container name (no host port, no public Traefik route). htpasswd auth,
-# persistent volume, TLS optional (with signature check disabled on the consuming side). Mirrors the Kubernetes
-# per-account registry but provisioned over SSH/Ansible through the reused East PaaS docker-compose runner.
+# Runs a dedicated rootless `registry` container for one account on the remote Docker host, attached to the
+# external private network (no host port) and exposed by the host's Traefik on the websecure entrypoint under
+# the per-account host name `registry_host` (`<namespace>-registry.<docker host>`): a container name is neither
+# resolvable by the worker pushing the built images nor by the host daemon pulling them at `docker compose up`.
+# htpasswd auth, persistent volume, TLS between Traefik and the registry optional. The deploy user is finally
+# logged in on that registry (`~/.docker/config.json`) so the Compose stacks it runs can pull the images. Mirrors
+# the Kubernetes per-account registry (behind an Ingress) but provisioned over SSH/Ansible through the reused
+# East PaaS docker-compose runner.
 #
 # Idempotent (install-if-absent / config-converge), rootless runtime, passwordless escalation only — never an
 # SSH or become password.
 #
-# CONNECTS AS THE DEPLOY USER. BuildRegistryInventory writes `ansible_user=<deploy user>`, and that account is
+# CONNECTS AS THE DEPLOY USER. The runner passes the cluster's SSH user (`--user`), and that account is
 # deliberately unprivileged: no sudoers entry, no `docker` group, locked password. Escalation is therefore
 # conditional — `become: "{{ deploy_user != ansible_facts['user_id'] }}"` — so the playbook is a no-op sudo
 # when it is already the deploy user (the normal case, where an unconditional `become: true` would simply be
@@ -24,22 +28,25 @@
 # and makes Ansible raise "Recursive loop detected in template" as soon as the key is NOT supplied through
 # --extra-vars. Extra vars already outrank play vars, so literals are all it takes.
 #
-# Expected extraVars: registry_container, registry_htpasswd, registry_volume (required), and optionally
-# registry_image, registry_network, registry_port, registry_tls, deploy_root. `deploy_user` is accepted too
-# but is normally omitted: it defaults to the account the playbook connected as.
+# Expected extraVars: registry_container, registry_host, registry_account, registry_password, registry_htpasswd,
+# registry_volume (required), and optionally registry_image, registry_network, registry_port, registry_tls,
+# deploy_root, traefik_container, traefik_dynamic_dir, traefik_entrypoint_websecure, traefik_default_certresolver
+# (when absent, Traefik serves its default certificate: a valid one must then be configured on the host, the
+# worker and the daemon verify it). `deploy_user` is accepted too but is normally omitted: it defaults to the
+# account the playbook connected as.
 
 - name: Provision a per-account private OCI registry for docker-compose deployments
-  hosts: registry_host
+  hosts: docker_host
   gather_facts: true
 
   vars:
-    # The runner execs `ansible-playbook` with no ansible.cfg and no ANSIBLE_* environment, so controller
-    # options have to be declared here. `auto_silent` keeps the normal interpreter auto-discovery and only
-    # drops its warning.
+    # The runner execs `ansible-playbook` with no ansible.cfg (its ANSIBLE_* environment only covers colors and
+    # the SSH host key checking), so the other controller options have to be declared here. `auto_silent`
+    # keeps the normal interpreter auto-discovery and only drops its warning.
     ansible_python_interpreter: auto_silent
 
-    # Defaults to the account this playbook connected as, which by construction IS the deploy user:
-    # BuildRegistryInventory writes `ansible_user=<user of the cluster master address>`, and
+    # Defaults to the account this playbook connected as, which by construction IS the deploy user: the
+    # runner connects with the cluster's SSH user (its credentials, else the user of its master address), and
     # GenerateRegistryCredentials does not pass `deploy_user` at all. A hardcoded 'paas' would be wrong on
     # every host whose deploy account is named otherwise, and would turn `_become` below into a sudo that
     # the unprivileged deploy user cannot perform. An explicit extra var still overrides this.
@@ -49,10 +56,46 @@
     registry_network: space-registry
     registry_port: 5000
     registry_tls: false
+    traefik_container: traefik
+    traefik_dynamic_dir: /etc/traefik/dynamic
+    traefik_entrypoint_websecure: websecure
+    # Empty: no ACME resolver, Traefik serves its default certificate for the registry host name.
+    traefik_default_certresolver: ""
 
     # --- internals (not part of the extraVars contract) ---------------------------------------------
     _become: "{{ deploy_user != ansible_facts['user_id'] }}"
     _registry_dir: "{{ deploy_root }}/{{ registry_container }}"
+
+    # Traefik dynamic configuration exposing the registry: one file per account in the watched directory, every
+    # resource name prefixed by the (unique) container name like the East PaaS deploy driver does for projects.
+    # Traefik reaches the registry over the external private network it is connected to below.
+    _registry_traefik_config: |
+      http:
+        routers:
+          {{ registry_container }}:
+            rule: "Host(`{{ registry_host }}`)"
+            entryPoints:
+              - {{ traefik_entrypoint_websecure }}
+            service: {{ registry_container }}
+      {% if traefik_default_certresolver | length > 0 %}
+            tls:
+              certResolver: {{ traefik_default_certresolver }}
+      {% else %}
+            tls: {}
+      {% endif %}
+        services:
+          {{ registry_container }}:
+            loadBalancer:
+              servers:
+      {% if registry_tls | bool %}
+                - url: "https://{{ registry_container }}:{{ registry_port }}"
+              serversTransport: {{ registry_container }}-transport
+        serversTransports:
+          {{ registry_container }}-transport:
+            insecureSkipVerify: true
+      {% else %}
+                - url: "http://{{ registry_container }}:{{ registry_port }}"
+      {% endif %}
 
     # Rootless registry stack, written to {{ _registry_dir }}/registry.compose.yml and started with
     # `docker compose` under the deploy user's rootless Docker. No host port is published: the registry is
@@ -184,3 +227,46 @@
           'running'. Inspect it on the host with:
           docker logs {{ registry_container }}
         quiet: true
+
+    # --- 3. Expose the registry through Traefik ------------------------------------------------------
+    # The worker pushes and the host daemon pulls by host name: Traefik (run by the same rootless daemon, see the
+    # Enterprise bootstrap) routes `registry_host` to the registry container over the external private network.
+    - name: Connect Traefik to the external private registry network (idempotent)
+      become: "{{ _become }}"
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: docker network connect {{ registry_network }} {{ traefik_container }}
+      environment:
+        DOCKER_HOST: "unix:///run/user/{{ deploy_uid }}/docker.sock"
+      register: registry_traefik_connect
+      changed_when: "'endpoint' in (registry_traefik_connect.stdout | default(''))"
+      failed_when:
+        - registry_traefik_connect.rc != 0
+        - "'already exists in network' not in (registry_traefik_connect.stderr | default(''))"
+
+    - name: Publish the registry Traefik dynamic configuration
+      become: "{{ _become }}"
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.copy:
+        content: "{{ _registry_traefik_config }}"
+        dest: "{{ traefik_dynamic_dir }}/{{ registry_container }}.yml"
+        mode: "0640"
+
+    # --- 4. Log the deploy user in on the registry ----------------------------------------------------
+    # `docker compose up` (run later by the East PaaS deploy playbook as this same user) pulls the built images
+    # with the credential stored in ~/.docker/config.json. Retried: the first request triggers the ACME
+    # issuance of the certificate when a resolver is configured.
+    - name: Log the deploy user in on the private registry
+      become: "{{ _become }}"
+      become_user: "{{ deploy_user }}"
+      ansible.builtin.command:
+        cmd: docker login {{ registry_host }} --username {{ registry_account }} --password-stdin
+        stdin: "{{ registry_password }}"
+      environment:
+        DOCKER_HOST: "unix:///run/user/{{ deploy_uid }}/docker.sock"
+      register: registry_login
+      until: registry_login.rc == 0
+      retries: 20
+      delay: 6
+      changed_when: true
+      no_log: true

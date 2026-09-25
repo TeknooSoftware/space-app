@@ -35,11 +35,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
-use Teknoo\East\Paas\Object\Job as JobOrigin;
+use Teknoo\East\Paas\Recipe\Step\Worker\CheckTimeouts;
+use Teknoo\East\Paas\Recipe\Step\Worker\CloneRepository;
 
+use function array_map;
 use function array_shift;
-use function current;
 use function explode;
+use function sort;
+use function str_starts_with;
 use function trim;
 
 /**
@@ -49,6 +52,11 @@ use function trim;
  */
 trait BrowserCrawlingTrait
 {
+    /**
+     * Refresh link in the header of the account edit pages.
+     */
+    private const string PAGE_REFRESH_BUTTON = '.top-header a.space-page-refresh';
+
     public function createCrawler(?string $url = null, ?Response $response = null): Crawler
     {
         $url ??= 'https://' . $this->appHostname . $this->currentUrl;
@@ -133,6 +141,124 @@ trait BrowserCrawlingTrait
         }
     }
 
+    #[Then('the form field :field is read only')]
+    public function theFormFieldIsReadOnly(string $field): void
+    {
+        Assert::assertNotNull(
+            $this->findFormField($field)->attr('readonly'),
+            "The form field '{$field}' is editable",
+        );
+    }
+
+    #[Then('the form field :field is editable')]
+    public function theFormFieldIsEditable(string $field): void
+    {
+        Assert::assertNull(
+            $this->findFormField($field)->attr('readonly'),
+            "The form field '{$field}' is read only",
+        );
+    }
+
+    #[Then('the form field :field is hidden')]
+    public function theFormFieldIsHidden(string $field): void
+    {
+        Assert::assertEquals(
+            'hidden',
+            $this->findFormField($field)->attr('type'),
+            "The form field '{$field}' is not hidden",
+        );
+    }
+
+    #[Then('the form field :field is disabled')]
+    public function theFormFieldIsDisabled(string $field): void
+    {
+        Assert::assertNotNull(
+            $this->findFormField($field)->attr('disabled'),
+            "The form field '{$field}' is not disabled",
+        );
+    }
+
+    #[Then('the form field :field is displayed as a checkbox')]
+    public function theFormFieldIsDisplayedAsACheckbox(string $field): void
+    {
+        Assert::assertEquals(
+            'checkbox',
+            $this->findFormField($field)->attr('type'),
+            "The form field '{$field}' is not displayed as a checkbox",
+        );
+    }
+
+    #[Then('the form field :field is shown only for the cluster types :types')]
+    public function theFormFieldIsShownOnlyForTheClusterTypes(string $field, string $types): void
+    {
+        $row = $this->findFormField($field)->closest('.cluster-field');
+        Assert::assertNotNull(
+            $row,
+            "The form field '{$field}' is shown for every cluster type",
+        );
+
+        $expected = array_map(
+            static fn (string $type): string => 'cluster-field-for-' . trim($type),
+            explode(',', $types),
+        );
+
+        $classes = [];
+        foreach (explode(' ', (string) $row->attr('class')) as $class) {
+            if (str_starts_with($class, 'cluster-field-for-')) {
+                $classes[] = $class;
+            }
+        }
+
+        sort($expected);
+        sort($classes);
+
+        Assert::assertEquals(
+            $expected,
+            $classes,
+            "The form field '{$field}' is not shown for the cluster types '{$types}' only",
+        );
+    }
+
+    #[Then('the form field :field is labelled :label for the cluster type :type')]
+    public function theFormFieldIsLabelledForTheClusterType(string $field, string $label, string $type): void
+    {
+        $id = (string) $this->findFormField($field)->attr('id');
+
+        $node = $this->createCrawler()->filter("label[for=\"{$id}\"] .cluster-field-for-{$type}");
+        Assert::assertCount(
+            1,
+            $node,
+            "The form field '{$field}' has no label for the cluster type '{$type}'",
+        );
+
+        Assert::assertEquals($label, trim($node->text()));
+    }
+
+    #[Then('the form field :field is shown for every cluster type')]
+    public function theFormFieldIsShownForEveryClusterType(string $field): void
+    {
+        Assert::assertNull(
+            $this->findFormField($field)->closest('.cluster-field'),
+            "The form field '{$field}' is shown only for some cluster types",
+        );
+    }
+
+    private function findFormField(string $dottedField): Crawler
+    {
+        $this->isAFinalResponse();
+
+        $parts = explode('.', $dottedField);
+        $name = array_shift($parts);
+        foreach ($parts as $part) {
+            $name .= "[{$part}]";
+        }
+
+        $node = $this->createCrawler()->filter("[name=\"{$name}\"]");
+        Assert::assertCount(1, $node, "The form field '{$dottedField}' is missing");
+
+        return $node;
+    }
+
     #[Then('it is redirected to the dashboard')]
     public function itIsRedirectedToTheDashboard(): void
     {
@@ -159,8 +285,8 @@ trait BrowserCrawlingTrait
         );
     }
 
-    #[Then('it must redirected to the TOTP code page')]
-    public function itMustRedirectedToTheTotpCodePage(): void
+    #[Then('it must be redirected to the TOTP code page')]
+    public function itMustBeRedirectedToTheTotpCodePage(): void
     {
         $this->hasBeenUserRedirected();
         Assert::assertEquals(
@@ -276,27 +402,25 @@ trait BrowserCrawlingTrait
     #[Then('it is forwared to job page')]
     public function itIsForwaredToJobPage(): void
     {
-        $jobs = $this->listObjects(JobOrigin::class);
-        Assert::assertNotEmpty($jobs);
-
-        /** @var JobOrigin $job */
-        $job = current($jobs);
-        Assert::assertInstanceOf(JobOrigin::class, $job);
-
-        $project = $this->recall(Project::class);
         Assert::assertEquals(
-            $project,
-            $job->getProject(),
+            $this->recall(Project::class),
+            $this->firstJob()->getProject(),
         );
 
-        $url = $this->getPathFromRoute(
-            route: 'space_job_get',
-            parameters: [
-                'id' => $job->getId(),
-            ],
-        );
+        $this->openPageOfFirstJob('space_job_get');
+    }
 
-        $this->executeRequest('GET', $url);
+    private function openPageOfFirstJob(string $route): void
+    {
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute(
+                route: $route,
+                parameters: [
+                    'id' => $this->firstJob()->getId(),
+                ],
+            ),
+        );
     }
 
     #[Then('the user obtains an error')]
@@ -354,6 +478,81 @@ trait BrowserCrawlingTrait
     public function getAValidWebOage(): void
     {
         $this->isAFinalResponse();
+    }
+
+    /**
+     * A single refresh link, reloading the current url with a GET.
+     */
+    private function assertRefreshButton(Crawler $crawler, string $selector): void
+    {
+        $node = $crawler->filter($selector);
+        Assert::assertCount(1, $node);
+        Assert::assertEquals($this->currentUrl, $node->attr('href'));
+    }
+
+    #[Then('the page has a refresh button')]
+    public function thePageHasARefreshButton(): void
+    {
+        $this->isAFinalResponse();
+
+        $this->assertRefreshButton($this->createCrawler(), self::PAGE_REFRESH_BUTTON);
+    }
+
+    #[When('it refreshes the page')]
+    public function itRefreshesThePage(): void
+    {
+        $this->isAFinalResponse();
+
+        $node = $this->createCrawler()->filter(self::PAGE_REFRESH_BUTTON);
+        if (0 === $node->count()) {
+            Assert::fail('The refresh button was not found in the page');
+        }
+
+        $this->executeRequest('GET', (string) $node->attr('href'));
+    }
+
+    #[Then('the account history is displayed with a refresh button')]
+    public function theAccountHistoryIsDisplayedWithARefreshButton(): void
+    {
+        $this->isAFinalResponse();
+
+        $crawler = $this->createCrawler();
+        //Hidden by space.css while the accordion button is collapsed, so it must stay its next sibling
+        $this->assertRefreshButton(
+            $crawler,
+            '#headingHistory .accordion-button.collapsed + .space-history-refresh a.space-page-refresh',
+        );
+        Assert::assertGreaterThan(0, $crawler->filter('#collapseHistory tbody tr')->count());
+    }
+
+    #[Then('the account history is not displayed')]
+    public function theAccountHistoryIsNotDisplayed(): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertCount(0, $this->createCrawler()->filter('#account-history'));
+    }
+
+    #[When('it goes to the admin job page')]
+    public function itGoesToTheAdminJobPage(): void
+    {
+        $this->openPageOfFirstJob('space_admin_job_get');
+    }
+
+    #[Then('the job history is humanized on the job page')]
+    public function theJobHistoryIsHumanizedOnTheJobPage(): void
+    {
+        $this->isAFinalResponse();
+
+        ['labels' => $labels, 'warnings' => $warnings] = $this->readHumanizedHistoryRows($this->createCrawler());
+
+        Assert::assertSame('Cloning the source repository', $labels[CloneRepository::class] ?? null);
+        Assert::assertSame(
+            'Some timeouts exceed the worker time limit',
+            $labels[CheckTimeouts::class . ':Warning'] ?? null,
+        );
+
+        Assert::assertSame([CheckTimeouts::class . ':Warning'], $warnings);
     }
 
     #[Then('the account name is now :accountName')]

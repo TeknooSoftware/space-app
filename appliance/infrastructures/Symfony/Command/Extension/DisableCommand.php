@@ -103,7 +103,7 @@ class DisableCommand extends Command
         if (Command::SUCCESS === $returnCode) {
             $output->writeln('<info>Cache warmup successful</info>');
         } else {
-            $output->writeln('<error>Error during cache warlup</error>');
+            $output->writeln('<error>Error during cache warmup</error>');
         }
 
         return self::SUCCESS;

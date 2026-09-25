@@ -170,6 +170,81 @@ class ClusterCatalogTest extends TestCase
         $catalog->getClusterForRegistry();
     }
 
+    /**
+     * A registry records the cluster it was installed on: the catalog must return that exact cluster, even when
+     * another one comes first in the iteration order, so a reinstall never moves the registry elsewhere.
+     */
+    public function testGetClusterForRegistryWithAnExplicitNameIgnoresTheIterationOrder(): void
+    {
+        $firstCluster = new KubernetesCluster(
+            'first',
+            'first',
+            'test',
+            'https://test',
+            'test',
+            'https://test',
+            $this->createStub(Client::class),
+            'token',
+            true,
+            false,
+            false,
+        );
+
+        $recordedCluster = new KubernetesCluster(
+            'recorded',
+            'recorded-slug',
+            'test',
+            'https://test',
+            'test',
+            'https://test',
+            $this->createStub(Client::class),
+            'token',
+            true,
+            false,
+            false,
+        );
+
+        $catalog = new ClusterCatalog(
+            [
+                'FirstCluster' => $firstCluster,
+                'RecordedCluster' => $recordedCluster,
+            ],
+            ['recorded-slug' => 'RecordedCluster'],
+        );
+
+        $this->assertSame($firstCluster, $catalog->getClusterForRegistry());
+        $this->assertSame($recordedCluster, $catalog->getClusterForRegistry('RecordedCluster'));
+        $this->assertSame($recordedCluster, $catalog->getClusterForRegistry('recorded-slug'));
+        $this->assertSame($firstCluster, $catalog->getClusterForRegistry(''));
+    }
+
+    public function testGetClusterForRegistryWithAnUnknownNameThrowsException(): void
+    {
+        $cluster = new KubernetesCluster(
+            'test',
+            'test',
+            'test',
+            'https://test',
+            'test',
+            'https://test',
+            $this->createStub(Client::class),
+            'token',
+            true,
+            false,
+            false,
+        );
+
+        $catalog = new ClusterCatalog(
+            ['TestCluster' => $cluster],
+            [],
+        );
+
+        //Never silently fall back to another cluster: the registry would be rebuilt at the wrong place.
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Cluster DeletedCluster is not available in the catalog');
+        $catalog->getClusterForRegistry('DeletedCluster');
+    }
+
     public function testGetDefaultClusterName(): void
     {
         $cluster = $this->createStub(KubernetesCluster::class);

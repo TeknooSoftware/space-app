@@ -1,3 +1,4 @@
+@api @admin
 Feature: API admin endpoints to administrate variables and secrets defined for accounts
   In order to manage account's clusters
   As an administrator of Space
@@ -8,40 +9,32 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
   Variables can be a secret. According to the Space configuration secrets can be encrypted before be stored in the Space
   database and decrypted on the worker on the job execution.
 
-  Scenario: From the API, as Admin, get an project'variables
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Background:
+    Given a Space app instance
+    And a memory document database
+
+  Scenario: From the API, as Admin, get a project'variables
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to get the last project's variables as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized "10" project's variables
 
-  Scenario: From the API, as Admin, edit an project's variables via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, as Admin, edit a project's variables via a request with a form url encoded body
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to edit a project's variables:
       | field                                      | value            |
       | project_vars.sets.prod.envName             | prod             |
@@ -50,24 +43,18 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | project_vars.sets.prod.variables.21.name   | DB_PWD           |
       | project_vars.sets.prod.variables.21.secret | 1                |
       | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
 
-  Scenario: From the API, as Admin, edit an project's variables via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+  Scenario: From the API, as Admin, edit a project's variables via a request with a json body
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to edit a project's variables with a json body:
       | field                        | value            |
       | sets.prod.envName            | prod             |
@@ -76,26 +63,19 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | sets.prod.variables.1.name   | DB_PWD           |
       | sets.prod.variables.1.secret | 1                |
       | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
 
-  Scenario: From the API, as Admin, edit an project's variables with secrets encryptions via a request with a form url
-  encoded body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+  Scenario: From the API, as Admin, edit a project's variables with secrets encryptions via a request with a form url encoded body
+    Given encryption of persisted variables in the database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And the 2FA authentication is enabled for the last user
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to edit a project's variables:
       | field                                      | value            |
       | project_vars.sets.prod.envName             | prod             |
@@ -104,25 +84,19 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | project_vars.sets.prod.variables.21.name   | DB_PWD           |
       | project_vars.sets.prod.variables.21.secret | 1                |
       | project_vars.sets.prod.variables.21.value  | fooBar           |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"
 
-  Scenario: From the API, as Admin, edit an project's variables with secrets encryptions, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+  Scenario: From the API, as Admin, edit a project's variables with secrets encryptions, via a request with a json body
+    Given encryption of persisted variables in the database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And the 2FA authentication is enabled for the last user
     And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And "10" project's variables
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to edit a project's variables with a json body:
       | field                        | value            |
       | sets.prod.envName            | prod             |
@@ -131,5 +105,5 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | sets.prod.variables.1.name   | DB_PWD           |
       | sets.prod.variables.1.secret | 1                |
       | sets.prod.variables.1.value  | fooBar           |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized "2" project's variables with "DB_NAME" equals to "space_project_db"

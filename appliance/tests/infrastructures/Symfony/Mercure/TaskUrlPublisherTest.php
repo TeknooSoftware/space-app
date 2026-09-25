@@ -30,6 +30,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
 
 /**
@@ -68,6 +69,36 @@ class TaskUrlPublisherTest extends TestCase
                 'bar',
                 'foo',
             )
+        );
+    }
+
+    public function testPublishWhenDisabled(): void
+    {
+        $hub = $this->createMock(HubInterface::class);
+        $hub->expects($this->never())->method('publish');
+
+        $publisher = new TaskUrlPublisher($hub, false);
+        $this->assertInstanceOf(
+            TaskUrlPublisher::class,
+            $publisher->publish('foo', 'bar', 'foo'),
+        );
+    }
+
+    public function testPublishWithoutTaskUrl(): void
+    {
+        $hub = $this->createMock(HubInterface::class);
+        $hub->expects($this->once())
+            ->method('publish')
+            ->with($this->callback(
+                static fn (Update $update): bool => 'bar' === $update->getId()
+                    && '{"task_id":"bar"}' === $update->getData(),
+            ))
+            ->willReturn('id');
+
+        $publisher = new TaskUrlPublisher($hub);
+        $this->assertInstanceOf(
+            TaskUrlPublisher::class,
+            $publisher->publish('foo', 'bar', null),
         );
     }
 }

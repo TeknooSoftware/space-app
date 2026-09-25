@@ -25,12 +25,14 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Recipe\Step\Account;
 
+use DomainException;
 use RuntimeException;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
+use Throwable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -62,7 +64,13 @@ class LoadSubscriptionPlan
                     return null;
                 }
 
-                return $this->catalog->getSubscriptionPlan($planId);
+                try {
+                    return $this->catalog->getSubscriptionPlan($planId);
+                } catch (DomainException) {
+                    return null;
+                } catch (Throwable $error) {
+                    throw $error;
+                }
             },
         );
         $accountData->visit('subscriptionPlan', $promise);

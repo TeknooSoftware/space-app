@@ -25,7 +25,6 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan;
 
-use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Paas\Object\Account;
 use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
@@ -70,7 +69,6 @@ class AccountEnvironmentInstall implements EditablePlanInterface
         private readonly CreateSecretServiceAccountToken $createSecret,
         private readonly PersistEnvironment $persistCredentials,
         private readonly PrepareAccountErrorHandler $errorHandler,
-        private readonly ObjectAccessControlInterface $objectAccessControl,
     ) {
         $this->fill($recipe);
     }
@@ -84,8 +82,6 @@ class AccountEnvironmentInstall implements EditablePlanInterface
         $recipe = $recipe->require(new Ingredient('string', 'accountNamespace'));
         $recipe = $recipe->require(new Ingredient('string', 'envName'));
         $recipe = $recipe->require(new Ingredient('string', 'clusterName'));
-
-        $recipe = $recipe->cook($this->objectAccessControl, ObjectAccessControlInterface::class, [], 10);
 
         $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
 

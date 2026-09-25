@@ -1,3 +1,4 @@
+@api @admin
 Feature: API admin endpoints to administrate projects
   In order to manage projects
   As an administrator of Space
@@ -12,63 +13,45 @@ Feature: API admin endpoints to administrate projects
   it, per environment. The project's configuration can store variables. All others informations are stored directly into
   the space.paas.yaml file available at the root of the source repostirory.
 
-  Scenario: From the API, as Admin, list all registered projects
-    Given A Space app instance
-    And A memory document database
+  Background:
+    Given a Space app instance
+    And a memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My First Company" with the account namespace "my-first-company"
-    And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+
+  Scenario: From the API, as Admin, list all registered projects
+    Given an account for "My First Company" with the account namespace "my-first-company"
+    And a user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
     And "5" standard projects "project X" and a prefix "a-prefix"
     And an account for "My Other Company" with the account namespace "my-other-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "5" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to list of projects as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And is a serialized collection of "10" items on "1" pages
-    And the a list of serialized projects
+    And the list of serialized projects
 
   Scenario: From the API, as Admin, list all projects of the selected account
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My First Company" with the account namespace "my-first-company"
-    And an user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    Given an account for "My First Company" with the account namespace "my-first-company"
+    And a user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
     And "5" standard projects "project X" and a prefix "a-prefix"
     And an account for "My Other Company" with the account namespace "my-other-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "5" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to list of projects of last account as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And is a serialized collection of "5" items on "1" pages
-    And the a list of serialized projects of last account
+    And the list of serialized projects of last account
 
   Scenario: From the API, as Admin, create a project, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to create a project as admin:
       | field                                                       | value                                 |
       | space_project.project.name                                  | Behats Test                           |
@@ -90,23 +73,15 @@ Feature: API admin endpoints to administrate projects
       | space_project.project.clusters.0.identity.clientCertificate |                                       |
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | fooBar                                |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
   Scenario: From the API, as Admin, create a project, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to create a project as admin with a json body:
       | field                                         | value                                 |
       | project.name                                  | Behats Test                           |
@@ -128,25 +103,16 @@ Feature: API admin endpoints to administrate projects
       | project.clusters.0.identity.clientCertificate |                                       |
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | fooBar                                |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized created project "Behats Test"
     And there is a project in the memory for this account
 
-  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a form url
-  encoded body and get an error
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a form url encoded body and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "3" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to create a project as admin:
       | field                                                       | value                                 |
       | space_project.project.name                                  | Behats Test                           |
@@ -168,24 +134,15 @@ Feature: API admin endpoints to administrate projects
       | space_project.project.clusters.0.identity.clientCertificate |                                       |
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | fooBar                                |
-    Then get a JSON reponse
+    Then get a JSON response
     But an 400 error
 
-  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a json body
-  and get an error
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a json body and get an error
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "3" standard projects "other project X" and a prefix "other-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to create a project as admin with a json body:
       | field                                         | value                                 |
       | project.name                                  | Behats Test                           |
@@ -207,41 +164,25 @@ Feature: API admin endpoints to administrate projects
       | project.clusters.0.identity.clientCertificate |                                       |
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | fooBar                                |
-    Then get a JSON reponse
+    Then get a JSON response
     But an 400 error
 
-  Scenario: From the API, as Admin, get an project
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, get a project
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to get the last project as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized project "my project"
 
-  Scenario: From the API, as Admin, edit an project via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, edit a project via a request with a form url encoded body
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to edit a project as admin:
       | field                                                       | value                                 |
       | space_project.project.name                                  | Behats Test                           |
@@ -263,23 +204,15 @@ Feature: API admin endpoints to administrate projects
       | space_project.project.clusters.0.identity.clientCertificate |                                       |
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | fooBar                                |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized updated project "Behats Test"
 
-  Scenario: From the API, as Admin, edit an project via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, edit a project via a request with a json body
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to edit a project as admin with a json body:
       | field                                         | value                                 |
       | project.name                                  | Behats Test                           |
@@ -301,43 +234,27 @@ Feature: API admin endpoints to administrate projects
       | project.clusters.0.identity.clientCertificate |                                       |
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | fooBar                                |
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized updated project "Behats Test"
 
-  Scenario: From the API, as Admin, delete an project
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, delete a project
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last project as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized deleted project
     And the project is deleted
 
-  Scenario: From the API, as Admin, delete an project via a request with DELETE method
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
-    And an account for "My Company" with the account namespace "my-company"
-    And an user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+  Scenario: From the API, as Admin, delete a project via a request with DELETE method
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last project with DELETE method as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized deleted project
     And the project is deleted

@@ -1,5 +1,108 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta4] - 2026-09-15
+### Beta Release
+- **Cluster operations move to the `new_task` worker**: the web process no longer talks to Kubernetes or to a
+  Docker host, it queues a task and records a "task queued" line in the account history
+  - Registry install / reinstall, environment install / reinstall, quota refresh and environment removal are
+    tasks, run by the new `AccountProvisioningTask` and `AccountEnvironmentsDeletionTask` plans
+  - The admin provisioning pages and their API twins share the new `AccountTaskDispatch` plan; the API
+    response returns the `taskId`
+  - The Kubernetes and Docker Compose provisioning plans are pure sub-recipes, without HTTP or access control
+- **Each service only receives the variables it needs** (compose files and php-fpm pool whitelist)
+  - `web` loses the OCI registry, cluster issuer, registry root namespace, HNC, storage, job root and
+    Kubernetes version level settings
+  - `cli_new_task` gains the clusters catalog, Kubernetes client, namespaces, OCI registry, storage and
+    `SPACE_DC_*` settings
+  - The `php-cli` image ships `ansible-core`, `openssh-client` and an `en_US.UTF-8` locale
+  - The documentation lists which process reads which variable and where the asymmetric keys go
+- **Mercure hub 1.0** support
+  - New env var `MERCURE_PROTOCOL_VERSION` (`0.x` by default), read at container compilation: a warmup is
+    needed after a change, and every PHP process needs the same value
+  - New env var `MERCURE_JWT_ISSUER` (default `https://localhost`), the `iss` claim of the tokens
+  - `compose.fpm.yml` and the legacy stack run `dunglas/mercure:v1` (`MERCURE_IMAGE_TAG` to override) in
+    `1.0`; the FrankenPHP stacks stay in `0.x` (embedded Mercure 0.24 module)
+  - New env var `INTERNAL_SERVER_NAME` (default `https://web`), the internal name of the FrankenPHP web
+    server the workers publish to
+- **Valkey replaces Redis** as the session store (Redis licence change); `phpredis` and Symfony
+  `RedisSessionHandler` are kept
+  - The dev stack builds a `valkey` service (`valkey/valkey:9.1-alpine`)
+  - New env vars `SPACE_VALKEY_HOST` and `SPACE_VALKEY_PORT`; the session template is now
+    `framework.session.backend.valkey.yaml.dist`
+  - `SPACE_REDIS_HOST` and `SPACE_REDIS_PORT` are deprecated, still read when `SPACE_VALKEY_*` are not set
+- **Docker Compose**
+  - The stacks generated with East PaaS 5.7 really run: per-key `secrets`/`configs`, per-container
+    `env_file`, `<project>-private` network, service DNS aliases, project-prefixed Traefik resources
+  - The account registry is exposed through the host's Traefik as `<namespace>-registry.<docker host>` (the
+    account `registryUrl`); it requires a DNS record and a certificate on Traefik
+  - A `docker-compose` account cluster no longer forces the registry support on: the form value is honoured
+  - New env vars `SPACE_DC_NETWORK_INTERNAL` (default `false`) and `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR`
+    (default `SPACE_DC_TRAEFIK_CERTS_DIR`)
+  - `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP` and `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` are removed: public TCP/UDP
+    services are published as host ports
+  - A quota refresh on a Docker Compose cluster is recorded in the history as not applicable
+- `AccountRegistry` records the cluster hosting it (`cluster_name`, nullable); a reinstall reuses it instead of
+  picking the first cluster again. Existing registries get it recorded on their next reinstall
+- **Ingress**
+  - `traefik2` no longer writes the `router.entrypoints` annotation, which pinned the router to a single
+    entrypoint (`404` on the other port)
+  - `traefik3` is accepted as an alias of `traefik2` in `SPACE_INGRESS_PROVIDER_JSON`
+- **Web UI**
+  - Account edit pages: refresh buttons on the page and on the account history; the user page shows the
+    account history too
+  - Project form: a cluster only shows the fields its type uses, with per-type labels; the SSH username of a
+    Docker Compose cluster is read only on a locked cluster
+  - The hierarchical namespaces switch, deprecated by Kubernetes, is hidden in the cluster forms; new env var
+    `SPACE_SHOW_HNC_FIELD` (`0` by default, web only) to show it. The API is unchanged; the flag will be
+    removed in Space 3
+- **Hooks**
+  - New DI entry `teknoo.space.hooks_collection.default_timeout` (`240`), the timeout of a hook defined
+    without one
+  - The `execute_job` worker warns at start-up when `SPACE_WORKER_TIME_LIMIT` is lower than one of the
+    configured timeouts
+- **Development stack**
+  - The `cli_execute` image (`build.dev/php-buildah`) behaves like the production builder: rootless
+    `buildah` / `containerd` / `nerdctl`, `ansible-core`, `openssh-client` and the `space-run` hook launcher
+  - `cli_execute` gets a `builder_containerd` volume, logs into the global registry
+    (`SPACE_OCI_GLOBAL_REGISTRY_URL` / `_USERNAME` / `_PWD`) and pre-pulls in the background the hook images
+    listed in the new `SPACE_BUILDER_HOOKS`
+- **Fixes**
+  - Mercure: the pending pages granted the subscription cookie on the hub URL instead of the topic, and
+    `FetchJobIdFromPending` generated a token authorizing nothing
+  - Mercure: the legacy and FrankenPHP stacks published to an unreachable `https://localhost` hub; on
+    FrankenPHP every task failed and was dropped
+  - The admin quota refresh, broken since the provisioning moved to the worker: the quota is re-applied on
+    every environment of the account, with the plan of its cluster type
+  - "Nesting level too deep" when saving an `AccountHistory`: the history is limited to 90 entries, longer
+    ones are truncated on their next update
+  - Saving a project from the web emptied the SSH username of its clusters, and was refused on a managed
+    Docker Compose cluster
+  - A Docker Compose deployment could not pull its images when the account registry was not hosted on the
+    Docker host (`no basic auth credentials`). Existing environments need a reinstall
+  - `UserVoter` returned the wrong reason key on the granted path
+  - `SendEmail` did not enforce `SPACE_MAIL_MAX_ATTACHMENTS` as the real maximum
+  - The `Health` step reported only the last Kubernetes cluster of the catalog
+  - The Ansible inventory of the registry playbook stayed in the worker tmp dir: every playbook Space runs now
+    goes through the new `PlaybookRunner`, which removes it after the run
+- **Tests**
+  - New Behat step `Space executes the pending tasks`
+  - Behat coverage of the East PaaS `v1.2` expose shortcuts, on Kubernetes and Docker Compose
+  - Docker Compose golden files regenerated for East PaaS 5.7 (`SPACE_DC_DUMP_GOLDEN=1`), the generated
+    `compose.yaml` is checked with `docker compose config` when Docker is available
+  - PHPUnit: 100% line coverage of `domain/`, `src/` and `infrastructures/`
+- Update documentations
+- Update `teknoo.space.assets.version`
+- Update libs
+  - East PaaS 5.7.1
+  - East Foundation Symfony 9.2.3
+  - Teknoo States 7.1.11
+  - Symfony 7.4.19/8.1.7, and `symfony/twig-bridge` required in `^7.4.19||>=8.1.7` (older versions break the
+    form rendering with Twig 3.29)
+  - Twig 3.29
+  - Symfony Monolog Bundle 4.1.0
+  - Illuminate 13.33
+  - PHPStan 2.2.16, PHPUnit 13.3.5
+
 ## [2.5.0-beta3] - 2026-09-11
 ### Beta Release
 - Rename JobUrlPublisher to TaskUrlPublisher and `newJobResult` to `taskResult` in the pending API templates,

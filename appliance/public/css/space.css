@@ -74,3 +74,7 @@ div.accordion div.accordion-vh-limited {
     max-height: 40vh;
     overflow-y: scroll;
 }
+
+div.accordion .accordion-button.collapsed + .space-history-refresh {
+    display: none;
+}

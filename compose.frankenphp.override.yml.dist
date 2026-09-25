@@ -40,24 +40,26 @@ services:
             - SPACE_JWT_ENABLE_IN_QUERY=ToChange!
             - SPACE_JWT_MAX_DAYS_TO_TIVE=ToChange!
             - SPACE_JWT_PASSPHRASE=ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
-            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
-            - SPACE_OCI_REGISTRY_URL=ToChange!
             - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=ToChange!
             - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=ToChange!
+            - SPACE_SHOW_HNC_FIELD=0
             - SPACE_SUBSCRIPTION_DEFAULT_PLAN=ToChange!
             - SPACE_SUPPORT_CONTACT=ToChange!
             - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/messages/public.pem
             - PHP_XDEBUG_HOST=ToChange!
-              SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON=ToChange!
+            - SPACE_SUBSCRIPTION_PLAN_CATALOG_JSON=ToChange!
             - SPACE_CLUSTER_CATALOG_JSON=ToChange!
     cli_new_task:
         environment:
             - APP_ENV=dev
             - APP_SECRET=ToChange!
             - MERCURE_JWT_TOKEN=ToChange!
-            - MERCURE_PUBLISH_URL=ToChange!
+            # The hub is embedded in the `web` container of this stack, so `localhost` here would
+            # be the worker container itself and no update would ever be published. The publish
+            # URL must name the `web` service, reachable on the `backend` network. Only the
+            # subscriber URL, used by the browser, carries the public hostname.
+            - MERCURE_PUBLISH_URL=https://web/.well-known/mercure
             - MERCURE_SUBSCRIBER_URL=ToChange!
             - MESSENGER_EXECUTE_JOB_DSN=ToChange!
             - MESSENGER_HISTORY_SENT_DSN=ToChange!
@@ -72,6 +74,10 @@ services:
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!
             - TEKNOO_PAAS_SECURITY_PUBLIC_KEY=ToChange!
             - PHP_XDEBUG_HOST=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
+            - SPACE_OCI_REGISTRY_URL=ToChange!
+            - SPACE_CLUSTER_CATALOG_JSON=ToChange!
     cli_job_done:
         environment:
             - APP_ENV=dev
@@ -103,7 +109,10 @@ services:
             - MESSENGER_EXECUTE_JOB_DSN=ToChange!
             - MESSENGER_HISTORY_SENT_DSN=ToChange!
             - MESSENGER_JOB_DONE_DSN=ToChange!
+            - SPACE_BUILDER_HOOKS=
             - SPACE_JWT_PASSPHRASE=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_PWD=ToChange!
+            - SPACE_OCI_GLOBAL_REGISTRY_URL=ToChange!
             - TEKNOO_PAAS_SECURITY_ALGORITHM=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY=ToChange!
             - TEKNOO_PAAS_SECURITY_PRIVATE_KEY_PASSPHRASE=ToChange!

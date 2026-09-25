@@ -132,4 +132,51 @@ class AccountVarsMapperTest extends TestCase
 
         $this->assertTrue(true);
     }
+
+    public function testMapDataToFormsWithoutSpaceObject(): void
+    {
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->never())->method('setData');
+
+        $this->accountVarsType->mapDataToForms(null, new ArrayIterator(['sets' => $form]));
+    }
+
+    public function testMapFormsToDataWithoutSpaceObject(): void
+    {
+        $viewData = null;
+        $this->accountVarsType->mapFormsToData(new ArrayIterator([]), $viewData);
+
+        $this->assertNull($viewData);
+    }
+
+    public function testMapFormsToDataRestoreSecretValueFromPersistedVariable(): void
+    {
+        $persisted = $this->createStub(AccountPersistedVariable::class);
+        $persisted->method('getId')->willReturn('v1');
+        $persisted->method('getValue')->willReturn('secret-value');
+        $persisted->method('getEncryptionAlgorithm')->willReturn('rsa');
+
+        $account = new SpaceAccount();
+        $account->variables = [$persisted];
+
+        $variable = new JobVar(
+            id: 'v1',
+            name: 'name',
+            value: '',
+            persisted: true,
+            secret: false,
+            wasSecret: true,
+        );
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('getData')
+            ->willReturn([new JobVarsSet(envName: 'foo', variables: [$variable])]);
+
+        $this->accountVarsType->mapFormsToData(new ArrayIterator(['sets' => $form]), $account);
+
+        $this->assertSame('rsa', $variable->encryptionAlgorithm);
+        $this->assertSame('secret-value', $variable->value);
+        $this->assertCount(1, $account->variables);
+        $this->assertInstanceOf(AccountPersistedVariable::class, $account->variables[0]);
+    }
 }

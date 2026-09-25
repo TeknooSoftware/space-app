@@ -1,3 +1,4 @@
+@web
 Feature: Web interface to subscribe on a Space instance
   In order to subscription
   As a new user
@@ -8,13 +9,15 @@ Feature: Web interface to subscribe on a Space instance
   On success, Space will also create namespace on the Kubernetes cluster, private OCI registry and service account on
   Kubernetes.
 
-  Scenario: From the UI, subscription with a non valid code on a instance with a private access
-    Given A Space app instance
+  Background:
+    Given a Space app instance
     And a kubernetes client
-    And a subscription restriction
-    And A memory document database
+
+  Scenario: From the UI, subscription with a non valid code on a instance with a private access
+    Given a subscription restriction
+    And a memory document database
     And the platform is booted
-    When an user go to subscription page
+    When a user goes to the subscription page
     Then the user obtains the form:
       | field                                                       | value |
       | space_subscription.user.user.firstName                      |       |
@@ -65,12 +68,10 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.code                                     | AAAAAAA        |
 
   Scenario: From the UI, subscription with a valid code on a instance with a private access
-    Given A Space app instance
-    And a kubernetes client
-    And a subscription restriction
-    And A memory document database
+    Given a subscription restriction
+    And a memory document database
     And the platform is booted
-    When an user go to subscription page
+    When a user goes to the subscription page
     Then the user obtains the form:
       | field                                                       | value |
       | space_subscription.user.user.firstName                      |       |
@@ -103,19 +104,18 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
       | space_subscription.code                                     | NWQ4MTC1       |
     Then An account "My Company" is created
-    And an user "jean@dupont.me" is created
+    And a user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page
 
   Scenario: From the UI, subscription with a subscription plan, a valid code on a instance with a private access
-    Given A Space app instance
-    And a kubernetes client
-    And a subscription restriction
-    And A memory document database
+    Given a subscription restriction
+    And a memory document database
     And a subscription plan "test-1" is selected
     And the platform is booted
-    When an user go to subscription page
+    When a user goes to the subscription page
     Then the user obtains the form:
       | field                                                       | value |
       | space_subscription.user.user.firstName                      |       |
@@ -148,18 +148,17 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
       | space_subscription.code                                     | NWQ4MTC1       |
     Then An account "My Company" is created
-    And an user "jean@dupont.me" is created
+    And a user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page
 
   Scenario: From the UI, subscription on a public instance
-    Given A Space app instance
-    And a kubernetes client
-    And without a subscription restriction
-    And A memory document database
+    Given without a subscription restriction
+    And a memory document database
     And the platform is booted
-    When an user go to subscription page
+    When a user goes to the subscription page
     Then the user obtains the form:
       | field                                                       | value |
       | space_subscription.user.user.firstName                      |       |
@@ -190,19 +189,18 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.account.accountData.countryName          | France         |
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
     Then An account "My Company" is created
-    And an user "jean@dupont.me" is created
+    And a user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page
 
   Scenario: From the UI, subscription with a subscription plan on a public instance
-    Given A Space app instance
-    And a kubernetes client
-    And without a subscription restriction
-    And A memory document database
+    Given without a subscription restriction
+    And a memory document database
     And a subscription plan "test-1" is selected
     And the platform is booted
-    When an user go to subscription page
+    When a user goes to the subscription page
     Then the user obtains the form:
       | field                                                       | value |
       | space_subscription.user.user.firstName                      |       |
@@ -233,7 +231,8 @@ Feature: Web interface to subscribe on a Space instance
       | space_subscription.account.accountData.countryName          | France         |
       | space_subscription.account.accountData.vatNumber            | FR0102030405   |
     Then An account "My Company" is created
-    And an user "jean@dupont.me" is created
+    And a user "jean@dupont.me" is created
+    And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And a session is opened
     And the user is redirected to the dashboard page

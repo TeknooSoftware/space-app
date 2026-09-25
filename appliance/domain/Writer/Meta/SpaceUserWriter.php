@@ -80,7 +80,10 @@ class SpaceUserWriter implements WriterInterface
             static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                 new RuntimeException(
                     message: 'teknoo.space.error.space_user.user.persisting',
-                    code: $error->getCode() > 0 ? $error->getCode() : 500,
+                    code: match (true) {
+                        $error->getCode() > 0 => $error->getCode(),
+                        default => 500,
+                    },
                     previous: $error,
                 )
             ),
@@ -113,7 +116,10 @@ class SpaceUserWriter implements WriterInterface
                 static fn (Throwable $error, ?PromiseInterface $next = null): ?PromiseInterface => $next?->fail(
                     new RuntimeException(
                         message: 'teknoo.space.error.space_user.user.deleting',
-                        code: $error->getCode() > 0 ? $error->getCode() : 500,
+                        code: match (true) {
+                            $error->getCode() > 0 => $error->getCode(),
+                            default => 500,
+                        },
                         previous: $error,
                     )
                 ),

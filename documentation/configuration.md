@@ -20,6 +20,28 @@ Configuration can be set through:
 2. `.env.local` file
 3. `.env` file (default values)
 
+## Which Process Reads What
+
+Space runs one web server and four workers (`new_task`, `execute_job`, `history_sent`, `job_done`, see
+[worker.md](worker.md)). Since account provisioning moved to the `new_task` worker, each process only needs
+the variables below; the compose files at the repository root apply this split per service.
+
+| Variables                                                                                                                                                                                                                                                                 | Web                                                 | new_task                              | execute_job                               | history_sent / job_done |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|---------------------------------------|-------------------------------------------|-------------------------|
+| `APP_*`, `MONGODB_*`, `TEKNOO_EAST_EXTENSION_*`, `SPACE_HOSTNAME`, `MERCURE_PROTOCOL_VERSION` (compile-time, same value everywhere)                                                                                                                                       | yes                                                 | yes                                   | yes (no MongoDB for `execute_job`)        | yes                     |
+| `MESSENGER_*_DSN`                                                                                                                                                                                                                                                         | `new_task` (producer)                               | `execute_job`, `history_sent`         | `execute_job`, `history_sent`, `job_done` | its own transport       |
+| `TEKNOO_PAAS_SECURITY_*` (message encryption)                                                                                                                                                                                                                             | public key only                                     | public + private keys                 | public + private keys                     | public + private keys   |
+| `SPACE_PERSISTED_VAR_SECURITY_*`                                                                                                                                                                                                                                          | public key, `AGENT_MODE=0`                          | public + private keys, `AGENT_MODE=1` | no                                        | no                      |
+| `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN`, `MERCURE_JWT_ISSUER`                                                                                                                                                                                                          | yes                                                 | yes (`NewJob` updates)                | no                                        | no                      |
+| `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_SHOW_HNC_FIELD`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS`                                    | yes                                                 | no                                    | no                                        | no                      |
+| Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`, `SPACE_KUBERNETES_MASTER`/`DASHBOARD`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE`                                                              | yes (dashboard, account clusters, namespace naming) | yes                                   | `SPACE_KUBERNETES_CLIENT_*` only          | no                      |
+| `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME`                                | no                                                  | yes                                   | no                                        | no                      |
+| `SPACE_OCI_GLOBAL_REGISTRY_URL`, `SPACE_OCI_GLOBAL_REGISTRY_USERNAME`, `SPACE_OCI_GLOBAL_REGISTRY_PWD`                                                                                                                                                                    | no                                                  | yes                                   | yes (`buildah login` / `nerdctl login`)   | no                      |
+| `SPACE_STORAGE_CLASS`, `SPACE_STORAGE_DEFAULT_SIZE`, `SPACE_JOB_ROOT`, `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`, `SPACE_DC_ANSIBLE_BINARY`, `SPACE_DC_TIMEOUT`, `SPACE_DC_DEPLOY_ROOT`                                                                                    | no                                                  | yes                                   | yes                                       | no                      |
+| `SPACE_KUBERNETES_VERSION_LEVEL`, `SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_*`, `SPACE_INGRESS_PROVIDER_*`, `SPACE_HOOKS_COLLECTION_*`, `SPACE_PAAS_*`, `SPACE_GIT_TIMEOUT`, `SPACE_IMG_BUILDER_*`, other `SPACE_DC_*`                                                | no                                                  | no                                    | yes                                       | no                      |
+| `SPACE_WORKER_TIME_LIMIT`                                                                                                                                                                                                                                                 | no                                                  | yes                                   | yes                                       | `history_sent`          |
+| `SPACE_PING_FILE`, `SPACE_PING_SECONDS`                                                                                                                                                                                                                                   | no                                                  | yes                                   | yes                                       | yes                     |
+
 ## Core Configuration
 
 ### Application Settings
@@ -198,6 +220,27 @@ MAILER_SENDER_ADDRESS=no-reply@space.example.com
 MAILER_SENDER_NAME=Space Platform
 ```
 
+#### MAILER_REPLY_TO_ADDRESS
+
+- **Type**: String (email)
+- **Optional**: Yes
+- **Description**: `Reply-To` address put on outgoing mail. Set by `./space.sh config` alongside the sender
+  address, and whitelisted in the php-fpm pool under `build.dev/`.
+
+```bash
+MAILER_REPLY_TO_ADDRESS=support@space.example.com
+```
+
+#### MAILER_REPLY_TO_NAME
+
+- **Type**: String
+- **Optional**: Yes
+- **Description**: Display name paired with `MAILER_REPLY_TO_ADDRESS`.
+
+```bash
+MAILER_REPLY_TO_NAME=Space Support
+```
+
 #### MAILER_FORBIDDEN_WORDS
 
 - **Type**: String (comma-separated)
@@ -244,6 +287,22 @@ SPACE_MAIL_MAX_FILE_SIZE=204800
 SPACE_SUPPORT_CONTACT=support@space.example.com
 ```
 
+### Hierarchical Namespaces
+
+#### SPACE_SHOW_HNC_FIELD
+
+- **Type**: Boolean (0/1)
+- **Optional**: Yes
+- **Default**: `0`
+- **Description**: Kubernetes has deprecated Hierarchical Namespaces (HNC), so the web forms of clusters (project
+  and account) no longer show their "use hierarchical namespaces" switch: the current value is kept as a hidden
+  field and preserved on save. Set to `1` to show the switch again. Read by the web process only. The API still
+  accepts and returns the flag; it will be removed in Space 3.
+
+```bash
+SPACE_SHOW_HNC_FIELD=0
+```
+
 ### Two-Factor Authentication (2FA)
 
 #### SPACE_2FA_PROVIDER
@@ -260,28 +319,38 @@ SPACE_2FA_PROVIDER=google
 
 ## Session Storage
 
-### Redis (sessions)
+### Valkey (sessions)
 
-#### SPACE_REDIS_HOST
+Space stores HTTP sessions in a [Valkey](https://valkey.io/) server (BSD licensed, Redis protocol
+compatible), accessed through the `phpredis` extension and Symfony's `RedisSessionHandler`.
+
+#### SPACE_VALKEY_HOST
 
 - **Type**: String (hostname)
 - **Optional**: Yes
-- **Description**: Redis host used for sessions
+- **Description**: Valkey host used for sessions
 
 ```bash
-SPACE_REDIS_HOST=redis
+SPACE_VALKEY_HOST=valkey
 ```
 
-#### SPACE_REDIS_PORT
+#### SPACE_VALKEY_PORT
 
 - **Type**: Integer
 - **Optional**: Yes
 - **Default**: `6379`
-- **Description**: Redis port used for sessions
+- **Description**: Valkey port used for sessions
 
 ```bash
-SPACE_REDIS_PORT=6379
+SPACE_VALKEY_PORT=6379
 ```
+
+#### SPACE_REDIS_HOST / SPACE_REDIS_PORT (deprecated)
+
+- **Optional**: Yes
+- **Description**: Former names of `SPACE_VALKEY_HOST` / `SPACE_VALKEY_PORT`. They are still read as a
+  fallback when the `SPACE_VALKEY_*` variables are not set or empty, so existing deployments keep
+  working. New configurations must use the `SPACE_VALKEY_*` names.
 
 ## Authentication
 
@@ -368,6 +437,30 @@ OAUTH_ENABLED=1
 
 ```bash
 OAUTH_SERVER_TYPE=gitlab
+```
+
+#### OAUTH_SERVER_URL
+
+- **Type**: String (URL)
+- **Optional**: Yes
+- **Description**: Base URL of the self-hosted provider, when it is not the vendor's public instance.
+
+```bash
+OAUTH_SERVER_URL=https://gitlab.example.com
+```
+
+#### OAUTH_CLIENT_ID / OAUTH_CLIENT_SECRET
+
+- **Type**: String
+- **Optional**: Yes
+- **Description**: Credentials of the generic provider selected by `OAUTH_SERVER_TYPE`, used by
+  `config/packages/knpu_oauth2_client.yaml`. `./space.sh config` writes them. The per-vendor variables
+  documented below (`OAUTH_GH_*`, `OAUTH_GITLAB_*`, …) are the alternative when several providers are enabled
+  at once — the generic pair configures exactly one.
+
+```bash
+OAUTH_CLIENT_ID=abcdef0123456789
+OAUTH_CLIENT_SECRET=...
 ```
 
 #### DigitalOcean
@@ -553,8 +646,8 @@ SPACE_CLUSTER_CATALOG_JSON='[{
 }]'
 ```
 
-**Docker Compose cluster entry** — a cluster with `"type": "docker-compose"` targets a remote Docker host over
-**SSH** (key-only authentication, no password, all operations rootless) instead of a Kubernetes API. It carries
+**Docker Compose cluster entry** — a cluster with `"type": "docker-compose"` targets a remote Docker host over **SSH**
+(key-only authentication, no password, all operations rootless) instead of a Kubernetes API. It carries
 an `ssh` block rather than `create_account`/`storage_provisioner`/`use_hnc`:
 
 ```bash
@@ -770,6 +863,27 @@ SPACE_KUBERNETES_INGRESS_DEFAULT_ANNOTATIONS_FILE=/opt/space/config/ingress-anno
 
 Define ingress provider type based on ingress class name pattern matching.
 
+The resolved type only decides **which annotation declares an `https-backend: true` ingress to its
+controller**. It never decides on which entrypoint or port an ingress is published:
+
+| Type                                   | Annotation added on the Ingress when `https-backend: true` |
+|----------------------------------------|------------------------------------------------------------|
+| `nginx` (and any unmatched class)      | `nginx.ingress.kubernetes.io/backend-protocol: HTTPS`      |
+| `traefik`, `traefik1`                  | `ingress.kubernetes.io/protocol: https`                    |
+| `traefik2`, `traefik3` (Traefik v2/v3) | _none_                                                     |
+| `haproxy`                              | `haproxy.org/server-ssl: true`                             |
+| `aws`                                  | `alb.ingress.kubernetes.io/backend-protocol: HTTPS`        |
+| `gce`                                  | `cloud.google.com/app-protocols: HTTPS`                    |
+
+Traefik v2/v3 exposes no Ingress annotation for the backend scheme — it reads it from the Service — so
+`traefik2` writes nothing, and `https-backend` has no effect for that type. `traefik3` is accepted as an
+alias of `traefik2`: both versions share the same `traefik.ingress.kubernetes.io/*` annotations, and
+without the alias a cluster declared `traefik3` would silently fall back to the `nginx` annotations.
+`traefik.ingress.kubernetes.io/router.entrypoints` must **never** be used as a substitute: it pins the
+router to a single entrypoint, so `web` leaves the host with no HTTPS router at all (`404` on 443) and
+`websecure` leaves it with no HTTP one. Without that annotation the router is published on every
+entrypoint, which is the behaviour the nginx controller had.
+
 Use **one** of these options:
 
 #### SPACE_INGRESS_PROVIDER_JSON
@@ -778,8 +892,8 @@ Use **one** of these options:
 - **Optional**: Yes
 - **Description**: Maps ingress class name patterns (regex) to provider types
 - **Format**: `{"pattern": "type", ...}`
-  - `pattern`: Regular expression to match against ingress class name
-  - `type`: Provider type - one of: `nginx`, `traefik`, `traefik1`, `traefik2`, `haproxy`, `aws`, `gce`
+    - `pattern`: Regular expression to match against ingress class name
+    - `type`: Provider type - one of: `nginx`, `traefik`, `traefik1`, `traefik2`, `traefik3`, `haproxy`, `aws`, `gce`
 - **Default**: `nginx` (used when no match found or invalid type)
 
 ```bash
@@ -836,12 +950,12 @@ SPACE_DC_ANSIBLE_BINARY=ansible-playbook
 
 - **Type**: Integer (seconds)
 - **Optional**: Yes
-- **Default**: `300`
+- **Default**: `900`
 - **Maps to**: `teknoo.east.paas.docker-compose.timeout`
 - **Description**: Timeout for a single playbook run
 
 ```bash
-SPACE_DC_TIMEOUT=600
+SPACE_DC_TIMEOUT=900
 ```
 
 #### SPACE_DC_DEPLOY_ROOT
@@ -866,6 +980,20 @@ SPACE_DC_DEPLOY_ROOT=/opt/paas
 
 ```bash
 SPACE_DC_NETWORK_DRIVER=bridge
+```
+
+#### SPACE_DC_NETWORK_INTERNAL
+
+- **Type**: Boolean
+- **Optional**: Yes
+- **Default**: `false`
+- **Maps to**: `teknoo.east.paas.docker-compose.network.internal`
+- **Description**: Declare each project network (`<project>-private`) as `internal: true`: the containers have no
+  egress and are only reachable through Traefik. Off by default (like Kubernetes pods, the containers keep an
+  egress). When enabled, the host ports published by public services are **not** reachable.
+
+```bash
+SPACE_DC_NETWORK_INTERNAL=false
 ```
 
 #### SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY
@@ -912,10 +1040,25 @@ SPACE_DC_TRAEFIK_DYNAMIC_DIR=/etc/traefik/dynamic
 - **Optional**: Yes
 - **Default**: `/etc/traefik/certs`
 - **Maps to**: `teknoo.east.paas.docker-compose.traefik.certs_dir`
-- **Description**: Directory holding TLS certificates for Traefik
+- **Description**: Directory on the Docker host where the TLS certificates of the ingresses are pushed (the Traefik
+  container bind-mounts it, see `SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR`)
 
 ```bash
 SPACE_DC_TRAEFIK_CERTS_DIR=/etc/traefik/certs
+```
+
+#### SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR
+
+- **Type**: String (path)
+- **Optional**: Yes
+- **Default**: the value of `SPACE_DC_TRAEFIK_CERTS_DIR`
+- **Maps to**: `teknoo.east.paas.docker-compose.traefik.certs_mount_dir`
+- **Description**: The certificates directory as seen by the Traefik process, i.e. the path where the host
+  directory above is bind-mounted in the Traefik container. The generated dynamic files reference the certificates
+  under this path. Only set it when the mount target differs from the host path.
+
+```bash
+SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR=/etc/traefik/certs
 ```
 
 #### SPACE_DC_TRAEFIK_CERTRESOLVER
@@ -955,37 +1098,30 @@ SPACE_DC_TRAEFIK_ENTRYPOINT_WEB=web
 SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE=websecure
 ```
 
-#### SPACE_DC_TRAEFIK_ENTRYPOINT_TCP
-
-- **Type**: String
-- **Optional**: Yes
-- **Default**: `tcp`
-- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.tcp`
-- **Description**: Traefik entrypoint name for raw TCP services
-
-```bash
-SPACE_DC_TRAEFIK_ENTRYPOINT_TCP=tcp
-```
-
-#### SPACE_DC_TRAEFIK_ENTRYPOINT_UDP
-
-- **Type**: String
-- **Optional**: Yes
-- **Default**: `udp`
-- **Maps to**: `teknoo.east.paas.docker-compose.traefik.entrypoint.udp`
-- **Description**: Traefik entrypoint name for UDP services
-
-```bash
-SPACE_DC_TRAEFIK_ENTRYPOINT_UDP=udp
-```
+> Public TCP/UDP services of the deployed projects are published as host ports by their Compose stack (`ports:`),
+> not routed by Traefik: there is no TCP/UDP entrypoint to configure (the former `SPACE_DC_TRAEFIK_ENTRYPOINT_TCP`
+> and `SPACE_DC_TRAEFIK_ENTRYPOINT_UDP` variables are ignored). A public service on a replicated pod cannot publish
+> host ports; the deployment succeeds with a warning in the job history, expose it through an ingress instead.
 
 ### Per-Account Registry Settings (docker-compose)
 
 When a docker-compose cluster has `support_registry: true` (the default), Space provisions a **per-account
 private OCI registry** as a dedicated `<namespace>-registry` container on the same Docker host, over Ansible.
-It is reachable only over an internal Docker network by its container name (no public route), authenticated with
-htpasswd, and TLS is optional. This is the docker-compose equivalent of the Kubernetes-hosted per-account
-registry — docker-compose clusters do **not** require the Kubernetes-only OCI registry settings below.
+The container is attached to an internal Docker network (`SPACE_DC_REGISTRY_NETWORK`, no host port) and is **exposed by
+the host's Traefik** on the `websecure` entrypoint under the host name
+`<namespace>-registry.<docker host>` (the host of the cluster `master` address): this name is the account
+`registryUrl`, the worker pushes the built images to it and the Docker host pulls them from it at
+`docker compose up` (a container name would be resolvable by neither). The registry playbook also connects Traefik
+to the registry network, drops the Traefik dynamic file `<namespace>-registry.yml` in `SPACE_DC_TRAEFIK_DYNAMIC_DIR`
+and logs the deploy user in on the registry (`~/.docker/config.json`) so the pull is authenticated (htpasswd).
+
+Prerequisites on the Docker host: a DNS record for `<namespace>-registry.<docker host>` (a wildcard `*.<docker host>`
+covers every account) pointing to the host, and a valid certificate for it on Traefik — either an ACME resolver
+(`SPACE_DC_TRAEFIK_CERTRESOLVER`, the certificate is issued on the first request) or a certificate declared in
+Traefik for that name; the worker (`buildah login`/`push`) and the Docker daemon verify it. TLS between Traefik
+and the registry container is optional (`SPACE_DC_REGISTRY_TLS`). This is the docker-compose equivalent of the
+Kubernetes-hosted per-account registry (behind an Ingress) — docker-compose clusters do **not** require the
+Kubernetes-only OCI registry settings below.
 
 #### SPACE_DC_REGISTRY_IMAGE
 
@@ -1005,7 +1141,8 @@ SPACE_DC_REGISTRY_IMAGE=registry:2
 - **Optional**: Yes
 - **Default**: `space-registry`
 - **Maps to**: `teknoo.east.paas.docker-compose.registry.network`
-- **Description**: Name of the external, internal-only Docker network the registry is attached to
+- **Description**: Name of the external, internal-only Docker network the registry is attached to (Traefik is
+  connected to it to reach the registry)
 
 ```bash
 SPACE_DC_REGISTRY_NETWORK=space-registry
@@ -1029,7 +1166,8 @@ SPACE_DC_REGISTRY_PORT=5000
 - **Optional**: Yes
 - **Default**: `false`
 - **Maps to**: `teknoo.east.paas.docker-compose.registry.tls`
-- **Description**: Enable TLS on the per-account registry container
+- **Description**: Enable TLS on the per-account registry container itself (between Traefik and the registry; the
+  public side is always HTTPS through Traefik)
 
 ```bash
 SPACE_DC_REGISTRY_TLS=false
@@ -1212,7 +1350,11 @@ TEKNOO_PAAS_SECURITY_PUBLIC_KEY=/opt/space/config/secrets/public.pem
 
 ### Persisted Variables Encryption
 
-Used for encrypting stored secrets in database.
+Used for encrypting stored secrets in database. The web server encrypts them when they are saved (public key
+only, `SPACE_PERSISTED_VAR_AGENT_MODE=0`); the `new_task` worker is the only process decrypting them, when a
+new job is prepared (public and private keys, `SPACE_PERSISTED_VAR_AGENT_MODE=1`). The `execute_job`,
+`history_sent` and `job_done` workers receive the variables already decrypted inside the encrypted job message
+and need none of these keys.
 
 #### SPACE_PERSISTED_VAR_AGENT_MODE
 
@@ -1371,7 +1513,10 @@ SPACE_SUBSCRIPTION_PLAN_CATALOG_FILE=/opt/space/config/plans.json
                 "require": "2Gi"
             }
         ],
-        "clusters": ["production", "staging"]
+        "clusters": [
+            "production",
+            "staging"
+        ]
     }
 ]
 ```
@@ -1395,7 +1540,12 @@ SPACE_JOB_ROOT=/var/lib/space/jobs
 
 - **Type**: Integer (seconds)
 - **Optional**: Yes
-- **Description**: Maximum time allowed for job execution
+- **Default**: `300`
+- **Description**: Maximum time allowed for job execution. It must be bigger than each timeout of a job's
+  operations (`SPACE_GIT_TIMEOUT`, `SPACE_IMG_BUILDER_TIMEOUT`, `SPACE_DC_TIMEOUT`,
+  `SPACE_KUBERNETES_CLIENT_TIMEOUT`, hooks' timeouts) and than the biggest hook timeout added to the biggest
+  deployment timeout; the `execute_job` worker prints a warning at start otherwise — see
+  [worker.md](worker.md#2-execute-job-worker).
 
 ```bash
 SPACE_WORKER_TIME_LIMIT=3600
@@ -1412,6 +1562,22 @@ SPACE_GIT_TIMEOUT=600
 ```
 
 ### Image Building Settings
+
+#### SPACE_BUILDER_HOOKS
+
+- **Type**: String (list of `name:tag`, separated by spaces or commas)
+- **Optional**: Yes
+- **Default**: empty (nothing is pre-pulled)
+- **Read by**: the `execute_job` worker's entrypoint only
+- **Description**: Hook images to pull from the global OCI registry when the container starts, each
+  resolved against `${SPACE_OCI_GLOBAL_REGISTRY_URL}/space/hook-<name>:<tag>`. Requires
+  `SPACE_OCI_GLOBAL_REGISTRY_URL`, `_USERNAME` and `_PWD` to be set. Leaving it empty makes each hook
+  pull its own image on first use, inside the hook's own timeout and with the pull progress stored in
+  the job history — see [development.md](development.md).
+
+```bash
+SPACE_BUILDER_HOOKS=composer:latest composer:8.5 make:latest npm:latest php:8.5
+```
 
 #### SPACE_IMG_BUILDER_CMD
 
@@ -1522,15 +1688,20 @@ SPACE_PAAS_GLOBAL_VARIABLES_FILE=/opt/space/config/global-vars.json
 
 ### Extends Libraries
 
-For pods, containers, services, and ingresses:
+Reusable fragments a project's `.paas.yaml` can pull in with `extends`. There is one pair per compiled
+element; in each pair use **either** the `_JSON` form (the library inline) **or** the `_FILE` form (a path to a
+JSON file returning it), never both.
 
-#### SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON / _FILE
+| Element    | Variables                                                             |
+|------------|-----------------------------------------------------------------------|
+| Pods       | `SPACE_PAAS_COMPILATION_PODS_EXTENDS_LIBRARY_JSON` / `..._FILE`       |
+| Containers | `SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON` / `..._FILE` |
+| Services   | `SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON` / `..._FILE`   |
+| Ingresses  | `SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON` / `..._FILE`  |
 
-#### SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_JSON / _FILE
-
-#### SPACE_PAAS_COMPILATION_SERVICES_EXTENDS_LIBRARY_JSON / _FILE
-
-#### SPACE_PAAS_COMPILATION_INGRESSES_EXTENDS_LIBRARY_JSON / _FILE
+```bash
+SPACE_PAAS_COMPILATION_CONTAINERS_EXTENDS_LIBRARY_FILE=/opt/space/config/containers-library.json
+```
 
 ### Image Library
 
@@ -1565,7 +1736,11 @@ SPACE_MERCURE_PUBLISHING_ENABLED=1
 
 - **Type**: String (URL)
 - **Optional**: Yes (required if Mercure enabled)
-- **Description**: Mercure hub URL for publishing
+- **Description**: Mercure hub URL for publishing. It is resolved by the PHP process, never by the browser
+  (that one is `MERCURE_SUBSCRIBER_URL`), so it has to be reachable from **every** process publishing an
+  update, the `new_task` worker included. When the hub is embedded in the web server instead of running in
+  its own container, `https://localhost/.well-known/mercure` only works inside the web server itself: the
+  workers need a name routed to it, and the web server has to answer to that name.
 
 ```bash
 MERCURE_PUBLISH_URL=http://mercure:3000/.well-known/mercure
@@ -1590,6 +1765,64 @@ MERCURE_SUBSCRIBER_URL=https://mercure.example.com/.well-known/mercure
 ```bash
 MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
+
+#### MERCURE_JWT_ISSUER
+
+- **Type**: String (URL)
+- **Optional**: Yes
+- **Default**: `https://localhost`
+- **Description**: `iss` claim of the tokens minted for the hub. Only read by a Mercure **1.0** hub,
+  where RFC 9068 access tokens require it and where it must match the issuer the hub trusts (its `issuer` directive,
+  `MERCURE_TRUSTED_ISSUERS` in the official image). A 0.x hub ignores it.
+
+```bash
+MERCURE_JWT_ISSUER=https://space.example.com
+```
+
+#### MERCURE_PROTOCOL_VERSION
+
+- **Type**: String, `0.x` or `1.0`
+- **Optional**: Yes
+- **Default**: `0.x`, which an empty or unrecognized value also falls back to
+- **Description**: The Mercure protocol spoken by the hub. It must match the hub actually deployed,
+  and the two Docker Compose topologies do not run the same one:
+
+| Stack                                                                         | Hub                                                               | `MERCURE_PROTOCOL_VERSION`      |
+|-------------------------------------------------------------------------------|-------------------------------------------------------------------|---------------------------------|
+| `compose.yml` (default), `compose.frankenphp.yml`                             | Caddy module embedded in `dunglas/frankenphp`, still Mercure 0.24 | unset, i.e. `0.x`               |
+| `compose.fpm.yml`, and its legacy httpd variant `compose.legacy.override.yml` | dedicated `dunglas/mercure:v1` container                          | `1.0`, set on every PHP service |
+
+The FrankenPHP stacks will move to `1.0` as soon as FrankenPHP ships a Mercure 1.0 module (it embeds
+`github.com/dunglas/mercure v0.24.2` today). The hub tag stays overridable with
+`MERCURE_IMAGE_TAG=v0.24` to roll the FPM stack back, which then also means setting
+`MERCURE_PROTOCOL_VERSION=0.x` on its PHP services.
+
+```bash
+MERCURE_PROTOCOL_VERSION=1.0
+```
+
+**This variable is read while the Symfony container is compiled**, in `appliance/config/di.variables.php`,
+and not at runtime like every other one: MercureBundle turns the value into a `ProtocolVersion` enum
+case during compilation, so an `%env()%` placeholder, which only gets its value at runtime, can not be
+used. Two consequences: a `./space.sh warmup` is required after changing it (it is already part of the
+install flow), and it must carry the same value for every PHP process of a stack — all the more so with
+Docker Compose, where `var/cache` is shared through the mounted volume, including when switching from
+one stack to the other.
+
+On the FPM and legacy stacks the workers publish through the internal
+`http://mercure:8181/.well-known/mercure` while the browser subscribes through the httpd proxy at
+`https://localhost/hub/.well-known/mercure`. A 1.0 hub derives the audience it expects from each
+request, so the two URLs differing would make every publication fail with a `401`; the hub therefore
+pins `resource_identifier` to the public URL, which is also the `aud` claim of the generated tokens.
+`MERCURE_TRUSTED_ISSUERS` on the hub and `MERCURE_JWT_ISSUER` on the PHP services must likewise be
+the same value.
+
+Switching the parameter to `1.0` changes three things at once, and all of them are handled by the
+code: the subscription query parameter becomes `match` instead of `topic`, the generated JWT becomes
+an RFC 9068 access token carrying `authorization_details` (hence `MERCURE_JWT_ISSUER`), and the
+subscriber cookie is renamed `__Secure-mercure_access_token`, which requires the hub public URL to be
+served over HTTPS. Switch it only once **every** process talks to a 1.0 hub, and update the hub
+configuration accordingly (`issuer` block instead of `publisher_jwt`/`subscriber_jwt`).
 
 ### Job Notification
 
@@ -1654,6 +1887,31 @@ TEKNOO_EAST_EXTENSION_FILE=/opt/space/extensions/enabled.json
     "Vendor\\AnotherExtension\\Extension"
 ]
 ```
+
+## Container and Stack Variables
+
+These are read by the Docker Compose stacks and the images, not by the PHP application. They do not appear in
+`.env.local`; they belong to the compose override file (or the shell that runs `docker compose`).
+
+| Variable                                                    | Used by                          | Purpose                                                                                                                                                                                                                              |
+|-------------------------------------------------------------|----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SERVER_NAME`                                               | `compose.yml` (FrankenPHP/Caddy) | Host name Caddy serves and issues its certificate for                                                                                                                                                                                |
+| `MONGO_VERSION`                                             | `build.dev/mongo/Dockerfile`     | Tag of the MongoDB image to build from (default `7`)                                                                                                                                                                                 |
+| `MONGO_INITDB_ROOT_USERNAME` / `MONGO_INITDB_ROOT_PASSWORD` | `compose.yml`                    | Root credentials created on first start of the MongoDB container                                                                                                                                                                     |
+| `MONGO_INITDB_DATABASE`                                     | `compose.yml`                    | Database created on first start                                                                                                                                                                                                      |
+| `RABBITMQ_USERNAME` / `RABBITMQ_PASSWORD`                   | `compose.yml`                    | Broker credentials; the shipped values are `space` / `space_pwd`, **not** `guest`                                                                                                                                                    |
+| `PHP_XDEBUG_HOST`                                           | `compose.yml`                    | Host Xdebug connects back to. See the note on FrankenPHP below                                                                                                                                                                       |
+| `MERCURE_EXTRA_DIRECTIVES`                                  | `compose.fpm.yml`                | Extra Caddy directives appended to the standalone hub's configuration                                                                                                                                                                |
+| `MERCURE_PUBLISHER_JWT_KEY` / `MERCURE_SUBSCRIBER_JWT_KEY`  | hub + `Caddyfile`                | Signing keys of a `0.x` hub, written by `./space.sh config`                                                                                                                                                                          |
+| `MERCURE_PUBLISHER_JWT_ALG` / `MERCURE_SUBSCRIBER_JWT_ALG`  | hub                              | Signing algorithms paired with the keys above                                                                                                                                                                                        |
+| `TRUSTED_PROXIES` / `TRUSTED_HOSTS`                         | Symfony (`.env`)                 | Symfony's own trusted proxy and host lists, commented out by default. Space's application-level host allowlist is `SPACE_TRUSTED_HOSTS`, documented under [Core Configuration](#core-configuration) — the two are different settings |
+
+Notifier DSNs from the Symfony recipes (`NEXMO_DSN`, `SLACK_DSN`, `TELEGRAM_DSN`, `TWILIO_DSN`) and
+`VAR_DUMPER_SERVER` are left at their defaults; Space configures none of them.
+
+**Xdebug on the FrankenPHP stack**: Xdebug 3.5.3 corrupts the heap under ZTS, and `XDEBUG_MODE=off` does not
+remove the hook. The `php-fpm` stack is unaffected. Do not enable it on the FrankenPHP `web` service until
+Xdebug 3.6 is available.
 
 ## Example Complete Configuration
 
@@ -1737,6 +1995,8 @@ SPACE_MERCURE_PUBLISHING_ENABLED=1
 MERCURE_PUBLISH_URL=http://mercure:3000/.well-known/mercure
 MERCURE_SUBSCRIBER_URL=https://mercure.example.com/.well-known/mercure
 MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+MERCURE_JWT_ISSUER=https://space.example.com
+MERCURE_PROTOCOL_VERSION=1.0
 ###< mercure ###
 
 ###> extensions ###

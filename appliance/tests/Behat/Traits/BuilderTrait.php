@@ -38,13 +38,11 @@ use Teknoo\East\Paas\Contracts\Object\SourceRepositoryInterface;
 use Teknoo\East\Paas\Contracts\Repository\CloningAgentInterface;
 use Teknoo\East\Paas\Contracts\Workspace\FileInterface;
 use Teknoo\East\Paas\Contracts\Workspace\JobWorkspaceInterface;
-use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\Immutable\ImmutableTrait;
 use Teknoo\Recipe\Promise\PromiseInterface;
 use Teknoo\Space\Tests\Behat\HookMock;
 use Traversable;
 
-use function current;
 use function file_exists;
 use function iterator_to_array;
 use function json_encode;
@@ -59,12 +57,7 @@ trait BuilderTrait
     #[Then('it has an error about a timeout')]
     public function itHasAnErrorAboutATimeout(): void
     {
-        $jobs = $this->listObjects(JobOrigin::class);
-        Assert::assertNotEmpty($jobs);
-
-        /** @var JobOrigin $job */
-        $job = current($jobs);
-        Assert::assertInstanceOf(JobOrigin::class, $job);
+        $job = $this->firstJob();
 
         Assert::assertTrue($job->getHistory()->isFinal());
         Assert::assertEquals(
@@ -76,12 +69,7 @@ trait BuilderTrait
     #[Then('it has an error about a quota exceeded')]
     public function itHasAnErrorAboutQuotaExceeded(): void
     {
-        $jobs = $this->listObjects(JobOrigin::class);
-        Assert::assertNotEmpty($jobs);
-
-        /** @var JobOrigin $job */
-        $job = current($jobs);
-        Assert::assertInstanceOf(JobOrigin::class, $job);
+        $job = $this->firstJob();
 
         Assert::assertTrue($job->getHistory()->isFinal());
         Assert::assertStringContainsString(

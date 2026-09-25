@@ -9,8 +9,8 @@ customization purposes.
 
 ### Prerequisites
 
-- PHP 8.4+
-- Composer 2.0+
+- PHP 8.5+
+- Composer 2.8+
 - Docker and Docker Compose (recommended)
 - Git
 
@@ -46,8 +46,8 @@ customization purposes.
    ```
 
 6. **Access the application**:
-    - Web UI: http://localhost
-    - RabbitMQ Management: http://localhost:15672 (guest/guest)
+    - Web UI: https://localhost (the stack serves TLS; a self-signed certificate is generated)
+    - RabbitMQ Management: http://localhost:15672 (`space` / `space_pwd`)
     - MongoDB: localhost:27017
 
 #### Local Setup (Without Docker)
@@ -95,30 +95,46 @@ customization purposes.
 ```
 space-app/
 ├── appliance/              # Main application
-│   ├── bin/               # Console scripts
-│   ├── config/            # Application configuration
+│   ├── bin/               # console + config.sh
+│   ├── config/            # Application configuration — di.*.php live here, directly
 │   │   ├── doctrine/      # ODM mappings
 │   │   ├── packages/      # Bundle configs
-│   │   ├── routes/        # Routing
+│   │   ├── routes/        # Routing (api/ holds the API v1 files)
 │   │   └── serializer/    # Serialization
 │   ├── domain/            # Domain layer (DDD)
+│   │   ├── Cluster/       # Cluster catalog
+│   │   ├── Configuration/ # Configuration objects
 │   │   ├── Contracts/     # Interfaces
-│   │   ├── Object/        # Entities, DTOs
+│   │   ├── Liveness/      # Ping file and scheduler
+│   │   ├── Loader/        # Read side
+│   │   ├── Middleware/    # Domain middlewares
+│   │   ├── Object/        # Entities (Persisted/), DTOs (DTO/, DTO/Task/), Config/
 │   │   ├── Query/         # Query objects
-│   │   └── Recipe/        # Workflows
+│   │   ├── Recipe/        # Workflows — Plan/, Plan/Task/, Step/
+│   │   ├── Service/       # Domain services
+│   │   └── Writer/        # Write side
+│   ├── extensions/        # Mounted extensions — gitignored, see extensions/*/AGENTS.md
+│   ├── features/          # Behat .feature files (NOT under tests/)
 │   ├── infrastructures/   # Infrastructure layer
+│   │   ├── AnsibleDockerCompose/ # Docker Compose target
 │   │   ├── Doctrine/      # ODM repositories
+│   │   ├── Endroid/       # QR code step
 │   │   ├── Kubernetes/    # K8s integration
+│   │   ├── Recipe/        # ProvisioningPlanBowl
 │   │   ├── Symfony/       # Symfony adapters
 │   │   └── Twig/          # Template extensions
 │   ├── public/            # Web root
-│   ├── src/               # Application code
-│   ├── templates/         # Twig templates
-│   ├── tests/             # Tests
+│   ├── src/               # Kernel.php only
+│   ├── templates/         # Twig templates (api/ holds the .json.twig views)
+│   ├── tests/             # PHPUnit tests + Behat contexts, traits and fixtures
+│   ├── translations/      # Translation catalogues
 │   └── var/               # Cache, logs
+├── .agents/               # Agent coordination hub
 ├── build.dev/             # Docker build files
-├── documentation/         # Documentation
-├── compose.yml            # Docker Compose config
+├── documentation/         # Documentation (start at documentation/README.md)
+├── AGENTS.md              # Standards for contributors and AI agents
+├── CLAUDE.md              # Claude Code gateway to AGENTS.md
+├── compose.yml            # Default Docker Compose stack (three others ship beside it)
 └── space.sh              # CLI tool
 ```
 
@@ -450,45 +466,67 @@ class ProjectContext implements Context
 
 **Worker hook** (1): `worker.hooks`
 
+An enabled extension adds features of its own in `appliance/extensions/<Name>/features/`, discovered through
+`ExtensionsDiscoveryExtension` in `appliance/behat.yml`.
+
+**Conventions** (adopted 2026-09-19):
+
+- A `Background:` holds only the strictly identical leading `Given` run of a file. Never reorder a step to
+  widen one: `an account for …` / `a user, called …` act on the *last* created object.
+- Use the composite authentication steps from `AuthenticationTrait` rather than re-chaining the primitives.
+- **A scenario title stays on one line.** A wrapped title is parsed as a description, and `behat --name` can
+  never match it again.
+- Tag a feature with its audience: `@api`, `@web`, `@worker`, `@admin`.
+- Step patterns match case-insensitively (`/^…$/iu`), and `behat/gherkin` 4.17 does not parse `Rule:`.
+
 ### Test Traits
 
-12 Behat test traits in `tests/Behat/Traits/`:
+Behat test traits in `tests/Behat/Traits/`:
 
-| Trait | Purpose |
-|-------|---------|
-| `ApiTrait` | API request helpers |
-| `BrowserActionTrait` | Browser action helpers |
-| `BrowserCrawlingTrait` | Browser crawling/navigation |
-| `BuilderTrait` | Git/build helpers |
-| `DockerComposeTrait` | Docker Compose cluster helpers |
-| `HttpTrait` | HTTP request/response helpers |
-| `JwtTrait` | JWT token generation |
-| `KubernetesTrait` | Kubernetes cluster helpers |
-| `NotificationTrait` | Notification/messaging helpers |
-| `PersistenceOperationTrait` | MongoDB persistence operations |
-| `PersistenceStepsTrait` | Persistence step definitions |
-| `WorkerTrait` | Worker/AMQP helpers |
+| Trait                       | Purpose                                       |
+|-----------------------------|-----------------------------------------------|
+| `ApiTrait`                  | API request helpers                           |
+| `AuthenticationTrait`       | Composite sign in / TOTP / JWT / logout steps |
+| `BrowserActionTrait`        | Browser action helpers                        |
+| `BrowserCrawlingTrait`      | Browser crawling/navigation                   |
+| `BuilderTrait`              | Git/build helpers                             |
+| `DockerComposeTrait`        | Docker Compose cluster helpers                |
+| `HttpTrait`                 | HTTP request/response helpers                 |
+| `JwtTrait`                  | JWT token generation                          |
+| `KubernetesTrait`           | Kubernetes cluster helpers                    |
+| `NotificationTrait`         | Notification/messaging helpers                |
+| `PersistenceOperationTrait` | MongoDB persistence operations                |
+| `PersistenceStepsTrait`     | Persistence step definitions                  |
+| `WorkerTrait`               | Worker/AMQP helpers                           |
 
 ### PHPUnit Structure
 
-`appliance/tests/` mirrors `domain/` and `infrastructures/` directory structure. **280 test files** total.
-Test classes follow the namespace pattern `Teknoo\Space\Tests\{Layer}\{SubPath}`. For example:
+`appliance/tests/` mirrors the `domain/` and `infrastructures/` directory structure. Test classes follow the
+namespace pattern `Teknoo\Space\Tests\{Layer}\{SubPath}` and the `Test.php` suffix. For example:
 `tests/domain/Object/Persisted/AccountDataTest.php` tests `domain/Object/Persisted/AccountData.php`.
+
+The suite is at **100% line coverage** and runs with `failOnDeprecation="true"`: a deprecation warning fails
+the build and must be fixed at its call site, never silenced.
 
 ### Form Types
 
-33 form types across 7 categories in `infrastructures/Symfony/Form/Type/`:
+Form types live in `infrastructures/Symfony/Form/Type/`, one subdirectory per category:
 
-- **Account**: `AccountType`, `AccountClusterType`, `AccountEnvironmentResumesType`, `SpaceAccountType`,
-  `AdminSpaceAccountType`, `SpaceSubscriptionType`, `VarsSetType`, `VarsType`, `CodeGeneratorType`
-- **Project**: `ProjectMetadataType`, `SpaceProjectType`, `VarsSetType`, `VarsType`
-- **Job**: `JobType`, `JobVarType`, `NewJobType`, `ApiNewJobType`
+- **Account**: `AccountType`, `AccountClusterType`, `SpaceAccountType`, `AdminSpaceAccountType`,
+  `SpaceSubscriptionType`, `CodeGeneratorType`, `VarsSetType`, `VarsType`
+- **AccountData**: `AccountDataType`
+- **AccountEnvironment**: `AccountEnvironmentResumesType`
+- **Project**: `SpaceProjectType`, `VarsSetType`, `VarsType`
+- **ProjectMetadata**: `ProjectMetadataType`
+- **Job**: `NewJobType`, `ApiNewJobType`, `JobVarType`
 - **User**: `UserType`, `AdminSpaceUserType`, `SpaceUserType`, `PasswordType`, `SpacePasswordType`,
   `ApiKeysAuthType`, `JWTConfigurationType`
 - **Contact**: `SupportType`, `AttachmentType`
-- **Search**: `AccountSearchType`, `ProjectSearchType`, `UserSearchType`, `JobSearchType`,
-  `AccountClusterSearchType`, `MediaSearchType`
-- **AccountEnvironment**: `AccountEnvironmentResumesType`
+- **Search**: `AccountSearchType`, `AccountClusterSearchType`, `JobSearchType`, `MediaSearchType`,
+  `ProjectSearchType`, `UserSearchType`, and the shared `DefaultSearchTrait`
+
+`VarsSetType` and `VarsType` exist under both `Account/` and `Project/`: distinct classes in distinct
+namespaces, not a duplication.
 
 Custom data mappers in `infrastructures/Symfony/Form/DataMapper/`:
 `AbstractVarsMapper`, `AccountVarsMapper`, `ProjectVarsMapper`.
@@ -547,7 +585,7 @@ use Teknoo\East\Foundation\Extension\ModuleInterface;
 use Teknoo\East\FoundationBundle\Extension\Bundles;
 use Teknoo\East\FoundationBundle\Extension\PHPDI;
 use Teknoo\East\FoundationBundle\Extension\Routes;
-use Teknoo\Space\Extensions\Enterprise\Infrastructure\Symfony\Bundle\TeknooSpaceEnterpriseBundle;
+use Teknoo\Space\Extensions\MyExtension\Infrastructure\Symfony\Bundle\MyExtensionBundle;
 use Teknoo\Space\Infrastructures\Twig\SpaceExtension\Twig;
 
 use function class_exists;
@@ -613,7 +651,7 @@ class MyExtension implements ExtensionInterface
     public function executeFor(ModuleInterface $module): ExtensionInterface
     {
         match ($module::class) {
-            Bundles::class => $module->register(TeknooSpaceEnterpriseBundle::class, ['all' => true]),
+            Bundles::class => $module->register(MyExtensionBundle::class, ['all' => true]),
             PHPDI::class => $this->configurePHPDI($module),
             Routes::class => $this->configureRoutes($module),
             Twig::class => $this->injectTwigTemplates($module),
@@ -909,6 +947,93 @@ Code reviews focus on:
 docker build -t space-php-fpm -f build.dev/php-fpm/Dockerfile .
 ```
 
+### The `cli_execute` Image (`build.dev/php-buildah/`)
+
+Three of the four workers run on `build.dev/php-cli`. The `execute_job` one — the service `cli_execute`
+in the compose stacks — runs on `build.dev/php-buildah` instead, because it is the only process that
+builds OCI images and runs build hooks. That image mirrors the production builder image, on a Debian
+base rather than Alpine:
+
+- **`buildah`, `containerd`, `nerdctl`** with a rootless setup: a real `HOME` for `spaceuser`,
+  `/etc/subuid` and `/etc/subgid` ranges, a `storage.conf` using `fuse-overlayfs`, a `containerd`
+  configuration whose gRPC socket belongs to uid/gid 1000, and `sudoers` rules limited to
+  `containerd`, `ctr`, `nerdctl` and the snapshotter.
+- **`ansible-core` and `openssh-client`**, used when the deployment target is a Docker Compose host.
+  The locale is `C.UTF-8`: Ansible refuses to start unless Python reports a UTF-8 preferred encoding.
+- **`/usr/local/bin/space-run`** — a thin `sudo nerdctl run "$@"` wrapper. Hook definitions
+  (`SPACE_HOOKS_COLLECTION_JSON` / `SPACE_HOOKS_COLLECTION_FILE`) invoke hooks through this name, so a
+  hook fails with `space-run: not found` on any image that does not ship it.
+- **The `overlayfs` containerd snapshotter on a named volume.** The two settings go together: the
+  `builder_containerd` volume puts `/var/lib/containerd` on a real filesystem, and only then can
+  `overlayfs` work — left on the overlay2 filesystem Docker gives the container it cannot stack an
+  overlay on an overlay and every `nerdctl run` dies with
+  `failed to mount rootfs component: invalid argument`. Measured on `composer --version`:
+
+  | Snapshotter | containerd root | run |
+  |---|---|---|
+  | `overlayfs` | named volume | **~0.7 s** |
+  | `native` | container filesystem | 11 s, then 36 s (it copies the whole rootfs each time) |
+  | `fuse-overlayfs` | container filesystem | cannot extract a layer at all (`setxattr ... user.overlay.impure: operation not permitted`) |
+
+  The volume also makes the pulled hook images survive a container recreation. It holds the content
+  store, the metadata database and the snapshots together — splitting them across separate volumes
+  desynchronises them and pulls then fail with `snapshot ... already exists`. It applies to `nerdctl`
+  only; `buildah` has its own store and uses `fuse-overlayfs` as a mount program there.
+- **`/builder-init.sh`** — the image entrypoint. It creates `XDG_RUNTIME_DIR`, starts `containerd`,
+  waits for its socket, logs into the global OCI registry when
+  `SPACE_OCI_GLOBAL_REGISTRY_URL`/`_USERNAME`/`_PWD` are all set, then `exec`s whatever the compose
+  file passes as `command:`. Every step degrades to a warning, so the worker keeps consuming its queue
+  even without a usable nested runtime. The hook pre-pull is started **in the background**: it takes
+  minutes, and a worker that has not reached `messenger:consume` leaves the `execute_job` queue
+  unconsumed for exactly that long.
+
+#### The hook images are pre-pulled, and that is not optional
+
+`SPACE_BUILDER_HOOKS` lists the hook images the entrypoint pulls before the worker starts consuming,
+exactly as production does. It looks like an optimisation but it is what makes hooks usable at all.
+
+The value is a list of `name:tag` pairs separated by spaces or commas, each resolved against
+`${SPACE_OCI_GLOBAL_REGISTRY_URL}/space/hook-<name>:<tag>`. It belongs to the **override** layer, next
+to the registry credentials, because it depends on what the registry actually holds: the
+`compose*.override.yml.dist` templates ship it empty, and an empty value pulls nothing.
+
+```yaml
+    cli_execute:
+        environment:
+            - SPACE_BUILDER_HOOKS=composer:latest composer:8.5 make:latest npm:latest php:8.5
+```
+
+A hook is run by `space-run`, that is `nerdctl run`, and `nerdctl run` has no quiet mode in the version
+this image ships. So when the image is not already local, the pull happens *inside* the hook, and
+`Teknoo\East\Paas\Infrastructures\ProjectBuilding\AbstractHook::run()` stores
+`getOutput() . getErrorOutput()` in the job history. Measured on `hook-composer:8.5`: **4.2 MB and
+28 122 lines** of progress-bar redraw frames written to the history, and **187 s** of the hook's
+**240 s** timeout spent downloading before `composer` even starts.
+
+The `builder_containerd` volume keeps the pulled images across container recreations, so the download
+is paid once. The pre-pull still runs in the background rather than inline: on a first start the
+collection is several gigabytes, and a worker that has not reached `messenger:consume` leaves the
+`execute_job` queue unconsumed for exactly that long. Keep `SPACE_BUILDER_HOOKS` to the hooks you
+actually use rather than the full catalogue.
+
+#### Why the service is `privileged`
+
+`privileged: true` on `cli_execute` is not a convenience, it is a requirement, and it was measured on
+this image:
+
+| Docker options | Result |
+|---|---|
+| defaults | `buildah` dies immediately: `Error during unshare(CLONE_NEWUSER): Operation not permitted` (the default seccomp profile blocks the syscall) and `/dev/fuse` is absent |
+| `--security-opt seccomp=unconfined` + `--device /dev/fuse` | fails at the overlay mount: `permission denied` (AppArmor) |
+| `--security-opt seccomp=unconfined --security-opt apparmor=unconfined` | fails at the overlay mount: `fuse: device not found` |
+| all three together | `newuidmap`/`newgidmap` still fail and buildah falls back to a *single* UID mapping, so pulling any real base image fails: `potentially insufficient UIDs or GIDs available in user namespace (requested 0:42 for /etc/shadow)` |
+| `--privileged` | works, with the full `/etc/subuid` range: `buildah bud` builds, commits and tags |
+
+Only the last row can build an image whose layers contain files owned by more than one UID, which is
+every distribution base image. Note that `privileged` does not give the process any capability here —
+the container still runs as `spaceuser` with an empty effective capability set — it lifts the seccomp
+and AppArmor profiles, exposes `/dev/fuse` and allows the full user-namespace UID mapping.
+
 ## Best Practices
 
 ### Domain Layer
@@ -976,4 +1101,3 @@ See the LICENSE file for details.
 
 - **Community Support**: GitHub Issues and Discussions (free)
 - **Priority Support**: contact@teknoo.software (commercial)
-- **Enterprise Edition**: richard@teknoo.software

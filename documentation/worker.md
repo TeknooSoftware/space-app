@@ -3,25 +3,40 @@
 ## Overview
 
 Space uses a distributed worker architecture based on Symfony Messenger to handle asynchronous job processing.
-Workers are independent processes that consume messages from RabbitMQ queues and execute deployment tasks.
+Workers are independent processes that consume messages from a queue and execute deployment tasks. The
+transport DSNs default to `in-memory://`; a real deployment points them at RabbitMQ through the
+`MESSENGER_*_DSN` variables, and the test environment overrides every one of them to `test://`.
 
 ## Worker Types
 
-Space includes four types of workers, each with a specific responsibility:
+Space includes four types of workers, each with a specific responsibility. An enabled extension may declare
+transports and consumers of its own; that extension's documentation lists them and says which to run.
 
 ### 1. New Task Worker
 
-**Purpose**: Initialize new deployment jobs
+**Purpose**: Run every `NewTaskInterface` task queued by the web application
 
 **Queue**: `new_task`
 
 **Responsibilities**:
 
-- Receive new job creation requests
-- Validate job parameters
-- Store job metadata in MongoDB
-- Dispatch job to Execute Job Worker
-- Publish real-time updates via Mercure (if enabled)
+- Receive new job creation requests (`NewJob`): validate the job, store its metadata in MongoDB and dispatch
+  it to the Execute Job Worker; publish real-time updates via Mercure (if enabled)
+- Run the account provisioning tasks (`Teknoo\Space\Object\DTO\Task\*`), directly and without a second hop
+  since they are short: `InstallRegistryTask` (queued when an account is created), `InstallEnvironmentTask`
+  (queued when an environment is added to an account), `ReinstallEnvironmentTask`, `ReinstallRegistryTask` and
+  `RefreshQuotaTask` (queued by the admin account actions). The worker reloads the account, its history,
+  clusters, environments and registry, resolves the Kubernetes or Docker Compose provisioning plan from the
+  cluster type, applies it and records the result (or the error) in the `AccountHistory`. The web request only
+  writes a "task queued" line in that history and redirects to the account page.
+- Tear down the environments removed from an account (`DeleteEnvironmentsTask`, queued by the account edition
+  flows once the `AccountEnvironment` documents are dropped): the `AccountEnvironmentsDeletionTask` plan deletes
+  the Kubernetes namespace of each removed environment when it is labelled with the account id, and records in
+  the `AccountHistory` what was deleted, not found, or not applicable (Docker Compose clusters)
+- Run any `NewTaskInterface` task registered by an enabled extension
+
+`NewTaskHandler` resolves the plan of a task from its class through `NewTaskRecipeRegistry`
+(`config/di.recipe.plans.php`; extensions decorate it to register their own tasks).
 
 **Command**:
 
@@ -34,6 +49,8 @@ bin/console messenger:consume new_task
 - CPU: Low (1-2 cores)
 - RAM: 64 - 256 MB
 - Concurrency: 1-2 instances recommended
+- **Requires**: `ansible-playbook` (`ansible-core`) and an SSH client when a cluster of the catalog is a
+  `docker-compose` one (the per-account registry is provisioned on the Docker host over Ansible)
 
 ### 2. Execute Job Worker
 
@@ -59,6 +76,20 @@ bin/console messenger:consume new_task
 ```bash
 bin/console messenger:consume execute_job
 ```
+
+**Time limit check**: when it starts (`execute_job` among the receivers, or `--all`), the worker compares
+`SPACE_WORKER_TIME_LIMIT`, the time limit set on each job, to the timeouts of the operations a job runs, and
+prints a `[WARNING]` block on its standard output for:
+
+- each timeout bigger than the time limit: `SPACE_GIT_TIMEOUT`, `SPACE_IMG_BUILDER_TIMEOUT`, `SPACE_DC_TIMEOUT`,
+  `SPACE_KUBERNETES_CLIENT_TIMEOUT` and the timeout of each hook of the collection;
+- the biggest hook timeout added to the biggest deployment timeout (`SPACE_DC_TIMEOUT` or
+  `SPACE_KUBERNETES_CLIENT_TIMEOUT`), when this sum is bigger than the time limit. Only the biggest hook is
+  counted, a job does not run every hook.
+
+The worker is stopped when the time limit is reached, so such a timeout is never reached. The worker still starts,
+the warning is only informative. A timeout (or a time limit) lower or equal to zero means no limit and is not
+checked. East PaaS also adds these warnings, for the timeouts and hooks used by the job, in each job's history.
 
 **Resource Requirements**:
 
@@ -139,6 +170,40 @@ bin/console messenger:consume job_done
 7. Job Done Worker finalizes job
 ```
 
+Account provisioning follows a shorter path, entirely handled by the New Task Worker:
+
+```
+1. Account created / environment added / admin reinstall or quota refresh (Web UI/API)
+        ↓
+2. Install*Task / Reinstall*Task / RefreshQuotaTask → new_task queue ("task queued" line in AccountHistory)
+        ↓
+3. New Task Worker runs AccountProvisioningTask
+   ├→ loads Account, AccountHistory, clusters, environments, registry
+   ├→ ProvisioningPlanBowl picks the Kubernetes or Docker Compose plan
+   └→ persists AccountEnvironment / AccountRegistry and the result in AccountHistory
+```
+
+The registry tasks resolve their cluster before the type dispatch: `SelectRegistryCluster` reads the cluster
+recorded in the account's `AccountRegistry` (or, for a first install and for registries predating that field, the
+first cluster of the catalog declaring the registry support) and publishes it as `registryClusterName`. The bowl
+and every registry step use that name, and `PersistRegistryCredential` stores it on the rebuilt registry, so a
+reinstall always lands on the cluster hosting the registry URL, namespace and volume. A recorded cluster missing
+from the catalog fails the task and is reported in the `AccountHistory`, rather than rebuilding the registry
+elsewhere.
+
+The quota refresh is the one account-wide provisioning task: a quota applies to every environment of the account (an
+environment is a cluster plus a namespace), so `RefreshQuotaTask` runs `AccountRefreshQuotaTask` instead, which
+loads the account, its history, clusters and environments, then loops over the whole wallet. At each iteration the
+`ProvisioningPlanBowl` picks the Kubernetes or Docker Compose single-environment quota plan for *that* environment's
+cluster: the `ResourceQuota` is re-applied on every Kubernetes namespace, and a "not applicable" line is recorded in
+the `AccountHistory` for each environment hosted on a Docker Compose cluster. The loop position lives in the
+workplan (`WalletCursor`), never in a step instance, because the same plan instance serves every task consumed by
+a long-running worker.
+
+Removing environments from an account follows the same path: the web request drops the `AccountEnvironment`
+documents and queues one `DeleteEnvironmentsTask` listing them (name, cluster, namespace); the New Task Worker
+runs `AccountEnvironmentsDeletionTask` (`DeleteNamespaces` step) and records the outcome in the `AccountHistory`.
+
 ### Worker Process Lifecycle
 
 ```
@@ -180,6 +245,61 @@ MESSENGER_HISTORY_SENT_DSN=amqp://...
 MESSENGER_JOB_DONE_DSN=amqp://...
 ```
 
+**New Task Worker Specific** (account provisioning runs here, not in the web server):
+
+```bash
+# Clusters: the catalog (or the legacy single cluster), exactly as configured on the web server
+SPACE_CLUSTER_CATALOG_JSON=...          # or SPACE_CLUSTER_CATALOG_FILE, or the SPACE_CLUSTER_NAME / SPACE_CLUSTER_TYPE /
+                                        # SPACE_KUBERNETES_MASTER / SPACE_KUBERNETES_CREATE_TOKEN / SPACE_KUBERNETES_CA_VALUE set
+SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+SPACE_KUBERNETES_CLUSTER_USE_HNC=0
+SPACE_KUBERNETES_ROOT_NAMESPACE=space-client-
+SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE=space-registry-
+SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME=5
+SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS=public
+SPACE_CLUSTER_ISSUER=lets-encrypt
+# Per-account registry (Kubernetes) and global registry credentials
+SPACE_OCI_REGISTRY_IMAGE=registry:latest
+SPACE_OCI_REGISTRY_URL=...
+SPACE_OCI_REGISTRY_TLS_SECRET=registry-certs
+SPACE_OCI_REGISTRY_PVC_SIZE=4Gi
+SPACE_OCI_REGISTRY_REQUESTS_CPU=10m
+SPACE_OCI_REGISTRY_REQUESTS_MEMORY=32Mi
+SPACE_OCI_REGISTRY_LIMITS_CPU=100m
+SPACE_OCI_REGISTRY_LIMITS_MEMORY=256Mi
+SPACE_OCI_GLOBAL_REGISTRY_URL=...
+SPACE_OCI_GLOBAL_REGISTRY_USERNAME=...
+SPACE_OCI_GLOBAL_REGISTRY_PWD=...
+SPACE_STORAGE_CLASS=nfs.csi.k8s.io
+SPACE_STORAGE_DEFAULT_SIZE=3Gi
+SPACE_JOB_ROOT=/tmp                     # Ansible inventories and Kubernetes client temporary files
+# Docker Compose clusters only (per-account registry provisioned over Ansible; library defaults shown)
+SPACE_DC_ANSIBLE_BINARY=ansible-playbook
+SPACE_DC_TIMEOUT=900
+SPACE_DC_DEPLOY_ROOT=/opt/paas
+SPACE_DC_NETWORK_INTERNAL=false
+SPACE_DC_TRAEFIK_CERTS_MOUNT_DIR=/etc/traefik/certs   # defaults to SPACE_DC_TRAEFIK_CERTS_DIR
+SPACE_DC_REGISTRY_IMAGE=registry:2
+SPACE_DC_REGISTRY_NETWORK=space-registry
+SPACE_DC_REGISTRY_PORT=5000
+SPACE_DC_REGISTRY_TLS=false
+# Persisted variables: this worker is the only process decrypting them (NewJob variables)
+SPACE_PERSISTED_VAR_AGENT_MODE=1
+SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
+SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/etc/space/keys/variables/public.pem
+SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY=/etc/space/keys/variables/private.pem
+SPACE_PERSISTED_VAR_SECURITY_PRIVATE_KEY_PASSPHRASE=...
+SPACE_NEW_TASK_WAITING_TIME=5
+MERCURE_PUBLISH_URL=...                 # NewJob real-time updates, reachable from this process
+MERCURE_JWT_TOKEN=...
+```
+
+The web server keeps only what its own pages need: the clusters catalog (dashboard health overview, dashboard
+frame, account clusters), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE` (namespace name computed
+at account creation) and the persisted variables **public** key (`SPACE_PERSISTED_VAR_AGENT_MODE=0`). The OCI
+registry, cluster issuer, HNC, storage and `SPACE_DC_*` settings are no longer read by the web server.
+
 **Execute Job Worker Specific**:
 
 ```bash
@@ -189,11 +309,19 @@ SPACE_GIT_TIMEOUT=600
 SPACE_IMG_BUILDER_CMD=buildah
 SPACE_IMG_BUILDER_TIMEOUT=1800
 SPACE_IMG_BUILDER_PLATFORMS=linux/amd64
-SPACE_KUBERNETES_MASTER=https://...
-SPACE_KUBERNETES_CREATE_TOKEN=...
-# For docker-compose deployment targets, the SPACE_DC_* variables apply instead
+SPACE_KUBERNETES_CLIENT_TIMEOUT=3
+SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
+SPACE_KUBERNETES_VERSION_LEVEL=1.30
+SPACE_STORAGE_CLASS=nfs.csi.k8s.io
+SPACE_STORAGE_DEFAULT_SIZE=3Gi
+# The job carries its own cluster credentials: no SPACE_KUBERNETES_MASTER / SPACE_KUBERNETES_CREATE_TOKEN here.
+# For docker-compose deployment targets, the SPACE_DC_* variables apply
 # (see documentation/configuration.md — Docker Compose Configuration).
 ```
+
+**Message encryption (all processes)**: `TEKNOO_PAAS_SECURITY_*`. The web server only encrypts (public key);
+every worker decrypts what it receives and encrypts what it forwards, so each worker needs both the public and
+the private key.
 
 **Health Check**:
 To configure health check to kill the agent if it freeze
@@ -214,7 +342,7 @@ Common options for `messenger:consume`:
 - Prevents memory leaks
 
 ```bash
-bin/console messenger:consume execute_job
+bin/console messenger:consume execute_job --time-limit=3600
 ```
 
 **--memory-limit=LIMIT**
@@ -686,13 +814,18 @@ Workers broadcast real-time job status updates via Mercure (Server-Sent Events).
 `infrastructures/Symfony/Mercure/`:
 
 - **TaskUrlPublisher**: Publishes job URL updates after job processing completes. Triggers browser
-  redirect to the job detail page. Dispatched by `NewTaskHandler` and `ExecuteJobHandler`.
+  redirect to the job detail page. Dispatched by `NewTaskHandler` and `RunJobHandler`.
 - **TaskErrorPublisher**: Publishes task error notifications when a job fails or encounters errors.
   Used by the `TaskError` notifier for error broadcast.
 
 The Mercure hub delivers SSE events to subscribed browsers, enabling live dashboard updates without
 polling. Clients subscribe via the Mercure JavaScript library using the hub URL and JWT authorization
 token.
+
+The protocol spoken by the hub is driven by the `MERCURE_PROTOCOL_VERSION` environment variable (`0.x` by default,
+see [configuration.md](configuration.md)). It is read while the Symfony container
+is compiled and must carry the same value for the web process and for every worker: a Mercure 1.0 hub
+rejects the 0.x tokens, and vice versa.
 
 ## Related Documentation
 

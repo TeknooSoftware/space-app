@@ -52,10 +52,12 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerFactoryInterface;
-use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\BuildRegistryInventory;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\PlaybookRunner;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\GenerateRegistryCredentials;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\LogDeployUserInRegistries;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\PersistSshIdentity;
 use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\RunRegistryPlaybook;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step\SkipQuotaRefresh;
 use Teknoo\Space\Infrastructures\Endroid\QrCode\Recipe\Step\BuildQrCode;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\CreateNamespace;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Account\PrepareAccountErrorHandler;
@@ -67,7 +69,7 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRole;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateRoleBinding;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecretServiceAccountToken;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaceFromResumes;
+use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaces;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
@@ -105,10 +107,14 @@ use Teknoo\Space\Recipe\Step\AccountEnvironment\ExtractResumes;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\FindEnvironmentInWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\PersistEnvironment;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\PrepareDeleteEnvironmentsTask;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\EndLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\ReloadEnvironement;
+use Teknoo\Space\Recipe\Step\AccountEnvironment\StartLoopingOnWallet;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\RemoveEnvironment;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
+use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
@@ -130,6 +136,9 @@ use Teknoo\Space\Recipe\Step\SpaceProject\PrepareRedirection as SpaceProjectPrep
 use Teknoo\Space\Recipe\Step\SpaceProject\WorkplanInit;
 use Teknoo\Space\Recipe\Step\Subscription\CreateAccount;
 use Teknoo\Space\Recipe\Step\Subscription\InjectStatus;
+use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
+use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
+use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
@@ -152,26 +161,57 @@ return [
         );
     },
 
-    BuildRegistryInventory::class => create()
+    //Every playbook run by Space itself: writes the single-host inventory, runs, then removes the inventory
+    PlaybookRunner::class => create()
         ->constructor(
+            get(RunnerFactoryInterface::class),
             get('teknoo.space.flysystem.ansible_inventory'),
             get('teknoo.east.paas.worker.tmp_dir'),
         ),
 
-    GenerateRegistryCredentials::class => create()
-        ->constructor(
-            get('teknoo.east.paas.docker-compose.registry.image'),
-            get('teknoo.east.paas.docker-compose.registry.network'),
-            get('teknoo.east.paas.docker-compose.registry.port'),
-            get('teknoo.east.paas.docker-compose.registry.tls'),
-            get('teknoo.east.paas.docker-compose.deploy_root'),
-        ),
+    //A closure: `teknoo.east.paas.docker-compose.traefik.default_certresolver` is only declared when the
+    //SPACE_DC_TRAEFIK_CERTRESOLVER env var is set (see di.variables.east.paas.php), `get()` would throw.
+    GenerateRegistryCredentials::class => static function (ContainerInterface $container): GenerateRegistryCredentials {
+        $certresolver = null;
+        if ($container->has('teknoo.east.paas.docker-compose.traefik.default_certresolver')) {
+            $certresolver = (string) $container->get('teknoo.east.paas.docker-compose.traefik.default_certresolver');
+        }
+
+        return new GenerateRegistryCredentials(
+            registryImage: (string) $container->get('teknoo.east.paas.docker-compose.registry.image'),
+            registryNetwork: (string) $container->get('teknoo.east.paas.docker-compose.registry.network'),
+            registryPort: (int) $container->get('teknoo.east.paas.docker-compose.registry.port'),
+            registryTls: (bool) $container->get('teknoo.east.paas.docker-compose.registry.tls'),
+            deployRoot: (string) $container->get('teknoo.east.paas.docker-compose.deploy_root'),
+            traefikContainer: (string) $container->get('teknoo.east.paas.docker-compose.traefik.container'),
+            traefikDynamicDir: (string) $container->get('teknoo.east.paas.docker-compose.traefik.dynamic_dir'),
+            traefikEntrypointWebsecure: (string) $container->get(
+                'teknoo.east.paas.docker-compose.traefik.entrypoint.websecure',
+            ),
+            traefikDefaultCertresolver: $certresolver,
+        );
+    },
 
     RunRegistryPlaybook::class => create()
         ->constructor(
-            get(RunnerFactoryInterface::class),
+            get(PlaybookRunner::class),
             dirname(__DIR__) . '/infrastructures/AnsibleDockerCompose/templates/registry.yml',
         ),
+
+    //Docker-compose counterpart of CreateDockerSecret: same account and global Space registries
+    LogDeployUserInRegistries::class => static function (ContainerInterface $container): LogDeployUserInRegistries {
+        return new LogDeployUserInRegistries(
+            playbookRunner: $container->get(PlaybookRunner::class),
+            playbookPath: dirname(__DIR__) . '/infrastructures/AnsibleDockerCompose/templates/registries-login.yml',
+            datesService: $container->get(DatesService::class),
+            preferRealDate: !empty($container->get('teknoo.space.prefer-real-date')),
+            spaceRegistryUrl: (string) $container->get('teknoo.space.kubernetes.oci_space_global_registry.url'),
+            spaceRegistryUsername: (string) $container->get(
+                'teknoo.space.kubernetes.oci_space_global_registry.username',
+            ),
+            spaceRegistryPwd: (string) $container->get('teknoo.space.kubernetes.oci_space_global_registry.pwd'),
+        );
+    },
 
     SetAccountNamespace::class => create()
         ->constructor(
@@ -189,14 +229,20 @@ return [
         );
     },
 
-    DeleteNamespaceFromResumes::class => create()
-        ->constructor(
-            get('teknoo.space.clusters_catalog'),
-        ),
+    DeleteNamespaces::class => static function (ContainerInterface $container): DeleteNamespaces {
+        return new DeleteNamespaces(
+            $container->get(DatesService::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
 
     ReloadNamespace::class => create(),
 
     ReloadEnvironement::class => create(),
+
+    StartLoopingOnWallet::class => create(),
+
+    EndLoopingOnWallet::class => create(),
 
     CreateServiceAccount::class => static function (ContainerInterface $container): CreateServiceAccount {
         return new CreateServiceAccount(
@@ -322,6 +368,33 @@ return [
         );
     },
 
+    AddTaskToHistory::class => static function (ContainerInterface $container): AddTaskToHistory {
+        return new AddTaskToHistory(
+            $container->get(AccountHistoryWriter::class),
+            $container->get(DatesService::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
+    AccountTaskErrorHandler::class => static function (ContainerInterface $container): AccountTaskErrorHandler {
+        return new AccountTaskErrorHandler(
+            $container->get(DatesService::class),
+            $container->get(AccountHistoryWriter::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
+    PrepareAccountTask::class => create(),
+
+    PrepareDeleteEnvironmentsTask::class => create(),
+
+    SkipQuotaRefresh::class => static function (ContainerInterface $container): SkipQuotaRefresh {
+        return new SkipQuotaRefresh(
+            $container->get(DatesService::class),
+            !empty($container->get('teknoo.space.prefer-real-date')),
+        );
+    },
+
     CreateAccountHistory::class => static function (ContainerInterface $container): CreateAccountHistory {
         return new CreateAccountHistory(
             $container->get(AccountHistoryWriter::class),
@@ -346,6 +419,8 @@ return [
 
     DeleteEnvFromResumes::class => create()
         ->constructor(get(AccountEnvironmentWriter::class)),
+
+    SelectRegistryCluster::class => create(),
 
     LoadRegistryCredential::class => create()
         ->constructor(get(AccountRegistryLoader::class)),

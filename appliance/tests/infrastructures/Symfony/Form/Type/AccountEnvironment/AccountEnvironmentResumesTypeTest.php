@@ -25,13 +25,24 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\AccountEnvironment;
 
+use ArrayIterator;
+use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\ResolvedFormTypeInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountEnvironment\AccountEnvironmentResumesType;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
+use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
 
 /**
  * Class AccountEnvironmentResumesTypeTest.
@@ -68,11 +79,139 @@ class AccountEnvironmentResumesTypeTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testBuildFormWithoutSubscriptionPlan(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->accountEnvironmentResumesType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [],
+        );
+    }
+
+    public function testBuildFormWithoutClusterCatalog(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->accountEnvironmentResumesType->buildForm(
+            $this->createStub(FormBuilderInterface::class),
+            [
+                'subscriptionPlan' => new SubscriptionPlan('plan', 'Plan', []),
+            ],
+        );
+    }
+
+    private function buildCluster(string $name, bool $isExternal): KubernetesCluster
+    {
+        return new KubernetesCluster(
+            name: $name,
+            sluggyName: $name,
+            type: 'kubernetes',
+            masterAddress: 'https://master',
+            storageProvisioner: 'provisioner',
+            dashboardAddress: 'https://dashboard',
+            kubernetesClient: static fn () => throw new DomainException('not needed'),
+            token: 'token',
+            supportRegistry: false,
+            useHnc: false,
+            isExternal: $isExternal,
+        );
+    }
+
+    private function buildChild(string $name, mixed $attr): FormInterface&Stub
+    {
+        $type = $this->createStub(ResolvedFormTypeInterface::class);
+        $type->method('getInnerType')->willReturn(new TextType());
+
+        $config = $this->createStub(FormConfigInterface::class);
+        $config->method('getOptions')->willReturn(['attr' => $attr]);
+        $config->method('getType')->willReturn($type);
+
+        $child = $this->createStub(FormInterface::class);
+        $child->method('getConfig')->willReturn($config);
+        $child->method('getData')->willReturn('value');
+        $child->method('getName')->willReturn($name);
+
+        return $child;
+    }
+
+    public function testBuildFormWithRealCatalogAndPostSetDataListener(): void
+    {
+        $added = [];
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')
+            ->willReturnCallback(
+                function (string $child, ?string $type = null, array $options = []) use (&$added, $builder) {
+                    $added[$child] = $options;
+
+                    return $builder;
+                }
+            );
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $event, callable $listener) use (&$listeners, $builder) {
+                    $listeners[$event][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $this->accountEnvironmentResumesType->buildForm(
+            $builder,
+            [
+                'subscriptionPlan' => new SubscriptionPlan('plan', 'Plan', [], clusters: ['c1']),
+                'clusterCatalog' => new ClusterCatalog(
+                    [
+                        'c1' => $this->buildCluster('c1', false),
+                        'c2' => $this->buildCluster('c2', true),
+                        'c3' => $this->buildCluster('c3', false),
+                    ],
+                    [],
+                ),
+            ],
+        );
+
+        $this->assertSame(['c1' => 'c1', 'c2' => 'c2'], $added['clusterName']['choices']);
+        $this->assertCount(1, $listeners[FormEvents::POST_SET_DATA]);
+        $listener = $listeners[FormEvents::POST_SET_DATA][0];
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->never())->method('add');
+        $listener(new FormEvent($form, null));
+        $listener(new FormEvent($form, new AccountEnvironmentResume('c1', 'env', null)));
+
+        $children = new ArrayIterator(
+            [
+                $this->buildChild('clusterName', []),
+                $this->buildChild('envName', 'not an array'),
+            ]
+        );
+        $form = $this->createMock(FormInterface::class);
+        $form->method('rewind')->willReturnCallback($children->rewind(...));
+        $form->method('valid')->willReturnCallback($children->valid(...));
+        $form->method('current')->willReturnCallback($children->current(...));
+        $form->method('key')->willReturnCallback($children->key(...));
+        $form->method('next')->willReturnCallback($children->next(...));
+        $form->expects($this->exactly(2))
+            ->method('add')
+            ->with($this->isString(), TextType::class, $this->isArray())
+            ->willReturnSelf();
+
+        $listener(new FormEvent($form, new AccountEnvironmentResume('c1', 'env', 'someId')));
+    }
+
     public function testConfigureOptions(): void
     {
-        $this->accountEnvironmentResumesType->configureOptions(
-            $this->createStub(OptionsResolver::class),
+        $resolver = new OptionsResolver();
+        $this->accountEnvironmentResumesType->configureOptions($resolver);
+
+        $this->assertSame(
+            AccountEnvironmentResume::class,
+            $resolver->resolve(
+                [
+                    'subscriptionPlan' => new SubscriptionPlan('plan', 'Plan', []),
+                    'clusterCatalog' => new ClusterCatalog([], []),
+                ]
+            )['data_class'],
         );
-        $this->assertTrue(true);
     }
 }

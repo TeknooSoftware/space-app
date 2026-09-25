@@ -684,6 +684,7 @@ EOF;
         bool $jobsEnabled,
         string $ingressProvider,
         string $versionLevel = '1.30',
+        bool $exposeShortcuts = false,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -691,6 +692,15 @@ EOF;
 
         $useImageVolumes = version_compare($versionLevel, '1.32', '>=');
         $useHostUsers = version_compare($versionLevel, '1.36', '>=');
+
+        // With the v1.2 expose shortcuts, services are generated from the container ({pod}-{container}) and the
+        // ingress is named after its service, the compiled deployment is otherwise identical to the explicit one.
+        $phpServiceName = 'php-service';
+        $demoServiceName = 'demo';
+        if ($exposeShortcuts) {
+            $phpServiceName = 'php-pods-php-run';
+            $demoServiceName = 'demo-nginx';
+        }
 
         $servicePrefix = '';
         $serviceSuffix = '';
@@ -955,8 +965,15 @@ EOF;
 JSON;
         }
 
-        $translationVolumeEntry = $useImageVolumes
-            ? <<<JSON
+        $translationVolumeEntry = <<<JSON
+{
+                                "name": "extra-myproject-volume",
+                                "emptyDir": []
+                            }
+JSON;
+
+        if ($useImageVolumes) {
+            $translationVolumeEntry = <<<JSON
 {
                                 "name": "extra-myproject-volume",
                                 "image": {
@@ -964,15 +981,13 @@ JSON;
                                     "pullPolicy": "Always"
                                 }
                             }
-JSON
-            : <<<JSON
-{
-                                "name": "extra-myproject-volume",
-                                "emptyDir": []
-                            }
 JSON;
+        }
 
-        $statefulSetInitContainerBlock = $useImageVolumes ? '' : <<<JSON
+        $statefulSetInitContainerBlock = '';
+
+        if (!$useImageVolumes) {
+            $statefulSetInitContainerBlock = <<<JSON
 ,
                         "initContainers": [
                             {
@@ -995,9 +1010,17 @@ JSON;
                             }
                         ]
 JSON;
+        }
 
-        $statefulSetVolumeEntry = $useImageVolumes
-            ? <<<JSON
+        $statefulSetVolumeEntry = <<<JSON
+{
+                                "name": "extra-{$jobId}-volume",
+                                "emptyDir": []
+                            }
+JSON;
+
+        if ($useImageVolumes) {
+            $statefulSetVolumeEntry = <<<JSON
 {
                                 "name": "extra-{$jobId}-volume",
                                 "image": {
@@ -1005,13 +1028,8 @@ JSON;
                                     "pullPolicy": "Always"
                                 }
                             }
-JSON
-            : <<<JSON
-{
-                                "name": "extra-{$jobId}-volume",
-                                "emptyDir": []
-                            }
 JSON;
+        }
 
         $jobsManifest = '';
         if ($jobsEnabled) {
@@ -1408,10 +1426,10 @@ EOF;
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "{$projectPrefix}demo",
+                "name": "{$projectPrefix}{$demoServiceName}",
                 "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
-                    "name": "{$projectPrefix}demo"
+                    "name": "{$projectPrefix}{$demoServiceName}"
                 }
             },
             "spec": {
@@ -1421,7 +1439,7 @@ EOF;
                 "type": "ClusterIP",
                 "ports": [
                     {
-                        "name": "demo-8080",
+                        "name": "{$demoServiceName}-8080",
                         "protocol": "TCP",
                         "port": 8080,
                         "targetPort": 8080
@@ -1433,10 +1451,10 @@ EOF;
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "{$projectPrefix}demo-ssl",
+                "name": "{$projectPrefix}{$demoServiceName}-ssl",
                 "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
-                    "name": "{$projectPrefix}demo-ssl"
+                    "name": "{$projectPrefix}{$demoServiceName}-ssl"
                 }
             },
             "spec": {
@@ -1446,7 +1464,7 @@ EOF;
                 "type": "ClusterIP",
                 "ports": [
                     {
-                        "name": "https-demo-ssl-8181",
+                        "name": "https-{$demoServiceName}-ssl-8181",
                         "protocol": "TCP",
                         "port": 8181,
                         "targetPort": 8181
@@ -1461,10 +1479,10 @@ EOF;
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "{$projectPrefix}demo",
+                "name": "{$projectPrefix}{$demoServiceName}",
                 "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
-                    "name": "{$projectPrefix}demo"
+                    "name": "{$projectPrefix}{$demoServiceName}"
                 }
             },
             "spec": {
@@ -1474,13 +1492,13 @@ EOF;
                 "type": "ClusterIP",
                 "ports": [
                     {
-                        "name": "demo-8080",
+                        "name": "{$demoServiceName}-8080",
                         "protocol": "TCP",
                         "port": 8080,
                         "targetPort": 8080
                     },
                     {
-                        "name": "demo-8181",
+                        "name": "{$demoServiceName}-8181",
                         "protocol": "TCP",
                         "port": 8181,
                         "targetPort": 8181
@@ -2009,10 +2027,10 @@ EOF;
             "kind": "Service",
             "apiVersion": "v1",
             "metadata": {
-                "name": "{$projectPrefix}php-service",
+                "name": "{$projectPrefix}{$phpServiceName}",
                 "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
-                    "name": "{$projectPrefix}php-service"
+                    "name": "{$projectPrefix}{$phpServiceName}"
                 }
             },
             "spec": {
@@ -2022,7 +2040,7 @@ EOF;
                 "type": "LoadBalancer",
                 "ports": [
                     {
-                        "name": "{$servicePrefix}php-service-9876",
+                        "name": "{$servicePrefix}{$phpServiceName}-9876",
                         "protocol": "TCP",
                         "port": 9876,
                         "targetPort": 8080
@@ -2037,10 +2055,10 @@ EOF;
             "kind": "Ingress",
             "apiVersion": "networking.k8s.io/v1",
             "metadata": {
-                "name": "{$projectPrefix}demo-ingress",
+                "name": "{$projectPrefix}{$demoServiceName}-ingress",
                 "namespace": "space-client-my-company-prod{$hncSuffix}",
                 "labels": {
-                    "name": "{$projectPrefix}demo"
+                    "name": "{$projectPrefix}{$demoServiceName}"
                 },
                 "annotations": {
                     "foo2": "bar",
@@ -2058,7 +2076,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}demo",
+                                            "name": "{$projectPrefix}{$demoServiceName}",
                                             "port": {
                                                 "number": 8080
                                             }
@@ -2070,7 +2088,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}php-service",
+                                            "name": "{$projectPrefix}{$phpServiceName}",
                                             "port": {
                                                 "number": 9876
                                             }
@@ -2088,7 +2106,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}demo",
+                                            "name": "{$projectPrefix}{$demoServiceName}",
                                             "port": {
                                                 "number": 8080
                                             }
@@ -2100,7 +2118,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}php-service",
+                                            "name": "{$projectPrefix}{$phpServiceName}",
                                             "port": {
                                                 "number": 9876
                                             }
@@ -2118,7 +2136,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}demo",
+                                            "name": "{$projectPrefix}{$demoServiceName}",
                                             "port": {
                                                 "number": 8080
                                             }
@@ -2130,7 +2148,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}php-service",
+                                            "name": "{$projectPrefix}{$phpServiceName}",
                                             "port": {
                                                 "number": 9876
                                             }
@@ -2178,7 +2196,7 @@ EOF;
                                     "pathType": "Prefix",
                                     "backend": {
                                         "service": {
-                                            "name": "{$projectPrefix}demo{$serviceSuffix}",
+                                            "name": "{$projectPrefix}{$demoServiceName}{$serviceSuffix}",
                                             "port": {
                                                 "number": 8181
                                             }

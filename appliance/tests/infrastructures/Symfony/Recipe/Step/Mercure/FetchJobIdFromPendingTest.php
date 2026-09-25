@@ -25,10 +25,11 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Mercure;
 
+use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpClient\Chunk\ErrorChunk;
 use Symfony\Component\HttpClient\Chunk\FirstChunk;
 use Symfony\Component\HttpClient\Chunk\LastChunk;
 use Symfony\Component\HttpClient\Chunk\ServerSentEvent;
@@ -36,12 +37,17 @@ use Symfony\Component\HttpClient\EventSourceHttpClient;
 use Symfony\Component\HttpClient\Response\ResponseStream;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\HubRegistry;
+use Symfony\Component\Mercure\Jwt\Grant;
 use Symfony\Component\Mercure\Jwt\TokenFactoryInterface;
+use Symfony\Component\Mercure\ProtocolVersion;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\HttpClient\ChunkInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\Exception\ExceedLimitException;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\Exception\SSEClosedException;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Mercure\FetchJobIdFromPending;
 
 use const PHP_EOL;
@@ -57,15 +63,26 @@ use const PHP_EOL;
 #[CoversClass(FetchJobIdFromPending::class)]
 class FetchJobIdFromPendingTest extends TestCase
 {
-    private FetchJobIdFromPending $fetchJobIdFromPending;
-
     private HubRegistry $hub;
 
     private UrlGeneratorInterface&Stub $generator;
 
     private EventSourceHttpClient $sseClient;
 
+    private HttpClientInterface&Stub $httpClient;
+
+    private ResponseInterface&Stub $response;
+
     private string $pendingTaskRoute;
+
+    private string $topicUrl;
+
+    private ?string $requestedUrl = null;
+
+    /**
+     * @var array<int, Grant>
+     */
+    private array $requestedGrants = [];
 
     /**
      * {@inheritdoc}
@@ -74,19 +91,18 @@ class FetchJobIdFromPendingTest extends TestCase
     {
         parent::setUp();
 
-        $hubMock = $this->createStub(HubInterface::class);
-        $tokenFactory = $this->createStub(TokenFactoryInterface::class);
-        $tokenFactory->method('create')->willReturn('mock-jwt-token');
-        $hubMock->method('getFactory')->willReturn($tokenFactory);
+        $this->topicUrl = 'https://localhost/job/pending/foo';
+        $this->hub = $this->createHubRegistry(ProtocolVersion::Legacy);
 
-        $this->hub = new HubRegistry($hubMock);
         $this->generator = $this->createStub(UrlGeneratorInterface::class);
+        $this->generator->method('generate')->willReturn($this->topicUrl);
+
         $this->sseClient = new EventSourceHttpClient(
-            $httpClient = $this->createStub(HttpClientInterface::class),
+            $this->httpClient = $this->createStub(HttpClientInterface::class),
         );
 
-        $response = $this->createStub(ResponseInterface::class);
-        $response
+        $this->response = $this->createStub(ResponseInterface::class);
+        $this->response
             ->method('getInfo')
             ->willReturnCallback(
                 fn (?string $key): array|int|false => match ($key) {
@@ -98,51 +114,281 @@ class FetchJobIdFromPendingTest extends TestCase
                 }
             );
 
-        $httpClient
+        $this->httpClient
             ->method('request')
-            ->willReturn($response);
-
-        $httpClient
-            ->method('stream')
             ->willReturnCallback(
-                function () use ($response): \Symfony\Component\HttpClient\Response\ResponseStream {
-                    $generator = function () use ($response): \Generator {
-                        yield $response => new FirstChunk();
-                        yield $response => new ServerSentEvent(
-                            ':' . PHP_EOL
-                                . 'id: urn:uuid:3212d4b5-f4b8-4322-b5a4-5c49160c3283' . PHP_EOL
-                                . 'data: {"foo":"bar"}' . PHP_EOL
-                                . PHP_EOL
-                        );
-                        yield $response => new LastChunk();
-                    };
+                function (string $method, string $url): ResponseInterface {
+                    $this->requestedUrl = $url;
 
-                    return new ResponseStream(
-                        $generator(),
-                    );
+                    return $this->response;
                 }
             );
 
         $this->pendingTaskRoute = 'foo';
-        $this->fetchJobIdFromPending = new FetchJobIdFromPending(
+    }
+
+    private function createHubRegistry(ProtocolVersion $protocolVersion): HubRegistry
+    {
+        $tokenFactory = $this->createStub(TokenFactoryInterface::class);
+        $tokenFactory
+            ->method('create')
+            ->willReturnCallback(
+                function (array $grants = [], array $additionalClaims = []): string {
+                    $this->requestedGrants = $grants;
+
+                    return 'mock-jwt-token';
+                }
+            );
+
+        $hubMock = $this->createStub(HubInterface::class);
+        $hubMock->method('getFactory')->willReturn($tokenFactory);
+        $hubMock->method('getProtocolVersion')->willReturn($protocolVersion);
+        $hubMock->method('getPublicUrl')->willReturn('https://localhost/.well-known/mercure');
+
+        return new HubRegistry($hubMock);
+    }
+
+    /**
+     * Each callable feeds one call to the http client's stream() (the last one is reused for further calls).
+     *
+     * @param callable(ResponseInterface): Generator<ResponseInterface, ChunkInterface> ...$calls
+     */
+    private function prepareStream(callable ...$calls): void
+    {
+        $callCounter = 0;
+        $this->httpClient
+            ->method('stream')
+            ->willReturnCallback(
+                function () use (&$callCounter, $calls): ResponseStream {
+                    $chunks = $calls[min($callCounter++, count($calls) - 1)];
+
+                    return new ResponseStream(
+                        $chunks($this->response),
+                    );
+                }
+            );
+    }
+
+    private function createEvent(): ServerSentEvent
+    {
+        return new ServerSentEvent(
+            ':' . PHP_EOL
+                . 'id: urn:uuid:3212d4b5-f4b8-4322-b5a4-5c49160c3283' . PHP_EOL
+                . 'data: {"foo":"bar"}' . PHP_EOL
+                . PHP_EOL
+        );
+    }
+
+    private function buildStep(
+        int $maxLoopInSSE = 123,
+        int $maxChunkCount = 456,
+        bool $mercureEnabled = true,
+    ): FetchJobIdFromPending {
+        return new FetchJobIdFromPending(
             $this->hub,
             $this->generator,
             $this->sseClient,
             $this->pendingTaskRoute,
-            123,
-            456
+            $maxLoopInSSE,
+            $maxChunkCount,
+            $mercureEnabled,
         );
     }
 
     public function testInvoke(): void
     {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with('taskResult', ['foo' => 'bar'])
+            ->willReturnSelf();
+
         $this->assertInstanceOf(
             FetchJobIdFromPending::class,
-            ($this->fetchJobIdFromPending)(
+            ($this->buildStep())(
                 $this->createStub(ManagerInterface::class),
-                $this->createStub(ParametersBag::class),
+                $bag,
                 'foo',
             )
+        );
+    }
+
+    public function testInvokeWithMercureDisabled(): void
+    {
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with(
+                'taskResult',
+                [
+                    'task_id' => 'foo',
+                    'error_code' => 500,
+                    'error_message' => 'teknoo.space.error.job.pending.mercure_disabled',
+                ],
+            )
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            FetchJobIdFromPending::class,
+            ($this->buildStep(mercureEnabled: false))(
+                $this->createStub(ManagerInterface::class),
+                $bag,
+                'foo',
+            )
+        );
+    }
+
+    public function testInvokeWhenChunkLimitIsExceeded(): void
+    {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        $this->expectException(ExceedLimitException::class);
+        $this->expectExceptionMessage('teknoo.space.error.job.pending.exceed_sse_chunk_limit');
+        ($this->buildStep(maxChunkCount: 0))(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+    }
+
+    public function testInvokeWithATimeoutBeforeTheEvent(): void
+    {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => new ErrorChunk(0, 'timeout');
+            },
+            function (ResponseInterface $response): Generator {
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag
+            ->expects($this->once())
+            ->method('set')
+            ->with('taskResult', ['foo' => 'bar'])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            FetchJobIdFromPending::class,
+            ($this->buildStep())(
+                $this->createStub(ManagerInterface::class),
+                $bag,
+                'foo',
+            )
+        );
+    }
+
+    public function testInvokeWhenTheStreamIsClosedWithoutEvent(): void
+    {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => new LastChunk();
+            }
+        );
+
+        $this->expectException(SSEClosedException::class);
+        ($this->buildStep())(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+    }
+
+    public function testInvokeWhenRetryLimitIsExceeded(): void
+    {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => new ErrorChunk(0, 'timeout');
+            }
+        );
+
+        $this->expectException(ExceedLimitException::class);
+        $this->expectExceptionMessage('teknoo.space.error.job.pending.exceed_sse_retry_limit');
+        ($this->buildStep(maxLoopInSSE: 0))(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+    }
+
+    public function testInvokeSubscribesToTheTopicWithTheLegacyProtocol(): void
+    {
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        ($this->buildStep())(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+
+        $this->assertSame(
+            'https://localhost/.well-known/mercure'
+                . '?topic=' . rawurlencode($this->topicUrl)
+                . '&lastEventID=foo',
+            $this->requestedUrl,
+        );
+
+        $this->assertEquals(
+            [new Grant([Grant::ACTION_SUBSCRIBE], [$this->topicUrl])],
+            $this->requestedGrants,
+        );
+    }
+
+    public function testInvokeSubscribesToTheTopicWithTheProtocolOneDotZero(): void
+    {
+        $this->hub = $this->createHubRegistry(ProtocolVersion::V1);
+
+        $this->prepareStream(
+            function (ResponseInterface $response): Generator {
+                yield $response => new FirstChunk();
+                yield $response => $this->createEvent();
+                yield $response => new LastChunk();
+            }
+        );
+
+        ($this->buildStep())(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ParametersBag::class),
+            'foo',
+        );
+
+        $this->assertSame(
+            'https://localhost/.well-known/mercure'
+                . '?match=' . rawurlencode($this->topicUrl)
+                . '&lastEventID=foo',
+            $this->requestedUrl,
+        );
+
+        $this->assertEquals(
+            [new Grant([Grant::ACTION_SUBSCRIBE], [$this->topicUrl])],
+            $this->requestedGrants,
         );
     }
 }

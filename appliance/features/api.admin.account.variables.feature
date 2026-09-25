@@ -1,3 +1,4 @@
+@api @admin
 Feature: API admin endpoints to administrate variables and secrets defined for accounts
   In order to manage account's clusters
   As an administrator of Space
@@ -8,19 +9,17 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
   Variables can be a secret. According to the Space configuration secrets can be encrypted before be stored in the Space
   database and decrypted on the worker on the job execution.
 
+  Background:
+    Given a Space app instance
+    And a memory document database
+
   Scenario: From the API, as Admin, create new account variable, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables as admin:
       | field                                     | value  |
       | account_vars.sets.0.envName               | prod   |
@@ -43,21 +42,15 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, create new account variable, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body as admin:
       | field                        | value  |
       | sets.0.envName               | prod   |
@@ -80,13 +73,11 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, Update or delete accounts variables, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -102,11 +93,7 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ggg | var6 | 1      | value6 | dev         |
       | hhh | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables as admin:
       | field                                        | value    |
       | account_vars.sets.prod.envName               | prod     |
@@ -143,13 +130,11 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ggg | var6 | 1      | value7   | dev         |
       | hhh | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, Update or delete accounts variables, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -165,11 +150,7 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ggg | var6 | 1      | value6 | dev         |
       | hhh | var8 | 1      | value8 | dev         |
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body as admin:
       | field                           | value    |
       | sets.prod.envName               | prod     |
@@ -205,22 +186,16 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ggg | var6 | 1      | value7   | dev         |
       | hhh | var8 | 0      | value8   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, create new account encrypted secret, via a request with a form url encoded body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables as admin:
       | field                                     | value  |
       | account_vars.sets.0.envName               | prod   |
@@ -243,22 +218,16 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, create new account encrypted secret, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And an account for "My Other Company" with the account namespace "my-other-company"
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body as admin:
       | field                        | value  |
       | sets.0.envName               | prod   |
@@ -281,15 +250,12 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | x  | var1 | 0      | value1 | prod        |
       | x  | var2 | 1      | value2 | prod        |
       | x  | var3 | 0      | value3 | dev         |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
-  Scenario: From the API, as Admin, Update or delete encrypted accounts secrets, via a request with a form url
-  encoded body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+  Scenario: From the API, as Admin, Update or delete encrypted accounts secrets, via a request with a form url encoded body
+    Given encryption of persisted variables in the database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -304,11 +270,7 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ddd | var4 | 0      | value4 | dev         |
       | ggg | var6 | 1      | value6 | dev         |
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables as admin:
       | field                                        | value    |
       | account_vars.sets.prod.envName               | prod     |
@@ -339,14 +301,12 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ddd | var3 | 0      | value3.1 | dev         |
       | ggg | var6 | 1      | value7   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, Update or delete encrypted accounts secrets, via a request with a json body
-    Given A Space app instance
-    And A memory document database
-    And encryption of persisted variables in the database
+    Given encryption of persisted variables in the database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -361,11 +321,7 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ddd | var4 | 0      | value4 | dev         |
       | ggg | var6 | 1      | value6 | dev         |
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to update account's variables with a json body as admin:
       | field                           | value    |
       | sets.prod.envName               | prod     |
@@ -395,13 +351,11 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ddd | var3 | 0      | value3.1 | dev         |
       | ggg | var6 | 1      | value7   | dev         |
       | x   | var5 | 0      | value5   | prod        |
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, get accounts variables ans secrets of my account
-    Given A Space app instance
-    And A memory document database
-    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication enable for last user
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
     And an account for "My First Company" with the account namespace "my-first-company"
     And the account has these persisted variables:
       | id  | name | secret | value  | environment |
@@ -415,12 +369,8 @@ Feature: API admin endpoints to administrate variables and secrets defined for a
       | ccc | var3 | 0      | value3 | prod        |
       | ddd | var4 | 0      | value4 | dev         |
     And the platform is booted
-    When the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    Then it must redirected to the TOTP code page
-    When the user enter a valid TOTP code
-    And get a JWT token for the user
-    And the user logs out
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to get account's variables as admin
-    Then get a JSON reponse
+    Then get a JSON response
     And the serialized accounts variables with 4 variables
-    And no Kubernetes manifests must not be deleted
+    And no Kubernetes manifests have been deleted

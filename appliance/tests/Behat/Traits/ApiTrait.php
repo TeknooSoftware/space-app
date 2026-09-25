@@ -35,6 +35,7 @@ use RuntimeException;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
+use Teknoo\East\Paas\Contracts\Recipe\Step\Job\DispatchResultInterface;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
@@ -43,6 +44,7 @@ use Teknoo\East\Paas\Object\Cluster;
 use Teknoo\East\Paas\Object\Environment;
 use Teknoo\East\Paas\Object\Job as JobOrigin;
 use Teknoo\East\Paas\Object\Project as ProjectOrigin;
+use Teknoo\East\Paas\Recipe\Step\Worker\CloneRepository;
 use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountEnvironmentResume;
@@ -71,6 +73,7 @@ use function json_decode;
 use function json_encode;
 use function str_contains;
 use function str_starts_with;
+use function strlen;
 use function strtolower;
 use function trim;
 
@@ -783,9 +786,9 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to create an user as admin with a :format body:')]
-    #[When('the API is called to create an user as admin:')]
-    public function theApiIsCalledToCreateAnUserAsAdmin(
+    #[When('the API is called to create a user as admin with a :format body:')]
+    #[When('the API is called to create a user as admin:')]
+    public function theApiIsCalledToCreateAUserAsAdmin(
         TableNode $bodyFields,
         string $format = 'default',
     ): void {
@@ -977,8 +980,6 @@ trait ApiTrait
     #[When("the API is called to update account's :view with a :format body:")]
     #[When("the API is called to update account's :view as :role:")]
     #[When("the API is called to update account's :view with a :format body as :role:")]
-    #[When('the API is called to update variables of last account with a :format body as :role:')]
-    #[When('the API is called to update variables of last account with as :role:')]
     public function theApiIsCalledToUpdateAccountsSettings(
         TableNode $bodyFields,
         string $format = 'default',
@@ -1135,8 +1136,8 @@ trait ApiTrait
         );
     }
 
-    #[Then('get a JSON reponse')]
-    public function getAJsonReponse(): void
+    #[Then('get a JSON response')]
+    public function getAJsonResponse(): void
     {
         Assert::assertStringStartsWith(
             'application/json',
@@ -1154,6 +1155,12 @@ trait ApiTrait
 
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
+
+        // The provisioning is queued to the `new_task` worker: the response carries the generated task id
+        Assert::assertIsArray($unserialized);
+        Assert::assertNotEmpty($unserialized['taskId'] ?? null);
+        Assert::assertSame(48, strlen((string) $unserialized['taskId']));
+        unset($unserialized['taskId']);
 
         Assert::assertEquals(
             [
@@ -1279,8 +1286,8 @@ trait ApiTrait
         $this->itemsPerPages = $count / $page;
     }
 
-    #[Then('the a list of serialized users')]
-    public function theAListOfSerializedUsers(): void
+    #[Then('the list of serialized users')]
+    public function theListOfSerializedUsers(): void
     {
         $users = [];
         foreach ($this->getListOfPersistedObjects(User::class) as $user) {
@@ -1317,8 +1324,8 @@ trait ApiTrait
         );
     }
 
-    #[Then('the a list of serialized accounts')]
-    public function theAListOfSerializedAccounts(): void
+    #[Then('the list of serialized accounts')]
+    public function theListOfSerializedAccounts(): void
     {
         $accounts = [];
         foreach ($this->getListOfPersistedObjects(Account::class) as $account) {
@@ -1356,8 +1363,8 @@ trait ApiTrait
         );
     }
 
-    #[When('the a list of serialized jobs')]
-    public function theListSerializedJobs(): void
+    #[Then('the list of serialized jobs')]
+    public function theListOfSerializedJobs(): void
     {
         $jobs = $this->getListOfPersistedObjects(Job::class);
         $selectedJobs = array_values(
@@ -1390,8 +1397,8 @@ trait ApiTrait
         );
     }
 
-    #[Then('the a list of serialized owned projects')]
-    public function theAListOfSerializedOwnedProjects(): void
+    #[Then('the list of serialized owned projects')]
+    public function theListOfSerializedOwnedProjects(): void
     {
         $account = $this->recall(Account::class);
         $allProjects = $this->getListOfPersistedObjects(Project::class);
@@ -1432,9 +1439,9 @@ trait ApiTrait
         );
     }
 
-    #[Then('the a list of serialized owned accounts clusters')]
-    #[Then('the a list of serialized accounts clusters')]
-    public function theAListOfSerializedOwnedAccountsClusters(): void
+    #[Then('the list of serialized owned accounts clusters')]
+    #[Then('the list of serialized accounts clusters')]
+    public function theListOfSerializedOwnedAccountsClusters(): void
     {
         $account = $this->recall(Account::class);
         $allAccountClusters = $this->getListOfPersistedObjects(AccountCluster::class);
@@ -1475,9 +1482,9 @@ trait ApiTrait
         );
     }
 
-    #[Then('the a list of serialized projects')]
-    #[Then('the a list of serialized projects of last :type')]
-    public function theAListOfSerializedProjects(?string $type = null): void
+    #[Then('the list of serialized projects')]
+    #[Then('the list of serialized projects of last :type')]
+    public function theListOfSerializedProjects(?string $type = null): void
     {
         $account = null;
         if ('account' === $type) {
@@ -1698,6 +1705,29 @@ trait ApiTrait
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
 
+        if ('environments' === $view) {
+            // An environment added by this request is only queued to the `new_task` worker: the response
+            // already lists it, without id, while nothing is persisted yet
+            $persisted = array_map(
+                static fn (AccountEnvironmentResume $resume): string => $resume->clusterName . '/' . $resume->envName,
+                $environments,
+            );
+
+            foreach (($unserialized['data']['environments'] ?? []) as $pending) {
+                if (
+                    !empty($pending['accountEnvironmentId'])
+                    || in_array(($pending['clusterName'] ?? '') . '/' . ($pending['envName'] ?? ''), $persisted, true)
+                ) {
+                    continue;
+                }
+
+                $environments[] = new AccountEnvironmentResume(
+                    clusterName: (string) ($pending['clusterName'] ?? ''),
+                    envName: (string) ($pending['envName'] ?? ''),
+                );
+            }
+        }
+
         $normalized = $this->normalizer->normalize(
             [
                 'meta' => [
@@ -1870,33 +1900,21 @@ trait ApiTrait
         $credentials = $this->recall(AccountEnvironment::class);
         /** @var Project $project */
         $project = $this->recall(Project::class);
-        $clusters = [];
-        $project->visit(
-            'clusters',
-            function ($cs) use (&$clusters): void {
-                $clusters = $cs;
-            },
-        );
-
-        Assert::assertCount(1, $clusters);
 
         /** @var ClusterCatalog $clustersCatalog */
         $clustersCatalog = $this->sfContainer->get('teknoo.space.clusters_catalog');
 
-        /** @var Cluster $cluster */
-        foreach ($clusters as $cluster) {
-            $this->compareCluster(
-                $project,
-                $this->createCatalogCluster(
-                    $account,
-                    $clustersCatalog->getCluster($this->defaultClusterName),
-                    $credentials,
-                    '',
-                    'prod',
-                ),
-                $cluster,
-            );
-        }
+        $this->compareCluster(
+            $project,
+            $this->createCatalogCluster(
+                $account,
+                $clustersCatalog->getCluster($this->defaultClusterName),
+                $credentials,
+                '',
+                'prod',
+            ),
+            $this->lastProjectSingleCluster(),
+        );
     }
 
     #[Then("the last project's cluster returns to its original state from the account cluster")]
@@ -1906,24 +1924,12 @@ trait ApiTrait
 
         /** @var Project $project */
         $project = $this->recall(Project::class);
-        $clusters = [];
-        $project->visit(
-            'clusters',
-            function ($cs) use (&$clusters): void {
-                $clusters = $cs;
-            },
+
+        $this->compareCluster(
+            $project,
+            $this->createCatalogAccountCluster($account, 'prod'),
+            $this->lastProjectSingleCluster(),
         );
-
-        Assert::assertCount(1, $clusters);
-
-        /** @var Cluster $cluster */
-        foreach ($clusters as $cluster) {
-            $this->compareCluster(
-                $project,
-                $this->createCatalogAccountCluster($account, 'prod'),
-                $cluster,
-            );
-        }
     }
 
     #[Then('the serialized account cluster :name')]
@@ -2008,6 +2014,28 @@ trait ApiTrait
         Assert::assertEquals(
             $normalized,
             $unserialized,
+        );
+    }
+
+    #[Then('the serialized job history is humanized')]
+    public function theSerializedJobHistoryIsHumanized(): void
+    {
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        $entry = $unserialized['data']['history'] ?? null;
+        Assert::assertIsArray($entry);
+
+        $humanizedMessages = $this->collectHumanizedMessages($entry);
+
+        Assert::assertSame(
+            'Cloning the source repository',
+            $humanizedMessages[CloneRepository::class] ?? null,
+        );
+
+        Assert::assertSame(
+            'Job finished',
+            $humanizedMessages[DispatchResultInterface::class] ?? null,
         );
     }
 

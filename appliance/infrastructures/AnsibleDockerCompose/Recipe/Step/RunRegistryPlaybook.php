@@ -26,17 +26,17 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\AnsibleDockerCompose\Recipe\Step;
 
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Infrastructures\DockerCompose\Contracts\RunnerFactoryInterface;
 use Teknoo\Recipe\Promise\Promise;
+use Teknoo\Space\Infrastructures\AnsibleDockerCompose\PlaybookRunner;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Throwable;
 
 /**
- * Run the registry provisioning playbook on the remote Docker host, reusing the East PaaS docker-compose
- * `RunnerFactoryInterface`/`RunnerInterface` (no custom runner/driver/transcriber). SSH is key-only and rootless
- * — the `ClusterCredentials` carry only the private key (+ optional known_hosts / username), never a password.
+ * Run the registry provisioning playbook on the remote Docker host through the `PlaybookRunner`, which writes the
+ * single-host inventory and removes it once the playbook has run. SSH is key-only and rootless — the
+ * `ClusterCredentials` carry only the private key (+ optional known_hosts / username), never a password.
  * Success/failure is routed through a `Promise` to the workplan / the manager's error channel.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -47,7 +47,7 @@ use Throwable;
 class RunRegistryPlaybook
 {
     public function __construct(
-        private readonly RunnerFactoryInterface $runnerFactory,
+        private readonly PlaybookRunner $playbookRunner,
         private readonly string $playbookPath,
     ) {
     }
@@ -58,16 +58,16 @@ class RunRegistryPlaybook
     public function __invoke(
         ManagerInterface $manager,
         ClusterCatalog $clusterCatalog,
-        string $inventoryPath,
         array $extraVars,
+        ?string $registryClusterName = null,
     ): self {
-        $cluster = $clusterCatalog->getClusterForRegistry();
+        //The registry cluster is resolved once per task by `SelectRegistryCluster`; falls back to the
+        //first cluster supporting the registry when the task did not resolve it.
+        $cluster = $clusterCatalog->getClusterForRegistry($registryClusterName);
 
         if (!$cluster instanceof DockerComposeCluster) {
             throw new UnsupportedClusterTypeException('This step only supports docker-compose clusters');
         }
-
-        $credentials = $cluster->getCredentials();
 
         /** @var Promise<array<string, mixed>|string, mixed, mixed> $promise */
         $promise = new Promise(
@@ -79,8 +79,13 @@ class RunRegistryPlaybook
             },
         );
 
-        ($this->runnerFactory)($cluster->masterAddress, $credentials)
-            ->run($this->playbookPath, $inventoryPath, $extraVars, $credentials, $promise);
+        $this->playbookRunner->run(
+            $this->playbookPath,
+            $cluster->masterAddress,
+            $cluster->getCredentials(),
+            $extraVars,
+            $promise,
+        );
 
         return $this;
     }
