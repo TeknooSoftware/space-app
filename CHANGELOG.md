@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta7] - 2026-09-28
+### Beta Release
+- Update libs
+  - East PaaS 5.7.3
+
 ## [2.5.0-beta6] - 2026-09-28
 ### Beta Release
 - New env var `SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE` (default `false`), for the DI parameter
