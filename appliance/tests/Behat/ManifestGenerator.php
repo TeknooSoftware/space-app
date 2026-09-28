@@ -728,7 +728,7 @@ EOF;
         $hncManifest = '';
         if ($useHnc) {
             $hncManifest = <<<"EOF"
-"namespaces/space-client-my-company-prod/subnamespacesanchors": [
+"namespaces/space-client-my-company-prod/subnamespaceanchors": [
         {
             "kind": "SubnamespaceAnchor",
             "apiVersion": "hnc.x-k8s.io/v1",
