@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a5c543b365fea2f022b70876d0bd9a0",
+    "content-hash": "5a115c6bed9daa4db83d7e5c13d7452c",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11518,16 +11518,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.7.1",
+            "version": "5.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "034d0d04aabb5d2c558be7935b8ac23340a05bff"
+                "reference": "fbe883af6b1dc72a1d6c32d23c3cc64e1d131ca8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/034d0d04aabb5d2c558be7935b8ac23340a05bff",
-                "reference": "034d0d04aabb5d2c558be7935b8ac23340a05bff",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/fbe883af6b1dc72a1d6c32d23c3cc64e1d131ca8",
+                "reference": "fbe883af6b1dc72a1d6c32d23c3cc64e1d131ca8",
                 "shasum": ""
             },
             "require": {
@@ -11540,8 +11540,8 @@
                 "teknoo/east-common": "^4.5",
                 "teknoo/east-foundation": "^9.2.3",
                 "teknoo/immutable": "^3.0.22",
-                "teknoo/recipe": "^7.2.2",
-                "teknoo/states": "^7.1.10"
+                "teknoo/recipe": "^7.3",
+                "teknoo/states": "^7.1.11"
             },
             "require-dev": {
                 "behat/behat": "^3.29",
@@ -11602,7 +11602,7 @@
                 "symfony/var-exporter": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/kubernetes-client": "^2.0.3"
+                "teknoo/kubernetes-client": "^2.1"
             },
             "suggest": {
                 "symfony/scheduler": "platform-side scheduling of scheduled jobs",
@@ -11675,20 +11675,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-09-25T11:17:28+00:00"
+            "time": "2026-09-28T08:30:27+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.7.1",
+            "version": "5.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "911e6ba54f5f19b0cfa08f1313a0237a997c167b"
+                "reference": "b205273825e897a7a96429e3dc73fb1fa77117a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/911e6ba54f5f19b0cfa08f1313a0237a997c167b",
-                "reference": "911e6ba54f5f19b0cfa08f1313a0237a997c167b",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/b205273825e897a7a96429e3dc73fb1fa77117a5",
+                "reference": "b205273825e897a7a96429e3dc73fb1fa77117a5",
                 "shasum": ""
             },
             "require": {
@@ -11726,11 +11726,11 @@
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
                 "teknoo/east-common-symfony": "^4.5",
                 "teknoo/east-foundation-symfony": "^9.2.3",
-                "teknoo/east-paas": "^5.7.1",
+                "teknoo/east-paas": "^5.7.2",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.0.3",
-                "teknoo/recipe": "^7.2.2",
-                "teknoo/states": "^7.1.6"
+                "teknoo/recipe": "^7.3",
+                "teknoo/states": "^7.1.11"
             },
             "require-dev": {
                 "roave/security-advisories": "dev-latest"
@@ -11788,7 +11788,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-09-25T11:29:38+00:00"
+            "time": "2026-09-28T08:36:52+00:00"
         },
         {
             "name": "teknoo/immutable",

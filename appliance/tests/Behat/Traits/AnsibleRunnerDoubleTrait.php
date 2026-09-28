@@ -51,31 +51,38 @@ use function count;
 trait AnsibleRunnerDoubleTrait
 {
     /**
+     * Name of the SSH private key file the real `RunnerFactory` writes into the credentials directory of a runner.
+     */
+    private const ANSIBLE_KEY_FILE = 'id_key';
+
+    /**
+     * Name of the known_hosts file the real `RunnerFactory` writes into the credentials directory of a runner,
+     * from the credentials' CA certificate field.
+     */
+    private const ANSIBLE_KNOWN_HOSTS_FILE = 'known_hosts';
+
+    /**
      * The real factory, on the given Flysystem (in memory, so the private key never touches the disk) with
-     * `tmpDir: ''` and deterministic names for the files it materializes, making the "--private-key" argument and
-     * the known_hosts path assertable. The factory materializes the private key first, then the known_hosts built
-     * from the credentials' CA certificate field: the names are handed out in turn, once per file and per run - a
-     * single name would make the known_hosts overwrite the private key.
+     * `tmpDir: ''` and a deterministic name for the credentials directory of each runner, making the
+     * "--private-key" argument ("/<directory>/id_key") and the known_hosts path ("/<directory>/known_hosts")
+     * assertable. A single name is enough: each runner is run right after it is built and removes its directory
+     * once the playbook has run, and the factory refuses an existing directory, so a leaked directory fails the
+     * next run.
      *
-     * @param list<string> $materializedFileNames
      * @param callable(array<int, string>, ?float): Process $processFactory
      */
     private function buildAnsibleRunnerFactory(
         Filesystem $filesystem,
         float $timeout,
-        array $materializedFileNames,
+        string $credentialsDirectory,
         callable $processFactory,
     ): RunnerFactory {
-        $materializedFiles = 0;
-
         return new RunnerFactory(
             filesystem: $filesystem,
             tmpDir: '',
             playbookBinary: 'ansible-playbook',
             timeout: $timeout,
-            keyFileNameFactory: static function () use (&$materializedFiles, $materializedFileNames): string {
-                return $materializedFileNames[$materializedFiles++ % count($materializedFileNames)];
-            },
+            directoryNameFactory: static fn (): string => $credentialsDirectory,
             //Only overridden to inject the mocked process factory: the runner itself is the real one.
             runnerBuilder: static fn (
                 string $playbookBinary,

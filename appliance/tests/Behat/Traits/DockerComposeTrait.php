@@ -102,19 +102,13 @@ trait DockerComposeTrait
     use AnsibleRunnerDoubleTrait;
 
     /**
-     * Deterministic name of the SSH private key file the real `RunnerFactory` materializes, making the
-     * "--private-key" argument assertable. It must not start with "space-behat-compose-", or
-     * `normalizeComposePlaybook()` would rewrite it and the artifact capture would mistake it for a working
-     * directory.
+     * Deterministic name of the credentials directory where the real `RunnerFactory` materializes the SSH private
+     * key and the `known_hosts` (from the cluster credentials' CA certificate field) of each runner, making the
+     * "--private-key" argument and the `ANSIBLE_SSH_COMMON_ARGS` environment variable assertable. It must not start
+     * with "space-behat-compose-", or `normalizeComposePlaybook()` would rewrite it and the artifact capture would
+     * mistake it for a working directory.
      */
-    private const COMPOSE_KEY_FILE_NAME = 'space-behat-ansible-key';
-
-    /**
-     * Deterministic name of the `known_hosts` file the real `RunnerFactory` materializes from the cluster
-     * credentials' CA certificate field (second file written after the private key), making the
-     * `ANSIBLE_SSH_COMMON_ARGS` environment variable assertable.
-     */
-    private const COMPOSE_KNOWN_HOSTS_FILE_NAME = 'space-behat-ansible-known-hosts';
+    private const COMPOSE_CREDENTIALS_DIRECTORY = 'space-behat-ansible';
 
     /**
      * Timeout handed to the real `RunnerFactory`, proving it reaches the (mocked) `Process` factory.
@@ -147,12 +141,11 @@ trait DockerComposeTrait
     private const COMPOSE_SSH_PORT = 22;
 
     /**
-     * Deterministic names of the SSH private key and of the known_hosts the real `RunnerFactory` materializes for
-     * the account provisioning playbooks (see "a fake Ansible runner for the account provisioning").
+     * Deterministic name of the credentials directory where the real `RunnerFactory` materializes the SSH private
+     * key and the known_hosts for the account provisioning playbooks (see "a fake Ansible runner for the account
+     * provisioning").
      */
-    private const PROVISIONING_KEY_FILE_NAME = 'space-behat-provisioning-key';
-
-    private const PROVISIONING_KNOWN_HOSTS_FILE_NAME = 'space-behat-provisioning-known-hosts';
+    private const PROVISIONING_CREDENTIALS_DIRECTORY = 'space-behat-provisioning';
 
     /**
      * @var array<string, string>
@@ -325,13 +318,15 @@ trait DockerComposeTrait
                 $this->ansibleInventories[$stage] = $workspaceFilesystem->read($inventoryRelative);
             }
 
-            //The materialized SSH private key and known_hosts must be read here: RunnerFactory::__destruct()
-            //deletes them as soon as the factory goes out of scope.
-            if ($workspaceFilesystem->fileExists(self::COMPOSE_KEY_FILE_NAME)) {
-                $this->ansibleKeyFileContent = $workspaceFilesystem->read(self::COMPOSE_KEY_FILE_NAME);
+            //The materialized SSH private key and known_hosts must be read here: the runner removes its
+            //credentials directory as soon as the playbook has run.
+            $keyFile = self::COMPOSE_CREDENTIALS_DIRECTORY . '/' . self::ANSIBLE_KEY_FILE;
+            if ($workspaceFilesystem->fileExists($keyFile)) {
+                $this->ansibleKeyFileContent = $workspaceFilesystem->read($keyFile);
             }
-            if ($workspaceFilesystem->fileExists(self::COMPOSE_KNOWN_HOSTS_FILE_NAME)) {
-                $this->ansibleKnownHostsContent = $workspaceFilesystem->read(self::COMPOSE_KNOWN_HOSTS_FILE_NAME);
+            $knownHostsFile = self::COMPOSE_CREDENTIALS_DIRECTORY . '/' . self::ANSIBLE_KNOWN_HOSTS_FILE;
+            if ($workspaceFilesystem->fileExists($knownHostsFile)) {
+                $this->ansibleKnownHostsContent = $workspaceFilesystem->read($knownHostsFile);
             }
 
             ($capture)($command[1]);
@@ -347,12 +342,12 @@ trait DockerComposeTrait
             );
         };
 
-        //The real factory, pointed at the same in-memory workspace, materializing the private key then the
-        //known_hosts for each stage (deploy, expose).
+        //The real factory, pointed at the same in-memory workspace, materializing the private key and the
+        //known_hosts in the credentials directory of each stage's runner (deploy, expose).
         $runnerFactory = $this->buildAnsibleRunnerFactory(
             filesystem: $workspaceFilesystem,
             timeout: self::COMPOSE_ANSIBLE_TIMEOUT,
-            materializedFileNames: [self::COMPOSE_KEY_FILE_NAME, self::COMPOSE_KNOWN_HOSTS_FILE_NAME],
+            credentialsDirectory: self::COMPOSE_CREDENTIALS_DIRECTORY,
             processFactory: $processFactory,
         );
 
@@ -547,7 +542,7 @@ trait DockerComposeTrait
     /**
      * The per-run working directory holds the secret values, the TLS private keys and the SSH inventory: the
      * Driver must remove it from the worker once the playbook ran, whatever the outcome. The private key and
-     * known_hosts files are removed by the RunnerFactory destructor.
+     * known_hosts files are removed by each runner once its playbook has run (`EphemeralCredentialsRunner`).
      */
     private function assertComposeWorkingDirectoriesRemoved(): void
     {
@@ -684,7 +679,7 @@ trait DockerComposeTrait
                 '--user',
                 self::COMPOSE_SSH_USER,
                 '--private-key',
-                '/' . self::COMPOSE_KEY_FILE_NAME,
+                '/' . self::COMPOSE_CREDENTIALS_DIRECTORY . '/' . self::ANSIBLE_KEY_FILE,
             ],
             array_map($this->normalizeComposePlaybook(...), $run['command']),
             'The `ansible-playbook` command line built for the "' . $stage . '" stage is not the expected one',
@@ -701,7 +696,7 @@ trait DockerComposeTrait
             keyFileContent: $this->ansibleKeyFileContent,
             knownHostsContent: $this->ansibleKnownHostsContent,
             host: $this->expectedComposeSshHost,
-            knownHostsFileName: self::COMPOSE_KNOWN_HOSTS_FILE_NAME,
+            credentialsDirectory: self::COMPOSE_CREDENTIALS_DIRECTORY,
             env: $run['env'],
             process: '"' . $stage . '"',
         );
@@ -709,8 +704,8 @@ trait DockerComposeTrait
 
     /**
      * The runner materialized the cluster credentials: the private key, and the SSH host public key carried by the
-     * credentials' CA certificate field, which the factory binds to the cluster host in a known_hosts file and
-     * against which the runner enforces a strict host key checking.
+     * credentials' CA certificate field, which the factory binds to the cluster host in a known_hosts file of the
+     * runner's credentials directory and against which the runner enforces a strict host key checking.
      *
      * @param array<string, string> $env
      */
@@ -718,7 +713,7 @@ trait DockerComposeTrait
         ?string $keyFileContent,
         ?string $knownHostsContent,
         string $host,
-        string $knownHostsFileName,
+        string $credentialsDirectory,
         array $env,
         string $process,
     ): void {
@@ -739,8 +734,8 @@ trait DockerComposeTrait
                 'ANSIBLE_NOCOLOR' => '1',
                 'ANSIBLE_FORCE_COLOR' => '0',
                 'ANSIBLE_HOST_KEY_CHECKING' => 'True',
-                'ANSIBLE_SSH_COMMON_ARGS' => '-o UserKnownHostsFile=/' . $knownHostsFileName
-                    . ' -o StrictHostKeyChecking=yes',
+                'ANSIBLE_SSH_COMMON_ARGS' => '-o UserKnownHostsFile=/' . $credentialsDirectory
+                    . '/' . self::ANSIBLE_KNOWN_HOSTS_FILE . ' -o StrictHostKeyChecking=yes',
             ],
             $env,
             'The Ansible environment set on the ' . $process . ' process is not the expected one',
@@ -904,7 +899,8 @@ trait DockerComposeTrait
         $this->provisioningInventoryFilesystem = $inventoryFilesystem;
         $this->sfContainer->set('teknoo.space.flysystem.ansible_inventory', $inventoryFilesystem);
 
-        //Workspace of the real RunnerFactory, where it materializes the private key then the known_hosts.
+        //Workspace of the real RunnerFactory, where it materializes the private key and the known_hosts in the
+        //credentials directory of each runner.
         $keyFilesystem = new Filesystem(new InMemoryFilesystemAdapter());
 
         $this->sfContainer->set(
@@ -912,7 +908,7 @@ trait DockerComposeTrait
             $this->buildAnsibleRunnerFactory(
                 filesystem: $keyFilesystem,
                 timeout: self::COMPOSE_ANSIBLE_TIMEOUT,
-                materializedFileNames: [self::PROVISIONING_KEY_FILE_NAME, self::PROVISIONING_KNOWN_HOSTS_FILE_NAME],
+                credentialsDirectory: self::PROVISIONING_CREDENTIALS_DIRECTORY,
                 processFactory: fn (array $command, ?float $timeout): Process => $this->buildProvisioningProcess(
                     $command,
                     $timeout,
@@ -925,8 +921,8 @@ trait DockerComposeTrait
 
     /**
      * Record the `ansible-playbook` invocation and answer it with a mocked successful `Process`. The inventory,
-     * the private key and the known_hosts are read here: the `PlaybookRunner` removes the inventory once the
-     * playbook has run, and `RunnerFactory::__destruct()` deletes the key files.
+     * the private key and the known_hosts are read here: the `PlaybookRunner` removes the inventory, and the
+     * runner its credentials directory, once the playbook has run.
      *
      * @param array<int, string> $command
      */
@@ -945,11 +941,13 @@ trait DockerComposeTrait
             $this->provisioningAnsibleInventories[$runIndex] = $inventoryFilesystem->read($inventoryName);
         }
 
-        if ($keyFilesystem->fileExists(self::PROVISIONING_KEY_FILE_NAME)) {
-            $this->provisioningKeyFileContent = $keyFilesystem->read(self::PROVISIONING_KEY_FILE_NAME);
+        $keyFile = self::PROVISIONING_CREDENTIALS_DIRECTORY . '/' . self::ANSIBLE_KEY_FILE;
+        if ($keyFilesystem->fileExists($keyFile)) {
+            $this->provisioningKeyFileContent = $keyFilesystem->read($keyFile);
         }
-        if ($keyFilesystem->fileExists(self::PROVISIONING_KNOWN_HOSTS_FILE_NAME)) {
-            $this->provisioningKnownHostsContent = $keyFilesystem->read(self::PROVISIONING_KNOWN_HOSTS_FILE_NAME);
+        $knownHostsFile = self::PROVISIONING_CREDENTIALS_DIRECTORY . '/' . self::ANSIBLE_KNOWN_HOSTS_FILE;
+        if ($keyFilesystem->fileExists($knownHostsFile)) {
+            $this->provisioningKnownHostsContent = $keyFilesystem->read($knownHostsFile);
         }
 
         return $this->buildAnsibleProcessDouble(
@@ -1027,7 +1025,7 @@ trait DockerComposeTrait
                 '--user',
                 self::COMPOSE_SSH_USER,
                 '--private-key',
-                '/' . self::PROVISIONING_KEY_FILE_NAME,
+                '/' . self::PROVISIONING_CREDENTIALS_DIRECTORY . '/' . self::ANSIBLE_KEY_FILE,
             ],
             $run['command'],
             'The `ansible-playbook` command line logging the deploy user in is not the expected one',
@@ -1043,7 +1041,7 @@ trait DockerComposeTrait
             keyFileContent: $this->provisioningKeyFileContent,
             knownHostsContent: $this->provisioningKnownHostsContent,
             host: $host,
-            knownHostsFileName: self::PROVISIONING_KNOWN_HOSTS_FILE_NAME,
+            credentialsDirectory: self::PROVISIONING_CREDENTIALS_DIRECTORY,
             env: $run['env'],
             process: 'registries login',
         );

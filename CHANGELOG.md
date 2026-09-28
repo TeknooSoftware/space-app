@@ -1,5 +1,19 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta5] - 2026-09-28
+### Beta Release
+- Jobs remove the cluster credentials written on the worker at the end of each stage (East PaaS 5.7.2)
+- A cluster token designating a file of the worker is refused, unless the DI parameter
+  `teknoo.east.paas.kubernetes.token.allow_file` is enabled (East PaaS 5.7.2)
+- HNC subnamespace anchors are created on their real resource path `subnamespaceanchors` (Kubernetes Client 2.1)
+- Behat: Docker Compose runner doubles adapted to the East PaaS 5.7.2 `RunnerFactory`
+- Update libs
+  - East PaaS 5.7.2
+  - Kubernetes Client 2.1.0
+  - Recipe 7.3.0
+  - Twig 3.30
+  - Behat 3.34, Gherkin 4.18
+
 ## [2.5.0-beta4] - 2026-09-25
 ### Beta Release
 - **Cluster operations move to the `new_task` worker**: the web process no longer talks to Kubernetes or to a
