@@ -76,6 +76,7 @@ services:
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
             - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
             - SPACE_JWT_TTL=31104000
+            - SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE=false
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
             - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
@@ -116,6 +117,7 @@ services:
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
             - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
             - SPACE_JWT_TTL=31104000
+            - SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE=false
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
             - SPACE_KUBERNETES_CREATE_TOKEN=fooBar
@@ -230,6 +232,7 @@ services:
             - SPACE_JWT_PUBLIC_KEY=%kernel.project_dir%/var/jwt/public.pem
             - SPACE_JWT_SECRET_KEY=%kernel.project_dir%/var/jwt/private.pem
             - SPACE_JWT_TTL=31104000
+            - SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE=false
             - SPACE_KUBERNETES_CLIENT_TIMEOUT=3
             - SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
             - SPACE_KUBERNETES_VERSION_LEVEL=1.30

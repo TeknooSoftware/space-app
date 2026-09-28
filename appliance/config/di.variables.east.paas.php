@@ -143,10 +143,6 @@ $parameters = [
         'SPACE_DC_TRAEFIK_ENTRYPOINT_WEBSECURE',
         'websecure'
     ),
-    'teknoo.east.paas.docker-compose.https_backend.insecure_skip_verify' => env(
-        'SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY',
-        false
-    ),
 
     // Per-account private registry (docker-compose): a dedicated `registry` container provisioned over Ansible on
     // the external private network, exposed by the host's Traefik (websecure) as `<namespace>-registry.<host>`.
@@ -154,8 +150,21 @@ $parameters = [
     'teknoo.east.paas.docker-compose.registry.image' => env('SPACE_DC_REGISTRY_IMAGE', 'registry:2'),
     'teknoo.east.paas.docker-compose.registry.network' => env('SPACE_DC_REGISTRY_NETWORK', 'space-registry'),
     'teknoo.east.paas.docker-compose.registry.port' => env('SPACE_DC_REGISTRY_PORT', 5000),
-    'teknoo.east.paas.docker-compose.registry.tls' => env('SPACE_DC_REGISTRY_TLS', false),
 ];
+
+// Booleans are resolved here, not through env(): env() hands over the raw string and its consumers cast it with
+// (bool), so "false" would be read as true.
+// Skip the TLS verification of HTTPS backends behind Traefik. Off by default.
+$parameters['teknoo.east.paas.docker-compose.https_backend.insecure_skip_verify'] = filter_var(
+    $_ENV['SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY'] ?? false,
+    FILTER_VALIDATE_BOOL,
+);
+
+// TLS between Traefik and the per-account registry container. Off by default.
+$parameters['teknoo.east.paas.docker-compose.registry.tls'] = filter_var(
+    $_ENV['SPACE_DC_REGISTRY_TLS'] ?? false,
+    FILTER_VALIDATE_BOOL,
+);
 
 // The default_certresolver param is only declared when SPACE_DC_TRAEFIK_CERTRESOLVER is explicitly set, so the
 // vendored DockerCompose/di.php keeps applying its own default when the operator did not configure a resolver.
@@ -169,6 +178,15 @@ if (!empty($_ENV['SPACE_DC_TRAEFIK_CERTRESOLVER'])) {
 // here (not through env()) so "false" is a boolean false, not a non-empty string.
 $parameters['teknoo.east.paas.docker-compose.network.internal'] = filter_var(
     $_ENV['SPACE_DC_NETWORK_INTERNAL'] ?? false,
+    FILTER_VALIDATE_BOOL,
+);
+
+// Only for a worker whose clusters are not configured by users: allows a cluster's token to be the path of a file of
+// the worker (e.g. a mounted service account token), the Kubernetes client sending its content as bearer token to the
+// cluster's address. Off by default. Resolved here (not through env()) so "false" is a boolean false, not a non-empty
+// string.
+$parameters['teknoo.east.paas.kubernetes.token.allow_file'] = filter_var(
+    $_ENV['SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE'] ?? false,
     FILTER_VALIDATE_BOOL,
 );
 

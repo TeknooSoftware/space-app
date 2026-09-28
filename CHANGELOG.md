@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta6] - 2026-09-28
+### Beta Release
+- New env var `SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE` (default `false`), for the DI parameter
+  `teknoo.east.paas.kubernetes.token.allow_file`
+- Fix `SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY` and `SPACE_DC_REGISTRY_TLS`: the value `false` was read as `true`
+
 ## [2.5.0-beta5] - 2026-09-28
 ### Beta Release
 - Jobs remove the cluster credentials written on the worker at the end of each stage (East PaaS 5.7.2)

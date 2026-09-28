@@ -743,6 +743,23 @@ SPACE_KUBERNETES_CLIENT_TIMEOUT=5
 SPACE_KUBERNETES_CLIENT_VERIFY_SSL=1
 ```
 
+#### SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE
+
+- **Type**: Boolean
+- **Optional**: Yes
+- **Default**: `false`
+- **Maps to**: `teknoo.east.paas.kubernetes.token.allow_file`
+- **Description**: Allow a cluster's token to be the path of a file of the web server or the worker (for example a
+  mounted service account token). The Kubernetes client then reads this file and sends its content as bearer token
+  to the cluster's address. When disabled, such a token is refused. Enable it **only when no user can declare a
+  cluster or a cluster token** (account clusters, project clusters): otherwise any file readable by the process can
+  be sent to an address chosen by a user. The value is read when the Symfony container is compiled: after a change,
+  rebuild the cache with the new value in the environment and restart the workers.
+
+```bash
+SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE=false
+```
+
 #### SPACE_KUBERNETES_VERSION_LEVEL
 
 - **Type**: String
@@ -1002,7 +1019,9 @@ SPACE_DC_NETWORK_INTERNAL=false
 - **Optional**: Yes
 - **Default**: `false`
 - **Maps to**: `teknoo.east.paas.docker-compose.https_backend.insecure_skip_verify`
-- **Description**: Skip TLS certificate verification for HTTPS backends behind Traefik
+- **Description**: Skip TLS certificate verification for HTTPS backends behind Traefik.
+  The value is read when the Symfony container is compiled: after a change, rebuild the cache with the new value in
+  the environment and restart the workers.
 
 ```bash
 SPACE_DC_HTTPS_BACKEND_INSECURE_SKIP_VERIFY=false
@@ -1167,7 +1186,9 @@ SPACE_DC_REGISTRY_PORT=5000
 - **Default**: `false`
 - **Maps to**: `teknoo.east.paas.docker-compose.registry.tls`
 - **Description**: Enable TLS on the per-account registry container itself (between Traefik and the registry; the
-  public side is always HTTPS through Traefik)
+  public side is always HTTPS through Traefik).
+  The value is read when the Symfony container is compiled: after a change, rebuild the cache with the new value in
+  the environment and restart the workers.
 
 ```bash
 SPACE_DC_REGISTRY_TLS=false
