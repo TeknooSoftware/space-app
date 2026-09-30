@@ -25,65 +25,35 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
-use Symfony\Component\Serializer\SerializerInterface;
 use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
+use Teknoo\East\CommonBundle\Twig\Extension\ApiObjectSerializing as BaseApiObjectSerializing;
 use Twig\Attribute\AsTwigFilter;
 
-use function get_parent_class;
-
 /**
+ * Alias of the East Common's Twig extension `ApiObjectSerializing`, to keep the Twig filter's name
+ * `space_api_object_serialization` used by Space's templates.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ApiObjectSerializing
+class ApiObjectSerializing extends BaseApiObjectSerializing
 {
-    public function __construct(
-        private readonly SerializerInterface $serializer,
-    ) {
-    }
-
     /**
-     * @param object|array<string, mixed> $object
-     * @param array<string, string[]> $context
+     * @param object|array<mixed, mixed> $object
+     * @param array<string, mixed> $context
      * @param array<string, mixed> $meta
      */
+    #[\Override]
     #[AsTwigFilter(name: 'space_api_object_serialization', isSafe: ['html', 'json', 'js'])]
     public function serialize(
         object|array $object,
         array $context = [],
         string $format = 'json',
         array $meta = [],
-        ?IdentifiedObjectInterface $parentObject = null
+        ?IdentifiedObjectInterface $parentObject = null,
     ): string {
-        $computedMeta = [];
-
-        $metaObject = $object;
-        if (!$metaObject instanceof IdentifiedObjectInterface && $parentObject !== null) {
-            $metaObject = $parentObject;
-        }
-
-        if ($metaObject instanceof IdentifiedObjectInterface) {
-            $parentClass = $metaObject::class;
-            while (false !== ($tmp = get_parent_class($parentClass))) {
-                $parentClass = $tmp;
-            }
-
-            $computedMeta['id'] = $metaObject->getId();
-            $computedMeta['@class'] = $parentClass;
-        }
-
-        return $this->serializer->serialize(
-            data: [
-                'meta' => array_merge(
-                    $computedMeta,
-                    $meta,
-                ),
-                'data' => $object,
-            ],
-            format: $format,
-            context: $context,
-        );
+        return parent::serialize($object, $context, $format, $meta, $parentObject);
     }
 }

@@ -13,8 +13,8 @@ Form types live in `infrastructures/Symfony/Form/Type/`, one subdirectory per ca
 - **Project**: `SpaceProjectType`, `VarsSetType`, `VarsType`
 - **ProjectMetadata**: `ProjectMetadataType`
 - **Job**: `NewJobType`, `ApiNewJobType`, `JobVarType` — there is no `JobType`
-- **User**: `UserType`, `SpaceUserType`, `AdminSpaceUserType`, `PasswordType`, `SpacePasswordType`,
-  `ApiKeysAuthType`, `JWTConfigurationType`
+- **User**: `UserType`, `SpaceUserType`, `AdminSpaceUserType`, `PasswordType`, `SpacePasswordType`
+  (`ApiKeysAuthType` and `JWTConfigurationType` are provided by East Common)
 - **Contact**: `SupportType`, `AttachmentType`
 - **Search**: `AccountSearchType`, `AccountClusterSearchType`, `JobSearchType`, `MediaSearchType`,
   `ProjectSearchType`, `UserSearchType`, plus the shared `DefaultSearchTrait`

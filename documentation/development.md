@@ -519,8 +519,8 @@ Form types live in `infrastructures/Symfony/Form/Type/`, one subdirectory per ca
 - **Project**: `SpaceProjectType`, `VarsSetType`, `VarsType`
 - **ProjectMetadata**: `ProjectMetadataType`
 - **Job**: `NewJobType`, `ApiNewJobType`, `JobVarType`
-- **User**: `UserType`, `AdminSpaceUserType`, `SpaceUserType`, `PasswordType`, `SpacePasswordType`,
-  `ApiKeysAuthType`, `JWTConfigurationType`
+- **User**: `UserType`, `AdminSpaceUserType`, `SpaceUserType`, `PasswordType`, `SpacePasswordType`
+  (`ApiKeysAuthType` and `JWTConfigurationType` are provided by East Common)
 - **Contact**: `SupportType`, `AttachmentType`
 - **Search**: `AccountSearchType`, `AccountClusterSearchType`, `JobSearchType`, `MediaSearchType`,
   `ProjectSearchType`, `UserSearchType`, and the shared `DefaultSearchTrait`
@@ -970,7 +970,7 @@ base rather than Alpine:
   `failed to mount rootfs component: invalid argument`. Measured on `composer --version`:
 
   | Snapshotter | containerd root | run |
-  |---|---|---|
+    |---|---|---|
   | `overlayfs` | named volume | **~0.7 s** |
   | `native` | container filesystem | 11 s, then 36 s (it copies the whole rootfs each time) |
   | `fuse-overlayfs` | container filesystem | cannot extract a layer at all (`setxattr ... user.overlay.impure: operation not permitted`) |
@@ -1007,8 +1007,8 @@ A hook is run by `space-run`, that is `nerdctl run`, and `nerdctl run` has no qu
 this image ships. So when the image is not already local, the pull happens *inside* the hook, and
 `Teknoo\East\Paas\Infrastructures\ProjectBuilding\AbstractHook::run()` stores
 `getOutput() . getErrorOutput()` in the job history. Measured on `hook-composer:8.5`: **4.2 MB and
-28 122 lines** of progress-bar redraw frames written to the history, and **187 s** of the hook's
-**240 s** timeout spent downloading before `composer` even starts.
+28 122 lines** of progress-bar redraw frames written to the history, and **187 s** of the hook's **240 s** timeout spent
+downloading before `composer` even starts.
 
 The `builder_containerd` volume keeps the pulled images across container recreations, so the download
 is paid once. The pre-pull still runs in the background rather than inline: on a first start the
@@ -1021,13 +1021,13 @@ actually use rather than the full catalogue.
 `privileged: true` on `cli_execute` is not a convenience, it is a requirement, and it was measured on
 this image:
 
-| Docker options | Result |
-|---|---|
-| defaults | `buildah` dies immediately: `Error during unshare(CLONE_NEWUSER): Operation not permitted` (the default seccomp profile blocks the syscall) and `/dev/fuse` is absent |
-| `--security-opt seccomp=unconfined` + `--device /dev/fuse` | fails at the overlay mount: `permission denied` (AppArmor) |
-| `--security-opt seccomp=unconfined --security-opt apparmor=unconfined` | fails at the overlay mount: `fuse: device not found` |
-| all three together | `newuidmap`/`newgidmap` still fail and buildah falls back to a *single* UID mapping, so pulling any real base image fails: `potentially insufficient UIDs or GIDs available in user namespace (requested 0:42 for /etc/shadow)` |
-| `--privileged` | works, with the full `/etc/subuid` range: `buildah bud` builds, commits and tags |
+| Docker options                                                         | Result                                                                                                                                                                                                                          |
+|------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| defaults                                                               | `buildah` dies immediately: `Error during unshare(CLONE_NEWUSER): Operation not permitted` (the default seccomp profile blocks the syscall) and `/dev/fuse` is absent                                                           |
+| `--security-opt seccomp=unconfined` + `--device /dev/fuse`             | fails at the overlay mount: `permission denied` (AppArmor)                                                                                                                                                                      |
+| `--security-opt seccomp=unconfined --security-opt apparmor=unconfined` | fails at the overlay mount: `fuse: device not found`                                                                                                                                                                            |
+| all three together                                                     | `newuidmap`/`newgidmap` still fail and buildah falls back to a *single* UID mapping, so pulling any real base image fails: `potentially insufficient UIDs or GIDs available in user namespace (requested 0:42 for /etc/shadow)` |
+| `--privileged`                                                         | works, with the full `/etc/subuid` range: `buildah bud` builds, commits and tags                                                                                                                                                |
 
 Only the last row can build an image whose layers contain files owned by more than one UID, which is
 every distribution base image. Note that `privileged` does not give the process any capability here —

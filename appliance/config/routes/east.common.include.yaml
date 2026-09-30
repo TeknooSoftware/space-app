@@ -1,20 +1,40 @@
-prefix_east_common_admin:
+_east_common_admin:
     resource: '@TeknooEastCommonBundle/config/admin_routing.yaml'
     prefix: '/admin'
 
-prefix_east_common_2fa:
+_east_common_2fa:
     resource: '@TeknooEastCommonBundle/config/2fa_routing.yaml'
     prefix: '/'
 
-prefix_east_common_routing:
+_east_common_routing:
     resource: '@TeknooEastCommonBundle/config/assets_routing.yaml'
     prefix: '/build'
 
-prefix_east_common_user_recovery:
+_east_common_user_recovery:
     resource: '@TeknooEastCommonBundle/config/user_recovery_routing.yaml'
     prefix: '/account'
 
-prefix_east_common:
+_east_common:
     resource: '@TeknooEastCommonBundle/config/routing.yaml'
     prefix: '/'
 
+
+# Routes are shipped by East Common, templates are the ones of Space
+_east_common_api_keys:
+    resource: '@TeknooEastCommonBundle/config/api_keys_routing.yaml'
+    prefix: '/my-settings'
+    schemes: ['https']
+    defaults:
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        template: '@@TeknooSpace/User/api-keys.form.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
+_east_common_jwt:
+    resource: '@TeknooEastCommonBundle/config/jwt_routing.yaml'
+    prefix: '/my-settings'
+    schemes: ['https']
+    defaults:
+        errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
+        template: '@@TeknooSpace/User/jwt.form.html.twig'
+        tokenTemplate: '@@TeknooSpace/User/jwt.token.html.twig'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"

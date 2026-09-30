@@ -25,33 +25,26 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
-use Countable;
-use Symfony\Component\Serializer\SerializerInterface;
-use Traversable;
+use Teknoo\East\CommonBundle\Twig\Extension\ApiCollectionSerializing as BaseApiCollectionSerializing;
 use Twig\Attribute\AsTwigFilter;
 
-use function array_merge;
-use function count;
-use function iterator_to_array;
-
 /**
+ * Alias of the East Common's Twig extension `ApiCollectionSerializing`, to keep the Twig filter's name
+ * `space_api_collection_serialization` used by Space's templates.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ApiCollectionSerializing
+class ApiCollectionSerializing extends BaseApiCollectionSerializing
 {
-    public function __construct(
-        private readonly SerializerInterface $serializer,
-    ) {
-    }
-
     /**
      * @param iterable<mixed> $collection
-     * @param array<string, string[]> $context
+     * @param array<string, mixed> $context
      * @param array<string, mixed> $meta
      */
+    #[\Override]
     #[AsTwigFilter(name: 'space_api_collection_serialization', isSafe: ['html', 'json', 'js'])]
     public function serialize(
         iterable $collection,
@@ -61,32 +54,6 @@ class ApiCollectionSerializing
         string $format = 'json',
         array $meta = [],
     ): string {
-        $arrayCollection = $collection;
-        if ($arrayCollection instanceof Traversable) {
-            $arrayCollection = iterator_to_array($arrayCollection);
-        }
-
-        $count = 0;
-        if ($collection instanceof Countable) {
-            $count = $collection->count();
-        } else {
-            $count = count($arrayCollection);
-        }
-
-        return $this->serializer->serialize(
-            data: [
-                'meta' => array_merge(
-                    [
-                        'totalPages' => $countPages,
-                        'page' => $currentPage,
-                        'count' => $count,
-                    ],
-                    $meta,
-                ),
-                'data' => $arrayCollection,
-            ],
-            format: $format,
-            context: $context,
-        );
+        return parent::serialize($collection, $currentPage, $countPages, $context, $format, $meta);
     }
 }

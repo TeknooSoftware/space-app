@@ -45,9 +45,10 @@ See the full Step example in `.agents/EXAMPLES.md#recipe-step-example`.
 - Plans: `config/di.recipe.plans.php`
 - Steps: `config/di.recipe.steps.php`
 
-Neither file is a complete inventory of its own kind: `di.recipe.plans.php` also registers steps that only one
-plan uses — `ApiKey\RemoveKey` is there, which is why the step categories imported by `di.recipe.steps.php` are
-one fewer than the subdirectories of `domain/Recipe/Step/`. When looking for where a step is wired, grep both.
+The plans and the steps of API keys and JWT tokens are not registered here: they are shipped by East Common and
+registered by its own `src/di.php` and `infrastructures/symfony/config/services.yaml` (in `vendor/teknoo/east-common`).
+A step without constructor argument can also be resolved by the PHP-DI autowiring, without any definition: when
+looking for where a step is wired, grep both files, then the vendor ones.
 
 Extensions register via their own `di.php` files loaded by the East Foundation extension system.
 

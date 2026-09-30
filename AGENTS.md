@@ -91,14 +91,19 @@ appliance/
 ```
 config/routes/api/v1/
 ├── unauthenticated/    # Public endpoints (login)
-├── authenticated/      # User endpoints (JWT required): account, project, job, jwt, settings
+├── authenticated/      # User endpoints (JWT required): account, project, job, settings
 └── admin/              # Admin endpoints: account, project, job, user
 ```
+
+The login (`POST /api/v1/login`) and JWT (`POST /api/v1/jwt/create-token`) endpoints are routes shipped by East
+Common (`_teknoo_common_*`): the login is imported by `api/v1/unauthenticated/space.api.v1.login.yaml`, the JWT one
+by `config/routes/api.yaml`. The web pages of API keys and JWT tokens under `/my-settings` are imported by
+`config/routes/east.common.include.yaml`.
 
 Route files are prefixed: `space.api.v1.<name>.yaml`. The `/api/v1` and `/api/v1/admin` prefixes come from the
 loader `config/routes/api.yaml`, not from the file names.
 
-Web routes: 10 YAML files (`space.*.yaml`) in `config/routes/` with 48 `path:` entries total. That directory
+Web routes: 10 YAML files (`space.*.yaml`) in `config/routes/` with 45 `path:` entries total. That directory
 also holds the framework/vendor route files (`api.yaml`, `connect.oauth.yaml`, `east.*`, `scheb_2fa.yaml`,
 `symfony.framework.yaml`, `web_profiler.yaml`).
 

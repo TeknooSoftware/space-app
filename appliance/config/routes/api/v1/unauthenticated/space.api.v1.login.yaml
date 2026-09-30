@@ -1,10 +1,6 @@
-space_api_v1_login_check:
-    path: '/login'
+# Login route shipped by East Common (`check_path` of the `json_login` authenticator), with the template of Space
+_east_common_api_v1_login:
+    resource: '@TeknooEastCommonBundle/config/jwt_api_login_routing.yaml'
     schemes: ['https']
-    methods: ['POST']
     defaults:
-        _controller: 'teknoo.space.endpoint.login.jwt_token'
-        api: 'json'
-        objectClass: 'Teknoo\Space\Object\DTO\JWTConfiguration'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         tokenTemplate: '@@TeknooSpace/api/Jwt/jwt.token.json.twig'

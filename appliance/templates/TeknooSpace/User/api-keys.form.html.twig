@@ -6,7 +6,7 @@
 
 {% block instanceMainTitle %}<i class="ti ti-key"></i> {{ 'teknoo.space.title.user.api-keys'|trans }}{% endblock %}
 
-{% block breadcrumbListLink %}{{ path('space_my_settings_list_api_keys') }}{% endblock %}
+{% block breadcrumbListLink %}{{ path('_teknoo_common_api_keys_manage') }}{% endblock %}
 {% block breadcrumbFormTitle %}{{ 'teknoo.space.title.user.api-keys'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ space.user }}{% endblock %}
 
@@ -65,7 +65,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            {% set tokens = space.user.user.getOneAuthData('Teknoo\\Space\\Object\\Persisted\\ApiKeysAuth') %}
+                            {% set tokens = space.user.user.getOneAuthData('Teknoo\\East\\Common\\Object\\ApiKeysAuth') %}
                             {% if tokens is empty %}
                                 <tr class="table-row-even">
                                     <td colspan="5">{{ 'teknoo.space.text.user.api-keys.empty'|trans }}</td>
@@ -84,7 +84,7 @@
                                         <td>
                                             <a class="text-primary"
                                                onclick="return confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
-                                               href="{{ path('space_my_settings_remove_api_keys', {'tokenName':token.name}) }}"
+                                               href="{{ path('_teknoo_common_api_keys_delete', {'tokenName':token.name}) }}"
                                                title="Delete this entry">
                                                 <span class="mdi mdi-trash-can"></span>
                                             </a>

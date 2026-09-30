@@ -60,6 +60,8 @@ parameters:
     teknoo.space.default.framework.trutest_hosts: ~
 
     teknoo.east.common.admin.rendering.clean_html: true
+    teknoo.east.common.bundle.api_keys.token_prefix: 'sp_'
+    teknoo.east.common.bundle.jwt.max_days_to_live: '%teknoo.space.jwt.max-days-to-tive%'
     teknoo.east.common.rendering.clean_html: true
 
     teknoo.east.paas.admin.rendering.clean_html: true
@@ -121,4 +123,8 @@ parameters:
             qrcode: '_teknoo_common_2fa_totp_qrcode'
             validate: '_teknoo_common_2fa_totp_validate'
 
-    teknoo.space.api_key_authenticated_user_provider.class: 'Teknoo\Space\Infrastructures\Symfony\Security\Provider\ApiKeysAuthenticatedUserProvider'
+
+# Messages of server errors (5xx) are hidden in API responses, except in the dev environment
+when@dev:
+    parameters:
+        teknoo.east.common.rendering.api.expose_server_error_message: true
