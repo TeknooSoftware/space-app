@@ -310,10 +310,18 @@ The API credentials of a user. `ApiKeysAuth` is an authentication method attache
 collection of `ApiKeyToken`; each token has a `name`, its clear `token` (shown once, at creation), a
 `tokenHash` for verification, a `createdAt` and an optional `expiresAt`.
 
+Both classes, the form, the steps, the plans, the endpoints and the routes are provided by East Common
+(`Teknoo\East\Common\Object\ApiKeysAuth` and `ApiKeyToken`); Space keeps its templates (`templates/TeknooSpace/User/`
+and `templates/TeknooSpace/api/Jwt/`), set on the imported routes, and its configuration. Documents persisted before
+this move keep `Teknoo\Space\Object\Persisted\ApiKeysAuth` in the
+discriminator field `type` of `users.authData`: the Doctrine listener `AuthDataDiscriminatorMapListener`
+(`infrastructures/Doctrine/Listener/`) maps this legacy name to the East Common class, and a document is rewritten with
+the new name the next time its user is updated.
+
 A token is not a session: it is exchanged for a JWT at `POST /api/v1/login`, with
 `username` = `"<token name>:<user email>"` and `token` = the clear value. The JWT, not the token, authenticates
-the subsequent calls. Users manage their tokens from the web UI (`space_my_settings_list_api_keys` at
-`/my-settings/api-keys`, and `space_my_settings_remove_api_keys` to revoke one).
+the subsequent calls. Users manage their tokens from the web UI, with the routes shipped by East Common
+(`_teknoo_common_api_keys_manage` at `/my-settings/api-keys`, and `_teknoo_common_api_keys_delete` to revoke one).
 
 **Business Rules:**
 
@@ -457,7 +465,7 @@ Email attachment data.
 
 ### JWTConfiguration
 
-JWT token configuration and settings.
+JWT token configuration and settings. Provided by East Common (`Teknoo\East\Common\Object\DTO\JWTConfiguration`).
 
 ### Search
 
@@ -515,7 +523,8 @@ Domain defines contracts for workflow steps without implementing them:
 
 #### User
 
-- `JwtCreateTokenInterface`: Generate JWT tokens
+- `JwtCreateTokenInterface`: Generate JWT tokens. Contract and implementation are provided by East Common
+  (`Teknoo\East\Common\Contracts\Recipe\Step\User\JwtCreateTokenInterface`)
 
 ## Business Rules Summary
 

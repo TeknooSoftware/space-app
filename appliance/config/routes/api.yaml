@@ -9,3 +9,12 @@ prefix_space_api_v1_authenticated:
 prefix_space_api_v1_admin:
     resource: 'api/v1/admin/*.yaml'
     prefix: '/api/v1/admin'
+
+# Route shipped by East Common to get a new JWT token from a valid one, with the templates of Space
+_east_common_api_v1_jwt:
+    resource: '@TeknooEastCommonBundle/config/jwt_api_routing.yaml'
+    prefix: '/api/v1'
+    schemes: ['https']
+    defaults:
+        template: '@@TeknooSpace/api/Jwt/jwt.form.json.twig'
+        tokenTemplate: '@@TeknooSpace/api/Jwt/jwt.token.json.twig'

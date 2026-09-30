@@ -25,48 +25,28 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Infrastructures\Twig\Extension;
 
-use Symfony\Component\Form\FormError as SfFormError;
 use Symfony\Component\Form\FormView;
+use Teknoo\East\CommonBundle\Twig\Extension\FormError as BaseFormError;
 use Twig\Attribute\AsTwigFunction;
 
-use function array_pop;
-use function array_reverse;
-use function implode;
-use function is_iterable;
-
 /**
+ * Alias of the East Common's Twig extension `FormError`, to keep the Twig function's name `space_form_errors` used by
+ * Space's templates.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class FormError
+class FormError extends BaseFormError
 {
     /**
-     * @return iterable<string, string>
+     * @return array<string, string>
      */
+    #[\Override]
     #[AsTwigFunction('space_form_errors')]
-    public function getFieldErrors(FormView $view): iterable
+    public function getFieldErrors(?FormView $view): array
     {
-        if (empty($view->vars['errors']) || !is_iterable($view->vars['errors'])) {
-            return [];
-        }
-
-        /** @var SfFormError $error */
-        foreach ($view->vars['errors'] as $error) {
-            $path = '.';
-            $elements = [];
-            $form = $error->getOrigin();
-            while (null !== $form) {
-                $elements[] = (string) $form->getPropertyPath();
-                $form = $form->getParent();
-            }
-
-            array_pop($elements);
-            $elements = array_reverse($elements);
-            $path .= implode('.', $elements);
-
-            yield $path => $error->getMessage();
-        }
+        return parent::getFieldErrors($view);
     }
 }

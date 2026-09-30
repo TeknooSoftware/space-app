@@ -1,5 +1,44 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-beta8] - 2026-09-30
+### Beta Release
+
+#### Security
+- API errors only return `code`, `message` and the `previous` errors (code and message): no more class, file and line
+  of the exception.
+- The message of a server error (`5xx`) is replaced by `Internal Server Error` in API responses, except in the `dev`
+  environment (DI parameter `teknoo.east.common.rendering.api.expose_server_error_message`).
+
+#### Fixes
+- The creation date of an API key created from the web form is now stored.
+- The login (`POST /api/v1/login`) no longer requires the header `Content-Type: application/json`.
+
+#### Evolutions
+- API keys and JWT tokens are provided by East Common 4.6: objects, Symfony user and provider, forms, steps, plans,
+  endpoints, routes and Doctrine mapping. The Space classes are removed. Paths, web pages and templates are unchanged.
+- The routes are imported from East Common, their names change:
+  - `space_api_v1_login_check` becomes `_teknoo_common_api_jwt_login`.
+  - `space_api_v1_jwt_generate_token` becomes `_teknoo_common_api_jwt_create`.
+  - `space_my_settings_jwt_token` becomes `_teknoo_common_jwt_create`.
+  - `space_my_settings_list_api_keys` becomes `_teknoo_common_api_keys_manage`.
+  - `space_my_settings_remove_api_keys` becomes `_teknoo_common_api_keys_delete`.
+- Authentication failures of the API (`401`) use the format of the other errors (`meta` and `data`), instead of
+  `{"error": "..."}` for the login and `{"code": 401, "message": "..."}` for the JWT token.
+- No database migration: API keys already persisted keep the class name `Teknoo\Space\Object\Persisted\ApiKeysAuth`
+  in `users.authData`, mapped to the East Common class by the Doctrine listener `AuthDataDiscriminatorMapListener`.
+  The Doctrine metadata cache must be cleared when upgrading.
+- DI parameters:
+  - New `teknoo.east.common.bundle.api_keys.token_prefix` (`sp_`) and
+    `teknoo.east.common.bundle.jwt.max_days_to_live` (`SPACE_JWT_MAX_DAYS_TO_TIVE`).
+  - `teknoo.space.api_key_authenticated_user_provider.class` is replaced by
+    `teknoo.east.common.bundle.api_keys_authenticated_user_provider.class`.
+- Translation keys of the API key and JWT forms are renamed to `teknoo.east.common.api_keys.*` and
+  `teknoo.east.common.jwt.*`.
+
+#### Docs
+- `documentation/api.md`: format of errors and organization of the route files.
+- `documentation/domain.md`: API keys and JWT configuration are provided by East Common.
+
 ## [2.5.0-beta7] - 2026-09-28
 ### Beta Release
 - Update libs

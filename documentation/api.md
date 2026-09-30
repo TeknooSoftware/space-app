@@ -109,13 +109,17 @@ JWT tokens are configured via environment variables:
 
 ## Route File Organization
 
-API routes are organized in `config/routes/api/v1/` with 10 YAML files. Every file name is prefixed
+API routes are organized in `config/routes/api/v1/` with 9 YAML files. Every file name is prefixed
 `space.api.v1.`:
 
 - **unauthenticated/**: `space.api.v1.login.yaml` (1 file — public login endpoint)
-- **authenticated/**: `space.api.v1.account.yaml`, `.job.yaml`, `.jwt.yaml`, `.project.yaml`, `.settings.yaml`
-  (5 files)
+- **authenticated/**: `space.api.v1.account.yaml`, `.job.yaml`, `.project.yaml`, `.settings.yaml` (4 files)
 - **admin/**: `space.api.v1.account.yaml`, `.job.yaml`, `.project.yaml`, `.user.yaml` (4 files)
+
+The public login endpoint (`POST /api/v1/login`, route `_teknoo_common_api_jwt_login`) and the JWT endpoint
+(`POST /api/v1/jwt/create-token`, route `_teknoo_common_api_jwt_create`) are routes shipped by East Common.
+`space.api.v1.login.yaml` only imports `jwt_api_login_routing.yaml`, and `config/routes/api.yaml` imports
+`jwt_api_routing.yaml` under `/api/v1`.
 
 The `/api/v1` and `/api/v1/admin` prefixes are not written in those files: `config/routes/api.yaml` imports
 each directory under its prefix.
@@ -123,7 +127,7 @@ each directory under its prefix.
 Web routes are in `config/routes/` with 10 `space.*.yaml` files (`space.account.yaml`,
 `space.admin.account.yaml`, `space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`,
 `space.job.yaml`, `space.project.yaml`, `space.settings.yaml`, `space.subscription.yaml`,
-`space.support.contact.yaml`) containing 48 `path:` entries. The same directory holds 11 more YAML files
+`space.support.contact.yaml`) containing 45 `path:` entries. The same directory holds 11 more YAML files
 wiring the framework and the vendor bundles: `api.yaml`, `connect.oauth.yaml`, `east.common.include.yaml`,
 `east.paas.include.yaml`, the four `east.paas.overwrite.*.yaml`, `scheb_2fa.yaml`, `symfony.framework.yaml`
 and `web_profiler.yaml`.
@@ -149,8 +153,10 @@ carry the **`.json.twig`** extension, and a single object is usually `item`, not
 | `AdminUser/`      | `deleted`, `item`, `list`                              |
 
 There is no `AdminProject/` directory: the admin project endpoints reuse the `Project/` templates.
+The `Jwt/` templates render the East Common routes `/api/v1/login` and `/api/v1/jwt/create-token`: they replace the
+templates shipped by East Common through the `template` and `tokenTemplate` defaults of the route import.
 
-Each template renders a JSON object matching the API response format (`{"data": {...}}` or `{"error": {...}}`).
+Each template renders a JSON object matching the API response format (`{"meta": {...}, "data": {...}}`).
 The template to use is named in the route `defaults`, next to `api: 'json'`.
 
 ## API Endpoints
@@ -476,12 +482,27 @@ All API responses follow a consistent JSON format:
 
 ```json
 {
-    "error": {
+    "meta": {
+        "error": true
+    },
+    "data": {
+        "code": 404,
         "message": "Error description",
-        "code": "ERROR_CODE"
+        "previous": [
+            {
+                "code": 400,
+                "message": "Description of a previous error"
+            }
+        ]
     }
 }
 ```
+
+`previous` is present only when the error has previous errors. The class, the file, the line and the trace of an
+error are never returned, and the message of a server error (`5xx`) is replaced by `Internal Server Error`, except in
+the `dev` environment (DI parameter `teknoo.east.common.rendering.api.expose_server_error_message`, enabled by
+`when@dev` in `config/parameters.yaml`). Authentication failures (`401`: invalid credentials on the login, JWT token not
+found, invalid or expired) use the same format.
 
 ## HTTP Status Codes
 

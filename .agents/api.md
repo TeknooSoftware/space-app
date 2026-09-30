@@ -4,12 +4,18 @@ Thin reference for the API layer. **See `documentation/` for full details.**
 
 ## Route File Organization
 
-**API v1 routes** (`config/routes/api/v1/`): 10 YAML files across 3 subdirectories. Every file is prefixed
+**API v1 routes** (`config/routes/api/v1/`): 9 YAML files across 3 subdirectories. Every file is prefixed
 `space.api.v1.` — the bare names (`account.yaml`, `job.yaml`, …) do not exist:
 
 - **unauthenticated/**: `space.api.v1.login.yaml`
-- **authenticated/**: `space.api.v1.account.yaml`, `.job.yaml`, `.jwt.yaml`, `.project.yaml`, `.settings.yaml`
+- **authenticated/**: `space.api.v1.account.yaml`, `.job.yaml`, `.project.yaml`, `.settings.yaml`
 - **admin/**: `space.api.v1.account.yaml`, `.job.yaml`, `.project.yaml`, `.user.yaml`
+
+`POST /api/v1/login` and `POST /api/v1/jwt/create-token` are the East Common routes `_teknoo_common_api_jwt_login`
+and `_teknoo_common_api_jwt_create`: `space.api.v1.login.yaml` only imports `jwt_api_login_routing.yaml`, and
+`config/routes/api.yaml` imports `jwt_api_routing.yaml`. The web pages of API keys and JWT tokens
+(`_teknoo_common_api_keys_manage`, `_teknoo_common_api_keys_delete`, `_teknoo_common_jwt_create`, under
+`/my-settings`) are imported by `config/routes/east.common.include.yaml`.
 
 The `/api/v1` and `/api/v1/admin` prefixes are **not** in these files: they come from the loader
 `config/routes/api.yaml`, which imports the three directories under their prefix.
@@ -17,7 +23,7 @@ The `/api/v1` and `/api/v1/admin` prefixes are **not** in these files: they come
 **Web routes** (`config/routes/`): 10 YAML files (`space.account.yaml`, `space.admin.account.yaml`,
 `space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`,
 `space.project.yaml`, `space.settings.yaml`, `space.subscription.yaml`,
-`space.support.contact.yaml`) containing 48 `path:` entries. The same directory also holds the
+`space.support.contact.yaml`) containing 45 `path:` entries. The same directory also holds the
 framework and vendor route files (`api.yaml`, `connect.oauth.yaml`, `east.common.include.yaml`,
 `east.paas.include.yaml`, four `east.paas.overwrite.*.yaml`, `scheb_2fa.yaml`, `symfony.framework.yaml`,
 `web_profiler.yaml`).
@@ -42,8 +48,12 @@ API responses are rendered by Twig templates in `templates/TeknooSpace/api/`. Th
 | `AdminUser/`      | `deleted`, `item`, `list`                              |
 
 There is no `AdminProject/` directory: admin project responses reuse the non-admin `Project/` templates.
+The `Jwt/` templates render the East Common routes `/api/v1/login` and `/api/v1/jwt/create-token`: they are set by
+the `template` and `tokenTemplate` defaults of the route import, in `config/routes/east.common.include.yaml`.
 
-Each template renders `{"data": {...}}` or `{"error": {...}}`. The template to use is named in the route
+Each template renders `{"meta": {...}, "data": {...}}`; errors, authentication failures included, are
+`{"meta": {"error": true}, "data": {"code": ..., "message": ..., "previous": [...]}}`, without class, file, line or
+trace. The template to use is named in the route
 `defaults`, alongside `api: 'json'`.
 
 → `documentation/api.md#json-template-structure`

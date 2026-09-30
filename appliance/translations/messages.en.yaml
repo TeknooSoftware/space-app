@@ -33,6 +33,12 @@ Search: 'Search'
 'Teknoo\East\Paas\Recipe\Step\Worker\PrepareWorkspace': 'Preparing the workspace'
 'Teknoo\East\Paas\Recipe\Step\Worker\ReadDeploymentConfiguration': 'Reading the deployment file (.paas.yaml)'
 teknoo.east.common.2fa.error_code_not_validated: 'Invalid Code'
+teknoo.east.common.api_keys.error.already_exists: 'A token already exists with this token'
+teknoo.east.common.api_keys.error.list_not_accessible: 'The keys list is not accessible'
+teknoo.east.common.api_keys.form.expiration: 'Token Expiration date'
+teknoo.east.common.api_keys.form.name.regex_error: 'Token name accepts only lower alphanumeric characters and underscores'
+teknoo.east.common.api_keys.form.name: 'Token Name'
+teknoo.east.common.jwt.form.expiration: 'Token expiration'
 teknoo.east.common.recovery_access.notification.subject: '[Teknoo Space] - Recovery access'
 teknoo.east.paas.jobs.configured: 'Job configured, waiting for a worker'
 teknoo.space.action.2fa.disable: 'Disable'
@@ -161,8 +167,6 @@ teknoo.space.error.space_project.project.deleting: "Can not delete the project"
 teknoo.space.error.space_project.project.fetching: "Main project's data can not be fetched"
 teknoo.space.error.space_project.project.persisting: "Can not persist project's updates"
 teknoo.space.error.space_project.project_metadata.fetching: "Project's data can not be fetched"
-teknoo.space.error.space_user.api_key.list_not_accessible: 'The keys list is not accessible'
-teknoo.space.error.space_user.api_key_already_exists: 'A token already exists with this token'
 teknoo.space.error.space_user.user.deleting: "Can not delete the user"
 teknoo.space.error.space_user.user.fetching: "Main user's data can not be fetched"
 teknoo.space.error.space_user.user.persisting: "Can not persist update's updates"
@@ -217,10 +221,6 @@ teknoo.space.form.project.cluster.username: 'Username'
 teknoo.space.form.project.vars_set.environment: 'Environment'
 teknoo.space.form.reset_password.email: 'Email address'
 teknoo.space.form.search.text: 'Search'
-teknoo.space.form.user.api_key.expiration: 'Token Expiration date'
-teknoo.space.form.user.api_key.name.regex_error: 'Token name accepts only lower alphanumeric characters and underscores'
-teknoo.space.form.user.api_key.name: 'Token Name'
-teknoo.space.form.user.jwt.expiration: 'Token expiration'
 teknoo.space.form.user.user.email: 'Email'
 teknoo.space.form.user.user.first_name: 'First Name'
 teknoo.space.form.user.user.last_name: 'Last Name'

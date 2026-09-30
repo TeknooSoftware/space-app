@@ -46,7 +46,7 @@ trait JwtTrait
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
-            routeName: 'space_my_settings_jwt_token',
+            routeName: '_teknoo_common_jwt_create',
         );
 
         $dateInFuture = new DateTime('now'); //Use now, because JWT Bundle does not use DatesService
@@ -57,7 +57,7 @@ trait JwtTrait
 
         $this->executeRequest(
             method: 'POST',
-            url: $this->getPathFromRoute('space_my_settings_jwt_token'),
+            url: $this->getPathFromRoute('_teknoo_common_jwt_create'),
             params: $values
         );
 

@@ -7,7 +7,7 @@ security:
         with_password:
             id: 'Teknoo\East\CommonBundle\Provider\PasswordAuthenticatedUserProvider'
         with_api_key:
-            id: 'Teknoo\Space\Infrastructures\Symfony\Security\Provider\ApiKeysAuthenticatedUserProvider'
+            id: 'Teknoo\East\CommonBundle\Provider\ApiKeysAuthenticatedUserProvider'
         from_third_party:
             id: 'Teknoo\East\CommonBundle\Provider\ThirdPartyAuthenticatedUserProvider'
         with_recovery_access:
@@ -22,7 +22,7 @@ security:
     password_hashers:
         Teknoo\East\CommonBundle\Object\PasswordAuthenticatedUser:
             algorithm: 'sodium'
-        Teknoo\Space\Infrastructures\Symfony\Object\ApiKeysAuthUser:
+        Teknoo\East\CommonBundle\Object\ApiKeysAuthUser:
             algorithm: 'sodium'
 
     firewalls:
@@ -47,9 +47,10 @@ security:
             jwt: ~
             json_login:
                 provider: 'with_api_key'
-                check_path: 'space_api_v1_login_check'
+                check_path: '_teknoo_common_api_jwt_login'
                 username_path: 'username'
                 password_path: 'token'
+                failure_handler: 'lexik_jwt_authentication.handler.authentication_failure'
 
         #require admin role for all others pages
         account_area:

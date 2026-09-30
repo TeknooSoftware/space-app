@@ -47,7 +47,6 @@ use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\East\Common\Recipe\Step\RenderList;
 use Teknoo\East\Common\Recipe\Step\SaveObject;
 use Teknoo\East\Common\Recipe\Step\StartLoopingOn;
-use Teknoo\East\Common\Recipe\Step\Stop;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditAccountEndPointInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditProjectEndPointInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
@@ -72,7 +71,6 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\LoginUserInterface;
-use Teknoo\Space\Contracts\Recipe\Step\User\JwtCreateTokenInterface;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentInstall as K8sEnvInstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountEnvironmentReinstall as K8sEnvReinstall;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Plan\AccountRefreshQuota as K8sRefreshQuota;
@@ -142,10 +140,6 @@ use Teknoo\Space\Recipe\Plan\Subscription;
 use Teknoo\Space\Recipe\Plan\Task\AccountEnvironmentsDeletionTask;
 use Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask;
 use Teknoo\Space\Recipe\Plan\Task\AccountRefreshQuotaTask;
-use Teknoo\Space\Recipe\Plan\UserCreateJwtToken;
-use Teknoo\Space\Recipe\Plan\UserCreateFromFormJwtToken;
-use Teknoo\Space\Recipe\Plan\UserDeleteApiToken;
-use Teknoo\Space\Recipe\Plan\UserManageApiTokens;
 use Teknoo\Space\Recipe\Plan\UserMySettings;
 use Teknoo\Space\Recipe\Step\Account\CreateAccountHistory;
 use Teknoo\Space\Recipe\Step\Account\ExtractFromAccountDTO;
@@ -176,7 +170,6 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\LoadRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
-use Teknoo\Space\Recipe\Step\ApiKey\RemoveKey;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
@@ -884,52 +877,6 @@ return [
             diGet(RenderFormInterface::class),
             diGet(RenderError::class),
             value(SpaceUser::class),
-            diGet('teknoo.east.common.get_default_error_template'),
-        ),
-
-    UserManageApiTokens::class => create()
-        ->constructor(
-            diGet(OriginalRecipeInterface::class),
-            diGet(CreateObject::class),
-            diGet(FormHandlingInterface::class),
-            diGet(FormProcessingInterface::class),
-            diGet(SaveObject::class),
-            diGet(RenderFormInterface::class),
-            diGet(RenderError::class),
-            diGet('teknoo.east.common.get_default_error_template'),
-        ),
-
-    UserDeleteApiToken::class => create()
-        ->constructor(
-            diGet(OriginalRecipeInterface::class),
-            diGet(RemoveKey::class),
-            diGet(SaveObject::class),
-            diGet(RedirectClientInterface::class),
-            diGet(RenderError::class),
-            diGet('teknoo.east.common.get_default_error_template'),
-        ),
-
-    UserCreateFromFormJwtToken::class => create()
-        ->constructor(
-            diGet(OriginalRecipeInterface::class),
-            diGet(CreateObject::class),
-            diGet(FormHandlingInterface::class),
-            diGet(FormProcessingInterface::class),
-            diGet(JwtCreateTokenInterface::class),
-            diGet(Render::class),
-            diGet(Stop::class),
-            diGet(RenderFormInterface::class),
-            diGet(RenderError::class),
-            diGet('teknoo.east.common.get_default_error_template'),
-        ),
-
-    UserCreateJwtToken::class => create()
-        ->constructor(
-            diGet(OriginalRecipeInterface::class),
-            diGet(CreateObject::class),
-            diGet(JwtCreateTokenInterface::class),
-            diGet(Render::class),
-            diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
         ),
 

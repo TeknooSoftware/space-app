@@ -32,6 +32,8 @@ use DomainException;
 use DateTimeInterface;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
+use Teknoo\East\Common\Object\ApiKeysAuth;
+use Teknoo\East\Common\Object\ApiKeyToken;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Normalizer\EastNormalizerInterface;
 use Teknoo\East\Foundation\Time\DatesService;
@@ -55,8 +57,6 @@ use Teknoo\Space\Object\Persisted\AccountCluster;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Object\Persisted\AccountData;
 use Teknoo\Space\Object\Persisted\AccountPersistedVariable;
-use Teknoo\Space\Object\Persisted\ApiKeysAuth;
-use Teknoo\Space\Object\Persisted\ApiKeyToken;
 use Teknoo\Space\Object\Persisted\ProjectPersistedVariable;
 use Teknoo\Space\Object\Persisted\ProjectMetadata;
 use Teknoo\Space\Object\Persisted\UserData;
@@ -1208,6 +1208,13 @@ trait ApiTrait
                     $unserialized['error'],
                 );
             }
+
+            if (isset($unserialized['data']['message'])) {
+                Assert::assertEquals(
+                    $message,
+                    $unserialized['data']['message'],
+                );
+            }
         } else {
             Assert::assertEquals(
                 $code,
@@ -2279,7 +2286,7 @@ trait ApiTrait
     {
         $this->executeRequest(
             method: 'post',
-            url: $this->getPathFromRoute('space_api_v1_jwt_generate_token'),
+            url: $this->getPathFromRoute('_teknoo_common_api_jwt_create'),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -2344,7 +2351,7 @@ trait ApiTrait
     {
         $this->findUrlFromRouteInPageAndOpenIt(
             crawler: $this->createCrawler(),
-            routeName: 'space_my_settings_list_api_keys',
+            routeName: '_teknoo_common_api_keys_manage',
         );
 
         $dateInFuture = $this->datesService->now();
@@ -2356,7 +2363,7 @@ trait ApiTrait
 
         $this->executeRequest(
             method: 'POST',
-            url: $this->getPathFromRoute('space_my_settings_list_api_keys'),
+            url: $this->getPathFromRoute('_teknoo_common_api_keys_manage'),
             params: $values
         );
 
@@ -2388,7 +2395,7 @@ trait ApiTrait
         $this->executeRequest(
             method: 'post',
             url: $this->getPathFromRoute(
-                route: 'space_api_v1_login_check',
+                route: '_teknoo_common_api_jwt_login',
             ),
             params: [],
             noCookies: true,
