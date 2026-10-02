@@ -200,5 +200,6 @@ class ListCommandTest extends TestCase
         $content = $output->fetch();
         $this->assertStringNotContainsString('Ghost', $content);
         $this->assertStringNotContainsString('FakeNotAnExtension', $content);
+        $this->assertStringNotContainsString('.gitkeep', $content);
     }
 }

@@ -32,7 +32,6 @@ use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\Config\SubscriptionPlanCatalog;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Throwable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -68,8 +67,6 @@ class LoadSubscriptionPlan
                     return $this->catalog->getSubscriptionPlan($planId);
                 } catch (DomainException) {
                     return null;
-                } catch (Throwable $error) {
-                    throw $error;
                 }
             },
         );

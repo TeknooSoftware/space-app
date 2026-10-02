@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Account;
 
+use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -134,6 +135,42 @@ class PrepareFormTest extends TestCase
                     accountData: new AccountData(account: $account, subscriptionPlan: ''),
                 ),
                 ['foo' => 'bar'],
+            )
+        );
+    }
+
+    public function testInvokeWithUnknownSubscriptionPlan(): void
+    {
+        $this->subscriptionPlanCatalog
+            ->expects($this->once())
+            ->method('getSubscriptionPlan')
+            ->with('removed-plan')
+            ->willThrowException(new DomainException('Subscription Plan removed-plan is not available'));
+
+        $account = new Account();
+        $clusterCatalog = new ClusterCatalog([], []);
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager
+            ->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([
+                'formOptions' => [
+                    'subscriptionPlan' => null,
+                    'clusterCatalog' => $clusterCatalog,
+                ],
+            ])
+            ->willReturnSelf();
+
+        $this->assertInstanceOf(
+            PrepareForm::class,
+            ($this->prepareForm)(
+                $manager,
+                $clusterCatalog,
+                new SpaceAccount(
+                    account: $account,
+                    accountData: new AccountData(account: $account, subscriptionPlan: 'removed-plan'),
+                ),
             )
         );
     }

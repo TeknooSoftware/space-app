@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
+use DomainException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -128,6 +129,39 @@ class LoadSubscriptionPlanTest extends TestCase
                         && $workplan[SubscriptionPlan::class] === null;
                 })
             );
+
+        $this->assertInstanceOf(
+            LoadSubscriptionPlan::class,
+            ($this->loadSubscriptionPlan)(
+                manager: $manager,
+                spaceAccount: $spaceAccount,
+            )
+        );
+    }
+
+    public function testInvokeWithUnknownPlanId(): void
+    {
+        $accountData = $this->createMock(AccountData::class);
+        $accountData->expects($this->once())
+            ->method('visit')
+            ->willReturnCallback(function ($field, $promise) use ($accountData) {
+                $this->assertEquals('subscriptionPlan', $field);
+                $promise->success('removed-plan');
+                return $accountData;
+            });
+
+        $spaceAccount = new SpaceAccount($this->createStub(Account::class));
+        $spaceAccount->accountData = $accountData;
+
+        $this->subscriptionPlanCatalog->expects($this->once())
+            ->method('getSubscriptionPlan')
+            ->with('removed-plan')
+            ->willThrowException(new DomainException('Subscription Plan removed-plan is not available'));
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([SubscriptionPlan::class => null]);
 
         $this->assertInstanceOf(
             LoadSubscriptionPlan::class,
