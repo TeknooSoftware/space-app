@@ -208,19 +208,27 @@ if [ "$useDockerCompose" = "y" ]; then
 
   mongoDbDSN="mongodb://space_user:space_pwd@db/teknoo_space"
   amqpDSN="amqp://space:space_pwd@amqp:5672/"
-  mercurePublishUrl="https://localhost/"
-  mercureSubscribeUrl="https://localhost/"
+  # Public URL of the hub: embedded in the web server of the FrankenPHP stack, behind the /hub
+  # proxy of httpd in the FPM one. Both stacks trust the issuer https://localhost.
+  if [ "$useDockerComposeFranken" = "y" ]; then
+    mercurePublishUrl="https://localhost/.well-known/mercure"
+  else
+    mercurePublishUrl="https://localhost/hub/.well-known/mercure"
+  fi
+  mercureSubscribeUrl="$mercurePublishUrl"
+  mercureJwtIssuerDefault="https://localhost"
 else
   mongoDbDSN=$(readAMandatoryResponse "MongoDB DSN")
   amqpDSN=$(readAMandatoryResponse "AMQP DSN")
   mercurePublishUrl=$(readAMandatoryResponse "Mercure Server URL")
   mercureSubscribeUrl="$mercurePublishUrl"
+  mercureJwtIssuerDefault="$mercureSubscribeUrl"
 fi
 
 mercureJwtToken=$(readAMandatoryResponse "Mercure JWT Token")
 # Read by a Mercure 1.0 hub only (the `iss` claim of RFC 9068 access tokens), but harmless on a 0.x one
-mercureJwtIssuer=$(readAMandatoryResponse "Mercure trusted issuer (iss claim)" "$mercureSubscribeUrl")
-mercureProtocolVersion=$(readAMandatoryResponse "Mercure protocol spoken by the hub (0.x or 1.0)" "0.x")
+mercureJwtIssuer=$(readAMandatoryResponse "Mercure trusted issuer (iss claim)" "$mercureJwtIssuerDefault")
+mercureProtocolVersion=$(readAMandatoryResponse "Mercure protocol spoken by the hub (0.x or 1.0)" "1.0")
 useCatalog=$(readForYesOrNoToBool "Use Cluster Catalog ? [y/n]")
 if [ "$useCatalog" = "0" ]; then
   kubernetesApi=$(readAMandatoryResponse "Kubernetes API Url")
@@ -632,7 +640,8 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "APP_ENV" "$APP_ENV"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MAILER_REPLY_TO_ADDRESS" "$mailerSenderAddress"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MAILER_SENDER_ADDRESS" "$mailerSenderAddress"
-  updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MERCURE_PUBLISH_URL" "$mercurePublishUrl"
+  # MERCURE_PUBLISH_URL is left as the templates set it: each service names the hub it can reach
+  # from its own container, which is not the public URL.
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "MERCURE_SUBSCRIBER_URL" "$mercureSubscribeUrl"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_ENABLED" "$oauthEnabled"
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "OAUTH_SERVER_TYPE" "$oauthServerType"

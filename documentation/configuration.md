@@ -1805,17 +1805,17 @@ MERCURE_JWT_ISSUER=https://space.example.com
 - **Type**: String, `0.x` or `1.0`
 - **Optional**: Yes
 - **Default**: `0.x`, which an empty or unrecognized value also falls back to
-- **Description**: The Mercure protocol spoken by the hub. It must match the hub actually deployed,
-  and the two Docker Compose topologies do not run the same one:
+- **Description**: The Mercure protocol spoken by the hub. It must match the hub actually deployed.
+  Every Docker Compose topology now runs a Mercure 1.0 hub:
 
-| Stack                                                                         | Hub                                                               | `MERCURE_PROTOCOL_VERSION`      |
-|-------------------------------------------------------------------------------|-------------------------------------------------------------------|---------------------------------|
-| `compose.yml` (default), `compose.frankenphp.yml`                             | Caddy module embedded in `dunglas/frankenphp`, still Mercure 0.24 | unset, i.e. `0.x`               |
-| `compose.fpm.yml`, and its legacy httpd variant `compose.legacy.override.yml` | dedicated `dunglas/mercure:v1` container                          | `1.0`, set on every PHP service |
+| Stack                                                                         | Hub                                                              | `MERCURE_PROTOCOL_VERSION`      |
+|-------------------------------------------------------------------------------|------------------------------------------------------------------|---------------------------------|
+| `compose.yml` (default), `compose.frankenphp.yml`                             | Caddy module embedded in `dunglas/frankenphp` 1.13, Mercure 1.0  | `1.0`, set on every PHP service |
+| `compose.fpm.yml`, and its legacy httpd variant `compose.legacy.override.yml` | dedicated `dunglas/mercure:v1` container                         | `1.0`, set on every PHP service |
 
-The FrankenPHP stacks will move to `1.0` as soon as FrankenPHP ships a Mercure 1.0 module (it embeds
-`github.com/dunglas/mercure v0.24.2` today). The hub tag stays overridable with
-`MERCURE_IMAGE_TAG=v0.24` to roll the FPM stack back, which then also means setting
+FrankenPHP embeds Mercure 1.0 since its release 1.13 (1.12 still embedded `github.com/dunglas/mercure
+v0.24.2`), so the development image is built from `dunglas/frankenphp:1.13-php8.5`. The hub tag of the FPM
+stack stays overridable with `MERCURE_IMAGE_TAG=v0.24` to roll it back, which then also means setting
 `MERCURE_PROTOCOL_VERSION=0.x` on its PHP services.
 
 ```bash
@@ -1832,17 +1832,20 @@ one stack to the other.
 
 On the FPM and legacy stacks the workers publish through the internal
 `http://mercure:8181/.well-known/mercure` while the browser subscribes through the httpd proxy at
-`https://localhost/hub/.well-known/mercure`. A 1.0 hub derives the audience it expects from each
-request, so the two URLs differing would make every publication fail with a `401`; the hub therefore
-pins `resource_identifier` to the public URL, which is also the `aud` claim of the generated tokens.
-`MERCURE_TRUSTED_ISSUERS` on the hub and `MERCURE_JWT_ISSUER` on the PHP services must likewise be
-the same value.
+`https://localhost/hub/.well-known/mercure`. On the FrankenPHP stacks the workers publish through
+`https://web/.well-known/mercure`, the name of the `web` service on the Compose network, while the
+browser subscribes at `https://localhost/.well-known/mercure`. A 1.0 hub derives the audience it expects
+from each request, so the two URLs differing would make every publication fail with a `401`; the hub
+therefore pins `resource_identifier` to the public URL, which is also the `aud` claim of the generated
+tokens (the FrankenPHP `Caddyfile` reads it from `MERCURE_SUBSCRIBER_URL`). `MERCURE_TRUSTED_ISSUERS` on
+the hub and `MERCURE_JWT_ISSUER` on the PHP services must likewise be the same value.
 
-Switching the parameter to `1.0` changes three things at once, and all of them are handled by the
-code: the subscription query parameter becomes `match` instead of `topic`, the generated JWT becomes
-an RFC 9068 access token carrying `authorization_details` (hence `MERCURE_JWT_ISSUER`), and the
-subscriber cookie is renamed `__Secure-mercure_access_token`, which requires the hub public URL to be
-served over HTTPS. Switch it only once **every** process talks to a 1.0 hub, and update the hub
+Switching the parameter to `1.0` changes four things at once, and all of them are handled by the
+code: the subscription query parameter becomes `match` instead of `topic`, the history replay parameter
+becomes `last_event_id` instead of `lastEventID` (a 1.0 hub ignores the latter, so the updates published
+before the subscription would be lost), the generated JWT becomes an RFC 9068 access token carrying
+`authorization_details` (hence `MERCURE_JWT_ISSUER`), and the subscriber cookie is renamed
+`__Secure-mercure_access_token`, which requires the hub public URL to be served over HTTPS. Switch it only once **every** process talks to a 1.0 hub, and update the hub
 configuration accordingly (`issuer` block instead of `publisher_jwt`/`subscriber_jwt`).
 
 ### Job Notification

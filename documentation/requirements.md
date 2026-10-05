@@ -243,11 +243,10 @@ Worker also needs them to deploy jobs on `docker-compose` clusters.
 
 #### Mercure (Optional but Recommended)
 
-**Version:** Mercure **1.0** for the stacks running a dedicated hub container (`compose.fpm.yml` and
-its legacy httpd variant, which use `dunglas/mercure:v1`), Mercure **0.24** for the FrankenPHP stacks,
-whose hub is the Caddy module embedded in the image and is not a 1.0 one yet. The protocol is selected
-by the `MERCURE_PROTOCOL_VERSION` environment variable and must match the hub actually deployed, see
-[configuration.md](configuration.md).
+**Version:** Mercure **1.0** for every stack: the dedicated hub container of `compose.fpm.yml` and of
+its legacy httpd variant (`dunglas/mercure:v1`), and the Caddy module embedded in FrankenPHP 1.13 and
+later for the FrankenPHP stacks. The protocol is selected by the `MERCURE_PROTOCOL_VERSION` environment
+variable and must match the hub actually deployed, see [configuration.md](configuration.md).
 
 **Purpose:** Real-time Server-Sent Events (SSE) for live updates
 

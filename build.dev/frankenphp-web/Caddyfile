@@ -27,22 +27,20 @@ https://localhost, {$INTERNAL_SERVER_NAME:https://web} {
 
     encode zstd gzip
 
-    # Mercure 0.x directives: the hub embedded in the `dunglas/frankenphp` image is still a 0.24
-    # one. When FrankenPHP ships the Mercure 1.0 module, `publisher_jwt`/`subscriber_jwt` become
-    # unknown directives (a fatal error, no longer a warning) and must be replaced by an issuer
-    # block, while teknoo.space.mercure.protocol_version is switched to `1.0`:
-    #
-    #     issuer {$MERCURE_TRUSTED_ISSUERS:https://localhost} {
-    #         publisher {
-    #             jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
-    #         }
-    #         subscriber {
-    #             jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
-    #         }
-    #     }
+    # Mercure 1.0 hub, the module embedded in FrankenPHP since 1.13. The issuer must be the `iss`
+    # claim of the tokens minted by the PHP services (MERCURE_JWT_ISSUER). `resource_identifier`
+    # pins the audience on the public URL: the workers publish through `https://web`, and a 1.0 hub
+    # otherwise derives the audience from each request and rejects their tokens with a 401.
     mercure {
-        publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
-        subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+        issuer {$MERCURE_TRUSTED_ISSUERS:https://localhost} {
+            publisher {
+                jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
+            }
+            subscriber {
+                jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
+            }
+        }
+        resource_identifier {$MERCURE_SUBSCRIBER_URL:https://localhost/.well-known/mercure}
 
         anonymous
         subscriptions

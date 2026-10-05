@@ -382,7 +382,7 @@ class FetchJobIdFromPendingTest extends TestCase
         $this->assertSame(
             'https://localhost/.well-known/mercure'
                 . '?match=' . rawurlencode($this->topicUrl)
-                . '&lastEventID=foo',
+                . '&last_event_id=foo',
             $this->requestedUrl,
         );
 

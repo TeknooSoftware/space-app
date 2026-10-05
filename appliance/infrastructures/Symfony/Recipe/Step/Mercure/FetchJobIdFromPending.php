@@ -77,17 +77,23 @@ class FetchJobIdFromPending implements FetchJobIdFromPendingInterface
         string $taskId,
     ): string {
         // The Mercure protocol 1.0 replaced the `topic` query parameter by matcher-typed ones,
-        // `match` being the exact matcher. `lastEventID` is kept by both versions.
+        // `match` being the exact matcher, and renamed `lastEventID` to `last_event_id`: a 1.0 hub
+        // ignores `lastEventID` and would not replay the updates published before the subscription.
         $matcher = match ($hub->getProtocolVersion()) {
             ProtocolVersion::V1 => 'match',
             ProtocolVersion::Legacy => 'topic',
+        };
+
+        $lastEventId = match ($hub->getProtocolVersion()) {
+            ProtocolVersion::V1 => 'last_event_id',
+            ProtocolVersion::Legacy => 'lastEventID',
         };
 
         $url = $hub->getPublicUrl();
 
         $url .= '?' . $matcher . '=' . rawurlencode($topicUrl);
 
-        return $url . ('&lastEventID=' . $taskId);
+        return $url . ('&' . $lastEventId . '=' . $taskId);
     }
 
     public function __invoke(

@@ -1,5 +1,7 @@
 # FrankenPHP web image replacing httpd + php-fpm for development
-FROM dunglas/frankenphp:1-php8.5
+# Pinned on 1.13, the first release embedding the Mercure 1.0 module the Caddyfile is written for:
+# `./space.sh build` does not pull, so a cached `1-php8.5` could still be a 1.12 image.
+FROM dunglas/frankenphp:1.13-php8.5
 
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US:fr

@@ -11,8 +11,13 @@ services:
             - MAILER_DSN=ToChange!
             - MAILER_REPLY_TO_ADDRESS=ToChange!
             - MAILER_SENDER_ADDRESS=ToChange!
+            # `iss` of the tokens: must match MERCURE_TRUSTED_ISSUERS, set on this service in compose.yml
+            - MERCURE_JWT_ISSUER=https://localhost
             - MERCURE_JWT_TOKEN=ToChange!
-            - MERCURE_PUBLISH_URL=ToChange!
+            - MERCURE_PUBLISHER_JWT_KEY=ToChange!
+            # The hub is embedded in this container, which answers on https://localhost (Caddyfile)
+            - MERCURE_PUBLISH_URL=https://localhost/.well-known/mercure
+            - MERCURE_SUBSCRIBER_JWT_KEY=ToChange!
             - MERCURE_SUBSCRIBER_URL=ToChange!
             - MESSENGER_NEW_TASK_DSN=ToChange!
             - MONGODB_SERVER=ToChange!
@@ -58,6 +63,8 @@ services:
         environment:
             - APP_ENV=dev
             - APP_SECRET=ToChange!
+            # `iss` of the tokens: must match MERCURE_TRUSTED_ISSUERS of the `web` service, the hub
+            - MERCURE_JWT_ISSUER=https://localhost
             - MERCURE_JWT_TOKEN=ToChange!
             # The hub is embedded in the `web` container of this stack, so `localhost` here would
             # be the worker container itself and no update would ever be published. The publish

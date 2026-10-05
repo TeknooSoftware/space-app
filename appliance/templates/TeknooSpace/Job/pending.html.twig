@@ -55,15 +55,15 @@
     {% set topicUrl = url('space_job_new_pending', {'taskId': taskId }) %}
     <script nonce="{{ space_nonce() }}">
         {% if mercureEnabled %}
-        const eventSource = new EventSource(
-          "{{ mercure(
-              topicUrl,
-              {
-                  'lastEventId': taskId,
-                  'subscribe': topicUrl
-              }
-          )|escape('js') }}"
-        );
+        {#- Updates published before the subscription are replayed from the marker identified by
+            the task id. Mercure 1.0 reads it from `last_event_id`, while the `lastEventId` option of
+            mercure() (symfony/mercure 0.8) only emits the 0.x `lastEventID`/`Last-Event-ID`. -#}
+        {% if mercureProtocolVersion == '1.0' %}
+            {% set mercureSubscriptionUrl = mercure(topicUrl, {'subscribe': topicUrl}) ~ '&last_event_id=' ~ taskId|url_encode %}
+        {% else %}
+            {% set mercureSubscriptionUrl = mercure(topicUrl, {'lastEventId': taskId, 'subscribe': topicUrl}) %}
+        {% endif %}
+        const eventSource = new EventSource("{{ mercureSubscriptionUrl|escape('js') }}");
 
         eventSource.onmessage = event => {
           result = JSON.parse(event.data);
