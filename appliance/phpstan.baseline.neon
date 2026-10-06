@@ -46,9 +46,6 @@ parameters:
             message: '#::persist\(#'
             path:  domain/Writer/PersistedVariableWriterTrait.php
         -
-            message: '#runVisit\(\) is unused#'
-            path:  domain/Object
-        -
             message: '#on left side of \?\? is unnecessary. Use -> instead#'
             path:   domain/
         -
@@ -69,6 +66,3 @@ parameters:
         -
             message: '#mixed#'
             path:   infrastructures/Twig/Extension/UpdateQueryField.php
-        -
-            message: '#Kernel::configureRoutes#'
-            path:   src/Kernel.php
