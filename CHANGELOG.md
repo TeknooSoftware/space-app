@@ -1,5 +1,115 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.0-rc] - 2026-10-06
+### RC Release
+
+#### Security
+- The web process no longer operates a cluster nor a Docker host: registry and environment install / reinstall, quota
+  refresh and environment removal are tasks run by the `new_task` worker
+- Each service only receives the environment variables it needs (compose files and php-fpm pool whitelist)
+- Jobs remove the cluster credentials written on the worker at the end of each stage
+- A cluster token designating a file of the worker is refused, unless the new env var
+  `SPACE_KUBERNETES_CLIENT_ALLOW_TOKEN_FILE` (default `false`) is enabled
+- `/api/v1/admin` is restricted to `ROLE_ADMIN` and denied to `ROLE_RECOVERY`
+- API errors only return `code`, `message` and the `previous` errors (code and message): no more class, file and line
+  of the exception
+- The message of a server error (`5xx`) is replaced by `Internal Server Error` in API responses, except in the `dev`
+  environment (DI parameter `teknoo.east.common.rendering.api.expose_server_error_message`)
+
+#### Fixes
+- Mercure: the pending pages granted the subscription cookie on the hub URL instead of the topic, and
+  `FetchJobIdFromPending` generated a token authorizing nothing
+- Mercure: the development stacks and `bin/config.sh` used an unreachable or incomplete hub URL
+- "Nesting level too deep" when saving an `AccountHistory`: the history is limited to 90 entries, longer ones are
+  truncated on their next update
+- `traefik2` no longer writes the `router.entrypoints` annotation, which pinned the router to a single entrypoint
+- HNC subnamespace anchors are created on their real resource path `subnamespaceanchors`
+- The `Health` step reported only the last Kubernetes cluster of the catalog
+- `UserVoter` returned the wrong reason key on the granted path
+- `SendEmail` did not enforce `SPACE_MAIL_MAX_ATTACHMENTS` as the real maximum
+- The creation date of an API key created from the web form is now stored
+- The login (`POST /api/v1/login`) no longer requires the header `Content-Type: application/json`
+
+#### Evolutions
+- **Docker Compose deployment target**, beside Kubernetes: a remote Docker host reached by SSH and managed with
+  Ansible, with cluster provisioning, job deployment, Traefik v3 routing, DNS and TLS
+  - New `SPACE_DC_*` env vars (SSH, Traefik, Docker); `SPACE_DC_TIMEOUT` is `900` seconds by default
+  - Public TCP/UDP services are published as host ports
+  - The account registry is exposed through the host's Traefik as `<namespace>-registry.<docker host>`; it requires a
+    DNS record and a certificate on Traefik
+  - Scripts `dc-start`, `dc-stop`, `dc-status`, `dc-logs` and `dc-cleanup`
+  - Enterprise extension: `InstallDockerHost` plan, Trivy vulnerability and audit reports (web UI and CLI command)
+- **Tasks**: the `new_job` worker becomes `new_task` and runs any task, not only the creation of jobs
+  - `MESSENGER_NEW_JOB_DSN` becomes `MESSENGER_NEW_TASK_DSN`
+  - `NewJob*` / `CallNewJob*` become `NewTask*` / `CallNewTask*`, `JobUrlPublisher` becomes `TaskUrlPublisher`,
+    `new_job_id` / `newJobId` become `task_id` / `taskId`, `newJobResult` becomes `taskResult`
+  - The admin provisioning pages and their API twins queue a task (`AccountTaskDispatch` plan) and record it in the
+    account history; the API response returns the `taskId`
+  - `AccountRegistry` records the cluster hosting it (`cluster_name`, nullable), reused by a reinstall
+- **Mercure hub 1.0** support
+  - New env var `MERCURE_PROTOCOL_VERSION` (`0.x` by default), read at container compilation: a warmup is needed
+    after a change, and every PHP process needs the same value
+  - New env var `MERCURE_JWT_ISSUER` (default `https://localhost`), the `iss` claim of the tokens: it must match the
+    issuer trusted by the hub (`MERCURE_TRUSTED_ISSUERS`)
+  - New env var `INTERNAL_SERVER_NAME` (default `https://web`), the internal name of the FrankenPHP web server
+  - Every development stack runs a 1.0 hub: `dunglas/mercure:v1` (`MERCURE_IMAGE_TAG` to override) or the module
+    embedded in FrankenPHP 1.13
+- **Valkey replaces Redis** as the session store (Redis licence change); `phpredis` and Symfony
+  `RedisSessionHandler` are kept
+  - New env vars `SPACE_VALKEY_HOST` and `SPACE_VALKEY_PORT`; the session template is now
+    `framework.session.backend.valkey.yaml.dist`
+  - `SPACE_REDIS_HOST` and `SPACE_REDIS_PORT` are deprecated, still read when `SPACE_VALKEY_*` are not set
+- **API keys and JWT tokens are provided by East Common 4.6**; paths, web pages and templates are unchanged
+  - Routes renamed:
+    - `space_api_v1_login_check` becomes `_teknoo_common_api_jwt_login`
+    - `space_api_v1_jwt_generate_token` becomes `_teknoo_common_api_jwt_create`
+    - `space_my_settings_jwt_token` becomes `_teknoo_common_jwt_create`
+    - `space_my_settings_list_api_keys` becomes `_teknoo_common_api_keys_manage`
+    - `space_my_settings_remove_api_keys` becomes `_teknoo_common_api_keys_delete`
+  - API authentication failures (`401`) use the format of the other errors (`meta` and `data`)
+  - New DI parameters `teknoo.east.common.bundle.api_keys.token_prefix` (`sp_`) and
+    `teknoo.east.common.bundle.jwt.max_days_to_live` (`SPACE_JWT_MAX_DAYS_TO_TIVE`);
+    `teknoo.space.api_key_authenticated_user_provider.class` is replaced by
+    `teknoo.east.common.bundle.api_keys_authenticated_user_provider.class`
+  - Translation keys renamed to `teknoo.east.common.api_keys.*` and `teknoo.east.common.jwt.*`
+  - No database migration; the Doctrine metadata cache must be cleared when upgrading
+- `traefik3` is accepted as an alias of `traefik2` in `SPACE_INGRESS_PROVIDER_JSON`
+- **Web UI**
+  - Account edit pages and user page show the account history, with refresh buttons
+  - Project form: a cluster only shows the fields its type uses, with per-type labels
+  - The hierarchical namespaces switch, deprecated by Kubernetes, is hidden in the cluster forms unless
+    `SPACE_SHOW_HNC_FIELD` is enabled (`0` by default, web only); the API is unchanged, the flag will be removed in
+    Space 3
+- **Hooks**: new DI entry `teknoo.space.hooks_collection.default_timeout` (`240`); the `execute_job` worker warns at
+  start-up when `SPACE_WORKER_TIME_LIMIT` is lower than a configured timeout
+- **Images and development stack**
+  - The `php-cli` image ships `ansible-core`, `openssh-client` and an `en_US.UTF-8` locale
+  - The `cli_execute` image behaves like the production builder (rootless `buildah` / `containerd` / `nerdctl`,
+    `space-run`), logs into the global registry and pre-pulls the hook images listed in the new `SPACE_BUILDER_HOOKS`
+  - New `valkey` service (`valkey/valkey:9.1-alpine`); FrankenPHP image pinned on `dunglas/frankenphp:1.13-php8.5`
+- Remove the unused `cleanHtml` argument from the API v1 routes
+- Update `teknoo.space.assets.version`
+- Tests: Behat coverage of Docker Compose deployments and of the East PaaS `v1.2` expose shortcuts, new step
+  `Space executes the pending tasks`; PHPUnit 100% line coverage of `domain/`, `src/` and `infrastructures/`
+- Update libs
+  - East PaaS 5.7.3, East Common 4.6, East Foundation 9.2.4, Kubernetes Client 2.1, Recipe 7.3, States 7.1.12
+  - Symfony 7.4.20/8.1.8, 8.0 is no longer supported; `symfony/twig-bridge` required in `^7.4.19||>=8.1.7`
+  - Symfony Mercure 0.8, Mercure Bundle 0.5
+  - Twig 3.30
+  - Doctrine MongoDB ODM 2.17.1
+  - Illuminate 13.34
+  - Guzzle 7.15 (8 supported)
+  - Monolog 3.12.1, Symfony Monolog Bundle 4.1
+  - Flysystem 3.36
+  - Scheb 2FA 8.6.1
+  - Behat 3.34, Gherkin 4.18, PHPUnit 13.4.1, PHPStan 2.3
+
+#### Docs
+- Docker Compose deployment target, its `SPACE_DC_*` variables, and which process reads which variable
+- Mercure 1.0: hub of each stack and `MERCURE_*` variables (`documentation/configuration.md`, `requirements.md`)
+- `documentation/api.md`: format of errors and organization of the route files
+- `documentation/domain.md`: API keys and JWT configuration are provided by East Common
+
 ## [2.5.0-beta8] - 2026-09-30
 ### Beta Release
 
