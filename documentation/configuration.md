@@ -1757,6 +1757,8 @@ SPACE_MERCURE_PUBLISHING_ENABLED=1
 
 - **Type**: String (URL)
 - **Optional**: Yes (required if Mercure enabled)
+- **Default**: `https://localhost/.well-known/mercure`. An empty value falls back to it too: MercureBundle would
+  otherwise select FrankenPHP's built-in hub, which neither the workers nor PHP-FPM can publish through.
 - **Description**: Mercure hub URL for publishing. It is resolved by the PHP process, never by the browser
   (that one is `MERCURE_SUBSCRIBER_URL`), so it has to be reachable from **every** process publishing an
   update, the `new_task` worker included. When the hub is embedded in the web server instead of running in

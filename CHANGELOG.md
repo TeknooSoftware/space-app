@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [2.5.1] - 2026-10-08
+### Stable Release
+#### Evolutions
+- Support Symfony 8.1 and last Symfony Mercure integration
+
 ## [2.5.0] - 2026-10-08
 ### Stable Release
 

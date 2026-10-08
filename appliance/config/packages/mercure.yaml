@@ -1,7 +1,9 @@
 mercure:
     hubs:
         default:
-            url: '%env(MERCURE_PUBLISH_URL)%'
+            # Never empty: MercureBundle selects FrankenPHP's built-in hub for an empty URL, and builds it
+            # with Twig, but its `mercure_publish()` function exists neither for the CLI workers nor for FPM.
+            url: '%env(default:teknoo.space.default.mercure.publish_url:MERCURE_PUBLISH_URL)%'
             public_url: '%env(MERCURE_SUBSCRIBER_URL)%'
             # Driven by the MERCURE_PROTOCOL_VERSION environment variable, read in
             # `config/di.variables.php`: MercureBundle turns this value into a `ProtocolVersion`

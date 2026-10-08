@@ -45,6 +45,7 @@ parameters:
     teknoo.space.default.mailer.sender_name: ''
     teknoo.space.default.mercure.jwt_issuer: 'https://localhost'
     teknoo.space.default.mercure.publishing_enabled: true
+    teknoo.space.default.mercure.publish_url: 'https://localhost/.well-known/mercure'
     teknoo.space.default.messenger.dsn: 'in-memory://'
     teknoo.space.default.new_task.waiting_time: 5
     teknoo.space.default.valkey.host: ''
