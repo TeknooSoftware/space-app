@@ -173,7 +173,7 @@ units-tests-without-coverage: setup-phpunit 		## Run only units tests without co
 	@${PHP} -dmax_execution_time=0 vendor/bin/phpunit -c phpunit.xml
 
 setup-behat:
-	@[ -f behat.yml ] || cp behat.dist.yml behat.yml
+	@[ -f behat.php ] || cp behat.dist.php behat.php
 	@rm -rf var/cache/test
 	@APP_ENV=test ${PHP} -dmemory_limit=-1 bin/console cache:warmup
 	@APP_ENV=test ${PHP} bin/console lexik:jwt:generate-keypair --skip-if-exists

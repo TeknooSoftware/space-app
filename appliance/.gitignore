@@ -37,6 +37,6 @@
 /vendor-bin/
 /extensions/*
 /config/reference.php
-/behat.yml
+/behat.php
 /phpstan.neon
 /phpunit.xml

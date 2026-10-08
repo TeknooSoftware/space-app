@@ -427,7 +427,7 @@ trait DockerComposeTrait
         //match the reviewed expected file byte for byte.
         Assert::assertSame(
             $expected['compose.yaml'],
-            $this->composeArtifacts['compose.yaml'],
+            $this->normalizeYamlEmptyMappings($this->composeArtifacts['compose.yaml']),
             'The generated compose.yaml does not match the expected golden file',
         );
 
@@ -497,7 +497,7 @@ trait DockerComposeTrait
         );
         Assert::assertSame(
             $expected['traefik'],
-            (string) reset($this->traefikArtifacts),
+            $this->normalizeYamlEmptyMappings((string) reset($this->traefikArtifacts)),
             'The generated Traefik dynamic configuration does not match the expected golden file',
         );
 
@@ -757,6 +757,15 @@ trait DockerComposeTrait
     }
 
     /**
+     * Symfony YAML < 8 dumps an empty mapping as "{  }", 8.x as "{}": both are valid, the golden files keep the
+     * compact form so the suite passes whatever the installed Symfony version.
+     */
+    private function normalizeYamlEmptyMappings(string $yaml): string
+    {
+        return (string) preg_replace('/\{\s+\}/', '{}', $yaml);
+    }
+
+    /**
      * The generated Compose artifacts depend only on the deployed project (name/prefix), its paas file and the
      * quota mode; encryption, Kubernetes version, ingress-provider annotations and HNC do not change them. This
      * key collapses those irrelevant axes so scenarios sharing the same compose output share one golden set.
@@ -843,7 +852,10 @@ trait DockerComposeTrait
         }
 
         if (isset($this->composeArtifacts['compose.yaml'])) {
-            file_put_contents($dir . '/compose.yaml', $this->composeArtifacts['compose.yaml']);
+            file_put_contents(
+                $dir . '/compose.yaml',
+                $this->normalizeYamlEmptyMappings($this->composeArtifacts['compose.yaml']),
+            );
         }
         if (isset($this->composeArtifacts['deploy.yml'])) {
             file_put_contents(
@@ -858,7 +870,7 @@ trait DockerComposeTrait
             );
         }
         foreach ($this->traefikArtifacts as $content) {
-            file_put_contents($dir . '/traefik.yml', $content);
+            file_put_contents($dir . '/traefik.yml', $this->normalizeYamlEmptyMappings($content));
         }
         //The referenced files tree is rebuilt from scratch: a stale file (a removed key, a renamed secret)
         //would otherwise stay in the golden set and fail the comparison.
