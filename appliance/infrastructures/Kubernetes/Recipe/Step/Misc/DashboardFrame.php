@@ -27,42 +27,54 @@ namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use BadMethodCallException;
 use Http\Client\Common\HttpMethodsClientInterface;
-use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Recipe\Step\Traits\TemplateTrait;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Template\EngineInterface;
-use Teknoo\East\Paas\Object\Account;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
-use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
-use Teknoo\Space\Object\Config\KubernetesCluster;
-use Teknoo\Space\Object\DTO\AccountWallet;
-use Teknoo\Space\Object\Persisted\AccountEnvironment;
-use Teknoo\Space\Service\DashboardAvailability;
+use Teknoo\Space\Object\DTO\DashboardTarget;
 use Throwable;
 
-use function http_build_query;
 use function in_array;
 use function is_string;
 use function ltrim;
+use function parse_str;
 use function parse_url;
 use function preg_match;
+use function preg_quote;
 use function preg_replace;
+use function preg_replace_callback;
+use function rawurldecode;
 use function rtrim;
 use function str_contains;
+use function str_starts_with;
 use function strcasecmp;
+use function strlen;
 use function strtolower;
 use function strtoupper;
+use function substr;
 
 use const PHP_URL_HOST;
+use const PHP_URL_PATH;
 
 /**
+ * Relays the requests of the dashboard frame to the web dashboard of the cluster resolved in the `DashboardTarget`,
+ * with the credential of the user injected by the headers of the dashboard's profile, so the user never signs in
+ * on the dashboard nor knows the credential. The relay is generic, all differences between dashboards are
+ * described by their `DashboardProfile`:
+ * - the path requested under the frame's URL (as sent by the browser, with its query string) is requested under
+ *   the dashboard's address, which can not be left;
+ * - the body and the `Accept` / `Content-Type` headers are relayed, never the cookies nor the credentials of Space;
+ * - HTML pages are adapted to be served under the frame's URL (base path, head snippet of the profile).
+ *
+ * This relay works request by request: websockets and streamed watches, used by dashboards for live updates, logs
+ * and terminals, are refused at once (501) instead of holding a PHP worker.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
@@ -82,52 +94,32 @@ class DashboardFrame implements DashboardFrameInterface
      */
     private const array FORWARDED_REQUEST_HEADERS = ['accept', 'content-type'];
 
+    /**
+     * Response headers of the dashboard relayed to the browser. Cookies or framing policies of the dashboard are not.
+     */
+    private const array FORWARDED_RESPONSE_HEADERS = [
+        'content-type',
+        'accept-ranges',
+        'cache-control',
+        'last-modified',
+        'strict-transport-security',
+    ];
+
+    /**
+     * Query parameters of the Kubernetes API asking for a response streamed without end.
+     */
+    private const array STREAMING_PARAMETERS = ['watch', 'follow'];
+
     public function __construct(
         private readonly HttpMethodsClientInterface $httpMethodsClient,
         ResponseFactoryInterface $responseFactory,
         StreamFactoryInterface $streamFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         EngineInterface $templating,
-        private readonly DashboardAvailability $dashboardAvailability,
     ) {
         $this->templating = $templating;
         $this->streamFactory = $streamFactory;
         $this->responseFactory = $responseFactory;
-    }
-
-    /**
-     * The path requested by the browser is always appended after a `/` closing the dashboard address: whatever it
-     * contains (`@host`, `//host`...), it can not change the host receiving the request, and so the token.
-     */
-    private function getDashboardUrl(KubernetesCluster $cluster, ?AccountEnvironment $env, string $wildcard): string
-    {
-        $wildcard = ltrim($wildcard, '/');
-        if (1 === preg_match('#(^|/)\.\.(/|$)#', $wildcard)) {
-            throw new BadMethodCallException(
-                message: "The dashboard path can not go up from the dashboard address",
-                code: 400,
-            );
-        }
-
-        $baseUrl = rtrim($cluster->dashboardAddress, '/') . '/';
-
-        if (!str_contains($wildcard, '#')) {
-            if ('config/config.json' === $wildcard) {
-                $wildcard = 'assets/' . $wildcard;
-            }
-
-            return $baseUrl . $wildcard;
-        }
-
-        $url = $baseUrl . $wildcard;
-
-        if (null !== $env) {
-            $url .= '?' . http_build_query(['namespace' => $env->getNamespace()]);
-        } else {
-            $url .= '?' . http_build_query(['namespace' => '_all']);
-        }
-
-        return $url;
     }
 
     private function isSafeMethod(ServerRequestInterface $serverRequest): bool
@@ -167,10 +159,65 @@ class DashboardFrame implements DashboardFrameInterface
         );
     }
 
+    private function isStreaming(ServerRequestInterface $serverRequest): bool
+    {
+        if ('' !== $serverRequest->getHeaderLine('upgrade')) {
+            return true;
+        }
+
+        parse_str($serverRequest->getUri()->getQuery(), $query);
+        foreach (self::STREAMING_PARAMETERS as $parameter) {
+            $value = $query[$parameter] ?? null;
+            if (is_string($value) && in_array(strtolower($value), ['1', 'true'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Path requested under the frame's URL, as sent by the browser (still encoded).
+     */
+    private function getRequestedPath(ServerRequestInterface $serverRequest, string $framePath): string
+    {
+        $path = $serverRequest->getUri()->getPath();
+        if (!str_starts_with($path, $framePath)) {
+            throw new BadMethodCallException(
+                message: "This request is not a request of the dashboard frame",
+                code: 400,
+            );
+        }
+
+        return substr($path, strlen($framePath));
+    }
+
+    /**
+     * The path is always appended after a `/` closing the dashboard's address: whatever it contains (`@host`,
+     * `//host`...), it can not change the host receiving the request, and so the credential.
+     */
+    private function getDashboardUri(DashboardTarget $target, string $path, string $query): string
+    {
+        $path = $target->profile->resolvePath(ltrim($path, '/'));
+        if (1 === preg_match('#(^|/)\.\.(/|$)#', rawurldecode($path))) {
+            throw new BadMethodCallException(
+                message: "The dashboard path can not go up from the dashboard address",
+                code: 400,
+            );
+        }
+
+        $uri = rtrim($target->cluster->dashboardAddress, '/') . '/' . $path;
+        if ('' !== $query) {
+            $uri .= '?' . $query;
+        }
+
+        return $uri;
+    }
+
     /**
      * @return array<string, string>
      */
-    private function getForwardedHeaders(ServerRequestInterface $serverRequest): array
+    private function getRequestHeaders(ServerRequestInterface $serverRequest, DashboardTarget $target): array
     {
         $headers = [];
         foreach (self::FORWARDED_REQUEST_HEADERS as $headerName) {
@@ -180,82 +227,93 @@ class DashboardFrame implements DashboardFrameInterface
             }
         }
 
-        return $headers;
+        //Bodies are relayed as is: a compressed one would need its `Content-Encoding`, not relayed
+        $headers['Accept-Encoding'] = 'identity';
+
+        return [...$headers, ...$target->profile->renderRequestHeaders($target->token)];
+    }
+
+    private function rewriteHtml(string $html, DashboardTarget $target, string $frameUrl): string
+    {
+        if ($target->profile->rewriteBasePath) {
+            $basePath = rtrim((string) parse_url($target->cluster->dashboardAddress, PHP_URL_PATH), '/');
+            $framePath = rtrim((string) parse_url($frameUrl, PHP_URL_PATH), '/');
+
+            $html = preg_replace(
+                '#' . preg_quote($basePath, '#') . '(?=[/\'"])#',
+                $framePath,
+                $html,
+            ) ?? $html;
+        }
+
+        $snippet = $target->profile->renderHeadSnippet($frameUrl, $target->namespace);
+        if ('' !== $snippet) {
+            $html = preg_replace_callback(
+                '#<head\b[^>]*>#i',
+                static fn (array $head): string => $head[0] . $snippet,
+                $html,
+                1,
+            ) ?? $html;
+        }
+
+        return $html;
+    }
+
+    private function createResponse(ResponseInterface $dashboardResponse, string $body): ResponseInterface
+    {
+        $response = $this->responseFactory->createResponse(
+            $dashboardResponse->getStatusCode(),
+            $dashboardResponse->getReasonPhrase(),
+        );
+
+        foreach (self::FORWARDED_RESPONSE_HEADERS as $headerName) {
+            $headersValues = $dashboardResponse->getHeader($headerName);
+            if (!empty($headersValues)) {
+                $response = $response->withHeader($headerName, $headersValues);
+            }
+        }
+
+        return $response->withBody($this->streamFactory->createStream($body));
     }
 
     public function __invoke(
         ManagerInterface $manager,
         EastClient $client,
         ServerRequestInterface $serverRequest,
-        User $user,
-        ClusterCatalog $clusterCatalog,
-        string $clusterName,
-        string $wildcard = '',
-        ?Account $account = null,
-        ?AccountWallet $accountWallet = null,
-        ?string $envName = null,
+        DashboardTarget $dashboardTarget,
     ): DashboardFrameInterface {
         $this->assertSameOrigin($serverRequest);
 
-        if (empty($wildcard)) {
-            $wildcard = '#/workloads';
-        }
-
-        //Hack because last version of dashboard does not respect base uri
-        if ('assets' === $clusterName && 'config.json' === $wildcard) {
-            $client->acceptResponse(new Response($this->streamFactory->createStream('Not found'), 404));
+        if ($this->isStreaming($serverRequest)) {
+            $client->acceptResponse(
+                $this->responseFactory->createResponse(501)->withBody(
+                    $this->streamFactory->createStream('Streamed requests are not relayed to the dashboard'),
+                ),
+            );
 
             return $this;
         }
 
-        $clusterConfig = $clusterCatalog->getCluster($clusterName);
-        if (!$clusterConfig instanceof KubernetesCluster) {
-            throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
-        }
+        $frameUrl = $this->urlGenerator->generate(
+            'space_dashboard_frame',
+            [
+                'clusterName' => $dashboardTarget->clusterName,
+                'envName' => $dashboardTarget->envName,
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
 
-        if (!$this->dashboardAvailability->isAvailable($clusterConfig)) {
-            throw new BadMethodCallException(message: "No dashboard is available for this cluster", code: 404);
-        }
-
-        $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
-        $accountEnvironment = null;
-
-        if (!$isAdmin) {
-            if (null === $accountWallet) {
-                throw new BadMethodCallException(message: "Wallet is mandatory for non admin user", code: 403);
-            }
-
-            if (null === $envName) {
-                throw new BadMethodCallException(message: "Environment name is mandatory", code: 400);
-            }
-
-            if (!$accountWallet->has($clusterConfig->name, $envName)) {
-                throw new BadMethodCallException(message: "Cluster is not allowed for this user", code: 403);
-            }
-
-            $accountEnvironment = $accountWallet->get($clusterConfig->name, $envName);
-
-            if (null === $accountEnvironment) {
-                throw new BadMethodCallException(message: "Account environment missing", code: 403);
-            }
-        }
-
-        $dashboardUrl = $this->getDashboardUrl($clusterConfig, $accountEnvironment, $wildcard);
-
-        //A fragment is resolved by the browser, the query string of the page belongs to the dashboard's request
-        $query = $serverRequest->getUri()->getQuery();
-        if ('' !== $query && !str_contains($dashboardUrl, '#')) {
-            $dashboardUrl .= '?' . $query;
-        }
+        $dashboardUri = $this->getDashboardUri(
+            target: $dashboardTarget,
+            path: $this->getRequestedPath($serverRequest, (string) parse_url($frameUrl, PHP_URL_PATH)),
+            query: $serverRequest->getUri()->getQuery(),
+        );
 
         try {
-            $responseDashboard = $this->httpMethodsClient->send(
+            $dashboardResponse = $this->httpMethodsClient->send(
                 method: $serverRequest->getMethod(),
-                uri: $dashboardUrl,
-                headers: [
-                    ...$this->getForwardedHeaders($serverRequest),
-                    'Authorization' => 'Bearer ' . trim($accountEnvironment?->getToken() ?? $clusterConfig->token),
-                ],
+                uri: $dashboardUri,
+                headers: $this->getRequestHeaders($serverRequest, $dashboardTarget),
                 body: $this->isSafeMethod($serverRequest) ? null : (string) $serverRequest->getBody(),
             );
         } catch (Throwable $error) {
@@ -269,53 +327,12 @@ class DashboardFrame implements DashboardFrameInterface
             return $this;
         }
 
-        $response = $this->responseFactory->createResponse(
-            $responseDashboard->getStatusCode(),
-            $responseDashboard->getReasonPhrase(),
-        );
-
-        $headersList = [
-            'content-type',
-            'accept-ranges',
-            'cache-control',
-            'last-modified',
-            'strict-transport-security',
-        ];
-
-        foreach ($headersList as $headerName) {
-            $headersValues = $responseDashboard->getHeader($headerName);
-            if (empty($headersValues)) {
-                continue;
-            }
-
-            $response = $response->withHeader(
-                $headerName,
-                $headersValues,
-            );
+        $body = (string) $dashboardResponse->getBody();
+        if (str_contains(strtolower($dashboardResponse->getHeaderLine('content-type')), 'text/html')) {
+            $body = $this->rewriteHtml($body, $dashboardTarget, $frameUrl);
         }
 
-        $body = (string) $responseDashboard->getBody();
-
-        $baseTag = '<base href="' . $this->urlGenerator->generate(
-            'space_dashboard_frame',
-            [
-                'clusterName' => $clusterName,
-                'envName' => $envName,
-            ],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        ) . '">';
-
-        $body = preg_replace(
-            '/<html([^>]*)>.*?<head>/is',
-            '<html$1><head>' . $baseTag,
-            $body,
-        ) ?? $body;
-
-        $response = $response->withBody(
-            $this->streamFactory->createStream((string) $body),
-        );
-
-        $client->acceptResponse($response);
+        $client->acceptResponse($this->createResponse($dashboardResponse, $body));
 
         return $this;
     }

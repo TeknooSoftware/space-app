@@ -26,14 +26,13 @@ declare(strict_types=1);
 namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\DTO\DashboardTarget;
 
 /**
+ * Relays a request of the dashboard frame to the web dashboard resolved in the `DashboardTarget`.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
@@ -45,12 +44,6 @@ interface DashboardFrameInterface
         ManagerInterface $manager,
         EastClient $client,
         ServerRequestInterface $serverRequest,
-        User $user,
-        ClusterCatalog $clusterCatalog,
-        string $clusterName,
-        string $wildcard = '',
-        ?Account $account = null,
-        ?AccountWallet $accountWallet = null,
-        ?string $envName = null,
+        DashboardTarget $dashboardTarget,
     ): DashboardFrameInterface;
 }

@@ -557,8 +557,10 @@ return [
         if ($container->has(ClientInterface::class)) {
             $httpClient = $container->get(ClientInterface::class);
         } else {
+            //A dashboard slower than the Kubernetes API timeout fails with a 502 instead of holding a PHP worker
             $httpClient = HttpClientDiscovery::find(
                 verify: (bool) $container->get('teknoo.east.paas.kubernetes.ssl.verify'),
+                timeout: (int) $container->get('teknoo.east.paas.kubernetes.timeout'),
             );
         }
 
@@ -586,7 +588,6 @@ return [
             streamFactory: $container->get(StreamFactoryInterface::class),
             urlGenerator: $container->get('router'),
             templating: $container->get(EngineInterface::class),
-            dashboardAvailability: $container->get(DashboardAvailability::class),
         );
     },
 

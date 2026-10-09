@@ -38,7 +38,10 @@ use Teknoo\Space\Object\DTO\DashboardTarget;
 use Teknoo\Space\Service\DashboardAvailability;
 
 use function in_array;
+use function parse_url;
 use function trim;
+
+use const PHP_URL_PATH;
 
 /**
  * Resolves the dashboard to relay for the current user, without reaching it: the cluster, its dashboard's profile,
@@ -76,6 +79,18 @@ class ResolveDashboardTarget
             throw new DomainException(message: "No dashboard is available for this cluster", code: 404);
         }
 
+        $profile = $this->profileCatalog->getProfile($cluster->dashboardType);
+        if (
+            $profile->rewriteBasePath
+            && '' === trim((string) parse_url($cluster->dashboardAddress, PHP_URL_PATH), '/')
+        ) {
+            throw new DomainException(
+                message: "The {$profile->name} dashboard of the cluster {$cluster->name} must be served under a base "
+                    . "path, included in its address (e.g. `https://dashboard.example/__{$profile->name}/`)",
+                code: 500,
+            );
+        }
+
         $token = $cluster->token;
         $namespace = null;
 
@@ -100,7 +115,7 @@ class ResolveDashboardTarget
         $manager->updateWorkPlan([
             DashboardTarget::class => new DashboardTarget(
                 cluster: $cluster,
-                profile: $this->profileCatalog->getProfile($cluster->dashboardType),
+                profile: $profile,
                 token: trim($token),
                 clusterName: $clusterName,
                 envName: (string) $envName,
