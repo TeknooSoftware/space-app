@@ -49,8 +49,11 @@ use Throwable;
 use function http_build_query;
 use function in_array;
 use function is_string;
+use function ltrim;
 use function parse_url;
+use function preg_match;
 use function preg_replace;
+use function rtrim;
 use function str_contains;
 use function strcasecmp;
 use function strtolower;
@@ -90,17 +93,31 @@ class DashboardFrame implements DashboardFrameInterface
         $this->responseFactory = $responseFactory;
     }
 
+    /**
+     * The path requested by the browser is always appended after a `/` closing the dashboard address: whatever it
+     * contains (`@host`, `//host`...), it can not change the host receiving the request, and so the token.
+     */
     private function getDashboardUrl(KubernetesCluster $cluster, ?AccountEnvironment $env, string $wildcard): string
     {
+        $wildcard = ltrim($wildcard, '/');
+        if (1 === preg_match('#(^|/)\.\.(/|$)#', $wildcard)) {
+            throw new BadMethodCallException(
+                message: "The dashboard path can not go up from the dashboard address",
+                code: 400,
+            );
+        }
+
+        $baseUrl = rtrim($cluster->dashboardAddress, '/') . '/';
+
         if (!str_contains($wildcard, '#')) {
             if ('config/config.json' === $wildcard) {
                 $wildcard = 'assets/' . $wildcard;
             }
 
-            return $cluster->dashboardAddress . $wildcard;
+            return $baseUrl . $wildcard;
         }
 
-        $url = $cluster->dashboardAddress . $wildcard;
+        $url = $baseUrl . $wildcard;
 
         if (null !== $env) {
             $url .= '?' . http_build_query(['namespace' => $env->getNamespace()]);

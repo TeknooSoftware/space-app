@@ -104,7 +104,7 @@ class DashboardFrameTest extends TestCase
             type: 'foo',
             masterAddress: 'foo',
             storageProvisioner: 'foo',
-            dashboardAddress: 'foo',
+            dashboardAddress: 'https://dashboard.test',
             kubernetesClient: $this->createStub(Client::class),
             token: 'foo',
             supportRegistry: true,
@@ -233,7 +233,7 @@ class DashboardFrameTest extends TestCase
     public function testInvokeForNonAdminWithDefaultWildcard(): void
     {
         $finalResponse = $this->prepareDashboardResponse(
-            'foo#/workloads?namespace=space-ns',
+            'https://dashboard.test/#/workloads?namespace=space-ns',
             ['content-type' => ['text/html']],
         );
 
@@ -262,7 +262,7 @@ class DashboardFrameTest extends TestCase
 
     public function testInvokeForAdminWithAnchoredWildcard(): void
     {
-        $this->prepareDashboardResponse('foo#/workloads?namespace=_all');
+        $this->prepareDashboardResponse('https://dashboard.test/#/workloads?namespace=_all');
 
         $this->assertInstanceOf(
             DashboardFrame::class,
@@ -280,7 +280,7 @@ class DashboardFrameTest extends TestCase
 
     public function testInvokeForAdminWithConfigJson(): void
     {
-        $this->prepareDashboardResponse('fooassets/config/config.json');
+        $this->prepareDashboardResponse('https://dashboard.test/assets/config/config.json');
 
         $this->assertInstanceOf(
             DashboardFrame::class,
@@ -450,7 +450,9 @@ class DashboardFrameTest extends TestCase
 
     public function testInvokeForwardsTheQueryStringAndTheAcceptHeader(): void
     {
-        $this->prepareDashboardResponse('fooapi/v1/namespaces/space-ns/pods?limit=10&labelSelector=app%3Dfoo');
+        $this->prepareDashboardResponse(
+            'https://dashboard.test/api/v1/namespaces/space-ns/pods?limit=10&labelSelector=app%3Dfoo',
+        );
 
         ($this->dashboardFrame)(
             manager: $this->createStub(ManagerInterface::class),
@@ -474,7 +476,7 @@ class DashboardFrameTest extends TestCase
 
     public function testInvokeDoesNotAppendTheQueryStringToAnAnchoredWildcard(): void
     {
-        $this->prepareDashboardResponse('foo#/workloads?namespace=_all');
+        $this->prepareDashboardResponse('https://dashboard.test/#/workloads?namespace=_all');
 
         ($this->dashboardFrame)(
             manager: $this->createStub(ManagerInterface::class),
@@ -486,13 +488,13 @@ class DashboardFrameTest extends TestCase
             wildcard: '#/workloads',
         );
 
-        $this->assertSame('foo#/workloads?namespace=_all', $this->sentRequest['uri'] ?? null);
+        $this->assertSame('https://dashboard.test/#/workloads?namespace=_all', $this->sentRequest['uri'] ?? null);
     }
 
     public function testInvokeForwardsTheBodyOfASameOriginMutatingRequest(): void
     {
         $this->prepareDashboardResponse(
-            expectedUri: 'fooapis/authorization.k8s.io/v1/selfsubjectrulesreviews',
+            expectedUri: 'https://dashboard.test/apis/authorization.k8s.io/v1/selfsubjectrulesreviews',
             expectedMethod: 'POST',
         );
 
@@ -522,7 +524,7 @@ class DashboardFrameTest extends TestCase
     public function testInvokeForwardsAMutatingRequestFromTheSameHostWithoutFetchMetadata(): void
     {
         $this->prepareDashboardResponse(
-            expectedUri: 'fooapi/v1/namespaces/space-ns/pods/foo',
+            expectedUri: 'https://dashboard.test/api/v1/namespaces/space-ns/pods/foo',
             expectedMethod: 'PATCH',
         );
 
@@ -541,6 +543,62 @@ class DashboardFrameTest extends TestCase
         );
 
         $this->assertSame('{}', $this->sentRequest['body'] ?? null);
+    }
+
+    public function testInvokeKeepsTheHostOfTheDashboardWhateverThePath(): void
+    {
+        $this->prepareDashboardResponse('https://dashboard.test/@evil.test/steal');
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createAdmin(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: '//@evil.test/steal',
+        );
+
+        $this->assertSame('https://dashboard.test/@evil.test/steal', $this->sentRequest['uri'] ?? null);
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function traversalWildcardsProvider(): iterable
+    {
+        yield 'parent' => ['..'];
+        yield 'leading parent' => ['../admin'];
+        yield 'inner parent' => ['api/../../admin'];
+        yield 'trailing parent' => ['api/..'];
+    }
+
+    #[DataProvider('traversalWildcardsProvider')]
+    public function testInvokeRefusesAPathGoingUpFromTheDashboardAddress(string $wildcard): void
+    {
+        $httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
+        $httpMethodsClient->expects($this->never())->method('send');
+
+        $dashboardFrame = new DashboardFrame(
+            $httpMethodsClient,
+            $this->responseFactory,
+            $this->streamFactory,
+            $this->urlGenerator,
+            $this->template,
+        );
+
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(400);
+
+        $dashboardFrame(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createAdmin(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: $wildcard,
+        );
     }
 
     /**
