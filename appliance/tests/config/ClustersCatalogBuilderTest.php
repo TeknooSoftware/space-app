@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Config;
 
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
@@ -152,6 +153,52 @@ class ClustersCatalogBuilderTest extends TestCase
         //No dashboard type, no dashboard: none is chosen by default
         $parameters['teknoo.space.clusters.default_cluster.dashboard_type'] = '';
         $this->assertSame('', $this->buildCatalog([], $parameters)->getCluster('Env Cluster')->dashboardType);
+    }
+
+    /**
+     * @return iterable<string, array{?string, ?string, string}>
+     */
+    public static function dashboardOfTheClusterDefinedByTheEnvironmentProvider(): iterable
+    {
+        yield 'none' => [null, null, ''];
+        yield 'new name' => ['https://new.example.com/', null, 'https://new.example.com/'];
+        yield 'deprecated name' => [null, 'https://old.example.com/', 'https://old.example.com/'];
+        yield 'new name empty' => ['', 'https://old.example.com/', 'https://old.example.com/'];
+        yield 'both names' => ['https://new.example.com/', 'https://old.example.com/', 'https://new.example.com/'];
+    }
+
+    #[DataProvider('dashboardOfTheClusterDefinedByTheEnvironmentProvider')]
+    public function testTheDashboardOfTheClusterDefinedByTheEnvironment(
+        ?string $newName,
+        ?string $deprecatedName,
+        string $expected,
+    ): void {
+        $previous = [
+            'SPACE_CLUSTER_DASHBOARD' => $_ENV['SPACE_CLUSTER_DASHBOARD'] ?? null,
+            'SPACE_KUBERNETES_DASHBOARD' => $_ENV['SPACE_KUBERNETES_DASHBOARD'] ?? null,
+        ];
+
+        $values = ['SPACE_CLUSTER_DASHBOARD' => $newName, 'SPACE_KUBERNETES_DASHBOARD' => $deprecatedName];
+        foreach ($values as $name => $value) {
+            unset($_ENV[$name]);
+            if (null !== $value) {
+                $_ENV[$name] = $value;
+            }
+        }
+
+        try {
+            /** @var array<string, mixed> $config */
+            $config = require __DIR__ . '/../../config/di.variables.clusters.php';
+
+            $this->assertSame($expected, $config['teknoo.space.clusters.default_cluster.dashboard']);
+        } finally {
+            foreach ($previous as $name => $value) {
+                unset($_ENV[$name]);
+                if (null !== $value) {
+                    $_ENV[$name] = $value;
+                }
+            }
+        }
     }
 
     public function testKubernetesEntryKeepsItsDashboardType(): void
