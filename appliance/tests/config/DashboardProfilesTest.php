@@ -60,7 +60,10 @@ class DashboardProfilesTest extends TestCase
      */
     private function builtInProfiles(): array
     {
-        return $this->loadConfig()['teknoo.space.dashboard.profiles']();
+        $profiles = $this->loadConfig()['teknoo.space.dashboard.profiles']();
+        $this->assertInstanceOf(ArrayObject::class, $profiles);
+
+        return $profiles->getArrayCopy();
     }
 
     private function buildCatalog(mixed $defaultType, mixed $profiles = null): DashboardProfileCatalog
@@ -95,9 +98,9 @@ class DashboardProfilesTest extends TestCase
         );
     }
 
-    public function testProfilesCanBeAnArrayObject(): void
+    public function testProfilesCanBeAnArray(): void
     {
-        $catalog = $this->buildCatalog('headlamp', new ArrayObject($this->builtInProfiles()));
+        $catalog = $this->buildCatalog('headlamp', $this->builtInProfiles());
 
         $this->assertSame('kubernetes-dashboard', $catalog->getProfile('kubernetes-dashboard')->name);
     }
