@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Config;
 
+use DI\Definition\EnvironmentVariableDefinition;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -135,16 +136,9 @@ class ClustersCatalogBuilderTest extends TestCase
 
     public function testTheClusterDefinedByTheEnvironmentHasTheDashboardTypeOfTheEnvironment(): void
     {
-        $parameters = [
-            'teknoo.space.clusters.default_cluster.master' => 'https://k8s.example.com',
-            'teknoo.space.clusters.default_cluster.name' => 'Env Cluster',
-            'teknoo.space.clusters.default_cluster.type' => 'kubernetes',
-            'teknoo.space.clusters.default_cluster.use_hnc' => false,
-            'teknoo.space.clusters.default_cluster.create_account.token' => 'a-token',
-            'teknoo.space.clusters.default_cluster.create_account.ca_cert' => base64_encode('a-ca-cert'),
-            'teknoo.space.clusters.default_cluster.dashboard' => 'https://dashboard.example.com/__headlamp/',
-            'teknoo.space.clusters.default_cluster.dashboard_type' => ' headlamp ',
-        ];
+        $parameters = $this->environmentParameters();
+        $parameters['teknoo.space.clusters.default_cluster.dashboard'] = 'https://dashboard.example.com/__headlamp/';
+        $parameters['teknoo.space.clusters.default_cluster.dashboard_type'] = ' headlamp ';
 
         $cluster = $this->buildCatalog([], $parameters)->getCluster('Env Cluster');
         $this->assertSame('https://dashboard.example.com/__headlamp/', $cluster->dashboardAddress);
@@ -156,49 +150,63 @@ class ClustersCatalogBuilderTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{?string, ?string, string}>
+     * @return array<string, mixed>
+     */
+    private function environmentParameters(): array
+    {
+        return [
+            'teknoo.space.clusters.default_cluster.master' => 'https://k8s.example.com',
+            'teknoo.space.clusters.default_cluster.name' => 'Env Cluster',
+            'teknoo.space.clusters.default_cluster.type' => 'kubernetes',
+            'teknoo.space.clusters.default_cluster.use_hnc' => false,
+            'teknoo.space.clusters.default_cluster.create_account.token' => 'a-token',
+            'teknoo.space.clusters.default_cluster.create_account.ca_cert' => base64_encode('a-ca-cert'),
+            'teknoo.space.clusters.default_cluster.dashboard' => '',
+            'teknoo.space.clusters.default_cluster.dashboard.deprecated' => '',
+            'teknoo.space.clusters.default_cluster.dashboard_type' => 'headlamp',
+        ];
+    }
+
+    /**
+     * @return iterable<string, array{string, string, string}>
      */
     public static function dashboardOfTheClusterDefinedByTheEnvironmentProvider(): iterable
     {
-        yield 'none' => [null, null, ''];
-        yield 'new name' => ['https://new.example.com/', null, 'https://new.example.com/'];
-        yield 'deprecated name' => [null, 'https://old.example.com/', 'https://old.example.com/'];
-        yield 'new name empty' => ['', 'https://old.example.com/', 'https://old.example.com/'];
+        yield 'none' => ['', '', ''];
+        yield 'new name' => ['https://new.example.com/', '', 'https://new.example.com/'];
+        yield 'deprecated name' => ['', 'https://old.example.com/', 'https://old.example.com/'];
         yield 'both names' => ['https://new.example.com/', 'https://old.example.com/', 'https://new.example.com/'];
     }
 
     #[DataProvider('dashboardOfTheClusterDefinedByTheEnvironmentProvider')]
     public function testTheDashboardOfTheClusterDefinedByTheEnvironment(
-        ?string $newName,
-        ?string $deprecatedName,
+        string $newName,
+        string $deprecatedName,
         string $expected,
     ): void {
-        $previous = [
-            'SPACE_CLUSTER_DASHBOARD' => $_ENV['SPACE_CLUSTER_DASHBOARD'] ?? null,
-            'SPACE_KUBERNETES_DASHBOARD' => $_ENV['SPACE_KUBERNETES_DASHBOARD'] ?? null,
-        ];
+        $parameters = $this->environmentParameters();
+        $parameters['teknoo.space.clusters.default_cluster.dashboard'] = $newName;
+        $parameters['teknoo.space.clusters.default_cluster.dashboard.deprecated'] = $deprecatedName;
 
-        $values = ['SPACE_CLUSTER_DASHBOARD' => $newName, 'SPACE_KUBERNETES_DASHBOARD' => $deprecatedName];
-        foreach ($values as $name => $value) {
-            unset($_ENV[$name]);
-            if (null !== $value) {
-                $_ENV[$name] = $value;
-            }
-        }
+        $cluster = $this->buildCatalog([], $parameters)->getCluster('Env Cluster');
 
-        try {
-            /** @var array<string, mixed> $config */
-            $config = require __DIR__ . '/../../config/di.variables.clusters.php';
+        $this->assertSame($expected, $cluster->dashboardAddress);
+    }
 
-            $this->assertSame($expected, $config['teknoo.space.clusters.default_cluster.dashboard']);
-        } finally {
-            foreach ($previous as $name => $value) {
-                unset($_ENV[$name]);
-                if (null !== $value) {
-                    $_ENV[$name] = $value;
-                }
-            }
-        }
+    public function testTheDashboardOfTheClusterDefinedByTheEnvironmentIsReadAtRuntime(): void
+    {
+        /** @var array<string, mixed> $config */
+        $config = require __DIR__ . '/../../config/di.variables.clusters.php';
+
+        //env() definitions, not values computed when the file is included: those are frozen in the compiled container
+        $this->assertInstanceOf(
+            EnvironmentVariableDefinition::class,
+            $config['teknoo.space.clusters.default_cluster.dashboard'],
+        );
+        $this->assertInstanceOf(
+            EnvironmentVariableDefinition::class,
+            $config['teknoo.space.clusters.default_cluster.dashboard.deprecated'],
+        );
     }
 
     public function testKubernetesEntryKeepsItsDashboardType(): void

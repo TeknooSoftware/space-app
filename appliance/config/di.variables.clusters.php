@@ -50,11 +50,9 @@ use const FILTER_VALIDATE_BOOL;
 
 return [
     'teknoo.space.clusters.default_cluster.master' => env('SPACE_KUBERNETES_MASTER'),
-    //SPACE_KUBERNETES_DASHBOARD is the deprecated name of SPACE_CLUSTER_DASHBOARD, still read when the new one is
-    //empty (an empty variable is defined by `.env` and by the php-fpm pool, so `??` is not enough)
-    'teknoo.space.clusters.default_cluster.dashboard' => (string) (
-        ($_ENV['SPACE_CLUSTER_DASHBOARD'] ?? '') ?: ($_ENV['SPACE_KUBERNETES_DASHBOARD'] ?? '')
-    ),
+    'teknoo.space.clusters.default_cluster.dashboard' => env('SPACE_CLUSTER_DASHBOARD', ''),
+    //Deprecated name of SPACE_CLUSTER_DASHBOARD
+    'teknoo.space.clusters.default_cluster.dashboard.deprecated' => env('SPACE_KUBERNETES_DASHBOARD', ''),
     'teknoo.space.clusters.default_cluster.dashboard_type' => env('SPACE_CLUSTER_DASHBOARD_TYPE', ''),
     'teknoo.space.clusters.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN'),
     'teknoo.space.clusters.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE'),
@@ -132,10 +130,18 @@ return [
         $clusterName = $container->get('teknoo.space.clusters.default_cluster.name');
 
         if (empty($definitions) && !empty($clusterName) && !empty($master)) {
+            //SPACE_KUBERNETES_DASHBOARD, deprecated, is still read when SPACE_CLUSTER_DASHBOARD is empty (`.env` and
+            //the php-fpm pool define an unset variable as empty, so `??` is not enough). Both are read at runtime by
+            //env(), a value computed when this file is included would be frozen in the compiled container.
+            $dashboard = (string) $container->get('teknoo.space.clusters.default_cluster.dashboard');
+            if ('' === $dashboard) {
+                $dashboard = (string) $container->get('teknoo.space.clusters.default_cluster.dashboard.deprecated');
+            }
+
             $definitions = [
                 [
                     'master' => $master,
-                    'dashboard' => $container->get('teknoo.space.clusters.default_cluster.dashboard'),
+                    'dashboard' => $dashboard,
                     'dashboard_type' => $container->get('teknoo.space.clusters.default_cluster.dashboard_type'),
                     'create_account' => [
                         'token' => $container->get('teknoo.space.clusters.default_cluster.create_account.token'),
