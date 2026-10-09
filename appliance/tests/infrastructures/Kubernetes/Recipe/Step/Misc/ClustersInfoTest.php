@@ -87,4 +87,26 @@ class ClustersInfoTest extends TestCase
             )
         );
     }
+
+    public function testInvokePrefersTheCatalogOfTheWorkplan(): void
+    {
+        $workplanCatalog = new ClusterCatalog([], [], $this->clusterCatalog);
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->exactly(2))
+            ->method('set')
+            ->willReturnCallback(function (string $key, mixed $value) use ($bag, $workplanCatalog): ParametersBag {
+                if ('clusterCatalog' === $key) {
+                    $this->assertSame($workplanCatalog, $value);
+                }
+
+                return $bag;
+            });
+
+        ($this->clustersInfo)(
+            $bag,
+            null,
+            $workplanCatalog,
+        );
+    }
 }

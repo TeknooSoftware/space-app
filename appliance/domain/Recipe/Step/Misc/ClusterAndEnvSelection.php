@@ -31,6 +31,7 @@ use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Service\DashboardAvailability;
 
 use function explode;
 use function is_string;
@@ -44,7 +45,7 @@ use function is_string;
 class ClusterAndEnvSelection
 {
     public function __construct(
-        private readonly ClusterCatalog $clusterCatalog,
+        private readonly DashboardAvailability $dashboardAvailability,
     ) {
     }
 
@@ -52,6 +53,7 @@ class ClusterAndEnvSelection
         ManagerInterface $manager,
         ServerRequestInterface $request,
         ParametersBag $parametersBag,
+        ClusterCatalog $clusterCatalog,
         ?AccountWallet $accountWallet = null,
     ): self {
         $clusterSelected = null;
@@ -76,7 +78,7 @@ class ClusterAndEnvSelection
 
                 if (empty($clusterSelectedStr) || $clusterSelectedStr === $currentValue) {
                     $clusterSelectedStr = $currentValue;
-                    $clusterSelected = $this->clusterCatalog->getCluster($accountEnv->getClusterName());
+                    $clusterSelected = $clusterCatalog->getCluster($accountEnv->getClusterName());
                     $clusterSlug = $clusterSelected->sluggyName;
                     $envName = $accountEnv->getEnvName();
                     $namespace = $accountEnv->getNamespace();
@@ -85,7 +87,7 @@ class ClusterAndEnvSelection
                 }
             }
         } else {
-            foreach ($this->clusterCatalog as $clusterConfig) {
+            foreach ($clusterCatalog as $clusterConfig) {
                 if (empty($clusterSelectedStr) || $clusterSelectedStr === $clusterConfig->sluggyName) {
                     $clusterSelectedStr = $clusterConfig->sluggyName;
                     $clusterSlug = $clusterConfig->sluggyName;
@@ -106,6 +108,10 @@ class ClusterAndEnvSelection
         $parametersBag->set('clusterSlug', $clusterSlug);
         $parametersBag->set('envName', $envName);
         $parametersBag->set('namespace', $namespace);
+        $parametersBag->set(
+            'dashboardAvailable',
+            null !== $clusterSelected && $this->dashboardAvailability->isAvailable($clusterSelected),
+        );
 
         return $this;
     }

@@ -38,6 +38,7 @@ use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Plan\Dashboard;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 
@@ -90,6 +91,7 @@ class DashboardTest extends TestCase
             recipe: $this->recipe,
             health: $this->health,
             loadEnvironments: $this->loadEnvironments,
+            loadAccountClusters: $this->createStub(LoadAccountClusters::class),
             clustersInfo: $this->clustersInfo,
             clusterAndEnvSelection: $this->clusterAndEnvSelection,
             render: $this->render,

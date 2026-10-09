@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
 
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
@@ -39,5 +40,6 @@ interface ClustersInfoInterface
     public function __invoke(
         ParametersBag $parametersBag,
         ?AccountWallet $accountWallet = null,
+        ?ClusterCatalog $clusterCatalog = null,
     ): ClustersInfoInterface;
 }

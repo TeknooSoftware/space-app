@@ -23,35 +23,30 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Service;
 
-use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
-use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\KubernetesCluster;
+
+use function trim;
 
 /**
+ * Tells if the web dashboard of a cluster can be embedded in Space and relayed by it: only a Kubernetes cluster
+ * with a configured dashboard address. The dashboard of a cluster registered by a client (external cluster) is not
+ * relayed: its address is supplied by the client, and the web process must not reach such an address.
+ * The dashboard page and the relay share this rule, so a frame is never shown for a dashboard the relay refuses.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ClustersInfo implements ClustersInfoInterface
+class DashboardAvailability
 {
-    public function __construct(
-        private readonly ClusterCatalog $clusterCatalog,
-    ) {
-    }
-
-    public function __invoke(
-        ParametersBag $parametersBag,
-        ?AccountWallet $accountWallet = null,
-        ?ClusterCatalog $clusterCatalog = null,
-    ): ClustersInfoInterface {
-        $parametersBag->set('accountWallet', $accountWallet);
-        //The workplan's catalog also lists the clusters registered by the account, when they are loaded
-        $parametersBag->set('clusterCatalog', $clusterCatalog ?? $this->clusterCatalog);
-
-        return $this;
+    public function isAvailable(ConfigClusterInterface $cluster): bool
+    {
+        return $cluster instanceof KubernetesCluster
+            && '' !== trim($cluster->dashboardAddress)
+            && !$cluster->isExternal;
     }
 }

@@ -38,6 +38,7 @@ use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
+use Teknoo\Space\Service\DashboardAvailability;
 
 /**
  * Class ExtractProjectTest.
@@ -81,7 +82,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->clusterAndEnvSelection = new ClusterAndEnvSelection($this->clusterCatalog);
+        $this->clusterAndEnvSelection = new ClusterAndEnvSelection(new DashboardAvailability());
     }
 
     public function testInvokeWithoutAccount(): void
@@ -92,6 +93,7 @@ class ClusterAndEnvSelectionTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ServerRequestInterface::class),
                 $this->createStub(ParametersBag::class),
+                $this->clusterCatalog,
             )
         );
     }
@@ -104,6 +106,7 @@ class ClusterAndEnvSelectionTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ServerRequestInterface::class),
                 $this->createStub(ParametersBag::class),
+                $this->clusterCatalog,
                 $this->createStub(AccountWallet::class),
             )
         );
@@ -128,13 +131,14 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set');
 
         $result = ($this->clusterAndEnvSelection)(
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -160,13 +164,15 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('envName' === $key) {
                     $this->assertSame('_all', $value);
                 } elseif ('namespace' === $key) {
                     $this->assertSame('_all', $value);
+                } elseif ('dashboardAvailable' === $key) {
+                    $this->assertTrue($value);
                 }
                 return $bag;
             });
@@ -175,6 +181,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -200,7 +207,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('envName' === $key) {
@@ -213,6 +220,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -254,7 +262,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('namespace' === $key) {
@@ -269,6 +277,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
@@ -300,13 +309,14 @@ class ClusterAndEnvSelectionTest extends TestCase
             ->method('updateWorkPlan');
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set');
 
         $result = ($this->clusterAndEnvSelection)(
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
@@ -349,7 +359,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('namespace' === $key) {
@@ -364,6 +374,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
@@ -388,13 +399,14 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set');
 
         $result = ($this->clusterAndEnvSelection)(
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -425,13 +437,15 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('clusterSelected' === $key) {
                     $this->assertNull($value);
                 } elseif ('namespace' === $key) {
                     $this->assertSame('_all', $value);
+                } elseif ('dashboardAvailable' === $key) {
+                    $this->assertFalse($value);
                 }
                 return $bag;
             });
@@ -440,6 +454,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 

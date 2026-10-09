@@ -1067,6 +1067,7 @@ return [
             diGet(OriginalRecipeInterface::class),
             diGet(HealthInterface::class),
             diGet(LoadEnvironments::class),
+            diGet(LoadAccountClusters::class),
             diGet(ClustersInfoInterface::class),
             diGet(ClusterAndEnvSelection::class),
             diGet(Render::class),
@@ -1078,6 +1079,7 @@ return [
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadEnvironments::class),
+            diGet(LoadAccountClusters::class),
             diGet(DashboardFrameInterface::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),

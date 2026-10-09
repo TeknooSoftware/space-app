@@ -140,6 +140,7 @@ use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
 use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
 use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
+use Teknoo\Space\Service\DashboardAvailability;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountRegistryWriter;
@@ -538,8 +539,10 @@ return [
 
     ClusterAndEnvSelection::class => create()
         ->constructor(
-            get('teknoo.space.clusters_catalog'),
+            get(DashboardAvailability::class),
         ),
+
+    DashboardAvailability::class => create(),
 
     DashboardFrameInterface::class => get(DashboardFrame::class),
     DashboardFrame::class => static function (ContainerInterface $container): DashboardFrame {
@@ -575,6 +578,7 @@ return [
             streamFactory: $container->get(StreamFactoryInterface::class),
             urlGenerator: $container->get('router'),
             templating: $container->get(EngineInterface::class),
+            dashboardAvailability: $container->get(DashboardAvailability::class),
         );
     },
 

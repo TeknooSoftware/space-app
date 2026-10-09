@@ -44,6 +44,7 @@ use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Service\DashboardAvailability;
 use Throwable;
 
 use function http_build_query;
@@ -87,6 +88,7 @@ class DashboardFrame implements DashboardFrameInterface
         StreamFactoryInterface $streamFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         EngineInterface $templating,
+        private readonly DashboardAvailability $dashboardAvailability,
     ) {
         $this->templating = $templating;
         $this->streamFactory = $streamFactory;
@@ -209,6 +211,10 @@ class DashboardFrame implements DashboardFrameInterface
         $clusterConfig = $clusterCatalog->getCluster($clusterName);
         if (!$clusterConfig instanceof KubernetesCluster) {
             throw new UnsupportedClusterTypeException('This step only supports Kubernetes clusters');
+        }
+
+        if (!$this->dashboardAvailability->isAvailable($clusterConfig)) {
+            throw new BadMethodCallException(message: "No dashboard is available for this cluster", code: 404);
         }
 
         $isAdmin = in_array('ROLE_ADMIN', (array) $user->getRoles());
