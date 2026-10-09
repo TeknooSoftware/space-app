@@ -171,6 +171,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -1080,6 +1081,7 @@ return [
             diGet(OriginalRecipeInterface::class),
             diGet(LoadEnvironments::class),
             diGet(LoadAccountClusters::class),
+            diGet(ResolveDashboardTarget::class),
             diGet(DashboardFrameInterface::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),

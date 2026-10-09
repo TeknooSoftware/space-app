@@ -34,6 +34,7 @@ use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -49,6 +50,7 @@ class DashboardFrame implements EditablePlanInterface
         RecipeInterface $recipe,
         private readonly LoadEnvironments $loadEnvironments,
         private readonly LoadAccountClusters $loadAccountClusters,
+        private readonly ResolveDashboardTarget $resolveDashboardTarget,
         private readonly DashboardFrameInterface $dashboard,
         private readonly RenderError $renderError,
         private readonly string|Stringable $defaultErrorTemplate,
@@ -61,6 +63,8 @@ class DashboardFrame implements EditablePlanInterface
         $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
 
         $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
+
+        $recipe = $recipe->cook($this->resolveDashboardTarget, ResolveDashboardTarget::class, [], 30);
 
         $recipe = $recipe->cook($this->dashboard, DashboardFrameInterface::class, [], 40);
 
