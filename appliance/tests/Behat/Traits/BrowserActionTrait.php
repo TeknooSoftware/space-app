@@ -365,6 +365,18 @@ trait BrowserActionTrait
         );
     }
 
+    #[When('It opens the dashboard frame of :clusterName for :envName')]
+    public function itOpensTheDashboardFrameOfFor(string $clusterName, string $envName): void
+    {
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute(
+                route: 'space_dashboard_frame',
+                parameters: ['clusterName' => $clusterName, 'envName' => $envName],
+            ),
+        );
+    }
+
     #[When('It goes to user settings')]
     public function itGoesToUserSettings(): void
     {

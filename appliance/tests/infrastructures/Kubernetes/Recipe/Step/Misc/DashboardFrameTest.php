@@ -54,6 +54,7 @@ use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
+use Teknoo\Space\Service\DashboardAvailability;
 
 /**
  * Class DashboardFrameTest.
@@ -123,6 +124,7 @@ class DashboardFrameTest extends TestCase
             $this->streamFactory,
             $this->urlGenerator,
             $this->template,
+            new DashboardAvailability(),
         );
     }
 
@@ -448,6 +450,61 @@ class DashboardFrameTest extends TestCase
         );
     }
 
+    /**
+     * @return iterable<string, array{string, bool}>
+     */
+    public static function unavailableDashboardsProvider(): iterable
+    {
+        yield 'no dashboard' => ['', false];
+        yield 'external cluster' => ['https://dashboard.client.test/', true];
+    }
+
+    #[DataProvider('unavailableDashboardsProvider')]
+    public function testInvokeRefusesAClusterWithoutAvailableDashboard(string $address, bool $isExternal): void
+    {
+        $catalog = new ClusterCatalog(
+            ['clusterName' => new ClusterConfig(
+                name: 'foo',
+                sluggyName: 'foo',
+                type: 'kubernetes',
+                masterAddress: 'https://kubernetes.client.test',
+                storageProvisioner: 'foo',
+                dashboardAddress: $address,
+                kubernetesClient: $this->createStub(Client::class),
+                token: 'foo',
+                supportRegistry: false,
+                useHnc: false,
+                isExternal: $isExternal,
+            )],
+            [],
+        );
+
+        $httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
+        $httpMethodsClient->expects($this->never())->method('send');
+
+        $dashboardFrame = new DashboardFrame(
+            $httpMethodsClient,
+            $this->responseFactory,
+            $this->streamFactory,
+            $this->urlGenerator,
+            $this->template,
+            new DashboardAvailability(),
+        );
+
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(404);
+
+        $dashboardFrame(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(),
+            user: $this->createAdmin(),
+            clusterCatalog: $catalog,
+            clusterName: 'clusterName',
+            wildcard: '',
+        );
+    }
+
     public function testInvokeForwardsTheQueryStringAndTheAcceptHeader(): void
     {
         $this->prepareDashboardResponse(
@@ -585,6 +642,7 @@ class DashboardFrameTest extends TestCase
             $this->streamFactory,
             $this->urlGenerator,
             $this->template,
+            new DashboardAvailability(),
         );
 
         $this->expectException(BadMethodCallException::class);
@@ -627,6 +685,7 @@ class DashboardFrameTest extends TestCase
             $this->streamFactory,
             $this->urlGenerator,
             $this->template,
+            new DashboardAvailability(),
         );
 
         $this->expectException(BadMethodCallException::class);

@@ -160,7 +160,7 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-        {% if clusterSlug is not empty and envName is not empty and clusterSelected.dashboardAddress is defined and clusterSelected.dashboardAddress is not empty %}
+        {% if clusterSlug is not empty and envName is not empty and dashboardAvailable is defined and dashboardAvailable %}
         <div class="row mt-3">
             <div class="col-12">
                 <iframe id="dashboard"

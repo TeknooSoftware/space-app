@@ -36,6 +36,7 @@ use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Recipe\Plan\DashboardFrame;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 
 /**
@@ -77,6 +78,7 @@ class DashboardFrameTest extends TestCase
         $this->dashboardFrame = new DashboardFrame(
             recipe: $this->recipe,
             loadEnvironments: $this->loadEnvironments,
+            loadAccountClusters: $this->createStub(LoadAccountClusters::class),
             dashboard: $this->dashboard,
             renderError: $this->renderError,
             defaultErrorTemplate: $this->defaultErrorTemplate,

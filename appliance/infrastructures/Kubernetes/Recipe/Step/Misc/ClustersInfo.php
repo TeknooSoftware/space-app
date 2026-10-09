@@ -46,9 +46,11 @@ class ClustersInfo implements ClustersInfoInterface
     public function __invoke(
         ParametersBag $parametersBag,
         ?AccountWallet $accountWallet = null,
+        ?ClusterCatalog $clusterCatalog = null,
     ): ClustersInfoInterface {
         $parametersBag->set('accountWallet', $accountWallet);
-        $parametersBag->set('clusterCatalog', $this->clusterCatalog);
+        //The workplan's catalog also lists the clusters registered by the account, when they are loaded
+        $parametersBag->set('clusterCatalog', $clusterCatalog ?? $this->clusterCatalog);
 
         return $this;
     }
