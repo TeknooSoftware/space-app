@@ -75,7 +75,7 @@ class ClustersCatalogBuilderTest extends TestCase
                     'teknoo.east.paas.default_storage_provider' => 'space-nfs',
                     ClientFactoryInterface::class => $this->createStub(ClientFactoryInterface::class),
                     DashboardProfileCatalog::class => new DashboardProfileCatalog(
-                        profiles: $config['teknoo.space.dashboard.profiles'](),
+                        profiles: $config['teknoo.space.dashboard.profiles']()->getArrayCopy(),
                         defaultType: 'headlamp',
                     ),
                     default => null,

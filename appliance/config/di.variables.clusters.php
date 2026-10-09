@@ -58,8 +58,9 @@ return [
 
     //Kubernetes web dashboards embedded by Space: a cluster selects one with its `dashboard_type` key, otherwise the
     //default one is used. An extension can add its own profiles by decorating `teknoo.space.dashboard.profiles`.
+    //(an ArrayObject, the Symfony bridge requiring an object for each entry)
     'teknoo.space.dashboard.default_type' => env('SPACE_KUBERNETES_DASHBOARD_TYPE', 'headlamp'),
-    'teknoo.space.dashboard.profiles' => static fn (): array => [
+    'teknoo.space.dashboard.profiles' => static fn (): ArrayObject => new ArrayObject([
         //Headlamp must be served under a base path (Helm value `config.baseURL`, e.g. `/__headlamp`), included in
         //the dashboard address: it is replaced, in the pages relayed, by the path of the frame. The namespaces
         //allowed to the user are given to Headlamp through its cluster settings (local storage).
@@ -87,7 +88,7 @@ return [
             namespacedHeadSnippet: '<base href="{baseHref}">',
             pathAliases: ['config/config.json' => 'assets/config/config.json'],
         ),
-    ],
+    ]),
     DashboardProfileCatalog::class => static function (ContainerInterface $container): DashboardProfileCatalog {
         $profiles = $container->get('teknoo.space.dashboard.profiles');
         if ($profiles instanceof ArrayObject) {
