@@ -51,5 +51,6 @@ interface DashboardFrameInterface
         string $wildcard = '',
         ?Account $account = null,
         ?AccountWallet $accountWallet = null,
+        ?string $envName = null,
     ): DashboardFrameInterface;
 }
