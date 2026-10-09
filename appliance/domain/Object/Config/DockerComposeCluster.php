@@ -42,6 +42,11 @@ class DockerComposeCluster implements ConfigClusterInterface
 {
     public readonly bool $useHnc;
 
+    /**
+     * No credential of an administrator is available yet for the dashboard of a docker-compose cluster
+     */
+    public readonly string $dashboardAdminToken;
+
     public function __construct(
         public readonly string $name,
         public readonly string $sluggyName,
@@ -53,8 +58,10 @@ class DockerComposeCluster implements ConfigClusterInterface
         public readonly string $username = '',
         public readonly string $caCertificate = '',
         public readonly bool $supportRegistry = true,
+        public readonly string $dashboardType = '',
     ) {
         $this->useHnc = false;
+        $this->dashboardAdminToken = '';
     }
 
     /**

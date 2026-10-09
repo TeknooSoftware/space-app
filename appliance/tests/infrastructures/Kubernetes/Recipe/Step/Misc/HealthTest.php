@@ -141,6 +141,10 @@ class HealthTest extends TestCase
 
             public string $dashboardAddress = 'foo';
 
+            public string $dashboardType = '';
+
+            public string $dashboardAdminToken = '';
+
             public bool $supportRegistry = false;
 
             public bool $useHnc = false;

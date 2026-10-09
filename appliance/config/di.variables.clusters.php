@@ -153,12 +153,22 @@ return [
 
         $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', (string) $text)));
 
+        $getDashboardType = static function (array $definition) use ($container): string {
+            $dashboardType = (string) ($definition['dashboard_type'] ?? '');
+            if ('' !== $dashboardType) {
+                //An unknown dashboard type fails at boot, not at the first opening of the dashboard
+                $container->get(DashboardProfileCatalog::class)->getProfile($dashboardType);
+            }
+
+            return $dashboardType;
+        };
+
         $buildDockerComposeCluster = static function (
             array $definition,
             string $name,
             string $sluggyName,
             string $type,
-        ): DockerComposeCluster {
+        ) use ($getDashboardType): DockerComposeCluster {
             if (empty($definition['ssh']['client_key'])) {
                 throw new DomainException(
                     "Error, the docker-compose cluster $name requires an ssh.client_key in the catalog"
@@ -176,6 +186,7 @@ return [
                 username: (string) ($definition['ssh']['username'] ?? ''),
                 caCertificate: (string) ($definition['ssh']['known_hosts'] ?? ''),
                 supportRegistry: (bool) ($definition['support_registry'] ?? true),
+                dashboardType: $getDashboardType($definition),
             );
         };
 
@@ -187,7 +198,8 @@ return [
         ) use (
             $container,
             $factory,
-            $storageProvisioner
+            $storageProvisioner,
+            $getDashboardType,
 ): KubernetesCluster {
             $caCertificate = base64_decode((string) $definition['create_account']['ca_cert']);
             $credentials = new ClusterCredentials(
@@ -201,12 +213,6 @@ return [
                 $container->get(RepositoryRegistry::class)
             );
 
-            $dashboardType = (string) ($definition['dashboard_type'] ?? '');
-            if ('' !== $dashboardType) {
-                //An unknown dashboard type fails at boot, not at the first opening of the dashboard
-                $container->get(DashboardProfileCatalog::class)->getProfile($dashboardType);
-            }
-
             return new KubernetesCluster(
                 name: $name,
                 sluggyName: $sluggyName,
@@ -219,7 +225,7 @@ return [
                 supportRegistry: !empty($definition['support_registry']),
                 useHnc: !empty($definition['use_hnc']),
                 isExternal: false,
-                dashboardType: $dashboardType,
+                dashboardType: $getDashboardType($definition),
             );
         };
 

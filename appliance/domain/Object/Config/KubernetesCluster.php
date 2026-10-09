@@ -36,6 +36,11 @@ use Teknoo\Kubernetes\Client;
  */
 class KubernetesCluster implements ConfigClusterInterface
 {
+    /**
+     * An administrator uses the dashboard with the cluster's token
+     */
+    public readonly string $dashboardAdminToken;
+
     private ?Client $kubernetesClient = null;
 
     private Client $kubernetesRegistryClient;
@@ -59,6 +64,8 @@ class KubernetesCluster implements ConfigClusterInterface
         public readonly bool $isExternal,
         public readonly string $dashboardType = '',
     ) {
+        $this->dashboardAdminToken = $token;
+
         if ($kubernetesClient instanceof Client) {
             $this->kubernetesClient = $kubernetesClient;
             $this->kubernetesRegistryClient = clone $kubernetesClient;

@@ -73,6 +73,7 @@ class KubernetesClusterTest extends TestCase
             $this->cluster->getKubernetesClient(),
         );
         $this->assertSame('', $this->cluster->dashboardType);
+        $this->assertSame('foo', $this->cluster->dashboardAdminToken);
     }
 
     public function testConstructWithADashboardType(): void

@@ -175,6 +175,10 @@ class CreateStorageTest extends TestCase
 
             public string $dashboardAddress = 'foo';
 
+            public string $dashboardType = '';
+
+            public string $dashboardAdminToken = '';
+
             public bool $supportRegistry = true;
 
             public bool $useHnc = false;
