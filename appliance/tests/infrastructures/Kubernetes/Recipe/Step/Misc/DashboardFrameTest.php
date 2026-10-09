@@ -27,7 +27,10 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use BadMethodCallException;
 use Http\Client\Common\HttpMethodsClientInterface;
+use Laminas\Diactoros\ServerRequest;
+use Laminas\Diactoros\StreamFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
@@ -78,6 +81,11 @@ class DashboardFrameTest extends TestCase
     private EngineInterface&Stub $template;
 
     /**
+     * @var array{method: string, uri: string, headers: array<string, string>, body: ?string}|null
+     */
+    private ?array $sentRequest = null;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp(): void
@@ -118,12 +126,29 @@ class DashboardFrameTest extends TestCase
         );
     }
 
-    private function createServerRequest(): ServerRequestInterface&Stub
-    {
-        $sRequest = $this->createStub(ServerRequestInterface::class);
-        $sRequest->method('getMethod')->willReturn('GET');
+    /**
+     * @param array<string, string> $headers
+     */
+    private function createServerRequest(
+        string $method = 'GET',
+        string $query = '',
+        array $headers = [],
+        string $body = '',
+    ): ServerRequestInterface {
+        return new ServerRequest(
+            uri: 'https://space.test/dashboard/frame/cluster-name/prod/?' . $query,
+            method: $method,
+            body: new StreamFactory()->createStream($body),
+            headers: $headers,
+        );
+    }
 
-        return $sRequest;
+    private function createUser(): User&Stub
+    {
+        $user = $this->createStub(User::class);
+        $user->method('getRoles')->willReturn(['ROLE_USER']);
+
+        return $user;
     }
 
     private function createAdmin(): User&Stub
@@ -137,8 +162,11 @@ class DashboardFrameTest extends TestCase
     /**
      * @param array<string, string[]> $headers
      */
-    private function prepareDashboardResponse(string $expectedUri, array $headers = []): ResponseInterface&MockObject
-    {
+    private function prepareDashboardResponse(
+        string $expectedUri,
+        array $headers = [],
+        string $expectedMethod = 'GET',
+    ): ResponseInterface&MockObject {
         $finalResponse = $this->createMock(ResponseInterface::class);
         $finalResponse->method('withBody')->willReturnSelf();
         $withHeaderExpectation = $this->never();
@@ -165,9 +193,19 @@ class DashboardFrameTest extends TestCase
         $this->httpMethodsClient
             ->method('send')
             ->willReturnCallback(
-                function (string $method, string $uri) use ($expectedUri, $response): ResponseInterface {
-                    $this->assertSame('GET', $method);
+                function (
+                    string $method,
+                    string $uri,
+                    array $headers = [],
+                    ?string $body = null,
+                ) use (
+                    $expectedUri,
+                    $expectedMethod,
+                    $response,
+                ): ResponseInterface {
+                    $this->assertSame($expectedMethod, $method);
                     $this->assertSame($expectedUri, $uri);
+                    $this->sentRequest = ['method' => $method, 'uri' => $uri, 'headers' => $headers, 'body' => $body];
 
                     return $response;
                 }
@@ -402,11 +440,148 @@ class DashboardFrameTest extends TestCase
         ($this->dashboardFrame)(
             manager: $this->createStub(ManagerInterface::class),
             client: $this->createStub(EastClient::class),
-            serverRequest: $this->createStub(ServerRequestInterface::class),
+            serverRequest: $this->createServerRequest(),
             user: $this->createStub(User::class),
             clusterCatalog: $catalog,
             clusterName: 'clusterName',
             wildcard: '*',
+        );
+    }
+
+    public function testInvokeForwardsTheQueryStringAndTheAcceptHeader(): void
+    {
+        $this->prepareDashboardResponse('fooapi/v1/namespaces/space-ns/pods?limit=10&labelSelector=app%3Dfoo');
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(
+                query: 'limit=10&labelSelector=app%3Dfoo',
+                headers: ['Accept' => 'application/json', 'Cookie' => 'PHPSESSID=secret'],
+            ),
+            user: $this->createAdmin(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: 'api/v1/namespaces/space-ns/pods',
+        );
+
+        $this->assertSame(
+            ['accept' => 'application/json', 'Authorization' => 'Bearer foo'],
+            $this->sentRequest['headers'] ?? null,
+        );
+        $this->assertNull($this->sentRequest['body'] ?? null);
+    }
+
+    public function testInvokeDoesNotAppendTheQueryStringToAnAnchoredWildcard(): void
+    {
+        $this->prepareDashboardResponse('foo#/workloads?namespace=_all');
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(query: 'foo=bar'),
+            user: $this->createAdmin(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: '#/workloads',
+        );
+
+        $this->assertSame('foo#/workloads?namespace=_all', $this->sentRequest['uri'] ?? null);
+    }
+
+    public function testInvokeForwardsTheBodyOfASameOriginMutatingRequest(): void
+    {
+        $this->prepareDashboardResponse(
+            expectedUri: 'fooapis/authorization.k8s.io/v1/selfsubjectrulesreviews',
+            expectedMethod: 'POST',
+        );
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(
+                method: 'POST',
+                headers: ['Sec-Fetch-Site' => 'same-origin', 'Content-Type' => 'application/json'],
+                body: '{"spec":{"namespace":"space-ns"}}',
+            ),
+            user: $this->createUser(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: 'apis/authorization.k8s.io/v1/selfsubjectrulesreviews',
+            accountWallet: $this->createWallet(true, true),
+            envName: 'prod',
+        );
+
+        $this->assertSame(
+            ['content-type' => 'application/json', 'Authorization' => 'Bearer env-token'],
+            $this->sentRequest['headers'] ?? null,
+        );
+        $this->assertSame('{"spec":{"namespace":"space-ns"}}', $this->sentRequest['body'] ?? null);
+    }
+
+    public function testInvokeForwardsAMutatingRequestFromTheSameHostWithoutFetchMetadata(): void
+    {
+        $this->prepareDashboardResponse(
+            expectedUri: 'fooapi/v1/namespaces/space-ns/pods/foo',
+            expectedMethod: 'PATCH',
+        );
+
+        ($this->dashboardFrame)(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(
+                method: 'PATCH',
+                headers: ['Origin' => 'https://SPACE.test', 'Content-Type' => 'application/merge-patch+json'],
+                body: '{}',
+            ),
+            user: $this->createAdmin(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: 'api/v1/namespaces/space-ns/pods/foo',
+        );
+
+        $this->assertSame('{}', $this->sentRequest['body'] ?? null);
+    }
+
+    /**
+     * @return iterable<string, array{array<string, string>}>
+     */
+    public static function crossOriginHeadersProvider(): iterable
+    {
+        yield 'cross-site fetch' => [['Sec-Fetch-Site' => 'cross-site', 'Origin' => 'https://space.test']];
+        yield 'same-site fetch' => [['Sec-Fetch-Site' => 'same-site']];
+        yield 'foreign origin' => [['Origin' => 'https://evil.test']];
+        yield 'no origin' => [[]];
+    }
+
+    /**
+     * @param array<string, string> $headers
+     */
+    #[DataProvider('crossOriginHeadersProvider')]
+    public function testInvokeRefusesAMutatingRequestNotIssuedBySpace(array $headers): void
+    {
+        $httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
+        $httpMethodsClient->expects($this->never())->method('send');
+
+        $dashboardFrame = new DashboardFrame(
+            $httpMethodsClient,
+            $this->responseFactory,
+            $this->streamFactory,
+            $this->urlGenerator,
+            $this->template,
+        );
+
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        $dashboardFrame(
+            manager: $this->createStub(ManagerInterface::class),
+            client: $this->createStub(EastClient::class),
+            serverRequest: $this->createServerRequest(method: 'DELETE', headers: $headers),
+            user: $this->createAdmin(),
+            clusterCatalog: $this->clusterCatalog,
+            clusterName: 'clusterName',
+            wildcard: 'api/v1/namespaces/space-ns/pods/foo',
         );
     }
 }

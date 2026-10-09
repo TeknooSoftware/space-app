@@ -48,8 +48,15 @@ use Throwable;
 
 use function http_build_query;
 use function in_array;
+use function is_string;
+use function parse_url;
 use function preg_replace;
 use function str_contains;
+use function strcasecmp;
+use function strtolower;
+use function strtoupper;
+
+use const PHP_URL_HOST;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -60,6 +67,16 @@ use function str_contains;
 class DashboardFrame implements DashboardFrameInterface
 {
     use TemplateTrait;
+
+    /**
+     * Methods without side effect: the only ones relayed without proving the request comes from Space itself.
+     */
+    private const array SAFE_METHODS = ['GET', 'HEAD'];
+
+    /**
+     * Request headers of the browser relayed to the dashboard. Cookies and credentials of Space are never relayed.
+     */
+    private const array FORWARDED_REQUEST_HEADERS = ['accept', 'content-type'];
 
     public function __construct(
         private readonly HttpMethodsClientInterface $httpMethodsClient,
@@ -94,6 +111,59 @@ class DashboardFrame implements DashboardFrameInterface
         return $url;
     }
 
+    private function isSafeMethod(ServerRequestInterface $serverRequest): bool
+    {
+        return in_array(strtoupper($serverRequest->getMethod()), self::SAFE_METHODS, true);
+    }
+
+    /**
+     * The relay acts with the credentials of the environment, so a request with side effects is relayed only when
+     * it is issued by a page of Space itself, never by a third-party site abusing the user's session (CSRF).
+     * Browsers send `Sec-Fetch-Site`; older ones are checked against their `Origin`.
+     */
+    private function assertSameOrigin(ServerRequestInterface $serverRequest): void
+    {
+        if ($this->isSafeMethod($serverRequest)) {
+            return;
+        }
+
+        $fetchSite = strtolower($serverRequest->getHeaderLine('sec-fetch-site'));
+        if ('same-origin' === $fetchSite) {
+            return;
+        }
+
+        if ('' === $fetchSite) {
+            $originHost = parse_url($serverRequest->getHeaderLine('origin'), PHP_URL_HOST);
+            if (
+                is_string($originHost)
+                && 0 === strcasecmp($originHost, $serverRequest->getUri()->getHost())
+            ) {
+                return;
+            }
+        }
+
+        throw new BadMethodCallException(
+            message: "Only requests issued by Space are relayed to the dashboard",
+            code: 403,
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getForwardedHeaders(ServerRequestInterface $serverRequest): array
+    {
+        $headers = [];
+        foreach (self::FORWARDED_REQUEST_HEADERS as $headerName) {
+            $value = $serverRequest->getHeaderLine($headerName);
+            if ('' !== $value) {
+                $headers[$headerName] = $value;
+            }
+        }
+
+        return $headers;
+    }
+
     public function __invoke(
         ManagerInterface $manager,
         EastClient $client,
@@ -106,6 +176,8 @@ class DashboardFrame implements DashboardFrameInterface
         ?AccountWallet $accountWallet = null,
         ?string $envName = null,
     ): DashboardFrameInterface {
+        $this->assertSameOrigin($serverRequest);
+
         if (empty($wildcard)) {
             $wildcard = '#/workloads';
         }
@@ -147,13 +219,21 @@ class DashboardFrame implements DashboardFrameInterface
 
         $dashboardUrl = $this->getDashboardUrl($clusterConfig, $accountEnvironment, $wildcard);
 
+        //A fragment is resolved by the browser, the query string of the page belongs to the dashboard's request
+        $query = $serverRequest->getUri()->getQuery();
+        if ('' !== $query && !str_contains($dashboardUrl, '#')) {
+            $dashboardUrl .= '?' . $query;
+        }
+
         try {
             $responseDashboard = $this->httpMethodsClient->send(
                 method: $serverRequest->getMethod(),
                 uri: $dashboardUrl,
                 headers: [
+                    ...$this->getForwardedHeaders($serverRequest),
                     'Authorization' => 'Bearer ' . trim($accountEnvironment?->getToken() ?? $clusterConfig->token),
                 ],
+                body: $this->isSafeMethod($serverRequest) ? null : (string) $serverRequest->getBody(),
             );
         } catch (Throwable $error) {
             $this->render(
