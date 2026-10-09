@@ -26,8 +26,8 @@ declare(strict_types=1);
 namespace Teknoo\Space\Object\DTO;
 
 use SensitiveParameter;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
 use Teknoo\Space\Object\Config\DashboardProfile;
-use Teknoo\Space\Object\Config\KubernetesCluster;
 
 /**
  * Dashboard to relay for the current user, resolved from the frame's route: the cluster hosting it, its profile,
@@ -42,7 +42,7 @@ use Teknoo\Space\Object\Config\KubernetesCluster;
 class DashboardTarget
 {
     public function __construct(
-        public readonly KubernetesCluster $cluster,
+        public readonly ConfigClusterInterface $cluster,
         public readonly DashboardProfile $profile,
         #[SensitiveParameter]
         public readonly string $token,

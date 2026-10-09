@@ -30,6 +30,13 @@ Feature: Web dashboard embedding the web dashboard of the selected cluster
     When It goes to the dashboard of "Demo Compose Cluster~staging"
     Then the dashboard frame is not displayed
 
+  Scenario: From the UI, the dashboard frame of a cluster without dashboard is not found
+    Given an account clusters "Client Compose" and a slug "client-compose" on docker compose
+    And an account environment on "Demo Compose Cluster" for the environment "staging"
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It opens the dashboard frame of "demo-compose-cluster" for "staging"
+    Then the user must have a 404 error
+
   Scenario: From the UI, the dashboard page supports an environment on a cluster registered by the account
     Given an account clusters "Client Kube" and a slug "client-kube"
     And an account environment on "Client Kube" for the environment "staging"
