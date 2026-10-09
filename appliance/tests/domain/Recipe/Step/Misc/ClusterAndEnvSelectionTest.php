@@ -34,6 +34,8 @@ use Teknoo\East\Paas\Object\Job;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DashboardProfile;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
@@ -82,7 +84,20 @@ class ClusterAndEnvSelectionTest extends TestCase
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->clusterAndEnvSelection = new ClusterAndEnvSelection(new DashboardAvailability());
+        $this->clusterAndEnvSelection = new ClusterAndEnvSelection(
+            new DashboardAvailability(),
+            new DashboardProfileCatalog(
+                profiles: [
+                    'headlamp' => new DashboardProfile(
+                        name: 'headlamp',
+                        requestHeaders: [],
+                        entryPath: 'c/main',
+                        namespacedEntryPath: 'c/main/workloads?namespace={namespace}',
+                    ),
+                ],
+                defaultType: 'headlamp',
+            ),
+        );
     }
 
     public function testInvokeWithoutAccount(): void
@@ -171,8 +186,8 @@ class ClusterAndEnvSelectionTest extends TestCase
                     $this->assertSame('_all', $value);
                 } elseif ('namespace' === $key) {
                     $this->assertSame('_all', $value);
-                } elseif ('dashboardAvailable' === $key) {
-                    $this->assertTrue($value);
+                } elseif ('dashboardEntryPath' === $key) {
+                    $this->assertSame('c/main', $value);
                 }
                 return $bag;
             });
@@ -269,6 +284,8 @@ class ClusterAndEnvSelectionTest extends TestCase
                     $this->assertSame('my-namespace', $value);
                 } elseif ('envName' === $key) {
                     $this->assertSame('staging', $value);
+                } elseif ('dashboardEntryPath' === $key) {
+                    $this->assertSame('c/main/workloads?namespace=my-namespace', $value);
                 }
                 return $bag;
             });
@@ -444,8 +461,8 @@ class ClusterAndEnvSelectionTest extends TestCase
                     $this->assertNull($value);
                 } elseif ('namespace' === $key) {
                     $this->assertSame('_all', $value);
-                } elseif ('dashboardAvailable' === $key) {
-                    $this->assertFalse($value);
+                } elseif ('dashboardEntryPath' === $key) {
+                    $this->assertNull($value);
                 }
                 return $bag;
             });

@@ -277,6 +277,16 @@ trait BrowserCrawlingTrait
         Assert::assertCount(1, $this->createCrawler()->filter('iframe#dashboard'));
     }
 
+    #[Then('the dashboard frame opens :source')]
+    public function theDashboardFrameOpens(string $source): void
+    {
+        $this->isAFinalResponse();
+
+        $frame = $this->createCrawler()->filter('iframe#dashboard');
+        Assert::assertCount(1, $frame);
+        Assert::assertSame($source, $frame->attr('src'));
+    }
+
     #[Then('the dashboard frame is not displayed')]
     public function theDashboardFrameIsNotDisplayed(): void
     {

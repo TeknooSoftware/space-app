@@ -19,6 +19,7 @@ Feature: Web dashboard embedding the web dashboard of the selected cluster
     Given the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     When It goes to the dashboard of "Demo Kube Cluster~dev"
     Then the dashboard frame is displayed
+    And the dashboard frame opens "/dashboard/frame/demo-kube-cluster/dev/c/main/workloads?namespace=space-client-my-company-dev"
 
   Scenario: From the UI, no dashboard is embedded for a cluster without dashboard
     Given an account clusters "Client Compose" and a slug "client-compose" on docker compose

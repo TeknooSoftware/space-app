@@ -542,6 +542,7 @@ return [
     ClusterAndEnvSelection::class => create()
         ->constructor(
             get(DashboardAvailability::class),
+            get(DashboardProfileCatalog::class),
         ),
 
     DashboardAvailability::class => create(),
