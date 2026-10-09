@@ -269,6 +269,22 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('the dashboard frame is displayed')]
+    public function theDashboardFrameIsDisplayed(): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertCount(1, $this->createCrawler()->filter('iframe#dashboard'));
+    }
+
+    #[Then('the dashboard frame is not displayed')]
+    public function theDashboardFrameIsNotDisplayed(): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertCount(0, $this->createCrawler()->filter('iframe#dashboard'));
+    }
+
     #[Then('It has a welcome message with :fullName in the dashboard header')]
     public function itHasAWelcomeMessageWithInTheDashboardHeader(string $fullName): void
     {

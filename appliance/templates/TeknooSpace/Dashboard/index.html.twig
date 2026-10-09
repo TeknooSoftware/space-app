@@ -160,12 +160,12 @@
                 {% endif %}
             {% endfor %}
         {% endif %}
-        {% if clusterSlug is not empty and envName is not empty and clusterSelected.dashboardAddress is defined and clusterSelected.dashboardAddress is not null %}
+        {% if clusterSlug is not empty and envName is not empty and clusterSelected.dashboardAddress is defined and clusterSelected.dashboardAddress is not empty %}
         <div class="row mt-3">
             <div class="col-12">
                 <iframe id="dashboard"
                         class="w-100 min-vh-100"
-                        title="Kuberntes Dashboard"
+                        title="Kubernetes Dashboard"
                         src="{{ path('space_dashboard_frame', {'clusterName': clusterSlug, 'envName': envName}) }}#/workloads?namespace={{ namespace }}"
                         sandbox="allow-scripts allow-forms allow-same-origin"
                 ></iframe>
