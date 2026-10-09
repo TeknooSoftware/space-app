@@ -67,7 +67,7 @@ class ResolveDashboardTargetTest extends TestCase
     {
         parent::setUp();
 
-        $this->headlamp = new DashboardProfile(name: 'headlamp', requestHeaders: []);
+        $this->headlamp = new DashboardProfile(name: 'headlamp', requestHeaders: [], rewriteBasePath: true);
         $this->legacy = new DashboardProfile(name: 'kubernetes-dashboard', requestHeaders: []);
 
         $this->step = new ResolveDashboardTarget(
@@ -250,6 +250,33 @@ class ResolveDashboardTargetTest extends TestCase
             clusterCatalog: $this->createCatalog($this->createCluster(dashboardAddress: '')),
             clusterName: 'cluster-name',
         );
+    }
+
+    public function testRefuseADashboardWithoutTheBasePathRequiredByItsProfile(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionCode(500);
+
+        ($this->step)(
+            manager: $this->createManager(),
+            user: $this->createUser(['ROLE_ADMIN']),
+            clusterCatalog: $this->createCatalog($this->createCluster(dashboardAddress: 'https://dashboard.test/')),
+            clusterName: 'cluster-name',
+        );
+    }
+
+    public function testAcceptARootDashboardWhenItsProfileDoesNotRewriteTheBasePath(): void
+    {
+        ($this->step)(
+            manager: $this->createManager(),
+            user: $this->createUser(['ROLE_ADMIN']),
+            clusterCatalog: $this->createCatalog(
+                $this->createCluster(dashboardAddress: 'https://dashboard.test', dashboardType: 'kubernetes-dashboard'),
+            ),
+            clusterName: 'cluster-name',
+        );
+
+        $this->assertSame($this->legacy, $this->target?->profile);
     }
 
     public function testRefuseAUserWithoutWallet(): void
