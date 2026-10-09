@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use BadMethodCallException;
+use Closure;
 use Http\Client\Common\HttpMethodsClientInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ResponseFactory;
@@ -85,8 +86,13 @@ class DashboardFrameTest extends TestCase
         $this->dashboardFrame = $this->createDashboardFrame($this->httpMethodsClient);
     }
 
-    private function createDashboardFrame(HttpMethodsClientInterface $httpMethodsClient): DashboardFrame
-    {
+    /**
+     * @param (Closure(string): array<string>)|null $hostResolver
+     */
+    private function createDashboardFrame(
+        HttpMethodsClientInterface $httpMethodsClient,
+        ?Closure $hostResolver = null,
+    ): DashboardFrame {
         $urlGenerator = $this->createStub(UrlGeneratorInterface::class);
         $urlGenerator->method('generate')
             ->willReturnCallback(
@@ -113,6 +119,7 @@ class DashboardFrameTest extends TestCase
             new StreamFactory(),
             $urlGenerator,
             $engine,
+            $hostResolver,
         );
     }
 
@@ -143,6 +150,7 @@ class DashboardFrameTest extends TestCase
         ?string $namespace = 'space-ns',
         string $dashboardAddress = 'http://headlamp.test/__headlamp/',
         string $envName = 'prod',
+        bool $isExternal = false,
     ): DashboardTarget {
         return new DashboardTarget(
             cluster: new KubernetesCluster(
@@ -156,7 +164,7 @@ class DashboardFrameTest extends TestCase
                 token: 'cluster-token',
                 supportRegistry: false,
                 useHnc: false,
-                isExternal: false,
+                isExternal: $isExternal,
             ),
             profile: $profile ?? $this->headlampProfile(),
             token: null === $namespace ? 'cluster-token' : 'env-token',
@@ -549,6 +557,98 @@ class DashboardFrameTest extends TestCase
             serverRequest: new ServerRequest(uri: 'https://space.test/dashboard/frame/other-cluster/prod/'),
             dashboardFrame: $this->createNeverCalledDashboardFrame(),
         );
+    }
+
+    public function testRelayTheDashboardOfAnExternalClusterServedByAPublicHost(): void
+    {
+        $this->dashboardAnswers();
+
+        $resolvedHosts = [];
+        $dashboardFrame = $this->createDashboardFrame(
+            $this->httpMethodsClient,
+            static function (string $host) use (&$resolvedHosts): array {
+                $resolvedHosts[] = $host;
+
+                return ['93.184.215.14', '2606:2800:21f:cb07:6820:80da:af6b:8b2c'];
+            },
+        );
+
+        $this->relay(
+            serverRequest: $this->createServerRequest(),
+            target: $this->createTarget(dashboardAddress: 'https://headlamp.client.test/__headlamp/', isExternal: true),
+            dashboardFrame: $dashboardFrame,
+        );
+
+        $this->assertSame(['headlamp.client.test'], $resolvedHosts);
+        $this->assertSame('https://headlamp.client.test/__headlamp/', $this->sentRequest['uri'] ?? null);
+    }
+
+    /**
+     * @return iterable<string, array{string, array<string>}>
+     */
+    public static function nonPublicExternalDashboardsProvider(): iterable
+    {
+        yield 'http' => ['http://headlamp.client.test/__headlamp/', ['93.184.215.14']];
+        yield 'unresolved' => ['https://headlamp.client.test/__headlamp/', []];
+        yield 'private network' => ['https://headlamp.client.test/__headlamp/', ['10.1.2.3']];
+        yield 'cloud metadata' => ['https://headlamp.client.test/__headlamp/', ['169.254.169.254']];
+        yield 'one private address' => ['https://headlamp.client.test/__headlamp/', ['93.184.215.14', 'fd00::1']];
+    }
+
+    /**
+     * @param array<string> $addresses
+     */
+    #[DataProvider('nonPublicExternalDashboardsProvider')]
+    public function testRefuseTheDashboardOfAnExternalClusterNotServedByAPublicHost(
+        string $dashboardAddress,
+        array $addresses,
+    ): void {
+        $httpMethodsClient = $this->createMock(HttpMethodsClientInterface::class);
+        $httpMethodsClient->expects($this->never())->method('send');
+
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        $this->relay(
+            serverRequest: $this->createServerRequest(),
+            target: $this->createTarget(dashboardAddress: $dashboardAddress, isExternal: true),
+            dashboardFrame: $this->createDashboardFrame($httpMethodsClient, static fn (): array => $addresses),
+        );
+    }
+
+    /**
+     * @return iterable<string, array{string}>
+     */
+    public static function localHostsProvider(): iterable
+    {
+        yield 'ipv4 loopback' => ['https://127.0.0.1/__headlamp/'];
+        yield 'ipv6 loopback' => ['https://[::1]/__headlamp/'];
+        yield 'localhost' => ['https://localhost/__headlamp/'];
+    }
+
+    #[DataProvider('localHostsProvider')]
+    public function testTheDnsResolverRefusesLocalHosts(string $dashboardAddress): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        $this->relay(
+            serverRequest: $this->createServerRequest(),
+            target: $this->createTarget(dashboardAddress: $dashboardAddress, isExternal: true),
+            dashboardFrame: $this->createNeverCalledDashboardFrame(),
+        );
+    }
+
+    public function testTheDnsResolverAcceptsAPublicAddress(): void
+    {
+        $this->dashboardAnswers();
+
+        $this->relay(
+            $this->createServerRequest(),
+            $this->createTarget(dashboardAddress: 'https://93.184.215.14/__headlamp/', isExternal: true),
+        );
+
+        $this->assertSame('https://93.184.215.14/__headlamp/', $this->sentRequest['uri'] ?? null);
     }
 
     public function testRenderAnErrorWhenTheDashboardIsUnreachable(): void

@@ -34,6 +34,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Url;
 use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
@@ -133,6 +134,10 @@ class AccountClusterType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.dashboard_address',
+                //Relayed by Space with the credentials of the environments: only over https
+                'constraints' => [
+                    new Url(protocols: ['https'], requireTld: false),
+                ],
             ],
         );
 

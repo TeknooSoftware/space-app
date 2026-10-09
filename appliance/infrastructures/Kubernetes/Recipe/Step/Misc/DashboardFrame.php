@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use BadMethodCallException;
+use Closure;
 use Http\Client\Common\HttpMethodsClientInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -40,6 +41,11 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Object\DTO\DashboardTarget;
 use Throwable;
 
+use function array_column;
+use function array_filter;
+use function dns_get_record;
+use function filter_var;
+use function gethostbynamel;
 use function in_array;
 use function is_string;
 use function ltrim;
@@ -58,9 +64,14 @@ use function strlen;
 use function strtolower;
 use function strtoupper;
 use function substr;
+use function trim;
 
+use const DNS_AAAA;
+use const FILTER_FLAG_GLOBAL_RANGE;
+use const FILTER_VALIDATE_IP;
 use const PHP_URL_HOST;
 use const PHP_URL_PATH;
+use const PHP_URL_SCHEME;
 
 /**
  * Relays the requests of the dashboard frame to the web dashboard of the cluster resolved in the `DashboardTarget`,
@@ -74,6 +85,9 @@ use const PHP_URL_PATH;
  *
  * This relay works request by request: websockets and streamed watches, used by dashboards for live updates, logs
  * and terminals, are refused at once (501) instead of holding a PHP worker.
+ *
+ * The dashboard of a cluster registered by a client is relayed only over https to a public host (see
+ * `assertPublicDashboard()`), its address being supplied by the client.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -110,16 +124,74 @@ class DashboardFrame implements DashboardFrameInterface
      */
     private const array STREAMING_PARAMETERS = ['watch', 'follow'];
 
+    /**
+     * @var Closure(string): array<string>
+     */
+    private readonly Closure $hostResolver;
+
+    /**
+     * @param (Closure(string): array<string>)|null $hostResolver returns the IP addresses of a host, the DNS by
+     *  default
+     */
     public function __construct(
         private readonly HttpMethodsClientInterface $httpMethodsClient,
         ResponseFactoryInterface $responseFactory,
         StreamFactoryInterface $streamFactory,
         private readonly UrlGeneratorInterface $urlGenerator,
         EngineInterface $templating,
+        ?Closure $hostResolver = null,
     ) {
         $this->templating = $templating;
         $this->streamFactory = $streamFactory;
         $this->responseFactory = $responseFactory;
+        $this->hostResolver = $hostResolver ?? self::resolveHost(...);
+    }
+
+    /**
+     * @return array<string>
+     */
+    private static function resolveHost(string $host): array
+    {
+        $host = trim($host, '[]');
+        if (false !== filter_var($host, FILTER_VALIDATE_IP)) {
+            return [$host];
+        }
+
+        return [
+            ...(gethostbynamel($host) ?: []),
+            //A failing DNS query only means no IPv6 address
+            ...array_filter(array_column(@dns_get_record($host, DNS_AAAA) ?: [], 'ipv6'), is_string(...)),
+        ];
+    }
+
+    /**
+     * The address of the dashboard of a cluster registered by a client is supplied by the client: it is relayed only
+     * over https, to a host whose addresses are all public, never to the private network of Space (SSRF).
+     * Redirections are not followed by the HTTP client of the relay.
+     */
+    private function assertPublicDashboard(string $dashboardUri): void
+    {
+        $host = parse_url($dashboardUri, PHP_URL_HOST);
+        $addresses = [];
+        if ('https' === strtolower((string) parse_url($dashboardUri, PHP_URL_SCHEME)) && is_string($host)) {
+            $addresses = ($this->hostResolver)($host);
+        }
+
+        if (empty($addresses)) {
+            throw new BadMethodCallException(
+                message: "The dashboard of this cluster must be served over https by a public host",
+                code: 403,
+            );
+        }
+
+        foreach ($addresses as $address) {
+            if (false === filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE)) {
+                throw new BadMethodCallException(
+                    message: "The dashboard of this cluster must be served by a public host",
+                    code: 403,
+                );
+            }
+        }
     }
 
     private function isSafeMethod(ServerRequestInterface $serverRequest): bool
@@ -308,6 +380,10 @@ class DashboardFrame implements DashboardFrameInterface
             path: $this->getRequestedPath($serverRequest, (string) parse_url($frameUrl, PHP_URL_PATH)),
             query: $serverRequest->getUri()->getQuery(),
         );
+
+        if ($dashboardTarget->cluster->isExternal) {
+            $this->assertPublicDashboard($dashboardUri);
+        }
 
         try {
             $dashboardResponse = $this->httpMethodsClient->send(

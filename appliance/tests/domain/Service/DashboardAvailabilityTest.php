@@ -76,13 +76,23 @@ class DashboardAvailabilityTest extends TestCase
         );
     }
 
-    public function testTheDashboardOfAnExternalClusterIsNotAvailable(): void
+    public function testTheDashboardOfAnExternalClusterIsNotAvailableByDefault(): void
     {
         $this->assertFalse(
             new DashboardAvailability()->isAvailable(
                 $this->createKubernetesCluster('https://dashboard.client.test/', true),
             ),
         );
+    }
+
+    public function testTheDashboardOfAnExternalClusterIsAvailableWhenAllowed(): void
+    {
+        $availability = new DashboardAvailability(externalDashboardsEnabled: true);
+
+        $this->assertTrue(
+            $availability->isAvailable($this->createKubernetesCluster('https://dashboard.client.test/', true)),
+        );
+        $this->assertFalse($availability->isAvailable($this->createKubernetesCluster('', true)));
     }
 
     public function testADockerComposeClusterIsNotAvailable(): void

@@ -27,6 +27,7 @@ namespace Teknoo\Space\Tests\Unit\Config;
 
 use ArrayObject;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Teknoo\Space\Object\Config\DashboardProfile;
@@ -82,6 +83,39 @@ class DashboardProfilesTest extends TestCase
             );
 
         return $config[DashboardProfileCatalog::class]($container);
+    }
+
+    /**
+     * @return iterable<string, array{?string, bool}>
+     */
+    public static function externalDashboardsSwitchProvider(): iterable
+    {
+        yield 'not defined' => [null, false];
+        yield 'empty' => ['', false];
+        yield 'false' => ['false', false];
+        yield 'zero' => ['0', false];
+        yield 'true' => ['true', true];
+        yield 'one' => ['1', true];
+        yield 'yes' => ['yes', true];
+    }
+
+    #[DataProvider('externalDashboardsSwitchProvider')]
+    public function testTheExternalDashboardsSwitch(?string $value, bool $expected): void
+    {
+        $previous = $_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED'] ?? null;
+        unset($_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED']);
+        if (null !== $value) {
+            $_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED'] = $value;
+        }
+
+        try {
+            $this->assertSame($expected, $this->loadConfig()['teknoo.space.dashboard.external.enabled']);
+        } finally {
+            unset($_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED']);
+            if (null !== $previous) {
+                $_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED'] = $previous;
+            }
+        }
     }
 
     public function testTheDefaultTypeIsHeadlamp(): void

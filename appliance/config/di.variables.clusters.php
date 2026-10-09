@@ -41,9 +41,12 @@ use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 
 use function DI\env;
+use function filter_var;
 use function preg_replace;
 use function strtolower;
 use function trim;
+
+use const FILTER_VALIDATE_BOOL;
 
 return [
     'teknoo.space.clusters.default_cluster.master' => env('SPACE_KUBERNETES_MASTER'),
@@ -60,6 +63,13 @@ return [
     //default one is used. An extension can add its own profiles by decorating `teknoo.space.dashboard.profiles`.
     //(an ArrayObject, the Symfony bridge requiring an object for each entry)
     'teknoo.space.dashboard.default_type' => env('SPACE_KUBERNETES_DASHBOARD_TYPE', 'headlamp'),
+    //The dashboard of a cluster registered by a client has an address supplied by the client: the web process
+    //relays it only when the operator allows it. Off by default. Resolved here (not through env()) so "false" is a
+    //boolean false, not a non-empty string.
+    'teknoo.space.dashboard.external.enabled' => filter_var(
+        $_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED'] ?? false,
+        FILTER_VALIDATE_BOOL,
+    ),
     'teknoo.space.dashboard.profiles' => static fn (): ArrayObject => new ArrayObject([
         //Headlamp must be served under a base path (Helm value `config.baseURL`, e.g. `/__headlamp`), included in
         //the dashboard address: it is replaced, in the pages relayed, by the path of the frame. The namespaces
