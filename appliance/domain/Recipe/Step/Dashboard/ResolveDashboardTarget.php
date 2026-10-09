@@ -31,8 +31,6 @@ use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
-use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
-use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\DashboardTarget;
 use Teknoo\Space\Service\DashboardAvailability;
@@ -46,7 +44,8 @@ use const PHP_URL_PATH;
 /**
  * Resolves the dashboard to relay for the current user, without reaching it: the cluster, its dashboard's profile,
  * and the credential and the namespace of the user. An administrator uses the cluster's credential on all
- * namespaces, a user the credential of its environment on the environment's namespace only.
+ * namespaces, a user the credential of its environment on the environment's namespace only. The dashboard is relayed
+ * only with a credential, whatever the type of the cluster.
  * The transport of the requests is the job of the `DashboardFrameInterface` step.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -71,10 +70,6 @@ class ResolveDashboardTarget
         ?AccountWallet $accountWallet = null,
     ): self {
         $cluster = $clusterCatalog->getCluster($clusterName);
-        if (!$cluster instanceof KubernetesCluster) {
-            throw new UnsupportedClusterTypeException('Only the dashboard of a Kubernetes cluster can be embedded');
-        }
-
         if (!$this->dashboardAvailability->isAvailable($cluster)) {
             throw new DomainException(message: "No dashboard is available for this cluster", code: 404);
         }
@@ -91,7 +86,7 @@ class ResolveDashboardTarget
             );
         }
 
-        $token = $cluster->token;
+        $token = $cluster->dashboardAdminToken;
         $namespace = null;
 
         if (!in_array('ROLE_ADMIN', (array) $user->getRoles(), true)) {
@@ -112,11 +107,16 @@ class ResolveDashboardTarget
             $namespace = $accountEnvironment->getNamespace();
         }
 
+        $token = trim($token);
+        if ('' === $token) {
+            throw new BadMethodCallException(message: "No credential is available for this dashboard", code: 403);
+        }
+
         $manager->updateWorkPlan([
             DashboardTarget::class => new DashboardTarget(
                 cluster: $cluster,
                 profile: $profile,
-                token: trim($token),
+                token: $token,
                 clusterName: $clusterName,
                 envName: (string) $envName,
                 namespace: $namespace,

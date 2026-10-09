@@ -37,6 +37,7 @@ use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
 use Teknoo\Space\Object\Config\DashboardProfile;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
@@ -502,5 +503,21 @@ class ClusterAndEnvSelectionTest extends TestCase
     {
         $this->assertSame('c/main', $this->selectDashboardEntryPath($this->createKubernetesCluster()));
         $this->assertNull($this->selectDashboardEntryPath($this->createKubernetesCluster(dashboardType: '')));
+    }
+
+    public function testTheDashboardOfAClusterOfAnyType(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'compose',
+            sluggyName: 'compose',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'https://dashboard.test/',
+            isExternal: false,
+            clientKey: 'k',
+            dashboardType: 'headlamp',
+        );
+
+        $this->assertSame('c/main', $this->selectDashboardEntryPath($cluster));
     }
 }

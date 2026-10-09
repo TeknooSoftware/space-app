@@ -30,7 +30,6 @@ use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
-use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Service\DashboardAvailability;
@@ -114,10 +113,7 @@ class ClusterAndEnvSelection
 
         //Path opened in the dashboard's frame, according to the dashboard's profile, null without dashboard
         $dashboardEntryPath = null;
-        if (
-            $clusterSelected instanceof KubernetesCluster
-            && $this->dashboardAvailability->isAvailable($clusterSelected)
-        ) {
+        if (null !== $clusterSelected && $this->dashboardAvailability->isAvailable($clusterSelected)) {
             $dashboardEntryPath = $this->profileCatalog
                 ->getProfile($clusterSelected->dashboardType)
                 ->renderEntryPath('_all' === $namespace ? null : $namespace);

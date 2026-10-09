@@ -33,10 +33,10 @@ use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
 use Teknoo\Space\Object\Config\DashboardProfile;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
-use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\DTO\DashboardTarget;
@@ -98,7 +98,21 @@ class ResolveDashboardTargetTest extends TestCase
         );
     }
 
-    private function createCatalog(?KubernetesCluster $cluster = null): ClusterCatalog
+    private function createDockerComposeCluster(): DockerComposeCluster
+    {
+        return new DockerComposeCluster(
+            name: 'Cluster Name',
+            sluggyName: 'cluster-name',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'https://dashboard.test/',
+            isExternal: false,
+            clientKey: 'k',
+            dashboardType: 'kubernetes-dashboard',
+        );
+    }
+
+    private function createCatalog(?ConfigClusterInterface $cluster = null): ClusterCatalog
     {
         return new ClusterCatalog(
             ['Cluster Name' => $cluster ?? $this->createCluster()],
@@ -146,10 +160,10 @@ class ResolveDashboardTargetTest extends TestCase
         return $wallet;
     }
 
-    private function createEnvironment(): AccountEnvironment
+    private function createEnvironment(string $token = 'env-token '): AccountEnvironment
     {
         $environment = $this->createStub(AccountEnvironment::class);
-        $environment->method('getToken')->willReturn('env-token ');
+        $environment->method('getToken')->willReturn($token);
         $environment->method('getNamespace')->willReturn('space-client-foo-prod');
 
         return $environment;
@@ -211,30 +225,49 @@ class ResolveDashboardTargetTest extends TestCase
         $this->assertSame('', $this->target?->envName);
     }
 
-    public function testRefuseANonKubernetesCluster(): void
+    public function testResolveTheDashboardOfAClusterOfAnyType(): void
     {
-        $catalog = new ClusterCatalog(
-            [
-                'Cluster Name' => new DockerComposeCluster(
-                    name: 'Cluster Name',
-                    sluggyName: 'cluster-name',
-                    type: 'docker-compose',
-                    masterAddress: 'ssh://u@h:22',
-                    dashboardAddress: 'https://dashboard.test/',
-                    isExternal: false,
-                    clientKey: 'k',
-                ),
-            ],
-            [],
+        $cluster = $this->createDockerComposeCluster();
+
+        ($this->step)(
+            manager: $this->createManager(),
+            user: $this->createUser(['ROLE_USER']),
+            clusterCatalog: $this->createCatalog($cluster),
+            clusterName: 'cluster-name',
+            envName: 'prod',
+            accountWallet: $this->createWallet($this->createEnvironment()),
         );
 
-        $this->expectException(UnsupportedClusterTypeException::class);
+        $this->assertSame($cluster, $this->target?->cluster);
+        $this->assertSame($this->legacy, $this->target?->profile);
+        $this->assertSame('env-token', $this->target?->token);
+    }
+
+    public function testRefuseAnAdministratorWithoutCredentialForTheDashboard(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
 
         ($this->step)(
             manager: $this->createManager(),
             user: $this->createUser(['ROLE_ADMIN']),
-            clusterCatalog: $catalog,
-            clusterName: 'Cluster Name',
+            clusterCatalog: $this->createCatalog($this->createDockerComposeCluster()),
+            clusterName: 'cluster-name',
+        );
+    }
+
+    public function testRefuseAUserWithoutCredentialForTheDashboard(): void
+    {
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionCode(403);
+
+        ($this->step)(
+            manager: $this->createManager(),
+            user: $this->createUser(['ROLE_USER']),
+            clusterCatalog: $this->createCatalog(),
+            clusterName: 'cluster-name',
+            envName: 'prod',
+            accountWallet: $this->createWallet($this->createEnvironment(token: " \n")),
         );
     }
 

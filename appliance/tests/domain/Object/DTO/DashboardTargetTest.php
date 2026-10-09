@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\DashboardProfile;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\DashboardTarget;
 
@@ -94,5 +95,28 @@ class DashboardTargetTest extends TestCase
         );
 
         $this->assertNull($target->namespace);
+    }
+
+    public function testConstructForAClusterOfAnyType(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'Compose',
+            sluggyName: 'compose',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'https://dashboard.test/',
+            isExternal: false,
+            dashboardType: 'headlamp',
+        );
+
+        $target = new DashboardTarget(
+            cluster: $cluster,
+            profile: new DashboardProfile(name: 'headlamp', requestHeaders: []),
+            token: 'env-token',
+            clusterName: 'compose',
+            envName: 'prod',
+        );
+
+        $this->assertSame($cluster, $target->cluster);
     }
 }
