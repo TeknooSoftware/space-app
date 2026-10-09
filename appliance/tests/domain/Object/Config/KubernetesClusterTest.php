@@ -72,6 +72,27 @@ class KubernetesClusterTest extends TestCase
             Client::class,
             $this->cluster->getKubernetesClient(),
         );
+        $this->assertSame('', $this->cluster->dashboardType);
+    }
+
+    public function testConstructWithADashboardType(): void
+    {
+        $cluster = new ClusterConfig(
+            name: 'foo',
+            sluggyName: 'bar',
+            type: 'foo',
+            masterAddress: 'foo',
+            storageProvisioner: 'foo',
+            dashboardAddress: 'foo',
+            kubernetesClient: $this->createStub(Client::class),
+            token: 'foo',
+            supportRegistry: true,
+            useHnc: true,
+            isExternal: false,
+            dashboardType: 'kubernetes-dashboard',
+        );
+
+        $this->assertSame('kubernetes-dashboard', $cluster->dashboardType);
     }
 
     public function testConstructWithCallable(): void

@@ -34,6 +34,8 @@ use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
+use Teknoo\Space\Object\Config\DashboardProfile;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Teknoo\Space\Object\Config\KubernetesCluster;
@@ -53,6 +55,52 @@ return [
     'teknoo.space.clusters.default_cluster.use_hnc' => env('SPACE_KUBERNETES_CLUSTER_USE_HNC', false),
 
     BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
+
+    //Kubernetes web dashboards embedded by Space: a cluster selects one with its `dashboard_type` key, otherwise the
+    //default one is used. An extension can add its own profiles by decorating `teknoo.space.dashboard.profiles`.
+    'teknoo.space.dashboard.default_type' => env('SPACE_KUBERNETES_DASHBOARD_TYPE', 'headlamp'),
+    'teknoo.space.dashboard.profiles' => static fn (): array => [
+        //Headlamp must be served under a base path (Helm value `config.baseURL`, e.g. `/__headlamp`), included in
+        //the dashboard address: it is replaced, in the pages relayed, by the path of the frame. The namespaces
+        //allowed to the user are given to Headlamp through its cluster settings (local storage).
+        'headlamp' => new DashboardProfile(
+            name: 'headlamp',
+            requestHeaders: ['Authorization' => 'Bearer {token}'],
+            entryPath: 'c/main',
+            namespacedEntryPath: 'c/main/workloads?namespace={namespace}',
+            headSnippet: '<script>(function(s){try{var k=\'cluster_settings.main\','
+                . 'c=JSON.parse(s.getItem(k)||\'{}\');delete c.allowedNamespaces;delete c.defaultNamespace;'
+                . 's.setItem(k,JSON.stringify(c));s.removeItem(\'headlamp-selected-namespace_main\');}'
+                . 'catch(e){}})(window.localStorage);</script>',
+            namespacedHeadSnippet: '<script>(function(s,n){try{var k=\'cluster_settings.main\','
+                . 'c=JSON.parse(s.getItem(k)||\'{}\');c.allowedNamespaces=[n];c.defaultNamespace=n;'
+                . 's.setItem(k,JSON.stringify(c));}catch(e){}})(window.localStorage,\'{namespace}\');</script>',
+            rewriteBasePath: true,
+        ),
+        //The legacy Kubernetes Dashboard (archived), selecting the namespace through its URL fragment
+        'kubernetes-dashboard' => new DashboardProfile(
+            name: 'kubernetes-dashboard',
+            requestHeaders: ['Authorization' => 'Bearer {token}'],
+            entryPath: '#/workloads?namespace=_all',
+            namespacedEntryPath: '#/workloads?namespace={namespace}',
+            headSnippet: '<base href="{baseHref}">',
+            namespacedHeadSnippet: '<base href="{baseHref}">',
+            pathAliases: ['config/config.json' => 'assets/config/config.json'],
+        ),
+    ],
+    DashboardProfileCatalog::class => static function (ContainerInterface $container): DashboardProfileCatalog {
+        $profiles = $container->get('teknoo.space.dashboard.profiles');
+        if ($profiles instanceof ArrayObject) {
+            $profiles = $profiles->getArrayCopy();
+        }
+
+        $defaultType = trim((string) $container->get('teknoo.space.dashboard.default_type'));
+
+        return new DashboardProfileCatalog(
+            profiles: $profiles,
+            defaultType: '' !== $defaultType ? $defaultType : 'headlamp',
+        );
+    },
 
     'teknoo.space.clusters_catalog' => static function (ContainerInterface $container): ClusterCatalog {
         static $clusterCatalog = null;
@@ -142,6 +190,12 @@ return [
                 $container->get(RepositoryRegistry::class)
             );
 
+            $dashboardType = (string) ($definition['dashboard_type'] ?? '');
+            if ('' !== $dashboardType) {
+                //An unknown dashboard type fails at boot, not at the first opening of the dashboard
+                $container->get(DashboardProfileCatalog::class)->getProfile($dashboardType);
+            }
+
             return new KubernetesCluster(
                 name: $name,
                 sluggyName: $sluggyName,
@@ -154,6 +208,7 @@ return [
                 supportRegistry: !empty($definition['support_registry']),
                 useHnc: !empty($definition['use_hnc']),
                 isExternal: false,
+                dashboardType: $dashboardType,
             );
         };
 
