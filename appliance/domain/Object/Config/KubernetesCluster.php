@@ -57,6 +57,7 @@ class KubernetesCluster implements ConfigClusterInterface
         public readonly bool $supportRegistry,
         public readonly bool $useHnc,
         public readonly bool $isExternal,
+        public readonly string $dashboardType = '',
     ) {
         if ($kubernetesClient instanceof Client) {
             $this->kubernetesClient = $kubernetesClient;

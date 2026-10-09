@@ -31,6 +31,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 
@@ -73,6 +74,10 @@ class ClustersCatalogBuilderTest extends TestCase
                     'teknoo.space.clusters.default_cluster.name' => '',
                     'teknoo.east.paas.default_storage_provider' => 'space-nfs',
                     ClientFactoryInterface::class => $this->createStub(ClientFactoryInterface::class),
+                    DashboardProfileCatalog::class => new DashboardProfileCatalog(
+                        profiles: $config['teknoo.space.dashboard.profiles'](),
+                        defaultType: 'headlamp',
+                    ),
                     default => null,
                 }
             );
@@ -124,6 +129,28 @@ class ClustersCatalogBuilderTest extends TestCase
         $this->assertInstanceOf(KubernetesCluster::class, $cluster);
         $this->assertSame('https://k8s.example.com', $cluster->masterAddress);
         $this->assertTrue($cluster->supportRegistry);
+        $this->assertSame('', $cluster->dashboardType);
+    }
+
+    public function testKubernetesEntryKeepsItsDashboardType(): void
+    {
+        $definition = $this->kubernetesDefinition();
+        $definition['dashboard_type'] = 'kubernetes-dashboard';
+
+        $cluster = $this->buildCatalog([$definition])->getCluster('K8s One');
+
+        $this->assertInstanceOf(KubernetesCluster::class, $cluster);
+        $this->assertSame('kubernetes-dashboard', $cluster->dashboardType);
+    }
+
+    public function testKubernetesEntryWithAnUnknownDashboardTypeThrows(): void
+    {
+        $definition = $this->kubernetesDefinition();
+        $definition['dashboard_type'] = 'unknown-dashboard';
+
+        $this->expectException(DomainException::class);
+
+        $this->buildCatalog([$definition]);
     }
 
     public function testMissingTypeDefaultsToKubernetes(): void
