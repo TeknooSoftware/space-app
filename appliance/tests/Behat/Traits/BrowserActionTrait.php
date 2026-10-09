@@ -353,6 +353,18 @@ trait BrowserActionTrait
         $this->formName = 'space_subscription';
     }
 
+    #[When('It goes to the dashboard of :clusterSelection')]
+    public function itGoesToTheDashboardOf(string $clusterSelection): void
+    {
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute(
+                route: 'space_dashboard',
+                parameters: ['cluster' => $clusterSelection],
+            ),
+        );
+    }
+
     #[When('It goes to user settings')]
     public function itGoesToUserSettings(): void
     {
