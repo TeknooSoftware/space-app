@@ -288,6 +288,7 @@ class AccountCluster implements
             username: (string) $this->username,
             caCertificate: $this->caCertificate,
             supportRegistry: $this->supportRegistry,
+            dashboardType: (string) $this->dashboardType,
         );
     }
 

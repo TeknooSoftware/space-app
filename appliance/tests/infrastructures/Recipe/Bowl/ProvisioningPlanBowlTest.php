@@ -58,6 +58,10 @@ class ProvisioningPlanBowlTest extends TestCase
 
             public string $dashboardAddress = '';
 
+            public string $dashboardType = '';
+
+            public string $dashboardAdminToken = '';
+
             public bool $useHnc = false;
 
             public bool $isExternal = false;

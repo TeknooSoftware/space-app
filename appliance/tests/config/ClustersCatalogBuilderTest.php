@@ -176,6 +176,32 @@ class ClustersCatalogBuilderTest extends TestCase
         $this->assertFalse($cluster->useHnc);
     }
 
+    public function testDockerComposeEntryKeepsItsDashboardType(): void
+    {
+        $definition = $this->dockerComposeDefinition();
+        $definition['dashboard'] = 'https://dashboard.example.com';
+        $definition['dashboard_type'] = 'headlamp';
+
+        $cluster = $this->buildCatalog([$definition])->getCluster('DC One');
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $cluster);
+        $this->assertSame('https://dashboard.example.com', $cluster->dashboardAddress);
+        $this->assertSame('headlamp', $cluster->dashboardType);
+
+        $withoutDashboard = $this->buildCatalog([$this->dockerComposeDefinition()])->getCluster('DC One');
+        $this->assertSame('', $withoutDashboard->dashboardType);
+    }
+
+    public function testDockerComposeEntryWithAnUnknownDashboardTypeThrows(): void
+    {
+        $definition = $this->dockerComposeDefinition();
+        $definition['dashboard_type'] = 'unknown-dashboard';
+
+        $this->expectException(DomainException::class);
+
+        $this->buildCatalog([$definition]);
+    }
+
     public function testMixedCatalogBuildsBothTypes(): void
     {
         $catalog = $this->buildCatalog([$this->kubernetesDefinition(), $this->dockerComposeDefinition()]);

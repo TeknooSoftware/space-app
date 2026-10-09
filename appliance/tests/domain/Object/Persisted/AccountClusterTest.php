@@ -466,6 +466,30 @@ class AccountClusterTest extends TestCase
     }
 
     #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterForDockerComposeKeepsTheDashboardType(): void
+    {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: 'DC',
+            slug: 'dc',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@docker-host.example.com:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            dashboardType: 'headlamp',
+        );
+
+        $result = $accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $result);
+        $this->assertSame('headlamp', $result->dashboardType);
+        $this->assertSame('', $result->dashboardAdminToken);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetClientKey(): void
     {
         $result = $this->accountCluster->setClientKey('-----BEGIN OPENSSH PRIVATE KEY-----KEY');
