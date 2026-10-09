@@ -67,6 +67,7 @@ use Teknoo\Space\Tests\Behat\Traits\AuthenticationTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserActionTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserCrawlingTrait;
 use Teknoo\Space\Tests\Behat\Traits\BuilderTrait;
+use Teknoo\Space\Tests\Behat\Traits\DashboardTrait;
 use Teknoo\Space\Tests\Behat\Traits\DockerComposeTrait;
 use Teknoo\Space\Tests\Behat\Traits\HistoryReaderTrait;
 use Teknoo\Space\Tests\Behat\Traits\HttpTrait;
@@ -99,6 +100,7 @@ class SpaceContext implements Context
     use BrowserActionTrait;
     use BrowserCrawlingTrait;
     use BuilderTrait;
+    use DashboardTrait;
     use DockerComposeTrait;
     use HistoryReaderTrait;
     use HttpTrait;

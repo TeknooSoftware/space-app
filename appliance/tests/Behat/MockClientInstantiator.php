@@ -38,6 +38,7 @@ use function explode;
 use function json_decode;
 use function parse_str;
 use function str_contains;
+use function str_starts_with;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -64,6 +65,11 @@ class MockClientInstantiator implements InstantiatorInterface
 
             public function sendRequest(RequestInterface $request): ResponseInterface
             {
+                //Requests relayed to the web dashboard of a cluster, not to its Kubernetes API
+                if (str_starts_with($request->getUri()->getHost(), 'dashboard.')) {
+                    return $this->testsContext->answerAsTheDashboard($request);
+                }
+
                 if ('GET' !== $request->getMethod()) {
                     $uriStr = (string) $request->getUri();
                     $host = $request->getUri()->getHost();

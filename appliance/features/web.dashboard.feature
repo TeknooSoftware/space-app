@@ -6,7 +6,9 @@ Feature: Web dashboard embedding the web dashboard of the selected cluster
 
   The dashboard page embeds, in an iframe, the web dashboard of the cluster hosting the selected environment. Space
   relays it and injects the environment's credentials, so the user never signs in on the dashboard. A cluster without
-  a configured dashboard shows no iframe.
+  a configured dashboard shows no iframe. The dashboard is Headlamp by default, served under the base path
+  `/__headlamp`, rewritten by the relay into the path of the frame. Websockets and streamed requests, used by
+  dashboards for live updates, logs and terminals, are not relayed.
 
   Background:
     Given a Space app instance
@@ -41,3 +43,65 @@ Feature: Web dashboard embedding the web dashboard of the selected cluster
     And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     When It opens the dashboard frame of "client-kube" for "staging"
     Then the user must have a 404 error
+
+  Scenario: From the UI, the Headlamp dashboard of the environment is relayed with its credentials
+    Given a kubernetes client
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It opens the dashboard frame of "demo-kube-cluster" for "dev"
+    Then the dashboard received a "GET" request to "https://dashboard.kubernetes.localhost/__headlamp/" with the token "aFakeToken"
+    And the dashboard page is served under "/dashboard/frame/demo-kube-cluster/dev"
+    And the dashboard page restricts Headlamp to the namespace "space-client-my-company-dev"
+
+  Scenario: From the UI, the requests of the dashboard are relayed with their query string and their body
+    Given a kubernetes client
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It sends a "POST" request to "clusters/main/apis/authorization.k8s.io/v1/selfsubjectrulesreviews?dryRun=All" on the dashboard frame of "demo-kube-cluster" for "dev"
+      """
+      {"spec":{"namespace":"space-client-my-company-dev"}}
+      """
+    Then the dashboard received a "POST" request to "https://dashboard.kubernetes.localhost/__headlamp/clusters/main/apis/authorization.k8s.io/v1/selfsubjectrulesreviews?dryRun=All" with the token "aFakeToken"
+    And the dashboard received the body:
+      """
+      {"spec":{"namespace":"space-client-my-company-dev"}}
+      """
+
+  Scenario: From the UI, a request sent to the dashboard by another site is refused
+    Given a kubernetes client
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When another site sends a "DELETE" request to "clusters/main/api/v1/namespaces/space-client-my-company-dev/pods/foo" on the dashboard frame of "demo-kube-cluster" for "dev"
+    Then the user must have a 403 error
+    And the dashboard was not reached
+
+  Scenario: From the UI, the live updates of the dashboard are refused at once
+    Given a kubernetes client
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It sends a "GET" request to "clusters/main/api/v1/namespaces/space-client-my-company-dev/pods?watch=1" on the dashboard frame of "demo-kube-cluster" for "dev"
+    Then the user must have a 501 error
+    And the dashboard was not reached
+
+  Scenario: From the UI, a user can not open the dashboard of an environment it does not own
+    Given a kubernetes client
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It opens the dashboard frame of "demo-kube-cluster" for "staging"
+    Then the user must have a 403 error
+    And the dashboard was not reached
+
+  Scenario: From the UI, an administrator opens the Headlamp dashboard of a cluster on all namespaces
+    Given a kubernetes client
+    And an admin, called "Admin" "Space" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the user is signed in with "admin@teknoo.space" and the password "Test2@Test"
+    When It opens the dashboard frame of "demo-kube-cluster" for "_all"
+    Then the dashboard received a "GET" request to "https://dashboard.kubernetes.localhost/__headlamp/" with the token "fooBar"
+    And the dashboard page is served under "/dashboard/frame/demo-kube-cluster/_all"
+    And the dashboard page lets Headlamp show all namespaces
+
+  Scenario: From the UI, the legacy Kubernetes Dashboard is embedded and relayed with its own profile
+    Given a kubernetes client
+    And the default dashboard is the legacy Kubernetes Dashboard
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It goes to the dashboard of "Demo Kube Cluster~dev"
+    Then the dashboard frame opens "/dashboard/frame/demo-kube-cluster/dev/#/workloads?namespace=space-client-my-company-dev"
+    When It opens the dashboard frame of "demo-kube-cluster" for "dev"
+    Then the dashboard received a "GET" request to "https://dashboard.kubernetes.localhost/__headlamp/" with the token "aFakeToken"
+    And the dashboard page has the base "https://localhost/dashboard/frame/demo-kube-cluster/dev/"
