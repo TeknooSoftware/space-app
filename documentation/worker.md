@@ -298,7 +298,8 @@ MERCURE_JWT_TOKEN=...
 
 The web server keeps only what its own pages need: the clusters catalog (dashboard health overview, dashboard
 frame, account clusters), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE` (namespace name computed
-at account creation) and the persisted variables **public** key (`SPACE_PERSISTED_VAR_AGENT_MODE=0`). The OCI
+at account creation), `SPACE_KUBERNETES_DASHBOARD_TYPE` and `SPACE_DASHBOARD_EXTERNAL_ENABLED` (dashboard relay)
+and the persisted variables **public** key (`SPACE_PERSISTED_VAR_AGENT_MODE=0`). The OCI
 registry, cluster issuer, HNC, storage and `SPACE_DC_*` settings are no longer read by the web server.
 
 **Execute Job Worker Specific**:

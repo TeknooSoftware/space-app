@@ -35,6 +35,7 @@ the variables below; the compose files at the repository root apply this split p
 | `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN`, `MERCURE_JWT_ISSUER`                                                                                                                                                                                                          | yes                                                 | yes (`NewJob` updates)                | no                                        | no                      |
 | `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_SHOW_HNC_FIELD`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS`                                    | yes                                                 | no                                    | no                                        | no                      |
 | Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`, `SPACE_KUBERNETES_MASTER`/`DASHBOARD`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE`                                                              | yes (dashboard, account clusters, namespace naming) | yes                                   | `SPACE_KUBERNETES_CLIENT_*` only          | no                      |
+| `SPACE_KUBERNETES_DASHBOARD_TYPE`, `SPACE_DASHBOARD_EXTERNAL_ENABLED`                                                                                                                                                                                                     | yes (dashboard relay)                               | no                                    | no                                        | no                      |
 | `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME`                                | no                                                  | yes                                   | no                                        | no                      |
 | `SPACE_OCI_GLOBAL_REGISTRY_URL`, `SPACE_OCI_GLOBAL_REGISTRY_USERNAME`, `SPACE_OCI_GLOBAL_REGISTRY_PWD`                                                                                                                                                                    | no                                                  | yes                                   | yes (`buildah login` / `nerdctl login`)   | no                      |
 | `SPACE_STORAGE_CLASS`, `SPACE_STORAGE_DEFAULT_SIZE`, `SPACE_JOB_ROOT`, `SPACE_KUBERNETES_INGRESS_DEFAULT_CLASS`, `SPACE_DC_ANSIBLE_BINARY`, `SPACE_DC_TIMEOUT`, `SPACE_DC_DEPLOY_ROOT`                                                                                    | no                                                  | yes                                   | yes                                       | no                      |
@@ -582,11 +583,65 @@ SPACE_KUBERNETES_CREATE_TOKEN=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
 
 - **Type**: String (URL)
 - **Optional**: Yes
-- **Description**: Kubernetes Dashboard URL for embedding
+- **Description**: URL of the web dashboard of the cluster, embedded in the Space dashboard page and relayed by
+  the web server, which injects the credentials of the environment (see [Web dashboard](#web-dashboard)). Headlamp
+  must be served under a base path included in this URL (Helm value `config.baseURL`).
 
 ```bash
-SPACE_KUBERNETES_DASHBOARD=https://dashboard.kubernetes.example.com
+SPACE_KUBERNETES_DASHBOARD=http://headlamp.headlamp.svc.cluster.local/__headlamp/
 ```
+
+#### SPACE_KUBERNETES_DASHBOARD_TYPE
+
+- **Type**: String (`headlamp`, `kubernetes-dashboard`)
+- **Default**: `headlamp`
+- **Optional**: Yes
+- **Description**: Type of web dashboard of the clusters declaring no `dashboard_type` (and of the single cluster
+  configured by `SPACE_KUBERNETES_*`). `kubernetes-dashboard` is the legacy, archived, Kubernetes Dashboard.
+
+```bash
+SPACE_KUBERNETES_DASHBOARD_TYPE=headlamp
+```
+
+#### SPACE_DASHBOARD_EXTERNAL_ENABLED
+
+- **Type**: Boolean
+- **Default**: `false`
+- **Optional**: Yes
+- **Description**: Also relays the web dashboards of the clusters registered by the accounts. Their address is
+  supplied by the client: the relay then only reaches it over https, on a host whose addresses are all public (never
+  the private network of Space). Web server only.
+
+```bash
+SPACE_DASHBOARD_EXTERNAL_ENABLED=false
+```
+
+#### Web dashboard
+
+The Space dashboard page embeds, in an iframe, the web dashboard of the cluster hosting the selected environment.
+The iframe targets Space itself (`/dashboard/frame/{cluster}/{env}/...`), which relays each request to the
+dashboard, injecting the credentials of the environment (or of the cluster, for an administrator): users never sign
+in on the dashboard, nor know these credentials. A non-administrator only sees the namespace of its environment.
+
+The way a dashboard is embedded is described by a **dashboard profile** (headers to inject, entry path, HTML snippet,
+base path rewriting...). Two profiles are built in:
+
+| Type                   | Dashboard                                                     | Address                                                  |
+|------------------------|---------------------------------------------------------------|----------------------------------------------------------|
+| `headlamp` (default)   | [Headlamp](https://headlamp.dev), deployed with its Helm chart | Served under a base path, e.g. `.../__headlamp/` (`config.baseURL: /__headlamp`) |
+| `kubernetes-dashboard` | Legacy Kubernetes Dashboard (archived)                        | Its root URL                                             |
+
+An extension can add profiles by decorating the PHP-DI entry `teknoo.space.dashboard.profiles`.
+
+Limits of the relay, which works request by request:
+- websockets and streamed requests (`watch`, `follow`) are refused at once with a `501`: pod logs, terminals and
+  live updates of the dashboard are not available;
+- mutating requests are relayed only when issued by Space itself (`Sec-Fetch-Site: same-origin`, or an `Origin` of
+  the Space host), otherwise `403`.
+
+For Headlamp, disable the `cluster-admin` binding of its service account (`clusterRoleBinding.create: false`): Space
+always injects the credentials of the user, and the dashboard does not need to be exposed by an ingress when Space
+runs in the same cluster.
 
 #### SPACE_KUBERNETES_CA_VALUE
 
@@ -635,7 +690,8 @@ SPACE_CLUSTER_CATALOG_JSON='[{
   "name": "production",
   "type": "kubernetes",
   "master": "https://k8s-prod.example.com:6443",
-  "dashboard": "https://dashboard-prod.example.com",
+  "dashboard": "http://headlamp.headlamp.svc.cluster.local/__headlamp/",
+  "dashboard_type": "headlamp",
   "create_account": {
     "token": "eyJhbGciOiJSUzI1...",
     "ca_cert": "LS0tLS1CRUdJTi..."
@@ -697,7 +753,8 @@ SPACE_CLUSTER_CATALOG_FILE=/opt/space/config/clusters.json
         "name": "production",
         "type": "kubernetes",
         "master": "https://k8s-prod.example.com:6443",
-        "dashboard": "https://dashboard-prod.example.com",
+        "dashboard": "http://headlamp.headlamp.svc.cluster.local/__headlamp/",
+        "dashboard_type": "headlamp",
         "create_account": {
             "token": "eyJhbGciOiJSUzI1...",
             "ca_cert": "LS0tLS1CRUdJTi..."

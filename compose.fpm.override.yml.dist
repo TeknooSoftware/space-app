@@ -53,7 +53,9 @@ services:
             - SPACE_JWT_PASSPHRASE=ToChange!
             - SPACE_KUBERNETES_CA_VALUE=
             - SPACE_KUBERNETES_CREATE_TOKEN=ToChange!
-            - SPACE_KUBERNETES_DASHBOARD=https://ToChange!
+            - SPACE_KUBERNETES_DASHBOARD=http://ToChange!/__headlamp/
+            - SPACE_KUBERNETES_DASHBOARD_TYPE=headlamp
+            #- SPACE_DASHBOARD_EXTERNAL_ENABLED=false
             - SPACE_KUBERNETES_MASTER=https://ToChange!
             - SPACE_PERSISTED_VAR_SECURITY_ALGORITHM=rsa
             - SPACE_PERSISTED_VAR_SECURITY_PUBLIC_KEY=/var/www/space/var/keys/variables/public.pem

@@ -1,5 +1,51 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.0-beta1] - 2026-10-09
+### Beta Release
+
+#### Security
+- The dashboard relay can not send the token to another host: the requested path is always appended after a `/`
+  closing the dashboard address (a path like `@evil.test/x` turned the dashboard host into user info), and a path
+  going up from the dashboard address (`..`, encoded or not) is refused
+- A request with side effects relayed to the dashboard must be issued by Space itself (`Sec-Fetch-Site:
+  same-origin`, or an `Origin` of the Space host), otherwise `403` (CSRF)
+- The dashboards of the clusters registered by the accounts, whose address is supplied by the client, are relayed
+  only when the new env var `SPACE_DASHBOARD_EXTERNAL_ENABLED` (default `false`) is enabled, and then only over https
+  to a host whose addresses are all public (SSRF). Their address must be an https URL in the cluster form
+- The relay never forwards the cookies nor the credentials of Space, nor the cookies or framing headers of the
+  dashboard
+
+#### Fixes
+- The dashboard page embedded a frame for a cluster without configured dashboard (docker-compose clusters)
+- The dashboard page failed for an environment hosted on a cluster registered by the account
+- The dashboard relay forwarded neither the query string nor the body of the requests
+- `DashboardFrameInterface` did not declare the environment name read by its implementation
+
+#### Evolutions
+- **Headlamp replaces the archived Kubernetes Dashboard**, as the default web dashboard embedded in Space. Space
+  still relays it and injects the credentials of the environment: users never sign in on the dashboard, and only see
+  the namespace of their environment
+  - **Breaking**: the default dashboard type is `headlamp`, served under a base path included in the dashboard address
+    (Helm value `config.baseURL`, e.g. `http://headlamp.headlamp.svc/__headlamp/`). An installation still using the
+    legacy dashboard must set `SPACE_KUBERNETES_DASHBOARD_TYPE=kubernetes-dashboard` or `dashboard_type` on its
+    clusters
+  - **Known limitation**: the relay works request by request, websockets and streamed requests are refused at once
+    (`501`): pod logs, terminals and live updates of the dashboard are not available
+- **Generic dashboard relay**, for any Kubernetes web dashboard, driven by dashboard profiles (`DashboardProfile`): the
+  templates of the headers injected (`Authorization: Bearer {token}`), the entry path, the HTML snippet inserted in
+  the relayed pages, the rewriting of the base path, the path aliases
+  - Built-in profiles: `headlamp`, `kubernetes-dashboard`; extensions can add their own by decorating
+    `teknoo.space.dashboard.profiles`
+  - New catalog key `dashboard_type` and new env var `SPACE_KUBERNETES_DASHBOARD_TYPE` (default type)
+  - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB)
+  - The resolution of the dashboard to relay (new step `ResolveDashboardTarget`) is separated from the HTTP transport
+    (`DashboardFrameInterface`)
+  - The HTTP client of the relay uses the timeout of the Kubernetes client (`SPACE_KUBERNETES_CLIENT_TIMEOUT`)
+- Tests: Behat coverage of the dashboard page and of the dashboard relay
+
+#### Docs
+- `documentation/configuration.md`: web dashboard, new env vars and catalog key
+
 ## [2.5.1] - 2026-10-08
 ### Stable Release
 #### Evolutions
