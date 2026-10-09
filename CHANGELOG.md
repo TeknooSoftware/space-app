@@ -48,7 +48,6 @@
   - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB)
   - The resolution of the dashboard to relay (new step `ResolveDashboardTarget`) is separated from the HTTP transport
     (`DashboardFrameInterface`)
-  - The HTTP client of the relay uses the timeout of the Kubernetes client (`SPACE_KUBERNETES_CLIENT_TIMEOUT`)
 - Tests: Behat coverage of the dashboard page and of the dashboard relay
 
 #### Docs
