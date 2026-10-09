@@ -109,6 +109,8 @@ class AccountCluster implements
         private ?string $clientKey = null,
         #[Normalize(['crud', 'api'])]
         private ?string $username = null,
+        #[Normalize(['crud', 'api'])]
+        private ?string $dashboardType = null,
     ) {
     }
 
@@ -133,6 +135,13 @@ class AccountCluster implements
     public function setDashboardAddress(string $dashboardAddress): AccountCluster
     {
         $this->dashboardAddress = $dashboardAddress;
+
+        return $this;
+    }
+
+    public function setDashboardType(?string $dashboardType): AccountCluster
+    {
+        $this->dashboardType = $dashboardType;
 
         return $this;
     }
@@ -309,6 +318,7 @@ class AccountCluster implements
             supportRegistry: $this->supportRegistry,
             useHnc: $this->useHnc,
             isExternal: true,
+            dashboardType: (string) $this->dashboardType,
         );
     }
 
@@ -321,6 +331,7 @@ class AccountCluster implements
             'master_address' => 'masterAddress',
             'storage_provisioner' => 'storage_provisioner',
             'dashboard_address' => 'dashboardAddress',
+            'dashboard_type' => 'dashboardType',
             'ca_certificate' => 'caCertificate',
             'support_registry' => 'supportRegistry',
             'registry_url' => 'registryUrl',

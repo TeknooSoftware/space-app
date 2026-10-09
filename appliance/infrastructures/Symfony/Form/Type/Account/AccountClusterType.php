@@ -35,6 +35,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 use Traversable;
 
@@ -53,7 +54,21 @@ class AccountClusterType extends AbstractType
 {
     public function __construct(
         private readonly EastDataMapper $dataMapper,
+        private readonly DashboardProfileCatalog $dashboardProfileCatalog,
     ) {
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getDashboardTypes(): array
+    {
+        $types = [];
+        foreach ($this->dashboardProfileCatalog as $type => $profile) {
+            $types[$type] = $type;
+        }
+
+        return $types;
     }
 
     /**
@@ -118,6 +133,18 @@ class AccountClusterType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.dashboard_address',
+            ],
+        );
+
+        $builder->add(
+            'dashboardType',
+            ChoiceType::class,
+            [
+                'required' => false,
+                'label' => 'teknoo.space.form.account.account_cluster.dashboard_type',
+                'placeholder' => 'teknoo.space.form.account.account_cluster.dashboard_type_default',
+                'choices' => $this->getDashboardTypes(),
+                'choice_translation_domain' => false,
             ],
         );
 

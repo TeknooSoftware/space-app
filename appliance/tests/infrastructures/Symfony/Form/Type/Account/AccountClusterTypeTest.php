@@ -32,6 +32,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType;
+use Teknoo\Space\Object\Config\DashboardProfile;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 
 /**
  * Class AccountClusterTypeTest.
@@ -57,7 +59,16 @@ class AccountClusterTypeTest extends TestCase
 
         $this->eastDataMapper = $this->createStub(EastDataMapper::class);
 
-        $this->accountClusterType = new AccountClusterType($this->eastDataMapper);
+        $this->accountClusterType = new AccountClusterType(
+            $this->eastDataMapper,
+            new DashboardProfileCatalog(
+                profiles: [
+                    'headlamp' => new DashboardProfile(name: 'headlamp', requestHeaders: []),
+                    'kubernetes-dashboard' => new DashboardProfile(name: 'kubernetes-dashboard', requestHeaders: []),
+                ],
+                defaultType: 'headlamp',
+            ),
+        );
     }
 
     public function testBuildForm(): void
@@ -89,6 +100,13 @@ class AccountClusterTypeTest extends TestCase
             ['Kubernetes' => 'kubernetes', 'Docker Compose' => 'docker-compose'],
             $added['type']['choices'],
         );
+
+        $this->assertArrayHasKey('dashboardType', $added);
+        $this->assertSame(
+            ['headlamp' => 'headlamp', 'kubernetes-dashboard' => 'kubernetes-dashboard'],
+            $added['dashboardType']['choices'],
+        );
+        $this->assertFalse($added['dashboardType']['required']);
 
         $this->assertArrayHasKey('clientKey', $added);
         $this->assertArrayHasKey('username', $added);

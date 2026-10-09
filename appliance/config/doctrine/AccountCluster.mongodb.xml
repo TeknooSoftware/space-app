@@ -15,6 +15,7 @@
         <field field-name="masterAddress" name="master_address" type="string" nullable="false"/>
         <field field-name="storageProvisioner" name="storage_provisioner" type="string" nullable="false"/>
         <field field-name="dashboardAddress" name="dashboard_address" type="string" nullable="false"/>
+        <field field-name="dashboardType" name="dashboard_type" type="string" nullable="true"/>
         <field field-name="caCertificate" name="ca_certificate" type="string" nullable="false"/>
         <field field-name="token" name="token" type="string" nullable="false"/>
         <field field-name="clientKey" name="client_key" type="string" nullable="true"/>

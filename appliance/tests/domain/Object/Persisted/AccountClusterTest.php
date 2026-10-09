@@ -150,6 +150,60 @@ class AccountClusterTest extends TestCase
     }
 
     #[AllowMockObjectsWithoutExpectations]
+    public function testSetDashboardType(): void
+    {
+        $this->assertInstanceOf(
+            AccountCluster::class,
+            $this->accountCluster->setDashboardType('kubernetes-dashboard'),
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterForKubernetesKeepsTheDashboardType(): void
+    {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: 'K8S',
+            slug: 'k8s',
+            type: 'kubernetes',
+            masterAddress: 'https://kubernetes.example.com',
+            dashboardAddress: 'https://dashboard.example.com/__headlamp/',
+            dashboardType: 'headlamp',
+        );
+
+        $result = $accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(KubernetesCluster::class, $result);
+        $this->assertSame('headlamp', $result->dashboardType);
+        $this->assertTrue($result->isExternal);
+
+        $this->assertSame(
+            '',
+            $accountCluster->setDashboardType(null)->convertToConfigCluster(
+                $this->createStub(ClientFactoryInterface::class),
+                $this->createStub(RepositoryRegistry::class),
+            )->dashboardType,
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testVisitTheDashboardTypeWithSnakeCaseMapping(): void
+    {
+        $dashboardTypeValue = 'not visited';
+
+        $this->accountCluster->setDashboardType('kubernetes-dashboard')->visit([
+            'dashboard_type' => function ($value) use (&$dashboardTypeValue): void {
+                $dashboardTypeValue = $value;
+            },
+        ]);
+
+        $this->assertSame('kubernetes-dashboard', $dashboardTypeValue);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
     public function testSetMasterAddress(): void
     {
         $newAddress = 'https://master.example.com';

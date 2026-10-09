@@ -1621,6 +1621,14 @@ trait ApiTrait
         $this->theSerializedProject(created: true, name: $name);
     }
 
+    #[Then('the serialized account cluster uses the :type dashboard')]
+    public function theSerializedAccountClusterUsesTheDashboard(string $type): void
+    {
+        $unserialized = json_decode(json: (string) $this->response->getContent(), associative: true);
+
+        Assert::assertSame($type, $unserialized['data']['dashboardType'] ?? null);
+    }
+
     #[Then('the serialized created account cluster :name')]
     public function theSerializedCreatedAccountCluster(string $name): void
     {
