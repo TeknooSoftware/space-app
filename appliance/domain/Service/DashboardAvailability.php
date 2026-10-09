@@ -26,15 +26,15 @@ declare(strict_types=1);
 namespace Teknoo\Space\Service;
 
 use Teknoo\Space\Object\Config\ConfigClusterInterface;
-use Teknoo\Space\Object\Config\KubernetesCluster;
 
 use function trim;
 
 /**
- * Tells if the web dashboard of a cluster can be embedded in Space and relayed by it: only a Kubernetes cluster
- * with a configured dashboard address. The dashboard of a cluster registered by a client (external cluster) is
- * relayed only when the operator allows it (`SPACE_DASHBOARD_EXTERNAL_ENABLED`): its address is supplied by the
- * client, so the relay then also requires it to be served over https by a public host.
+ * Tells if the web dashboard of a cluster can be embedded in Space and relayed by it, whatever the cluster's type:
+ * a cluster without dashboard type or without dashboard address has no dashboard. The dashboard of a cluster
+ * registered by a client (external cluster) is relayed only when the operator allows it
+ * (`SPACE_DASHBOARD_EXTERNAL_ENABLED`): its address is supplied by the client, so the relay then also requires it to
+ * be served over https by a public host.
  * The dashboard page and the relay share this rule, so a frame is never shown for a dashboard the relay refuses.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -51,7 +51,7 @@ class DashboardAvailability
 
     public function isAvailable(ConfigClusterInterface $cluster): bool
     {
-        return $cluster instanceof KubernetesCluster
+        return '' !== trim($cluster->dashboardType)
             && '' !== trim($cluster->dashboardAddress)
             && (!$cluster->isExternal || $this->externalDashboardsEnabled);
     }

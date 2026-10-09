@@ -34,6 +34,7 @@ use Teknoo\East\Paas\Object\Job;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
 use Teknoo\Space\Object\Config\DashboardProfile;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
@@ -60,12 +61,9 @@ class ClusterAndEnvSelectionTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp(): void
+    private function createKubernetesCluster(string $dashboardType = 'headlamp'): ClusterConfig
     {
-        parent::setUp();
-
-
-        $clusterConfig = new ClusterConfig(
+        return new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
             type: 'foo',
@@ -77,10 +75,33 @@ class ClusterAndEnvSelectionTest extends TestCase
             supportRegistry: true,
             useHnc: false,
             isExternal: false,
+            dashboardType: $dashboardType,
+        );
+    }
+
+    private function selectDashboardEntryPath(ConfigClusterInterface $cluster): mixed
+    {
+        $bag = new ParametersBag();
+
+        ($this->clusterAndEnvSelection)(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ServerRequestInterface::class),
+            $bag,
+            new ClusterCatalog([$cluster->name => $cluster], [$cluster->sluggyName => $cluster->name]),
         );
 
+        $parameters = (array) $bag->transform();
+        $this->assertArrayHasKey('dashboardEntryPath', $parameters);
+
+        return $parameters['dashboardEntryPath'];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
         $this->clusterCatalog = new ClusterCatalog(
-            ['clusterName' => $clusterConfig],
+            ['clusterName' => $this->createKubernetesCluster()],
             ['cluster-name' => 'clusterName'],
         );
 
@@ -95,7 +116,6 @@ class ClusterAndEnvSelectionTest extends TestCase
                         namespacedEntryPath: 'c/main/workloads?namespace={namespace}',
                     ),
                 ],
-                defaultType: 'headlamp',
             ),
         );
     }
@@ -476,5 +496,11 @@ class ClusterAndEnvSelectionTest extends TestCase
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
+    }
+
+    public function testNoDashboardForAClusterWithoutDashboardType(): void
+    {
+        $this->assertSame('c/main', $this->selectDashboardEntryPath($this->createKubernetesCluster()));
+        $this->assertNull($this->selectDashboardEntryPath($this->createKubernetesCluster(dashboardType: '')));
     }
 }

@@ -6,9 +6,9 @@ Feature: Web dashboard embedding the web dashboard of the selected cluster
 
   The dashboard page embeds, in an iframe, the web dashboard of the cluster hosting the selected environment. Space
   relays it and injects the environment's credentials, so the user never signs in on the dashboard. A cluster without
-  a configured dashboard shows no iframe. The dashboard is Headlamp by default, served under the base path
-  `/__headlamp`, rewritten by the relay into the path of the frame. Websockets and streamed requests, used by
-  dashboards for live updates, logs and terminals, are not relayed.
+  a dashboard address or without a dashboard type shows no iframe. The dashboard type selects the profile of the
+  relay: Headlamp is served under the base path `/__headlamp`, rewritten by the relay into the path of the frame.
+  Websockets and streamed requests, used by dashboards for live updates, logs and terminals, are not relayed.
 
   Background:
     Given a Space app instance
@@ -98,7 +98,7 @@ Feature: Web dashboard embedding the web dashboard of the selected cluster
 
   Scenario: From the UI, the legacy Kubernetes Dashboard is embedded and relayed with its own profile
     Given a kubernetes client
-    And the default dashboard is the legacy Kubernetes Dashboard
+    And the cluster "Demo Kube Cluster" uses the legacy Kubernetes Dashboard
     And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
     When It goes to the dashboard of "Demo Kube Cluster~dev"
     Then the dashboard frame opens "/dashboard/frame/demo-kube-cluster/dev/#/workloads?namespace=space-client-my-company-dev"

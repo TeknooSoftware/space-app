@@ -52,8 +52,9 @@ class ClustersCatalogBuilderTest extends TestCase
 {
     /**
      * @param array<int, array<string, mixed>> $definitions
+     * @param array<string, mixed> $parameters
      */
-    private function buildCatalog(array $definitions): ClusterCatalog
+    private function buildCatalog(array $definitions, array $parameters = []): ClusterCatalog
     {
         // `require` (not `_once`) re-executes the file, yielding a fresh builder closure with its own
         // `static $clusterCatalog`, so each test invocation is isolated.
@@ -68,7 +69,7 @@ class ClustersCatalogBuilderTest extends TestCase
             );
         $container->method('get')
             ->willReturnCallback(
-                fn (string $id): mixed => match ($id) {
+                fn (string $id): mixed => $parameters[$id] ?? match ($id) {
                     'teknoo.space.clusters_catalog.definitions' => $definitions,
                     'teknoo.space.clusters.default_cluster.master' => '',
                     'teknoo.space.clusters.default_cluster.name' => '',
@@ -76,7 +77,6 @@ class ClustersCatalogBuilderTest extends TestCase
                     ClientFactoryInterface::class => $this->createStub(ClientFactoryInterface::class),
                     DashboardProfileCatalog::class => new DashboardProfileCatalog(
                         profiles: $config['teknoo.space.dashboard.profiles']()->getArrayCopy(),
-                        defaultType: 'headlamp',
                     ),
                     default => null,
                 }
@@ -130,6 +130,28 @@ class ClustersCatalogBuilderTest extends TestCase
         $this->assertSame('https://k8s.example.com', $cluster->masterAddress);
         $this->assertTrue($cluster->supportRegistry);
         $this->assertSame('', $cluster->dashboardType);
+    }
+
+    public function testTheClusterDefinedByTheEnvironmentHasTheDashboardTypeOfTheEnvironment(): void
+    {
+        $parameters = [
+            'teknoo.space.clusters.default_cluster.master' => 'https://k8s.example.com',
+            'teknoo.space.clusters.default_cluster.name' => 'Env Cluster',
+            'teknoo.space.clusters.default_cluster.type' => 'kubernetes',
+            'teknoo.space.clusters.default_cluster.use_hnc' => false,
+            'teknoo.space.clusters.default_cluster.create_account.token' => 'a-token',
+            'teknoo.space.clusters.default_cluster.create_account.ca_cert' => base64_encode('a-ca-cert'),
+            'teknoo.space.clusters.default_cluster.dashboard' => 'https://dashboard.example.com/__headlamp/',
+            'teknoo.space.clusters.default_cluster.dashboard_type' => ' headlamp ',
+        ];
+
+        $cluster = $this->buildCatalog([], $parameters)->getCluster('Env Cluster');
+        $this->assertSame('https://dashboard.example.com/__headlamp/', $cluster->dashboardAddress);
+        $this->assertSame('headlamp', $cluster->dashboardType);
+
+        //No dashboard type, no dashboard: none is chosen by default
+        $parameters['teknoo.space.clusters.default_cluster.dashboard_type'] = '';
+        $this->assertSame('', $this->buildCatalog([], $parameters)->getCluster('Env Cluster')->dashboardType);
     }
 
     public function testKubernetesEntryKeepsItsDashboardType(): void

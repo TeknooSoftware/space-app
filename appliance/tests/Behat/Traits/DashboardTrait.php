@@ -36,7 +36,13 @@ use PHPUnit\Framework\Assert;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use function is_array;
+use function json_decode;
+use function json_encode;
 use function str_contains;
+
+use const JSON_THROW_ON_ERROR;
+use const JSON_UNESCAPED_SLASHES;
 
 /**
  * Fake web dashboard of the Kubernetes clusters (hosts `dashboard.*`, answered by the MockClientInstantiator),
@@ -51,9 +57,9 @@ trait DashboardTrait
 {
     private ?RequestInterface $dashboardRequest = null;
 
-    private ?string $previousDefaultDashboardType = null;
+    private ?string $previousClusterCatalog = null;
 
-    private bool $defaultDashboardTypeChanged = false;
+    private bool $clusterCatalogChanged = false;
 
     public function answerAsTheDashboard(RequestInterface $request): ResponseInterface
     {
@@ -70,27 +76,39 @@ trait DashboardTrait
         );
     }
 
-    #[Given('the default dashboard is the legacy Kubernetes Dashboard')]
-    public function theDefaultDashboardIsTheLegacyKubernetesDashboard(): void
+    #[Given('the cluster :clusterName uses the legacy Kubernetes Dashboard')]
+    public function theClusterUsesTheLegacyKubernetesDashboard(string $clusterName): void
     {
-        $this->defaultDashboardTypeChanged = true;
-        $this->previousDefaultDashboardType = $_ENV['SPACE_KUBERNETES_DASHBOARD_TYPE'] ?? null;
-        $_ENV['SPACE_KUBERNETES_DASHBOARD_TYPE'] = 'kubernetes-dashboard';
+        $this->clusterCatalogChanged = true;
+        $this->previousClusterCatalog = $_ENV['SPACE_CLUSTER_CATALOG_JSON'] ?? null;
+
+        $definitions = json_decode((string) $this->previousClusterCatalog, true, flags: JSON_THROW_ON_ERROR);
+        Assert::assertIsArray($definitions);
+        foreach ($definitions as &$definition) {
+            if (is_array($definition) && $clusterName === ($definition['name'] ?? null)) {
+                $definition['dashboard_type'] = 'kubernetes-dashboard';
+            }
+        }
+
+        $_ENV['SPACE_CLUSTER_CATALOG_JSON'] = json_encode(
+            $definitions,
+            JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES,
+        );
     }
 
     #[AfterScenario]
-    public function restoreTheDefaultDashboard(): void
+    public function restoreTheClusterCatalog(): void
     {
-        if (!$this->defaultDashboardTypeChanged) {
+        if (!$this->clusterCatalogChanged) {
             return;
         }
 
-        unset($_ENV['SPACE_KUBERNETES_DASHBOARD_TYPE']);
-        if (null !== $this->previousDefaultDashboardType) {
-            $_ENV['SPACE_KUBERNETES_DASHBOARD_TYPE'] = $this->previousDefaultDashboardType;
+        unset($_ENV['SPACE_CLUSTER_CATALOG_JSON']);
+        if (null !== $this->previousClusterCatalog) {
+            $_ENV['SPACE_CLUSTER_CATALOG_JSON'] = $this->previousClusterCatalog;
         }
 
-        $this->defaultDashboardTypeChanged = false;
+        $this->clusterCatalogChanged = false;
     }
 
     /**

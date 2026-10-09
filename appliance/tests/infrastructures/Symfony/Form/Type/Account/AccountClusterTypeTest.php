@@ -67,7 +67,6 @@ class AccountClusterTypeTest extends TestCase
                     'headlamp' => new DashboardProfile(name: 'headlamp', requestHeaders: []),
                     'kubernetes-dashboard' => new DashboardProfile(name: 'kubernetes-dashboard', requestHeaders: []),
                 ],
-                defaultType: 'headlamp',
             ),
         );
     }

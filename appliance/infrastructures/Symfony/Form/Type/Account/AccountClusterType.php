@@ -147,7 +147,7 @@ class AccountClusterType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.dashboard_type',
-                'placeholder' => 'teknoo.space.form.account.account_cluster.dashboard_type_default',
+                'placeholder' => 'teknoo.space.form.account.account_cluster.dashboard_type_none',
                 'choices' => $this->getDashboardTypes(),
                 'choice_translation_domain' => false,
             ],

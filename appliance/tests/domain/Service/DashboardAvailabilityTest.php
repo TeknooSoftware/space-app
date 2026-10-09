@@ -43,8 +43,11 @@ use Teknoo\Space\Service\DashboardAvailability;
 #[CoversClass(DashboardAvailability::class)]
 class DashboardAvailabilityTest extends TestCase
 {
-    private function createKubernetesCluster(string $dashboardAddress, bool $isExternal): KubernetesCluster
-    {
+    private function createKubernetesCluster(
+        string $dashboardAddress,
+        bool $isExternal,
+        string $dashboardType = 'headlamp',
+    ): KubernetesCluster {
         return new KubernetesCluster(
             name: 'foo',
             sluggyName: 'foo',
@@ -57,10 +60,25 @@ class DashboardAvailabilityTest extends TestCase
             supportRegistry: false,
             useHnc: false,
             isExternal: $isExternal,
+            dashboardType: $dashboardType,
         );
     }
 
-    public function testAKubernetesClusterWithADashboardIsAvailable(): void
+    private function createDockerComposeCluster(string $dashboardType): DockerComposeCluster
+    {
+        return new DockerComposeCluster(
+            name: 'foo',
+            sluggyName: 'foo',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'https://dashboard.test/',
+            isExternal: false,
+            clientKey: 'k',
+            dashboardType: $dashboardType,
+        );
+    }
+
+    public function testAClusterWithADashboardIsAvailable(): void
     {
         $this->assertTrue(
             new DashboardAvailability()->isAvailable(
@@ -69,10 +87,19 @@ class DashboardAvailabilityTest extends TestCase
         );
     }
 
-    public function testAKubernetesClusterWithoutDashboardIsNotAvailable(): void
+    public function testAClusterWithoutDashboardAddressIsNotAvailable(): void
     {
         $this->assertFalse(
             new DashboardAvailability()->isAvailable($this->createKubernetesCluster(' ', false)),
+        );
+    }
+
+    public function testAClusterWithoutDashboardTypeIsNotAvailable(): void
+    {
+        $this->assertFalse(
+            new DashboardAvailability()->isAvailable(
+                $this->createKubernetesCluster('https://dashboard.test/', false, ' '),
+            ),
         );
     }
 
@@ -95,20 +122,11 @@ class DashboardAvailabilityTest extends TestCase
         $this->assertFalse($availability->isAvailable($this->createKubernetesCluster('', true)));
     }
 
-    public function testADockerComposeClusterIsNotAvailable(): void
+    public function testTheDashboardOfAClusterOfAnyTypeIsAvailable(): void
     {
-        $this->assertFalse(
-            new DashboardAvailability()->isAvailable(
-                new DockerComposeCluster(
-                    name: 'foo',
-                    sluggyName: 'foo',
-                    type: 'docker-compose',
-                    masterAddress: 'ssh://u@h:22',
-                    dashboardAddress: 'https://dashboard.test/',
-                    isExternal: false,
-                    clientKey: 'k',
-                ),
-            ),
-        );
+        $availability = new DashboardAvailability();
+
+        $this->assertTrue($availability->isAvailable($this->createDockerComposeCluster('headlamp')));
+        $this->assertFalse($availability->isAvailable($this->createDockerComposeCluster('')));
     }
 }

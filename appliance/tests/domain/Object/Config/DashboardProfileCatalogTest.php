@@ -58,15 +58,7 @@ class DashboardProfileCatalogTest extends TestCase
         $this->legacy = new DashboardProfile(name: 'kubernetes-dashboard', requestHeaders: []);
         $this->catalog = new DashboardProfileCatalog(
             profiles: ['headlamp' => $this->headlamp, 'kubernetes-dashboard' => $this->legacy],
-            defaultType: 'headlamp',
         );
-    }
-
-    public function testConstructWithAnUnknownDefaultTypeThrows(): void
-    {
-        $this->expectException(DomainException::class);
-
-        new DashboardProfileCatalog(profiles: ['headlamp' => $this->headlamp], defaultType: 'foo');
     }
 
     public function testGetProfile(): void
@@ -75,10 +67,11 @@ class DashboardProfileCatalogTest extends TestCase
         $this->assertSame($this->headlamp, $this->catalog->getProfile('headlamp'));
     }
 
-    public function testGetProfileWithoutTypeReturnsTheDefaultOne(): void
+    public function testGetProfileWithoutTypeThrows(): void
     {
-        $this->assertSame($this->headlamp, $this->catalog->getProfile());
-        $this->assertSame($this->headlamp, $this->catalog->getProfile(''));
+        $this->expectException(DomainException::class);
+
+        $this->catalog->getProfile('');
     }
 
     public function testGetProfileWithAnUnknownTypeThrows(): void

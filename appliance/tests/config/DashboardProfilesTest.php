@@ -67,7 +67,7 @@ class DashboardProfilesTest extends TestCase
         return $profiles->getArrayCopy();
     }
 
-    private function buildCatalog(mixed $defaultType, mixed $profiles = null): DashboardProfileCatalog
+    private function buildCatalog(mixed $profiles = null): DashboardProfileCatalog
     {
         $config = $this->loadConfig();
         $profiles ??= $config['teknoo.space.dashboard.profiles']();
@@ -77,7 +77,6 @@ class DashboardProfilesTest extends TestCase
             ->willReturnCallback(
                 static fn (string $id): mixed => match ($id) {
                     'teknoo.space.dashboard.profiles' => $profiles,
-                    'teknoo.space.dashboard.default_type' => $defaultType,
                     default => null,
                 }
             );
@@ -118,23 +117,17 @@ class DashboardProfilesTest extends TestCase
         }
     }
 
-    public function testTheDefaultTypeIsHeadlamp(): void
+    public function testTheBuiltInProfiles(): void
     {
-        $this->assertSame('headlamp', $this->buildCatalog('')->getProfile()->name);
-        $this->assertSame('headlamp', $this->buildCatalog(null)->getProfile()->name);
-    }
+        $catalog = $this->buildCatalog();
 
-    public function testTheDefaultTypeIsConfigurable(): void
-    {
-        $this->assertSame(
-            'kubernetes-dashboard',
-            $this->buildCatalog(' kubernetes-dashboard ')->getProfile()->name,
-        );
+        $this->assertSame('headlamp', $catalog->getProfile('headlamp')->name);
+        $this->assertSame('kubernetes-dashboard', $catalog->getProfile('kubernetes-dashboard')->name);
     }
 
     public function testProfilesCanBeAnArray(): void
     {
-        $catalog = $this->buildCatalog('headlamp', $this->builtInProfiles());
+        $catalog = $this->buildCatalog($this->builtInProfiles());
 
         $this->assertSame('kubernetes-dashboard', $catalog->getProfile('kubernetes-dashboard')->name);
     }
