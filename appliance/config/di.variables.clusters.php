@@ -51,6 +51,7 @@ use const FILTER_VALIDATE_BOOL;
 return [
     'teknoo.space.clusters.default_cluster.master' => env('SPACE_KUBERNETES_MASTER'),
     'teknoo.space.clusters.default_cluster.dashboard' => env('SPACE_KUBERNETES_DASHBOARD'),
+    'teknoo.space.clusters.default_cluster.dashboard_type' => env('SPACE_KUBERNETES_DASHBOARD_TYPE', ''),
     'teknoo.space.clusters.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN'),
     'teknoo.space.clusters.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE'),
     'teknoo.space.clusters.default_cluster.name' => env('SPACE_CLUSTER_NAME', 'localhost'),
@@ -59,10 +60,10 @@ return [
 
     BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
 
-    //Kubernetes web dashboards embedded by Space: a cluster selects one with its `dashboard_type` key, otherwise the
-    //default one is used. An extension can add its own profiles by decorating `teknoo.space.dashboard.profiles`.
-    //(an ArrayObject, the Symfony bridge requiring an object for each entry)
-    'teknoo.space.dashboard.default_type' => env('SPACE_KUBERNETES_DASHBOARD_TYPE', 'headlamp'),
+    //Web dashboards embedded by Space: a cluster selects one with its `dashboard_type` key, a cluster without
+    //`dashboard_type` (or without `dashboard` address) has no dashboard. An extension can add its own profiles by
+    //decorating `teknoo.space.dashboard.profiles` (an ArrayObject, the Symfony bridge requiring an object for each
+    //entry).
     //The dashboard of a cluster registered by a client has an address supplied by the client: the web process
     //relays it only when the operator allows it. Off by default. Resolved here (not through env()) so "false" is a
     //boolean false, not a non-empty string.
@@ -105,12 +106,7 @@ return [
             $profiles = $profiles->getArrayCopy();
         }
 
-        $defaultType = trim((string) $container->get('teknoo.space.dashboard.default_type'));
-
-        return new DashboardProfileCatalog(
-            profiles: $profiles,
-            defaultType: '' !== $defaultType ? $defaultType : 'headlamp',
-        );
+        return new DashboardProfileCatalog(profiles: $profiles);
     },
 
     'teknoo.space.clusters_catalog' => static function (ContainerInterface $container): ClusterCatalog {
@@ -136,6 +132,7 @@ return [
                 [
                     'master' => $master,
                     'dashboard' => $container->get('teknoo.space.clusters.default_cluster.dashboard'),
+                    'dashboard_type' => $container->get('teknoo.space.clusters.default_cluster.dashboard_type'),
                     'create_account' => [
                         'token' => $container->get('teknoo.space.clusters.default_cluster.create_account.token'),
                         'ca_cert' => $container->get('teknoo.space.clusters.default_cluster.create_account.ca_cert'),
@@ -154,7 +151,7 @@ return [
         $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', (string) $text)));
 
         $getDashboardType = static function (array $definition) use ($container): string {
-            $dashboardType = (string) ($definition['dashboard_type'] ?? '');
+            $dashboardType = trim((string) ($definition['dashboard_type'] ?? ''));
             if ('' !== $dashboardType) {
                 //An unknown dashboard type fails at boot, not at the first opening of the dashboard
                 $container->get(DashboardProfileCatalog::class)->getProfile($dashboardType);

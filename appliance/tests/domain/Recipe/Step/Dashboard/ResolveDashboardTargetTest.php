@@ -73,7 +73,6 @@ class ResolveDashboardTargetTest extends TestCase
         $this->step = new ResolveDashboardTarget(
             new DashboardProfileCatalog(
                 profiles: ['headlamp' => $this->headlamp, 'kubernetes-dashboard' => $this->legacy],
-                defaultType: 'headlamp',
             ),
             new DashboardAvailability(),
         );
@@ -81,7 +80,7 @@ class ResolveDashboardTargetTest extends TestCase
 
     private function createCluster(
         string $dashboardAddress = 'https://dashboard.test/__headlamp/',
-        string $dashboardType = '',
+        string $dashboardType = 'headlamp',
     ): KubernetesCluster {
         return new KubernetesCluster(
             name: 'Cluster Name',
@@ -248,6 +247,19 @@ class ResolveDashboardTargetTest extends TestCase
             manager: $this->createManager(),
             user: $this->createUser(['ROLE_ADMIN']),
             clusterCatalog: $this->createCatalog($this->createCluster(dashboardAddress: '')),
+            clusterName: 'cluster-name',
+        );
+    }
+
+    public function testRefuseAClusterWithoutDashboardType(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionCode(404);
+
+        ($this->step)(
+            manager: $this->createManager(),
+            user: $this->createUser(['ROLE_ADMIN']),
+            clusterCatalog: $this->createCatalog($this->createCluster(dashboardType: '')),
             clusterName: 'cluster-name',
         );
     }

@@ -30,8 +30,8 @@ use IteratorAggregate;
 use Traversable;
 
 /**
- * Profiles of the Kubernetes web dashboards supported by Space, by type. A cluster without dashboard type uses the
- * default profile.
+ * Profiles of the web dashboards supported by Space, by type. A cluster selects one with its dashboard type, a cluster
+ * without dashboard type has no dashboard.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -47,21 +47,11 @@ class DashboardProfileCatalog implements IteratorAggregate
      */
     public function __construct(
         private readonly array $profiles,
-        private readonly string $defaultType,
     ) {
-        if (!isset($this->profiles[$this->defaultType])) {
-            throw new DomainException(
-                "The default dashboard type {$this->defaultType} is not available in the catalog",
-            );
-        }
     }
 
-    public function getProfile(?string $type = null): DashboardProfile
+    public function getProfile(string $type): DashboardProfile
     {
-        if (null === $type || '' === $type) {
-            $type = $this->defaultType;
-        }
-
         if (!isset($this->profiles[$type])) {
             throw new DomainException("The dashboard type {$type} is not available in the catalog");
         }
