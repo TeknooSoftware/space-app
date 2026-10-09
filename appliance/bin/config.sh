@@ -236,7 +236,8 @@ if [ "$useCatalog" = "0" ]; then
   kubernetesToken=$(readAMandatoryResponse "Kubernetes API Service Token to create new namespace and roles")
   kubernetesClusterName=$(readAMandatoryResponse "Kubernetes cluster name")
   kubernetesHnc=$(readForYesOrNoToBool "Kubernetes cluster use hierarchical namespaces [y/n]")
-  kubernetesDashboard=$(readAMandatoryResponse "Kubernetes Dashboard URL")
+  kubernetesDashboard=$(readAMandatoryResponse "Kubernetes web dashboard URL (for Headlamp, with its base path, e.g. http://headlamp.headlamp.svc/__headlamp/)")
+  kubernetesDashboardType=$(readAMandatoryResponse "Kubernetes web dashboard type [headlamp/kubernetes-dashboard]" "headlamp")
 else
   clusterCatalogFile=$(readAMandatoryFileResponse "Cluster Catalog file")
 fi
@@ -580,6 +581,7 @@ updateFile "$ENV_LOCAL_FILE" "SPACE_2FA_PROVIDER" "$mFAProvider"
 updateFile "$ENV_LOCAL_FILE" "SPACE_JWT_MAX_DAYS_TO_TIVE" "$jwtMaxAgeDelay"
 if [ "$useCatalog" = "0" ]; then
   updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
+  setEnvVar "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_DASHBOARD_TYPE" "$kubernetesDashboardType"
   updateFile "$ENV_LOCAL_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
   updateFile "$ENV_LOCAL_FILE" "SPACE_CLUSTER_NAME" "$kubernetesClusterName"
   updateFile "$ENV_LOCAL_FILE" "SPACE_CLUSTER_TYPE" "kubernetes"
@@ -650,6 +652,7 @@ if [ "$useDockerCompose" = "y" ]; then
   updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_JWT_MAX_DAYS_TO_TIVE" "$jwtMaxAgeDelay"
   if [ "$useCatalog" = "0" ]; then
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_DASHBOARD" "$kubernetesDashboard"
+    setComposeEnv "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_DASHBOARD_TYPE" "$kubernetesDashboardType"
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_KUBERNETES_MASTER" "$kubernetesApi"
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CLUSTER_NAME" "$kubernetesClusterName"
     updateFile "$DOCKER_COMPOSE_OVERRIDE_FILE" "SPACE_CLUSTER_TYPE" "kubernetes"

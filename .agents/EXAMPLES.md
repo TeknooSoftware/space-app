@@ -192,6 +192,7 @@ use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
+use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 
@@ -203,6 +204,7 @@ class Dashboard implements EditablePlanInterface
         RecipeInterface $recipe,
         private readonly HealthInterface $health,
         private readonly LoadEnvironments $loadEnvironments,
+        private readonly LoadAccountClusters $loadAccountClusters,
         private readonly ClustersInfoInterface $clustersInfo,
         private readonly ClusterAndEnvSelection $clusterAndEnvSelection,
         private readonly Render $render,
@@ -216,6 +218,7 @@ class Dashboard implements EditablePlanInterface
     {
         $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);
         $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
+        $recipe = $recipe->cook($this->loadAccountClusters, LoadAccountClusters::class, [], 15);
         $recipe = $recipe->cook($this->clustersInfo, ClustersInfoInterface::class, [], 20);
         $recipe = $recipe->cook($this->clusterAndEnvSelection, ClusterAndEnvSelection::class, [], 30);
         $recipe = $recipe->cook($this->render, Render::class, [], 50);
