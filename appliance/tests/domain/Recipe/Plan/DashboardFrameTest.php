@@ -38,6 +38,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
 use Teknoo\Space\Recipe\Plan\DashboardFrame;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 
 /**
  * Class DashboardFrameTest.
@@ -79,6 +80,7 @@ class DashboardFrameTest extends TestCase
             recipe: $this->recipe,
             loadEnvironments: $this->loadEnvironments,
             loadAccountClusters: $this->createStub(LoadAccountClusters::class),
+            resolveDashboardTarget: $this->createStub(ResolveDashboardTarget::class),
             dashboard: $this->dashboard,
             renderError: $this->renderError,
             defaultErrorTemplate: $this->defaultErrorTemplate,

@@ -118,6 +118,8 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -543,6 +545,12 @@ return [
         ),
 
     DashboardAvailability::class => create(),
+
+    ResolveDashboardTarget::class => create()
+        ->constructor(
+            get(DashboardProfileCatalog::class),
+            get(DashboardAvailability::class),
+        ),
 
     DashboardFrameInterface::class => get(DashboardFrame::class),
     DashboardFrame::class => static function (ContainerInterface $container): DashboardFrame {
