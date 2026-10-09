@@ -209,7 +209,7 @@ Links an account to an available deployment cluster (Kubernetes **or** docker-co
 - `storageProvisioner`: Default name of the storage provisioner (Kubernetes-only)
 - `dashboardAddress`: URL of the web dashboard (https only, relayed only when `SPACE_DASHBOARD_EXTERNAL_ENABLED`
   is on, see [DashboardAvailability](#dashboard))
-- `dashboardType`: type of the web dashboard (`headlamp`, `kubernetes-dashboard`...), nullable: the default type
+- `dashboardType`: type of the web dashboard (`headlamp`, `kubernetes-dashboard`...), nullable: no dashboard
 - `caCertificate`, `token`: Kubernetes credentials. For docker-compose, `caCertificate` reuses the same field to
   hold the SSH `known_hosts` host key
 - `clientKey`: Kubernetes client key, or — for docker-compose — the SSH **private key** (nullable, stored
@@ -346,14 +346,17 @@ the catalog (`di.variables.clusters.php`) and when converting an `AccountCluster
 - `type`: `kubernetes` or `docker-compose`
 - `masterAddress`: endpoint to connect (Kubernetes API URL, or `ssh://user@host:port` for docker-compose)
 - `dashboardAddress`: Endpoint to access the dashboard
+- `dashboardType`: type (profile) of the dashboard, catalog key `dashboard_type`, `''` for no dashboard
+- `dashboardAdminToken`: credential injected in the dashboard for an administrator of Space (the cluster `token` of
+  a Kubernetes cluster, none yet for a docker-compose cluster)
 - `supportRegistry`: This cluster can host a per-account OCI registry
 - `useHnc`: This cluster uses hierarchical namespaces (Kubernetes-only)
 - `isExternal`: This cluster is user defined and not admin defined
 
 **`KubernetesCluster`** (implements the interface; renamed from the former `Cluster`)
 
-- Adds Kubernetes-only members kept **off** the interface: `storageProvisioner`, `token`, `dashboardType` (catalog
-  key `dashboard_type`, empty for the default type), `getKubernetesClient()`, `getKubernetesRegistryClient()`.
+- Adds Kubernetes-only members kept **off** the interface: `storageProvisioner`, `token`, `getKubernetesClient()`,
+  `getKubernetesRegistryClient()`.
 
 **`DockerComposeCluster`** (implements the interface)
 
@@ -368,7 +371,7 @@ dashboard health, job defaults) skip non-Kubernetes clusters instead of throwing
 
 #### Dashboard
 
-The web dashboard of a Kubernetes cluster is embedded in the Space dashboard page and relayed by the web server,
+The web dashboard of a cluster, of any type, is embedded in the Space dashboard page and relayed by the web server,
 which injects the credentials of the user (see `documentation/configuration.md#web-dashboard`):
 
 - **`DashboardProfile`** (`Object/Config`): the "template" describing how a kind of dashboard is embedded: headers
@@ -376,10 +379,11 @@ which injects the credentials of the user (see `documentation/configuration.md#w
   (`{namespace}`), HTML snippet inserted in the `<head>` of relayed pages (`{baseHref}`, `{namespace}`), rewriting
   of the base path the dashboard is served under, path aliases. Namespaces are checked as Kubernetes names before
   any substitution.
-- **`DashboardProfileCatalog`** (`Object/Config`): profiles by type, with a default type (`headlamp`, configurable
-  by `SPACE_KUBERNETES_DASHBOARD_TYPE`). Built-in: `headlamp`, `kubernetes-dashboard`.
+- **`DashboardProfileCatalog`** (`Object/Config`): profiles by type, without default type. Built-in: `headlamp`,
+  `kubernetes-dashboard`.
 - **`DashboardAvailability`** (`Service`): the single rule telling if a cluster's dashboard can be embedded and
-  relayed: a Kubernetes cluster with a dashboard address; for a cluster registered by an account, only when
+  relayed: a cluster, of any type, with a dashboard type and a dashboard address; for a cluster registered by an
+  account, only when
   `SPACE_DASHBOARD_EXTERNAL_ENABLED` is on.
 - **`DashboardTarget`** (`Object/DTO`): the dashboard resolved for the current user by the `ResolveDashboardTarget`
   step (cluster, profile, credential, namespace or `null` for all namespaces), consumed by the transport step

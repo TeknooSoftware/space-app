@@ -14,29 +14,37 @@
   to a host whose addresses are all public (SSRF). Their address must be an https URL in the cluster form
 - The relay never forwards the cookies nor the credentials of Space, nor the cookies or framing headers of the
   dashboard
+- A dashboard is relayed only with a credential to inject (`403` otherwise)
+- Residual risk, documented with the recommended mitigation (egress `NetworkPolicy`): a DNS rebinding between the
+  check of the addresses of an external dashboard and the connection
 
 #### Fixes
 - The dashboard page embedded a frame for a cluster without configured dashboard (docker-compose clusters)
 - The dashboard page failed for an environment hosted on a cluster registered by the account
 - The dashboard relay forwarded neither the query string nor the body of the requests
 - `DashboardFrameInterface` did not declare the environment name read by its implementation
+- The dashboard frame of a cluster without dashboard (docker-compose clusters) answered a `500`, now a `404`
 
 #### Evolutions
-- **Headlamp replaces the archived Kubernetes Dashboard**, as the default web dashboard embedded in Space. Space
-  still relays it and injects the credentials of the environment: users never sign in on the dashboard, and only see
-  the namespace of their environment
-  - **Breaking**: the default dashboard type is `headlamp`, served under a base path included in the dashboard address
-    (Helm value `config.baseURL`, e.g. `http://headlamp.headlamp.svc/__headlamp/`). An installation still using the
-    legacy dashboard must set `SPACE_KUBERNETES_DASHBOARD_TYPE=kubernetes-dashboard` or `dashboard_type` on its
-    clusters
+- **Headlamp replaces the archived Kubernetes Dashboard**, as the web dashboard embedded in Space. Space still
+  relays it and injects the credentials of the environment: users never sign in on the dashboard, and only see the
+  namespace of their environment. Headlamp is served under a base path included in the dashboard address (Helm value
+  `config.baseURL`, e.g. `http://headlamp.headlamp.svc/__headlamp/`)
+  - **Breaking**: a cluster has a dashboard only with a dashboard address and a dashboard type, there is no default
+    type: `dashboard_type` in the clusters catalog (`headlamp`, or `kubernetes-dashboard` for the legacy dashboard),
+    `SPACE_CLUSTER_DASHBOARD_TYPE` for the cluster configured by environment variables
+  - **Deprecated**: `SPACE_KUBERNETES_DASHBOARD` is replaced by `SPACE_CLUSTER_DASHBOARD`, and still read when the
+    new one is empty
   - **Known limitation**: the relay works request by request, websockets and streamed requests are refused at once
     (`501`): pod logs, terminals and live updates of the dashboard are not available
-- **Generic dashboard relay**, for any Kubernetes web dashboard, driven by dashboard profiles (`DashboardProfile`): the
-  templates of the headers injected (`Authorization: Bearer {token}`), the entry path, the HTML snippet inserted in
-  the relayed pages, the rewriting of the base path, the path aliases
+- **Generic dashboard relay**, for any web dashboard and any type of cluster, driven by dashboard profiles
+  (`DashboardProfile`): the templates of the headers injected (`Authorization: Bearer {token}`), the entry path, the
+  HTML snippet inserted in the relayed pages, the rewriting of the base path, the path aliases
   - Built-in profiles: `headlamp`, `kubernetes-dashboard`; extensions can add their own by decorating
     `teknoo.space.dashboard.profiles`
-  - New catalog key `dashboard_type` and new env var `SPACE_KUBERNETES_DASHBOARD_TYPE` (default type)
+  - New catalog key `dashboard_type` (for every type of cluster) and new env var `SPACE_CLUSTER_DASHBOARD_TYPE`
+  - `ConfigClusterInterface` exposes the dashboard type and the credential of an administrator on the dashboard
+    (`dashboardType`, `dashboardAdminToken`)
   - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB)
   - The resolution of the dashboard to relay (new step `ResolveDashboardTarget`) is separated from the HTTP transport
     (`DashboardFrameInterface`)
@@ -44,7 +52,8 @@
 - Tests: Behat coverage of the dashboard page and of the dashboard relay
 
 #### Docs
-- `documentation/configuration.md`: web dashboard, new env vars and catalog key
+- `documentation/configuration.md`: web dashboard, new env vars and catalog key, residual risk of the relay of the
+  external dashboards
 
 ## [2.5.1] - 2026-10-08
 ### Stable Release
