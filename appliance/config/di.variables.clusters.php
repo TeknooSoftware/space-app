@@ -50,8 +50,12 @@ use const FILTER_VALIDATE_BOOL;
 
 return [
     'teknoo.space.clusters.default_cluster.master' => env('SPACE_KUBERNETES_MASTER'),
-    'teknoo.space.clusters.default_cluster.dashboard' => env('SPACE_KUBERNETES_DASHBOARD'),
-    'teknoo.space.clusters.default_cluster.dashboard_type' => env('SPACE_KUBERNETES_DASHBOARD_TYPE', ''),
+    //SPACE_KUBERNETES_DASHBOARD is the deprecated name of SPACE_CLUSTER_DASHBOARD, still read when the new one is
+    //empty (an empty variable is defined by `.env` and by the php-fpm pool, so `??` is not enough)
+    'teknoo.space.clusters.default_cluster.dashboard' => (string) (
+        ($_ENV['SPACE_CLUSTER_DASHBOARD'] ?? '') ?: ($_ENV['SPACE_KUBERNETES_DASHBOARD'] ?? '')
+    ),
+    'teknoo.space.clusters.default_cluster.dashboard_type' => env('SPACE_CLUSTER_DASHBOARD_TYPE', ''),
     'teknoo.space.clusters.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN'),
     'teknoo.space.clusters.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE'),
     'teknoo.space.clusters.default_cluster.name' => env('SPACE_CLUSTER_NAME', 'localhost'),
