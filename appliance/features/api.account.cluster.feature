@@ -43,6 +43,7 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | account_cluster.masterAddress      | https://127.0.0.1:12345 |
       | account_cluster.storageProvisioner | nfs                     |
       | account_cluster.dashboardAddress   | https://dashboard.local |
+      | account_cluster.dashboardType      | kubernetes-dashboard    |
       | account_cluster.caCertificate      | Foo                     |
       | account_cluster.token              | Bar                     |
       | account_cluster.supportRegistry    | 1                       |
@@ -50,6 +51,7 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | account_cluster.useHnc             | 0                       |
     Then get a JSON response
     And the serialized created account cluster "Behats Test"
+    And the serialized account cluster uses the "kubernetes-dashboard" dashboard
     And there is an account cluster in the memory for this account
 
   Scenario: From the API, create an account cluster, via a request with a json body
@@ -66,6 +68,7 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | masterAddress      | https://127.0.0.1:12345 |
       | storageProvisioner | nfs                     |
       | dashboardAddress   | https://dashboard.local |
+      | dashboardType      | headlamp                |
       | caCertificate      | Foo                     |
       | token              | Bar                     |
       | supportRegistry    | 1                       |
@@ -73,6 +76,7 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
       | useHnc             | 0                       |
     Then get a JSON response
     And the serialized created account cluster "Behats Test"
+    And the serialized account cluster uses the "headlamp" dashboard
     And there is an account cluster in the memory for this account
 
   Scenario: From the API, get an owned account cluster
