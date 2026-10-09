@@ -30,6 +30,7 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Url;
 use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AccountClusterType;
 use Teknoo\Space\Object\Config\DashboardProfile;
@@ -107,6 +108,10 @@ class AccountClusterTypeTest extends TestCase
             $added['dashboardType']['choices'],
         );
         $this->assertFalse($added['dashboardType']['required']);
+
+        $dashboardAddressConstraint = $added['dashboardAddress']['constraints'][0] ?? null;
+        $this->assertInstanceOf(Url::class, $dashboardAddressConstraint);
+        $this->assertSame(['https'], $dashboardAddressConstraint->protocols);
 
         $this->assertArrayHasKey('clientKey', $added);
         $this->assertArrayHasKey('username', $added);

@@ -545,7 +545,10 @@ return [
             get(DashboardProfileCatalog::class),
         ),
 
-    DashboardAvailability::class => create(),
+    DashboardAvailability::class => create()
+        ->constructor(
+            get('teknoo.space.dashboard.external.enabled'),
+        ),
 
     ResolveDashboardTarget::class => create()
         ->constructor(
