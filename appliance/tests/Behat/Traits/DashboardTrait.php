@@ -76,8 +76,8 @@ trait DashboardTrait
         );
     }
 
-    #[Given('the cluster :clusterName uses the legacy Kubernetes Dashboard')]
-    public function theClusterUsesTheLegacyKubernetesDashboard(string $clusterName): void
+    #[Given('the dashboard type of the cluster :clusterName is :dashboardType')]
+    public function theDashboardTypeOfTheClusterIs(string $clusterName, string $dashboardType): void
     {
         $this->clusterCatalogChanged = true;
         $this->previousClusterCatalog = $_ENV['SPACE_CLUSTER_CATALOG_JSON'] ?? null;
@@ -86,7 +86,7 @@ trait DashboardTrait
         Assert::assertIsArray($definitions);
         foreach ($definitions as &$definition) {
             if (is_array($definition) && $clusterName === ($definition['name'] ?? null)) {
-                $definition['dashboard_type'] = 'kubernetes-dashboard';
+                $definition['dashboard_type'] = $dashboardType;
             }
         }
 
