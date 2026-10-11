@@ -48,6 +48,9 @@
   - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB)
   - The resolution of the dashboard to relay (new step `ResolveDashboardTarget`) is separated from the HTTP transport
     (`DashboardFrameInterface`)
+  - **Breaking**: `ClustersInfoInterface` and `DashboardFrameInterface` move to
+    `Teknoo\Space\Contracts\Recipe\Step\Cluster`, their implementations `ClustersInfo` and `DashboardFrame` to
+    `Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster`
 - Tests: Behat coverage of the dashboard page and of the dashboard relay
 
 #### Docs

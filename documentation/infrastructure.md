@@ -133,25 +133,10 @@ Kubernetes-specific workflow steps:
 - Catch Errorr
 - Reinstall namespaec
 
-**DashboardFrame** (`Misc/DashboardFrame`, implements `DashboardFrameInterface`)
-
-- Relays, request by request, the frame's requests to the web dashboard resolved in the `DashboardTarget`, with the
-  headers of its `DashboardProfile` (the user's credential): path and query string as sent by the browser, kept
-  under the dashboard's address, body and `Accept` / `Content-Type` only (never the cookies of Space),
-  `Accept-Encoding: identity`, timeout of `SPACE_KUBERNETES_CLIENT_TIMEOUT`
-- Adapts the HTML pages to the frame's URL (base path, head snippet of the profile)
-- Refuses mutating requests not issued by Space (CSRF, `403`) and websockets / streamed requests (`501`)
-- For a cluster registered by an account: https only, to a host whose addresses are all public (SSRF guard)
-
 **Health**
 
 - Checks cluster connectivity
 - Validates API access
-
-**ClustersInfo**
-
-- Retrieves available clusters
-- Provides cluster metadata
 
 ### 3. Docker Compose / Ansible Integration
 
@@ -375,6 +360,20 @@ Symfony-specific workflow steps:
 **Mercure**
 
 - Client call
+
+**Cluster** (any type of cluster)
+
+- **ClustersInfo** (`Cluster/ClustersInfo`, implements `ClustersInfoInterface`)
+    - Retrieves available clusters
+    - Provides cluster metadata
+- **DashboardFrame** (`Cluster/DashboardFrame`, implements `DashboardFrameInterface`)
+    - Relays, request by request, the frame's requests to the web dashboard resolved in the `DashboardTarget`, with
+      the headers of its `DashboardProfile` (the user's credential): path and query string as sent by the browser,
+      kept under the dashboard's address, body and `Accept` / `Content-Type` only (never the cookies of Space),
+      `Accept-Encoding: identity`
+    - Adapts the HTML pages to the frame's URL (base path, head snippet of the profile)
+    - Refuses mutating requests not issued by Space (CSRF, `403`) and websockets / streamed requests (`501`)
+    - For a cluster registered by an account: https only, to a host whose addresses are all public (SSRF guard)
 
 ### 5. Twig Integration
 
