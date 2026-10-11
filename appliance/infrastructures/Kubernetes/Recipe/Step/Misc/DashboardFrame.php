@@ -37,7 +37,7 @@ use Teknoo\East\Common\Recipe\Step\Traits\TemplateTrait;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Foundation\Template\EngineInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\DashboardFrameInterface;
 use Teknoo\Space\Object\DTO\DashboardTarget;
 use Throwable;
 

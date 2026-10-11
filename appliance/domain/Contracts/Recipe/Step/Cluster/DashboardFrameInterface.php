@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
+namespace Teknoo\Space\Contracts\Recipe\Step\Cluster;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Teknoo\East\Foundation\Client\ClientInterface as EastClient;

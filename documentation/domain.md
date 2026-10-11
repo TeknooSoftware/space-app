@@ -534,7 +534,6 @@ Domain defines contracts for workflow steps without implementing them:
 
 - `ClustersInfoInterface`: Retrieve cluster information
 - `DashboardFrameInterface`: Relay a request of the dashboard frame to the web dashboard of the `DashboardTarget`
-  (Kubernetes)
 - `HealthInterface`: Check cluster health (Kubernetes)
 
 #### Subscription

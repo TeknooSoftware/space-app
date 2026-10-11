@@ -31,7 +31,7 @@ use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\DashboardFrameInterface;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
 use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;

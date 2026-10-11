@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
 
 use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 

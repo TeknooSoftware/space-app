@@ -32,7 +32,7 @@ use Teknoo\Recipe\Bowl\Bowl;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\Plan\EditablePlanTrait;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
