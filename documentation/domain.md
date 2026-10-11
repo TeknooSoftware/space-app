@@ -377,7 +377,7 @@ which injects the credentials of the user (see `documentation/configuration.md#w
 - **`DashboardProfile`** (`Object/Config`): the "template" describing how a kind of dashboard is embedded: headers
   injected in the relayed requests (`Authorization: Bearer {token}`), entry paths for all namespaces or for one
   (`{namespace}`), HTML snippet inserted in the `<head>` of relayed pages (`{baseHref}`, `{namespace}`), rewriting
-  of the base path the dashboard is served under, path aliases. Namespaces are checked as Kubernetes names before
+  of the base path the dashboard is served under, path aliases. Namespaces are checked as RFC 1123 labels before
   any substitution.
 - **`DashboardProfileCatalog`** (`Object/Config`): profiles by type, without default type. Built-in: `headlamp`,
   `kubernetes-dashboard`.

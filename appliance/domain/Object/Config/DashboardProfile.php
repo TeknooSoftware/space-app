@@ -35,8 +35,9 @@ use function strtr;
 use const ENT_QUOTES;
 
 /**
- * Describes how Space embeds and relays a kind of Kubernetes web dashboard (Headlamp, the legacy Kubernetes
- * Dashboard...), so the relay stays generic and a new dashboard only needs a new profile:
+ * Describes how Space embeds and relays a kind of web dashboard of a cluster, whatever the type of the cluster (for
+ * Kubernetes: Headlamp, the legacy Kubernetes Dashboard...), so the relay stays generic and a new dashboard only
+ * needs a new profile:
  * - `requestHeaders`: templates of the headers injected in every request relayed to the dashboard, `{token}` is
  *   replaced by the credential of the environment (or of the cluster for an administrator);
  * - `entryPath` / `namespacedEntryPath`: path opened in the frame, for all namespaces (administrator) or for the
@@ -47,8 +48,8 @@ use const ENT_QUOTES;
  *   relayed by the path of the frame;
  * - `pathAliases`: paths requested by the browser, relayed to another path of the dashboard.
  *
- * A namespace is always a Kubernetes name (RFC 1123 label), checked before any substitution, so a template can
- * use it in an URL, in HTML or in a JavaScript string.
+ * The namespace of the environment on its cluster is always an RFC 1123 label, checked before any substitution, so a
+ * template can use it in an URL, in HTML or in a JavaScript string.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
