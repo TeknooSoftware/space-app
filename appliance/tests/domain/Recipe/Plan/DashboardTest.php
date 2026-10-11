@@ -35,7 +35,7 @@ use Teknoo\East\Common\Recipe\Step\RenderError;
 use Teknoo\Recipe\ChefInterface;
 use Teknoo\Recipe\EditablePlanInterface;
 use Teknoo\Recipe\RecipeInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Plan\Dashboard;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
