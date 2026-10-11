@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster;
 
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;

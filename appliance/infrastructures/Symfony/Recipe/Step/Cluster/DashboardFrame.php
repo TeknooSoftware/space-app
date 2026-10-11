@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster;
 
 use BadMethodCallException;
 use Closure;

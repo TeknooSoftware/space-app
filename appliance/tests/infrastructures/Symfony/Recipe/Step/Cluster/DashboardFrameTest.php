@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Cluster;
 
 use BadMethodCallException;
 use Closure;
@@ -46,7 +46,7 @@ use Teknoo\East\Foundation\Template\EngineInterface;
 use Teknoo\East\Foundation\Template\ResultInterface;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Recipe\Promise\PromiseInterface;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster\DashboardFrame;
 use Teknoo\Space\Object\Config\DashboardProfile;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 use Teknoo\Space\Object\DTO\DashboardTarget;
