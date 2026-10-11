@@ -4,6 +4,8 @@ services:
             args:
                 MONGO_VERSION: 8.3
     web:
+        extra_hosts:
+            ["host.docker.internal:host-gateway"]
         environment:
             - APP_ENV=dev
             - APP_REMEMBER_SECRET=ToChange!
