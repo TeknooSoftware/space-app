@@ -62,8 +62,9 @@ traits standalone and fatals on it.
 
 ## Fixtures & Running
 
-PAAS YAML fixtures in `tests/Behat/Project/` cover 7 build scenarios: `Basic`, `WithConditions`, `WithDefaults`,
-`WithExtends`, `WithHttpsBackend`, `WithJobs`, `WithExposeShortcuts` (`v1.2`).
+PAAS YAML fixtures in `tests/Behat/Project/` cover 8 build scenarios: `Basic`, `WithConditions`, `WithDefaults`,
+`WithExtends`, `WithHttpsBackend`, `WithJobs`, `WithExposeShortcuts` (`v1.2`), `WithSharedVolumes` (`v1.2`, a
+persistent volume shared by two containers of a pod and by a scheduled job, with the CronJob options).
 
 ```bash
 ./space.sh test            # units + behavior, with coverage

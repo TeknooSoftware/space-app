@@ -155,6 +155,8 @@ class SpaceContext implements Context
 
     private bool $exposeShortcutsEnabled = false;
 
+    private bool $sharedVolumesEnabled = false;
+
     private string $defaultsMode = '';
 
     private bool $hasBeenRedirected = false;
@@ -323,6 +325,7 @@ class SpaceContext implements Context
         $this->clearJobMemory = false;
         $this->jobsEnabled = false;
         $this->exposeShortcutsEnabled = false;
+        $this->sharedVolumesEnabled = false;
         $this->timeoutService->disable();
 
         $envVarsNames = [
@@ -582,6 +585,19 @@ class SpaceContext implements Context
         $this->paasFile = __DIR__ . "/Project/WithHttpsBackend/paas.with-{$providerLower}-backend.yaml";
         $this->quotasMode = '';
         $this->ingressProvider = $providerLower;
+    }
+
+    /**
+     * The paas file with jobs, in `v1.2`, where a persistent volume is shared by two containers of the same pod and
+     * by a scheduled job, which also uses the options of the Kubernetes CronJobs (East PaaS 5.8).
+     */
+    #[Given('the project has a complete paas file with shared volumes')]
+    public function aProjectWithAPaasFileWithSharedVolumes(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithSharedVolumes/paas.yaml';
+        $this->quotasMode = '';
+        $this->jobsEnabled = true;
+        $this->sharedVolumesEnabled = true;
     }
 
     #[Given('the project has a complete paas file with jobs with wrong version')]
