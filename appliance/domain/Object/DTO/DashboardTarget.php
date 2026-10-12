@@ -23,33 +23,32 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
+namespace Teknoo\Space\Object\DTO;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Teknoo\East\Common\Object\User;
-use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use SensitiveParameter;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\DashboardProfile;
 
 /**
+ * Dashboard to relay for the current user, resolved from the frame's route: the cluster hosting it, its profile,
+ * the credential to inject and the namespace to open (`null` for all namespaces, for an administrator).
+ * `clusterName` and `envName` are the values of the frame's route, to generate its URLs.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-interface DashboardFrameInterface
+class DashboardTarget
 {
-    public function __invoke(
-        ManagerInterface $manager,
-        EastClient $client,
-        ServerRequestInterface $serverRequest,
-        User $user,
-        ClusterCatalog $clusterCatalog,
-        string $clusterName,
-        string $wildcard = '',
-        ?Account $account = null,
-        ?AccountWallet $accountWallet = null,
-    ): DashboardFrameInterface;
+    public function __construct(
+        public readonly ConfigClusterInterface $cluster,
+        public readonly DashboardProfile $profile,
+        #[SensitiveParameter]
+        public readonly string $token,
+        public readonly string $clusterName,
+        public readonly string $envName,
+        public readonly ?string $namespace = null,
+    ) {
+    }
 }

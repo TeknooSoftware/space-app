@@ -75,6 +75,16 @@ class AccountCluster implements
         VisitableTrait::runVisit as realRunVisit;
     }
 
+    /*
+     * To avoid issues with old mapping without `username` and `dashboardType` and issues when Mapper not instanciate
+     * new fields.
+     */
+    #[Normalize(['crud', 'api'])]
+    private ?string $username = null;
+
+    #[Normalize(['crud', 'api'])]
+    private ?string $dashboardType = null;
+
     public function __construct(
         private Account $account,
         #[Normalize(['default', 'crud', 'api'])]
@@ -107,9 +117,11 @@ class AccountCluster implements
             return '';
         })]
         private ?string $clientKey = null,
-        #[Normalize(['crud', 'api'])]
-        private ?string $username = null,
+        ?string $username = null,
+        ?string $dashboardType = null,
     ) {
+        $this->username = $username;
+        $this->dashboardType = $dashboardType;
     }
 
     public function getAccount(): Account
@@ -133,6 +145,13 @@ class AccountCluster implements
     public function setDashboardAddress(string $dashboardAddress): AccountCluster
     {
         $this->dashboardAddress = $dashboardAddress;
+
+        return $this;
+    }
+
+    public function setDashboardType(?string $dashboardType): AccountCluster
+    {
+        $this->dashboardType = $dashboardType;
 
         return $this;
     }
@@ -279,6 +298,7 @@ class AccountCluster implements
             username: (string) $this->username,
             caCertificate: $this->caCertificate,
             supportRegistry: $this->supportRegistry,
+            dashboardType: (string) $this->dashboardType,
         );
     }
 
@@ -309,6 +329,7 @@ class AccountCluster implements
             supportRegistry: $this->supportRegistry,
             useHnc: $this->useHnc,
             isExternal: true,
+            dashboardType: (string) $this->dashboardType,
         );
     }
 
@@ -321,6 +342,7 @@ class AccountCluster implements
             'master_address' => 'masterAddress',
             'storage_provisioner' => 'storage_provisioner',
             'dashboard_address' => 'dashboardAddress',
+            'dashboard_type' => 'dashboardType',
             'ca_certificate' => 'caCertificate',
             'support_registry' => 'supportRegistry',
             'registry_url' => 'registryUrl',

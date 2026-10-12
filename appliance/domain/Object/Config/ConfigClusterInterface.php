@@ -29,6 +29,9 @@ namespace Teknoo\Space\Object\Config;
  * Common cluster-configuration contract shared by every cluster type (Kubernetes, docker-compose, ...).
  * Exposes only the type-agnostic members; type-specific members (Kubernetes clients, storage provisioner,
  * token, ...) live on the concrete implementations.
+ * The web dashboard of a cluster is described by its address and its type (a profile of the dashboard profiles
+ * catalog), a cluster without one of them has no dashboard. `dashboardAdminToken` is the credential injected in the
+ * dashboard for an administrator of Space (a user gets the credential of its environment).
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -46,6 +49,10 @@ interface ConfigClusterInterface
     public string $masterAddress { get; }
 
     public string $dashboardAddress { get; }
+
+    public string $dashboardType { get; }
+
+    public string $dashboardAdminToken { get; }
 
     public bool $supportRegistry { get; }
 

@@ -75,7 +75,25 @@ class DockerComposeClusterTest extends TestCase
         $this->assertSame('docker-compose', $cluster->type);
         $this->assertSame('ssh://deployer@host.example.com:22', $cluster->masterAddress);
         $this->assertSame('https://dashboard.example.com', $cluster->dashboardAddress);
+        $this->assertSame('', $cluster->dashboardType);
+        $this->assertSame('', $cluster->dashboardAdminToken);
         $this->assertFalse($cluster->isExternal);
+    }
+
+    public function testConstructWithADashboardType(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'Docker Host',
+            sluggyName: 'docker-host',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@host.example.com:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            isExternal: false,
+            clientKey: self::SSH_KEY,
+            dashboardType: 'headlamp',
+        );
+
+        $this->assertSame('headlamp', $cluster->dashboardType);
     }
 
     public function testSupportRegistryDefaultsTrueAndUseHncIsAlwaysFalse(): void

@@ -67,6 +67,7 @@ use Teknoo\Space\Tests\Behat\Traits\AuthenticationTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserActionTrait;
 use Teknoo\Space\Tests\Behat\Traits\BrowserCrawlingTrait;
 use Teknoo\Space\Tests\Behat\Traits\BuilderTrait;
+use Teknoo\Space\Tests\Behat\Traits\DashboardTrait;
 use Teknoo\Space\Tests\Behat\Traits\DockerComposeTrait;
 use Teknoo\Space\Tests\Behat\Traits\HistoryReaderTrait;
 use Teknoo\Space\Tests\Behat\Traits\HttpTrait;
@@ -99,6 +100,7 @@ class SpaceContext implements Context
     use BrowserActionTrait;
     use BrowserCrawlingTrait;
     use BuilderTrait;
+    use DashboardTrait;
     use DockerComposeTrait;
     use HistoryReaderTrait;
     use HttpTrait;
@@ -152,6 +154,8 @@ class SpaceContext implements Context
     private bool $jobsEnabled = false;
 
     private bool $exposeShortcutsEnabled = false;
+
+    private bool $sharedVolumesEnabled = false;
 
     private string $defaultsMode = '';
 
@@ -321,6 +325,7 @@ class SpaceContext implements Context
         $this->clearJobMemory = false;
         $this->jobsEnabled = false;
         $this->exposeShortcutsEnabled = false;
+        $this->sharedVolumesEnabled = false;
         $this->timeoutService->disable();
 
         $envVarsNames = [
@@ -580,6 +585,19 @@ class SpaceContext implements Context
         $this->paasFile = __DIR__ . "/Project/WithHttpsBackend/paas.with-{$providerLower}-backend.yaml";
         $this->quotasMode = '';
         $this->ingressProvider = $providerLower;
+    }
+
+    /**
+     * The paas file with jobs, in `v1.2`, where a persistent volume is shared by two containers of the same pod and
+     * by a scheduled job, which also uses the options of the Kubernetes CronJobs (East PaaS 5.8).
+     */
+    #[Given('the project has a complete paas file with shared volumes')]
+    public function aProjectWithAPaasFileWithSharedVolumes(): void
+    {
+        $this->paasFile = __DIR__ . '/Project/WithSharedVolumes/paas.yaml';
+        $this->quotasMode = '';
+        $this->jobsEnabled = true;
+        $this->sharedVolumesEnabled = true;
     }
 
     #[Given('the project has a complete paas file with jobs with wrong version')]

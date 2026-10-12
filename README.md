@@ -46,7 +46,10 @@ This is the `Standard` version of Space. It is released under the 3-Clause BSD l
 * RESTFull API interfaces
 * Deployment workers
 * Kubernetes integration
-    * include a Dashboard integration
+    * include a web dashboard integration ([Headlamp](https://headlamp.dev) by default, the legacy Kubernetes
+      Dashboard or any web dashboard described by a profile), relayed by Space with the credentials of the
+      environment: users never sign in on the dashboard. Websockets are not relayed: pod logs, terminals and live
+      updates of the dashboard are not available.
 * Docker Compose integration
     * Deployments to remote Docker hosts via Ansible
     * Support for Traefik v3
@@ -355,7 +358,8 @@ the web application and the four workers do not receive the same set.
             * `OAUTH_MS_CLIENT_SECRET` : (string) OAuth client secret for Microsoft.
     * Kubernetes (shared with the `new_task` worker: the web server still opens Kubernetes clients for the
       dashboard health overview, the dashboard frame and the account clusters) :
-        * `SPACE_KUBERNETES_CLIENT_TIMEOUT` : (int) max time in seconds allowed for each Kubernetes's API query.
+        * `SPACE_KUBERNETES_CLIENT_TIMEOUT` : (int) max time in seconds allowed for each Kubernetes's API query
+          and each request relayed to a web dashboard.
           `3` by default. *Optional*
         * `SPACE_KUBERNETES_CLIENT_VERIFY_SSL` : (int/bool) to enable SSL check for each Kubernetes's API.
           `1` by default. *Optional*
@@ -363,12 +367,18 @@ the web application and the four workers do not receive the same set.
           content is sent as bearer token. Only when no user can declare a cluster. `false` by default. *Optional*
         * `SPACE_KUBERNETES_ROOT_NAMESPACE` : (string) Prefix value to use for Kubernetes namespace for each client
           account. `space-client-` by default. *Optional*
+        * `SPACE_DASHBOARD_EXTERNAL_ENABLED` : (bool) relay also the dashboards of the clusters registered by the
+          accounts. Their address is supplied by the client: they are then relayed only over https to public hosts.
+          `false` by default. *Optional*
         * Managed kubernetes cluster :
             * One cluster (legacy):
                 * `SPACE_KUBERNETES_MASTER` : (string) Default URL of Kubernetes API server.
-                * `SPACE_KUBERNETES_DASHBOARD` : (string) Kubernetes Dashboard URL to use to display this dashboard in
-                  the
-                  Space dashboard. *Optional*
+                * `SPACE_CLUSTER_DASHBOARD` : (string) URL of the web dashboard of the cluster, relayed in the Space
+                  dashboard. Headlamp must be served under a base path, included in this URL (Helm value
+                  `config.baseURL`, e.g. `http://headlamp.headlamp.svc/__headlamp/`). `SPACE_KUBERNETES_DASHBOARD`
+                  (deprecated) is still read when it is empty. *Optional*
+                * `SPACE_CLUSTER_DASHBOARD_TYPE` : (string) type of this web dashboard: `headlamp` or
+                  `kubernetes-dashboard` (legacy). No default: without type, the cluster has no dashboard. *Optional*
                 * `SPACE_KUBERNETES_CREATE_TOKEN` : (string) Service account's token dedicated to creation of new client
                   account namespace, role, etc..).
                 * `SPACE_KUBERNETES_CA_VALUE` : (string) Default CA for custom TLS certificate of the K8S API Service.
@@ -380,8 +390,10 @@ the web application and the four workers do not receive the same set.
                 * `SPACE_CLUSTER_CATALOG_JSON` : (json array).
                 * Dictionary's structure (`.` represent a subarray) :
                     * `master` : (string) Default URL of Kubernetes API server.
-                    * `dashboard` : (string) Kubernetes Dashboard URL to use to display this dashboard in the
-                      Space dashboard. *Optional*
+                    * `dashboard` : (string) URL of the web dashboard of the cluster, relayed in the Space dashboard.
+                      Headlamp must be served under a base path, included in this URL. *Optional*
+                    * `dashboard_type` : (string) type of this web dashboard: `headlamp` or `kubernetes-dashboard`.
+                      No default: without type, the cluster has no dashboard. *Optional*
                     * `create_account.token`: (string) Service account's token dedicated to creation of new client
                       account (namespace, role, etc..).
                     * `create_account.ca_cert` : (string) Default CA for custom TLS certificate of the K8S API Service.
@@ -402,6 +414,8 @@ the web application and the four workers do not receive the same set.
                           `master`).
                         * `ssh.known_hosts` : (string) *Optional* `known_hosts` content. Stored in the same
                           `ca_cert` field as the Kubernetes CA.
+                        * `dashboard`, `dashboard_type` : *Optional*, as for a Kubernetes cluster. The relay requires
+                          a credential, that docker-compose clusters and environments do not provide yet.
                         * `support_registry` : (bool) *Optional*, `true` by default. When enabled, Space
                           provisions a per-account private OCI registry container on the same Docker host over
                           Ansible (see the `SPACE_DC_REGISTRY_*` settings below).

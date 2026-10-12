@@ -197,6 +197,7 @@ trait KubernetesTrait
             ingressProvider: $this->ingressProvider,
             versionLevel: $versionLevel,
             exposeShortcuts: $this->exposeShortcutsEnabled,
+            sharedVolumes: $this->sharedVolumesEnabled,
         );
 
         Assert::assertEquals(

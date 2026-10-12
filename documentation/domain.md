@@ -207,7 +207,9 @@ Links an account to an available deployment cluster (Kubernetes **or** docker-co
 - `masterAddress`: address to connect to the cluster (a Kubernetes API URL, or an `ssh://user@host:port` URL for
   docker-compose)
 - `storageProvisioner`: Default name of the storage provisioner (Kubernetes-only)
-- `dashboardAddress`: URL of the dashboard
+- `dashboardAddress`: URL of the web dashboard (https only, relayed only when `SPACE_DASHBOARD_EXTERNAL_ENABLED`
+  is on, see [DashboardAvailability](#dashboard))
+- `dashboardType`: type of the web dashboard (`headlamp`, `kubernetes-dashboard`...), nullable: no dashboard
 - `caCertificate`, `token`: Kubernetes credentials. For docker-compose, `caCertificate` reuses the same field to
   hold the SSH `known_hosts` host key
 - `clientKey`: Kubernetes client key, or — for docker-compose — the SSH **private key** (nullable, stored
@@ -344,14 +346,17 @@ the catalog (`di.variables.clusters.php`) and when converting an `AccountCluster
 - `type`: `kubernetes` or `docker-compose`
 - `masterAddress`: endpoint to connect (Kubernetes API URL, or `ssh://user@host:port` for docker-compose)
 - `dashboardAddress`: Endpoint to access the dashboard
+- `dashboardType`: type (profile) of the dashboard, catalog key `dashboard_type`, `''` for no dashboard
+- `dashboardAdminToken`: credential injected in the dashboard for an administrator of Space (the cluster `token` of
+  a Kubernetes cluster, none yet for a docker-compose cluster)
 - `supportRegistry`: This cluster can host a per-account OCI registry
 - `useHnc`: This cluster uses hierarchical namespaces (Kubernetes-only)
 - `isExternal`: This cluster is user defined and not admin defined
 
 **`KubernetesCluster`** (implements the interface; renamed from the former `Cluster`)
 
-- Adds Kubernetes-only members kept **off** the interface: `storageProvisioner`, `token`,
-  `getKubernetesClient()`, `getKubernetesRegistryClient()`.
+- Adds Kubernetes-only members kept **off** the interface: `storageProvisioner`, `token`, `getKubernetesClient()`,
+  `getKubernetesRegistryClient()`.
 
 **`DockerComposeCluster`** (implements the interface)
 
@@ -363,6 +368,26 @@ the catalog (`di.variables.clusters.php`) and when converting an `AccountCluster
 Kubernetes-only Recipe steps narrow the injected instance with `instanceof KubernetesCluster` and throw
 `UnsupportedClusterTypeException` when routed a non-Kubernetes cluster; catalog-iterating *display* steps (e.g.
 dashboard health, job defaults) skip non-Kubernetes clusters instead of throwing.
+
+#### Dashboard
+
+The web dashboard of a cluster, of any type, is embedded in the Space dashboard page and relayed by the web server,
+which injects the credentials of the user (see `documentation/configuration.md#web-dashboard`):
+
+- **`DashboardProfile`** (`Object/Config`): the "template" describing how a kind of dashboard is embedded: headers
+  injected in the relayed requests (`Authorization: Bearer {token}`), entry paths for all namespaces or for one
+  (`{namespace}`), HTML snippet inserted in the `<head>` of relayed pages (`{baseHref}`, `{namespace}`), rewriting
+  of the base path the dashboard is served under, path aliases. Namespaces are checked as RFC 1123 labels before
+  any substitution.
+- **`DashboardProfileCatalog`** (`Object/Config`): profiles by type, without default type. Built-in: `headlamp`,
+  `kubernetes-dashboard`.
+- **`DashboardAvailability`** (`Service`): the single rule telling if a cluster's dashboard can be embedded and
+  relayed: a cluster, of any type, with a dashboard type and a dashboard address; for a cluster registered by an
+  account, only when
+  `SPACE_DASHBOARD_EXTERNAL_ENABLED` is on.
+- **`DashboardTarget`** (`Object/DTO`): the dashboard resolved for the current user by the `ResolveDashboardTarget`
+  step (cluster, profile, credential, namespace or `null` for all namespaces), consumed by the transport step
+  `DashboardFrameInterface`.
 
 #### SubscriptionPlan
 
@@ -508,7 +533,7 @@ Domain defines contracts for workflow steps without implementing them:
 #### Cluster Operations
 
 - `ClustersInfoInterface`: Retrieve cluster information
-- `DashboardFrameInterface`: Generate dashboard embed (Kubernetes)
+- `DashboardFrameInterface`: Relay a request of the dashboard frame to the web dashboard of the `DashboardTarget`
 - `HealthInterface`: Check cluster health (Kubernetes)
 
 #### Subscription

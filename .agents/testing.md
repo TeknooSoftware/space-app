@@ -62,8 +62,9 @@ traits standalone and fatals on it.
 
 ## Fixtures & Running
 
-PAAS YAML fixtures in `tests/Behat/Project/` cover 7 build scenarios: `Basic`, `WithConditions`, `WithDefaults`,
-`WithExtends`, `WithHttpsBackend`, `WithJobs`, `WithExposeShortcuts` (`v1.2`).
+PAAS YAML fixtures in `tests/Behat/Project/` cover 8 build scenarios: `Basic`, `WithConditions`, `WithDefaults`,
+`WithExtends`, `WithHttpsBackend`, `WithJobs`, `WithExposeShortcuts` (`v1.2`), `WithSharedVolumes` (`v1.2`, a
+persistent volume shared by two containers of a pod and by a scheduled job, with the CronJob options).
 
 ```bash
 ./space.sh test            # units + behavior, with coverage
@@ -71,7 +72,7 @@ PAAS YAML fixtures in `tests/Behat/Project/` cover 7 build scenarios: `Basic`, `
 ./space.sh behavior-test   # NB_THREADS=4; use behavior-test-mono-thread to serialise
 ```
 
-**Always go through `./space.sh`.** `phpunit.xml` and `behat.yml` are gitignored and copied from their `.dist`
+**Always go through `./space.sh`.** `phpunit.xml` and `behat.php` are gitignored and copied from their `.dist`
 by the `setup-phpunit` / `setup-behat` Makefile targets; `setup-behat` additionally clears `var/cache/test` and
 warms the test cache. Calling `vendor/bin/phpunit` directly on a clean checkout fails.
 
@@ -80,7 +81,7 @@ warms the test cache. Calling `vendor/bin/phpunit` directly on a clean checkout 
 ## Extensions
 
 An enabled extension is picked up by the **appliance's own** configuration: `phpunit.xml` adds
-`extensions/*/Tests/` to the suite, and `behat.yml` discovers extension features through
+`extensions/*/Tests/` to the suite, and `behat.php` discovers extension features through
 `ExtensionsDiscoveryExtension`. So an extension's tests live in `extensions/<Name>/Tests/` and its features in
 `extensions/<Name>/features/`, and the ordinary `./space.sh test` runs them all.
 

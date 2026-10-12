@@ -220,6 +220,10 @@ class GenerateRegistryCredentialsTest extends TestCase
 
             public string $dashboardAddress = '';
 
+            public string $dashboardType = '';
+
+            public string $dashboardAdminToken = '';
+
             public bool $supportRegistry = true;
 
             public bool $useHnc = false;

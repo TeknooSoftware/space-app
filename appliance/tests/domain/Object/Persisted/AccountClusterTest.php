@@ -29,6 +29,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Common\Service\FindSlugService;
@@ -147,6 +148,169 @@ class AccountClusterTest extends TestCase
         $result = $this->accountCluster->setDashboardAddress($newAddress);
 
         $this->assertInstanceOf(AccountCluster::class, $result);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testSetDashboardType(): void
+    {
+        $this->assertInstanceOf(
+            AccountCluster::class,
+            $this->accountCluster->setDashboardType('kubernetes-dashboard'),
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterForKubernetesKeepsTheDashboardType(): void
+    {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: 'K8S',
+            slug: 'k8s',
+            type: 'kubernetes',
+            masterAddress: 'https://kubernetes.example.com',
+            dashboardAddress: 'https://dashboard.example.com/__headlamp/',
+            dashboardType: 'headlamp',
+        );
+
+        $result = $accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(KubernetesCluster::class, $result);
+        $this->assertSame('headlamp', $result->dashboardType);
+        $this->assertTrue($result->isExternal);
+
+        $this->assertSame(
+            '',
+            $accountCluster->setDashboardType(null)->convertToConfigCluster(
+                $this->createStub(ClientFactoryInterface::class),
+                $this->createStub(RepositoryRegistry::class),
+            )->dashboardType,
+        );
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testVisitTheDashboardTypeWithSnakeCaseMapping(): void
+    {
+        $dashboardTypeValue = 'not visited';
+
+        $this->accountCluster->setDashboardType('kubernetes-dashboard')->visit([
+            'dashboard_type' => function ($value) use (&$dashboardTypeValue): void {
+                $dashboardTypeValue = $value;
+            },
+        ]);
+
+        $this->assertSame('kubernetes-dashboard', $dashboardTypeValue);
+    }
+
+    /**
+     * Builds an account cluster as Doctrine ODM hydrates a document written by Space 2.4: instantiated without its
+     * constructor, only the fields present in the document are set (no `client_key`, `username` nor
+     * `dashboard_type`, added later).
+     *
+     * @param array<string, mixed> $additionalFields
+     */
+    private function hydrateAnOldDocument(array $additionalFields = []): AccountCluster
+    {
+        $reflection = new ReflectionClass(AccountCluster::class);
+        $accountCluster = $reflection->newInstanceWithoutConstructor();
+
+        $fields = [
+            'account' => $this->createStub(Account::class),
+            'name' => 'Old Cluster',
+            'slug' => 'old-cluster',
+            'type' => 'kubernetes',
+            'masterAddress' => 'https://kubernetes.example.com',
+            'storageProvisioner' => 'nfs',
+            'dashboardAddress' => 'https://dashboard.example.com',
+            'caCertificate' => base64_encode('ca'),
+            'token' => 'token',
+            'supportRegistry' => true,
+            'registryUrl' => 'https://registry.example.com',
+            'useHnc' => false,
+        ];
+
+        foreach ($additionalFields + $fields as $property => $value) {
+            $reflection->getProperty($property)->setValue($accountCluster, $value);
+        }
+
+        return $accountCluster;
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterOfADocumentWithoutDashboardTypeHasNoDashboardType(): void
+    {
+        $result = $this->hydrateAnOldDocument()->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(KubernetesCluster::class, $result);
+        $this->assertSame('', $result->dashboardType);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterOfADockerComposeDocumentWithoutDashboardTypeHasNoDashboardType(): void
+    {
+        $result = $this->hydrateAnOldDocument([
+            'type' => 'docker-compose',
+            'clientKey' => 'privateKey',
+            'username' => 'deployer',
+        ])->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $result);
+        $this->assertSame('', $result->dashboardType);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testExportToMeDataOfADocumentWithoutUsernameNorDashboardType(): void
+    {
+        foreach (['api', 'crud'] as $group) {
+            $exported = null;
+            $normalizer = $this->createMock(EastNormalizerInterface::class);
+            $normalizer->expects($this->once())
+                ->method('injectData')
+                ->willReturnCallback(
+                    function (array $data) use (&$exported, $normalizer): EastNormalizerInterface {
+                        $exported = $data;
+
+                        return $normalizer;
+                    }
+                );
+
+            $this->hydrateAnOldDocument()->exportToMeData($normalizer, ['groups' => [$group]]);
+
+            $this->assertIsArray($exported);
+            $this->assertSame('Old Cluster', $exported['name']);
+            $this->assertArrayHasKey('username', $exported);
+            $this->assertNull($exported['username']);
+            $this->assertArrayHasKey('dashboardType', $exported);
+            $this->assertNull($exported['dashboardType']);
+        }
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testVisitADocumentWithoutUsernameNorDashboardType(): void
+    {
+        $visited = [];
+
+        $this->hydrateAnOldDocument()->visit([
+            'name' => function ($value) use (&$visited): void {
+                $visited['name'] = $value;
+            },
+            'username' => function ($value) use (&$visited): void {
+                $visited['username'] = $value;
+            },
+            'dashboard_type' => function ($value) use (&$visited): void {
+                $visited['dashboardType'] = $value;
+            },
+        ]);
+
+        $this->assertSame(['name' => 'Old Cluster'], $visited);
     }
 
     #[AllowMockObjectsWithoutExpectations]
@@ -409,6 +573,30 @@ class AccountClusterTest extends TestCase
 
         $this->assertInstanceOf(DockerComposeCluster::class, $result);
         $this->assertTrue($result->supportRegistry);
+    }
+
+    #[AllowMockObjectsWithoutExpectations]
+    public function testConvertToConfigClusterForDockerComposeKeepsTheDashboardType(): void
+    {
+        $accountCluster = new AccountCluster(
+            account: $this->account,
+            name: 'DC',
+            slug: 'dc',
+            type: 'docker-compose',
+            masterAddress: 'ssh://deployer@docker-host.example.com:22',
+            dashboardAddress: 'https://dashboard.example.com',
+            clientKey: '-----BEGIN OPENSSH PRIVATE KEY-----KEY',
+            dashboardType: 'headlamp',
+        );
+
+        $result = $accountCluster->convertToConfigCluster(
+            $this->createStub(ClientFactoryInterface::class),
+            $this->createStub(RepositoryRegistry::class),
+        );
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $result);
+        $this->assertSame('headlamp', $result->dashboardType);
+        $this->assertSame('', $result->dashboardAdminToken);
     }
 
     #[AllowMockObjectsWithoutExpectations]

@@ -23,13 +23,13 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Tests\Unit\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Recipe\Step\Cluster;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\View\ParametersBag;
 use Teknoo\Kubernetes\Client;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster\ClustersInfo;
 use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
@@ -85,6 +85,28 @@ class ClustersInfoTest extends TestCase
                 $this->createStub(ParametersBag::class),
                 $this->createStub(AccountWallet::class),
             )
+        );
+    }
+
+    public function testInvokePrefersTheCatalogOfTheWorkplan(): void
+    {
+        $workplanCatalog = new ClusterCatalog([], [], $this->clusterCatalog);
+
+        $bag = $this->createMock(ParametersBag::class);
+        $bag->expects($this->exactly(2))
+            ->method('set')
+            ->willReturnCallback(function (string $key, mixed $value) use ($bag, $workplanCatalog): ParametersBag {
+                if ('clusterCatalog' === $key) {
+                    $this->assertSame($workplanCatalog, $value);
+                }
+
+                return $bag;
+            });
+
+        ($this->clustersInfo)(
+            $bag,
+            null,
+            $workplanCatalog,
         );
     }
 }

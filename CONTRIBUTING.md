@@ -37,7 +37,7 @@ cd space-app
 ./space.sh qa              # lint + phpstan + phpcs + audit
 ```
 
-Always go through these targets: `phpunit.xml` and `behat.yml` are generated from their `.dist` files, and
+Always go through these targets: `phpunit.xml` and `behat.php` are generated from their `.dist` files, and
 Behat additionally needs a warmed test cache. Calling `vendor/bin/phpunit` directly on a fresh clone fails.
 
 The suite is at **100% line coverage** and the project intends to keep it there. A contribution that lowers
