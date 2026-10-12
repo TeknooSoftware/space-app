@@ -45,7 +45,8 @@
   - New catalog key `dashboard_type` (for every type of cluster) and new env var `SPACE_CLUSTER_DASHBOARD_TYPE`
   - `ConfigClusterInterface` exposes the dashboard type and the credential of an administrator on the dashboard
     (`dashboardType`, `dashboardAdminToken`)
-  - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB)
+  - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB). A cluster registered
+    before has no dashboard type, so no dashboard, until a type is chosen in its form
   - The resolution of the dashboard to relay (new step `ResolveDashboardTarget`) is separated from the HTTP transport
     (`DashboardFrameInterface`)
   - **Breaking**: `ClustersInfoInterface` and `DashboardFrameInterface` move to

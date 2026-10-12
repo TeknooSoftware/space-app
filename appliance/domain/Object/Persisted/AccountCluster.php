@@ -75,6 +75,16 @@ class AccountCluster implements
         VisitableTrait::runVisit as realRunVisit;
     }
 
+    /*
+     * To avoid issues with old mapping without `username` and `dashboardType` and issues when Mapper not instanciate
+     * new fields.
+     */
+    #[Normalize(['crud', 'api'])]
+    private ?string $username = null;
+
+    #[Normalize(['crud', 'api'])]
+    private ?string $dashboardType = null;
+
     public function __construct(
         private Account $account,
         #[Normalize(['default', 'crud', 'api'])]
@@ -107,11 +117,11 @@ class AccountCluster implements
             return '';
         })]
         private ?string $clientKey = null,
-        #[Normalize(['crud', 'api'])]
-        private ?string $username = null,
-        #[Normalize(['crud', 'api'])]
-        private ?string $dashboardType = null,
+        ?string $username = null,
+        ?string $dashboardType = null,
     ) {
+        $this->username = $username;
+        $this->dashboardType = $dashboardType;
     }
 
     public function getAccount(): Account
