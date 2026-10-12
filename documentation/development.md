@@ -467,7 +467,7 @@ class ProjectContext implements Context
 **Worker hook** (1): `worker.hooks`
 
 An enabled extension adds features of its own in `appliance/extensions/<Name>/features/`, discovered through
-`ExtensionsDiscoveryExtension` in `appliance/behat.yml`.
+`ExtensionsDiscoveryExtension` in `appliance/behat.php`.
 
 **Conventions** (adopted 2026-09-19):
 
