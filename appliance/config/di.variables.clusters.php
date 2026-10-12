@@ -34,18 +34,26 @@ use Teknoo\East\Paas\Object\ClusterCredentials;
 use Teknoo\Kubernetes\RepositoryRegistry;
 use Teknoo\Space\Infrastructures\Kubernetes\Transcriber\IngressTranscriber;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
+use Teknoo\Space\Object\Config\DashboardProfile;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\Exception\UnsupportedClusterTypeException;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 
 use function DI\env;
+use function filter_var;
 use function preg_replace;
 use function strtolower;
 use function trim;
 
+use const FILTER_VALIDATE_BOOL;
+
 return [
     'teknoo.space.clusters.default_cluster.master' => env('SPACE_KUBERNETES_MASTER'),
-    'teknoo.space.clusters.default_cluster.dashboard' => env('SPACE_KUBERNETES_DASHBOARD'),
+    'teknoo.space.clusters.default_cluster.dashboard' => env('SPACE_CLUSTER_DASHBOARD', ''),
+    //Deprecated name of SPACE_CLUSTER_DASHBOARD
+    'teknoo.space.clusters.default_cluster.dashboard.deprecated' => env('SPACE_KUBERNETES_DASHBOARD', ''),
+    'teknoo.space.clusters.default_cluster.dashboard_type' => env('SPACE_CLUSTER_DASHBOARD_TYPE', ''),
     'teknoo.space.clusters.default_cluster.create_account.token' => env('SPACE_KUBERNETES_CREATE_TOKEN'),
     'teknoo.space.clusters.default_cluster.create_account.ca_cert' => env('SPACE_KUBERNETES_CA_VALUE'),
     'teknoo.space.clusters.default_cluster.name' => env('SPACE_CLUSTER_NAME', 'localhost'),
@@ -53,6 +61,55 @@ return [
     'teknoo.space.clusters.default_cluster.use_hnc' => env('SPACE_KUBERNETES_CLUSTER_USE_HNC', false),
 
     BaseIngressTranscriber::class . ':class' => IngressTranscriber::class,
+
+    //Web dashboards embedded by Space: a cluster selects one with its `dashboard_type` key, a cluster without
+    //`dashboard_type` (or without `dashboard` address) has no dashboard. An extension can add its own profiles by
+    //decorating `teknoo.space.dashboard.profiles` (an ArrayObject, the Symfony bridge requiring an object for each
+    //entry).
+    //The dashboard of a cluster registered by a client has an address supplied by the client: the web process
+    //relays it only when the operator allows it. Off by default. Resolved here (not through env()) so "false" is a
+    //boolean false, not a non-empty string.
+    'teknoo.space.dashboard.external.enabled' => filter_var(
+        $_ENV['SPACE_DASHBOARD_EXTERNAL_ENABLED'] ?? false,
+        FILTER_VALIDATE_BOOL,
+    ),
+    'teknoo.space.dashboard.profiles' => static fn (): ArrayObject => new ArrayObject([
+        //Headlamp must be served under a base path (Helm value `config.baseURL`, e.g. `/__headlamp`), included in
+        //the dashboard address: it is replaced, in the pages relayed, by the path of the frame. The namespaces
+        //allowed to the user are given to Headlamp through its cluster settings (local storage).
+        'headlamp' => new DashboardProfile(
+            name: 'headlamp',
+            requestHeaders: ['Authorization' => 'Bearer {token}'],
+            entryPath: 'c/main',
+            namespacedEntryPath: 'c/main/workloads?namespace={namespace}',
+            headSnippet: '<script>(function(s){try{var k=\'cluster_settings.main\','
+                . 'c=JSON.parse(s.getItem(k)||\'{}\');delete c.allowedNamespaces;delete c.defaultNamespace;'
+                . 's.setItem(k,JSON.stringify(c));s.removeItem(\'headlamp-selected-namespace_main\');}'
+                . 'catch(e){}})(window.localStorage);</script>',
+            namespacedHeadSnippet: '<script>(function(s,n){try{var k=\'cluster_settings.main\','
+                . 'c=JSON.parse(s.getItem(k)||\'{}\');c.allowedNamespaces=[n];c.defaultNamespace=n;'
+                . 's.setItem(k,JSON.stringify(c));}catch(e){}})(window.localStorage,\'{namespace}\');</script>',
+            rewriteBasePath: true,
+        ),
+        //The legacy Kubernetes Dashboard (archived), selecting the namespace through its URL fragment
+        'kubernetes-dashboard' => new DashboardProfile(
+            name: 'kubernetes-dashboard',
+            requestHeaders: ['Authorization' => 'Bearer {token}'],
+            entryPath: '#/workloads?namespace=_all',
+            namespacedEntryPath: '#/workloads?namespace={namespace}',
+            headSnippet: '<base href="{baseHref}">',
+            namespacedHeadSnippet: '<base href="{baseHref}">',
+            pathAliases: ['config/config.json' => 'assets/config/config.json'],
+        ),
+    ]),
+    DashboardProfileCatalog::class => static function (ContainerInterface $container): DashboardProfileCatalog {
+        $profiles = $container->get('teknoo.space.dashboard.profiles');
+        if ($profiles instanceof ArrayObject) {
+            $profiles = $profiles->getArrayCopy();
+        }
+
+        return new DashboardProfileCatalog(profiles: $profiles);
+    },
 
     'teknoo.space.clusters_catalog' => static function (ContainerInterface $container): ClusterCatalog {
         static $clusterCatalog = null;
@@ -73,10 +130,19 @@ return [
         $clusterName = $container->get('teknoo.space.clusters.default_cluster.name');
 
         if (empty($definitions) && !empty($clusterName) && !empty($master)) {
+            //SPACE_KUBERNETES_DASHBOARD, deprecated, is still read when SPACE_CLUSTER_DASHBOARD is empty (`.env` and
+            //the php-fpm pool define an unset variable as empty, so `??` is not enough). Both are read at runtime by
+            //env(), a value computed when this file is included would be frozen in the compiled container.
+            $dashboard = (string) $container->get('teknoo.space.clusters.default_cluster.dashboard');
+            if ('' === $dashboard) {
+                $dashboard = (string) $container->get('teknoo.space.clusters.default_cluster.dashboard.deprecated');
+            }
+
             $definitions = [
                 [
                     'master' => $master,
-                    'dashboard' => $container->get('teknoo.space.clusters.default_cluster.dashboard'),
+                    'dashboard' => $dashboard,
+                    'dashboard_type' => $container->get('teknoo.space.clusters.default_cluster.dashboard_type'),
                     'create_account' => [
                         'token' => $container->get('teknoo.space.clusters.default_cluster.create_account.token'),
                         'ca_cert' => $container->get('teknoo.space.clusters.default_cluster.create_account.ca_cert'),
@@ -94,12 +160,22 @@ return [
 
         $sluggyfier = fn ($text) => strtolower(trim((string) preg_replace('#[^A-Za-z0-9-]+#', '-', (string) $text)));
 
+        $getDashboardType = static function (array $definition) use ($container): string {
+            $dashboardType = trim((string) ($definition['dashboard_type'] ?? ''));
+            if ('' !== $dashboardType) {
+                //An unknown dashboard type fails at boot, not at the first opening of the dashboard
+                $container->get(DashboardProfileCatalog::class)->getProfile($dashboardType);
+            }
+
+            return $dashboardType;
+        };
+
         $buildDockerComposeCluster = static function (
             array $definition,
             string $name,
             string $sluggyName,
             string $type,
-        ): DockerComposeCluster {
+        ) use ($getDashboardType): DockerComposeCluster {
             if (empty($definition['ssh']['client_key'])) {
                 throw new DomainException(
                     "Error, the docker-compose cluster $name requires an ssh.client_key in the catalog"
@@ -117,6 +193,7 @@ return [
                 username: (string) ($definition['ssh']['username'] ?? ''),
                 caCertificate: (string) ($definition['ssh']['known_hosts'] ?? ''),
                 supportRegistry: (bool) ($definition['support_registry'] ?? true),
+                dashboardType: $getDashboardType($definition),
             );
         };
 
@@ -128,7 +205,8 @@ return [
         ) use (
             $container,
             $factory,
-            $storageProvisioner
+            $storageProvisioner,
+            $getDashboardType,
 ): KubernetesCluster {
             $caCertificate = base64_decode((string) $definition['create_account']['ca_cert']);
             $credentials = new ClusterCredentials(
@@ -154,6 +232,7 @@ return [
                 supportRegistry: !empty($definition['support_registry']),
                 useHnc: !empty($definition['use_hnc']),
                 isExternal: false,
+                dashboardType: $getDashboardType($definition),
             );
         };
 

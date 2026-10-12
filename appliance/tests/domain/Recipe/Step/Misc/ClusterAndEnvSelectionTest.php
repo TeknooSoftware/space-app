@@ -34,10 +34,15 @@ use Teknoo\East\Paas\Object\Job;
 use Teknoo\Kubernetes\Client;
 use Teknoo\Space\Object\Config\KubernetesCluster as ClusterConfig;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\ConfigClusterInterface;
+use Teknoo\Space\Object\Config\DashboardProfile;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
+use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\DTO\AccountWallet;
 use Teknoo\Space\Object\Persisted\AccountEnvironment;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
+use Teknoo\Space\Service\DashboardAvailability;
 
 /**
  * Class ExtractProjectTest.
@@ -57,12 +62,9 @@ class ClusterAndEnvSelectionTest extends TestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp(): void
+    private function createKubernetesCluster(string $dashboardType = 'headlamp'): ClusterConfig
     {
-        parent::setUp();
-
-
-        $clusterConfig = new ClusterConfig(
+        return new ClusterConfig(
             name: 'foo',
             sluggyName: 'foo',
             type: 'foo',
@@ -74,14 +76,49 @@ class ClusterAndEnvSelectionTest extends TestCase
             supportRegistry: true,
             useHnc: false,
             isExternal: false,
+            dashboardType: $dashboardType,
+        );
+    }
+
+    private function selectDashboardEntryPath(ConfigClusterInterface $cluster): mixed
+    {
+        $bag = new ParametersBag();
+
+        ($this->clusterAndEnvSelection)(
+            $this->createStub(ManagerInterface::class),
+            $this->createStub(ServerRequestInterface::class),
+            $bag,
+            new ClusterCatalog([$cluster->name => $cluster], [$cluster->sluggyName => $cluster->name]),
         );
 
+        $parameters = (array) $bag->transform();
+        $this->assertArrayHasKey('dashboardEntryPath', $parameters);
+
+        return $parameters['dashboardEntryPath'];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
         $this->clusterCatalog = new ClusterCatalog(
-            ['clusterName' => $clusterConfig],
+            ['clusterName' => $this->createKubernetesCluster()],
             ['cluster-name' => 'clusterName'],
         );
 
-        $this->clusterAndEnvSelection = new ClusterAndEnvSelection($this->clusterCatalog);
+        $this->clusterAndEnvSelection = new ClusterAndEnvSelection(
+            new DashboardAvailability(),
+            new DashboardProfileCatalog(
+                profiles: [
+                    'headlamp' => new DashboardProfile(
+                        name: 'headlamp',
+                        requestHeaders: [],
+                        entryPath: 'c/main',
+                        namespacedEntryPath: 'c/main/workloads?namespace={namespace}',
+                    ),
+                ],
+            ),
+        );
     }
 
     public function testInvokeWithoutAccount(): void
@@ -92,6 +129,7 @@ class ClusterAndEnvSelectionTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ServerRequestInterface::class),
                 $this->createStub(ParametersBag::class),
+                $this->clusterCatalog,
             )
         );
     }
@@ -104,6 +142,7 @@ class ClusterAndEnvSelectionTest extends TestCase
                 $this->createStub(ManagerInterface::class),
                 $this->createStub(ServerRequestInterface::class),
                 $this->createStub(ParametersBag::class),
+                $this->clusterCatalog,
                 $this->createStub(AccountWallet::class),
             )
         );
@@ -128,13 +167,14 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set');
 
         $result = ($this->clusterAndEnvSelection)(
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -160,13 +200,15 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('envName' === $key) {
                     $this->assertSame('_all', $value);
                 } elseif ('namespace' === $key) {
                     $this->assertSame('_all', $value);
+                } elseif ('dashboardEntryPath' === $key) {
+                    $this->assertSame('c/main', $value);
                 }
                 return $bag;
             });
@@ -175,6 +217,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -200,7 +243,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('envName' === $key) {
@@ -213,6 +256,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -254,13 +298,15 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('namespace' === $key) {
                     $this->assertSame('my-namespace', $value);
                 } elseif ('envName' === $key) {
                     $this->assertSame('staging', $value);
+                } elseif ('dashboardEntryPath' === $key) {
+                    $this->assertSame('c/main/workloads?namespace=my-namespace', $value);
                 }
                 return $bag;
             });
@@ -269,6 +315,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
@@ -300,13 +347,14 @@ class ClusterAndEnvSelectionTest extends TestCase
             ->method('updateWorkPlan');
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set');
 
         $result = ($this->clusterAndEnvSelection)(
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
@@ -349,7 +397,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('namespace' === $key) {
@@ -364,6 +412,7 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
@@ -388,13 +437,14 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set');
 
         $result = ($this->clusterAndEnvSelection)(
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
@@ -425,13 +475,15 @@ class ClusterAndEnvSelectionTest extends TestCase
             );
 
         $bag = $this->createMock(ParametersBag::class);
-        $bag->expects($this->exactly(5))
+        $bag->expects($this->exactly(6))
             ->method('set')
             ->willReturnCallback(function ($key, $value) use ($bag) {
                 if ('clusterSelected' === $key) {
                     $this->assertNull($value);
                 } elseif ('namespace' === $key) {
                     $this->assertSame('_all', $value);
+                } elseif ('dashboardEntryPath' === $key) {
+                    $this->assertNull($value);
                 }
                 return $bag;
             });
@@ -440,9 +492,32 @@ class ClusterAndEnvSelectionTest extends TestCase
             $manager,
             $request,
             $bag,
+            $this->clusterCatalog,
             $accountWallet,
         );
 
         $this->assertInstanceOf(ClusterAndEnvSelection::class, $result);
+    }
+
+    public function testNoDashboardForAClusterWithoutDashboardType(): void
+    {
+        $this->assertSame('c/main', $this->selectDashboardEntryPath($this->createKubernetesCluster()));
+        $this->assertNull($this->selectDashboardEntryPath($this->createKubernetesCluster(dashboardType: '')));
+    }
+
+    public function testTheDashboardOfAClusterOfAnyType(): void
+    {
+        $cluster = new DockerComposeCluster(
+            name: 'compose',
+            sluggyName: 'compose',
+            type: 'docker-compose',
+            masterAddress: 'ssh://u@h:22',
+            dashboardAddress: 'https://dashboard.test/',
+            isExternal: false,
+            clientKey: 'k',
+            dashboardType: 'headlamp',
+        );
+
+        $this->assertSame('c/main', $this->selectDashboardEntryPath($cluster));
     }
 }

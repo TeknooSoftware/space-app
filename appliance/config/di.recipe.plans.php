@@ -65,8 +65,8 @@ use Teknoo\Space\Contracts\Recipe\Step\Contact\SendEmailInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Job\FetchJobIdFromPendingInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Task\NewTaskNotifierInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -171,6 +171,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -1067,6 +1068,7 @@ return [
             diGet(OriginalRecipeInterface::class),
             diGet(HealthInterface::class),
             diGet(LoadEnvironments::class),
+            diGet(LoadAccountClusters::class),
             diGet(ClustersInfoInterface::class),
             diGet(ClusterAndEnvSelection::class),
             diGet(Render::class),
@@ -1078,6 +1080,8 @@ return [
         ->constructor(
             diGet(OriginalRecipeInterface::class),
             diGet(LoadEnvironments::class),
+            diGet(LoadAccountClusters::class),
+            diGet(ResolveDashboardTarget::class),
             diGet(DashboardFrameInterface::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),

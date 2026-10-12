@@ -271,7 +271,8 @@ variable and must match the hub actually deployed, see [configuration.md](config
 **Recommended Components:**
 
 - cert-manager for TLS certificates
-- Kubernetes Dashboard
+- [Headlamp](https://headlamp.dev) (web dashboard embedded in Space, served under a base path, e.g.
+  `config.baseURL: /__headlamp`, without the `cluster-admin` binding of its service account)
 - Metrics server
 - Prometheus/Grafana (monitoring)
 - Hierarchical Namespace Controller (HNC) - optional

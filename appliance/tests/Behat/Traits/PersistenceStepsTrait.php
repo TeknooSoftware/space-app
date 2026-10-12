@@ -927,8 +927,14 @@ trait PersistenceStepsTrait
         }
     }
 
+    #[Given('an account clusters :name and a slug :slug with a :dashboardType dashboard')]
+    public function anAccountClustersAndASlugWithADashboard(string $name, string $slug, string $dashboardType): void
+    {
+        $this->anAccountClustersAndASlug($name, $slug, $dashboardType);
+    }
+
     #[Given('an account clusters :name and a slug :slug')]
-    public function anAccountClustersAndASlug(string $name, string $slug): void
+    public function anAccountClustersAndASlug(string $name, string $slug, ?string $dashboardType = null): void
     {
         $account = $this->recall(Account::class);
 
@@ -945,6 +951,7 @@ trait PersistenceStepsTrait
             supportRegistry: true,
             registryUrl: "https://registry.{$slug}.behat",
             useHnc: false,
+            dashboardType: $dashboardType,
         );
 
         $this->persistAndRegister($cluster);

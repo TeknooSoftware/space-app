@@ -25,12 +25,15 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Config;
 
+use DI\Definition\EnvironmentVariableDefinition;
 use DomainException;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Teknoo\East\Paas\Infrastructures\Kubernetes\Contracts\ClientFactoryInterface;
 use Teknoo\Space\Object\Config\ClusterCatalog;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\Config\DockerComposeCluster;
 use Teknoo\Space\Object\Config\KubernetesCluster;
 
@@ -51,8 +54,9 @@ class ClustersCatalogBuilderTest extends TestCase
 {
     /**
      * @param array<int, array<string, mixed>> $definitions
+     * @param array<string, mixed> $parameters
      */
-    private function buildCatalog(array $definitions): ClusterCatalog
+    private function buildCatalog(array $definitions, array $parameters = []): ClusterCatalog
     {
         // `require` (not `_once`) re-executes the file, yielding a fresh builder closure with its own
         // `static $clusterCatalog`, so each test invocation is isolated.
@@ -67,12 +71,15 @@ class ClustersCatalogBuilderTest extends TestCase
             );
         $container->method('get')
             ->willReturnCallback(
-                fn (string $id): mixed => match ($id) {
+                fn (string $id): mixed => $parameters[$id] ?? match ($id) {
                     'teknoo.space.clusters_catalog.definitions' => $definitions,
                     'teknoo.space.clusters.default_cluster.master' => '',
                     'teknoo.space.clusters.default_cluster.name' => '',
                     'teknoo.east.paas.default_storage_provider' => 'space-nfs',
                     ClientFactoryInterface::class => $this->createStub(ClientFactoryInterface::class),
+                    DashboardProfileCatalog::class => new DashboardProfileCatalog(
+                        profiles: $config['teknoo.space.dashboard.profiles']()->getArrayCopy(),
+                    ),
                     default => null,
                 }
             );
@@ -124,6 +131,103 @@ class ClustersCatalogBuilderTest extends TestCase
         $this->assertInstanceOf(KubernetesCluster::class, $cluster);
         $this->assertSame('https://k8s.example.com', $cluster->masterAddress);
         $this->assertTrue($cluster->supportRegistry);
+        $this->assertSame('', $cluster->dashboardType);
+    }
+
+    public function testTheClusterDefinedByTheEnvironmentHasTheDashboardTypeOfTheEnvironment(): void
+    {
+        $parameters = $this->environmentParameters();
+        $parameters['teknoo.space.clusters.default_cluster.dashboard'] = 'https://dashboard.example.com/__headlamp/';
+        $parameters['teknoo.space.clusters.default_cluster.dashboard_type'] = ' headlamp ';
+
+        $cluster = $this->buildCatalog([], $parameters)->getCluster('Env Cluster');
+        $this->assertSame('https://dashboard.example.com/__headlamp/', $cluster->dashboardAddress);
+        $this->assertSame('headlamp', $cluster->dashboardType);
+
+        //No dashboard type, no dashboard: none is chosen by default
+        $parameters['teknoo.space.clusters.default_cluster.dashboard_type'] = '';
+        $this->assertSame('', $this->buildCatalog([], $parameters)->getCluster('Env Cluster')->dashboardType);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function environmentParameters(): array
+    {
+        return [
+            'teknoo.space.clusters.default_cluster.master' => 'https://k8s.example.com',
+            'teknoo.space.clusters.default_cluster.name' => 'Env Cluster',
+            'teknoo.space.clusters.default_cluster.type' => 'kubernetes',
+            'teknoo.space.clusters.default_cluster.use_hnc' => false,
+            'teknoo.space.clusters.default_cluster.create_account.token' => 'a-token',
+            'teknoo.space.clusters.default_cluster.create_account.ca_cert' => base64_encode('a-ca-cert'),
+            'teknoo.space.clusters.default_cluster.dashboard' => '',
+            'teknoo.space.clusters.default_cluster.dashboard.deprecated' => '',
+            'teknoo.space.clusters.default_cluster.dashboard_type' => 'headlamp',
+        ];
+    }
+
+    /**
+     * @return iterable<string, array{string, string, string}>
+     */
+    public static function dashboardOfTheClusterDefinedByTheEnvironmentProvider(): iterable
+    {
+        yield 'none' => ['', '', ''];
+        yield 'new name' => ['https://new.example.com/', '', 'https://new.example.com/'];
+        yield 'deprecated name' => ['', 'https://old.example.com/', 'https://old.example.com/'];
+        yield 'both names' => ['https://new.example.com/', 'https://old.example.com/', 'https://new.example.com/'];
+    }
+
+    #[DataProvider('dashboardOfTheClusterDefinedByTheEnvironmentProvider')]
+    public function testTheDashboardOfTheClusterDefinedByTheEnvironment(
+        string $newName,
+        string $deprecatedName,
+        string $expected,
+    ): void {
+        $parameters = $this->environmentParameters();
+        $parameters['teknoo.space.clusters.default_cluster.dashboard'] = $newName;
+        $parameters['teknoo.space.clusters.default_cluster.dashboard.deprecated'] = $deprecatedName;
+
+        $cluster = $this->buildCatalog([], $parameters)->getCluster('Env Cluster');
+
+        $this->assertSame($expected, $cluster->dashboardAddress);
+    }
+
+    public function testTheDashboardOfTheClusterDefinedByTheEnvironmentIsReadAtRuntime(): void
+    {
+        /** @var array<string, mixed> $config */
+        $config = require __DIR__ . '/../../config/di.variables.clusters.php';
+
+        //env() definitions, not values computed when the file is included: those are frozen in the compiled container
+        $this->assertInstanceOf(
+            EnvironmentVariableDefinition::class,
+            $config['teknoo.space.clusters.default_cluster.dashboard'],
+        );
+        $this->assertInstanceOf(
+            EnvironmentVariableDefinition::class,
+            $config['teknoo.space.clusters.default_cluster.dashboard.deprecated'],
+        );
+    }
+
+    public function testKubernetesEntryKeepsItsDashboardType(): void
+    {
+        $definition = $this->kubernetesDefinition();
+        $definition['dashboard_type'] = 'kubernetes-dashboard';
+
+        $cluster = $this->buildCatalog([$definition])->getCluster('K8s One');
+
+        $this->assertInstanceOf(KubernetesCluster::class, $cluster);
+        $this->assertSame('kubernetes-dashboard', $cluster->dashboardType);
+    }
+
+    public function testKubernetesEntryWithAnUnknownDashboardTypeThrows(): void
+    {
+        $definition = $this->kubernetesDefinition();
+        $definition['dashboard_type'] = 'unknown-dashboard';
+
+        $this->expectException(DomainException::class);
+
+        $this->buildCatalog([$definition]);
     }
 
     public function testMissingTypeDefaultsToKubernetes(): void
@@ -147,6 +251,32 @@ class ClustersCatalogBuilderTest extends TestCase
         $this->assertSame('host ssh-ed25519 AAAA', $cluster->caCertificate);
         $this->assertFalse($cluster->supportRegistry);
         $this->assertFalse($cluster->useHnc);
+    }
+
+    public function testDockerComposeEntryKeepsItsDashboardType(): void
+    {
+        $definition = $this->dockerComposeDefinition();
+        $definition['dashboard'] = 'https://dashboard.example.com';
+        $definition['dashboard_type'] = 'headlamp';
+
+        $cluster = $this->buildCatalog([$definition])->getCluster('DC One');
+
+        $this->assertInstanceOf(DockerComposeCluster::class, $cluster);
+        $this->assertSame('https://dashboard.example.com', $cluster->dashboardAddress);
+        $this->assertSame('headlamp', $cluster->dashboardType);
+
+        $withoutDashboard = $this->buildCatalog([$this->dockerComposeDefinition()])->getCluster('DC One');
+        $this->assertSame('', $withoutDashboard->dashboardType);
+    }
+
+    public function testDockerComposeEntryWithAnUnknownDashboardTypeThrows(): void
+    {
+        $definition = $this->dockerComposeDefinition();
+        $definition['dashboard_type'] = 'unknown-dashboard';
+
+        $this->expectException(DomainException::class);
+
+        $this->buildCatalog([$definition]);
     }
 
     public function testMixedCatalogBuildsBothTypes(): void

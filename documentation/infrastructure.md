@@ -133,20 +133,10 @@ Kubernetes-specific workflow steps:
 - Catch Errorr
 - Reinstall namespaec
 
-**DashboardInfo**
-
-- Generates Kubernetes Dashboard embed URLs
-- Handles authentication tokens
-
 **Health**
 
 - Checks cluster connectivity
 - Validates API access
-
-**ClustersInfo**
-
-- Retrieves available clusters
-- Provides cluster metadata
 
 ### 3. Docker Compose / Ansible Integration
 
@@ -216,7 +206,7 @@ Removing an environment is a task too (`DeleteEnvironmentsTask` → `Recipe\Plan
 the web request only drops the `AccountEnvironment` documents, and the `new_task` worker deletes the Kubernetes
 namespaces (`DeleteNamespaces` step, skipped with a history line on Docker Compose clusters). The web server
 therefore no longer performs any provisioning call; it still opens Kubernetes clients for the dashboard health
-overview, the dashboard frame and the account clusters.
+overview and the account clusters, and relays the web dashboards of the clusters (dashboard frame).
 
 ### 4. Symfony Integration
 
@@ -370,6 +360,20 @@ Symfony-specific workflow steps:
 **Mercure**
 
 - Client call
+
+**Cluster** (any type of cluster)
+
+- **ClustersInfo** (`Cluster/ClustersInfo`, implements `ClustersInfoInterface`)
+    - Retrieves available clusters
+    - Provides cluster metadata
+- **DashboardFrame** (`Cluster/DashboardFrame`, implements `DashboardFrameInterface`)
+    - Relays, request by request, the frame's requests to the web dashboard resolved in the `DashboardTarget`, with
+      the headers of its `DashboardProfile` (the user's credential): path and query string as sent by the browser,
+      kept under the dashboard's address, body and `Accept` / `Content-Type` only (never the cookies of Space),
+      `Accept-Encoding: identity`
+    - Adapts the HTML pages to the frame's URL (base path, head snippet of the profile)
+    - Refuses mutating requests not issued by Space (CSRF, `403`) and websockets / streamed requests (`501`)
+    - For a cluster registered by an account: https only, to a host whose addresses are all public (SSRF guard)
 
 ### 5. Twig Integration
 

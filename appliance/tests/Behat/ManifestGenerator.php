@@ -685,6 +685,7 @@ EOF;
         string $ingressProvider,
         string $versionLevel = '1.30',
         bool $exposeShortcuts = false,
+        bool $sharedVolumes = false,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -700,6 +701,62 @@ EOF;
         if ($exposeShortcuts) {
             $phpServiceName = 'php-pods-php-run';
             $demoServiceName = 'demo-nginx';
+        }
+
+        // With the shared volumes (East PaaS 5.8), a sidecar of the php-pods pod and the scheduled job mount the same
+        // persistent volume as php-run: the pod declares it once, and the CronJob carries its options.
+        $phpPodsSidecarHostname = '';
+        $phpPodsSidecarContainer = '';
+        $backupScheduleOptions = '';
+        $backupVolumeMounts = '';
+        $backupVolumes = '';
+        if ($sharedVolumes) {
+            $phpPodsSidecarHostname = ', "exporter"';
+            $phpPodsSidecarContainer = <<<JSON
+,
+                            {
+                                "name": "exporter",
+                                "image": "registry.hub.docker.com/library/exporter:1",
+                                "imagePullPolicy": "Always",
+                                "volumeMounts": [
+                                    {
+                                        "name": "data-replicated-volume",
+                                        "mountPath": "/data",
+                                        "readOnly": false
+                                    }
+                                ]
+                            }
+JSON;
+            $backupScheduleOptions = <<<JSON
+
+                "timeZone": "Europe/Paris",
+                "concurrencyPolicy": "Forbid",
+                "startingDeadlineSeconds": 300,
+                "successfulJobsHistoryLimit": 3,
+                "failedJobsHistoryLimit": 1,
+                "suspend": false,
+JSON;
+            $backupVolumeMounts = <<<JSON
+,
+                                        "volumeMounts": [
+                                            {
+                                                "name": "data-replicated-volume",
+                                                "mountPath": "/backup/data",
+                                                "readOnly": false
+                                            }
+                                        ]
+JSON;
+            $backupVolumes = <<<JSON
+,
+                                "volumes": [
+                                    {
+                                        "name": "data-replicated-volume",
+                                        "persistentVolumeClaim": {
+                                            "claimName": "{$projectPrefix}data-replicated"
+                                        }
+                                    }
+                                ]
+JSON;
         }
 
         $servicePrefix = '';
@@ -1380,7 +1437,7 @@ JSON;
                 }
             },
             "spec": {
-                "schedule": "0 0 /3 * * *",
+                "schedule": "0 */3 * * *",{$backupScheduleOptions}
                 "jobTemplate": {
                     "spec": {
                         "completions": 1,
@@ -1400,7 +1457,7 @@ JSON;
                                     {
                                         "name": "backup",
                                         "image": "registry.hub.docker.com/backup:alpine",
-                                        "imagePullPolicy": "Always"
+                                        "imagePullPolicy": "Always"{$backupVolumeMounts}
                                     }
                                 ]{$hostUsersInline},
                                 "restartPolicy": "OnFailure",
@@ -1408,7 +1465,7 @@ JSON;
                                     {
                                         "name": "$imagePullSecrets"
                                     }
-                                ]
+                                ]{$backupVolumes}
                             }
                         },
                         "ttlSecondsAfterFinished": 3600
@@ -1863,7 +1920,7 @@ EOF;
                         "hostAliases": [
                             {
                                 "hostnames": [
-                                    "php-run"
+                                    "php-run"{$phpPodsSidecarHostname}
                                 ],
                                 "ip": "127.0.0.1"
                             }
@@ -1963,7 +2020,7 @@ EOF;
                                     "successThreshold": 1,
                                     "failureThreshold": 1
                                 }$phpRunResources
-                            }
+                            }{$phpPodsSidecarContainer}
                         ]{$hostUsersInline},
                         "imagePullSecrets": [
                             {

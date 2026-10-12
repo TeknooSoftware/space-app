@@ -46,8 +46,8 @@ use Teknoo\East\Paas\Loader\AccountLoader;
 use Teknoo\East\Paas\Loader\ProjectLoader;
 use Teknoo\Kubernetes\HttpClientDiscovery;
 use Teknoo\Kubernetes\RepositoryRegistry;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\DashboardFrameInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\DashboardFrameInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateAccountInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Subscription\CreateUserInterface;
@@ -71,13 +71,13 @@ use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateSecret
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\CreateServiceAccount;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\DeleteNamespaces;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Environment\PrepareInstall;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\ClustersInfo;
-use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\DashboardFrame;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc\Health;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateRegistryDeployment;
 use Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Registry\CreateStorage;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Account\PrepareForm as PrepareAccountForm;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster\ClustersInfo;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster\DashboardFrame;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Subscription\CreateUser;
 use Teknoo\Space\Loader\AccountClusterLoader;
 use Teknoo\Space\Loader\AccountDataLoader;
@@ -118,6 +118,8 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
 use Teknoo\Space\Recipe\Step\Job\JobSetDefaults;
@@ -140,6 +142,7 @@ use Teknoo\Space\Recipe\Step\Task\AccountTaskErrorHandler;
 use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
 use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
 use Teknoo\Space\Recipe\Step\UserData\LoadData as LoadUserData;
+use Teknoo\Space\Service\DashboardAvailability;
 use Teknoo\Space\Writer\AccountEnvironmentWriter;
 use Teknoo\Space\Writer\AccountHistoryWriter;
 use Teknoo\Space\Writer\AccountRegistryWriter;
@@ -538,7 +541,19 @@ return [
 
     ClusterAndEnvSelection::class => create()
         ->constructor(
-            get('teknoo.space.clusters_catalog'),
+            get(DashboardAvailability::class),
+            get(DashboardProfileCatalog::class),
+        ),
+
+    DashboardAvailability::class => create()
+        ->constructor(
+            get('teknoo.space.dashboard.external.enabled'),
+        ),
+
+    ResolveDashboardTarget::class => create()
+        ->constructor(
+            get(DashboardProfileCatalog::class),
+            get(DashboardAvailability::class),
         ),
 
     DashboardFrameInterface::class => get(DashboardFrame::class),

@@ -23,9 +23,11 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Contracts\Recipe\Step\Kubernetes;
+namespace Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster;
 
 use Teknoo\East\Common\View\ParametersBag;
+use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
+use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\DTO\AccountWallet;
 
 /**
@@ -34,10 +36,22 @@ use Teknoo\Space\Object\DTO\AccountWallet;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-interface ClustersInfoInterface
+class ClustersInfo implements ClustersInfoInterface
 {
+    public function __construct(
+        private readonly ClusterCatalog $clusterCatalog,
+    ) {
+    }
+
     public function __invoke(
         ParametersBag $parametersBag,
         ?AccountWallet $accountWallet = null,
-    ): ClustersInfoInterface;
+        ?ClusterCatalog $clusterCatalog = null,
+    ): ClustersInfoInterface {
+        $parametersBag->set('accountWallet', $accountWallet);
+        //The workplan's catalog also lists the clusters registered by the account, when they are loaded
+        $parametersBag->set('clusterCatalog', $clusterCatalog ?? $this->clusterCatalog);
+
+        return $this;
+    }
 }

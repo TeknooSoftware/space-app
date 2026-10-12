@@ -23,33 +23,27 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Kubernetes\Recipe\Step\Misc;
+namespace Teknoo\Space\Contracts\Recipe\Step\Cluster;
 
-use Teknoo\East\Common\View\ParametersBag;
-use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\ClustersInfoInterface;
-use Teknoo\Space\Object\Config\ClusterCatalog;
-use Teknoo\Space\Object\DTO\AccountWallet;
+use Psr\Http\Message\ServerRequestInterface;
+use Teknoo\East\Foundation\Client\ClientInterface as EastClient;
+use Teknoo\East\Foundation\Manager\ManagerInterface;
+use Teknoo\Space\Object\DTO\DashboardTarget;
 
 /**
+ * Relays a request of the dashboard frame to the web dashboard resolved in the `DashboardTarget`.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-class ClustersInfo implements ClustersInfoInterface
+interface DashboardFrameInterface
 {
-    public function __construct(
-        private readonly ClusterCatalog $clusterCatalog,
-    ) {
-    }
-
     public function __invoke(
-        ParametersBag $parametersBag,
-        ?AccountWallet $accountWallet = null,
-    ): ClustersInfoInterface {
-        $parametersBag->set('accountWallet', $accountWallet);
-        $parametersBag->set('clusterCatalog', $this->clusterCatalog);
-
-        return $this;
-    }
+        ManagerInterface $manager,
+        EastClient $client,
+        ServerRequestInterface $serverRequest,
+        DashboardTarget $dashboardTarget,
+    ): DashboardFrameInterface;
 }

@@ -26,20 +26,16 @@ declare(strict_types=1);
 namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Account;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Url;
 use Teknoo\East\CommonBundle\Form\DataMapper\EastDataMapper;
+use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Object\Persisted\AccountCluster;
-use Traversable;
-
-use function array_map;
-use function iterator_to_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -53,7 +49,21 @@ class AccountClusterType extends AbstractType
 {
     public function __construct(
         private readonly EastDataMapper $dataMapper,
+        private readonly DashboardProfileCatalog $dashboardProfileCatalog,
     ) {
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function getDashboardTypes(): array
+    {
+        $types = [];
+        foreach ($this->dashboardProfileCatalog as $type => $profile) {
+            $types[$type] = $type;
+        }
+
+        return $types;
     }
 
     /**
@@ -118,6 +128,22 @@ class AccountClusterType extends AbstractType
             [
                 'required' => false,
                 'label' => 'teknoo.space.form.account.account_cluster.dashboard_address',
+                //Relayed by Space with the credentials of the environments: only over https
+                'constraints' => [
+                    new Url(protocols: ['https'], requireTld: false),
+                ],
+            ],
+        );
+
+        $builder->add(
+            'dashboardType',
+            ChoiceType::class,
+            [
+                'required' => false,
+                'label' => 'teknoo.space.form.account.account_cluster.dashboard_type',
+                'placeholder' => 'teknoo.space.form.account.account_cluster.dashboard_type_none',
+                'choices' => $this->getDashboardTypes(),
+                'choice_translation_domain' => false,
             ],
         );
 
