@@ -327,6 +327,9 @@ the web application and the four workers do not receive the same set.
         * `MERCURE_PROTOCOL_VERSION` : (string) `0.x` (default) or `1.0`, the protocol spoken by the hub. Read
           while the container is compiled, so it needs a warmup after a change and the same value on every
           PHP process. *Optional*
+        * `MERCURE_COOKIE_NAME` : (string) the subscriber authorization cookie, the one read by the hub. Defaults
+          to the name of the protocol: `mercureAuthorization` for `0.x`, `__Secure-mercure_access_token` for `1.0`.
+          *Optional*
     * JWT :
         * `SPACE_JWT_SECRET_KEY` : (string) Path to the private key used to sign JWT tokens.
         * `SPACE_JWT_PUBLIC_KEY` : (string) Path to the public key used to verify JWT tokens.

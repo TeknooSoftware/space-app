@@ -10,6 +10,11 @@ mercure:
             # enum case while the container is compiled, so an `%env()%` placeholder, which only
             # gets its value at runtime, can not be used here.
             protocol_version: '%teknoo.space.mercure.protocol_version%'
+            # Always set: without it, MercureBundle names the cookie `mercure_access_token` in debug mode with the
+            # protocol 1.0, the name of the hub's playground mode, ignored by the hub. Empty, the fallback is null and
+            # the hub uses the cookie name of its protocol: `mercureAuthorization` for 0.x,
+            # `__Secure-mercure_access_token` for 1.0.
+            cookie_name: '%env(default::MERCURE_COOKIE_NAME)%'
             jwt:
                 secret: '%env(MERCURE_JWT_TOKEN)%'
                 publish: [ '*' ]

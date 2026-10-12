@@ -33,7 +33,7 @@ the variables below; the compose files at the repository root apply this split p
 | `TEKNOO_PAAS_SECURITY_*` (message encryption)                                                                                                                                                                                                                             | public key only                                     | public + private keys                 | public + private keys                     | public + private keys   |
 | `SPACE_PERSISTED_VAR_SECURITY_*`                                                                                                                                                                                                                                          | public key, `AGENT_MODE=0`                          | public + private keys, `AGENT_MODE=1` | no                                        | no                      |
 | `MERCURE_PUBLISH_URL`, `MERCURE_JWT_TOKEN`, `MERCURE_JWT_ISSUER`                                                                                                                                                                                                          | yes                                                 | yes (`NewJob` updates)                | no                                        | no                      |
-| `MERCURE_SUBSCRIBER_URL`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_SHOW_HNC_FIELD`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS`                                    | yes                                                 | no                                    | no                                        | no                      |
+| `MERCURE_SUBSCRIBER_URL`, `MERCURE_COOKIE_NAME`, `MAILER_*`, `OAUTH_*`, `SPACE_JWT_*`, `SPACE_VALKEY_*`, `SPACE_2FA_PROVIDER`, `SPACE_SUPPORT_CONTACT`, `SPACE_SHOW_HNC_FIELD`, `SPACE_CODE_*`, `SPACE_SUBSCRIPTION_*`, `SPACE_MAIL_*`, `SPACE_TRUSTED_HOSTS`             | yes                                                 | no                                    | no                                        | no                      |
 | Clusters catalog (`SPACE_CLUSTER_CATALOG_*` or `SPACE_CLUSTER_NAME`/`TYPE`/`DASHBOARD`/`DASHBOARD_TYPE`, `SPACE_KUBERNETES_MASTER`/`CREATE_TOKEN`/`CA_VALUE`), `SPACE_KUBERNETES_CLIENT_*`, `SPACE_KUBERNETES_ROOT_NAMESPACE`                                             | yes (dashboard, account clusters, namespace naming) | yes                                   | `SPACE_KUBERNETES_CLIENT_*` only          | no                      |
 | `SPACE_DASHBOARD_EXTERNAL_ENABLED`                                                                                                                                                                                                                                        | yes (dashboard relay)                               | no                                    | no                                        | no                      |
 | `SPACE_KUBERNETES_CLUSTER_USE_HNC`, `SPACE_KUBERNETES_REGISTRY_ROOT_NAMESPACE`, `SPACE_KUBERNETES_SECRET_ACCOUNT_TOKEN_WAITING_TIME`, `SPACE_CLUSTER_ISSUER`, `SPACE_OCI_REGISTRY_*`, `SPACE_DC_REGISTRY_*`, `SPACE_NEW_TASK_WAITING_TIME`                                | no                                                  | yes                                   | no                                        | no                      |
@@ -1871,6 +1871,22 @@ MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 MERCURE_JWT_ISSUER=https://space.example.com
 ```
 
+#### MERCURE_COOKIE_NAME
+
+- **Type**: String
+- **Optional**: Yes
+- **Default**: the cookie name of the protocol set by `MERCURE_PROTOCOL_VERSION`: `mercureAuthorization` for `0.x`,
+  `__Secure-mercure_access_token` for `1.0`. An empty value falls back to it too
+- **Read by**: `mercure.hubs.default.cookie_name` (`appliance/config/packages/mercure.yaml`), by the web process only
+- **Description**: Name of the subscriber authorization cookie set by the `mercure()` Twig function on the pending
+  job page; it must be the cookie read by the hub. The option is always set: without it, MercureBundle would use
+  `mercure_access_token` in debug mode with the protocol `1.0` (the name of the hub's playground mode), ignored by the
+  hub of the Docker stacks. A `__Secure-` name requires a public URL of the hub (`MERCURE_SUBSCRIBER_URL`) in HTTPS.
+
+```bash
+MERCURE_COOKIE_NAME=__Secure-mercure_access_token
+```
+
 #### MERCURE_PROTOCOL_VERSION
 
 - **Type**: String, `0.x` or `1.0`
@@ -1916,7 +1932,7 @@ code: the subscription query parameter becomes `match` instead of `topic`, the h
 becomes `last_event_id` instead of `lastEventID` (a 1.0 hub ignores the latter, so the updates published
 before the subscription would be lost), the generated JWT becomes an RFC 9068 access token carrying
 `authorization_details` (hence `MERCURE_JWT_ISSUER`), and the subscriber cookie is renamed
-`__Secure-mercure_access_token`, which requires the hub public URL to be served over HTTPS. Switch it only once **every** process talks to a 1.0 hub, and update the hub
+`__Secure-mercure_access_token` (unless `MERCURE_COOKIE_NAME` names another one), which requires the hub public URL to be served over HTTPS. Switch it only once **every** process talks to a 1.0 hub, and update the hub
 configuration accordingly (`issuer` block instead of `publisher_jwt`/`subscriber_jwt`).
 
 ### Job Notification
@@ -2092,6 +2108,7 @@ MERCURE_SUBSCRIBER_URL=https://mercure.example.com/.well-known/mercure
 MERCURE_JWT_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 MERCURE_JWT_ISSUER=https://space.example.com
 MERCURE_PROTOCOL_VERSION=1.0
+MERCURE_COOKIE_NAME=__Secure-mercure_access_token
 ###< mercure ###
 
 ###> extensions ###
