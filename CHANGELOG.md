@@ -52,6 +52,8 @@
     `Teknoo\Space\Contracts\Recipe\Step\Cluster`, their implementations `ClustersInfo` and `DashboardFrame` to
     `Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster`
 - Tests: Behat coverage of the dashboard page and of the dashboard relay
+- Tests: East PaaS 5.8, valid cron expression in the jobs fixtures, and Behat coverage of a persistent volume shared
+  by two containers of a pod and by a scheduled job, with the options of the Kubernetes CronJobs
 
 #### Docs
 - `documentation/configuration.md`: web dashboard, new env vars and catalog key, residual risk of the relay of the
