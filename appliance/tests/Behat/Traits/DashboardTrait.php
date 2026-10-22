@@ -229,6 +229,13 @@ trait DashboardTrait
         );
     }
 
+    #[Then('the dashboard frame answered the JSON :json')]
+    public function theDashboardFrameAnsweredTheJson(string $json): void
+    {
+        Assert::assertSame($json, $this->getRelayedPage());
+        Assert::assertSame('application/json', $this->response?->headers->get('content-type'));
+    }
+
     #[Then('the dashboard page has the base :href')]
     public function theDashboardPageHasTheBase(string $href): void
     {

@@ -636,7 +636,7 @@ administrator uses the cluster's credential (the `create_account` token of a Kub
 yet for a docker-compose cluster), a user the credential of its environment.
 
 The way a dashboard is embedded is described by a **dashboard profile** (headers to inject, entry path, HTML snippet,
-base path rewriting...), selected by the dashboard type. Two profiles are built in:
+base path rewriting, paths answered by Space itself...), selected by the dashboard type. Two profiles are built in:
 
 | Type                   | Dashboard                                                     | Address                                                  |
 |------------------------|---------------------------------------------------------------|----------------------------------------------------------|
@@ -650,6 +650,13 @@ Limits of the relay, which works request by request:
   live updates of the dashboard are not available;
 - mutating requests are relayed only when issued by Space itself (`Sec-Fetch-Site: same-origin`, or an `Origin` of
   the Space host), otherwise `403`.
+
+In the console of the browser, Headlamp shows `404` errors on API versions (`.../apis/<group>/<version>`): Headlamp
+probes each version a resource may be served by itself, and ignores the versions the cluster does not serve. They are
+expected, with or without Space. Space answers the `GET` of `clusters/main/me` itself, without reaching Headlamp: its
+backend reads the user from the expiry claim of the token, which the service-account tokens injected by Space do not
+carry, and answers a `401`. Headlamp then reads the user from a `SelfSubjectReview`, as it already did after this
+`401`.
 
 For Headlamp, disable the `cluster-admin` binding of its service account (`clusterRoleBinding.create: false`): Space
 always injects the credentials of the user, and the dashboard does not need to be exposed by an ingress when Space
