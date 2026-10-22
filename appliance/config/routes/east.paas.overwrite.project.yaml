@@ -46,9 +46,10 @@ _teknoo_paas_admin_project_new:
 
 _teknoo_paas_admin_project_delete:
     path: '/admin/project/{id}/delete'
-    methods: ['GET']
+    methods: ['GET', 'POST', 'DELETE']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
+        csrfTokenId: 'teknoo_east_paas_admin_delete'
         deleter: '@teknoo.space.deleting.space_project'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         loader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'

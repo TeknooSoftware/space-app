@@ -214,6 +214,20 @@ trait DockerComposeTrait
 
     private string $expectedComposeKnownHosts = '';
 
+    private ?string $composeExpectedDirectory = null;
+
+    private bool $composeNetworkInternal = false;
+
+    /**
+     * Test API for the extensions, not a step: a context of an extension compares the artifacts of a paas file of
+     * its own fixtures with its own expected files, in the variant subdirectory of this directory instead of
+     * `tests/Behat/expected/compose`, also where `SPACE_DC_DUMP_GOLDEN` writes them. Reset before each scenario.
+     */
+    public function useComposeExpectedDirectory(string $directory): void
+    {
+        $this->composeExpectedDirectory = $directory;
+    }
+
     /**
      * Declare the SSH target the current scenario deploys to, when it is not the "Demo Compose Cluster"
      * catalog entry (see the account-cluster docker-compose fixture), with the SSH host public key its
@@ -274,9 +288,10 @@ trait DockerComposeTrait
                 $this->composeArtifacts['compose.yaml'] = $workspaceFilesystem->read($composeRelative);
 
                 //The config/secret files referenced by the Compose Specification are written next to it under
-                //"configs/" and "secrets/"; capture their content keyed by the same forward-slash relative path
-                //so they can be golden-compared like the Kubernetes ConfigMap/Secret manifests.
-                foreach (['configs', 'secrets'] as $subDir) {
+                //"configs/" and "secrets/", the settings of the runner of each scheduled job under "jobs/"; capture
+                //their content keyed by the same forward-slash relative path so they can be golden-compared like
+                //the Kubernetes ConfigMap/Secret manifests.
+                foreach (['configs', 'jobs', 'secrets'] as $subDir) {
                     $base = $workingDir . '/' . $subDir;
                     foreach ($workspaceFilesystem->listContents($base, true) as $item) {
                         if (!$item->isFile()) {
@@ -364,6 +379,7 @@ trait DockerComposeTrait
                 'deploy' => 'deploy.yml.template',
                 'expose' => 'expose.yml.template',
             ],
+            networkInternal: $this->composeNetworkInternal,
         );
 
         $this->sfContainer->get(Directory::class)->register('docker-compose', $driver);
@@ -376,6 +392,17 @@ trait DockerComposeTrait
             name: 'Demo Compose Cluster',
             address: 'ssh://deployer@docker-host.behat.test:22',
         );
+    }
+
+    /**
+     * The dedicated network of the projects is declared `internal`, without egress, like on a worker with
+     * `SPACE_DC_NETWORK_INTERNAL`
+     */
+    #[Given('a docker-compose orchestrator with an internal network')]
+    public function aDockerComposeOrchestratorWithAnInternalNetwork(): void
+    {
+        $this->composeNetworkInternal = true;
+        $this->aDockerComposeOrchestrator();
     }
 
     #[Then('no docker compose configuration must be created')]
@@ -783,12 +810,16 @@ trait DockerComposeTrait
             $key .= '-quota-' . $this->quotasMode;
         }
 
+        if ($this->composeNetworkInternal) {
+            $key .= '-network-internal';
+        }
+
         return $key;
     }
 
     private function composeVariantDir(): string
     {
-        return __DIR__ . '/../expected/compose/' . $this->composeVariantKey();
+        return ($this->composeExpectedDirectory ?? __DIR__ . '/../expected/compose') . '/' . $this->composeVariantKey();
     }
 
     /**
@@ -807,7 +838,7 @@ trait DockerComposeTrait
         $dir = $this->composeVariantDir();
 
         $referencedFiles = [];
-        foreach (['configs', 'secrets'] as $subDir) {
+        foreach (['configs', 'jobs', 'secrets'] as $subDir) {
             $base = $dir . '/refs/' . $subDir;
             if (!is_dir($base)) {
                 continue;

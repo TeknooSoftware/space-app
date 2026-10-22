@@ -49,6 +49,7 @@ class ExpectedManifestTestExtension implements ModuleInterface
         public readonly ?bool $useHnc = null,
         public readonly ?string $quotaMode = null,
         public readonly ?string $defaultsMods = null,
+        public readonly ?string $paasFile = null,
     ) {
     }
 }

@@ -57,6 +57,7 @@ class ManifestGenerator
         ?bool $useHnc = null,
         ?string $quotaMode = null,
         ?string $defaultsMods = null,
+        ?string $paasFile = null,
     ): array {
         $module = new ExpectedManifestTestExtension(
             action: $action,
@@ -72,6 +73,7 @@ class ManifestGenerator
             useHnc: $useHnc,
             quotaMode: $quotaMode,
             defaultsMods: $defaultsMods,
+            paasFile: $paasFile,
         );
 
         Manager::run()->execute($module);
@@ -686,6 +688,7 @@ EOF;
         string $versionLevel = '1.30',
         bool $exposeShortcuts = false,
         bool $sharedVolumes = false,
+        ?string $paasFile = null,
     ): string {
         if (!empty($projectPrefix)) {
             $projectPrefix .= '-';
@@ -819,11 +822,11 @@ EOF;
             [
                 'requests' => [
                     'cpu' => '200m',
-                    'memory' => '20.480Mi',
+                    'memory' => '21474836',
                 ],
                 'limits' => [
                     'cpu' => '1.600',
-                    'memory' => '163.840Mi',
+                    'memory' => '171798691',
                 ],
             ],
         );
@@ -834,7 +837,7 @@ EOF;
                 [
                     'requests' => [
                         'cpu' => '68m',
-                        'memory' => '9.600Mi',
+                        'memory' => '10066329',
                     ],
                     'limits' => [
                         'cpu' => '561m',
@@ -863,7 +866,7 @@ EOF;
                 [
                     'requests' => [
                         'cpu' => '100m',
-                        'memory' => '9.600Mi',
+                        'memory' => '10066329',
                     ],
                     'limits' => [
                         'cpu' => '100m',
@@ -892,7 +895,7 @@ EOF;
                 [
                     'requests' => [
                         'cpu' => '68m',
-                        'memory' => '9.600Mi',
+                        'memory' => '10066329',
                     ],
                     'limits' => [
                         'cpu' => '561m',
@@ -2293,6 +2296,7 @@ EOF;
             useHnc: $useHnc,
             quotaMode: $quotaMode,
             defaultsMods: $defaultsMods,
+            paasFile: $paasFile,
         );
 
         return json_encode(

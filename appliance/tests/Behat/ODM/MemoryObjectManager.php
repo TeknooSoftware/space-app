@@ -59,6 +59,7 @@ class MemoryObjectManager implements ObjectManager
 
     public function persist($object): void
     {
+        $this->context->markSavedByTheApplication($object);
         $this->context->persistObject($object);
     }
 

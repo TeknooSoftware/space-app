@@ -21,6 +21,16 @@ Feature: Web interface to allow users to login
     And a session is opened
     And It has a welcome message with "Jean Dupont" in the dashboard header
 
+  Scenario: From the UI, logout asks the browser to clear all the data of the site
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    When the user sign in with "dupont@teknoo.space" and the password "Test2@Test"
+    Then it is redirected to the dashboard
+    When the user logs out
+    Then the browser is asked to clear all the data of the site
+    And it is redirected to the login page
+
   Scenario: From the UI, login with 2FA enabled for the user
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"

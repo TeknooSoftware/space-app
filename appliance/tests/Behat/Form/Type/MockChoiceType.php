@@ -26,7 +26,12 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Behat\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\Common\Contracts\Object\IdentifiedObjectInterface;
+use Teknoo\Space\Tests\Behat\SpaceContext;
+
+use function is_string;
 
 /**
  * @copyright Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -44,6 +49,22 @@ class MockChoiceType extends ChoiceType
             'csrf_protection' => false,
             'class' => '',
             'query_builder' => '',
+            // Like the DocumentType it replaces: the objects of the class, here those of the in-memory database
+            'choices' => static function (Options $options): array {
+                $class = $options['class'];
+                if (!is_string($class) || '' === $class) {
+                    return [];
+                }
+
+                return SpaceContext::current()->listObjects($class);
+            },
+            'choice_value' => static function (mixed $object): ?string {
+                if ($object instanceof IdentifiedObjectInterface) {
+                    return $object->getId();
+                }
+
+                return null;
+            },
         ]);
     }
 }

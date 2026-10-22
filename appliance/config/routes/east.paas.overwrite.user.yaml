@@ -40,9 +40,10 @@ _teknoo_common_admin_user_new:
 
 _teknoo_common_admin_user_delete:
     path: '/admin/user/{id}/delete'
-    methods: ['GET']
+    methods: ['GET', 'POST', 'DELETE']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
+        csrfTokenId: 'teknoo_east_common_admin_delete'
         deleter: '@teknoo.space.deleting.space_user'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         loader: '@Teknoo\Space\Loader\Meta\SpaceUserLoader'

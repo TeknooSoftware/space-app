@@ -70,9 +70,10 @@ space_job_list:
 
 space_job_delete:
     path: '/job/{id}/delete'
-    methods: ['GET']
+    methods: ['GET', 'POST', 'DELETE']
     defaults:
         _controller: 'teknoo.east.common.endpoint.crud.delete'
+        csrfTokenId: 'teknoo_space_delete'
         deleter: '@teknoo.east.paas.deleting.job'
         errorTemplate: '@@TeknooEastCommon/Error/default.html.twig'
         loader: '@Teknoo\East\Paas\Loader\JobLoader'

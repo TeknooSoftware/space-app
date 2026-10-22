@@ -29,7 +29,7 @@
             <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1">
                 <div class="col mt-4 d-inline-flex align-items-center">
                     <form action="?" method="get">
-                        <select name="cluster" class="form-select form-control" onchange="form.submit()"> %}
+                        <select name="cluster" class="form-select form-control" data-submit-on-change> %}
                             {%- if accountWallet is not empty -%}
                                 {%- for accountEnv in accountWallet -%}
                                     {% set currentValue = accountEnv.clusterName ~ '~' ~ accountEnv.envName %}

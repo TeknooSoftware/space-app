@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Plan;
 
 use Stringable;
+use Teknoo\East\Common\Contracts\Recipe\Step\CheckCsrfTokenInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Recipe\Plan\DeleteObjectEndPoint;
@@ -62,6 +63,7 @@ class AccountClusterDelete extends DeleteObjectEndPoint
         private readonly ObjectAccessControlInterface $objectAccessControl,
         string|Stringable|null $defaultErrorTemplate = null,
         array $loadObjectWiths = [],
+        private readonly ?CheckCsrfTokenInterface $checkCsrfToken = null,
     ) {
         parent::__construct(
             recipe: $recipe,
@@ -99,6 +101,11 @@ class AccountClusterDelete extends DeleteObjectEndPoint
                 default: false,
             )
         );
+
+        // Not given to the parent, which cooks it at 5: the jump at 04 would skip it without account selection
+        if (null !== $this->checkCsrfToken) {
+            $recipe = $recipe->cook($this->checkCsrfToken, CheckCsrfTokenInterface::class, [], 03);
+        }
 
         $recipe = $recipe->cook(
             $this->jumpIfNot,

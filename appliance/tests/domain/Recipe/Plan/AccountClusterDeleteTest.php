@@ -30,6 +30,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Stringable;
+use Teknoo\East\Common\Contracts\Recipe\Step\CheckCsrfTokenInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\RedirectClientInterface;
 use Teknoo\East\Common\Recipe\Step\DeleteObject;
@@ -131,5 +132,40 @@ class AccountClusterDeleteTest extends TestCase
                 $this->createStub(ChefInterface::class),
             )
         );
+    }
+
+    public function testTheCsrfTokenIsCheckedOnceBeforeTheJumpOfTheAccountSelection(): void
+    {
+        $positions = [];
+        $recipe = $this->createMock(RecipeInterface::class);
+        $recipe->method('require')->willReturnSelf();
+        $recipe->method('onError')->willReturnSelf();
+        $recipe->method('execute')->willReturnSelf();
+        $recipe->method('cook')->willReturnCallback(
+            function (mixed $action, string $name, array $with, ?int $position) use (&$positions, $recipe) {
+                $positions[$name][] = $position;
+
+                return $recipe;
+            }
+        );
+
+        $plan = new AccountClusterDelete(
+            recipe: $recipe,
+            jumpIfNot: $this->jumpIfNot,
+            loadObject: $this->loadObject,
+            injectToView: $this->injectToView,
+            deleteObject: $this->deleteObject,
+            jumpIf: $this->jumpIf,
+            redirectClient: $this->redirectClient,
+            render: $this->render,
+            renderError: $this->renderError,
+            objectAccessControl: $this->objectAccessControl,
+            defaultErrorTemplate: $this->defaultErrorTemplate,
+            checkCsrfToken: $this->createStub(CheckCsrfTokenInterface::class),
+        );
+        $plan->train($this->createStub(ChefInterface::class));
+
+        $this->assertSame([3], $positions[CheckCsrfTokenInterface::class] ?? null);
+        $this->assertSame([4], $positions[JumpIfNot::class] ?? null);
     }
 }

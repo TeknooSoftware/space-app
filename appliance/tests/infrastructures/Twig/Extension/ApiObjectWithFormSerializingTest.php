@@ -82,6 +82,32 @@ class ApiObjectWithFormSerializingTest extends TestCase
         $this->assertSame('serialized-errors', $result);
     }
 
+    public function testRenderingWithErrorsOnlyOnAChildField(): void
+    {
+        $formView = new FormView();
+        $formView->children['users'] = new FormView($formView);
+
+        $this->formError
+            ->expects($this->once())
+            ->method('getFieldErrors')
+            ->with($formView)
+            ->willReturn(['.account.users' => 'teknoo.space.error.space_account.admin_user']);
+
+        $this->objectSerializing
+            ->expects($this->once())
+            ->method('serialize')
+            ->with(
+                $this->equalTo(['.account.users' => 'teknoo.space.error.space_account.admin_user']),
+                $this->equalTo([]),
+                $this->equalTo('json'),
+                $this->equalTo(['errors' => true]),
+            )
+            ->willReturn('serialized-errors');
+
+        $result = $this->extension->rendering(object: ['foo' => 'bar'], formView: $formView);
+        $this->assertSame('serialized-errors', $result);
+    }
+
     #[AllowMockObjectsWithoutExpectations]
     public function testRenderingWithoutErrors(): void
     {

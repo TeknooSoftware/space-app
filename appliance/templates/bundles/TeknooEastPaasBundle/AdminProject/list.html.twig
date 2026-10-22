@@ -83,8 +83,8 @@
                 <span class="mdi mdi-shape-circle-plus"></span>
             </a>
             <a class="text-primary"
-               onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
-               href="{{ path('_teknoo_paas_admin_project_delete', {'id':object.id}) }}"
+               data-confirm="{{ 'teknoo.space.text.confirm_delete'|trans }}"
+               href="{{ path('_teknoo_paas_admin_project_delete', {'id':object.id, '_token': csrf_token('teknoo_east_paas_admin_delete')}) }}"
                title="{{ 'teknoo.space.action.delete_project'|trans }}">
                 <span class="mdi mdi-trash-can"></span>
             </a>

@@ -66,6 +66,33 @@ trait HttpTrait
         );
     }
 
+    /**
+     * A valid CSRF token of the session of the cookies, like the one a page of this session would render, also for a
+     * user who has no page rendering it
+     */
+    public function getCsrfTokenOfTheSession(string $tokenId): string
+    {
+        $container = $this->kernel->getContainer()->get('test.service_container');
+        $request = Request::create(uri: 'https://' . $this->appHostname . '/', cookies: $this->cookies);
+        $requestStack = $container->get('request_stack');
+        $requestStack->push($request);
+
+        try {
+            $session = $container->get('session.factory')->createSession();
+            $sessionId = $request->cookies->get($session->getName());
+            Assert::assertIsString($sessionId, 'No session is opened to get a CSRF token');
+            $session->setId($sessionId);
+            $request->setSession($session);
+
+            $token = $container->get('security.csrf.token_manager')->getToken($tokenId)->getValue();
+            $session->save();
+        } finally {
+            $requestStack->pop();
+        }
+
+        return $token;
+    }
+
     public function executeRequest(
         string $method,
         string $url,
@@ -76,6 +103,7 @@ trait HttpTrait
         ?string $content = null,
     ): Response {
         $this->hasBeenRedirected = false;
+        $this->savedByTheLastRequest = [];
         $this->isApiCall = !empty($headers['HTTP_AUTHORIZATION']);
         $host = 'https://' . $this->appHostname;
         $originalHost = 'https://' . $this->appHostname;
@@ -136,12 +164,14 @@ trait HttpTrait
                 unset($headers['CONTENT_TYPE']);
             }
 
+            $redirection = $this->response;
             $response = $this->executeRequest(
                 method: 'GET',
                 url: $newUrl,
                 headers: $headers,
             );
             $this->hasBeenRedirected = true;
+            $this->redirection = $redirection;
 
             return $response;
         }

@@ -74,9 +74,11 @@ use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
 
+use function array_keys;
 use function array_shift;
 use function count;
 use function current;
+use function is_a;
 use function mb_strtolower;
 use function random_int;
 use function str_replace;
@@ -215,7 +217,9 @@ trait PersistenceStepsTrait
         );
 
         $this->persistAndRegister($user);
-        $this->recall(Account::class)?->setUsers([$user]);
+        if ('admin' !== $role) {
+            $this->recall(Account::class)?->setUsers([$user]);
+        }
 
         $media = new MediaODM();
         $media->setId($this->generateId());
@@ -1408,6 +1412,64 @@ trait PersistenceStepsTrait
             1,
             $this->listObjects(AccountCluster::class),
         );
+    }
+
+    private function isAUserOfTheLastAccount(string $email): bool
+    {
+        $account = $this->recall(Account::class);
+        Assert::assertInstanceOf(Account::class, $account);
+
+        $found = false;
+        $account->visit(
+            'users',
+            static function (iterable $users) use ($email, &$found): void {
+                foreach ($users as $user) {
+                    if ($user instanceof User && $email === $user->getEmail()) {
+                        $found = true;
+                    }
+                }
+            },
+        );
+
+        return $found;
+    }
+
+    /**
+     * Only the account: an edition of an account also creates its history when it has none
+     */
+    private function hasTheLastRequestSavedTheAccount(): bool
+    {
+        foreach (array_keys($this->savedByTheLastRequest) as $className) {
+            if (is_a($className, AccountOrigin::class, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    #[Then('the last request has saved the account')]
+    public function theLastRequestHasSavedTheAccount(): void
+    {
+        Assert::assertTrue($this->hasTheLastRequestSavedTheAccount(), 'The last request did not save the account');
+    }
+
+    #[Then('the last request has not saved the account')]
+    public function theLastRequestHasNotSavedTheAccount(): void
+    {
+        Assert::assertFalse($this->hasTheLastRequestSavedTheAccount(), 'The last request saved the account');
+    }
+
+    #[Then('the user :email is a user of the last account')]
+    public function theUserIsAUserOfTheLastAccount(string $email): void
+    {
+        Assert::assertTrue($this->isAUserOfTheLastAccount($email), "$email is not a user of the last account");
+    }
+
+    #[Then('the user :email is not a user of the last account')]
+    public function theUserIsNotAUserOfTheLastAccount(string $email): void
+    {
+        Assert::assertFalse($this->isAUserOfTheLastAccount($email), "$email is a user of the last account");
     }
 
     #[Then('there is a user in the memory')]

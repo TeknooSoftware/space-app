@@ -31,6 +31,20 @@ function refreshClusterSubForm(subform) {
 }
 
 document.addEventListener("DOMContentLoaded",function () {
+  // The Content Security Policy blocks inline handlers like `onclick`: links to confirm define `data-confirm`
+  document.addEventListener('click', function (event) {
+    let link = event.target.closest('[data-confirm]');
+    if (null !== link && !confirm(link.dataset.confirm)) {
+      event.preventDefault();
+    }
+  });
+
+  document.addEventListener('change', function (event) {
+    if (event.target.matches('[data-submit-on-change]')) {
+      event.target.form.submit();
+    }
+  });
+
   document.addEventListener('click',function (event) {
     let button = event.target.closest('button');
     if (!button) {
