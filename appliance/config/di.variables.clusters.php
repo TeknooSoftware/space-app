@@ -77,6 +77,8 @@ return [
         //Headlamp must be served under a base path (Helm value `config.baseURL`, e.g. `/__headlamp`), included in
         //the dashboard address: it is replaced, in the pages relayed, by the path of the frame. The namespaces
         //allowed to the user are given to Headlamp through its cluster settings (local storage).
+        //Headlamp reads its user on `/me` by decoding the token as a JWT with an expiry, missing in the tokens of
+        //service accounts (a `401` from its backend): an empty answer lets it fall back on a SelfSubjectReview.
         'headlamp' => new DashboardProfile(
             name: 'headlamp',
             requestHeaders: ['Authorization' => 'Bearer {token}'],
@@ -90,6 +92,7 @@ return [
                 . 'c=JSON.parse(s.getItem(k)||\'{}\');c.allowedNamespaces=[n];c.defaultNamespace=n;'
                 . 's.setItem(k,JSON.stringify(c));}catch(e){}})(window.localStorage,\'{namespace}\');</script>',
             rewriteBasePath: true,
+            localResponses: ['clusters/main/me' => '{}'],
         ),
         //The legacy Kubernetes Dashboard (archived), selecting the namespace through its URL fragment
         'kubernetes-dashboard' => new DashboardProfile(

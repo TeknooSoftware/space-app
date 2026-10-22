@@ -348,6 +348,17 @@ class DashboardFrame implements DashboardFrameInterface
         return $response->withBody($this->streamFactory->createStream($body));
     }
 
+    /**
+     * Answer given by Space itself, in place of the dashboard, never kept by the browser.
+     */
+    private function createLocalResponse(string $body): ResponseInterface
+    {
+        return $this->responseFactory->createResponse(200)
+            ->withHeader('content-type', 'application/json')
+            ->withHeader('cache-control', 'no-store')
+            ->withBody($this->streamFactory->createStream($body));
+    }
+
     public function __invoke(
         ManagerInterface $manager,
         EastClient $client,
@@ -375,9 +386,21 @@ class DashboardFrame implements DashboardFrameInterface
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
 
+        $requestedPath = ltrim(
+            $this->getRequestedPath($serverRequest, (string) parse_url($frameUrl, PHP_URL_PATH)),
+            '/',
+        );
+
+        $localResponse = $dashboardTarget->profile->getLocalResponse($requestedPath);
+        if (null !== $localResponse && 'GET' === strtoupper($serverRequest->getMethod())) {
+            $client->acceptResponse($this->createLocalResponse($localResponse));
+
+            return $this;
+        }
+
         $dashboardUri = $this->getDashboardUri(
             target: $dashboardTarget,
-            path: $this->getRequestedPath($serverRequest, (string) parse_url($frameUrl, PHP_URL_PATH)),
+            path: $requestedPath,
             query: $serverRequest->getUri()->getQuery(),
         );
 

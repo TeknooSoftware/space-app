@@ -99,3 +99,10 @@ Feature: Web dashboard of the cluster hosting an environment
     And the user is signed in with "admin@teknoo.space" and the password "Test2@Test"
     When It opens the dashboard frame of "demo-kube-cluster" for "_all"
     Then the dashboard received a "GET" request to "https://dashboard.kubernetes.localhost/__headlamp/" with the token "fooBar"
+
+  Scenario: From the UI, the user of Headlamp is answered by Space, without reaching the dashboard
+    Given a kubernetes client
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It sends a "GET" request to "clusters/main/me" on the dashboard frame of "demo-kube-cluster" for "dev"
+    Then the dashboard frame answered the JSON "{}"
+    And the dashboard was not reached
