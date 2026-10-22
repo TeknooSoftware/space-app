@@ -137,6 +137,16 @@ trait PersistenceOperationTrait
             return $valid;
         }
 
+        if ('$ne' === $criteria) {
+            foreach ($value as $field => $notExpected) {
+                if ($this->testACriteria((string) $field, $notExpected, $roInstance, $object)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         if (str_contains($criteria, '.$')) {
             [$property, $attr] = explode('.$', $criteria);
 
@@ -179,7 +189,12 @@ trait PersistenceOperationTrait
             return true;
         }
 
-        return false;
+        // Like MongoDB, a field the object does not have matches null
+        return null === $value
+            && !$roInstance->hasProperty($criteria)
+            && !$roInstance->hasMethod("get{$criteria}")
+            && !$roInstance->hasMethod("is{$criteria}")
+            && !$roInstance->hasMethod("has{$criteria}");
     }
 
     private function testListOfCriteria(array $criteria, ReflectionObject $roInstance, object $object): bool
@@ -240,6 +255,19 @@ trait PersistenceOperationTrait
     public function getListOfPersistedObjects(string $class): array
     {
         return $this->objects[$class];
+    }
+
+    /**
+     * Classes of the objects saved by the object manager of the application, not by the fixtures, reset by each
+     * request
+     *
+     * @var array<class-string, true>
+     */
+    private array $savedByTheLastRequest = [];
+
+    public function markSavedByTheApplication(object $object): void
+    {
+        $this->savedByTheLastRequest[$object::class] = true;
     }
 
     public function persistObject(object $object): void

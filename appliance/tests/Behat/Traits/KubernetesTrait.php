@@ -198,6 +198,7 @@ trait KubernetesTrait
             versionLevel: $versionLevel,
             exposeShortcuts: $this->exposeShortcutsEnabled,
             sharedVolumes: $this->sharedVolumesEnabled,
+            paasFile: $this->paasFile,
         );
 
         Assert::assertEquals(

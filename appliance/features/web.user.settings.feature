@@ -69,3 +69,57 @@ Feature: Web interface to manage its user's settings
     Given the user is signed in with "dupont@teknoo.space" and the password "Test3@Test"
     Then it is redirected to the dashboard
     And a new session is open
+
+  Scenario: From the UI, disable the 2FA authentication
+    Given a Space app instance
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It goes to the 2FA page
+    Then the 2FA disable form is shown
+    When the user disables the 2FA
+    Then the 2FA disable form is not shown
+
+  Scenario: From the UI, disable the 2FA authentication without the CSRF token and get an error
+    Given a Space app instance
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When It goes to the 2FA page
+    And the user disables the 2FA without the CSRF token
+    Then the user must have a 403 error
+    When It goes to the 2FA page
+    Then the 2FA disable form is shown
+
+  Scenario: From the UI, delete an API key
+    Given a Space app instance
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When create api key "behat-key"
+    Then the API key "behat-key" is listed
+    When the user deletes the API key "behat-key"
+    Then the API key "behat-key" is not listed
+
+  Scenario: From the UI, delete an API key without the CSRF token and get an error
+    Given a Space app instance
+    And a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When create api key "behat-key"
+    And the user deletes the API key "behat-key" without the CSRF token
+    Then the user must have a 403 error
+    When It goes to the API keys page
+    Then the API key "behat-key" is listed

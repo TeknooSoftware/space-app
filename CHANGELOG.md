@@ -17,6 +17,11 @@
 - A dashboard is relayed only with a credential to inject (`403` otherwise)
 - Residual risk, documented with the recommended mitigation (egress `NetworkPolicy`): a DNS rebinding between the
   check of the addresses of an external dashboard and the connection
+- The deletions from the web interface (projects, jobs, clusters of an account, and in the administration accounts,
+  projects, jobs, users and media), of an API key, and the disabling of the 2FA check a CSRF token (`403` without
+  it). The API, authenticated by JWT, is not concerned
+  - **Breaking**: custom templates must add `_token` to the deleting links, and disable the 2FA from a `POST` form
+- The logout asks the browser to clear all the data of the site
 
 #### Fixes
 - The dashboard page embedded a frame for a cluster without configured dashboard (docker-compose clusters)
@@ -24,6 +29,12 @@
 - The dashboard relay forwarded neither the query string nor the body of the requests
 - `DashboardFrameInterface` did not declare the environment name read by its implementation
 - The dashboard frame of a cluster without dashboard (docker-compose clusters) answered a `500`, now a `404`
+- An administrator of Space can not be a user of an account, the error is shown on the users field
+- The API returns the errors of every field of a form, not only the ones of the form itself
+- Out of the dev environment, the Content Security Policy blocked the inline handlers: the deleting links ask their
+  confirmation again (and cancelling it no longer deletes), the copy buttons no longer submit their form, and the
+  cluster selector of the dashboard works again
+- The help of a form field is shown under it
 
 #### Evolutions
 - **Headlamp replaces the archived Kubernetes Dashboard**, as the web dashboard embedded in Space. Space still
@@ -55,10 +66,18 @@
 - Tests: Behat coverage of the dashboard page and of the dashboard relay
 - Tests: East PaaS 5.8, valid cron expression in the jobs fixtures, and Behat coverage of a persistent volume shared
   by two containers of a pod and by a scheduled job, with the options of the Kubernetes CronJobs
+- Requires East PaaS 5.11.2 (scheduled jobs on the Docker Compose hosts), East Common 4.8.1 and East Foundation 9.4
+- New optional env var `MERCURE_COOKIE_NAME`, the name of the subscriber cookie, by default the one of the protocol
+  of the hub
+- Dev stack: MongoDB 9, as in production
+- Update `teknoo.space.assets.version`
+- Tests: Behat coverage of the CSRF checks and of the scheduled jobs on Docker Compose, new helpers for the tests of
+  the extensions (`useProjectPaasFile()`, `useComposeExpectedDirectory()`)
 
 #### Docs
 - `documentation/configuration.md`: web dashboard, new env vars and catalog key, residual risk of the relay of the
   external dashboards
+- `documentation/configuration.md`: `MERCURE_COOKIE_NAME`
 
 ## [2.5.1] - 2026-10-08
 ### Stable Release

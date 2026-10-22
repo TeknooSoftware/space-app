@@ -310,6 +310,22 @@ trait BrowserActionTrait
             route: 'space_project_delete',
             parameters: [
                 'id' => $this->recall(Project::class)?->getId(),
+                '_token' => $this->getCsrfTokenOfTheSession('teknoo_space_delete'),
+            ],
+        );
+
+        $this->executeRequest('GET', $url);
+    }
+
+    #[When('It goes to delete the project :projectName of :accountName without the CSRF token')]
+    public function itGoesToDeleteTheProjectOfWithoutTheCsrfToken(string $projectName, string $accountName): void
+    {
+        $this->isAFinalResponse();
+
+        $url = $this->getPathFromRoute(
+            route: 'space_project_delete',
+            parameters: [
+                'id' => $this->recall(Project::class)?->getId(),
             ],
         );
 
@@ -374,6 +390,53 @@ trait BrowserActionTrait
                 route: 'space_dashboard_frame',
                 parameters: ['clusterName' => $clusterName, 'envName' => $envName],
             ),
+        );
+    }
+
+    #[When('It goes to the 2FA page')]
+    public function itGoesToThe2faPage(): void
+    {
+        $this->executeRequest('GET', $this->getPathFromRoute('_teknoo_common_2fa_google_enable'));
+    }
+
+    #[When('the user disables the 2FA')]
+    public function theUserDisablesThe2fa(): void
+    {
+        $url = $this->getPathFromRoute('_teknoo_common_2fa_google_disable');
+        $form = $this->createCrawler()->filter("form[action=\"{$url}\"]");
+        Assert::assertCount(1, $form, 'The 2FA disable form is not on the page');
+
+        $this->executeRequest('POST', $url, $form->form()->getValues());
+    }
+
+    #[When('the user disables the 2FA without the CSRF token')]
+    public function theUserDisablesThe2faWithoutTheCsrfToken(): void
+    {
+        $this->executeRequest('POST', $this->getPathFromRoute('_teknoo_common_2fa_google_disable'));
+    }
+
+    #[When('It goes to the API keys page')]
+    public function itGoesToTheApiKeysPage(): void
+    {
+        $this->executeRequest('GET', $this->getPathFromRoute('_teknoo_common_api_keys_manage'));
+    }
+
+    #[When('the user deletes the API key :name')]
+    public function theUserDeletesTheApiKey(string $name): void
+    {
+        $this->findUrlFromRouteInPageAndOpenIt(
+            crawler: $this->createCrawler(),
+            routeName: '_teknoo_common_api_keys_delete',
+            parameters: ['tokenName' => $name],
+        );
+    }
+
+    #[When('the user deletes the API key :name without the CSRF token')]
+    public function theUserDeletesTheApiKeyWithoutTheCsrfToken(string $name): void
+    {
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute('_teknoo_common_api_keys_delete', ['tokenName' => $name]),
         );
     }
 

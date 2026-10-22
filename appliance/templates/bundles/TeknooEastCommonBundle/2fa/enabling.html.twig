@@ -91,10 +91,13 @@
                             {% else %}
                                 <th scope="row">Disabled</th>
                                 <td>
-                                    <a href="{{ path(space_2fa_route_finder(app.user, 'disable')) }}"
-                                       class="btn btn-danger">
-                                        {{ 'teknoo.space.action.2fa.disable'|trans }}
-                                    </a>
+                                    <form method="post" action="{{ path(space_2fa_route_finder(app.user, 'disable')) }}">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('teknoo_east_common_2fa_disable') }}">
+                                        <button type="submit" class="btn btn-danger">
+                                            {{ 'teknoo.space.action.2fa.disable'|trans }}
+                                        </button>
+                                    </form>
                                 </td>
                             {% endif %}
                         </tr>

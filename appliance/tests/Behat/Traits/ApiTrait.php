@@ -559,6 +559,16 @@ trait ApiTrait
             }
         }
 
+        if (str_contains($field, 'users')) {
+            $parts = explode(':', trim($value, '<>'));
+
+            foreach ($this->listObjects(User::class) as $object) {
+                if ($object->getEmail() === ($parts[1] ?? '')) {
+                    return $object->getId();
+                }
+            }
+        }
+
         throw new RuntimeException('Auto unsupported');
     }
 
@@ -1172,6 +1182,20 @@ trait ApiTrait
             ],
             $unserialized,
         );
+    }
+
+    #[Then('the API returns the form error :message')]
+    public function theApiReturnsTheFormError(string $message): void
+    {
+        Assert::assertSame(400, $this->response->getStatusCode());
+
+        $unserialized = json_decode(json: (string) $this->response->getContent(), associative: true);
+        Assert::assertIsArray($unserialized);
+        Assert::assertSame(['errors' => true], $unserialized['meta'] ?? null);
+
+        $errors = $unserialized['data'] ?? null;
+        Assert::assertIsArray($errors);
+        Assert::assertContains($message, $errors);
     }
 
     #[When('an :arg1 error')]

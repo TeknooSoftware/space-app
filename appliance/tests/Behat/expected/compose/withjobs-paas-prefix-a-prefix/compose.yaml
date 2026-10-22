@@ -154,6 +154,20 @@ services:
                 - 5
             failure_exit_codes:
                 - 1
+    a-prefix-job-backup-backup:
+        image: 'registry.hub.docker.com/backup:alpine'
+        networks:
+            - space-client-my-company-prod-a-prefix-myproject-private
+        restart: 'no'
+        profiles:
+            - scheduled
+        x-paas-job:
+            parallel: false
+            completions: 1
+        x-paas-schedule:
+            schedule: '0 */3 * * *'
+            concurrency: allow
+            suspend: false
 networks:
     space-client-my-company-prod-a-prefix-myproject-private:
         name: space-client-my-company-prod-a-prefix-myproject-private

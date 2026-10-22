@@ -79,13 +79,14 @@ trait BrowserCrawlingTrait
         $this->isAFinalResponse();
 
         $url = $this->getPathFromRoute($routeName, $parameters);
-        $node = $crawler->filter("a[href=\"{$url}\"]");
+        // A link with a query string, like the CSRF token of a delete link, is followed with it
+        $node = $crawler->filter("a[href=\"{$url}\"], a[href^=\"{$url}?\"]");
 
         if (0 === $node->count()) {
             Assert::fail("The route '{$routeName}' with url '{$url}' was not found");
         }
 
-        $this->executeRequest('GET', $url);
+        $this->executeRequest('GET', (string) $node->attr('href'));
     }
 
     public function getCSRFToken(Crawler $crawler, ?string $formName = null, ?string $fieldName = null): ?string
@@ -311,6 +312,34 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('the 2FA disable form is shown')]
+    public function the2faDisableFormIsShown(): void
+    {
+        $url = $this->getPathFromRoute('_teknoo_common_2fa_google_disable');
+        Assert::assertCount(1, $this->createCrawler()->filter("form[action=\"{$url}\"]"));
+    }
+
+    #[Then('the 2FA disable form is not shown')]
+    public function the2faDisableFormIsNotShown(): void
+    {
+        $url = $this->getPathFromRoute('_teknoo_common_2fa_google_disable');
+        Assert::assertCount(0, $this->createCrawler()->filter("form[action=\"{$url}\"]"));
+    }
+
+    #[Then('the API key :name is listed')]
+    public function theApiKeyIsListed(string $name): void
+    {
+        $url = $this->getPathFromRoute('_teknoo_common_api_keys_delete', ['tokenName' => $name]);
+        Assert::assertCount(1, $this->createCrawler()->filter("a[href^=\"{$url}?_token=\"]"));
+    }
+
+    #[Then('the API key :name is not listed')]
+    public function theApiKeyIsNotListed(string $name): void
+    {
+        $url = $this->getPathFromRoute('_teknoo_common_api_keys_delete', ['tokenName' => $name]);
+        Assert::assertCount(0, $this->createCrawler()->filter("a[href^=\"{$url}\"]"));
+    }
+
     #[Then('it must be redirected to the TOTP code page')]
     public function itMustBeRedirectedToTheTotpCodePage(): void
     {
@@ -336,6 +365,12 @@ trait BrowserCrawlingTrait
      * An anonymous visitor bounced by the firewall lands on the login form without any `#login-error`
      * node, so the assertion below cannot require one.
      */
+    #[Then('the browser is asked to clear all the data of the site')]
+    public function theBrowserIsAskedToClearAllTheDataOfTheSite(): void
+    {
+        Assert::assertSame('"*"', $this->redirection?->headers->get('Clear-Site-Data'));
+    }
+
     #[Then('it is redirected to the login page')]
     public function itIsRedirectedToTheLoginPage(): void
     {

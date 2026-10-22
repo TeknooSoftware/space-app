@@ -96,8 +96,8 @@
                 <span class="mdi mdi-card-search"></span>
             </a>
             <a class="text-primary"
-               onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
-               href="{{ path('space_job_delete', {'id':object.id}) }}"
+               data-confirm="{{ 'teknoo.space.text.confirm_delete'|trans }}"
+               href="{{ path('space_job_delete', {'id':object.id, '_token': csrf_token('teknoo_space_delete')}) }}"
                title="{{ 'teknoo.space.action.delete_job'|trans }}">
                 <span class="mdi mdi-trash-can"></span>
             </a>

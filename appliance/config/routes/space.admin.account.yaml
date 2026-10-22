@@ -109,9 +109,10 @@ space_admin_account_clusters_new:
 
 space_admin_account_clusters_delete:
     path: '/admin/account/{accountId}/cluster/{id}/delete'
-    methods: ['GET']
+    methods: ['GET', 'POST', 'DELETE']
     defaults:
         _controller: 'teknoo.space.endpoint.account_cluster.delete'
+        csrfTokenId: 'teknoo_space_delete'
         accountLoader: '@Teknoo\East\Paas\Loader\AccountLoader'
         allowAccountSelection: true
         deleter: '@teknoo.space.deleting.account_cluster'

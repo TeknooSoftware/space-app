@@ -28,10 +28,12 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Count;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Form\Type\AccountType as EastPaaSAccountType;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\AccountData\AccountDataType;
@@ -41,7 +43,9 @@ use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
 use function array_key_exists;
+use function in_array;
 use function is_array;
+use function is_iterable;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -71,6 +75,25 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
                 [
                     'canUpdateSubscription' => true,
                 ]
+            );
+
+            $builder->addEventListener(
+                FormEvents::POST_SUBMIT,
+                static function (FormEvent $event): void {
+                    $usersField = $event->getForm()->get('account')->get('users');
+                    $users = $usersField->getData();
+                    if (!is_iterable($users)) {
+                        return;
+                    }
+
+                    foreach ($users as $user) {
+                        if ($user instanceof User && in_array('ROLE_ADMIN', (array) $user->getRoles(), true)) {
+                            $usersField->addError(new FormError('teknoo.space.error.space_account.admin_user'));
+
+                            return;
+                        }
+                    }
+                },
             );
         }
 

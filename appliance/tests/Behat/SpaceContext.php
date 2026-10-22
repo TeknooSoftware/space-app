@@ -161,6 +161,11 @@ class SpaceContext implements Context
 
     private bool $hasBeenRedirected = false;
 
+    /**
+     * First response of the last chain of redirections: the page it redirects to replaces its headers
+     */
+    private ?Response $redirection = null;
+
     private bool $isApiCall = false;
 
     private ?string $formName = null;
@@ -292,6 +297,7 @@ class SpaceContext implements Context
         $this->repositories = [];
         $this->objects = [];
         $this->removedObjects = [];
+        $this->savedByTheLastRequest = [];
         $this->cookies = [];
         $this->clientIp = '127.0.0.1';
         $this->currentUrl = null;
@@ -301,9 +307,12 @@ class SpaceContext implements Context
         $this->ingressProvider = '';
         $this->defaultsMode = '';
         $this->hasBeenRedirected = false;
+        $this->redirection = null;
         $this->formName = null;
         $this->originalProjectName = null;
         $this->paasFile = null;
+        $this->composeExpectedDirectory = null;
+        $this->composeNetworkInternal = false;
         $this->slowBuilder = false;
         $this->useHnc = false;
         $this->hncSuffix = '';
@@ -598,6 +607,24 @@ class SpaceContext implements Context
         $this->quotasMode = '';
         $this->jobsEnabled = true;
         $this->sharedVolumesEnabled = true;
+    }
+
+    /**
+     * Test API for the extensions, not a step: a context of an extension uses a paas file of its own fixtures
+     * through `SpaceContext::current()`, with the flags selecting the manifests expected from the core. The job
+     * workspace agent holds the paas file by reference, so this method can be called before or after it.
+     */
+    public function useProjectPaasFile(
+        string $paasFile,
+        bool $jobsEnabled = false,
+        bool $sharedVolumesEnabled = false,
+    ): void {
+        Assert::assertFileExists($paasFile);
+
+        $this->paasFile = $paasFile;
+        $this->quotasMode = '';
+        $this->jobsEnabled = $jobsEnabled;
+        $this->sharedVolumesEnabled = $sharedVolumesEnabled;
     }
 
     #[Given('the project has a complete paas file with jobs with wrong version')]

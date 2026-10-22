@@ -28,10 +28,12 @@ namespace Teknoo\Space\Tests\Unit\Infrastructures\Symfony\Form\Type\Account;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Teknoo\East\Common\Object\User;
 use Teknoo\Space\Infrastructures\Symfony\Form\Type\Account\AdminSpaceAccountType;
 use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
@@ -128,5 +130,53 @@ class AdminSpaceAccountTypeTest extends TestCase
         $event = new FormEvent($form, ['environments' => 'notArray']);
         $listener($event);
         $this->assertSame(['environments' => []], $event->getData());
+    }
+
+    public function testAnAdministratorOfSpaceCanNotBeAUserOfTheAccount(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $this->adminSpaceAccountType->buildForm(
+            $builder,
+            [
+                'api' => null,
+                'enableEnvManagement' => null,
+                'doctrine_type' => 'mongodb',
+                'namespaceIsReadonly' => false,
+            ],
+        );
+
+        $this->assertCount(1, $listeners[FormEvents::POST_SUBMIT]);
+        $listener = $listeners[FormEvents::POST_SUBMIT][0];
+
+        $admin = new User()->setRoles(['ROLE_ADMIN']);
+        $user = new User()->setRoles(['ROLE_USER']);
+
+        foreach ([[[$user, $admin], 1], [[$user], 0], ['notIterable', 0]] as [$users, $errorsCount]) {
+            $usersField = $this->createMock(FormInterface::class);
+            $usersField->method('getData')->willReturn($users);
+            $usersField->expects($this->exactly($errorsCount))
+                ->method('addError')
+                ->with(new FormError('teknoo.space.error.space_account.admin_user'))
+                ->willReturnSelf();
+            $accountField = $this->createStub(FormInterface::class);
+            $accountField->method('get')->willReturn($usersField);
+
+            $form = $this->createMock(FormInterface::class);
+            $form->expects($this->once())->method('get')->with('account')->willReturn($accountField);
+            $form->expects($this->never())->method('addError');
+
+            $listener(new FormEvent($form, null));
+        }
     }
 }

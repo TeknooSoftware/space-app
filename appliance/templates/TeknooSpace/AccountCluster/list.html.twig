@@ -107,8 +107,8 @@
                 <span class="mdi mdi-pencil"></span>
             </a>
             <a class="text-primary"
-               onclick="confirm('{{ 'teknoo.space.text.confirm_delete'|trans }}');"
-               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_delete', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_delete', {'id':object.id}) }}{% endif %}"
+               data-confirm="{{ 'teknoo.space.text.confirm_delete'|trans }}"
+               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_delete', {'accountId': account.id, 'id':object.id, '_token': csrf_token('teknoo_space_delete')}) }}{% else %}{{ path('space_account_clusters_delete', {'id':object.id, '_token': csrf_token('teknoo_space_delete')}) }}{% endif %}"
                title="{{ 'teknoo.space.action.delete_account_cluster'|trans }}">
                 <span class="mdi mdi-trash-can"></span>
             </a>

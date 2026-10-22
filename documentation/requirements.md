@@ -182,7 +182,7 @@ post_max_size = 100M
 
 #### MongoDB
 
-**Version:** MongoDB 5 or higher — the shipped image defaults to 7 (`MONGO_VERSION`)
+**Version:** MongoDB 5 or higher — the shipped image defaults to 9 (`MONGO_VERSION`), as in production
 
 **Required Features:**
 

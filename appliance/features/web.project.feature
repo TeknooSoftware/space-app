@@ -318,6 +318,14 @@ Feature: Web interface to manage account's projects
     Then the user obtains a project list:
       | Name |
 
+  Scenario: From the UI, delete a project without the CSRF token and get an error
+    Given a standard project "my project"
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    And It goes to projects list page
+    When It goes to delete the project "my project" of "My Company" without the CSRF token
+    Then the user must have a 403 error
+    And the project is not deleted
+
   Scenario: From the UI, delete a non-owned project and get an error
     Given a standard project "my project"
     And an account for "My Firm" with the account namespace "my-firm"

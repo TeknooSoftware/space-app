@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace Teknoo\Space\App\Config;
 
 use Psr\Container\ContainerInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\CheckCsrfTokenInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormHandlingInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\FormProcessingInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ListObjectsAccessControlInterface;
@@ -1042,6 +1043,8 @@ return [
             diGet(RenderError::class),
             diGet(ObjectAccessControlInterface::class),
             diGet('teknoo.east.common.get_default_error_template'),
+            [],
+            diGet(CheckCsrfTokenInterface::class),
         ),
 
     AccountClusterList::class => create()
