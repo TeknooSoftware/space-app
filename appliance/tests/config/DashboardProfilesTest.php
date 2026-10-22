@@ -141,6 +141,7 @@ class DashboardProfilesTest extends TestCase
         $this->assertSame('c/main', $profile->renderEntryPath(null));
         $this->assertSame('c/main/workloads?namespace=space-ns', $profile->renderEntryPath('space-ns'));
         $this->assertSame('foo', $profile->resolvePath('foo'));
+        $this->assertSame('{}', $profile->getLocalResponse('clusters/main/me'));
 
         $namespaced = $profile->renderHeadSnippet('https://space.test/frame/', 'space-ns');
         $this->assertStringContainsString('c.allowedNamespaces=[n];c.defaultNamespace=n;', $namespaced);
@@ -168,5 +169,6 @@ class DashboardProfilesTest extends TestCase
             $profile->renderHeadSnippet('https://space.test/frame/', null),
         );
         $this->assertSame('assets/config/config.json', $profile->resolvePath('config/config.json'));
+        $this->assertNull($profile->getLocalResponse('clusters/main/me'));
     }
 }

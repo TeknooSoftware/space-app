@@ -131,6 +131,7 @@ class DashboardFrameTest extends TestCase
             headSnippet: '<script>all();</script>',
             namespacedHeadSnippet: '<script>ns(\'{namespace}\');</script>',
             rewriteBasePath: true,
+            localResponses: ['clusters/main/me' => '{}'],
         );
     }
 
@@ -501,6 +502,35 @@ class DashboardFrameTest extends TestCase
         );
 
         $this->assertSame(200, $this->acceptedResponse?->getStatusCode());
+    }
+
+    public function testAnswerALocalResponseWithoutReachingTheDashboard(): void
+    {
+        $this->relay(
+            serverRequest: $this->createServerRequest(path: 'clusters/main/me'),
+            dashboardFrame: $this->createNeverCalledDashboardFrame(),
+        );
+
+        $this->assertSame(200, $this->acceptedResponse?->getStatusCode());
+        $this->assertSame('application/json', $this->acceptedResponse->getHeaderLine('content-type'));
+        $this->assertSame('no-store', $this->acceptedResponse->getHeaderLine('cache-control'));
+        $this->assertSame('{}', (string) $this->acceptedResponse->getBody());
+    }
+
+    public function testRelayAMutatingRequestOnThePathOfALocalResponse(): void
+    {
+        $this->dashboardAnswers(body: '{}', headers: ['content-type' => 'application/json']);
+
+        $this->relay(
+            $this->createServerRequest(
+                path: 'clusters/main/me',
+                method: 'POST',
+                headers: ['Sec-Fetch-Site' => 'same-origin'],
+            ),
+        );
+
+        $this->assertSame('POST', $this->sentRequest['method'] ?? null);
+        $this->assertSame('http://headlamp.test/__headlamp/clusters/main/me', $this->sentRequest['uri'] ?? null);
     }
 
     /**

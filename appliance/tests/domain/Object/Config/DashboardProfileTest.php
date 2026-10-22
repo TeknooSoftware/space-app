@@ -55,6 +55,7 @@ class DashboardProfileTest extends TestCase
             namespacedHeadSnippet: '<base href="{baseHref}"><script>var ns = \'{namespace}\';</script>',
             rewriteBasePath: true,
             pathAliases: ['config/config.json' => 'assets/config/config.json'],
+            localResponses: ['clusters/main/me' => '{}'],
         );
     }
 
@@ -68,6 +69,7 @@ class DashboardProfileTest extends TestCase
         $this->assertSame('', $profile->renderHeadSnippet('https://space.test/', null));
         $this->assertFalse($profile->rewriteBasePath);
         $this->assertSame([], $profile->renderRequestHeaders('a-token'));
+        $this->assertNull($profile->getLocalResponse('clusters/main/me'));
     }
 
     public function testRenderRequestHeaders(): void
@@ -142,5 +144,13 @@ class DashboardProfileTest extends TestCase
 
         $this->assertSame('assets/config/config.json', $profile->resolvePath('config/config.json'));
         $this->assertSame('api/v1/pods', $profile->resolvePath('api/v1/pods'));
+    }
+
+    public function testGetLocalResponse(): void
+    {
+        $profile = $this->createProfile();
+
+        $this->assertSame('{}', $profile->getLocalResponse('clusters/main/me'));
+        $this->assertNull($profile->getLocalResponse('clusters/main/api/v1/pods'));
     }
 }

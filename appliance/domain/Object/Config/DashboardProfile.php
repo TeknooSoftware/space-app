@@ -46,7 +46,9 @@ use const ENT_QUOTES;
  *   (`{baseHref}`: absolute URL of the frame, `{namespace}`);
  * - `rewriteBasePath`: the dashboard is served under a base path (the path of its address), replaced in the pages
  *   relayed by the path of the frame;
- * - `pathAliases`: paths requested by the browser, relayed to another path of the dashboard.
+ * - `pathAliases`: paths requested by the browser, relayed to another path of the dashboard;
+ * - `localResponses`: paths requested by the browser with `GET`, answered by Space itself with a JSON body, without
+ *   reaching the dashboard (endpoints the dashboard can not serve with the credential injected by Space).
  *
  * The namespace of the environment on its cluster is always an RFC 1123 label, checked before any substitution, so a
  * template can use it in an URL, in HTML or in a JavaScript string.
@@ -63,6 +65,7 @@ class DashboardProfile
     /**
      * @param array<string, string> $requestHeaders
      * @param array<string, string> $pathAliases
+     * @param array<string, string> $localResponses
      */
     public function __construct(
         public readonly string $name,
@@ -73,6 +76,7 @@ class DashboardProfile
         public readonly string $namespacedHeadSnippet = '',
         public readonly bool $rewriteBasePath = false,
         public readonly array $pathAliases = [],
+        public readonly array $localResponses = [],
     ) {
     }
 
@@ -127,5 +131,10 @@ class DashboardProfile
     public function resolvePath(string $path): string
     {
         return $this->pathAliases[$path] ?? $path;
+    }
+
+    public function getLocalResponse(string $path): ?string
+    {
+        return $this->localResponses[$path] ?? null;
     }
 }

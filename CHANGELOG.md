@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.0-beta2] - 2026-10-22
+### Beta Release
+
+#### Fixes
+- Headlamp showed a `401` in the console of the browser on `/me`: its backend reads the user from the expiry claim
+  of the token, which the service-account tokens do not carry. The `headlamp` profile answers it itself (new
+  dashboard profile option `localResponses`), Headlamp still reads the user from a `SelfSubjectReview`
+
 ## [2.6.0-beta1] - 2026-10-09
 ### Beta Release
 
