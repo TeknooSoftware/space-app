@@ -4,9 +4,16 @@
 ### Beta Release
 
 #### Fixes
-- Headlamp showed a `401` in the console of the browser on `/me`: its backend reads the user from the expiry claim
-  of the token, which the service-account tokens do not carry. The `headlamp` profile answers it itself (new
-  dashboard profile option `localResponses`), Headlamp still reads the user from a `SelfSubjectReview`
+- Headlamp logged a `401` on `/me`: its backend reads the user from the expiry claim of the token, absent from the
+  service-account tokens. Space answers `{}` itself and Headlamp reads the user from a `SelfSubjectReview`, as before
+
+#### Evolutions
+- New dashboard profile option `localResponses`: `GET` paths answered by Space with a JSON body, without reaching the
+  dashboard
+
+#### Docs
+- The `404` logged by Headlamp on `apis/<group>/<version>` are its probes of the API versions the cluster does not
+  serve, with or without Space
 
 ## [2.6.0-beta1] - 2026-10-09
 ### Beta Release
