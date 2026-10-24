@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\MockObject\Stub;
@@ -134,6 +135,7 @@ class AccountClusterDeleteTest extends TestCase
         );
     }
 
+    #[AllowMockObjectsWithoutExpectations]
     public function testTheCsrfTokenIsCheckedOnceBeforeTheJumpOfTheAccountSelection(): void
     {
         $positions = [];
