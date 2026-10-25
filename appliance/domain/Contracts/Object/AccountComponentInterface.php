@@ -37,7 +37,7 @@ use Teknoo\Recipe\Promise\PromiseInterface;
 interface AccountComponentInterface
 {
     /**
-     * @param PromiseInterface<bool, bool> $promise
+     * @param \Teknoo\Recipe\Promise\PromiseInterface<void, -1|0|1> $promise
      */
     public function verifyAccessToUser(User $user, PromiseInterface $promise): AccountComponentInterface;
 }

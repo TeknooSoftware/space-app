@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c09cabf77a0c245f4e2bdc111a7c1bc3",
+    "content-hash": "643b247c9223bf179587441050a6ab51",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11479,16 +11479,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.11.3",
+            "version": "5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "7fab593df24dfb28b81b2f3f06fc92cac47a310e"
+                "reference": "0a9189c6eb9f8cfb3927f047d3700a66fe1f59fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/7fab593df24dfb28b81b2f3f06fc92cac47a310e",
-                "reference": "7fab593df24dfb28b81b2f3f06fc92cac47a310e",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/0a9189c6eb9f8cfb3927f047d3700a66fe1f59fb",
+                "reference": "0a9189c6eb9f8cfb3927f047d3700a66fe1f59fb",
                 "shasum": ""
             },
             "require": {
@@ -11498,11 +11498,11 @@
                 "php": "^8.4",
                 "php-di/php-di": "^7.1.1",
                 "psr/http-client": "^1.0.3",
-                "teknoo/east-common": "^4.8",
+                "teknoo/east-common": "^4.8.1",
                 "teknoo/east-foundation": "^9.4",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.3",
-                "teknoo/states": "^7.1.12"
+                "teknoo/states": "^7.1.13"
             },
             "require-dev": {
                 "behat/behat": "^4.0",
@@ -11636,20 +11636,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-23T09:26:19+00:00"
+            "time": "2026-10-25T18:20:42+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.11.3",
+            "version": "5.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "6f1aed79362a47c3ed928ed91ca0b68a0d5e2c10"
+                "reference": "ee893fa563c66fb8e13008434146ef84dc90214a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/6f1aed79362a47c3ed928ed91ca0b68a0d5e2c10",
-                "reference": "6f1aed79362a47c3ed928ed91ca0b68a0d5e2c10",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/ee893fa563c66fb8e13008434146ef84dc90214a",
+                "reference": "ee893fa563c66fb8e13008434146ef84dc90214a",
                 "shasum": ""
             },
             "require": {
@@ -11687,11 +11687,11 @@
                 "teknoo/bridge-phpdi-symfony": "^7.2",
                 "teknoo/east-common-symfony": "^4.8",
                 "teknoo/east-foundation-symfony": "^9.4",
-                "teknoo/east-paas": "^5.11.3",
+                "teknoo/east-paas": "^5.11.4",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.1.1",
                 "teknoo/recipe": "^7.3",
-                "teknoo/states": "^7.1.12"
+                "teknoo/states": "^7.1.13"
             },
             "require-dev": {
                 "roave/security-advisories": "dev-latest"
@@ -11749,7 +11749,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-23T09:38:08+00:00"
+            "time": "2026-10-25T18:22:17+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -11994,16 +11994,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "7.1.12",
+            "version": "7.1.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "8cefa588bc0e42b1709ef9f73ebefe0807273c06"
+                "reference": "3a886047a1e460c54315c1bb0bb269385aac80a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/8cefa588bc0e42b1709ef9f73ebefe0807273c06",
-                "reference": "8cefa588bc0e42b1709ef9f73ebefe0807273c06",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/3a886047a1e460c54315c1bb0bb269385aac80a0",
+                "reference": "3a886047a1e460c54315c1bb0bb269385aac80a0",
                 "shasum": ""
             },
             "require": {
@@ -12015,7 +12015,7 @@
                 "doctrine/orm": "^3.6.2",
                 "nikic/php-parser": "^5.7",
                 "phpstan/phpdoc-parser": "^2.3.2",
-                "phpstan/phpstan": "^2.3.0",
+                "phpstan/phpstan": "^2.3.2",
                 "phpunit/phpunit": "^13.2",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
@@ -12077,7 +12077,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-06T07:59:38+00:00"
+            "time": "2026-10-25T11:17:36+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -13058,20 +13058,21 @@
         },
         {
             "name": "masterminds/html5",
-            "version": "2.11.0",
+            "version": "2.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "a1e7a2f88ee13635d86fc61cfbdf2306a76ddfc7"
+                "reference": "15e16663bd6f512352209d0e3a789c0a691c0d9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/a1e7a2f88ee13635d86fc61cfbdf2306a76ddfc7",
-                "reference": "a1e7a2f88ee13635d86fc61cfbdf2306a76ddfc7",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/15e16663bd6f512352209d0e3a789c0a691c0d9b",
+                "reference": "15e16663bd6f512352209d0e3a789c0a691c0d9b",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
+                "ext-mbstring": "*",
                 "php": ">=7.4"
             },
             "require-dev": {
@@ -13119,9 +13120,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.11.0"
+                "source": "https://github.com/Masterminds/html5-php/tree/2.12.0"
             },
-            "time": "2026-08-18T06:18:41+00:00"
+            "time": "2026-10-25T08:57:58+00:00"
         },
         {
             "name": "myclabs/deep-copy",
