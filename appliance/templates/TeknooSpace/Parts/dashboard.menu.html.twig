@@ -81,20 +81,6 @@
                         </ul>
                     </div>
                 </li>
-                <li class="sidebar-dropdown">
-                    <a href="javascript:void(0)">
-                        <i class="ti ti-file-info me-2"></i>{{ 'teknoo.space.text.admin_cms'|trans }}
-                    </a>
-                    <div class="sidebar-submenu">
-                        <ul>
-                            <li>
-                                <a href="{{ path('_teknoo_common_admin_media_list') }}">
-                                    {{ 'teknoo.space.action.admin_media'|trans }}
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
             {% elseif is_granted('ROLE_USER') %}
                 <li>
                     <a href="{{ path('space_project_list') }}">

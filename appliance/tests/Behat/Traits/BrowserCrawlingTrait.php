@@ -32,6 +32,8 @@ use PHPUnit\Framework\Assert;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingExceptionInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
@@ -41,6 +43,7 @@ use Teknoo\East\Paas\Recipe\Step\Worker\CloneRepository;
 use function array_map;
 use function array_shift;
 use function explode;
+use function parse_url;
 use function sort;
 use function str_starts_with;
 use function trim;
@@ -528,6 +531,32 @@ trait BrowserCrawlingTrait
         Assert::assertNotEmpty(
             trim((string) $node->getNode(0)?->textContent),
         );
+    }
+
+    #[Then('the page has no link to the route :route')]
+    public function thePageHasNoLinkToTheRoute(string $route): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertInstanceOf(RouterInterface::class, $this->urlGenerator);
+
+        $crawler = $this->createCrawler();
+        foreach (['a[href]' => 'href', '[formaction]' => 'formaction'] as $selector => $attribute) {
+            foreach ($crawler->filter($selector) as $node) {
+                $path = (string) parse_url((string) $node->getAttribute($attribute), PHP_URL_PATH);
+                if (!str_starts_with($path, '/')) {
+                    continue;
+                }
+
+                try {
+                    $match = $this->urlGenerator->match($path);
+                } catch (RoutingExceptionInterface) {
+                    continue;
+                }
+
+                Assert::assertNotSame($route, $match['_route'] ?? null, "The page has a link to the route $route");
+            }
+        }
     }
 
     #[Then('the form shows the error :message')]

@@ -362,41 +362,6 @@
     </div>
 {% endblock %}
 
-{% block _admin_space_account_environments_entry_widget %}
-    <div class="col-12 subform">
-        <div class="row">
-            {{ form_row(form.accountEnvironmentId) }}
-            {{ form_row(form.clusterName, {"colClass": "col-5"}) }}
-            {{ form_row(form.envName, {"colClass": "col-5"}) }}
-            <div class="col-2 align-self-center">
-                <div class="form-group">
-                    {% if form.vars.data.envName is defined
-                          and form.parent.parent.vars.data.account.id is defined
-                          and form.vars.data.envName is not empty %}
-                    <a href="{{ path('space_admin_account_environment_reinstall', {'id': form.parent.parent.vars.data.account.id, 'envName': form.vars.data.envName, 'clusterName': form.vars.data.clusterName}) }}"
-                       class="ml-1 btn btn-icon btn-small disableable-on-update"
-                       aria-description="{{ 'teknoo.space.action.environment.reinstall'|trans }}"
-                       data-bs-toggle="tooltip"
-                       data-bs-placement="bottom"
-                       data-disabled-message="{{ 'teknoo.space.text.environment.reinstall.need_saving'|trans }}"
-                       title="{{ 'teknoo.space.action.environment.reinstall'|trans }}">
-                        <i class="mdi mdi-refresh"></i>
-                    </a>
-                    {% endif %}
-                    <button type="button"
-                            class="btn btn-icon action-remove btn-small"
-                            aria-description="{{ 'teknoo.space.action.delete_item'|trans }}"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="bottom"
-                            title="{{ 'teknoo.space.action.delete_item'|trans }}">
-                        <i class="mdi mdi-trash-can "></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
 {% block _space_account_environments_entry_widget %}
     <div class="col-12 subform">
         <div class="row">
