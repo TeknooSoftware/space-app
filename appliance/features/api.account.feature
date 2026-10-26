@@ -53,6 +53,27 @@ Feature: API endpoints to manage account's settings
     And the account name is now "Great Company"
     And no Kubernetes manifests have been deleted
 
+  Scenario: From the API, update my account settings, a subscription plan sent in the request is ignored
+    Given a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to update account's settings:
+      | field                                   | value          |
+      | subscriptionPlanId                      | unknown-plan   |
+      | space_account.account.name              | Great Company  |
+      | space_account.accountData.legalName     | Gr Company SAS |
+      | space_account.accountData.streetAddress | 123 street     |
+      | space_account.accountData.zipCode       | 14000          |
+      | space_account.accountData.cityName      | Caen           |
+      | space_account.accountData.countryName   | France         |
+      | space_account.accountData.vatNumber     | FR0102030405   |
+    And the account name is now "Great Company"
+    When the API is called to get account's status
+    Then get a JSON response
+    And the subscription plan is "Test Plan 1"
+    And no Kubernetes manifests have been deleted
+
   Scenario: From the API, get my account status, when all is green
     Given a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "2" standard projects "project X" and a prefix "a-prefix"
