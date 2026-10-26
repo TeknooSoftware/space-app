@@ -25,20 +25,21 @@ space_api_v1_admin_job_new_pending:
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
 
+# The restart creates a new job on the project from the body, as job/new (the web restart opens the form of job/new)
 space_api_v1_admin_job_restart:
     path: '/account/{accountId}/project/{projectId}/job/{jobId}/restart'
     methods: ['POST']
     schemes: ['https']
     defaults:
-        _controller: 'teknoo.space.endpoint.job.restart'
+        _controller: 'teknoo.space.endpoint.job.new'
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formActionRoute: 'space_api_v1_admin_job_new'
         formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\ApiNewJobType'
         objectClass: 'Teknoo\Space\Object\DTO\NewJob'
         projectKey: 'Teknoo\East\Paas\Object\Project'
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
+        template: '@@TeknooSpace/api/AdminJob/new.json.twig'
+        clusterCatalog: '@teknoo.space.clusters_catalog'
 
 space_api_v1_admin_job_list:
     path: '/account/{accountId}/project/{projectId}/jobs'

@@ -14,6 +14,10 @@
 - **Breaking**: a refusal of the firewall of the API (`403`, rules of `access_control`) has the JSON error envelope
   (`meta` and `data`), as the other errors of the API, not an HTML body
 
+**Fixes**
+- The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
+  answered a `500`: it creates a new job on the project from the body, as `job/new`
+
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
   promise.

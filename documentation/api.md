@@ -286,6 +286,8 @@ its unchanged `message`. The `message` is most of the time the class name of the
 
 - `POST /api/v1/project/{projectId}/job/{jobId}/restart`
 
+Creates a new job on the project from the body, as `job/new` (same fields).
+
 **Delete Job**
 
 - `POST /api/v1/project/{projectId}/job/{id}/delete`
@@ -458,6 +460,8 @@ without `accountEnvironmentId` until the worker has provisioned it.
 **Restart Job**
 
 - `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/{jobId}/restart`
+
+Creates a new job on the project from the body, as `job/new` (same fields).
 
 **Delete Job**
 

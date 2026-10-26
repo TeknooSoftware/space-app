@@ -48,6 +48,20 @@ Feature: API admin endpoints to create new job and deploy project
     And there are "0" jobs in the memory
     And no Kubernetes manifests have been created
 
+  Scenario: From the API, as Admin, restart a job of a project is refused
+    Given "1" jobs for the project
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to restart a the job as admin:
+      | field                     | value |
+      | new_job.envName           | prod  |
+      | new_job.variables.0.name  | FOO   |
+      | new_job.variables.0.value | BAR   |
+    Then get a JSON response
+    But an 403 error
+    And there are "1" jobs in the memory
+    And no Kubernetes manifests have been created
+
   Scenario: From the API, as Admin, follow a pending job of a project is refused
     Given the platform is booted
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
