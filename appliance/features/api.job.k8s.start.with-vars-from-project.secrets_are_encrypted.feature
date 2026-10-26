@@ -16,7 +16,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
   Background:
     Given a Space app instance
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variable, prefix, a valid paas file, via a request with a form url encoded body
+  Scenario: From the API, execute a job from a project, with project's encrypted variable, prefix, a valid paas file, via a request with a form url encoded body
     Given encryption of persisted variables in the database
     And a kubernetes client
     And a job workspace agent
@@ -54,7 +54,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's two encrypted variables, prefix, a valid paas file, via a request with a form url encoded body
+  Scenario: From the API, execute a job from a project, with project's two encrypted variables, prefix, a valid paas file, via a request with a form url encoded body
     Given encryption of persisted variables in the database
     And a kubernetes client
     And a job workspace agent
@@ -94,7 +94,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
       | bbb | SERVER_SECRET | 1      | ThisIsUnsafe            | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, a valid paas file, encrypted messages between workers, via a request with a form url encoded body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, a valid paas file, encrypted messages between workers, via a request with a form url encoded body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -133,7 +133,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, re-execute a job from a project, with project's encrypted variables, prefix, a valid paas file, encrypted messages between workers, via a request with a form url encoded body
+  Scenario: From the API, re-execute a job from a project, with project's encrypted variables, prefix, a valid paas file, encrypted messages between workers, via a request with a form url encoded body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -173,7 +173,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, a valid paas file, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, a valid paas file, via a request with a json body
     Given encryption of persisted variables in the database
     And a kubernetes client
     And a job workspace agent
@@ -211,7 +211,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, a valid paas file, encrypted messages between workers, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, a valid paas file, encrypted messages between workers, via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -250,7 +250,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, defined quota, without defined resources, a valid paas file, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, defined quota, without defined resources, a valid paas file, via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -290,7 +290,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, defined quota, with partial defined resources, a valid paas file, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, defined quota, with partial defined resources, a valid paas file, via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -330,7 +330,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, defined quota, with full defined resources, a valid paas file, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, defined quota, with full defined resources, a valid paas file, via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -370,7 +370,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, defined quota, with required resources exceeded quota, a valid paas file, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, defined quota, with required resources exceeded quota, a valid paas file, via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -410,7 +410,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, prefix, a valid paas file with default generic values for variables and all variables are not filled via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, prefix, a valid paas file with default generic values for variables and all variables are not filled via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -449,7 +449,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | id  | name          | secret | value                   | environment |
       | aaa | SERVER_SCRIPT | 1      | /opt/app/src/server.php | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, a valid paas file, with new variables to persist after run into the project, via a request with a form url encoded body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, a valid paas file, with new variables to persist after run into the project, via a request with a form url encoded body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client
@@ -501,7 +501,7 @@ Feature: API endpoints to create new job and deploy project with variables from 
       | x   | hello         | 1      | world                   | prod        |
       | x   | world         | 0      | hello                   | prod        |
 
-  Scenario: From the API, as Admin, execute a job from a project, with project's encrypted variables, a valid paas file, with new variables to persist after run into the project, via a request with a json body
+  Scenario: From the API, execute a job from a project, with project's encrypted variables, a valid paas file, with new variables to persist after run into the project, via a request with a json body
     Given encryption capacities between servers and agents
     And encryption of persisted variables in the database
     And a kubernetes client

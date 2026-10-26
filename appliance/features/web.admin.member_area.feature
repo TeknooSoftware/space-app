@@ -67,3 +67,15 @@ Feature: Web interface of the members of an account, refused to the administrato
     And it must be redirected to the TOTP code page
     When it opens the page of the route "space_project_list"
     Then it must be redirected to the TOTP code page
+
+  Scenario Outline: From the UI, as Admin, the pages of the anonymous visitors are refused once signed in
+    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the user sign in with "admin@teknoo.space" and the password "Test2@Test"
+    And it is redirected to the dashboard
+    When it opens the page of the route "<route>"
+    Then the user must have a 403 error
+
+    Examples:
+      | route                        |
+      | space_subscription           |
+      | _teknoo_common_user_recovery |
