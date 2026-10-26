@@ -33,20 +33,22 @@ space_admin_account_environment_reinstall:
 
 space_admin_account_registry_reinstall:
     path: '/admin/account/{id}/registry/reinstall'
-    methods: ['GET']
+    methods: ['POST']
     defaults:
         _controller: 'teknoo.space.endpoint.admin.account.task'
         taskClass: 'Teknoo\Space\Object\DTO\Task\ReinstallRegistryTask'
+        csrfTokenId: 'teknoo_space_admin_account_task'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"
 
 space_admin_account_refresh_quota:
     path: '/admin/account/{id}/quota/refresh'
-    methods: ['GET']
+    methods: ['POST']
     defaults:
         _controller: 'teknoo.space.endpoint.admin.account.task'
         taskClass: 'Teknoo\Space\Object\DTO\Task\RefreshQuotaTask'
+        csrfTokenId: 'teknoo_space_admin_account_task'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
         route: '_teknoo_paas_admin_account_edit'
         cleanHtml: "%teknoo.east.paas.admin.rendering.clean_html%"

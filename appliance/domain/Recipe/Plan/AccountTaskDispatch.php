@@ -26,6 +26,7 @@ namespace Teknoo\Space\Recipe\Plan;
 
 use Stringable;
 use Teknoo\East\Common\Contracts\Loader\LoaderInterface;
+use Teknoo\East\Common\Contracts\Recipe\Step\CheckCsrfTokenInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
@@ -76,6 +77,7 @@ class AccountTaskDispatch implements EditablePlanInterface
         private readonly Render $render,
         private readonly RenderError $renderError,
         private readonly string|Stringable $defaultErrorTemplate,
+        private readonly ?CheckCsrfTokenInterface $checkCsrfToken = null,
     ) {
         $this->fill($recipe);
     }
@@ -99,6 +101,11 @@ class AccountTaskDispatch implements EditablePlanInterface
                 name: 'template',
             )
         );
+
+        // Checked only when the route gives a `csrfTokenId` (web routes): the API, authenticated by JWT, has none
+        if (null !== $this->checkCsrfToken) {
+            $recipe = $recipe->cook($this->checkCsrfToken, CheckCsrfTokenInterface::class, [], 05);
+        }
 
         $recipe = $recipe->cook($this->loadObject, LoadObject::class, [], 10);
 

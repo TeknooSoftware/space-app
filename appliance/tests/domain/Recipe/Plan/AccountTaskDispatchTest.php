@@ -26,6 +26,7 @@ namespace Teknoo\Space\Tests\Unit\Recipe\Plan;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Teknoo\East\Common\Contracts\Recipe\Step\CheckCsrfTokenInterface;
 use Teknoo\East\Common\Contracts\Recipe\Step\ObjectAccessControlInterface;
 use Teknoo\East\Common\Recipe\Step\JumpIf;
 use Teknoo\East\Common\Recipe\Step\LoadObject;
@@ -92,5 +93,59 @@ class AccountTaskDispatchTest extends TestCase
                 $this->createStub(ChefInterface::class),
             )
         );
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function trainAndListPositions(?CheckCsrfTokenInterface $checkCsrfToken): array
+    {
+        $positions = [];
+        $recipe = $this->createStub(RecipeInterface::class);
+        $recipe->method('require')->willReturnSelf();
+        $recipe->method('onError')->willReturnSelf();
+        $recipe->method('cook')->willReturnCallback(
+            function (mixed $action, string $name, array $with, ?int $position) use (&$positions, $recipe) {
+                $positions[$name] = $position;
+
+                return $recipe;
+            }
+        );
+
+        $plan = new AccountTaskDispatch(
+            recipe: $recipe,
+            loadObject: $this->createStub(LoadObject::class),
+            objectAccessControl: $this->createStub(ObjectAccessControlInterface::class),
+            loadHistory: $this->createStub(LoadHistory::class),
+            prepareAccountTask: $this->createStub(PrepareAccountTask::class),
+            callNewTask: $this->createStub(CallNewTaskInterface::class),
+            addTaskToHistory: $this->createStub(AddTaskToHistory::class),
+            prepareRedirection: $this->createStub(PrepareRedirection::class),
+            jumpIf: $this->createStub(JumpIf::class),
+            redirectClient: $this->createStub(SetRedirectClientAtEnd::class),
+            render: $this->createStub(Render::class),
+            renderError: $this->createStub(RenderError::class),
+            defaultErrorTemplate: 'foo',
+            checkCsrfToken: $checkCsrfToken,
+        );
+        $plan->train($this->createStub(ChefInterface::class));
+
+        return $positions;
+    }
+
+    public function testTheCsrfTokenIsCheckedBeforeTheLoadingOfTheAccount(): void
+    {
+        $positions = $this->trainAndListPositions($this->createStub(CheckCsrfTokenInterface::class));
+
+        $this->assertSame(5, $positions[CheckCsrfTokenInterface::class] ?? null);
+        $this->assertSame(10, $positions[LoadObject::class] ?? null);
+    }
+
+    public function testWithoutCsrfStepTheTokenIsNotChecked(): void
+    {
+        $positions = $this->trainAndListPositions(null);
+
+        $this->assertArrayNotHasKey(CheckCsrfTokenInterface::class, $positions);
+        $this->assertSame(10, $positions[LoadObject::class] ?? null);
     }
 }

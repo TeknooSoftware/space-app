@@ -532,6 +532,7 @@ return [
             diGet(Render::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
+            diGet(CheckCsrfTokenInterface::class),
         ),
 
     // `PrepareAccountTask` bound to a task class, for the account creation and edition flows

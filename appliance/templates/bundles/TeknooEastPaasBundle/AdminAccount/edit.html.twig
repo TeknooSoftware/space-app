@@ -136,15 +136,26 @@
                 {{ 'teknoo.space.action.new_project'|trans }}
             </button>
         {% endif %}
-        <a href="{{ path('space_admin_account_refresh_quota', {'id':objectInstance.id}) }}"
-           class="btn btn-outline-danger btn-full-large mt-2">
+        {# Inside the form of the account: these buttons send their own POST, with the CSRF token of the task #}
+        <button type="submit"
+                formaction="{{ path('space_admin_account_refresh_quota', {'id':objectInstance.id}) }}"
+                formmethod="post"
+                formnovalidate
+                name="_token"
+                value="{{ csrf_token('teknoo_space_admin_account_task') }}"
+                class="btn btn-outline-danger btn-full-large mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_refresh_quota'|trans }}
-        </a>
-        <a href="{{ path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}"
-           class="btn btn-outline-danger btn-full-large mt-2">
+        </button>
+        <button type="submit"
+                formaction="{{ path('space_admin_account_registry_reinstall', {'id':objectInstance.id}) }}"
+                formmethod="post"
+                formnovalidate
+                name="_token"
+                value="{{ csrf_token('teknoo_space_admin_account_task') }}"
+                class="btn btn-outline-danger btn-full-large mt-2">
             <i class="mdi mdi-shape-circle-plus"></i>
             {{ 'teknoo.space.action.admin_reconfigure_registry'|trans }}
-        </a>
+        </button>
     </div>
 {% endblock %}
