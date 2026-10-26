@@ -59,3 +59,28 @@ Feature: Web admin interface to manage accounts
     And Space executes the pending tasks
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests have been deleted
+
+  Scenario Outline: From the UI, as Admin, the variables, the clusters and the environments of an account are forbidden
+    When it opens the admin page "<route>" of the last account
+    Then the user must have a 403 error
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+
+    Examples:
+      | route                                     |
+      | space_admin_account_edit_variables        |
+      | space_admin_account_clusters_list         |
+      | space_admin_account_clusters_new          |
+      | space_admin_account_environment_reinstall |
+      | _teknoo_common_admin_media_list           |
+      | _teknoo_common_admin_media_new            |
+
+  Scenario Outline: From the UI, as Admin, the account pages and the subscription codes are allowed
+    When it opens the admin page "<route>" of the last account
+    Then get a valid web page
+
+    Examples:
+      | route                              |
+      | _teknoo_paas_admin_account_edit    |
+      | space_admin_account_status         |
+      | space_admin_account_code_generator |

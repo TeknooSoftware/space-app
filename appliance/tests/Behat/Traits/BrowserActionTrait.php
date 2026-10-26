@@ -357,6 +357,33 @@ trait BrowserActionTrait
         );
     }
 
+    #[When('it opens the admin page :route of the last account')]
+    public function itOpensTheAdminPageOfTheLastAccount(string $route): void
+    {
+        $accountId = $this->recall(Account::class)?->getId();
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: match ($route) {
+                    'space_admin_account_clusters_list',
+                    'space_admin_account_clusters_new',
+                    '_teknoo_paas_admin_project_new' => ['accountId' => $accountId],
+                    'space_admin_account_environment_reinstall' => [
+                        'id' => $accountId,
+                        'envName' => 'prod',
+                        'clusterName' => 'Demo Kube Cluster',
+                    ],
+                    'space_admin_account_code_generator',
+                    '_teknoo_common_admin_media_list',
+                    '_teknoo_common_admin_media_new' => [],
+                    default => ['id' => $accountId],
+                },
+            ),
+        );
+    }
+
     #[When('it calls the admin action :action of the last account with the method :method')]
     public function itCallsTheAdminActionOfTheLastAccountWithTheMethod(string $action, string $method): void
     {
