@@ -162,6 +162,7 @@ Feature: API admin endpoints to administrate accounts
       | admin_space_account.accountData.subscriptionPlan | test-1        |
     Then get a JSON response
     And the serialized account "Test Behat" for admin
+    And the namespace of the last account is "my-company"
     And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, edit an account, via a request with a json body
@@ -186,6 +187,7 @@ Feature: API admin endpoints to administrate accounts
       | accountData.subscriptionPlan | test-1        |
     Then get a JSON response
     And the serialized account "Test Behat" for admin
+    And the namespace of the last account is "my-company"
     And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, edit the users of an account

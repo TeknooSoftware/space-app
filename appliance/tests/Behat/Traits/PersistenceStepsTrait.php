@@ -1472,6 +1472,19 @@ trait PersistenceStepsTrait
         Assert::assertFalse($this->isAUserOfTheLastAccount($email), "$email is a user of the last account");
     }
 
+    #[Then('the namespace of the last account is :namespace')]
+    public function theNamespaceOfTheLastAccountIs(string $namespace): void
+    {
+        $current = null;
+        $this->recall(Account::class)->namespaceIsItDefined(
+            static function (string $accountNamespace) use (&$current): void {
+                $current = $accountNamespace;
+            },
+        );
+
+        Assert::assertEquals($namespace, $current);
+    }
+
     #[Then('there is a user in the memory')]
     public function thereIsAUserInTheMemory(): void
     {
