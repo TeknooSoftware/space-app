@@ -56,7 +56,7 @@ class JobVoterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->jobVoter = new JobVoter();
+        $this->jobVoter = new JobVoter('ROLE_ADMIN');
     }
 
     public function testVote(): void
@@ -165,5 +165,32 @@ class JobVoterTest extends TestCase
                 ['foo'],
             ),
         );
+    }
+
+    public function testVoteAbstainForAnAdministratorWhoIsAMemberOfTheAccount(): void
+    {
+        $user = (new User())->setId('user-1');
+        $account = (new Account())->setName('foo')->setUsers([$user]);
+
+        $wrappedUser = $this->createStub(AbstractUser::class);
+        $wrappedUser->method('getWrappedUser')->willReturn($user);
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($wrappedUser);
+        $token->method('getRoleNames')->willReturn(['ROLE_USER', 'ROLE_ADMIN']);
+
+        foreach (['access', 'list'] as $attribute) {
+            $vote = new Vote();
+
+            $this->assertSame(
+                VoterInterface::ACCESS_ABSTAIN,
+                $this->jobVoter->vote(
+                    $token,
+                    $this->createJob($account),
+                    [$attribute],
+                    $vote,
+                ),
+            );
+            $this->assertSame([], $vote->reasons);
+        }
     }
 }

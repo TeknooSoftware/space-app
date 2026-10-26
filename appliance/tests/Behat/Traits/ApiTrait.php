@@ -1131,6 +1131,38 @@ trait ApiTrait
         $this->clearJobMemory = true;
     }
 
+    #[When('the API is called to get the pending status of the task :taskId as admin')]
+    public function theApiIsCalledToGetThePendingStatusOfTheTaskAsAdmin(string $taskId): void
+    {
+        $project = $this->recall(Project::class);
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_admin_job_new_pending',
+                parameters: [
+                    'accountId' => $project->getAccount()->getId(),
+                    'projectId' => $project->getId(),
+                    'taskId' => $taskId,
+                ]
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[Then('there are :count jobs in the memory')]
+    public function thereAreJobsInTheMemory(int $count): void
+    {
+        //The jobs of the fixtures are documents, the jobs created by a request are domain objects
+        Assert::assertCount(
+            $count,
+            [...$this->listObjects(Job::class), ...$this->listObjects(JobOrigin::class)],
+        );
+    }
+
     #[When('the API is called to pending job status api')]
     public function theApiIsCalledToPendingJobStatusApi(): void
     {

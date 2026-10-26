@@ -29,8 +29,17 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Teknoo\East\CommonBundle\Object\AbstractUser;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\Paas\Object\Account;
+use Teknoo\East\Paas\Object\Job;
+use Teknoo\East\Paas\Object\Project;
+use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\AbstractAccessControl;
+use Teknoo\Space\Object\DTO\SpaceAccount;
+use Teknoo\Space\Object\DTO\SpaceProject;
+use Teknoo\Space\Object\DTO\SpaceUser;
 
 use function in_array;
+use function is_object;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -40,6 +49,22 @@ use function in_array;
  */
 class AdminVoter implements VoterInterface
 {
+    /**
+     * The objects an administrator of Space manages, with the attributes of the access control steps it is granted
+     * on: it lists the projects but can not open them, and it gets nothing on the other objects (account clusters,
+     * environments, variables, objects of extensions...). Instances are checked with `instanceof`, to accept the
+     * Doctrine proxies.
+     */
+    private const array GRANTS = [
+        Account::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
+        SpaceAccount::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
+        User::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
+        SpaceUser::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
+        Job::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
+        Project::class => [AbstractAccessControl::ATTRIBUTE_LIST],
+        SpaceProject::class => [AbstractAccessControl::ATTRIBUTE_LIST],
+    ];
+
     public function __construct(
         private readonly string $adminRoleName,
     ) {
@@ -54,16 +79,26 @@ class AdminVoter implements VoterInterface
         array $attributes,
         ?Vote $vote = null,
     ): int {
-        $user = $token->getUser();
-
-        if (!$user instanceof AbstractUser) {
+        if (
+            !$token->getUser() instanceof AbstractUser
+            || !is_object($subject)
+            || !in_array($this->adminRoleName, $token->getRoleNames(), true)
+        ) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
 
-        if (in_array($this->adminRoleName, $token->getRoleNames())) {
-            $vote?->addReason('teknoo.space.vote.granted.user_is_admin');
+        foreach (self::GRANTS as $className => $grantedAttributes) {
+            if (!$subject instanceof $className) {
+                continue;
+            }
 
-            return VoterInterface::ACCESS_GRANTED;
+            foreach ($attributes as $attribute) {
+                if (in_array($attribute, $grantedAttributes, true)) {
+                    $vote?->addReason('teknoo.space.vote.granted.user_is_admin');
+
+                    return VoterInterface::ACCESS_GRANTED;
+                }
+            }
         }
 
         return VoterInterface::ACCESS_ABSTAIN;

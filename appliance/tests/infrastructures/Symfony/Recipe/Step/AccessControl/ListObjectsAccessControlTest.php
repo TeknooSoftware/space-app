@@ -78,9 +78,16 @@ class ListObjectsAccessControlTest extends TestCase
 
     public function testInvoke(): void
     {
+        $attributes = [];
         $this->authorizationChecker
             ->method('isGranted')
-            ->willReturn(true);
+            ->willReturnCallback(
+                static function (mixed $attribute) use (&$attributes): bool {
+                    $attributes[] = $attribute;
+
+                    return true;
+                }
+            );
 
         $this->assertInstanceOf(
             ListObjectsAccessControl::class,
@@ -90,6 +97,8 @@ class ListObjectsAccessControlTest extends TestCase
                 [$this->createStub(ObjectInterface::class)],
             )
         );
+
+        $this->assertSame(['list'], $attributes);
     }
 
     public function testInvokeWithoutUserInToken(): void

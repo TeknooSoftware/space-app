@@ -1,8 +1,8 @@
 @api @admin
 Feature: API admin endpoints to administrate projects
-  In order to manage projects
+  In order to supervise projects
   As an administrator of Space
-  I want to manage all registered projects.
+  I want to list all registered projects, without opening, creating or deleting them.
 
   On a space instance, each allowed users can register a new project on its attached account. A project must hosted on
   a source repository like GIT. Currently Space support only GIT via https and ssh, with tls keys or access token.
@@ -47,7 +47,7 @@ Feature: API admin endpoints to administrate projects
     And is a serialized collection of "5" items on "1" pages
     And the list of serialized projects of last account
 
-  Scenario: From the API, as Admin, create a project, via a request with a form url encoded body
+  Scenario: From the API, as Admin, create a project, via a request with a form url encoded body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
@@ -74,10 +74,9 @@ Feature: API admin endpoints to administrate projects
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | fooBar                                |
     Then get a JSON response
-    And the serialized created project "Behats Test"
-    And there is a project in the memory for this account
+    But an 403 error
 
-  Scenario: From the API, as Admin, create a project, via a request with a json body
+  Scenario: From the API, as Admin, create a project, via a request with a json body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
@@ -104,10 +103,9 @@ Feature: API admin endpoints to administrate projects
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | fooBar                                |
     Then get a JSON response
-    And the serialized created project "Behats Test"
-    And there is a project in the memory for this account
+    But an 403 error
 
-  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a form url encoded body and get an error
+  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a form url encoded body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "3" standard projects "other project X" and a prefix "other-prefix"
@@ -135,9 +133,9 @@ Feature: API admin endpoints to administrate projects
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | fooBar                                |
     Then get a JSON response
-    But an 400 error
+    But an 403 error
 
-  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a json body and get an error
+  Scenario: From the API, as Admin, create a project exceeding the allowed capacity, via a request with a json body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And "3" standard projects "other project X" and a prefix "other-prefix"
@@ -165,9 +163,9 @@ Feature: API admin endpoints to administrate projects
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | fooBar                                |
     Then get a JSON response
-    But an 400 error
+    But an 403 error
 
-  Scenario: From the API, as Admin, get a project
+  Scenario: From the API, as Admin, get a project is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
@@ -175,9 +173,9 @@ Feature: API admin endpoints to administrate projects
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to get the last project as admin
     Then get a JSON response
-    And the serialized project "my project"
+    But an 403 error
 
-  Scenario: From the API, as Admin, edit a project via a request with a form url encoded body
+  Scenario: From the API, as Admin, edit a project via a request with a form url encoded body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
@@ -205,9 +203,9 @@ Feature: API admin endpoints to administrate projects
       | space_project.project.clusters.0.identity.clientKey         |                                       |
       | space_project.project.clusters.0.identity.token             | fooBar                                |
     Then get a JSON response
-    And the serialized updated project "Behats Test"
+    But an 403 error
 
-  Scenario: From the API, as Admin, edit a project via a request with a json body
+  Scenario: From the API, as Admin, edit a project via a request with a json body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
@@ -235,9 +233,9 @@ Feature: API admin endpoints to administrate projects
       | project.clusters.0.identity.clientKey         |                                       |
       | project.clusters.0.identity.token             | fooBar                                |
     Then get a JSON response
-    And the serialized updated project "Behats Test"
+    But an 403 error
 
-  Scenario: From the API, as Admin, delete a project
+  Scenario: From the API, as Admin, delete a project is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
@@ -245,10 +243,9 @@ Feature: API admin endpoints to administrate projects
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last project as admin
     Then get a JSON response
-    And the serialized deleted project
-    And the project is deleted
+    But an 403 error
 
-  Scenario: From the API, as Admin, delete a project via a request with DELETE method
+  Scenario: From the API, as Admin, delete a project via a request with DELETE method is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And a standard project "my project" and a prefix "a-prefix"
@@ -256,5 +253,4 @@ Feature: API admin endpoints to administrate projects
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last project with DELETE method as admin
     Then get a JSON response
-    And the serialized deleted project
-    And the project is deleted
+    But an 403 error
