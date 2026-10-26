@@ -1107,20 +1107,23 @@ trait ApiTrait
         ?string $role = null,
     ): void {
         $project = $this->recall(Project::class);
+        $job = $this->recall(Job::class);
 
         $this->submitValuesThroughAPI(
             url: match ($role) {
                 'admin' => $this->getPathFromRoute(
-                    route: 'space_api_v1_admin_job_new',
+                    route: 'space_api_v1_admin_job_restart',
                     parameters: [
                         'accountId' => $project->getAccount()->getId(),
                         'projectId' => $project->getId(),
+                        'jobId' => $job->getId(),
                     ]
                 ),
                 default => $this->getPathFromRoute(
-                    route: 'space_api_v1_job_new',
+                    route: 'space_api_v1_job_restart',
                     parameters: [
                         'projectId' => $project->getId(),
+                        'jobId' => $job->getId(),
                     ]
                 ),
             },
