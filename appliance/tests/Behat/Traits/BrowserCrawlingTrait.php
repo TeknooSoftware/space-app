@@ -244,6 +244,24 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('the form has no field :dottedField')]
+    public function theFormHasNoField(string $dottedField): void
+    {
+        $this->isAFinalResponse();
+
+        $parts = explode('.', $dottedField);
+        $name = array_shift($parts);
+        foreach ($parts as $part) {
+            $name .= "[{$part}]";
+        }
+
+        Assert::assertCount(
+            0,
+            $this->createCrawler()->filter("[name^=\"{$name}\"]"),
+            "The form has the field '{$dottedField}'",
+        );
+    }
+
     private function findFormField(string $dottedField): Crawler
     {
         $this->isAFinalResponse();

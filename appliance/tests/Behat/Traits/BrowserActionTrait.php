@@ -276,6 +276,12 @@ trait BrowserActionTrait
         $this->formName = $formName;
     }
 
+    #[When('it goes to the admin account page')]
+    public function itGoesToTheAdminAccountPage(): void
+    {
+        $this->openEditPageOfLast('_teknoo_paas_admin_account_edit', Account::class, 'admin_space_account');
+    }
+
     #[When('it goes to the admin project page')]
     public function itGoesToTheAdminProjectPage(): void
     {

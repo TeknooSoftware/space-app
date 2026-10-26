@@ -113,6 +113,34 @@ class AdminSpaceAccountTypeTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testBuildFormWithoutEnvManagementHasNoEnvironments(): void
+    {
+        $children = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')
+            ->willReturnCallback(
+                function (string $child) use (&$children, $builder): FormBuilderInterface {
+                    $children[] = $child;
+
+                    return $builder;
+                }
+            );
+
+        $this->adminSpaceAccountType->buildForm(
+            $builder,
+            [
+                'api' => null,
+                'enableEnvManagement' => false,
+                'subscriptionPlan' => new SubscriptionPlan('id', 'name', [], envsCountAllowed: 3),
+                'clusterCatalog' => new ClusterCatalog([], []),
+                'doctrine_type' => 'mongodb',
+                'namespaceIsReadonly' => false,
+            ],
+        );
+
+        $this->assertSame(['account', 'accountData'], $children);
+    }
+
     public function testBuildFormWithEnvManagementAndPreSubmitListener(): void
     {
         $listeners = [];

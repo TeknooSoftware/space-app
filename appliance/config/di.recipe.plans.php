@@ -724,6 +724,32 @@ return [
         };
     },
 
+    //Steps of the edit of an account by the administration: the account data and the subscription plan, without the
+    //management of the environments (no environment is installed or deleted by an administrator of Space)
+    'teknoo.space.account.additional_steps.admin_edit' => static function (): callable {
+        return static function (
+            EditablePlanInterface $steps,
+            ContainerInterface $container,
+        ): EditablePlanInterface {
+            //After LoadObject
+            $steps->add($container->get(ExtractFromAccountDTO::class), 11);
+            $steps->add($container->get(LoadEnvironments::class), 12);
+            $steps->add($container->get(CreateResumes::class), 13);
+            $steps->add($container->get(LoadSubscriptionPlan::class), 13);
+            $steps->add($container->get(InjectStatus::class), 14);
+
+            //After ObjectAccessControlInterface
+            $steps->add($container->get(LoadHistory::class), 25);
+
+            //After FormProcessingInterface
+            $steps->add($container->get(SetSubscriptionPlan::class), 57);
+            $steps->add($container->get(CheckingAllowedCountOfEnvs::class), 58);
+            $steps->add($container->get(CreateAccountHistory::class), 58);
+
+            return $steps;
+        };
+    },
+
     EditAccountEndPointInterface::class => decorate(
         callable: static function (
             EditAccountEndPointInterface $previous,
@@ -733,8 +759,8 @@ return [
             $previous->add($container->get(SetAccountNamespace::class), 58);
             $previous->add($container->get(SetQuota::class), 58);
 
-            $addStepsToManageEnv = $container->get('teknoo.space.account.additional_steps.common');
-            return $addStepsToManageEnv($previous, $container);
+            $addAdminSteps = $container->get('teknoo.space.account.additional_steps.admin_edit');
+            return $addAdminSteps($previous, $container);
         }
     ),
 

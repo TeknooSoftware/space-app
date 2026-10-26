@@ -201,6 +201,32 @@ Feature: API admin endpoints to administrate accounts
     And the namespace of the last account is "my-company"
     And no Kubernetes manifests have been deleted
 
+  Scenario: From the API, as Admin, the environments of an account can not be changed from its edit
+    Given a memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to edit the last account with a json body:
+      | field                        | value             |
+      | account.name                 | Test Behat        |
+      | accountData.legalName        | sasu demo         |
+      | accountData.streetAddress    | Auge              |
+      | accountData.zipCode          | 14000             |
+      | accountData.cityName         | Caen              |
+      | accountData.countryName      | France            |
+      | accountData.vatNumber        | FR0102030405      |
+      | accountData.subscriptionPlan | test-1            |
+      | environments.2.clusterName   | Demo Kube Cluster |
+      | environments.2.envName       | testing           |
+    Then get a JSON response
+    But the API returns the form error "This form should not contain extra fields."
+    And the last request has not saved the account
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+
   Scenario: From the API, as Admin, edit the users of an account
     Given a memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"

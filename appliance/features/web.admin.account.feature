@@ -85,3 +85,45 @@ Feature: Web admin interface to manage accounts
       | _teknoo_paas_admin_account_edit    |
       | space_admin_account_status         |
       | space_admin_account_code_generator |
+
+  Scenario: From the UI, as Admin, edit the data and the subscription of an account, without its environments
+    When it goes to the admin account page
+    Then the form has no field "admin_space_account.environments"
+    When it submits the form:
+      | field                                            | value          |
+      | admin_space_account._token                       | <auto>         |
+      | admin_space_account.account.name                 | Great Company  |
+      | admin_space_account.account.users                | <auto>         |
+      | admin_space_account.accountData.legalName        | Gr Company SAS |
+      | admin_space_account.accountData.streetAddress    | 123 street     |
+      | admin_space_account.accountData.zipCode          | 14000          |
+      | admin_space_account.accountData.cityName         | Caen           |
+      | admin_space_account.accountData.countryName      | France         |
+      | admin_space_account.accountData.vatNumber        | FR0102030405   |
+      | admin_space_account.accountData.subscriptionPlan | test-1         |
+    Then get a valid web page
+    And the last request has saved the account
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+    And no Kubernetes manifests have been deleted
+
+  Scenario: From the UI, as Admin, the environments of an account can not be changed from its edit
+    When it goes to the admin account page
+    And it submits the form:
+      | field                                            | value             |
+      | admin_space_account._token                       | <auto>            |
+      | admin_space_account.account.name                 | Great Company     |
+      | admin_space_account.account.users                | <auto>            |
+      | admin_space_account.accountData.legalName        | Gr Company SAS    |
+      | admin_space_account.accountData.streetAddress    | 123 street        |
+      | admin_space_account.accountData.zipCode          | 14000             |
+      | admin_space_account.accountData.cityName         | Caen              |
+      | admin_space_account.accountData.countryName      | France            |
+      | admin_space_account.accountData.vatNumber        | FR0102030405      |
+      | admin_space_account.accountData.subscriptionPlan | test-1            |
+      | admin_space_account.environments.2.clusterName   | Demo Kube Cluster |
+      | admin_space_account.environments.2.envName       | testing           |
+    Then the last request has not saved the account
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+    And no Kubernetes manifests have been deleted
