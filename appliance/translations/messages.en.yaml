@@ -149,6 +149,7 @@ teknoo.space.error.404.upper: 'Oh no!'
 teknoo.space.error.500.description: "Sorry, an error was occurred on the server."
 teknoo.space.error.500.title: 'Server error!'
 teknoo.space.error.500.upper: 'Oh no!'
+teknoo.space.error.access_control.not_authorized: "Access not granted to this resource"
 teknoo.space.error.code_not_accepted: "Subscription code is not accepted"
 teknoo.space.error.task.invalid_class: "The requested task is not a valid account task"
 teknoo.space.error.contact.bot_forbidden: "Ungranted bot"

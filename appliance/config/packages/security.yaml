@@ -45,6 +45,7 @@ security:
             pattern: '^/api'
             stateless: true
             jwt: ~
+            access_denied_handler: 'Teknoo\Space\Infrastructures\Symfony\Security\Authorization\ApiAccessDeniedHandler'
             json_login:
                 provider: 'with_api_key'
                 check_path: '_teknoo_common_api_jwt_login'
