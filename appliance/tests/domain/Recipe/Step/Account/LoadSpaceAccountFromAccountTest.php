@@ -26,16 +26,11 @@ declare(strict_types=1);
 namespace Teknoo\Space\Tests\Unit\Recipe\Step\Account;
 
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
-use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Class LoadSpaceAccountFromAccountTest.
@@ -50,8 +45,6 @@ class LoadSpaceAccountFromAccountTest extends TestCase
 {
     private LoadSpaceAccountFromAccount $loadSpaceAccountFromAccount;
 
-    private SpaceAccountLoader&MockObject $spaceAccountLoader;
-
     /**
      * {@inheritdoc}
      */
@@ -59,37 +52,36 @@ class LoadSpaceAccountFromAccountTest extends TestCase
     {
         parent::setUp();
 
-        $this->spaceAccountLoader = $this->createMock(SpaceAccountLoader::class);
-
-        $this->loadSpaceAccountFromAccount = new LoadSpaceAccountFromAccount($this->spaceAccountLoader);
+        $this->loadSpaceAccountFromAccount = new LoadSpaceAccountFromAccount();
     }
 
-    #[AllowMockObjectsWithoutExpectations]
-    public function testInvoke(): void
+    private function createAccount(string $id): Account
     {
         $account = $this->createStub(Account::class);
-        $account->method('getId')->willReturn('fooo');
+        $account->method('getId')->willReturn($id);
 
-        $user = $this->createStub(User::class);
-        $user->method('getRoles')->willReturn(['ROLE_ADMIN']);
+        return $account;
+    }
 
-        $spaceAccount = new SpaceAccount($account);
+    public function testInvokeWithMatchingSpaceAccountAndAccountInstance(): void
+    {
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->never())
+            ->method('updateWorkPlan');
+        $manager->expects($this->never())
+            ->method('error');
 
-        $this->assertInstanceOf(
-            LoadSpaceAccountFromAccount::class,
-            ($this->loadSpaceAccountFromAccount)(
-                $this->createStub(ManagerInterface::class),
-                $account,
-                $spaceAccount,
-                $user,
-            )
+        $result = ($this->loadSpaceAccountFromAccount)(
+            manager: $manager,
+            accountInstance: $this->createAccount('account-789'),
+            spaceAccount: new SpaceAccount($this->createAccount('account-789')),
         );
+
+        $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
     }
 
     public function testInvokeWithNullAccount(): void
     {
-        $user = $this->createStub(User::class);
-
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
             ->method('error')
@@ -101,151 +93,55 @@ class LoadSpaceAccountFromAccountTest extends TestCase
                 })
             );
 
-        $this->spaceAccountLoader->expects($this->never())
-            ->method('load');
-
         $result = ($this->loadSpaceAccountFromAccount)(
             manager: $manager,
             accountInstance: null,
             spaceAccount: null,
-            user: $user,
         );
 
         $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
     }
 
-    public function testInvokeWithNonAdminUser(): void
+    public function testInvokeWithAnOtherAccountThanTheAccountOfTheUser(): void
     {
-        $account = $this->createStub(Account::class);
-
-        $user = $this->createStub(User::class);
-        $user->method('getRoles')
-            ->willReturn(['ROLE_USER']);
-
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
             ->method('error')
             ->with(
                 $this->callback(function ($exception) {
                     return $exception instanceof \BadMethodCallException
-                        && 'Account is mandatory for non admin user' === $exception->getMessage()
+                        && 'The account is not the account of the user' === $exception->getMessage()
                         && 403 === $exception->getCode();
                 })
             );
 
-        $this->spaceAccountLoader->expects($this->never())
-            ->method('load');
-
         $result = ($this->loadSpaceAccountFromAccount)(
             manager: $manager,
-            accountInstance: $account,
-            spaceAccount: null,
-            user: $user,
+            accountInstance: $this->createAccount('account-123'),
+            spaceAccount: new SpaceAccount($this->createAccount('account-456')),
         );
 
         $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
     }
 
-    public function testInvokeWithAdminUserLoadingAccount(): void
+    public function testInvokeForAnAdministratorWithoutAccount(): void
     {
-        $account = $this->createStub(Account::class);
-        $account->method('getId')
-            ->willReturn('account-123');
-
-        $user = $this->createStub(User::class);
-        $user->method('getRoles')
-            ->willReturn(['ROLE_ADMIN']);
-
-        $spaceAccount = $this->createStub(SpaceAccount::class);
-
-        $this->spaceAccountLoader->expects($this->once())
-            ->method('load')
-            ->with('account-123', $this->anything())
-            ->willReturnCallback(function ($id, $promise) use ($spaceAccount) {
-                $promise->success($spaceAccount);
-                return $this->spaceAccountLoader;
-            });
-
         $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->once())
-            ->method('updateWorkPlan')
+            ->method('error')
             ->with(
-                $this->callback(function ($workplan) use ($spaceAccount) {
-                    return isset($workplan[SpaceAccount::class])
-                        && $workplan[SpaceAccount::class] === $spaceAccount;
+                $this->callback(function ($exception) {
+                    return $exception instanceof \BadMethodCallException
+                        && 403 === $exception->getCode();
                 })
             );
-
-        $result = ($this->loadSpaceAccountFromAccount)(
-            manager: $manager,
-            accountInstance: $account,
-            spaceAccount: null,
-            user: $user,
-        );
-
-        $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);
-    }
-
-    public function testInvokeWithPromiseFailure(): void
-    {
-        $account = $this->createStub(Account::class);
-        $account->method('getId')
-            ->willReturn('account-456');
-
-        $user = $this->createStub(User::class);
-        $user->method('getRoles')
-            ->willReturn(['ROLE_ADMIN']);
-
-        $this->spaceAccountLoader->expects($this->once())
-            ->method('load')
-            ->with('account-456', $this->anything())
-            ->willReturnCallback(function ($id, $promise) {
-                $promise->fail(new \RuntimeException('Failed to load account'));
-                return $this->spaceAccountLoader;
-            });
-
-        $manager = $this->createStub(ManagerInterface::class);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Failed to load account');
-
-        ($this->loadSpaceAccountFromAccount)(
-            manager: $manager,
-            accountInstance: $account,
-            spaceAccount: null,
-            user: $user,
-        );
-    }
-
-    public function testInvokeWithMatchingSpaceAccountAndAccountInstance(): void
-    {
-        $account = $this->createStub(Account::class);
-        $account->method('getId')
-            ->willReturn('account-789');
-
-        $accountInSpaceAccount = $this->createStub(Account::class);
-        $accountInSpaceAccount->method('getId')
-            ->willReturn('account-789');
-
-        $spaceAccount = new SpaceAccount($accountInSpaceAccount);
-
-        $user = $this->createStub(User::class);
-
-        // Loader should not be called when IDs match (early return)
-        $this->spaceAccountLoader->expects($this->never())
-            ->method('load');
-
-        $manager = $this->createMock(ManagerInterface::class);
         $manager->expects($this->never())
             ->method('updateWorkPlan');
-        $manager->expects($this->never())
-            ->method('error');
 
         $result = ($this->loadSpaceAccountFromAccount)(
             manager: $manager,
-            accountInstance: $account,
-            spaceAccount: $spaceAccount,
-            user: $user,
+            accountInstance: $this->createAccount('account-123'),
+            spaceAccount: null,
         );
 
         $this->assertInstanceOf(LoadSpaceAccountFromAccount::class, $result);

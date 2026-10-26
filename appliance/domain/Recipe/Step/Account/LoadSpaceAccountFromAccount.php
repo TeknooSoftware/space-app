@@ -26,15 +26,9 @@ declare(strict_types=1);
 namespace Teknoo\Space\Recipe\Step\Account;
 
 use BadMethodCallException;
-use Teknoo\East\Common\Object\User;
 use Teknoo\East\Foundation\Manager\ManagerInterface;
 use Teknoo\East\Paas\Object\Account;
-use Teknoo\Recipe\Promise\Promise;
-use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
 use Teknoo\Space\Object\DTO\SpaceAccount;
-use Throwable;
-
-use function in_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -44,16 +38,10 @@ use function in_array;
  */
 class LoadSpaceAccountFromAccount
 {
-    public function __construct(
-        private readonly SpaceAccountLoader $spaceAccountLoader,
-    ) {
-    }
-
     public function __invoke(
         ManagerInterface $manager,
         ?Account $accountInstance = null,
         ?SpaceAccount $spaceAccount = null,
-        ?User $user = null,
     ): self {
         if (
             $spaceAccount instanceof SpaceAccount
@@ -72,28 +60,9 @@ class LoadSpaceAccountFromAccount
             return $this;
         }
 
-        if (!in_array('ROLE_ADMIN', (array) $user?->getRoles())) {
-            $manager->error(
-                new BadMethodCallException(message: "Account is mandatory for non admin user", code: 403)
-            );
-
-            return $this;
-        }
-
-        //Request come from admin
-        /** @var Promise<SpaceAccount, mixed, mixed> $promiseAccount */
-        $promiseAccount = new Promise(
-            static function (SpaceAccount $spaceAccount) use ($manager): void {
-                $manager->updateWorkPlan([
-                    SpaceAccount::class => $spaceAccount,
-                ]);
-            },
-            static fn (Throwable $error): never => throw $error,
-        );
-
-        $this->spaceAccountLoader->load(
-            $accountInstance->getId(),
-            $promiseAccount,
+        //A project is created only on the account of the user: an administrator of Space has no account
+        $manager->error(
+            new BadMethodCallException(message: "The account is not the account of the user", code: 403)
         );
 
         return $this;

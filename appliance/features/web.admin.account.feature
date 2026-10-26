@@ -72,6 +72,7 @@ Feature: Web admin interface to manage accounts
       | space_admin_account_clusters_list         |
       | space_admin_account_clusters_new          |
       | space_admin_account_environment_reinstall |
+      | _teknoo_paas_admin_project_new            |
       | _teknoo_common_admin_media_list           |
       | _teknoo_common_admin_media_new            |
 

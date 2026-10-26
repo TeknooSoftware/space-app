@@ -254,3 +254,14 @@ Feature: API admin endpoints to administrate projects
     When the API is called to delete the last project with DELETE method as admin
     Then get a JSON response
     But an 403 error
+
+  Scenario: From the API, as Admin, create a project with an invalid body is refused before the form
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a project as admin:
+      | field                      | value |
+      | space_project.project.name |       |
+    Then get a JSON response
+    But an 403 error
