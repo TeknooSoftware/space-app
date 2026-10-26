@@ -483,7 +483,10 @@ return [
             get(SpaceAccountWriter::class),
         ),
 
-    LoadSpaceAccountFromAccount::class => create(),
+    LoadSpaceAccountFromAccount::class => create()
+        ->constructor(
+            get(SpaceAccountLoader::class)
+        ),
 
     LoadSubscriptionPlan::class => create()
         ->constructor(
