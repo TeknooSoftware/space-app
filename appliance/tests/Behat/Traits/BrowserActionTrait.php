@@ -420,8 +420,7 @@ trait BrowserActionTrait
             'space_job_list',
             'space_api_v1_job_new',
             'space_api_v1_job_list' => ['projectId' => $projectId],
-            'space_job_restart',
-            'space_api_v1_job_restart' => [
+            'space_job_restart' => [
                 'projectId' => $projectId,
                 'jobId' => $this->recall(Job::class)?->getId(),
             ],

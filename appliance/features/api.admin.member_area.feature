@@ -44,7 +44,6 @@ Feature: API endpoints of the members of an account, refused to the administrato
       | POST   | space_api_v1_project_delete              |
       | POST   | space_api_v1_job_new                     |
       | GET    | space_api_v1_job_new_pending             |
-      | POST   | space_api_v1_job_restart                 |
       | GET    | space_api_v1_job_list                    |
       | GET    | space_api_v1_job_get                     |
       | POST   | space_api_v1_job_delete                  |

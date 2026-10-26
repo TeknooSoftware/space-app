@@ -282,12 +282,6 @@ In every serialized job, each entry of `history` (and of its `previous` chain) c
 its unchanged `message`. The `message` is most of the time the class name of the step that wrote the entry, and
 `humanized_message` is its readable label from the translation catalogue, or the raw message when it has none.
 
-**Restart Job**
-
-- `POST /api/v1/project/{projectId}/job/{jobId}/restart`
-
-Creates a new job on the project from the body, as `job/new` (same fields).
-
 **Delete Job**
 
 - `POST /api/v1/project/{projectId}/job/{id}/delete`
@@ -300,7 +294,7 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 An administrator of Space is never a member of an account. These admin endpoints answer `403` to it: the variables,
 clusters and environments of an account (`/account/{id}/variables`, `/account/{id}/environments`,
 `/account/{id}/environment/...`, `/account/{accountId}/clusters` and `/cluster/...`), the creation, edition, deletion,
-variables and credentials of a project, and the creation, restart and pending of a job. The endpoints of the members
+variables and credentials of a project, and the creation and pending of a job. The endpoints of the members
 (`/api/v1/account/...`, `/api/v1/project/...`, `/api/v1/projects`) answer `403` too. Every `403` of the API has the
 JSON error envelope.
 
@@ -463,12 +457,6 @@ without `accountEnvironmentId` until the worker has provisioned it.
 **Get Job Details**
 
 - `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/{id}`
-
-**Restart Job**
-
-- `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/{jobId}/restart`
-
-Creates a new job on the project from the body, as `job/new` (same fields).
 
 **Delete Job**
 

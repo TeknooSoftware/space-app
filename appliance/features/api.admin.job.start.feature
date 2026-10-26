@@ -2,7 +2,7 @@
 Feature: API admin endpoints to create new job and deploy project
   In order to keep the deployments in the hands of the users of the accounts
   As an administrator of Space
-  I can list, open and delete the jobs of a project, but I can not create, restart or follow a new job
+  I can list, open and delete the jobs of a project, but I can not create or follow a new job
 
   An administrator of Space is not a user of an account: it can not open a project, so it can not run a job on it.
   The users of the account run the jobs, the administration only supervises them.
@@ -46,20 +46,6 @@ Feature: API admin endpoints to create new job and deploy project
     Then get a JSON response
     But an 403 error
     And there are "0" jobs in the memory
-    And no Kubernetes manifests have been created
-
-  Scenario: From the API, as Admin, restart a job of a project is refused
-    Given "1" jobs for the project
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to restart a the job as admin:
-      | field                     | value |
-      | new_job.envName           | prod  |
-      | new_job.variables.0.name  | FOO   |
-      | new_job.variables.0.value | BAR   |
-    Then get a JSON response
-    But an 403 error
-    And there are "1" jobs in the memory
     And no Kubernetes manifests have been created
 
   Scenario: From the API, as Admin, follow a pending job of a project is refused

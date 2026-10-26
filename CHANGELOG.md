@@ -22,7 +22,8 @@
 
 **Fixes**
 - The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
-  answered a `500`: it creates a new job on the project from the body, as `job/new`
+  answered a `500`
+  - **Breaking**: these endpoints are removed, create the job with `job/new`. The web restart does not change
 
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
