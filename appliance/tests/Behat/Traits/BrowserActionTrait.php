@@ -31,6 +31,7 @@ use OTPHP\TOTP;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Object\TOTPAuth;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
+use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 
@@ -354,6 +355,62 @@ trait BrowserActionTrait
                 ],
             ),
             params: $params,
+        );
+    }
+
+    /**
+     * Parameters of a route of the members area, from the last project, job and account cluster of the fixtures
+     *
+     * @return array<string, string|null>
+     */
+    private function getParametersOfMemberRoute(string $route): array
+    {
+        $projectId = $this->recall(Project::class)?->getId();
+
+        return match ($route) {
+            'space_project_edit',
+            'space_project_edit_variables',
+            'space_project_edit_refresh_credentials',
+            'space_project_delete' => ['id' => $projectId],
+            'space_job_new',
+            'space_job_list',
+            'space_api_v1_job_new',
+            'space_api_v1_job_list' => ['projectId' => $projectId],
+            'space_job_restart',
+            'space_api_v1_job_restart' => [
+                'projectId' => $projectId,
+                'jobId' => $this->recall(Job::class)?->getId(),
+            ],
+            'space_job_new_pending' => ['taskId' => 'fooBar'],
+            'space_api_v1_job_new_pending' => ['projectId' => $projectId, 'taskId' => 'fooBar'],
+            'space_job_get',
+            'space_job_delete' => ['id' => $this->recall(Job::class)?->getId()],
+            'space_api_v1_job_get',
+            'space_api_v1_job_delete' => [
+                'projectId' => $projectId,
+                'id' => $this->recall(Job::class)?->getId(),
+            ],
+            'space_account_clusters_edit',
+            'space_account_clusters_delete',
+            'space_api_v1_account_clusters_edit',
+            'space_api_v1_account_clusters_delete' => ['id' => $this->recall(AccountCluster::class)?->getId()],
+            'space_api_v1_project_edit',
+            'space_api_v1_project_edit_variables',
+            'space_api_v1_project_refresh_credentials',
+            'space_api_v1_project_delete' => ['id' => $projectId],
+            default => [],
+        };
+    }
+
+    #[When('it opens the page of the route :route')]
+    public function itOpensThePageOfTheRoute(string $route): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: $this->getParametersOfMemberRoute($route),
+            ),
         );
     }
 

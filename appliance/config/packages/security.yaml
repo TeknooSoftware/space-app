@@ -124,8 +124,21 @@ security:
         - { path: '^/api/v1/admin/account/[^/]+/(variables|environments?(/|$)|clusters?(/|$))', allow_if: 'false' }
         #Api : admin area
         - { path: '^/api/v1/admin', roles: [ROLE_ADMIN, ~ROLE_RECOVERY] }
+        #Api : area of the members of an account, an administrator of Space is never a member of an account
+        - { path: '^/api/v1/(projects?|account)(/|$)', allow_if: "is_fully_authenticated() and !is_granted('ROLE_ADMIN')" }
         #Api
         - { path: '^/api', roles: [IS_AUTHENTICATED_FULLY, ~ROLE_RECOVERY] }
+        #Area of the members of an account, an administrator of Space is never a member of an account
+        - {
+            path: '^/(projects?|job)/',
+            allow_if: "is_granted('ROLE_USER') and !is_granted('ROLE_ADMIN')",
+            requires_channel: https
+        }
+        - {
+            path: '^/account/(settings|status|variables|clusters?)(/|$)',
+            allow_if: "is_granted('ROLE_USER') and !is_granted('ROLE_ADMIN')",
+            requires_channel: https
+        }
         #Default
         - { path: '^/', roles: [ROLE_USER], requires_channel: https }
 

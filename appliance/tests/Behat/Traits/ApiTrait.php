@@ -1134,6 +1134,22 @@ trait ApiTrait
         $this->clearJobMemory = true;
     }
 
+    #[When('the API is called with the method :method on the route :route')]
+    public function theApiIsCalledWithTheMethodOnTheRoute(string $method, string $route): void
+    {
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: $this->getParametersOfMemberRoute($route),
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
     #[When('the API is called to get the pending status of the task :taskId as admin')]
     public function theApiIsCalledToGetThePendingStatusOfTheTaskAsAdmin(string $taskId): void
     {
