@@ -27,11 +27,20 @@ namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\User;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Teknoo\East\CommonBundle\Contracts\Form\FormApiAwareInterface;
-use Teknoo\East\CommonBundle\Form\Type\UserType;
+use Teknoo\East\CommonBundle\Form\Type\ApiUserType;
+use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Infrastructures\Doctrine\Form\UserData\UserDataType;
+use Teknoo\Space\Loader\Meta\SpaceAccountLoader;
+use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Query\Account\FetchAccountFromUser;
+
+use function in_array;
 
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -43,19 +52,52 @@ use Teknoo\Space\Object\DTO\SpaceUser;
  */
 class AdminSpaceUserType extends AbstractType implements FormApiAwareInterface
 {
+    public function __construct(
+        private readonly SpaceAccountLoader $spaceAccountLoader,
+        private readonly string $adminRoleName,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        //Without the password: an administrator of Space can not set the password of an other user
         $builder->add(
             'user',
-            UserType::class,
-            [
-                'api' => $options['api'] ?? null,
-            ]
+            ApiUserType::class,
         );
 
         $builder->add(
             'userData',
             UserDataType::class,
+        );
+
+        //An administrator of Space is never a user of an account: a user of an account can not get the admin role
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event): void {
+                $spaceUser = $event->getData();
+                if (!$spaceUser instanceof SpaceUser) {
+                    return;
+                }
+
+                $user = $spaceUser->user;
+                if (empty($user->getId()) || !in_array($this->adminRoleName, (array) $user->getRoles(), true)) {
+                    return;
+                }
+
+                $rolesField = $event->getForm()->get('user')->get('roles');
+
+                /** @var Promise<SpaceAccount, mixed, mixed> $promise */
+                $promise = new Promise(
+                    static function () use ($rolesField): void {
+                        $rolesField->addError(new FormError('teknoo.space.error.space_user.admin_in_account'));
+                    },
+                    static function (): void {
+                    },
+                );
+
+                $this->spaceAccountLoader->fetch(new FetchAccountFromUser($user), $promise);
+            },
         );
     }
 

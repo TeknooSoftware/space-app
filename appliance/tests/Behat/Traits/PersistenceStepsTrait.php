@@ -1466,6 +1466,54 @@ trait PersistenceStepsTrait
         Assert::assertTrue($this->isAUserOfTheLastAccount($email), "$email is not a user of the last account");
     }
 
+    #[Given('the last user has also the role :role')]
+    public function theLastUserHasAlsoTheRole(string $role): void
+    {
+        $user = $this->recall(User::class);
+        $user->setRoles([...(array) $user->getRoles(), $role]);
+    }
+
+    private function hasTheLastRequestSavedAUser(): bool
+    {
+        foreach (array_keys($this->savedByTheLastRequest) as $className) {
+            if (is_a($className, User::class, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    #[Then('the user :email exists without password')]
+    public function theUserExistsWithoutPassword(string $email): void
+    {
+        foreach ($this->listObjects(User::class) as $user) {
+            if ($email !== $user->getEmail()) {
+                continue;
+            }
+
+            foreach ($user->getAuthData() as $authData) {
+                Assert::assertNotInstanceOf(StoredPassword::class, $authData, "The user $email has a password");
+            }
+
+            return;
+        }
+
+        Assert::fail("The user $email is missing");
+    }
+
+    #[Then('the last request has saved the user')]
+    public function theLastRequestHasSavedTheUser(): void
+    {
+        Assert::assertTrue($this->hasTheLastRequestSavedAUser(), 'The last request did not save the user');
+    }
+
+    #[Then('the last request has not saved the user')]
+    public function theLastRequestHasNotSavedTheUser(): void
+    {
+        Assert::assertFalse($this->hasTheLastRequestSavedAUser(), 'The last request saved the user');
+    }
+
     #[Then('the user :email is not a user of the last account')]
     public function theUserIsNotAUserOfTheLastAccount(string $email): void
     {

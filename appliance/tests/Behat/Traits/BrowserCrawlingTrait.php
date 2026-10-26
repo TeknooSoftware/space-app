@@ -530,6 +530,19 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('the form shows the error :message')]
+    public function theFormShowsTheError(string $message): void
+    {
+        $this->isAFinalResponse();
+
+        $errors = [];
+        foreach ($this->createCrawler()->filter('.space-form-error') as $node) {
+            $errors[] = trim((string) $node->textContent);
+        }
+
+        Assert::assertContains($this->translator->trans($message), $errors);
+    }
+
     #[Then('a password mismatch error')]
     public function aPasswordMismatchError(): void
     {

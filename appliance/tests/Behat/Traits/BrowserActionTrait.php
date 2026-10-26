@@ -30,6 +30,7 @@ use Behat\Step\When;
 use OTPHP\TOTP;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Object\TOTPAuth;
+use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
@@ -274,6 +275,43 @@ trait BrowserActionTrait
         );
 
         $this->formName = $formName;
+    }
+
+    #[When('it goes to the admin page of the user :email')]
+    public function itGoesToTheAdminPageOfTheUser(string $email): void
+    {
+        $this->isAFinalResponse();
+
+        $userId = null;
+        foreach ($this->listObjects(User::class) as $user) {
+            if ($email === $user->getEmail()) {
+                $userId = $user->getId();
+            }
+        }
+
+        Assert::assertNotNull($userId, "The user $email is missing");
+
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute(
+                route: '_teknoo_common_admin_user_edit',
+                parameters: [
+                    'id' => $userId,
+                ],
+            ),
+        );
+
+        $this->formName = 'admin_space_user';
+    }
+
+    #[When('it goes to the admin page of a new user')]
+    public function itGoesToTheAdminPageOfANewUser(): void
+    {
+        $this->isAFinalResponse();
+
+        $this->executeRequest('GET', $this->getPathFromRoute('_teknoo_common_admin_user_new'));
+
+        $this->formName = 'admin_space_user';
     }
 
     #[When('it goes to the admin account page')]
