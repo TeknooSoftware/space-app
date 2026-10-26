@@ -69,6 +69,13 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
                 ],
             );
 
+            //The readonly attribute of East PaaS is only HTML: the submitted namespace must also be ignored
+            if (!empty($options['namespaceIsReadonly'])) {
+                $accountBuilder = $builder->get('account');
+                $accountBuilder->get('namespace')->setDisabled(true);
+                $accountBuilder->get('prefix_namespace')->setDisabled(true);
+            }
+
             $builder->add(
                 'accountData',
                 AccountDataType::class,

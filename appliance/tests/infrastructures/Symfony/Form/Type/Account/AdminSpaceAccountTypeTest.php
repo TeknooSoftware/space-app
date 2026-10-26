@@ -71,6 +71,40 @@ class AdminSpaceAccountTypeTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function testBuildFormDisablesTheNamespaceWhenItIsReadonly(): void
+    {
+        $namespace = $this->createMock(FormBuilderInterface::class);
+        $namespace->expects($this->once())->method('setDisabled')->with(true);
+
+        $prefixNamespace = $this->createMock(FormBuilderInterface::class);
+        $prefixNamespace->expects($this->once())->method('setDisabled')->with(true);
+
+        $account = $this->createStub(FormBuilderInterface::class);
+        $account->method('get')->willReturnMap([
+            ['namespace', $namespace],
+            ['prefix_namespace', $prefixNamespace],
+        ]);
+
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->once())->method('get')->with('account')->willReturn($account);
+
+        $this->adminSpaceAccountType->buildForm(
+            $builder,
+            ['doctrine_type' => 'odm', 'namespaceIsReadonly' => true,],
+        );
+    }
+
+    public function testBuildFormKeepsTheNamespaceEditableWhenItIsNotReadonly(): void
+    {
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->never())->method('get');
+
+        $this->adminSpaceAccountType->buildForm(
+            $builder,
+            ['doctrine_type' => 'odm', 'namespaceIsReadonly' => false,],
+        );
+    }
+
     public function testConfigureOptions(): void
     {
         $this->adminSpaceAccountType->configureOptions(

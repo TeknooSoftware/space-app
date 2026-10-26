@@ -6,6 +6,8 @@
 **Security**
 - A member can no longer choose its subscription plan with a `subscriptionPlanId` sent in the request of its account
   settings: the default plan of a subscription comes from the new step `SetDefaultSubscriptionPlan`
+- The namespace and its prefix can no longer be changed on the edit of an account by the administration: with
+  `namespaceIsReadonly`, the fields are disabled, not only read-only in the page
 
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
