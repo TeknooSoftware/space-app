@@ -643,11 +643,16 @@ services and checked by the `IsGranted` attribute or `AuthorizationChecker` duri
 
 | Voter            | Protects              | Logic                                           |
 |------------------|-----------------------|-------------------------------------------------|
-| **AdminVoter**   | Admin-only operations | Checks `ROLE_ADMIN` role                        |
-| **AccountVoter** | Account entities      | Validates account ownership (user's account)    |
-| **JobVoter**     | Job entities          | Validates job access via project ownership      |
-| **ProjectVoter** | Project entities      | Validates project access via account membership |
-| **UserVoter**    | User entities         | Validates user access (own profile or admin)    |
+| **AdminVoter**   | Admin operations      | `access` and `list` on accounts, users and jobs, `list` on projects, for `ROLE_ADMIN` |
+| **AccountVoter** | Account entities      | Validates account ownership (user's account), abstains for an admin |
+| **JobVoter**     | Job entities          | Validates job access via project ownership, abstains for an admin |
+| **ProjectVoter** | Project entities      | Validates project access via account membership, abstains for an admin |
+| **UserVoter**    | User entities         | Validates user access (own profile)             |
+
+An administrator of Space (`ROLE_ADMIN`) is never a member of an account. It manages the accounts (data, subscription
+plan, users, status, refresh of the quotas, reinstall of the registry, creation and deletion), the users (without
+their password), lists the projects and the jobs, opens and deletes the jobs, and uses the dashboard. Everything else
+(variables, clusters and environments of an account, projects, start of jobs, area of the members) answers `403`.
 
 ## ObjectAccessControl
 

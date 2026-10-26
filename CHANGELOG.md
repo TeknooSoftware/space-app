@@ -13,6 +13,12 @@
   - **Breaking**: custom templates must send a `POST` with `_token` (token id `teknoo_space_admin_account_task`)
 - **Breaking**: a refusal of the firewall of the API (`403`, rules of `access_control`) has the JSON error envelope
   (`meta` and `data`), as the other errors of the API, not an HTML body
+- **Breaking**: `ROLE_ADMIN` is restricted to the accounts (data, plan, users, status, quotas, registry), the users
+  (without password), the lists of projects and jobs, the jobs (open, delete) and the dashboard. The other admin
+  pages and endpoints (variables, clusters, environments, projects, start of jobs, media) and the members area answer `403`
+- **Breaking**: an administrator of Space has no member rights, and a user of an account can not get `ROLE_ADMIN`:
+  remove the role or detach the user from its account first
+- The admin user form has no password: a user created by the administration signs in through the recovery or OAuth
 
 **Fixes**
 - The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)

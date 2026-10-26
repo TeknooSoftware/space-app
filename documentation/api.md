@@ -297,6 +297,13 @@ Creates a new job on the project from the body, as `job/new` (same fields).
 
 All admin endpoints are prefixed with `/api/v1/admin`.
 
+An administrator of Space is never a member of an account. These admin endpoints answer `403` to it: the variables,
+clusters and environments of an account (`/account/{id}/variables`, `/account/{id}/environments`,
+`/account/{id}/environment/...`, `/account/{accountId}/clusters` and `/cluster/...`), the creation, edition, deletion,
+variables and credentials of a project, and the creation, restart and pending of a job. The endpoints of the members
+(`/api/v1/account/...`, `/api/v1/project/...`, `/api/v1/projects`) answer `403` too. Every `403` of the API has the
+JSON error envelope.
+
 #### Admin - Account Management
 
 **List All Accounts**

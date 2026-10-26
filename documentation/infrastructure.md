@@ -318,9 +318,10 @@ from an external repository.
 
 Symfony Security voters for fine-grained authorization:
 
-**AdmintVoter**
+**AdminVoter**
 
-- Checks admin role
+- Grants to `ROLE_ADMIN` the attributes `access` and `list` on accounts, users and jobs, and `list` on projects
+- Abstains on the other objects and attributes
 
 **AccountVoter**
 

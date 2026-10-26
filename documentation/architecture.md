@@ -162,8 +162,9 @@ The bowls are no longer executed inside the web request: each provisioning role 
 worker runs the matching `Recipe\Plan\Task\AccountProvisioningTask` instance, which loads the account, its
 history, clusters, environments and registry before delegating to the bowl. The admin routes
 (`space_admin_account_*_reinstall`, `space_admin_account_refresh_quota` and their API twins) share one HTTP
-plan, `Recipe\Plan\AccountTaskDispatch`, whose route default `taskClass` selects the task; account creation
-and edition queue `InstallRegistryTask` / `InstallEnvironmentTask` from their step lists.
+plan, `Recipe\Plan\AccountTaskDispatch`, whose route default `taskClass` selects the task (the web routes require
+a `POST` with a CSRF token, the environment reinstall is refused to the administrators); account creation queues
+`InstallRegistryTask` and the account settings of the members `InstallEnvironmentTask` from their step lists.
 
 ### 7. Access Control — ObjectAccessControl
 
