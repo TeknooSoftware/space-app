@@ -96,6 +96,7 @@ use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
+use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -495,6 +496,11 @@ return [
     SetSubscriptionPlan::class => create()
         ->constructor(
             get('teknoo.space.subscription_plan_catalog'),
+        ),
+
+    SetDefaultSubscriptionPlan::class => create()
+        ->constructor(
+            get('teknoo.space.subscription.plan_default'),
         ),
 
     SetQuota::class => create(),

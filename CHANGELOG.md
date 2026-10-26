@@ -3,6 +3,10 @@
 ## [2.6.0-beta3] - 2026-10-23
 ### Beta Release
 
+**Security**
+- A member can no longer choose its subscription plan with a `subscriptionPlanId` sent in the request of its account
+  settings: the default plan of a subscription comes from the new step `SetDefaultSubscriptionPlan`
+
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
   promise.

@@ -150,6 +150,7 @@ use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
+use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -216,6 +217,9 @@ return [
             $container->get(RenderError::class),
             $container->get('teknoo.east.common.get_default_error_template'),
         );
+
+        //The default plan comes from the configuration, never from the request: it runs before SetSubscriptionPlan
+        $plan->add($container->get(SetDefaultSubscriptionPlan::class), 55);
 
         $steps = $container->get('teknoo.space.account.endpoint.new.additional_steps');
 

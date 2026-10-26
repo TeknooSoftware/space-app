@@ -76,7 +76,6 @@ class SetSubscriptionPlanTest extends TestCase
             ($this->setSubscriptionPlan)(
                 $this->createStub(ManagerInterface::class),
                 new SpaceAccount($this->createStub(Account::class)),
-                'foo',
             ),
         );
     }
@@ -96,51 +95,7 @@ class SetSubscriptionPlanTest extends TestCase
         );
     }
 
-    public function testInvokeWithSubscriptionPlanId(): void
-    {
-        $accountData = $this->createMock(AccountData::class);
-        $accountData->expects($this->once())
-            ->method('setSubscriptionPlan')
-            ->with('plan-123');
-
-        $accountData->expects($this->once())
-            ->method('visit')
-            ->willReturnCallback(function ($field, $promise) use ($accountData) {
-                $this->assertEquals('subscriptionPlan', $field);
-                $promise->success('plan-123');
-                return $accountData;
-            });
-
-        $plan = $this->createStub(SubscriptionPlan::class);
-        $this->subscriptionPlanCatalog->expects($this->once())
-            ->method('getSubscriptionPlan')
-            ->with('plan-123')
-            ->willReturn($plan);
-
-        $spaceAccount = new SpaceAccount($this->createStub(Account::class));
-        $spaceAccount->accountData = $accountData;
-
-        $manager = $this->createMock(ManagerInterface::class);
-        $manager->expects($this->once())
-            ->method('updateWorkPlan')
-            ->with(
-                $this->callback(function ($workplan) use ($plan) {
-                    return isset($workplan[SubscriptionPlan::class])
-                        && $workplan[SubscriptionPlan::class] === $plan;
-                })
-            );
-
-        $this->assertInstanceOf(
-            SetSubscriptionPlan::class,
-            ($this->setSubscriptionPlan)(
-                manager: $manager,
-                spaceAccount: $spaceAccount,
-                subscriptionPlanId: 'plan-123',
-            ),
-        );
-    }
-
-    public function testInvokeWithoutSubscriptionPlanId(): void
+    public function testInvokeKeepsThePlanOfTheAccountData(): void
     {
         $accountData = $this->createMock(AccountData::class);
         $accountData->expects($this->never())
@@ -172,7 +127,6 @@ class SetSubscriptionPlanTest extends TestCase
             ($this->setSubscriptionPlan)(
                 manager: $manager,
                 spaceAccount: $spaceAccount,
-                subscriptionPlanId: null,
             ),
         );
     }
