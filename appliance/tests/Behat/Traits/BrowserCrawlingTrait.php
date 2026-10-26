@@ -270,6 +270,21 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('it is redirected to the admin page of the last account')]
+    public function itIsRedirectedToTheAdminPageOfTheLastAccount(): void
+    {
+        $this->hasBeenUserRedirected();
+        Assert::assertEquals(
+            $this->getPathFromRoute(
+                route: '_teknoo_paas_admin_account_edit',
+                parameters: [
+                    'id' => $this->recall(Account::class)?->getId(),
+                ],
+            ),
+            $this->currentUrl,
+        );
+    }
+
     #[Then('the dashboard frame is displayed')]
     public function theDashboardFrameIsDisplayed(): void
     {

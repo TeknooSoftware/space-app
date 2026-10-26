@@ -30,6 +30,7 @@ use Behat\Step\When;
 use OTPHP\TOTP;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Object\TOTPAuth;
+use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 
@@ -330,6 +331,44 @@ trait BrowserActionTrait
         );
 
         $this->executeRequest('GET', $url);
+    }
+
+    private function callAdminAccountTask(string $action, string $method, bool $withToken): void
+    {
+        $route = match ($action) {
+            'refresh quota' => 'space_admin_account_refresh_quota',
+            'reinstall registry' => 'space_admin_account_registry_reinstall',
+        };
+
+        $params = [];
+        if ($withToken) {
+            $params['_token'] = $this->getCsrfTokenOfTheSession('teknoo_space_admin_account_task');
+        }
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: [
+                    'id' => $this->recall(Account::class)?->getId(),
+                ],
+            ),
+            params: $params,
+        );
+    }
+
+    #[When('it calls the admin action :action of the last account with the method :method')]
+    public function itCallsTheAdminActionOfTheLastAccountWithTheMethod(string $action, string $method): void
+    {
+        $this->callAdminAccountTask($action, $method, false);
+    }
+
+    #[When('it calls the admin action :action of the last account with the method :method and the CSRF token')]
+    public function itCallsTheAdminActionOfTheLastAccountWithTheMethodAndTheCsrfToken(
+        string $action,
+        string $method,
+    ): void {
+        $this->callAdminAccountTask($action, $method, true);
     }
 
     #[When('it goes to project page of :projectName')]
