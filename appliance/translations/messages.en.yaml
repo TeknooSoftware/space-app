@@ -359,6 +359,7 @@ teknoo.space.text.copyright: 'Copyright © 2020-2021 SASU Teknoo Software. All r
 teknoo.space.text.create_account_cluster: 'Add a cluster'
 teknoo.space.text.create_project: 'Create a new project'
 teknoo.space.text.dashboard: 'Dashboard'
+teknoo.space.text.dashboard.without_account: 'Your user is attached to no account. You can only edit your settings, your password and your 2FA, until an administrator attaches you to an account.'
 teknoo.space.text.email: 'Email'
 teknoo.space.text.environment.reinstall.need_saving: 'The form account must be saved or reloaded before perfom an environment reinstallation'
 teknoo.space.text.error: 'Error'

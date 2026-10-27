@@ -119,6 +119,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\RenderWithoutAccount;
 use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
@@ -554,6 +555,11 @@ return [
     DashboardAvailability::class => create()
         ->constructor(
             get('teknoo.space.dashboard.external.enabled'),
+        ),
+
+    RenderWithoutAccount::class => create()
+        ->constructor(
+            '@TeknooSpace/Dashboard/without_account.html.twig',
         ),
 
     ResolveDashboardTarget::class => create()

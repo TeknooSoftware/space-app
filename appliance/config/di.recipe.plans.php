@@ -173,6 +173,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\RenderWithoutAccount;
 use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
@@ -1100,6 +1101,7 @@ return [
     Dashboard::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(RenderWithoutAccount::class),
             diGet(HealthInterface::class),
             diGet(LoadEnvironments::class),
             diGet(LoadAccountClusters::class),

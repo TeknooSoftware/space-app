@@ -19,6 +19,8 @@
 - **Breaking**: an administrator of Space has no member rights, and a user of an account can not get `ROLE_ADMIN`:
   remove the role or detach the user from its account first
 - The admin user form has no password: a user created by the administration signs in through the recovery or OAuth
+- The dashboard of a user without account, not administrator, no longer shows the clusters of the platform, their
+  health and their version, but a message (new step `RenderWithoutAccount`)
 
 **Fixes**
 - The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
