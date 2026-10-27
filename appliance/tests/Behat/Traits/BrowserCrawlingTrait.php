@@ -559,6 +559,22 @@ trait BrowserCrawlingTrait
         }
     }
 
+    #[Then('the page does not show :text')]
+    public function thePageDoesNotShow(string $text): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertStringNotContainsString($text, $this->createCrawler()->text());
+    }
+
+    #[Then('the page shows the message :key')]
+    public function thePageShowsTheMessage(string $key): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertStringContainsString($this->translator->trans($key), $this->createCrawler()->text());
+    }
+
     #[Then('the form shows the error :message')]
     public function theFormShowsTheError(string $message): void
     {
