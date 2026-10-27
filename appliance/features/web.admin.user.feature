@@ -6,7 +6,8 @@ Feature: Web admin interface to manage users
 
   An administrator of Space manages the users, but it can not set the password of an other user: a user created by the
   administration has no password, it signs in through the recovery page or a third party (OAuth). An administrator of
-  Space is never a user of an account: a user of an account can not get the admin role.
+  Space is never a user of an account: a user of an account can not get the admin role. The pending role is for a user
+  attached to no account: it is alone, and a user of an account can not get it.
 
   Background:
     Given a Space app instance
@@ -105,3 +106,56 @@ Feature: Web admin interface to manage users
       | admin_space_user.user.active    | 1                   |
       | admin_space_user.user.roles.0   | ROLE_USER           |
     Then the last request has saved the user
+
+  Scenario: From the UI, as Admin, create a user with the pending role
+    When it goes to the admin page of a new user
+    And it submits the form:
+      | field                           | value               |
+      | admin_space_user._token         | <auto>              |
+      | admin_space_user.user.firstName | Behat               |
+      | admin_space_user.user.lastName  | Test                |
+      | admin_space_user.user.email     | behat@teknoo.space  |
+      | admin_space_user.user.active    | 1                   |
+      | admin_space_user.user.roles.0   | ROLE_PENDING        |
+    Then get a valid web page
+    And the user "behat@teknoo.space" has the roles "ROLE_PENDING"
+
+  Scenario: From the UI, as Admin, the pending role can not be given with an other role
+    When it goes to the admin page of the user "albert@teknoo.space"
+    And it submits the form:
+      | field                           | value               |
+      | admin_space_user._token         | <auto>              |
+      | admin_space_user.user.firstName | Albert              |
+      | admin_space_user.user.lastName  | Jean                |
+      | admin_space_user.user.email     | albert@teknoo.space |
+      | admin_space_user.user.active    | 1                   |
+      | admin_space_user.user.roles.0   | ROLE_USER           |
+      | admin_space_user.user.roles.1   | ROLE_PENDING        |
+    Then the form shows the error "teknoo.space.error.space_user.pending_alone"
+    And the last request has not saved the user
+
+  Scenario: From the UI, as Admin, a user without account can get the pending role
+    When it goes to the admin page of the user "albert@teknoo.space"
+    And it submits the form:
+      | field                           | value               |
+      | admin_space_user._token         | <auto>              |
+      | admin_space_user.user.firstName | Albert              |
+      | admin_space_user.user.lastName  | Jean                |
+      | admin_space_user.user.email     | albert@teknoo.space |
+      | admin_space_user.user.active    | 1                   |
+      | admin_space_user.user.roles.0   | ROLE_PENDING        |
+    Then the last request has saved the user
+    And the user "albert@teknoo.space" has the roles "ROLE_PENDING"
+
+  Scenario: From the UI, as Admin, a user of an account can not get the pending role
+    When it goes to the admin page of the user "dupont@teknoo.space"
+    And it submits the form:
+      | field                           | value               |
+      | admin_space_user._token         | <auto>              |
+      | admin_space_user.user.firstName | Dupont              |
+      | admin_space_user.user.lastName  | Jean                |
+      | admin_space_user.user.email     | dupont@teknoo.space |
+      | admin_space_user.user.active    | 1                   |
+      | admin_space_user.user.roles.0   | ROLE_PENDING        |
+    Then the form shows the error "teknoo.space.error.space_user.pending_in_account"
+    And the last request has not saved the user

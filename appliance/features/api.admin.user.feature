@@ -145,3 +145,48 @@ Feature: API admin endpoints to administrate users
     Then get a JSON response
     And the serialized user "Jean" "Albert" for admin
     And the last request has saved the user
+
+  Scenario: From the API, as Admin, create a user with the pending role
+    Given the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to create a user as admin with a json body:
+      | field          | value               |
+      | user.active    | 1                   |
+      | user.firstName | Behat               |
+      | user.lastName  | Test                |
+      | user.roles.    | ROLE_PENDING        |
+      | user.email     | dupont@teknoo.space |
+    Then get a JSON response
+    And the user "dupont@teknoo.space" has the roles "ROLE_PENDING"
+
+  Scenario: From the API, as Admin, the pending role can not be given with an other role
+    Given a user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to edit the last user with a json body:
+      | field          | value               |
+      | user.active    | 1                   |
+      | user.firstName | Albert              |
+      | user.lastName  | Jean                |
+      | user.roles.0   | ROLE_USER           |
+      | user.roles.1   | ROLE_PENDING        |
+      | user.email     | albert@teknoo.space |
+    Then get a JSON response
+    But the API returns the form error "teknoo.space.error.space_user.pending_alone"
+    And the last request has not saved the user
+
+  Scenario: From the API, as Admin, a user of an account can not get the pending role
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to edit the last user with a json body:
+      | field          | value               |
+      | user.active    | 1                   |
+      | user.firstName | Dupont              |
+      | user.lastName  | Jean                |
+      | user.roles.0   | ROLE_PENDING        |
+      | user.email     | dupont@teknoo.space |
+    Then get a JSON response
+    But the API returns the form error "teknoo.space.error.space_user.pending_in_account"
+    And the last request has not saved the user

@@ -29,7 +29,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -70,17 +72,29 @@ class AdminSpaceUserTypeTest extends TestCase
 
         $this->spaceAccountLoader = $this->createMock(SpaceAccountLoader::class);
 
-        $this->adminSpaceUserType = new AdminSpaceUserType($this->spaceAccountLoader, 'ROLE_ADMIN');
+        $this->adminSpaceUserType = new AdminSpaceUserType($this->spaceAccountLoader, 'ROLE_ADMIN', 'ROLE_PENDING');
     }
 
     /**
-     * @return array{0: array<string, string>, 1: array<string, callable[]>}
+     * @return array{0: array<string, string>, 1: array<string, callable[]>, 2: array<string, mixed>}
      */
     private function buildAndListen(): array
     {
         $children = [];
         $listeners = [];
+        $rolesChild = [];
+        $userBuilder = $this->createStub(FormBuilderInterface::class);
+        $userBuilder->method('add')
+            ->willReturnCallback(
+                function (string $child, ?string $type = null, array $options = []) use (&$rolesChild, $userBuilder) {
+                    $rolesChild = ['child' => $child, 'type' => $type, 'options' => $options];
+
+                    return $userBuilder;
+                }
+            );
+
         $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('get')->willReturn($userBuilder);
         $builder->method('add')
             ->willReturnCallback(
                 function (string $child, ?string $type = null) use (&$children, $builder): FormBuilderInterface {
@@ -100,7 +114,7 @@ class AdminSpaceUserTypeTest extends TestCase
 
         $this->adminSpaceUserType->buildForm($builder, ['api' => null]);
 
-        return [$children, $listeners];
+        return [$children, $listeners, $rolesChild];
     }
 
     public function testBuildFormHasNoPasswordOnTheWebNorOnTheApi(): void
@@ -115,6 +129,30 @@ class AdminSpaceUserTypeTest extends TestCase
                 'userData' => UserDataType::class,
             ],
             $children,
+        );
+    }
+
+    public function testBuildFormAddsThePendingRoleToTheRolesOfTheUser(): void
+    {
+        $this->spaceAccountLoader->expects($this->never())->method('fetch');
+
+        [, , $rolesChild] = $this->buildAndListen();
+
+        $this->assertSame(
+            [
+                'child' => 'roles',
+                'type' => ChoiceType::class,
+                'options' => [
+                    'required' => true,
+                    'multiple' => true,
+                    'choices' => [
+                        'user' => 'ROLE_USER',
+                        'admin' => 'ROLE_ADMIN',
+                        'pending' => 'ROLE_PENDING',
+                    ],
+                ],
+            ],
+            $rolesChild,
         );
     }
 
@@ -202,6 +240,72 @@ class AdminSpaceUserTypeTest extends TestCase
         $roles->expects($this->never())->method('addError');
 
         $this->submit($this->createUser('user-1', ['ROLE_USER', 'ROLE_ADMIN']), $roles);
+    }
+
+    public function testTheGuardRefusesThePendingRoleWithAnOtherRole(): void
+    {
+        $this->spaceAccountLoader->expects($this->never())->method('fetch');
+
+        $roles = $this->createMock(FormInterface::class);
+        $roles->expects($this->once())
+            ->method('addError')
+            ->with($this->callback(
+                fn (FormError $error): bool => 'teknoo.space.error.space_user.pending_alone' === $error->getMessage(),
+            ));
+
+        $this->submit($this->createUser(null, ['ROLE_PENDING', 'ROLE_USER']), $roles);
+    }
+
+    public function testTheGuardAcceptsThePendingRoleForANewUser(): void
+    {
+        $this->spaceAccountLoader->expects($this->never())->method('fetch');
+
+        $roles = $this->createMock(FormInterface::class);
+        $roles->expects($this->never())->method('addError');
+
+        $this->submit($this->createUser(null, ['ROLE_PENDING']), $roles);
+    }
+
+    public function testTheGuardRefusesThePendingRoleToAUserOfAnAccount(): void
+    {
+        $this->spaceAccountLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function (QueryElementInterface $query, PromiseInterface $promise): LoaderInterface {
+                    $this->assertInstanceOf(FetchAccountFromUser::class, $query);
+                    $promise->success(new SpaceAccount());
+
+                    return $this->spaceAccountLoader;
+                }
+            );
+
+        $roles = $this->createMock(FormInterface::class);
+        $roles->expects($this->once())
+            ->method('addError')
+            ->with($this->callback(
+                fn (FormError $error): bool => 'teknoo.space.error.space_user.pending_in_account'
+                    === $error->getMessage(),
+            ));
+
+        $this->submit($this->createUser('user-1', ['ROLE_PENDING']), $roles);
+    }
+
+    public function testTheGuardAcceptsThePendingRoleForAUserWithoutAccount(): void
+    {
+        $this->spaceAccountLoader->expects($this->once())
+            ->method('fetch')
+            ->willReturnCallback(
+                function (QueryElementInterface $query, PromiseInterface $promise): LoaderInterface {
+                    $promise->fail(new \DomainException('not found'));
+
+                    return $this->spaceAccountLoader;
+                }
+            );
+
+        $roles = $this->createMock(FormInterface::class);
+        $roles->expects($this->never())->method('addError');
+
+        $this->submit($this->createUser('user-1', ['ROLE_PENDING']), $roles);
     }
 
     public function testConfigureOptions(): void

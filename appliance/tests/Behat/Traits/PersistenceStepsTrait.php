@@ -76,8 +76,10 @@ use Throwable;
 
 use function array_keys;
 use function array_shift;
+use function array_values;
 use function count;
 use function current;
+use function explode;
 use function is_a;
 use function mb_strtolower;
 use function random_int;
@@ -1495,6 +1497,22 @@ trait PersistenceStepsTrait
             foreach ($user->getAuthData() as $authData) {
                 Assert::assertNotInstanceOf(StoredPassword::class, $authData, "The user $email has a password");
             }
+
+            return;
+        }
+
+        Assert::fail("The user $email is missing");
+    }
+
+    #[Then('the user :email has the roles :roles')]
+    public function theUserHasTheRoles(string $email, string $roles): void
+    {
+        foreach ($this->listObjects(User::class) as $user) {
+            if ($email !== $user->getEmail()) {
+                continue;
+            }
+
+            Assert::assertSame(explode(',', $roles), array_values((array) $user->getRoles()));
 
             return;
         }
