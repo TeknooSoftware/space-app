@@ -312,7 +312,7 @@ Located in `appliance/infrastructures/Symfony/Security/`:
 **Authenticators**
 
 Build on `Teknoo East Common` authenticator, Space is bundled with `UserConverter` to import users
-from an external repository.
+from an external repository. A user imported at its first sign-in gets `ROLE_PENDING`: it is attached to no account.
 
 **Voters**
 

@@ -26,6 +26,13 @@ allowed but whose operation is not (variables, clusters and environments of an a
 refuse the area of the members (projects, jobs, account settings, and their `/api/v1` twins) to `ROLE_ADMIN`. Use
 `allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule.
 
+`ROLE_PENDING` is a user attached to no account: the first sign-in with OAuth gives it, or the admin user form (alone,
+never for a user of an account). It does not include `ROLE_USER`, so the default rule refuses it: only `/`,
+`/my-settings` and its password, `/2fa/`, `/contact/` and `/media/` accept it. The API refuses it (`allow_if`), so it
+has no API key and no JWT. Its dashboard shows a message (`RenderWithoutAccount`). Attached to an account by an
+administrator, it gets `ROLE_USER` (`AdminSpaceAccountType`); the web session keeps the roles of the sign-in until the
+next sign-in.
+
 The restriction prevents mistakes, not bad intent: an administrator can create a user with an email that it controls,
 attach it to an account and sign in as this user through the recovery page or OAuth.
 

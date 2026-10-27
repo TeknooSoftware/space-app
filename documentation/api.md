@@ -20,6 +20,9 @@ password.
 4. Click "Add API Key" to generate a new API token
 5. Save the token name and value securely - the token value will only be shown once
 
+A user attached to no account (`ROLE_PENDING`) can not create an API key, and the API answers `403` to it, also on the
+login and on its settings.
+
 #### Obtaining a JWT Token
 
 To authenticate with the API, you need to exchange your API token for a JWT token using the login endpoint.

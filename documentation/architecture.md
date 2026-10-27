@@ -219,7 +219,7 @@ Account (Tenant)
 - **OAuth2 Integration**: Third-party authentication support
 - **Multi-Factor Authentication (MFA)**: TOTP-based 2FA with QR code generation
 - **JWT Tokens**: API authentication
-- **Symfony Security**: Role-based access control (ROLE_USER, ROLE_ADMIN)
+- **Symfony Security**: Role-based access control (ROLE_USER, ROLE_ADMIN, ROLE_PENDING)
 - **Variable Encryption**: RSA/DSA encryption for sensitive persisted variables
 
 ### 12. East PaaS Integration
