@@ -559,6 +559,33 @@ trait BrowserCrawlingTrait
         }
     }
 
+    #[Then('the page has a link to the route :route')]
+    public function thePageHasALinkToTheRoute(string $route): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertInstanceOf(RouterInterface::class, $this->urlGenerator);
+
+        foreach ($this->createCrawler()->filter('a[href]') as $node) {
+            $path = (string) parse_url((string) $node->getAttribute('href'), PHP_URL_PATH);
+            if (!str_starts_with($path, '/')) {
+                continue;
+            }
+
+            try {
+                $match = $this->urlGenerator->match($path);
+            } catch (RoutingExceptionInterface) {
+                continue;
+            }
+
+            if ($route === ($match['_route'] ?? null)) {
+                return;
+            }
+        }
+
+        Assert::fail("The page has no link to the route $route");
+    }
+
     #[Then('the page does not show :text')]
     public function thePageDoesNotShow(string $text): void
     {

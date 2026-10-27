@@ -1469,6 +1469,12 @@ trait PersistenceStepsTrait
         Assert::assertTrue($this->isAUserOfTheLastAccount($email), "$email is not a user of the last account");
     }
 
+    #[Given('the last user has only the role :role')]
+    public function theLastUserHasOnlyTheRole(string $role): void
+    {
+        $this->recall(User::class)?->setRoles([$role]);
+    }
+
     #[Given('the last user has also the role :role')]
     public function theLastUserHasAlsoTheRole(string $role): void
     {
