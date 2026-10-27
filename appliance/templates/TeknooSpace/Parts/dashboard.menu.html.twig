@@ -13,7 +13,7 @@
         </div>
 
         <ul class="sidebar-menu">
-            {% if is_granted('ROLE_USER') %}
+            {% if is_granted('ROLE_USER') or is_granted('ROLE_PENDING') %}
                 <li>
                     <a href="{{ path('space_dashboard') }}">
                         <i class="ti ti-dashboard me-2"></i> {{ 'teknoo.space.action.dashboard'|trans }}
@@ -24,6 +24,8 @@
                         <i class="ti ti-user me-2"></i> {{ 'teknoo.space.action.my-settings'|trans }}
                     </a>
                 </li>
+            {% endif %}
+            {% if is_granted('ROLE_USER') %}
                 {% if space.account is defined and space.account is not empty %}
                     <li>
                         <a href="{{ path('space_account_settings') }}">

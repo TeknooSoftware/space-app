@@ -146,6 +146,7 @@
                                                                 </span>
                                                                 {{ 'teknoo.space.action.2fa'|trans }}
                                                             </a>
+                                                            {% if is_granted('ROLE_USER') %}
                                                             <a class="dropdown-item text-dark"
                                                                hreflang="{{ locale }}"
                                                                href="{{ path('_teknoo_common_jwt_create') }}">
@@ -162,6 +163,7 @@
                                                                 </span>
                                                                 {{ 'teknoo.space.action.api-keys'|trans }}
                                                             </a>
+                                                            {% endif %}
                                                             {{ space_extension('space_top_header_menu') }}
                                                             <div class="dropdown-divider border-top"></div>
                                                             <a class="dropdown-item text-dark"
