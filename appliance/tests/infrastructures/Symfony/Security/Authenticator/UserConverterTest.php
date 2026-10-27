@@ -59,7 +59,7 @@ class UserConverterTest extends TestCase
     {
         parent::setUp();
 
-        $this->userConverter = new UserConverter();
+        $this->userConverter = new UserConverter('ROLE_PENDING');
 
         $this->owner = $this->createStub(GenericResourceOwner::class);
         $this->owner->method('toArray')->willReturn([
@@ -127,7 +127,8 @@ class UserConverterTest extends TestCase
             ->with($this->callback(
                 fn (User $user): bool => 'foo@bar' === $user->getEmail()
                     && 'foo' === $user->getLastName()
-                    && 'bar' === $user->getFirstName(),
+                    && 'bar' === $user->getFirstName()
+                    && ['ROLE_PENDING'] === $user->getRoles(),
             ));
         $promise->expects($this->never())->method('fail');
 

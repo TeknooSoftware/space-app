@@ -34,6 +34,8 @@ use Teknoo\Recipe\Promise\Promise;
 use Teknoo\Space\Contracts\Object\AccountComponentInterface;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
+use function in_array;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -42,6 +44,11 @@ use Teknoo\Space\Object\DTO\SpaceAccount;
  */
 class AccountVoter implements VoterInterface
 {
+    public function __construct(
+        private readonly string $adminRoleName,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $attributes
      */
@@ -56,6 +63,11 @@ class AccountVoter implements VoterInterface
             && !$subject instanceof SpaceAccount
             && !$subject instanceof AccountComponentInterface
         ) {
+            return VoterInterface::ACCESS_ABSTAIN;
+        }
+
+        //An administrator of Space is never a member of an account: it gets no right from a membership
+        if (in_array($this->adminRoleName, $token->getRoleNames(), true)) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
 

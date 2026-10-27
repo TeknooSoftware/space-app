@@ -23,6 +23,17 @@ Feature: API admin endpoints to administrate accounts
     And is a serialized collection of "10" items on "1" pages
     And the list of serialized accounts
 
+  Scenario: From the API, a user of an account can not use the admin endpoints, the error is a JSON response
+    Given a memory document database
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to list of accounts as admin
+    Then get a JSON response
+    But an 403 error
+
   Scenario: From the API, as Admin, create an account, via a request with a form url encoded body
     Given a kubernetes client
     And a memory document database
@@ -162,6 +173,7 @@ Feature: API admin endpoints to administrate accounts
       | admin_space_account.accountData.subscriptionPlan | test-1        |
     Then get a JSON response
     And the serialized account "Test Behat" for admin
+    And the namespace of the last account is "my-company"
     And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, edit an account, via a request with a json body
@@ -186,7 +198,34 @@ Feature: API admin endpoints to administrate accounts
       | accountData.subscriptionPlan | test-1        |
     Then get a JSON response
     And the serialized account "Test Behat" for admin
+    And the namespace of the last account is "my-company"
     And no Kubernetes manifests have been deleted
+
+  Scenario: From the API, as Admin, the environments of an account can not be changed from its edit
+    Given a memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to edit the last account with a json body:
+      | field                        | value             |
+      | account.name                 | Test Behat        |
+      | accountData.legalName        | sasu demo         |
+      | accountData.streetAddress    | Auge              |
+      | accountData.zipCode          | 14000             |
+      | accountData.cityName         | Caen              |
+      | accountData.countryName      | France            |
+      | accountData.vatNumber        | FR0102030405      |
+      | accountData.subscriptionPlan | test-1            |
+      | environments.2.clusterName   | Demo Kube Cluster |
+      | environments.2.envName       | testing           |
+    Then get a JSON response
+    But the API returns the form error "This form should not contain extra fields."
+    And the last request has not saved the account
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
 
   Scenario: From the API, as Admin, edit the users of an account
     Given a memory document database
@@ -217,6 +256,35 @@ Feature: API admin endpoints to administrate accounts
     And the last request has saved the account
     And the user "dupont@teknoo.space" is a user of the last account
     And the user "albert@teknoo.space" is a user of the last account
+
+  Scenario: From the API, as Admin, a user attached to no account becomes a user of the account
+    Given a memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a pending, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    And the user "albert@teknoo.space" is not a user of the last account
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to edit the last account:
+      | field                                            | value                      |
+      | admin_space_account.account.name                 | Test Behat                 |
+      | admin_space_account.account.prefix_namespace     | space-client-              |
+      | admin_space_account.account.namespace            | behat                      |
+      | admin_space_account.account.users.0              | <auto:dupont@teknoo.space> |
+      | admin_space_account.account.users.1              | <auto:albert@teknoo.space> |
+      | admin_space_account.accountData.legalName        | sasu demo                  |
+      | admin_space_account.accountData.streetAddress    | Auge                       |
+      | admin_space_account.accountData.zipCode          | 14000                      |
+      | admin_space_account.accountData.cityName         | Caen                       |
+      | admin_space_account.accountData.countryName      | France                     |
+      | admin_space_account.accountData.vatNumber        | FR0102030405               |
+      | admin_space_account.accountData.subscriptionPlan | test-1                     |
+    Then get a JSON response
+    And the last request has saved the account
+    And the user "albert@teknoo.space" is a user of the last account
+    And the user "albert@teknoo.space" has the roles "ROLE_USER"
 
   Scenario: From the API, as Admin, an administrator of Space can not be a user of an account
     Given a memory document database

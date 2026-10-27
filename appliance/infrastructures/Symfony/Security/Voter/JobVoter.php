@@ -32,6 +32,8 @@ use Teknoo\East\CommonBundle\Object\AbstractUser;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\Recipe\Promise\Promise;
 
+use function in_array;
+
 /**
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
@@ -40,6 +42,11 @@ use Teknoo\Recipe\Promise\Promise;
  */
 class JobVoter implements VoterInterface
 {
+    public function __construct(
+        private readonly string $adminRoleName,
+    ) {
+    }
+
     /**
      * @param array<string, mixed> $attributes
      */
@@ -50,6 +57,11 @@ class JobVoter implements VoterInterface
         ?Vote $vote = null,
     ): int {
         if (!$subject instanceof Job) {
+            return VoterInterface::ACCESS_ABSTAIN;
+        }
+
+        //An administrator of Space is never a member of an account: it gets no right from a membership
+        if (in_array($this->adminRoleName, $token->getRoleNames(), true)) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
 

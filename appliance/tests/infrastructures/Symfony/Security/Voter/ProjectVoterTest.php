@@ -57,7 +57,7 @@ class ProjectVoterTest extends TestCase
     {
         parent::setUp();
 
-        $this->projectVoter = new ProjectVoter();
+        $this->projectVoter = new ProjectVoter('ROLE_ADMIN');
     }
 
     public function testVote(): void
@@ -146,5 +146,32 @@ class ProjectVoterTest extends TestCase
             ),
         );
         $this->assertSame([], $vote->reasons);
+    }
+
+    public function testVoteAbstainForAnAdministratorWhoIsAMemberOfTheAccount(): void
+    {
+        $user = (new User())->setId('user-1');
+        $account = (new Account())->setName('foo')->setUsers([$user]);
+
+        $wrappedUser = $this->createStub(AbstractUser::class);
+        $wrappedUser->method('getWrappedUser')->willReturn($user);
+        $token = $this->createStub(TokenInterface::class);
+        $token->method('getUser')->willReturn($wrappedUser);
+        $token->method('getRoleNames')->willReturn(['ROLE_USER', 'ROLE_ADMIN']);
+
+        foreach (['access', 'list'] as $attribute) {
+            $vote = new Vote();
+
+            $this->assertSame(
+                VoterInterface::ACCESS_ABSTAIN,
+                $this->projectVoter->vote(
+                    $token,
+                    new SpaceProject($this->createProject($account)),
+                    [$attribute],
+                    $vote,
+                ),
+            );
+            $this->assertSame([], $vote->reasons);
+        }
     }
 }

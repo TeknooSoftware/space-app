@@ -3,11 +3,40 @@
 ## [2.6.0-beta3] - 2026-10-23
 ### Beta Release
 
+**Security**
+- A member can no longer choose its subscription plan with a `subscriptionPlanId` sent in the request of its account
+  settings: the default plan of a subscription comes from the new step `SetDefaultSubscriptionPlan`
+- The namespace and its prefix can no longer be changed on the edit of an account by the administration: with
+  `namespaceIsReadonly`, the fields are disabled, not only read-only in the page (East PaaS 5.11.5)
+- The refresh of the quota and the reinstall of the registry from the web administration require a `POST` with a CSRF
+  token (`403` without it, `405` with a `GET`). The API is not concerned
+  - **Breaking**: custom templates must send a `POST` with `_token` (token id `teknoo_space_admin_account_task`)
+- **Breaking**: a refusal of the firewall of the API (`403`, rules of `access_control`) has the JSON error envelope
+  (`meta` and `data`), as the other errors of the API, not an HTML body
+- **Breaking**: `ROLE_ADMIN` is restricted to the accounts (data, plan, users, status, quotas, registry), the users
+  (without password), the lists of projects and jobs, the jobs (open, delete) and the dashboard. The other admin
+  pages and endpoints (variables, clusters, environments, projects, start of jobs, media) and the members area answer `403`
+- **Breaking**: an administrator of Space has no member rights, and a user of an account can not get `ROLE_ADMIN`:
+  remove the role or detach the user from its account first
+- The admin user form has no password: a user created by the administration signs in through the recovery or OAuth
+- The dashboard of a user without account, not administrator, no longer shows the clusters of the platform, their
+  health and their version, but a message (new step `RenderWithoutAccount`)
+
+**Fixes**
+- The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
+  answered a `500`
+  - **Breaking**: these endpoints are removed, create the job with `job/new`. The web restart does not change
+
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
   promise.
 - `HookingDeployment` logs the command called by the hook in the history, under the key `hook_command` (`null` if the
   hook does not provide it), next to `hook_output`.
+- `ROLE_PENDING`: a user attached to no account, limited to the dashboard (a message), its settings, its password
+  and its 2FA. The API, the API keys and the JWT are refused to it
+  - **Breaking**: the first sign-in with OAuth creates a user with `ROLE_PENDING` (before: no role)
+  - The admin user form gives the choice `pending`: alone, and refused to a user of an account
+  - Attached to an account by the administration, the user gets `ROLE_USER` and must sign in again
 
 ## [2.6.0-beta2] - 2026-10-22
 ### Beta Release

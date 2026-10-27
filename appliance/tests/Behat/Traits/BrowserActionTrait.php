@@ -30,11 +30,15 @@ use Behat\Step\When;
 use OTPHP\TOTP;
 use PHPUnit\Framework\Assert;
 use Teknoo\East\Common\Object\TOTPAuth;
+use Teknoo\East\Common\Object\User;
+use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
+use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Job;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
 use Teknoo\Space\Object\Persisted\AccountCluster;
 
 use function array_shift;
 use function explode;
+use function str_starts_with;
 use function substr;
 
 /**
@@ -153,6 +157,8 @@ trait BrowserActionTrait
         foreach ($formFields as $field) {
             if ('<auto>' === $field['value']) {
                 $field['value'] = $this->getFormFieldValue($formValue, $field['field']);
+            } elseif (str_starts_with($field['value'], '<auto:')) {
+                $field['value'] = $this->autoGetId(field: $field['field'], value: $field['value']);
             }
 
             $this->setRequestParameters($final, $field['field'], $field['value']);
@@ -274,6 +280,49 @@ trait BrowserActionTrait
         $this->formName = $formName;
     }
 
+    #[When('it goes to the admin page of the user :email')]
+    public function itGoesToTheAdminPageOfTheUser(string $email): void
+    {
+        $this->isAFinalResponse();
+
+        $userId = null;
+        foreach ($this->listObjects(User::class) as $user) {
+            if ($email === $user->getEmail()) {
+                $userId = $user->getId();
+            }
+        }
+
+        Assert::assertNotNull($userId, "The user $email is missing");
+
+        $this->executeRequest(
+            'GET',
+            $this->getPathFromRoute(
+                route: '_teknoo_common_admin_user_edit',
+                parameters: [
+                    'id' => $userId,
+                ],
+            ),
+        );
+
+        $this->formName = 'admin_space_user';
+    }
+
+    #[When('it goes to the admin page of a new user')]
+    public function itGoesToTheAdminPageOfANewUser(): void
+    {
+        $this->isAFinalResponse();
+
+        $this->executeRequest('GET', $this->getPathFromRoute('_teknoo_common_admin_user_new'));
+
+        $this->formName = 'admin_space_user';
+    }
+
+    #[When('it goes to the admin account page')]
+    public function itGoesToTheAdminAccountPage(): void
+    {
+        $this->openEditPageOfLast('_teknoo_paas_admin_account_edit', Account::class, 'admin_space_account');
+    }
+
     #[When('it goes to the admin project page')]
     public function itGoesToTheAdminProjectPage(): void
     {
@@ -330,6 +379,131 @@ trait BrowserActionTrait
         );
 
         $this->executeRequest('GET', $url);
+    }
+
+    private function callAdminAccountTask(string $action, string $method, bool $withToken): void
+    {
+        $route = match ($action) {
+            'refresh quota' => 'space_admin_account_refresh_quota',
+            'reinstall registry' => 'space_admin_account_registry_reinstall',
+        };
+
+        $params = [];
+        if ($withToken) {
+            $params['_token'] = $this->getCsrfTokenOfTheSession('teknoo_space_admin_account_task');
+        }
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: [
+                    'id' => $this->recall(Account::class)?->getId(),
+                ],
+            ),
+            params: $params,
+        );
+    }
+
+    /**
+     * Parameters of a route of the members area, from the last project, job and account cluster of the fixtures
+     *
+     * @return array<string, string|null>
+     */
+    private function getParametersOfMemberRoute(string $route): array
+    {
+        $projectId = $this->recall(Project::class)?->getId();
+
+        return match ($route) {
+            'space_project_edit',
+            'space_project_edit_variables',
+            'space_project_edit_refresh_credentials',
+            'space_project_delete' => ['id' => $projectId],
+            'space_job_new',
+            'space_job_list',
+            'space_api_v1_job_new',
+            'space_api_v1_job_list' => ['projectId' => $projectId],
+            'space_job_restart' => [
+                'projectId' => $projectId,
+                'jobId' => $this->recall(Job::class)?->getId(),
+            ],
+            'space_job_new_pending' => ['taskId' => 'fooBar'],
+            'space_api_v1_job_new_pending' => ['projectId' => $projectId, 'taskId' => 'fooBar'],
+            'space_job_get',
+            'space_job_delete' => ['id' => $this->recall(Job::class)?->getId()],
+            'space_api_v1_job_get',
+            'space_api_v1_job_delete' => [
+                'projectId' => $projectId,
+                'id' => $this->recall(Job::class)?->getId(),
+            ],
+            'space_account_clusters_edit',
+            'space_account_clusters_delete',
+            'space_api_v1_account_clusters_edit',
+            'space_api_v1_account_clusters_delete' => ['id' => $this->recall(AccountCluster::class)?->getId()],
+            'space_api_v1_project_edit',
+            'space_api_v1_project_edit_variables',
+            'space_api_v1_project_refresh_credentials',
+            'space_api_v1_project_delete' => ['id' => $projectId],
+            default => [],
+        };
+    }
+
+    #[When('it opens the page of the route :route')]
+    public function itOpensThePageOfTheRoute(string $route): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: $this->getParametersOfMemberRoute($route),
+            ),
+        );
+    }
+
+    #[When('it opens the admin page :route of the last account')]
+    public function itOpensTheAdminPageOfTheLastAccount(string $route): void
+    {
+        $accountId = $this->recall(Account::class)?->getId();
+
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: $route,
+                parameters: match ($route) {
+                    'space_admin_account_clusters_list',
+                    'space_admin_account_clusters_new',
+                    '_teknoo_paas_admin_project_new' => ['accountId' => $accountId],
+                    'space_admin_account_environment_reinstall' => [
+                        'id' => $accountId,
+                        'envName' => 'prod',
+                        'clusterName' => 'Demo Kube Cluster',
+                    ],
+                    'space_admin_job_get' => ['id' => $this->recall(Job::class)?->getId()],
+                    'space_admin_account_code_generator',
+                    '_teknoo_paas_admin_account_list',
+                    '_teknoo_paas_admin_project_list',
+                    '_teknoo_paas_admin_job_list',
+                    'space_dashboard',
+                    '_teknoo_common_admin_media_list',
+                    '_teknoo_common_admin_media_new' => [],
+                    default => ['id' => $accountId],
+                },
+            ),
+        );
+    }
+
+    #[When('it calls the admin action :action of the last account with the method :method')]
+    public function itCallsTheAdminActionOfTheLastAccountWithTheMethod(string $action, string $method): void
+    {
+        $this->callAdminAccountTask($action, $method, false);
+    }
+
+    #[When('it calls the admin action :action of the last account with the method :method and the CSRF token')]
+    public function itCallsTheAdminActionOfTheLastAccountWithTheMethodAndTheCsrfToken(
+        string $action,
+        string $method,
+    ): void {
+        $this->callAdminAccountTask($action, $method, true);
     }
 
     #[When('it goes to project page of :projectName')]

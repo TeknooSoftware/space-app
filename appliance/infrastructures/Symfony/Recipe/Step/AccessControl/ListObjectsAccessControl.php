@@ -42,6 +42,6 @@ class ListObjectsAccessControl extends AbstractAccessControl implements ListObje
         MessageInterface $message,
         iterable $objectsCollection = []
     ): ListObjectsAccessControlInterface {
-        return $this->run($manager, $objectsCollection);
+        return $this->run($manager, $objectsCollection, self::ATTRIBUTE_LIST);
     }
 }

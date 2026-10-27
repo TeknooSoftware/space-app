@@ -268,3 +268,27 @@ Feature: API endpoints to manage account's environments where deploy projects
     But the user must have a 400 error
     And Space executes the pending tasks
     And no Kubernetes manifests have been created
+
+  Scenario: From the API, create a new environment on a Docker Compose cluster, its deploy user is logged in on the account registry
+    Given a kubernetes client
+    And a fake Ansible runner for the account provisioning
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And an account clusters "Docker Host" and a slug "docker-host" on docker compose
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to update account's environments with a json body:
+      | field                               | value             |
+      | environments.1.accountEnvironmentId | <auto:prod>       |
+      | environments.1.clusterName          | Demo Kube Cluster |
+      | environments.1.envName              | prod              |
+      | environments.2.accountEnvironmentId |                   |
+      | environments.2.clusterName          | Docker Host       |
+      | environments.2.envName              | staging           |
+    Then get a JSON response
+    And the serialized account's environments of "My Company"
+    And Space executes the pending tasks
+    And the deploy user of the docker host "docker-host.docker-host.behat" has been logged in on the account registry
+    And the account history must record the registries login for "staging" on "Docker Host"

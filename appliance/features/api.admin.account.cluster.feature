@@ -1,8 +1,8 @@
 @api @admin
 Feature: API admin endpoints to administrate custom clusters of accounts.
-  In order to manage account's clusters
+  In order to keep the clusters of the accounts out of the reach of the administration
   As an administrator of Space
-  I want to manage accounts clusters of each registered account
+  I can not list, read or change the clusters of an account
 
   On space, users on a same account can define clusters to use with their environments and for all projects.
   These clusters will complete the official `Cluster Catalog` defined by the Space instance's administrators.
@@ -16,7 +16,7 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication is enabled for the last user
 
-  Scenario: From the API, as Admin, list accounts clusters of an account
+  Scenario: From the API, as Admin, list accounts clusters of an account is refused
     Given an account for "My First Company" with the account namespace "my-first-company"
     And a user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
     And "5" accounts clusters "cluster X" and a slug "a-cluster"
@@ -27,10 +27,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to list of accounts clusters of last account as admin
     Then get a JSON response
-    And is a serialized collection of "5" items on "1" pages
-    And the list of serialized accounts clusters
+    But an 403 error
 
-  Scenario: From the API, as Admin, create an account cluster, via a request with a form url encoded body
+  Scenario: From the API, as Admin, create an account cluster, via a request with a form url encoded body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
@@ -49,10 +48,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
       | account_cluster.registryUrl        | https://registry.local  |
       | account_cluster.useHnc             | 0                       |
     Then get a JSON response
-    And the serialized created account cluster "Behats Test"
-    And there is an account cluster in the memory for this account
+    But an 403 error
 
-  Scenario: From the API, as Admin, create an account cluster, via a request with a json body
+  Scenario: From the API, as Admin, create an account cluster, via a request with a json body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the platform is booted
@@ -71,10 +69,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
       | registryUrl        | https://registry.local  |
       | useHnc             | 0                       |
     Then get a JSON response
-    And the serialized created account cluster "Behats Test"
-    And there is an account cluster in the memory for this account
+    But an 403 error
 
-  Scenario: From the API, as Admin, get an account cluster
+  Scenario: From the API, as Admin, get an account cluster is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And an account clusters "my cluster" and a slug "a-cluster"
@@ -82,9 +79,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to get the last account cluster as admin
     Then get a JSON response
-    And the serialized account cluster "my cluster"
+    But an 403 error
 
-  Scenario: From the API, as Admin, edit an account's cluster, via a request with a form url encoded body
+  Scenario: From the API, as Admin, edit an account's cluster, via a request with a form url encoded body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And an account clusters "my cluster" and a slug "a-cluster"
@@ -104,9 +101,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
       | account_cluster.registryUrl        | https://registry.local  |
       | account_cluster.useHnc             | 0                       |
     Then get a JSON response
-    And the serialized updated account cluster "Behats Test"
+    But an 403 error
 
-  Scenario: From the API, as Admin, edit an account's cluster, via a request with a json body
+  Scenario: From the API, as Admin, edit an account's cluster, via a request with a json body is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And an account clusters "my cluster" and a slug "a-cluster"
@@ -126,9 +123,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
       | registryUrl        | https://registry.local  |
       | useHnc             | 0                       |
     Then get a JSON response
-    And the serialized updated account cluster "Behats Test"
+    But an 403 error
 
-  Scenario: From the API, as Admin, delete an account cluster
+  Scenario: From the API, as Admin, delete an account cluster is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And an account clusters "my cluster" and a slug "a-cluster"
@@ -136,10 +133,9 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last account cluster as admin
     Then get a JSON response
-    And the serialized deleted account cluster
-    And the account cluster is deleted
+    But an 403 error
 
-  Scenario: From the API, as Admin, delete an account cluster, via a request with DELETE method
+  Scenario: From the API, as Admin, delete an account cluster, via a request with DELETE method is refused
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And an account clusters "my cluster" and a slug "a-cluster"
@@ -147,5 +143,4 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to delete the last account cluster with DELETE method as admin
     Then get a JSON response
-    And the serialized deleted account cluster
-    And the account cluster is deleted
+    But an 403 error

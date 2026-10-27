@@ -32,6 +32,8 @@ use PHPUnit\Framework\Assert;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingExceptionInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Teknoo\East\Common\Object\User;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Account;
 use Teknoo\East\Paas\Infrastructures\Doctrine\Object\ODM\Project;
@@ -41,6 +43,7 @@ use Teknoo\East\Paas\Recipe\Step\Worker\CloneRepository;
 use function array_map;
 use function array_shift;
 use function explode;
+use function parse_url;
 use function sort;
 use function str_starts_with;
 use function trim;
@@ -244,6 +247,24 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('the form has no field :dottedField')]
+    public function theFormHasNoField(string $dottedField): void
+    {
+        $this->isAFinalResponse();
+
+        $parts = explode('.', $dottedField);
+        $name = array_shift($parts);
+        foreach ($parts as $part) {
+            $name .= "[{$part}]";
+        }
+
+        Assert::assertCount(
+            0,
+            $this->createCrawler()->filter("[name^=\"{$name}\"]"),
+            "The form has the field '{$dottedField}'",
+        );
+    }
+
     private function findFormField(string $dottedField): Crawler
     {
         $this->isAFinalResponse();
@@ -266,6 +287,21 @@ trait BrowserCrawlingTrait
         $this->hasBeenUserRedirected();
         Assert::assertEquals(
             $this->getPathFromRoute('space_dashboard'),
+            $this->currentUrl,
+        );
+    }
+
+    #[Then('it is redirected to the admin page of the last account')]
+    public function itIsRedirectedToTheAdminPageOfTheLastAccount(): void
+    {
+        $this->hasBeenUserRedirected();
+        Assert::assertEquals(
+            $this->getPathFromRoute(
+                route: '_teknoo_paas_admin_account_edit',
+                parameters: [
+                    'id' => $this->recall(Account::class)?->getId(),
+                ],
+            ),
             $this->currentUrl,
         );
     }
@@ -495,6 +531,88 @@ trait BrowserCrawlingTrait
         Assert::assertNotEmpty(
             trim((string) $node->getNode(0)?->textContent),
         );
+    }
+
+    #[Then('the page has no link to the route :route')]
+    public function thePageHasNoLinkToTheRoute(string $route): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertInstanceOf(RouterInterface::class, $this->urlGenerator);
+
+        $crawler = $this->createCrawler();
+        foreach (['a[href]' => 'href', '[formaction]' => 'formaction'] as $selector => $attribute) {
+            foreach ($crawler->filter($selector) as $node) {
+                $path = (string) parse_url((string) $node->getAttribute($attribute), PHP_URL_PATH);
+                if (!str_starts_with($path, '/')) {
+                    continue;
+                }
+
+                try {
+                    $match = $this->urlGenerator->match($path);
+                } catch (RoutingExceptionInterface) {
+                    continue;
+                }
+
+                Assert::assertNotSame($route, $match['_route'] ?? null, "The page has a link to the route $route");
+            }
+        }
+    }
+
+    #[Then('the page has a link to the route :route')]
+    public function thePageHasALinkToTheRoute(string $route): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertInstanceOf(RouterInterface::class, $this->urlGenerator);
+
+        foreach ($this->createCrawler()->filter('a[href]') as $node) {
+            $path = (string) parse_url((string) $node->getAttribute('href'), PHP_URL_PATH);
+            if (!str_starts_with($path, '/')) {
+                continue;
+            }
+
+            try {
+                $match = $this->urlGenerator->match($path);
+            } catch (RoutingExceptionInterface) {
+                continue;
+            }
+
+            if ($route === ($match['_route'] ?? null)) {
+                return;
+            }
+        }
+
+        Assert::fail("The page has no link to the route $route");
+    }
+
+    #[Then('the page does not show :text')]
+    public function thePageDoesNotShow(string $text): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertStringNotContainsString($text, $this->createCrawler()->text());
+    }
+
+    #[Then('the page shows the message :key')]
+    public function thePageShowsTheMessage(string $key): void
+    {
+        $this->isAFinalResponse();
+
+        Assert::assertStringContainsString($this->translator->trans($key), $this->createCrawler()->text());
+    }
+
+    #[Then('the form shows the error :message')]
+    public function theFormShowsTheError(string $message): void
+    {
+        $this->isAFinalResponse();
+
+        $errors = [];
+        foreach ($this->createCrawler()->filter('.space-form-error') as $node) {
+            $errors[] = trim((string) $node->textContent);
+        }
+
+        Assert::assertContains($this->translator->trans($message), $errors);
     }
 
     #[Then('a password mismatch error')]

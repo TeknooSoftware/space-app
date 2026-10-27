@@ -42,7 +42,10 @@ use Teknoo\Space\Object\Config\ClusterCatalog;
 use Teknoo\Space\Object\Config\SubscriptionPlan;
 use Teknoo\Space\Object\DTO\SpaceAccount;
 
+use function array_diff;
 use function array_key_exists;
+use function array_unique;
+use function array_values;
 use function in_array;
 use function is_array;
 use function is_iterable;
@@ -91,6 +94,15 @@ class AdminSpaceAccountType extends AbstractType implements FormApiAwareInterfac
                             $usersField->addError(new FormError('teknoo.space.error.space_account.admin_user'));
 
                             return;
+                        }
+                    }
+
+                    //A user attached to no account (ROLE_PENDING) becomes a user of this account (ROLE_USER)
+                    foreach ($users as $user) {
+                        if ($user instanceof User && in_array('ROLE_PENDING', (array) $user->getRoles(), true)) {
+                            $roles = array_diff((array) $user->getRoles(), ['ROLE_PENDING']);
+                            $roles[] = 'ROLE_USER';
+                            $user->setRoles(array_values(array_unique($roles)));
                         }
                     }
                 },

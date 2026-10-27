@@ -45,6 +45,16 @@ abstract class AbstractAccessControl
     use GrantTrait;
     use UserTrait;
 
+    /**
+     * Attribute voted on an object to open, change or delete it. Fixed in the code, never read from the workplan
+     */
+    public const string ATTRIBUTE_ACCESS = 'access';
+
+    /**
+     * Attribute voted on each object of a list. Fixed in the code, never read from the workplan
+     */
+    public const string ATTRIBUTE_LIST = 'list';
+
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
@@ -55,7 +65,8 @@ abstract class AbstractAccessControl
 
     protected function run(
         ManagerInterface $manager,
-        mixed $subject
+        mixed $subject,
+        string $attribute,
     ): static {
         if (($user = $this->getUser()) instanceof AbstractUser) {
             $manager->updateWorkPlan([
@@ -67,13 +78,13 @@ abstract class AbstractAccessControl
         if (null !== $subject && !empty($subject)) {
             if (is_iterable($subject)) {
                 foreach ($subject as $subSubjet) {
-                    $this->isGranted($manager, 'access', $subSubjet);
+                    $this->isGranted($manager, $attribute, $subSubjet);
                 }
 
                 return $this;
             }
 
-            $this->isGranted($manager, 'access', $subject);
+            $this->isGranted($manager, $attribute, $subject);
         }
 
         return $this;

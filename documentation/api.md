@@ -20,6 +20,9 @@ password.
 4. Click "Add API Key" to generate a new API token
 5. Save the token name and value securely - the token value will only be shown once
 
+A user attached to no account (`ROLE_PENDING`) can not create an API key, and the API answers `403` to it, also on the
+login and on its settings.
+
 #### Obtaining a JWT Token
 
 To authenticate with the API, you need to exchange your API token for a JWT token using the login endpoint.
@@ -282,10 +285,6 @@ In every serialized job, each entry of `history` (and of its `previous` chain) c
 its unchanged `message`. The `message` is most of the time the class name of the step that wrote the entry, and
 `humanized_message` is its readable label from the translation catalogue, or the raw message when it has none.
 
-**Restart Job**
-
-- `POST /api/v1/project/{projectId}/job/{jobId}/restart`
-
 **Delete Job**
 
 - `POST /api/v1/project/{projectId}/job/{id}/delete`
@@ -294,6 +293,13 @@ its unchanged `message`. The `message` is most of the time the class name of the
 ### Admin Endpoints
 
 All admin endpoints are prefixed with `/api/v1/admin`.
+
+An administrator of Space is never a member of an account. These admin endpoints answer `403` to it: the variables,
+clusters and environments of an account (`/account/{id}/variables`, `/account/{id}/environments`,
+`/account/{id}/environment/...`, `/account/{accountId}/clusters` and `/cluster/...`), the creation, edition, deletion,
+variables and credentials of a project, and the creation and pending of a job. The endpoints of the members
+(`/api/v1/account/...`, `/api/v1/project/...`, `/api/v1/projects`) answer `403` too. Every `403` of the API has the
+JSON error envelope.
 
 #### Admin - Account Management
 
@@ -454,10 +460,6 @@ without `accountEnvironmentId` until the worker has provisioned it.
 **Get Job Details**
 
 - `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/{id}`
-
-**Restart Job**
-
-- `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/{jobId}/restart`
 
 **Delete Job**
 

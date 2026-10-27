@@ -52,6 +52,30 @@ Feature: Web interface to manage account's settings
     And the account name is now "Great Company"
     And no Kubernetes manifests have been deleted
 
+  Scenario: From the UI, update my account settings, a subscription plan sent in the request is ignored
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    And It goes to account settings
+    When it submits the form:
+      | field                                   | value          |
+      | subscriptionPlanId                      | unknown-plan   |
+      | space_account._token                    | <auto>         |
+      | space_account.account.name              | Great Company  |
+      | space_account.accountData.legalName     | Gr Company SAS |
+      | space_account.accountData.streetAddress | 123 street     |
+      | space_account.accountData.zipCode       | 14000          |
+      | space_account.accountData.cityName      | Caen           |
+      | space_account.accountData.countryName   | France         |
+      | space_account.accountData.vatNumber     | FR0102030405   |
+    Then the account name is now "Great Company"
+    And It goes to account status
+    And get a valid web page
+    And in the page, the subscription plan is "Test Plan 1"
+    And no Kubernetes manifests have been deleted
+
   Scenario: From the UI, update my account's environment
     Given a kubernetes client
     And an account for "My Company" with the account namespace "my-company"

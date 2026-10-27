@@ -150,6 +150,7 @@ use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
+use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -172,6 +173,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\RenderWithoutAccount;
 use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
 use Teknoo\Space\Recipe\Step\Job\IncludeExtraInWorkplan;
@@ -216,6 +218,9 @@ return [
             $container->get(RenderError::class),
             $container->get('teknoo.east.common.get_default_error_template'),
         );
+
+        //The default plan comes from the configuration, never from the request: it runs before SetSubscriptionPlan
+        $plan->add($container->get(SetDefaultSubscriptionPlan::class), 55);
 
         $steps = $container->get('teknoo.space.account.endpoint.new.additional_steps');
 
@@ -528,6 +533,7 @@ return [
             diGet(Render::class),
             diGet(RenderError::class),
             diGet('teknoo.east.common.get_default_error_template'),
+            diGet(CheckCsrfTokenInterface::class),
         ),
 
     // `PrepareAccountTask` bound to a task class, for the account creation and edition flows
@@ -719,6 +725,32 @@ return [
         };
     },
 
+    //Steps of the edit of an account by the administration: the account data and the subscription plan, without the
+    //management of the environments (no environment is installed or deleted by an administrator of Space)
+    'teknoo.space.account.additional_steps.admin_edit' => static function (): callable {
+        return static function (
+            EditablePlanInterface $steps,
+            ContainerInterface $container,
+        ): EditablePlanInterface {
+            //After LoadObject
+            $steps->add($container->get(ExtractFromAccountDTO::class), 11);
+            $steps->add($container->get(LoadEnvironments::class), 12);
+            $steps->add($container->get(CreateResumes::class), 13);
+            $steps->add($container->get(LoadSubscriptionPlan::class), 13);
+            $steps->add($container->get(InjectStatus::class), 14);
+
+            //After ObjectAccessControlInterface
+            $steps->add($container->get(LoadHistory::class), 25);
+
+            //After FormProcessingInterface
+            $steps->add($container->get(SetSubscriptionPlan::class), 57);
+            $steps->add($container->get(CheckingAllowedCountOfEnvs::class), 58);
+            $steps->add($container->get(CreateAccountHistory::class), 58);
+
+            return $steps;
+        };
+    },
+
     EditAccountEndPointInterface::class => decorate(
         callable: static function (
             EditAccountEndPointInterface $previous,
@@ -728,8 +760,8 @@ return [
             $previous->add($container->get(SetAccountNamespace::class), 58);
             $previous->add($container->get(SetQuota::class), 58);
 
-            $addStepsToManageEnv = $container->get('teknoo.space.account.additional_steps.common');
-            return $addStepsToManageEnv($previous, $container);
+            $addAdminSteps = $container->get('teknoo.space.account.additional_steps.admin_edit');
+            return $addAdminSteps($previous, $container);
         }
     ),
 
@@ -1069,6 +1101,7 @@ return [
     Dashboard::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(RenderWithoutAccount::class),
             diGet(HealthInterface::class),
             diGet(LoadEnvironments::class),
             diGet(LoadAccountClusters::class),
