@@ -7,7 +7,7 @@
 - A member can no longer choose its subscription plan with a `subscriptionPlanId` sent in the request of its account
   settings: the default plan of a subscription comes from the new step `SetDefaultSubscriptionPlan`
 - The namespace and its prefix can no longer be changed on the edit of an account by the administration: with
-  `namespaceIsReadonly`, the fields are disabled, not only read-only in the page
+  `namespaceIsReadonly`, the fields are disabled, not only read-only in the page (East PaaS 5.11.5)
 - The refresh of the quota and the reinstall of the registry from the web administration require a `POST` with a CSRF
   token (`403` without it, `405` with a `GET`). The API is not concerned
   - **Breaking**: custom templates must send a `POST` with `_token` (token id `teknoo_space_admin_account_task`)
