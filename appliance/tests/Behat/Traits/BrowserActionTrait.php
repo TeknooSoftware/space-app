@@ -405,6 +405,31 @@ trait BrowserActionTrait
         );
     }
 
+    private function callAccountEnvironmentReinstall(
+        string $envName,
+        string $clusterName,
+        string $method,
+        bool $withToken,
+    ): void {
+        $params = [];
+        if ($withToken) {
+            $params['_token'] = $this->getCsrfTokenOfTheSession('teknoo_space_account_task');
+        }
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: 'space_account_environment_reinstall',
+                parameters: [
+                    'id' => $this->recall(Account::class)?->getId(),
+                    'envName' => $envName,
+                    'clusterName' => $clusterName,
+                ],
+            ),
+            params: $params,
+        );
+    }
+
     /**
      * Parameters of a route of the members area, from the last project, job and account cluster of the fixtures
      *
@@ -504,6 +529,24 @@ trait BrowserActionTrait
         string $method,
     ): void {
         $this->callAdminAccountTask($action, $method, true);
+    }
+
+    #[When('it reinstalls the environment :envName on :clusterName with the method :method')]
+    public function itReinstallsTheEnvironmentOnWithTheMethod(
+        string $envName,
+        string $clusterName,
+        string $method,
+    ): void {
+        $this->callAccountEnvironmentReinstall($envName, $clusterName, $method, false);
+    }
+
+    #[When('it reinstalls the environment :envName on :clusterName with the method :method and the CSRF token')]
+    public function itReinstallsTheEnvironmentOnWithTheMethodAndTheCsrfToken(
+        string $envName,
+        string $clusterName,
+        string $method,
+    ): void {
+        $this->callAccountEnvironmentReinstall($envName, $clusterName, $method, true);
     }
 
     #[When('it goes to project page of :projectName')]

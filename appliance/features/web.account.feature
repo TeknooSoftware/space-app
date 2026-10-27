@@ -135,6 +135,61 @@ Feature: Web interface to manage account's settings
     Then the page has a refresh button
     And the account history is displayed with a refresh button
 
+  Scenario: From the UI, each environment of my account has a reinstall button
+    Given a kubernetes client
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    And It goes to account settings
+    Then the page has a reinstall button for the environment "dev" on "Demo Kube Cluster"
+    And the page has a reinstall button for the environment "prod" on "Demo Kube Cluster"
+
+  Scenario: From the UI, an environment of my account can not be reinstalled with a link
+    Given a kubernetes client
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When it reinstalls the environment "prod" on "Demo Kube Cluster" with the method "GET"
+    Then the user must have a 405 error
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+    And no Kubernetes manifests have been deleted
+
+  Scenario: From the UI, an environment of my account can not be reinstalled without the CSRF token
+    Given a kubernetes client
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When it reinstalls the environment "prod" on "Demo Kube Cluster" with the method "POST"
+    Then the user must have a 403 error
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+    And no Kubernetes manifests have been deleted
+
+  Scenario: From the UI, reinstall an environment of my account
+    Given a kubernetes client
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And the platform is booted
+    And the user is signed in with "dupont@teknoo.space" and the password "Test2@Test"
+    When it reinstalls the environment "prod" on "Demo Kube Cluster" with the method "POST" and the CSRF token
+    Then it is redirected to the account settings page
+    And Space executes the pending tasks
+    And a Kubernetes namespace for "my-company-prod" dedicated to "Demo Kube Cluster" is applied and populated
+    And no Kubernetes manifests have been deleted
+    And the old account environment "space-client-my-company-prod" object has been deleted and remplaced
+
   Scenario: From the UI, update a read only environment and get an error
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"

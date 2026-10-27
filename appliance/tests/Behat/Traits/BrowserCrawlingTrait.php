@@ -306,6 +306,42 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('it is redirected to the account settings page')]
+    public function itIsRedirectedToTheAccountSettingsPage(): void
+    {
+        $this->hasBeenUserRedirected();
+        Assert::assertEquals(
+            $this->getPathFromRoute(
+                route: 'space_account_settings',
+                parameters: [
+                    'id' => $this->recall(Account::class)?->getId(),
+                ],
+            ),
+            $this->currentUrl,
+        );
+    }
+
+    #[Then('the page has a reinstall button for the environment :envName on :clusterName')]
+    public function thePageHasAReinstallButtonForTheEnvironmentOn(string $envName, string $clusterName): void
+    {
+        $this->isAFinalResponse();
+
+        $url = $this->getPathFromRoute(
+            route: 'space_account_environment_reinstall',
+            parameters: [
+                'id' => $this->recall(Account::class)?->getId(),
+                'envName' => $envName,
+                'clusterName' => $clusterName,
+            ],
+        );
+
+        $node = $this->createCrawler()->filter('button[formaction="' . $url . '"]');
+        Assert::assertCount(1, $node);
+        Assert::assertEquals('post', $node->attr('formmethod'));
+        Assert::assertEquals('_token', $node->attr('name'));
+        Assert::assertNotEmpty($node->attr('value'));
+    }
+
     #[Then('the dashboard frame is displayed')]
     public function theDashboardFrameIsDisplayed(): void
     {

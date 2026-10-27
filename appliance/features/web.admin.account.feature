@@ -60,6 +60,13 @@ Feature: Web admin interface to manage accounts
     And a Kubernetes namespace dedicated to registry for "my-company" is applied and populated on "Demo Kube Cluster"
     And no Kubernetes manifests have been deleted
 
+  Scenario: From the UI, as Admin, an environment of an account can not be reinstalled from the members area
+    When it reinstalls the environment "prod" on "Demo Kube Cluster" with the method "POST" and the CSRF token
+    Then the user must have a 403 error
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+    And no Kubernetes manifests have been deleted
+
   Scenario Outline: From the UI, as Admin, the variables, the clusters and the environments of an account are forbidden
     When it opens the admin page "<route>" of the last account
     Then the user must have a 403 error
