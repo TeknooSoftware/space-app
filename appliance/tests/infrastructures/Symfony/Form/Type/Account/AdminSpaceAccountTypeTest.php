@@ -207,4 +207,91 @@ class AdminSpaceAccountTypeTest extends TestCase
             $listener(new FormEvent($form, null));
         }
     }
+
+    public function testAUserAttachedToNoAccountBecomesAUserOfTheAccount(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $this->adminSpaceAccountType->buildForm(
+            $builder,
+            [
+                'api' => null,
+                'enableEnvManagement' => null,
+                'doctrine_type' => 'mongodb',
+                'namespaceIsReadonly' => false,
+            ],
+        );
+
+        $listener = $listeners[FormEvents::POST_SUBMIT][0];
+
+        $pending = new User()->setRoles(['ROLE_PENDING']);
+        $user = new User()->setRoles(['ROLE_USER']);
+
+        $usersField = $this->createMock(FormInterface::class);
+        $usersField->method('getData')->willReturn([$pending, $user]);
+        $usersField->expects($this->never())->method('addError');
+        $accountField = $this->createStub(FormInterface::class);
+        $accountField->method('get')->willReturn($usersField);
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('get')->willReturn($accountField);
+
+        $listener(new FormEvent($form, null));
+
+        $this->assertSame(['ROLE_USER'], $pending->getRoles());
+        $this->assertSame(['ROLE_USER'], $user->getRoles());
+    }
+
+    public function testAUserAttachedToNoAccountIsNotChangedWithAnAdministratorOfSpace(): void
+    {
+        $listeners = [];
+        $builder = $this->createStub(FormBuilderInterface::class);
+        $builder->method('add')->willReturnSelf();
+        $builder->method('addEventListener')
+            ->willReturnCallback(
+                function (string $eventName, callable $listener) use (&$listeners, $builder): FormBuilderInterface {
+                    $listeners[$eventName][] = $listener;
+
+                    return $builder;
+                }
+            );
+
+        $this->adminSpaceAccountType->buildForm(
+            $builder,
+            [
+                'api' => null,
+                'enableEnvManagement' => null,
+                'doctrine_type' => 'mongodb',
+                'namespaceIsReadonly' => false,
+            ],
+        );
+
+        $listener = $listeners[FormEvents::POST_SUBMIT][0];
+
+        $pending = new User()->setRoles(['ROLE_PENDING']);
+        $admin = new User()->setRoles(['ROLE_ADMIN']);
+
+        $usersField = $this->createMock(FormInterface::class);
+        $usersField->method('getData')->willReturn([$pending, $admin]);
+        $usersField->expects($this->once())->method('addError')->willReturnSelf();
+        $accountField = $this->createStub(FormInterface::class);
+        $accountField->method('get')->willReturn($usersField);
+
+        $form = $this->createStub(FormInterface::class);
+        $form->method('get')->willReturn($accountField);
+
+        $listener(new FormEvent($form, null));
+
+        $this->assertSame(['ROLE_PENDING'], $pending->getRoles());
+    }
 }

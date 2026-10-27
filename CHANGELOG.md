@@ -36,6 +36,7 @@
   and its 2FA. The API, the API keys and the JWT are refused to it
   - **Breaking**: the first sign-in with OAuth creates a user with `ROLE_PENDING` (before: no role)
   - The admin user form gives the choice `pending`: alone, and refused to a user of an account
+  - Attached to an account by the administration, the user gets `ROLE_USER` and must sign in again
 
 ## [2.6.0-beta2] - 2026-10-22
 ### Beta Release

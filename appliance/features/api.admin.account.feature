@@ -257,6 +257,35 @@ Feature: API admin endpoints to administrate accounts
     And the user "dupont@teknoo.space" is a user of the last account
     And the user "albert@teknoo.space" is a user of the last account
 
+  Scenario: From the API, as Admin, a user attached to no account becomes a user of the account
+    Given a memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And a pending, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    And the user "albert@teknoo.space" is not a user of the last account
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to edit the last account:
+      | field                                            | value                      |
+      | admin_space_account.account.name                 | Test Behat                 |
+      | admin_space_account.account.prefix_namespace     | space-client-              |
+      | admin_space_account.account.namespace            | behat                      |
+      | admin_space_account.account.users.0              | <auto:dupont@teknoo.space> |
+      | admin_space_account.account.users.1              | <auto:albert@teknoo.space> |
+      | admin_space_account.accountData.legalName        | sasu demo                  |
+      | admin_space_account.accountData.streetAddress    | Auge                       |
+      | admin_space_account.accountData.zipCode          | 14000                      |
+      | admin_space_account.accountData.cityName         | Caen                       |
+      | admin_space_account.accountData.countryName      | France                     |
+      | admin_space_account.accountData.vatNumber        | FR0102030405               |
+      | admin_space_account.accountData.subscriptionPlan | test-1                     |
+    Then get a JSON response
+    And the last request has saved the account
+    And the user "albert@teknoo.space" is a user of the last account
+    And the user "albert@teknoo.space" has the roles "ROLE_USER"
+
   Scenario: From the API, as Admin, an administrator of Space can not be a user of an account
     Given a memory document database
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"

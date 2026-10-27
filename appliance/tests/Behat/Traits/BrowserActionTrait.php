@@ -38,6 +38,7 @@ use Teknoo\Space\Object\Persisted\AccountCluster;
 
 use function array_shift;
 use function explode;
+use function str_starts_with;
 use function substr;
 
 /**
@@ -156,6 +157,8 @@ trait BrowserActionTrait
         foreach ($formFields as $field) {
             if ('<auto>' === $field['value']) {
                 $field['value'] = $this->getFormFieldValue($formValue, $field['field']);
+            } elseif (str_starts_with($field['value'], '<auto:')) {
+                $field['value'] = $this->autoGetId(field: $field['field'], value: $field['value']);
             }
 
             $this->setRequestParameters($final, $field['field'], $field['value']);

@@ -126,3 +126,24 @@ Feature: Web admin interface to manage accounts
     And Space executes the pending tasks
     And no Kubernetes manifests have been created
     And no Kubernetes manifests have been deleted
+
+  Scenario: From the UI, as Admin, a user attached to no account becomes a user of the account
+    Given a pending, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
+    When it goes to the admin account page
+    And it submits the form:
+      | field                                            | value                      |
+      | admin_space_account._token                       | <auto>                     |
+      | admin_space_account.account.name                 | Great Company              |
+      | admin_space_account.account.users.0              | <auto:dupont@teknoo.space> |
+      | admin_space_account.account.users.1              | <auto:albert@teknoo.space> |
+      | admin_space_account.accountData.legalName        | Gr Company SAS             |
+      | admin_space_account.accountData.streetAddress    | 123 street                 |
+      | admin_space_account.accountData.zipCode          | 14000                      |
+      | admin_space_account.accountData.cityName         | Caen                       |
+      | admin_space_account.accountData.countryName      | France                     |
+      | admin_space_account.accountData.vatNumber        | FR0102030405               |
+      | admin_space_account.accountData.subscriptionPlan | test-1                     |
+    Then get a valid web page
+    And the last request has saved the account
+    And the user "albert@teknoo.space" is a user of the last account
+    And the user "albert@teknoo.space" has the roles "ROLE_USER"

@@ -207,6 +207,7 @@ trait PersistenceStepsTrait
             match ($role) {
                 'user' => 'ROLE_USER',
                 'admin' => 'ROLE_ADMIN',
+                'pending' => 'ROLE_PENDING',
             }
         ]);
         $user->addAuthData(
@@ -219,7 +220,7 @@ trait PersistenceStepsTrait
         );
 
         $this->persistAndRegister($user);
-        if ('admin' !== $role) {
+        if ('user' === $role) {
             $this->recall(Account::class)?->setUsers([$user]);
         }
 
