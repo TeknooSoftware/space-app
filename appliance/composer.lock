@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "17aaa6161d311c1944b3b5ea756f92fa",
+    "content-hash": "0305ec1152ee10d1354ddcceb66abb12",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11479,16 +11479,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.11.4",
+            "version": "5.11.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "0a9189c6eb9f8cfb3927f047d3700a66fe1f59fb"
+                "reference": "bec264476b6aeb8a98681c3bac44da2395f0af45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/0a9189c6eb9f8cfb3927f047d3700a66fe1f59fb",
-                "reference": "0a9189c6eb9f8cfb3927f047d3700a66fe1f59fb",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/bec264476b6aeb8a98681c3bac44da2395f0af45",
+                "reference": "bec264476b6aeb8a98681c3bac44da2395f0af45",
                 "shasum": ""
             },
             "require": {
@@ -11636,20 +11636,20 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-25T18:20:42+00:00"
+            "time": "2026-10-27T06:48:39+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.11.4",
+            "version": "5.11.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "ee893fa563c66fb8e13008434146ef84dc90214a"
+                "reference": "0bcd91df6ee615ff97f73c34b4731eed48b06e00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/ee893fa563c66fb8e13008434146ef84dc90214a",
-                "reference": "ee893fa563c66fb8e13008434146ef84dc90214a",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/0bcd91df6ee615ff97f73c34b4731eed48b06e00",
+                "reference": "0bcd91df6ee615ff97f73c34b4731eed48b06e00",
                 "shasum": ""
             },
             "require": {
@@ -11687,7 +11687,7 @@
                 "teknoo/bridge-phpdi-symfony": "^7.2",
                 "teknoo/east-common-symfony": "^4.8",
                 "teknoo/east-foundation-symfony": "^9.4",
-                "teknoo/east-paas": "^5.11.4",
+                "teknoo/east-paas": "^5.11.5",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.1.1",
                 "teknoo/recipe": "^7.3",
@@ -11749,7 +11749,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-25T18:22:17+00:00"
+            "time": "2026-10-27T06:54:33+00:00"
         },
         {
             "name": "teknoo/immutable",
@@ -13930,16 +13930,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.4.3",
+            "version": "13.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2180c47c4229e5da117ff248753370443c074f10"
+                "reference": "941457a4f147a60fe2074d40e1fce0d08ea8d930"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2180c47c4229e5da117ff248753370443c074f10",
-                "reference": "2180c47c4229e5da117ff248753370443c074f10",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/941457a4f147a60fe2074d40e1fce0d08ea8d930",
+                "reference": "941457a4f147a60fe2074d40e1fce0d08ea8d930",
                 "shasum": ""
             },
             "require": {
@@ -13964,7 +13964,7 @@
                 "sebastian/environment": "^9.3.3",
                 "sebastian/exporter": "^8.2.1",
                 "sebastian/file-filter": "^1.0",
-                "sebastian/git-state": "^1.0",
+                "sebastian/git-state": "^1.1",
                 "sebastian/global-state": "^9.0.1",
                 "sebastian/object-enumerator": "^8.1.0",
                 "sebastian/recursion-context": "^8.0.1",
@@ -14010,7 +14010,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.4.3"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.4.5"
             },
             "funding": [
                 {
@@ -14018,7 +14018,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-10-16T05:56:47+00:00"
+            "time": "2026-10-27T04:16:22+00:00"
         },
         {
             "name": "roave/security-advisories",

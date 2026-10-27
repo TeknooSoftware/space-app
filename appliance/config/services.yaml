@@ -10,6 +10,7 @@ services:
         public: false
         bind:
             $adminRoleName: 'ROLE_ADMIN'
+            $pendingRoleName: 'ROLE_PENDING'
             $codeGeneratorSalt: '%env(SPACE_CODE_GENERATOR_SALT)%'
             $spaceDashboardRoute: 'space_dashboard'
             $spaceUpdatePasswordRoute: 'space_update_password'

@@ -96,6 +96,7 @@ use Teknoo\Space\Recipe\Step\Account\LoadSpaceAccountFromAccount;
 use Teknoo\Space\Recipe\Step\Account\LoadSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection as AccountPrepareRedirection;
 use Teknoo\Space\Recipe\Step\Account\SetAccountNamespace;
+use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
@@ -118,6 +119,7 @@ use Teknoo\Space\Recipe\Step\AccountRegistry\SelectRegistryCluster;
 use Teknoo\Space\Recipe\Step\AccountRegistry\PersistRegistryCredential;
 use Teknoo\Space\Recipe\Step\AccountRegistry\RemoveRegistryCredential;
 use Teknoo\Space\Recipe\Step\ClusterConfig\SelectClusterConfig;
+use Teknoo\Space\Recipe\Step\Dashboard\RenderWithoutAccount;
 use Teknoo\Space\Recipe\Step\Dashboard\ResolveDashboardTarget;
 use Teknoo\Space\Object\Config\DashboardProfileCatalog;
 use Teknoo\Space\Recipe\Step\Job\ExtractProject;
@@ -497,6 +499,11 @@ return [
             get('teknoo.space.subscription_plan_catalog'),
         ),
 
+    SetDefaultSubscriptionPlan::class => create()
+        ->constructor(
+            get('teknoo.space.subscription.plan_default'),
+        ),
+
     SetQuota::class => create(),
 
     PrepareInstall::class => create(),
@@ -548,6 +555,11 @@ return [
     DashboardAvailability::class => create()
         ->constructor(
             get('teknoo.space.dashboard.external.enabled'),
+        ),
+
+    RenderWithoutAccount::class => create()
+        ->constructor(
+            '@TeknooSpace/Dashboard/without_account.html.twig',
         ),
 
     ResolveDashboardTarget::class => create()

@@ -7,13 +7,34 @@ Thin reference for the security model. **See `documentation/` for full details.*
 Symfony Security Voters provide fine-grained entity-level authorization. Registered as services and checked
 via `#[IsGranted]` or `AuthorizationChecker` during recipe steps and controllers.
 
-| Voter            | Protects              | Logic                            |
-|------------------|-----------------------|----------------------------------|
-| **AdminVoter**   | Admin-only operations | Checks `ROLE_ADMIN` role         |
-| **AccountVoter** | Account entities      | Validates account ownership      |
-| **JobVoter**     | Job entities          | Validates via project ownership  |
-| **ProjectVoter** | Project entities      | Validates via account membership |
-| **UserVoter**    | User entities         | Own profile or admin             |
+| Voter            | Protects                   | Logic                                                       |
+|------------------|----------------------------|-------------------------------------------------------------|
+| **AdminVoter**   | Operations of the admin    | Matrix of objects and attributes for `ROLE_ADMIN`, see below |
+| **AccountVoter** | Account entities           | Validates account ownership; abstains for an admin          |
+| **JobVoter**     | Job entities               | Validates via project ownership; abstains for an admin      |
+| **ProjectVoter** | Project entities           | Validates via account membership; abstains for an admin     |
+| **UserVoter**    | User entities              | Own profile only                                            |
+
+The access control steps vote an attribute fixed in the code, never read from the workplan: `ObjectAccessControl`
+votes `access`, `ListObjectsAccessControl` votes `list`. `AdminVoter` grants `access` and `list` on `Account`,
+`SpaceAccount`, `User`, `SpaceUser` and `Job`, and only `list` on `Project` and `SpaceProject`; it abstains on
+everything else (other objects, roles, expressions). An administrator of Space is never a member of an account, so the
+member voters abstain for it.
+
+`access_control` completes the voters: rules refuse to everyone (`allow_if: 'false'`) the admin routes whose object is
+allowed but whose operation is not (variables, clusters and environments of an account, media CMS), and other rules
+refuse the area of the members (projects, jobs, account settings, and their `/api/v1` twins) to `ROLE_ADMIN`. Use
+`allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule.
+
+`ROLE_PENDING` is a user attached to no account: the first sign-in with OAuth gives it, or the admin user form (alone,
+never for a user of an account). It does not include `ROLE_USER`, so the default rule refuses it: only `/`,
+`/my-settings` and its password, `/2fa/`, `/contact/` and `/media/` accept it. The API refuses it (`allow_if`), so it
+has no API key and no JWT. Its dashboard shows a message (`RenderWithoutAccount`). Attached to an account by an
+administrator, it gets `ROLE_USER` (`AdminSpaceAccountType`); the web session keeps the roles of the sign-in until the
+next sign-in.
+
+The restriction prevents mistakes, not bad intent: an administrator can create a user with an email that it controls,
+attach it to an account and sign in as this user through the recovery page or OAuth.
 
 → `documentation/domain.md#security-voters` · `documentation/infrastructure.md#security`
 
@@ -69,6 +90,6 @@ An extension's object can reuse the core voters instead of shipping its own: imp
 `AccountComponentInterface` puts it under `AccountVoter`. An `/admin` route additionally picks up the
 `ROLE_ADMIN` gate from the `access_control` rules.
 
-The two denial layers do not answer alike, which matters when writing tests: `access_control` refuses **before** any
-view is rendered, so the response is HTML with a bare status, while a voter refusal goes
-through the recipe and produces the JSON error envelope.
+The two denial layers do not answer alike on the web, which matters when writing tests: `access_control` refuses
+**before** any view is rendered, so the response is HTML with a bare status, while a voter refusal goes through the
+recipe. On the API both answer the JSON error envelope (`ApiAccessDeniedHandler` on the firewall `api_area`).

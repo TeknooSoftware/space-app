@@ -40,6 +40,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Plan\Dashboard;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\Dashboard\RenderWithoutAccount;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 
 /**
@@ -89,6 +90,7 @@ class DashboardTest extends TestCase
         $this->defaultErrorTemplate = '42';
         $this->dashboard = new Dashboard(
             recipe: $this->recipe,
+            renderWithoutAccount: $this->createStub(RenderWithoutAccount::class),
             health: $this->health,
             loadEnvironments: $this->loadEnvironments,
             loadAccountClusters: $this->createStub(LoadAccountClusters::class),

@@ -76,8 +76,10 @@ use Throwable;
 
 use function array_keys;
 use function array_shift;
+use function array_values;
 use function count;
 use function current;
+use function explode;
 use function is_a;
 use function mb_strtolower;
 use function random_int;
@@ -205,6 +207,7 @@ trait PersistenceStepsTrait
             match ($role) {
                 'user' => 'ROLE_USER',
                 'admin' => 'ROLE_ADMIN',
+                'pending' => 'ROLE_PENDING',
             }
         ]);
         $user->addAuthData(
@@ -217,7 +220,7 @@ trait PersistenceStepsTrait
         );
 
         $this->persistAndRegister($user);
-        if ('admin' !== $role) {
+        if ('user' === $role) {
             $this->recall(Account::class)?->setUsers([$user]);
         }
 
@@ -1466,10 +1469,93 @@ trait PersistenceStepsTrait
         Assert::assertTrue($this->isAUserOfTheLastAccount($email), "$email is not a user of the last account");
     }
 
+    #[Given('the last user has only the role :role')]
+    public function theLastUserHasOnlyTheRole(string $role): void
+    {
+        $this->recall(User::class)?->setRoles([$role]);
+    }
+
+    #[Given('the last user has also the role :role')]
+    public function theLastUserHasAlsoTheRole(string $role): void
+    {
+        $user = $this->recall(User::class);
+        $user->setRoles([...(array) $user->getRoles(), $role]);
+    }
+
+    private function hasTheLastRequestSavedAUser(): bool
+    {
+        foreach (array_keys($this->savedByTheLastRequest) as $className) {
+            if (is_a($className, User::class, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    #[Then('the user :email exists without password')]
+    public function theUserExistsWithoutPassword(string $email): void
+    {
+        foreach ($this->listObjects(User::class) as $user) {
+            if ($email !== $user->getEmail()) {
+                continue;
+            }
+
+            foreach ($user->getAuthData() as $authData) {
+                Assert::assertNotInstanceOf(StoredPassword::class, $authData, "The user $email has a password");
+            }
+
+            return;
+        }
+
+        Assert::fail("The user $email is missing");
+    }
+
+    #[Then('the user :email has the roles :roles')]
+    public function theUserHasTheRoles(string $email, string $roles): void
+    {
+        foreach ($this->listObjects(User::class) as $user) {
+            if ($email !== $user->getEmail()) {
+                continue;
+            }
+
+            Assert::assertSame(explode(',', $roles), array_values((array) $user->getRoles()));
+
+            return;
+        }
+
+        Assert::fail("The user $email is missing");
+    }
+
+    #[Then('the last request has saved the user')]
+    public function theLastRequestHasSavedTheUser(): void
+    {
+        Assert::assertTrue($this->hasTheLastRequestSavedAUser(), 'The last request did not save the user');
+    }
+
+    #[Then('the last request has not saved the user')]
+    public function theLastRequestHasNotSavedTheUser(): void
+    {
+        Assert::assertFalse($this->hasTheLastRequestSavedAUser(), 'The last request saved the user');
+    }
+
     #[Then('the user :email is not a user of the last account')]
     public function theUserIsNotAUserOfTheLastAccount(string $email): void
     {
         Assert::assertFalse($this->isAUserOfTheLastAccount($email), "$email is a user of the last account");
+    }
+
+    #[Then('the namespace of the last account is :namespace')]
+    public function theNamespaceOfTheLastAccountIs(string $namespace): void
+    {
+        $current = null;
+        $this->recall(Account::class)->namespaceIsItDefined(
+            static function (string $accountNamespace) use (&$current): void {
+                $current = $accountNamespace;
+            },
+        );
+
+        Assert::assertEquals($namespace, $current);
     }
 
     #[Then('there is a user in the memory')]

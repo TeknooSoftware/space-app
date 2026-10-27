@@ -48,16 +48,11 @@ class SetSubscriptionPlan
     public function __invoke(
         ManagerInterface $manager,
         SpaceAccount $spaceAccount,
-        ?string $subscriptionPlanId = null,
     ): self {
         $accountData = $spaceAccount->accountData;
 
         if (null === $accountData) {
             throw new RuntimeException('Missing Space Account data');
-        }
-
-        if (!empty($subscriptionPlanId)) {
-            $accountData->setSubscriptionPlan($subscriptionPlanId);
         }
 
         /** @var Promise<string, ?SubscriptionPlan, mixed> $promise */

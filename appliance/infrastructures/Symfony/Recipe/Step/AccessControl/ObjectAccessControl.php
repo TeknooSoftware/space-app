@@ -43,6 +43,6 @@ class ObjectAccessControl extends AbstractAccessControl implements ObjectAccessC
         MessageInterface $message,
         ?ObjectInterface $object = null
     ): ObjectAccessControlInterface {
-        return $this->run($manager, $object);
+        return $this->run($manager, $object, self::ATTRIBUTE_ACCESS);
     }
 }

@@ -85,7 +85,7 @@ subclass (one-to-one) to extends User and add more properties like picture.
 - `firstName`: User's first name
 - `lastName`: User's last name
 - `active`: User status
-- `roles`: User roles (ROLE_USER, ROLE_ADMIN)
+- `roles`: User roles (ROLE_USER, ROLE_ADMIN, ROLE_PENDING for a user attached to no account)
 - `authData`: Hashed passzord, OAuth2 and MFA data (TOTP secret, recovery codes), etc..
 - `createdAt`: Registration timestamp
   Fom **UserData**:
@@ -100,7 +100,7 @@ subclass (one-to-one) to extends User and add more properties like picture.
 **Business Rules:**
 
 - Email must be unique across all users
-- Must have at least ROLE_USER
+- Must have at least ROLE_USER, or only ROLE_PENDING when it is attached to no account
 - Can enable Multi-Factor Authentication (TOTP)
 - Passwords are salted and hashed
 
@@ -616,7 +616,7 @@ Variables are merged with the following precedence (highest to lowest):
 
 - Email: Valid format, unique across all users
 - Password: Minimum complexity requirements
-- Roles: At least ROLE_USER required
+- Roles: At least ROLE_USER required, or only ROLE_PENDING for a user attached to no account
 
 ### Project
 
@@ -643,11 +643,20 @@ services and checked by the `IsGranted` attribute or `AuthorizationChecker` duri
 
 | Voter            | Protects              | Logic                                           |
 |------------------|-----------------------|-------------------------------------------------|
-| **AdminVoter**   | Admin-only operations | Checks `ROLE_ADMIN` role                        |
-| **AccountVoter** | Account entities      | Validates account ownership (user's account)    |
-| **JobVoter**     | Job entities          | Validates job access via project ownership      |
-| **ProjectVoter** | Project entities      | Validates project access via account membership |
-| **UserVoter**    | User entities         | Validates user access (own profile or admin)    |
+| **AdminVoter**   | Admin operations      | `access` and `list` on accounts, users and jobs, `list` on projects, for `ROLE_ADMIN` |
+| **AccountVoter** | Account entities      | Validates account ownership (user's account), abstains for an admin |
+| **JobVoter**     | Job entities          | Validates job access via project ownership, abstains for an admin |
+| **ProjectVoter** | Project entities      | Validates project access via account membership, abstains for an admin |
+| **UserVoter**    | User entities         | Validates user access (own profile)             |
+
+An administrator of Space (`ROLE_ADMIN`) is never a member of an account. It manages the accounts (data, subscription
+plan, users, status, refresh of the quotas, reinstall of the registry, creation and deletion), the users (without
+their password), lists the projects and the jobs, opens and deletes the jobs, and uses the dashboard. Everything else
+(variables, clusters and environments of an account, projects, start of jobs, area of the members) answers `403`.
+
+A user attached to no account has `ROLE_PENDING` (first sign-in with OAuth, or the admin user form). It can only open
+its dashboard, which shows a message, its settings, its password, its 2FA and the support. The API refuses it. It gets
+`ROLE_USER` when an administrator attaches it to an account.
 
 ## ObjectAccessControl
 

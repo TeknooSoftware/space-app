@@ -32,9 +32,6 @@
         {% do formView.userData.picture.name.setRendered() %}
         {% do formView.userData.picture.alternative.setRendered() %}
     </div>
-    <div class="row">
-        {{ form_row(formView.user.storedPassword.password) }}
-    </div>
 {% endblock %}
 
 {% block btnExtra %}

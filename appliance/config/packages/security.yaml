@@ -2,6 +2,7 @@ security:
     role_hierarchy:
         ROLE_ADMIN: 'ROLE_USER'
         ROLE_RECOVERY: ~
+        ROLE_PENDING: ~
 
     providers:
         with_password:
@@ -45,6 +46,7 @@ security:
             pattern: '^/api'
             stateless: true
             jwt: ~
+            access_denied_handler: 'Teknoo\Space\Infrastructures\Symfony\Security\Authorization\ApiAccessDeniedHandler'
             json_login:
                 provider: 'with_api_key'
                 check_path: '_teknoo_common_api_jwt_login'
@@ -91,6 +93,14 @@ security:
         #Front : available for anyone
         - { path: '^/healthy', roles: [PUBLIC_ACCESS] }
         - { path: '^/build', roles: [PUBLIC_ACCESS], requires_channel: https }
+        #Admin : the routes stay, but these operations are forbidden to the administrators of Space (variables, clusters
+        #and environments of an account, media CMS): their objects are allowed to the administrators for other operations
+        - {
+            path: '^/admin/account/[^/]+/(variables|environment/|clusters?(/|$))',
+            allow_if: 'false',
+            requires_channel: https
+        }
+        - { path: '^/admin/media', allow_if: 'false', requires_channel: https }
         #Admin : require role admin
         - { path: '^/admin', roles: [ROLE_ADMIN], requires_channel: https }
         #Account recovery
@@ -100,7 +110,7 @@ security:
             requires_channel: https,
             allow_if: "!is_authenticated()"
         }
-        - { path: '^/my-settings/update-password', roles: [ROLE_USER, ROLE_RECOVERY], requires_channel: https }
+        - { path: '^/my-settings/update-password', roles: [ROLE_USER, ROLE_PENDING, ROLE_RECOVERY], requires_channel: https }
         #Account subscription
         - {
             path: '^/account/subscription',
@@ -110,10 +120,35 @@ security:
         }
         #Account : 2fa
         - { path: '^/2fa/auth', roles: [IS_AUTHENTICATED_2FA_IN_PROGRESS], requires_channel: https }
+        #Account : 2fa of a user, also without account (ROLE_PENDING)
+        - { path: '^/2fa/', roles: [ROLE_USER, ROLE_PENDING], requires_channel: https }
+        #Api : admin area, the routes stay, but these operations are forbidden to the administrators of Space (variables,
+        #clusters and environments of an account)
+        - { path: '^/api/v1/admin/account/[^/]+/(variables|environments?(/|$)|clusters?(/|$))', allow_if: 'false' }
         #Api : admin area
         - { path: '^/api/v1/admin', roles: [ROLE_ADMIN, ~ROLE_RECOVERY] }
-        #Api
-        - { path: '^/api', roles: [IS_AUTHENTICATED_FULLY, ~ROLE_RECOVERY] }
+        #Api : area of the members of an account, an administrator of Space is never a member of an account
+        - {
+            path: '^/api/v1/(projects?|account)(/|$)',
+            allow_if: "is_fully_authenticated() and !is_granted('ROLE_ADMIN') and !is_granted('ROLE_PENDING')"
+        }
+        #Api : refused to the users without account (ROLE_PENDING)
+        - { path: '^/api', allow_if: "is_fully_authenticated() and !is_granted('ROLE_PENDING')" }
+        #Area of the members of an account, an administrator of Space is never a member of an account
+        - {
+            path: '^/(projects?|job)/',
+            allow_if: "is_granted('ROLE_USER') and !is_granted('ROLE_ADMIN')",
+            requires_channel: https
+        }
+        - {
+            path: '^/account/(settings|status|variables|clusters?)(/|$)',
+            allow_if: "is_granted('ROLE_USER') and !is_granted('ROLE_ADMIN')",
+            requires_channel: https
+        }
+        #Users without account (ROLE_PENDING) : only the dashboard, their settings, the support and the medias
+        - { path: '^/$', roles: [ROLE_USER, ROLE_PENDING], requires_channel: https }
+        - { path: '^/my-settings$', roles: [ROLE_USER, ROLE_PENDING], requires_channel: https }
+        - { path: '^/(contact|media)/', roles: [ROLE_USER, ROLE_PENDING], requires_channel: https }
         #Default
         - { path: '^/', roles: [ROLE_USER], requires_channel: https }
 

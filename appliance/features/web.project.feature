@@ -194,7 +194,7 @@ Feature: Web interface to manage account's projects
       | space_project.project.clusters.0.identity.username | deployer     |
     And the form field "space_project.project.clusters.0.identity.username" is read only
 
-  Scenario: From the UI, as Admin, update the SSH username of a project deployed on a managed Docker Compose cluster
+  Scenario: From the UI, as Admin, a project can not be opened
     Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And an account clusters "Cluster Company" and a slug "my-company-cluster" on docker compose
     And an account environment on "Cluster Company" for the environment "prod"
@@ -202,89 +202,7 @@ Feature: Web interface to manage account's projects
     And the user sign in with "admin@teknoo.space" and the password "Test2@Test"
     And it is redirected to the dashboard
     When it goes to the admin project page
-    Then the user obtains the form:
-      | field                                              | value           |
-      | space_project.project.name                         | my project      |
-      | space_project.project.clusters.0.name              | Cluster Company |
-      | space_project.project.clusters.0.identity.username | deployer        |
-    And the form field "space_project.project.clusters.0.identity.username" is editable
-    And the form field "space_project.project.clusters.0.identity.caCertificate" is shown for every cluster type
-    And the form field "space_project.project.clusters.0.identity.clientKey" is shown for every cluster type
-    And the form field "space_project.project.clusters.0.identity.clientCertificate" is shown only for the cluster types "kubernetes"
-    And the form field "space_project.project.clusters.0.identity.token" is shown only for the cluster types "kubernetes"
-    And the form field "space_project.project.clusters.0.identity.username" is shown only for the cluster types "docker-compose"
-    And the form field "space_project.project.clusters.0.address" is labelled "API Address" for the cluster type "kubernetes"
-    And the form field "space_project.project.clusters.0.address" is labelled "SSH Address" for the cluster type "docker-compose"
-    And the form field "space_project.project.clusters.0.identity.caCertificate" is labelled "CA Certificate" for the cluster type "kubernetes"
-    And the form field "space_project.project.clusters.0.identity.caCertificate" is labelled "SSH Host keys (known_hosts)" for the cluster type "docker-compose"
-    And the form field "space_project.project.clusters.0.identity.clientKey" is labelled "Client Key" for the cluster type "kubernetes"
-    And the form field "space_project.project.clusters.0.identity.clientKey" is labelled "SSH Private key" for the cluster type "docker-compose"
-    When it submits the form:
-      | field                                                        | value                          |
-      | space_project._token                                         | <auto>                         |
-      | space_project.project.name                                   | my project 2                   |
-      | space_project.projectMetadata.projectUrl                     | https://my2.project.demo       |
-      | space_project.project.prefix                                 | demo                           |
-      | space_project.project.sourceRepository.pullUrl               | https://oauth:tok2@gitlab.demo |
-      | space_project.project.sourceRepository.defaultBranch         | main                           |
-      | space_project.project.sourceRepository.identity.name         | git                            |
-      | space_project.project.sourceRepository.identity.privateKey   |                                |
-      | space_project.project.imagesRegistry.apiUrl                  | <auto>                         |
-      | space_project.project.imagesRegistry.identity.username       | <auto>                         |
-      | space_project.project.imagesRegistry.identity.password       | <auto>                         |
-      | space_project.project.clusters.0.name                        | <auto>                         |
-      | space_project.project.clusters.0.type                        | <auto>                         |
-      | space_project.project.clusters.0.address                     | <auto>                         |
-      | space_project.project.clusters.0.namespace                   | <auto>                         |
-      | space_project.project.clusters.0.environment.name            | <auto>                         |
-      | space_project.project.clusters.0.identity.caCertificate      | <auto>                         |
-      | space_project.project.clusters.0.identity.clientCertificate  | <auto>                         |
-      | space_project.project.clusters.0.identity.clientKey          | <auto>                         |
-      | space_project.project.clusters.0.identity.token              | <auto>                         |
-      | space_project.project.clusters.0.identity.username           | paas                           |
-      | space_project.project.clusters.0.locked                      | 1                              |
-    Then the project must be updated
-    And the SSH username of the last project's cluster is "paas"
-
-  Scenario: From the UI, as Admin, update a project on a cluster using hierarchical namespaces, the value is kept hidden
-    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And a cluster supporting hierarchical namespace
-    And a standard project "my project" and a prefix "demo"
-    And the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    And it is redirected to the dashboard
-    When it goes to the admin project page
-    Then the user obtains the form:
-      | field                                 | value             |
-      | space_project.project.name            | my project        |
-      | space_project.project.clusters.0.name | Demo Kube Cluster |
-    And the form field "space_project.project.clusters.0.useHierarchicalNamespaces" is hidden
-    When it submits the form:
-      | field                                                        | value                          |
-      | space_project._token                                         | <auto>                         |
-      | space_project.project.name                                   | my project 2                   |
-      | space_project.projectMetadata.projectUrl                     | https://my2.project.demo       |
-      | space_project.project.prefix                                 | demo                           |
-      | space_project.project.sourceRepository.pullUrl               | https://oauth:tok2@gitlab.demo |
-      | space_project.project.sourceRepository.defaultBranch         | main                           |
-      | space_project.project.sourceRepository.identity.name         | git                            |
-      | space_project.project.sourceRepository.identity.privateKey   |                                |
-      | space_project.project.imagesRegistry.apiUrl                  | <auto>                         |
-      | space_project.project.imagesRegistry.identity.username       | <auto>                         |
-      | space_project.project.imagesRegistry.identity.password       | <auto>                         |
-      | space_project.project.clusters.0.name                        | <auto>                         |
-      | space_project.project.clusters.0.type                        | <auto>                         |
-      | space_project.project.clusters.0.address                     | <auto>                         |
-      | space_project.project.clusters.0.namespace                   | <auto>                         |
-      | space_project.project.clusters.0.useHierarchicalNamespaces   | <auto>                         |
-      | space_project.project.clusters.0.environment.name            | <auto>                         |
-      | space_project.project.clusters.0.identity.caCertificate      | <auto>                         |
-      | space_project.project.clusters.0.identity.clientCertificate  | <auto>                         |
-      | space_project.project.clusters.0.identity.clientKey          | <auto>                         |
-      | space_project.project.clusters.0.identity.token              | <auto>                         |
-      | space_project.project.clusters.0.identity.username           | <auto>                         |
-      | space_project.project.clusters.0.locked                      | 1                              |
-    Then the project must be updated
-    And the last project's cluster uses hierarchical namespaces
+    Then the user must have a 403 error
 
   Scenario: From the UI, the hierarchical namespaces switch of a project's cluster is shown when enabled
     Given the hierarchical namespaces field is shown in the web interface

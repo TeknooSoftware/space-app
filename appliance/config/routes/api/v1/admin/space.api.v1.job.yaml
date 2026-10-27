@@ -25,21 +25,6 @@ space_api_v1_admin_job_new_pending:
         projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
         template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
 
-space_api_v1_admin_job_restart:
-    path: '/account/{accountId}/project/{projectId}/job/{jobId}/restart'
-    methods: ['POST']
-    schemes: ['https']
-    defaults:
-        _controller: 'teknoo.space.endpoint.job.restart'
-        api: 'json'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formActionRoute: 'space_api_v1_admin_job_new'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\ApiNewJobType'
-        objectClass: 'Teknoo\Space\Object\DTO\NewJob'
-        projectKey: 'Teknoo\East\Paas\Object\Project'
-        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
-
 space_api_v1_admin_job_list:
     path: '/account/{accountId}/project/{projectId}/jobs'
     methods: ['GET', 'POST']

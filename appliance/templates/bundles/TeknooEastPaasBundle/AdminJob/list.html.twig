@@ -69,13 +69,6 @@
         </td>
         <td>{{ object.updatedAt|date('Y M d H:i:s') }}</td>
         <td class="text-end">
-            {% if object.project is not empty %}
-                <a class="text-primary"
-                   href="{{ path('_teknoo_paas_admin_project_edit', {'id':object.project.id}) }}"
-                   title="{{ 'teknoo.space.action.edit_project_from_job'|trans }}">
-                    <span class="mdi mdi-pencil"></span>
-                </a>
-            {% endif %}
             <a class="text-primary"
                href="{{ path('space_admin_job_get', {'id':object.id}) }}"
                title="{{ 'teknoo.space.action.view_job'|trans }}">

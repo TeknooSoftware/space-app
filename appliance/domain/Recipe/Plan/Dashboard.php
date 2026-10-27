@@ -36,6 +36,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Cluster\ClustersInfoInterface;
 use Teknoo\Space\Contracts\Recipe\Step\Kubernetes\HealthInterface;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\LoadEnvironments;
+use Teknoo\Space\Recipe\Step\Dashboard\RenderWithoutAccount;
 use Teknoo\Space\Recipe\Step\Misc\ClusterAndEnvSelection;
 
 /**
@@ -50,6 +51,7 @@ class Dashboard implements EditablePlanInterface
 
     public function __construct(
         RecipeInterface $recipe,
+        private readonly RenderWithoutAccount $renderWithoutAccount,
         private readonly HealthInterface $health,
         private readonly LoadEnvironments $loadEnvironments,
         private readonly LoadAccountClusters $loadAccountClusters,
@@ -64,6 +66,8 @@ class Dashboard implements EditablePlanInterface
 
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
+        $recipe = $recipe->cook($this->renderWithoutAccount, RenderWithoutAccount::class, [], 5);
+
         $recipe = $recipe->cook($this->health, HealthInterface::class, [], 10);
 
         $recipe = $recipe->cook($this->loadEnvironments, LoadEnvironments::class, [], 10);
