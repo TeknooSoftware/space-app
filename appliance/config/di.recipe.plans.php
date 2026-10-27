@@ -517,7 +517,8 @@ return [
         ),
 
     // HTTP entry point of the admin provisioning actions (environment reinstall, registry reinstall, quota
-    // refresh): the route's `taskClass` default selects the task queued to the `new_task` worker.
+    // refresh), also of the environment reinstall by a member from its account settings: the route's `taskClass`
+    // default selects the task queued to the `new_task` worker.
     AccountTaskDispatch::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),

@@ -124,7 +124,7 @@ services:
             - '@service_container'
 
     # Environment reinstall, registry reinstall and quota refresh: the route's `taskClass` default selects the
-    # task queued to the `new_task` worker.
+    # task queued to the `new_task` worker. Also used by the environment reinstall of a member, from its settings.
     teknoo.space.endpoint.admin.account.task:
         class: 'Teknoo\East\Foundation\EndPoint\RecipeEndPoint'
         public: true

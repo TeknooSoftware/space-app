@@ -26,6 +26,8 @@
 - The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
   answered a `500`
   - **Breaking**: these endpoints are removed, create the job with `job/new`. The web restart does not change
+- A member reinstalls an environment of its account from its settings, with the button beside the deletion (`POST`
+  with the CSRF token `teknoo_space_account_task`): only the administration had it, removed with `ROLE_ADMIN` restricted
 
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
