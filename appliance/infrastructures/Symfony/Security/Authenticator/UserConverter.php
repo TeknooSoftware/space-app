@@ -46,6 +46,11 @@ use Throwable;
  */
 class UserConverter implements UserConverterInterface
 {
+    public function __construct(
+        private readonly string $pendingRoleName,
+    ) {
+    }
+
     public function extractEmail(ResourceOwnerInterface $owner, PromiseInterface $promise): UserConverterInterface
     {
         try {
@@ -105,6 +110,9 @@ class UserConverter implements UserConverterInterface
                     'teknoo.space.error.oauth.converter.resource_unknown'
                 ),
             };
+
+            //A new user is attached to no account: it waits for an administrator
+            $user->setRoles([$this->pendingRoleName]);
 
             $promise->success($user);
         } catch (Throwable $error) {

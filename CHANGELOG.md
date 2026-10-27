@@ -32,6 +32,9 @@
   promise.
 - `HookingDeployment` logs the command called by the hook in the history, under the key `hook_command` (`null` if the
   hook does not provide it), next to `hook_output`.
+- `ROLE_PENDING`: a user attached to no account, limited to the dashboard (a message), its settings, its password
+  and its 2FA. The API, the API keys and the JWT are refused to it
+  - **Breaking**: the first sign-in with OAuth creates a user with `ROLE_PENDING` (before: no role)
 
 ## [2.6.0-beta2] - 2026-10-22
 ### Beta Release
