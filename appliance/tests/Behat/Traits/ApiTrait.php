@@ -930,6 +930,24 @@ trait ApiTrait
         );
     }
 
+    #[When('the API is called to reinstall the environment :envName on :clusterName of my account')]
+    public function theApiIsCalledToReinstallTheEnvironmentOnOfMyAccount(
+        string $envName,
+        string $clusterName,
+    ): void {
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_account_environment_reinstall',
+                parameters: [
+                    'envName' => $envName,
+                    'clusterName' => $clusterName,
+                ]
+            ),
+            bodyFields: null,
+            format: 'json',
+        );
+    }
+
     #[When("the API is called to get user's settings")]
     public function theApiIsCalledToGetUsersSettings(): void
     {
@@ -954,7 +972,15 @@ trait ApiTrait
             url: match ($view) {
                 'settings' => $this->getPathFromRoute('space_api_v1_account_settings'),
                 'status' => $this->getPathFromRoute('space_api_v1_account_status'),
-                'environments' => $this->getPathFromRoute('space_api_v1_account_environments'),
+                'environments' => match ($role) {
+                    'admin' => $this->getPathFromRoute(
+                        route: 'space_api_v1_admin_account_edit_environments',
+                        parameters: [
+                            'id' => $this->recall(Account::class)->getId(),
+                        ],
+                    ),
+                    default => $this->getPathFromRoute('space_api_v1_account_environments'),
+                },
                 'variables' => match ($role) {
                     'admin' => $this->getPathFromRoute(
                         route: 'space_api_v1_admin_account_edit_variables',
@@ -1206,10 +1232,21 @@ trait ApiTrait
     #[Then('the serialized success result')]
     public function theSerializedSuccessResult(): void
     {
-        Assert::assertEquals(200, $this->response?->getStatusCode());
-
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
+
+        $this->assertSerializedSuccessResultOf($account);
+    }
+
+    #[Then('the serialized success result of the account :name')]
+    public function theSerializedSuccessResultOfTheAccount(string $name): void
+    {
+        $this->assertSerializedSuccessResultOf($this->findAccountNamed($name));
+    }
+
+    private function assertSerializedSuccessResultOf(Account $account): void
+    {
+        Assert::assertEquals(200, $this->response?->getStatusCode());
 
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);

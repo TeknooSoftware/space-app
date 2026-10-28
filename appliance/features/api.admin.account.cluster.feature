@@ -2,7 +2,7 @@
 Feature: API admin endpoints to administrate custom clusters of accounts.
   In order to keep the clusters of the accounts out of the reach of the administration
   As an administrator of Space
-  I can not list, read or change the clusters of an account
+  I can list the clusters of an account, read only, but I can not read or change one of them
 
   On space, users on a same account can define clusters to use with their environments and for all projects.
   These clusters will complete the official `Cluster Catalog` defined by the Space instance's administrators.
@@ -16,7 +16,7 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication is enabled for the last user
 
-  Scenario: From the API, as Admin, list accounts clusters of an account is refused
+  Scenario: From the API, as Admin, list accounts clusters of an account, read only
     Given an account for "My First Company" with the account namespace "my-first-company"
     And a user, called "Albert" "Jean" with the "albert@teknoo.space" with the password "Test2@Test"
     And "5" accounts clusters "cluster X" and a slug "a-cluster"
@@ -27,7 +27,8 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
     When the API is called to list of accounts clusters of last account as admin
     Then get a JSON response
-    But an 403 error
+    And is a serialized collection of "5" items on "1" pages
+    And the list of serialized accounts clusters
 
   Scenario: From the API, as Admin, create an account cluster, via a request with a form url encoded body is refused
     Given an account for "My Company" with the account namespace "my-company"

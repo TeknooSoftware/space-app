@@ -39,12 +39,17 @@ class PrepareRedirection
     public function __invoke(
         ManagerInterface $manager,
         Account $accountInstance,
+        bool $useAccountOfUser = false,
     ): self {
+        //The routes of the members area take the account of the user, they need no id
+        $parameters = [];
+        if (!$useAccountOfUser) {
+            $parameters['id'] = $accountInstance->getId();
+        }
+
         $manager->updateWorkPlan([
             'id' => $accountInstance->getId(),
-            'parameters' => [
-                'id' => $accountInstance->getId(),
-            ],
+            'parameters' => $parameters,
         ]);
 
         return $this;

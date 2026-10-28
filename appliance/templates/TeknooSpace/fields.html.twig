@@ -373,6 +373,21 @@
                     {% if form.vars.data.envName is defined
                           and form.parent.parent.vars.data.account.id is defined
                           and form.vars.data.envName is not empty %}
+                    {# Inside the form of the account: this button sends its own POST, with the CSRF token of the task #}
+                    <button type="submit"
+                            formaction="{{ path('space_account_environment_reinstall', {'envName': form.vars.data.envName, 'clusterName': form.vars.data.clusterName}) }}"
+                            formmethod="post"
+                            formnovalidate
+                            name="_token"
+                            value="{{ csrf_token('teknoo_space_account_task') }}"
+                            class="ml-1 btn btn-icon btn-small disableable-on-update"
+                            aria-description="{{ 'teknoo.space.action.environment.reinstall'|trans }}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            data-disabled-message="{{ 'teknoo.space.text.environment.reinstall.need_saving'|trans }}"
+                            title="{{ 'teknoo.space.action.environment.reinstall'|trans }}">
+                        <i class="mdi mdi-refresh"></i>
+                    </button>
                     {% endif %}
                     <button type="button"
                             class="btn btn-icon action-remove btn-small"

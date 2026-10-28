@@ -110,13 +110,13 @@ document.addEventListener("DOMContentLoaded",function () {
       form.querySelectorAll('.disableable-on-update').forEach(function (button) {
         if (button.hasAttribute('href')) {
           button.setAttribute('href', '#');
-          button.addEventListener('click', function (event) {
-            event.preventDefault();
-            alert(button.dataset.disabledMessage);
-
-            return false;
-          });
         }
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          alert(button.dataset.disabledMessage);
+
+          return false;
+        });
       });
     });
   });

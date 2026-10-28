@@ -122,6 +122,12 @@ security:
         - { path: '^/2fa/auth', roles: [IS_AUTHENTICATED_2FA_IN_PROGRESS], requires_channel: https }
         #Account : 2fa of a user, also without account (ROLE_PENDING)
         - { path: '^/2fa/', roles: [ROLE_USER, ROLE_PENDING], requires_channel: https }
+        #Api : admin area, the environments of an account and the list of its clusters stay readable, read only
+        - {
+            path: '^/api/v1/admin/account/[^/]+/(environments|clusters)$',
+            methods: [GET],
+            roles: [ROLE_ADMIN, ~ROLE_RECOVERY]
+        }
         #Api : admin area, the routes stay, but these operations are forbidden to the administrators of Space (variables,
         #clusters and environments of an account)
         - { path: '^/api/v1/admin/account/[^/]+/(variables|environments?(/|$)|clusters?(/|$))', allow_if: 'false' }
@@ -141,7 +147,7 @@ security:
             requires_channel: https
         }
         - {
-            path: '^/account/(settings|status|variables|clusters?)(/|$)',
+            path: '^/account/(settings|status|variables|clusters?|environment)(/|$)',
             allow_if: "is_granted('ROLE_USER') and !is_granted('ROLE_ADMIN')",
             requires_channel: https
         }

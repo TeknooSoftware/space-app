@@ -73,7 +73,7 @@ parameters:
     teknoo.east.paas.symfony.history.prefer-real-date: true
     teknoo.east.paas.symfony.prepare-job.prefer-real-date: true
 
-    teknoo.space.assets.version: '2026.10.21'
+    teknoo.space.assets.version: '2026.10.28'
 
     teknoo.space.east.paas.kubernetes.version_level: '%env(string:default:teknoo.space.default.east.paas.kubernetes.version_level:SPACE_KUBERNETES_VERSION_LEVEL)%'
 

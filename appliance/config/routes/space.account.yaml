@@ -52,6 +52,19 @@ space_account_settings:
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
         cleanHtml: "%teknoo.space.rendering.clean_html%"
 
+space_account_environment_reinstall:
+    path: '/account/environment/{envName}/{clusterName}/reinstall'
+    methods: ['POST']
+    schemes: ['https']
+    defaults:
+        _controller: 'teknoo.space.endpoint.admin.account.task'
+        taskClass: 'Teknoo\Space\Object\DTO\Task\ReinstallEnvironmentTask'
+        csrfTokenId: 'teknoo_space_account_task'
+        loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        useAccountOfUser: true
+        route: 'space_account_settings'
+        cleanHtml: "%teknoo.space.rendering.clean_html%"
+
 space_account_status:
     path: '/account/status'
     methods: ['GET']

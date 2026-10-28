@@ -39,6 +39,7 @@ use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Recipe\Plan\AccountTaskDispatch;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
+use Teknoo\Space\Recipe\Step\Account\UseAccountOfUser;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
 use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
@@ -62,6 +63,7 @@ class AccountTaskDispatchTest extends TestCase
 
         $this->accountTaskDispatch = new AccountTaskDispatch(
             recipe: $this->createStub(RecipeInterface::class),
+            useAccountOfUser: $this->createStub(UseAccountOfUser::class),
             loadObject: $this->createStub(LoadObject::class),
             objectAccessControl: $this->createStub(ObjectAccessControlInterface::class),
             loadHistory: $this->createStub(LoadHistory::class),
@@ -114,6 +116,7 @@ class AccountTaskDispatchTest extends TestCase
 
         $plan = new AccountTaskDispatch(
             recipe: $recipe,
+            useAccountOfUser: $this->createStub(UseAccountOfUser::class),
             loadObject: $this->createStub(LoadObject::class),
             objectAccessControl: $this->createStub(ObjectAccessControlInterface::class),
             loadHistory: $this->createStub(LoadHistory::class),
@@ -138,6 +141,14 @@ class AccountTaskDispatchTest extends TestCase
         $positions = $this->trainAndListPositions($this->createStub(CheckCsrfTokenInterface::class));
 
         $this->assertSame(5, $positions[CheckCsrfTokenInterface::class] ?? null);
+        $this->assertSame(10, $positions[LoadObject::class] ?? null);
+    }
+
+    public function testTheAccountOfTheUserIsUsedBeforeTheLoadingOfTheAccount(): void
+    {
+        $positions = $this->trainAndListPositions(null);
+
+        $this->assertSame(6, $positions[UseAccountOfUser::class] ?? null);
         $this->assertSame(10, $positions[LoadObject::class] ?? null);
     }
 

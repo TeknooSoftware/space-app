@@ -163,6 +163,11 @@ class AccountCluster implements
         return $this;
     }
 
+    public function getMasterAddress(): string
+    {
+        return $this->masterAddress;
+    }
+
     public function setName(string $name): AccountCluster
     {
         $this->name = $name;

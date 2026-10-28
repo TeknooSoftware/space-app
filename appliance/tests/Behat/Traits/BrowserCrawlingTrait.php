@@ -306,6 +306,63 @@ trait BrowserCrawlingTrait
         );
     }
 
+    #[Then('it is redirected to the account settings page')]
+    public function itIsRedirectedToTheAccountSettingsPage(): void
+    {
+        $this->hasBeenUserRedirected();
+        Assert::assertEquals(
+            $this->getPathFromRoute(route: 'space_account_settings'),
+            $this->currentUrl,
+        );
+    }
+
+    #[Then('the page has a reinstall button for the environment :envName on :clusterName')]
+    public function thePageHasAReinstallButtonForTheEnvironmentOn(string $envName, string $clusterName): void
+    {
+        $this->isAFinalResponse();
+
+        $url = $this->getPathFromRoute(
+            route: 'space_account_environment_reinstall',
+            parameters: [
+                'envName' => $envName,
+                'clusterName' => $clusterName,
+            ],
+        );
+
+        $node = $this->createCrawler()->filter('button[formaction="' . $url . '"]');
+        Assert::assertCount(1, $node);
+        Assert::assertEquals('post', $node->attr('formmethod'));
+        Assert::assertEquals('_token', $node->attr('name'));
+        Assert::assertNotEmpty($node->attr('value'));
+    }
+
+    #[Then('the page shows, read only, the environment :envName on :clusterName')]
+    public function thePageShowsReadOnlyTheEnvironmentOn(string $envName, string $clusterName): void
+    {
+        $this->isAFinalResponse();
+
+        $row = $this->createCrawler()->filter(
+            'tr[data-env-name="' . $envName . '"][data-cluster-name="' . $clusterName . '"]',
+        );
+        Assert::assertCount(1, $row);
+        Assert::assertCount(0, $row->filter('a, button, input, select, textarea'));
+    }
+
+    #[Then('the page shows, read only, the account cluster :name of type :type on :masterAddress')]
+    public function thePageShowsReadOnlyTheAccountClusterOfTypeOn(
+        string $name,
+        string $type,
+        string $masterAddress,
+    ): void {
+        $this->isAFinalResponse();
+
+        $row = $this->createCrawler()->filter('tr[data-account-cluster="' . $name . '"]');
+        Assert::assertCount(1, $row);
+        $cells = $row->filter('td')->each(fn ($cell): string => trim($cell->text()));
+        Assert::assertEquals([$name, $type, $masterAddress], $cells);
+        Assert::assertCount(0, $row->filter('a, button, input, select, textarea'));
+    }
+
     #[Then('the dashboard frame is displayed')]
     public function theDashboardFrameIsDisplayed(): void
     {
