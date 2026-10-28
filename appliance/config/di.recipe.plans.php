@@ -154,6 +154,7 @@ use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\Account\UseAccountOfUser;
 use Teknoo\Space\Recipe\Step\AccountCluster\InjectAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
@@ -523,6 +524,7 @@ return [
     AccountTaskDispatch::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(UseAccountOfUser::class),
             diGet(LoadObject::class),
             diGet(ObjectAccessControlInterface::class),
             diGet(LoadHistory::class),
