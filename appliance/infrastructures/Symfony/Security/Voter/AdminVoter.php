@@ -37,6 +37,7 @@ use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\AccessControl\AbstractAcces
 use Teknoo\Space\Object\DTO\SpaceAccount;
 use Teknoo\Space\Object\DTO\SpaceProject;
 use Teknoo\Space\Object\DTO\SpaceUser;
+use Teknoo\Space\Object\Persisted\AccountCluster;
 
 use function in_array;
 use function is_object;
@@ -51,9 +52,9 @@ class AdminVoter implements VoterInterface
 {
     /**
      * The objects an administrator of Space manages, with the attributes of the access control steps it is granted
-     * on: it lists the projects but can not open them, and it gets nothing on the other objects (account clusters,
-     * environments, variables, objects of extensions...). Instances are checked with `instanceof`, to accept the
-     * Doctrine proxies.
+     * on: it lists the projects and the clusters of an account but can not open them, and it gets nothing on the
+     * other objects (environments, variables, objects of extensions...). Instances are checked with `instanceof`, to
+     * accept the Doctrine proxies.
      */
     private const array GRANTS = [
         Account::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
@@ -63,6 +64,7 @@ class AdminVoter implements VoterInterface
         Job::class => [AbstractAccessControl::ATTRIBUTE_ACCESS, AbstractAccessControl::ATTRIBUTE_LIST],
         Project::class => [AbstractAccessControl::ATTRIBUTE_LIST],
         SpaceProject::class => [AbstractAccessControl::ATTRIBUTE_LIST],
+        AccountCluster::class => [AbstractAccessControl::ATTRIBUTE_LIST],
     ];
 
     public function __construct(

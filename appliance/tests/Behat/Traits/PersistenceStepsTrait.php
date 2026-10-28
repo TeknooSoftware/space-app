@@ -1616,6 +1616,20 @@ trait PersistenceStepsTrait
         Assert::fail('Missing AccountRegistry');
     }
 
+    /**
+     * A persisted account found by its name, when the account of a step is not the last one of the fixtures
+     */
+    private function findAccountNamed(string $name): Account
+    {
+        foreach ($this->listObjects(Account::class) as $account) {
+            if ($account instanceof Account && $name === (string) $account) {
+                return $account;
+            }
+        }
+
+        Assert::fail("Missing Account $name");
+    }
+
     #[Given('the account registry does not record its cluster')]
     public function theAccountRegistryDoesNotRecordItsCluster(): void
     {
@@ -1679,6 +1693,19 @@ trait PersistenceStepsTrait
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
 
+        $this->assertOldAccountEnvironmentIsDeletedAndRemplaced($namespace, $account);
+    }
+
+    #[Then('the old account environment :namespace object of the account :name has been deleted and remplaced')]
+    public function theOldAccountEnvironmentObjectOfTheAccountHasBeenDeletedAndRemplaced(
+        string $namespace,
+        string $name,
+    ): void {
+        $this->assertOldAccountEnvironmentIsDeletedAndRemplaced($namespace, $this->findAccountNamed($name));
+    }
+
+    private function assertOldAccountEnvironmentIsDeletedAndRemplaced(string $namespace, Account $account): void
+    {
         Assert::assertNotEmpty($this->removedObjects[AccountEnvironment::class]);
         Assert::assertCount(1, $this->removedObjects[AccountEnvironment::class]);
 

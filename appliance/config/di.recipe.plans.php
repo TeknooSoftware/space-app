@@ -154,6 +154,8 @@ use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\Account\UseAccountOfUser;
+use Teknoo\Space\Recipe\Step\AccountCluster\InjectAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CheckingAllowedCountOfEnvs;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
@@ -517,10 +519,12 @@ return [
         ),
 
     // HTTP entry point of the admin provisioning actions (environment reinstall, registry reinstall, quota
-    // refresh): the route's `taskClass` default selects the task queued to the `new_task` worker.
+    // refresh), also of the environment reinstall by a member (settings and API): the route's `taskClass`
+    // default selects the task queued to the `new_task` worker.
     AccountTaskDispatch::class => create()
         ->constructor(
             diGet(OriginalRecipeInterface::class),
+            diGet(UseAccountOfUser::class),
             diGet(LoadObject::class),
             diGet(ObjectAccessControlInterface::class),
             diGet(LoadHistory::class),
@@ -726,7 +730,8 @@ return [
     },
 
     //Steps of the edit of an account by the administration: the account data and the subscription plan, without the
-    //management of the environments (no environment is installed or deleted by an administrator of Space)
+    //management of the environments (no environment is installed or deleted by an administrator of Space). Its
+    //environments and its clusters are only shown, read only
     'teknoo.space.account.additional_steps.admin_edit' => static function (): callable {
         return static function (
             EditablePlanInterface $steps,
@@ -735,6 +740,7 @@ return [
             //After LoadObject
             $steps->add($container->get(ExtractFromAccountDTO::class), 11);
             $steps->add($container->get(LoadEnvironments::class), 12);
+            $steps->add($container->get(InjectAccountClusters::class), 12);
             $steps->add($container->get(CreateResumes::class), 13);
             $steps->add($container->get(LoadSubscriptionPlan::class), 13);
             $steps->add($container->get(InjectStatus::class), 14);

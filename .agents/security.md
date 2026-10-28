@@ -17,14 +17,20 @@ via `#[IsGranted]` or `AuthorizationChecker` during recipe steps and controllers
 
 The access control steps vote an attribute fixed in the code, never read from the workplan: `ObjectAccessControl`
 votes `access`, `ListObjectsAccessControl` votes `list`. `AdminVoter` grants `access` and `list` on `Account`,
-`SpaceAccount`, `User`, `SpaceUser` and `Job`, and only `list` on `Project` and `SpaceProject`; it abstains on
-everything else (other objects, roles, expressions). An administrator of Space is never a member of an account, so the
-member voters abstain for it.
+`SpaceAccount`, `User`, `SpaceUser` and `Job`, and only `list` on `Project`, `SpaceProject` and `AccountCluster`; it
+abstains on everything else (other objects, roles, expressions). An administrator of Space is never a member of an
+account, so the member voters abstain for it.
 
 `access_control` completes the voters: rules refuse to everyone (`allow_if: 'false'`) the admin routes whose object is
 allowed but whose operation is not (variables, clusters and environments of an account, media CMS), and other rules
 refuse the area of the members (projects, jobs, account settings, and their `/api/v1` twins) to `ROLE_ADMIN`. Use
-`allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule.
+`allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule. The member reinstall of an
+environment (`/account/environment/.../reinstall`) takes no account id: the route default `useAccountOfUser` takes the
+account of the user, then the account is loaded and checked as one given by its id. It needs such a rule all the same:
+`AdminVoter` grants `access` on an account to an administrator. Its API twin
+(`/api/v1/account/environment/.../reinstall`) is covered by the rule of the `/api/v1` members area.
+A rule placed before the refusal of the admin API keeps the `GET` of `/api/v1/admin/account/{id}/environments` and
+`/api/v1/admin/account/{accountId}/clusters` to `ROLE_ADMIN`, read only: the first matching rule wins.
 
 `ROLE_PENDING` is a user attached to no account: the first sign-in with OAuth gives it, or the admin user form (alone,
 never for a user of an account). It does not include `ROLE_USER`, so the default rule refuses it: only `/`,

@@ -196,6 +196,13 @@ The API is organized into authenticated user endpoints and admin endpoints.
 - `POST /api/v1/account/environments`
 - `PUT /api/v1/account/environments`
 
+**Reinstall Account Environment**
+
+- `POST /api/v1/account/environment/{envName}/{clusterName}/reinstall`
+
+Asynchronous, as its admin twin (see below): the response `{"meta": {...}, "success": true, "taskId": "..."}` only
+means the task has been queued. The route takes no account id: the account is always the account of the user.
+
 **Manage Account Variables**
 
 - `GET /api/v1/account/variables`
@@ -297,7 +304,9 @@ All admin endpoints are prefixed with `/api/v1/admin`.
 An administrator of Space is never a member of an account. These admin endpoints answer `403` to it: the variables,
 clusters and environments of an account (`/account/{id}/variables`, `/account/{id}/environments`,
 `/account/{id}/environment/...`, `/account/{accountId}/clusters` and `/cluster/...`), the creation, edition, deletion,
-variables and credentials of a project, and the creation and pending of a job. The endpoints of the members
+variables and credentials of a project, and the creation and pending of a job. Only the `GET` of
+`/account/{id}/environments` and of `/account/{accountId}/clusters` answer, read only (a cluster without its
+credentials). The endpoints of the members
 (`/api/v1/account/...`, `/api/v1/project/...`, `/api/v1/projects`) answer `403` too. Every `403` of the API has the
 JSON error envelope.
 

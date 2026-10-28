@@ -405,6 +405,30 @@ trait BrowserActionTrait
         );
     }
 
+    private function callAccountEnvironmentReinstall(
+        string $envName,
+        string $clusterName,
+        string $method,
+        bool $withToken,
+    ): void {
+        $params = [];
+        if ($withToken) {
+            $params['_token'] = $this->getCsrfTokenOfTheSession('teknoo_space_account_task');
+        }
+
+        $this->executeRequest(
+            method: $method,
+            url: $this->getPathFromRoute(
+                route: 'space_account_environment_reinstall',
+                parameters: [
+                    'envName' => $envName,
+                    'clusterName' => $clusterName,
+                ],
+            ),
+            params: $params,
+        );
+    }
+
     /**
      * Parameters of a route of the members area, from the last project, job and account cluster of the fixtures
      *
@@ -444,6 +468,10 @@ trait BrowserActionTrait
             'space_api_v1_project_edit_variables',
             'space_api_v1_project_refresh_credentials',
             'space_api_v1_project_delete' => ['id' => $projectId],
+            'space_api_v1_account_environment_reinstall' => [
+                'envName' => 'prod',
+                'clusterName' => 'Demo Kube Cluster',
+            ],
             default => [],
         };
     }
@@ -504,6 +532,24 @@ trait BrowserActionTrait
         string $method,
     ): void {
         $this->callAdminAccountTask($action, $method, true);
+    }
+
+    #[When('it reinstalls the environment :envName on :clusterName with the method :method')]
+    public function itReinstallsTheEnvironmentOnWithTheMethod(
+        string $envName,
+        string $clusterName,
+        string $method,
+    ): void {
+        $this->callAccountEnvironmentReinstall($envName, $clusterName, $method, false);
+    }
+
+    #[When('it reinstalls the environment :envName on :clusterName with the method :method and the CSRF token')]
+    public function itReinstallsTheEnvironmentOnWithTheMethodAndTheCsrfToken(
+        string $envName,
+        string $clusterName,
+        string $method,
+    ): void {
+        $this->callAccountEnvironmentReinstall($envName, $clusterName, $method, true);
     }
 
     #[When('it goes to project page of :projectName')]

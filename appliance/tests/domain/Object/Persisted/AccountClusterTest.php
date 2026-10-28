@@ -320,6 +320,7 @@ class AccountClusterTest extends TestCase
         $result = $this->accountCluster->setMasterAddress($newAddress);
 
         $this->assertInstanceOf(AccountCluster::class, $result);
+        $this->assertSame($newAddress, $result->getMasterAddress());
     }
 
     #[AllowMockObjectsWithoutExpectations]

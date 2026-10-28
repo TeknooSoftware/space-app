@@ -94,4 +94,29 @@ class PrepareRedirectionTest extends TestCase
             )
         );
     }
+
+    public function testWithTheAccountOfTheUserTheRedirectionHasNoId(): void
+    {
+        $account = $this->createStub(Account::class);
+        $account
+            ->method('getId')
+            ->willReturn('account-123');
+
+        $manager = $this->createMock(ManagerInterface::class);
+        $manager->expects($this->once())
+            ->method('updateWorkPlan')
+            ->with([
+                'id' => 'account-123',
+                'parameters' => [],
+            ]);
+
+        $this->assertInstanceOf(
+            PrepareRedirection::class,
+            ($this->prepareRedirection)(
+                manager: $manager,
+                accountInstance: $account,
+                useAccountOfUser: true,
+            )
+        );
+    }
 }

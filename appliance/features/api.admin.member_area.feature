@@ -27,26 +27,27 @@ Feature: API endpoints of the members of an account, refused to the administrato
     But an 403 error
 
     Examples:
-      | method | route                                    |
-      | GET    | space_api_v1_account_settings            |
-      | GET    | space_api_v1_account_status              |
-      | GET    | space_api_v1_account_environments        |
-      | GET    | space_api_v1_account_edit_variables      |
-      | GET    | space_api_v1_account_clusters_list       |
-      | POST   | space_api_v1_account_clusters_new        |
-      | GET    | space_api_v1_account_clusters_edit       |
-      | POST   | space_api_v1_account_clusters_delete     |
-      | POST   | space_api_v1_project_new                 |
-      | GET    | space_api_v1_project_edit                |
-      | GET    | space_api_v1_project_edit_variables      |
-      | POST   | space_api_v1_project_refresh_credentials |
-      | GET    | space_api_v1_project_list                |
-      | POST   | space_api_v1_project_delete              |
-      | POST   | space_api_v1_job_new                     |
-      | GET    | space_api_v1_job_new_pending             |
-      | GET    | space_api_v1_job_list                    |
-      | GET    | space_api_v1_job_get                     |
-      | POST   | space_api_v1_job_delete                  |
+      | method | route                                      |
+      | GET    | space_api_v1_account_settings              |
+      | GET    | space_api_v1_account_status                |
+      | GET    | space_api_v1_account_environments          |
+      | POST   | space_api_v1_account_environment_reinstall |
+      | GET    | space_api_v1_account_edit_variables        |
+      | GET    | space_api_v1_account_clusters_list         |
+      | POST   | space_api_v1_account_clusters_new          |
+      | GET    | space_api_v1_account_clusters_edit         |
+      | POST   | space_api_v1_account_clusters_delete       |
+      | POST   | space_api_v1_project_new                   |
+      | GET    | space_api_v1_project_edit                  |
+      | GET    | space_api_v1_project_edit_variables        |
+      | POST   | space_api_v1_project_refresh_credentials   |
+      | GET    | space_api_v1_project_list                  |
+      | POST   | space_api_v1_project_delete                |
+      | POST   | space_api_v1_job_new                       |
+      | GET    | space_api_v1_job_new_pending               |
+      | GET    | space_api_v1_job_list                      |
+      | GET    | space_api_v1_job_get                       |
+      | POST   | space_api_v1_job_delete                    |
 
   Scenario: From the API, as Admin, its own settings stay available
     When the API is called to get user's settings

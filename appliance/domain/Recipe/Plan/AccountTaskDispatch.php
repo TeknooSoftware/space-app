@@ -43,15 +43,18 @@ use Teknoo\Recipe\Value;
 use Teknoo\Space\Contracts\Recipe\Step\Task\CallNewTaskInterface;
 use Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Client\SetRedirectClientAtEnd;
 use Teknoo\Space\Recipe\Step\Account\PrepareRedirection;
+use Teknoo\Space\Recipe\Step\Account\UseAccountOfUser;
 use Teknoo\Space\Recipe\Step\AccountHistory\LoadHistory;
 use Teknoo\Space\Recipe\Step\Task\AddTaskToHistory;
 use Teknoo\Space\Recipe\Step\Task\PrepareAccountTask;
 
 /**
  * HTTP entry point (web and API) of the admin account provisioning actions: environment reinstall, registry
- * reinstall and quota refresh. The request loads the account, checks the access, queues the task named by the
- * route's `taskClass` default to the `new_task` worker, records it in the account history, then redirects
- * to the account page (web) or renders the `done` template (API). The provisioning itself happens later in
+ * reinstall and quota refresh, and of the environment reinstall by a member of the account from its settings
+ * (`space_account_environment_reinstall`) or the API (`space_api_v1_account_environment_reinstall`). The request
+ * loads the account (for a member, always the account of the user, without id), checks the access, queues the task
+ * named by the route's `taskClass` default to the `new_task` worker, records it in the account history, then
+ * redirects to the account page (web) or renders the `done` template (API). The provisioning itself happens later in
  * the worker, through the `Teknoo\Space\Recipe\Plan\Task\AccountProvisioningTask` plan.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
@@ -65,6 +68,7 @@ class AccountTaskDispatch implements EditablePlanInterface
 
     public function __construct(
         RecipeInterface $recipe,
+        private readonly UseAccountOfUser $useAccountOfUser,
         private readonly LoadObject $loadObject,
         private readonly ObjectAccessControlInterface $objectAccessControl,
         private readonly LoadHistory $loadHistory,
@@ -85,7 +89,14 @@ class AccountTaskDispatch implements EditablePlanInterface
     protected function populateRecipe(RecipeInterface $recipe): RecipeInterface
     {
         $recipe = $recipe->require(new Ingredient(LoaderInterface::class, 'loader'));
-        $recipe = $recipe->require(new Ingredient('string', 'id'));
+        // The routes of the members area give no id: `UseAccountOfUser` sets the one of the account of the user
+        $recipe = $recipe->require(
+            new IngredientWithCondition(
+                conditionCallback: fn (array &$workplan): bool => empty($workplan['useAccountOfUser']),
+                requiredType: 'string',
+                name: 'id',
+            )
+        );
         $recipe = $recipe->require(new Ingredient('string', 'taskClass'));
         $recipe = $recipe->require(
             new IngredientWithCondition(
@@ -106,6 +117,8 @@ class AccountTaskDispatch implements EditablePlanInterface
         if (null !== $this->checkCsrfToken) {
             $recipe = $recipe->cook($this->checkCsrfToken, CheckCsrfTokenInterface::class, [], 05);
         }
+
+        $recipe = $recipe->cook($this->useAccountOfUser, UseAccountOfUser::class, [], 06);
 
         $recipe = $recipe->cook($this->loadObject, LoadObject::class, [], 10);
 
