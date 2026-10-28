@@ -28,6 +28,7 @@
   - **Breaking**: these endpoints are removed, create the job with `job/new`. The web restart does not change
 - A member reinstalls an environment of its account from its settings, with the button beside the deletion (`POST`
   with the CSRF token `teknoo_space_account_task`): only the administration had it, removed with `ROLE_ADMIN` restricted
+  - and through the API: `POST /api/v1/account/{id}/environment/{envName}/{clusterName}/reinstall`
 
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
