@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce3ef71c222cda87392e866ff51ac34e",
+    "content-hash": "05ac49a9f19c3a73362914753c22e77f",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -16922,23 +16922,23 @@
         },
         {
             "name": "zenstruck/messenger-test",
-            "version": "v1.15.0",
+            "version": "v1.15.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/messenger-test.git",
-                "reference": "6c3e7e49887359d502c65318bed60289363c8635"
+                "reference": "ebf4c1bd483132282a59c7174ac9758893b3b3ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/6c3e7e49887359d502c65318bed60289363c8635",
-                "reference": "6c3e7e49887359d502c65318bed60289363c8635",
+                "url": "https://api.github.com/repos/zenstruck/messenger-test/zipball/ebf4c1bd483132282a59c7174ac9758893b3b3ba",
+                "reference": "ebf4c1bd483132282a59c7174ac9758893b3b3ba",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "symfony/deprecation-contracts": "^2.2|^3.0",
                 "symfony/framework-bundle": "^6.4.15|^7.0|^8.0",
-                "symfony/messenger": "^6.4|^7.0|^8.0",
+                "symfony/messenger": "^6.4.4|^7.0|^8.0",
                 "zenstruck/assert": "^1.0"
             },
             "require-dev": {
@@ -16979,7 +16979,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/messenger-test/issues",
-                "source": "https://github.com/zenstruck/messenger-test/tree/v1.15.0"
+                "source": "https://github.com/zenstruck/messenger-test/tree/v1.15.1"
             },
             "funding": [
                 {
@@ -16991,7 +16991,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-02T16:44:01+00:00"
+            "time": "2026-10-28T21:24:13+00:00"
         }
     ],
     "aliases": [],
