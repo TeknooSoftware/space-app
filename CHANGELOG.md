@@ -16,6 +16,9 @@
 - **Breaking**: `ROLE_ADMIN` is restricted to the accounts (data, plan, users, status, quotas, registry), the users
   (without password), the lists of projects and jobs, the jobs (open, delete) and the dashboard. The other admin
   pages and endpoints (variables, clusters, environments, projects, start of jobs, media) and the members area answer `403`
+  - The reinstall of an environment moves to the members area: a button beside the deletion in the account settings
+    (`POST` with the CSRF token `teknoo_space_account_task`) and
+    `POST /api/v1/account/{id}/environment/{envName}/{clusterName}/reinstall`
 - **Breaking**: an administrator of Space has no member rights, and a user of an account can not get `ROLE_ADMIN`:
   remove the role or detach the user from its account first
 - The admin user form has no password: a user created by the administration signs in through the recovery or OAuth
@@ -26,9 +29,6 @@
 - The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
   answered a `500`
   - **Breaking**: these endpoints are removed, create the job with `job/new`. The web restart does not change
-- A member reinstalls an environment of its account from its settings, with the button beside the deletion (`POST`
-  with the CSRF token `teknoo_space_account_task`): only the administration had it, removed with `ROLE_ADMIN` restricted
-  - and through the API: `POST /api/v1/account/{id}/environment/{envName}/{clusterName}/reinstall`
 
 **Evolutions**
 - Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
