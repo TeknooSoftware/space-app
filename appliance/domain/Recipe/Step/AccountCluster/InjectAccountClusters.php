@@ -38,7 +38,8 @@ use Throwable;
 
 /**
  * Injects the clusters of the account into the view, as `accountClusters`, to show them read only on the edit of an
- * account by the administration. The template renders only their name and their type, never their credentials.
+ * account by the administration. The template renders only their name, their type and their master address, never
+ * their credentials.
  *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)

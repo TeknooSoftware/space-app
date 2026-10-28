@@ -20,8 +20,9 @@
     (`POST` with the CSRF token `teknoo_space_account_task`) and
     `POST /api/v1/account/{id}/environment/{envName}/{clusterName}/reinstall`
   - The administration still reads the environments and the clusters of an account, without changing them: in the
-    edit of the account (name and type of a cluster), and with `GET /api/v1/admin/account/{id}/environments` and
-    `GET /api/v1/admin/account/{accountId}/clusters` (without credentials)
+    edit of the account (name, type and master address of a cluster), and with
+    `GET /api/v1/admin/account/{id}/environments` and `GET /api/v1/admin/account/{accountId}/clusters` (without
+    credentials)
 - **Breaking**: an administrator of Space has no member rights, and a user of an account can not get `ROLE_ADMIN`:
   remove the role or detach the user from its account first
 - The admin user form has no password: a user created by the administration signs in through the recovery or OAuth

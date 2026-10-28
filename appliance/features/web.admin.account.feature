@@ -120,7 +120,7 @@ Feature: Web admin interface to manage accounts
     And the form has no field "admin_space_account.environments"
     And the page shows, read only, the environment "dev" on "Demo Kube Cluster"
     And the page shows, read only, the environment "prod" on "Demo Kube Cluster"
-    And the page shows, read only, the account cluster "Cluster Company" of type "kubernetes"
+    And the page shows, read only, the account cluster "Cluster Company" of type "kubernetes" on "https://kubernetes.my-company-cluster.behat"
     And the page does not show "YmVoYXRUb2tlbg=="
     And the page does not show "YmVoYXRDYUNlcnRpZmljYXRl"
 

@@ -88,6 +88,7 @@
                 <tr>
                     <th scope="col">{{ 'teknoo.space.form.account.account_cluster.name'|trans }}</th>
                     <th scope="col">{{ 'teknoo.space.form.account.account_cluster.type'|trans }}</th>
+                    <th scope="col">{{ 'teknoo.space.form.account.account_cluster.master_address'|trans }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -95,9 +96,10 @@
                     <tr data-account-cluster="{{ accountCluster }}">
                         <td>{{ accountCluster }}</td>
                         <td>{{ accountCluster.type }}</td>
+                        <td>{{ accountCluster.masterAddress }}</td>
                     </tr>
                 {% else %}
-                    <tr><td colspan="2">{{ 'teknoo.space.text.account_cluster_no_entries'|trans }}</td></tr>
+                    <tr><td colspan="3">{{ 'teknoo.space.text.account_cluster_no_entries'|trans }}</td></tr>
                 {% endfor %}
                 </tbody>
             </table>

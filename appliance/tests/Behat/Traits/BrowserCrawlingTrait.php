@@ -354,14 +354,18 @@ trait BrowserCrawlingTrait
         Assert::assertCount(0, $row->filter('a, button, input, select, textarea'));
     }
 
-    #[Then('the page shows, read only, the account cluster :name of type :type')]
-    public function thePageShowsReadOnlyTheAccountClusterOfType(string $name, string $type): void
-    {
+    #[Then('the page shows, read only, the account cluster :name of type :type on :masterAddress')]
+    public function thePageShowsReadOnlyTheAccountClusterOfTypeOn(
+        string $name,
+        string $type,
+        string $masterAddress,
+    ): void {
         $this->isAFinalResponse();
 
         $row = $this->createCrawler()->filter('tr[data-account-cluster="' . $name . '"]');
         Assert::assertCount(1, $row);
-        Assert::assertEquals([$name, $type], $row->filter('td')->each(fn ($cell): string => trim($cell->text())));
+        $cells = $row->filter('td')->each(fn ($cell): string => trim($cell->text()));
+        Assert::assertEquals([$name, $type, $masterAddress], $cells);
         Assert::assertCount(0, $row->filter('a, button, input, select, textarea'));
     }
 
