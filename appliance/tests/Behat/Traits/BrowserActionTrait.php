@@ -469,6 +469,11 @@ trait BrowserActionTrait
             'space_api_v1_project_edit_variables',
             'space_api_v1_project_refresh_credentials',
             'space_api_v1_project_delete' => ['id' => $projectId],
+            'space_api_v1_account_environment_reinstall' => [
+                'id' => $this->recall(Account::class)?->getId(),
+                'envName' => 'prod',
+                'clusterName' => 'Demo Kube Cluster',
+            ],
             default => [],
         };
     }

@@ -930,6 +930,28 @@ trait ApiTrait
         );
     }
 
+    #[When('the API is called to reinstall the environment :envName on :clusterName of the last account')]
+    public function theApiIsCalledToReinstallTheEnvironmentOnOfTheLastAccount(
+        string $envName,
+        string $clusterName,
+    ): void {
+        $account = $this->recall(Account::class);
+        Assert::assertNotNull($account);
+
+        $this->submitValuesThroughAPI(
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_account_environment_reinstall',
+                parameters: [
+                    'id' => $account->getId(),
+                    'envName' => $envName,
+                    'clusterName' => $clusterName,
+                ]
+            ),
+            bodyFields: null,
+            format: 'json',
+        );
+    }
+
     #[When("the API is called to get user's settings")]
     public function theApiIsCalledToGetUsersSettings(): void
     {
