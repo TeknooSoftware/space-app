@@ -100,7 +100,6 @@ use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
-use Teknoo\Space\Recipe\Step\Account\UseAccountOfUser;
 use Teknoo\Space\Recipe\Step\AccountCluster\InjectAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
@@ -465,8 +464,6 @@ return [
     PrepareNewJobForm::class => create(),
 
     AccountPrepareRedirection::class => create(),
-
-    UseAccountOfUser::class => create(),
 
     WorkplanInit::class => create(),
 
