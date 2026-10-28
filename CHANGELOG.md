@@ -1,6 +1,6 @@
 # Teknoo Software - Space - Change Log
 
-## [2.6.0-beta3] - 2026-10-23
+## [2.6.0-beta3] - 2026-10-28
 ### Beta Release
 
 **Security**
