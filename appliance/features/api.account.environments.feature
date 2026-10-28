@@ -301,7 +301,7 @@ Feature: API endpoints to manage account's environments where deploy projects
     And the 2FA authentication is enabled for the last user
     And the platform is booted
     And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
-    When the API is called to reinstall the environment "prod" on "Demo Kube Cluster" of the last account
+    When the API is called to reinstall the environment "prod" on "Demo Kube Cluster" of my account
     Then get a JSON response
     And the serialized success result
     And Space executes the pending tasks
@@ -309,9 +309,10 @@ Feature: API endpoints to manage account's environments where deploy projects
     And no Kubernetes manifests have been deleted
     And the old account environment "space-client-my-company-prod" object has been deleted and remplaced
 
-  Scenario: From the API, reinstall an environment of another account and get an error
+  Scenario: From the API, reinstall an environment of my account, never of another account
     Given a kubernetes client
     And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication is enabled for the last user
     And an account for "An Other Company" with the account namespace "an-other-company"
@@ -319,9 +320,10 @@ Feature: API endpoints to manage account's environments where deploy projects
     And a user, called "Dupond" "Albert" with the "albert@teknoo.space" with the password "Test2@Test"
     And the platform is booted
     And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
-    When the API is called to reinstall the environment "prod" on "Demo Kube Cluster" of the last account
+    When the API is called to reinstall the environment "prod" on "Demo Kube Cluster" of my account
     Then get a JSON response
-    But an 403 error
+    And the serialized success result
     And Space executes the pending tasks
-    And no Kubernetes manifests have been created
+    And a Kubernetes namespace for "my-company-prod" dedicated to "Demo Kube Cluster" is applied and populated
     And no Kubernetes manifests have been deleted
+    And the old account environment "space-client-my-company-prod" object has been deleted and remplaced

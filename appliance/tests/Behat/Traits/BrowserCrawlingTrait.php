@@ -311,12 +311,7 @@ trait BrowserCrawlingTrait
     {
         $this->hasBeenUserRedirected();
         Assert::assertEquals(
-            $this->getPathFromRoute(
-                route: 'space_account_settings',
-                parameters: [
-                    'id' => $this->recall(Account::class)?->getId(),
-                ],
-            ),
+            $this->getPathFromRoute(route: 'space_account_settings'),
             $this->currentUrl,
         );
     }
@@ -329,7 +324,6 @@ trait BrowserCrawlingTrait
         $url = $this->getPathFromRoute(
             route: 'space_account_environment_reinstall',
             parameters: [
-                'id' => $this->recall(Account::class)?->getId(),
                 'envName' => $envName,
                 'clusterName' => $clusterName,
             ],
