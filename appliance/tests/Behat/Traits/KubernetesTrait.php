@@ -354,7 +354,36 @@ trait KubernetesTrait
         string $namespace,
         string $cluster,
     ): void {
-        $account = $this->recall(Account::class);
+        $this->assertKubernetesNamespaceIsAppliedAndPopulated(
+            namespace: $namespace,
+            cluster: $cluster,
+            account: $this->recall(Account::class),
+            registry: $this->recall(AccountRegistry::class),
+        );
+    }
+
+    #[Then('a Kubernetes namespace for :namespace dedicated to :cluster is applied and populated for :name')]
+    public function aKubernetesNamespaceDedicatedToClusterIsAppliedAndPopulatedForTheAccount(
+        string $namespace,
+        string $cluster,
+        string $name,
+    ): void {
+        $account = $this->findAccountNamed($name);
+
+        $this->assertKubernetesNamespaceIsAppliedAndPopulated(
+            namespace: $namespace,
+            cluster: $cluster,
+            account: $account,
+            registry: $this->findAccountRegistryOf($account),
+        );
+    }
+
+    private function assertKubernetesNamespaceIsAppliedAndPopulated(
+        string $namespace,
+        string $cluster,
+        Account $account,
+        AccountRegistry $registry,
+    ): void {
         $prNr = new Promise(fn ($s): string => $s);
         $prQt = new Promise(fn ($q): array => $q);
         $account->visit(
@@ -363,8 +392,6 @@ trait KubernetesTrait
                 'quotas' => $prQt,
             ]
         );
-
-        $registry = $this->recall(AccountRegistry::class);
 
         $expected = trim(
             new ManifestGenerator()->namespaceCreation(

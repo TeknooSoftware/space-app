@@ -322,8 +322,8 @@ Feature: API endpoints to manage account's environments where deploy projects
     And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
     When the API is called to reinstall the environment "prod" on "Demo Kube Cluster" of my account
     Then get a JSON response
-    And the serialized success result
+    And the serialized success result of the account "My Company"
     And Space executes the pending tasks
-    And a Kubernetes namespace for "my-company-prod" dedicated to "Demo Kube Cluster" is applied and populated
+    And a Kubernetes namespace for "my-company-prod" dedicated to "Demo Kube Cluster" is applied and populated for "My Company"
     And no Kubernetes manifests have been deleted
-    And the old account environment "space-client-my-company-prod" object has been deleted and remplaced
+    And the old account environment "space-client-my-company-prod" object of the account "My Company" has been deleted and remplaced

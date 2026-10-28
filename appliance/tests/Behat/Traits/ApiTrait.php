@@ -1232,10 +1232,21 @@ trait ApiTrait
     #[Then('the serialized success result')]
     public function theSerializedSuccessResult(): void
     {
-        Assert::assertEquals(200, $this->response?->getStatusCode());
-
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
+
+        $this->assertSerializedSuccessResultOf($account);
+    }
+
+    #[Then('the serialized success result of the account :name')]
+    public function theSerializedSuccessResultOfTheAccount(string $name): void
+    {
+        $this->assertSerializedSuccessResultOf($this->findAccountNamed($name));
+    }
+
+    private function assertSerializedSuccessResultOf(Account $account): void
+    {
+        Assert::assertEquals(200, $this->response?->getStatusCode());
 
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);

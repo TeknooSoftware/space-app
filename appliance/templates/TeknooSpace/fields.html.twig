@@ -375,7 +375,7 @@
                           and form.vars.data.envName is not empty %}
                     {# Inside the form of the account: this button sends its own POST, with the CSRF token of the task #}
                     <button type="submit"
-                            formaction="{{ path('space_account_environment_reinstall', {'id': form.parent.parent.vars.data.account.id, 'envName': form.vars.data.envName, 'clusterName': form.vars.data.clusterName}) }}"
+                            formaction="{{ path('space_account_environment_reinstall', {'envName': form.vars.data.envName, 'clusterName': form.vars.data.clusterName}) }}"
                             formmethod="post"
                             formnovalidate
                             name="_token"

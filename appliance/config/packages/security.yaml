@@ -147,7 +147,7 @@ security:
             requires_channel: https
         }
         - {
-            path: '^/account/(settings|status|variables|clusters?|[^/]+/environment)(/|$)',
+            path: '^/account/(settings|status|variables|clusters?|environment)(/|$)',
             allow_if: "is_granted('ROLE_USER') and !is_granted('ROLE_ADMIN')",
             requires_channel: https
         }

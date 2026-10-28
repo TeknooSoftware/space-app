@@ -45,7 +45,7 @@ space_api_v1_account_environments:
         writer: '@Teknoo\Space\Writer\Meta\SpaceAccountWriter'
 
 space_api_v1_account_environment_reinstall:
-    path: '/account/{id}/environment/{envName}/{clusterName}/reinstall'
+    path: '/account/environment/{envName}/{clusterName}/reinstall'
     methods: ['POST']
     schemes: ['https']
     defaults:
@@ -54,6 +54,7 @@ space_api_v1_account_environment_reinstall:
         api: 'json'
         errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
         loader: '@Teknoo\East\Paas\Loader\AccountLoader'
+        useAccountOfUser: true
         template: '@@TeknooSpace/AdminAccount/done.json.twig'
 
 space_api_v1_account_edit_variables:
