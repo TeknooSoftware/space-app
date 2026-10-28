@@ -198,10 +198,10 @@ The API is organized into authenticated user endpoints and admin endpoints.
 
 **Reinstall Account Environment**
 
-- `POST /api/v1/account/{id}/environment/{envName}/{clusterName}/reinstall`
+- `POST /api/v1/account/environment/{envName}/{clusterName}/reinstall`
 
 Asynchronous, as its admin twin (see below): the response `{"meta": {...}, "success": true, "taskId": "..."}` only
-means the task has been queued. A member of another account gets a `403`.
+means the task has been queued. The route takes no account id: the account is always the account of the user.
 
 **Manage Account Variables**
 

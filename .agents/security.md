@@ -24,10 +24,11 @@ account, so the member voters abstain for it.
 `access_control` completes the voters: rules refuse to everyone (`allow_if: 'false'`) the admin routes whose object is
 allowed but whose operation is not (variables, clusters and environments of an account, media CMS), and other rules
 refuse the area of the members (projects, jobs, account settings, and their `/api/v1` twins) to `ROLE_ADMIN`. Use
-`allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule. A member route that loads an
-account by its `{id}` (`/account/{id}/environment/.../reinstall`) needs such a rule: `AdminVoter` grants `access` on
-the account to an administrator. Its API twin (`/api/v1/account/{id}/environment/.../reinstall`) is covered by the
-rule of the `/api/v1` members area.
+`allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule. The member reinstall of an
+environment (`/account/environment/.../reinstall`) takes no account id: the route default `useAccountOfUser` takes the
+account of the user, then the account is loaded and checked as one given by its id. It needs such a rule all the same:
+`AdminVoter` grants `access` on an account to an administrator. Its API twin
+(`/api/v1/account/environment/.../reinstall`) is covered by the rule of the `/api/v1` members area.
 A rule placed before the refusal of the admin API keeps the `GET` of `/api/v1/admin/account/{id}/environments` and
 `/api/v1/admin/account/{accountId}/clusters` to `ROLE_ADMIN`, read only: the first matching rule wins.
 
