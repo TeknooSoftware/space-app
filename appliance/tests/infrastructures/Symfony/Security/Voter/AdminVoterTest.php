@@ -115,6 +115,7 @@ class AdminVoterTest extends TestCase
         yield 'Job proxy access' => [JobODM::class, 'access'];
         yield Project::class . ' list' => [Project::class, 'list'];
         yield SpaceProject::class . ' list' => [SpaceProject::class, 'list'];
+        yield AccountCluster::class . ' list' => [AccountCluster::class, 'list'];
     }
 
     /**
@@ -144,10 +145,10 @@ class AdminVoterTest extends TestCase
     {
         yield Project::class . ' access' => [Project::class, 'access'];
         yield SpaceProject::class . ' access' => [SpaceProject::class, 'access'];
+        yield AccountCluster::class . ' access' => [AccountCluster::class, 'access'];
 
         foreach (
             [
-                AccountCluster::class,
                 AccountData::class,
                 AccountEnvironment::class,
                 AccountHistory::class,

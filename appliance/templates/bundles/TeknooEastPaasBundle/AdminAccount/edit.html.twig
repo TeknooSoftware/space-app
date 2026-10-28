@@ -56,6 +56,53 @@
             </div>
         </div>
     </div>{# end col #}
+    {# Read only: the environments and the clusters of an account are managed by its users, never by the administration #}
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <h3>{{ 'teknoo.space.title.account.environments'|trans }}</h3>
+            <table class="table mb-0 table-center">
+                <thead>
+                <tr>
+                    <th scope="col">{{ 'teknoo.space.form.account_environment.env_name'|trans }}</th>
+                    <th scope="col">{{ 'teknoo.space.form.account_environment.cluster_name'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for envResume in accountEnvsResumes|default([]) %}
+                    <tr data-env-name="{{ envResume.envName }}" data-cluster-name="{{ envResume.clusterName }}">
+                        <td>{{ envResume.envName }}</td>
+                        <td>{{ envResume.clusterName }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="2">{{ 'teknoo.space.text.account_cluster_no_entries'|trans }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="rounded shadow p-4 bg-white mt-4">
+            <h3>{{ 'teknoo.space.title.account.account_cluster'|trans }}</h3>
+            <table class="table mb-0 table-center">
+                <thead>
+                <tr>
+                    <th scope="col">{{ 'teknoo.space.form.account.account_cluster.name'|trans }}</th>
+                    <th scope="col">{{ 'teknoo.space.form.account.account_cluster.type'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for accountCluster in accountClusters|default([]) %}
+                    <tr data-account-cluster="{{ accountCluster }}">
+                        <td>{{ accountCluster }}</td>
+                        <td>{{ accountCluster.type }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="2">{{ 'teknoo.space.text.account_cluster_no_entries'|trans }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}
 
 {% block addsFormButton %}

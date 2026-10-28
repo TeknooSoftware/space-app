@@ -100,6 +100,7 @@ use Teknoo\Space\Recipe\Step\Account\SetDefaultSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\SetQuota;
 use Teknoo\Space\Recipe\Step\Account\SetSubscriptionPlan;
 use Teknoo\Space\Recipe\Step\Account\UpdateAccountHistory;
+use Teknoo\Space\Recipe\Step\AccountCluster\InjectAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountCluster\LoadAccountClusters;
 use Teknoo\Space\Recipe\Step\AccountData\LoadData as LoadAccountData;
 use Teknoo\Space\Recipe\Step\AccountEnvironment\CreateResumes;
@@ -442,6 +443,9 @@ return [
             get(ClientFactoryInterface::class),
             get(RepositoryRegistry::class),
         ),
+
+    InjectAccountClusters::class => create()
+        ->constructor(get(AccountClusterLoader::class)),
 
     InjectToView::class => create(),
 
