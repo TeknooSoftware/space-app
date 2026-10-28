@@ -26,7 +26,8 @@ allowed but whose operation is not (variables, clusters and environments of an a
 refuse the area of the members (projects, jobs, account settings, and their `/api/v1` twins) to `ROLE_ADMIN`. Use
 `allow_if` alone in these rules: Symfony adds the expression to the `roles` of the rule. A member route that loads an
 account by its `{id}` (`/account/{id}/environment/.../reinstall`) needs such a rule: `AdminVoter` grants `access` on
-the account to an administrator.
+the account to an administrator. Its API twin (`/api/v1/account/{id}/environment/.../reinstall`) is covered by the
+rule of the `/api/v1` members area.
 
 `ROLE_PENDING` is a user attached to no account: the first sign-in with OAuth gives it, or the admin user form (alone,
 never for a user of an account). It does not include `ROLE_USER`, so the default rule refuses it: only `/`,

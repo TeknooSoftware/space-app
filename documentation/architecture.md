@@ -165,7 +165,8 @@ history, clusters, environments and registry before delegating to the bowl. The 
 plan, `Recipe\Plan\AccountTaskDispatch`, whose route default `taskClass` selects the task (the web routes require
 a `POST` with a CSRF token, the environment reinstall is refused to the administrators). A member reinstalls an
 environment of its account through the same plan, from its settings (`space_account_environment_reinstall`, `POST`
-with a CSRF token, refused to the administrators by `access_control`); account creation queues
+with a CSRF token, refused to the administrators by `access_control`) or the API
+(`space_api_v1_account_environment_reinstall`); account creation queues
 `InstallRegistryTask` and the account settings of the members `InstallEnvironmentTask` from their step lists.
 
 ### 7. Access Control — ObjectAccessControl
