@@ -113,6 +113,17 @@ Feature: Web admin interface to manage accounts
     And no Kubernetes manifests have been created
     And no Kubernetes manifests have been deleted
 
+  Scenario: From the UI, as Admin, the environments and the clusters of an account are shown, read only, on its edit
+    Given an account clusters "Cluster Company" and a slug "my-company-cluster"
+    When it goes to the admin account page
+    Then get a valid web page
+    And the form has no field "admin_space_account.environments"
+    And the page shows, read only, the environment "dev" on "Demo Kube Cluster"
+    And the page shows, read only, the environment "prod" on "Demo Kube Cluster"
+    And the page shows, read only, the account cluster "Cluster Company" of type "kubernetes"
+    And the page does not show "YmVoYXRUb2tlbg=="
+    And the page does not show "YmVoYXRDYUNlcnRpZmljYXRl"
+
   Scenario: From the UI, as Admin, the environments of an account can not be changed from its edit
     When it goes to the admin account page
     And it submits the form:

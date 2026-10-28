@@ -2,7 +2,7 @@
 Feature: API admin endpoints to administrate environments of accounts, where projects are deployed
   In order to keep the environments of the accounts in the hands of their users
   As an administrator of Space
-  I can refresh the quotas of an account, but I can not create, delete or reinstall its environments
+  I can read the environments of an account and refresh its quotas, but I can not create, delete or reinstall them
 
   On Space, projects are deployed on clusters's namespaces corresponding to desired an environment label for the
   deployment job. Clusters can be registered manually for each project or managed in the account.
@@ -15,6 +15,22 @@ Feature: API admin endpoints to administrate environments of accounts, where pro
   Background:
     Given a Space app instance
     And a memory document database
+
+  Scenario: From the API, as Admin, get the environments of an account, read only
+    Given a kubernetes client
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And an account for "My Company" with the account namespace "my-company"
+    And quotas defined for this account
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to get account's environments as admin
+    Then get a JSON response
+    And the serialized account's environments of "My Company"
+    And Space executes the pending tasks
+    And no Kubernetes manifests have been created
+    And no Kubernetes manifests have been deleted
 
   Scenario: From the API, as Admin, create a new environment, on a managed cluster, via a request with a form url encoded body is refused
     Given a kubernetes client

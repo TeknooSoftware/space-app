@@ -342,6 +342,29 @@ trait BrowserCrawlingTrait
         Assert::assertNotEmpty($node->attr('value'));
     }
 
+    #[Then('the page shows, read only, the environment :envName on :clusterName')]
+    public function thePageShowsReadOnlyTheEnvironmentOn(string $envName, string $clusterName): void
+    {
+        $this->isAFinalResponse();
+
+        $row = $this->createCrawler()->filter(
+            'tr[data-env-name="' . $envName . '"][data-cluster-name="' . $clusterName . '"]',
+        );
+        Assert::assertCount(1, $row);
+        Assert::assertCount(0, $row->filter('a, button, input, select, textarea'));
+    }
+
+    #[Then('the page shows, read only, the account cluster :name of type :type')]
+    public function thePageShowsReadOnlyTheAccountClusterOfType(string $name, string $type): void
+    {
+        $this->isAFinalResponse();
+
+        $row = $this->createCrawler()->filter('tr[data-account-cluster="' . $name . '"]');
+        Assert::assertCount(1, $row);
+        Assert::assertEquals([$name, $type], $row->filter('td')->each(fn ($cell): string => trim($cell->text())));
+        Assert::assertCount(0, $row->filter('a, button, input, select, textarea'));
+    }
+
     #[Then('the dashboard frame is displayed')]
     public function theDashboardFrameIsDisplayed(): void
     {

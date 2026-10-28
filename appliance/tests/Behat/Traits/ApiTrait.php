@@ -976,7 +976,15 @@ trait ApiTrait
             url: match ($view) {
                 'settings' => $this->getPathFromRoute('space_api_v1_account_settings'),
                 'status' => $this->getPathFromRoute('space_api_v1_account_status'),
-                'environments' => $this->getPathFromRoute('space_api_v1_account_environments'),
+                'environments' => match ($role) {
+                    'admin' => $this->getPathFromRoute(
+                        route: 'space_api_v1_admin_account_edit_environments',
+                        parameters: [
+                            'id' => $this->recall(Account::class)->getId(),
+                        ],
+                    ),
+                    default => $this->getPathFromRoute('space_api_v1_account_environments'),
+                },
                 'variables' => match ($role) {
                     'admin' => $this->getPathFromRoute(
                         route: 'space_api_v1_admin_account_edit_variables',
