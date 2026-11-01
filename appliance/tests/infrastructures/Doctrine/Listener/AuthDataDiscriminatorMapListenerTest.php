@@ -36,6 +36,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Teknoo\East\Common\Object\ApiKeysAuth;
 use Teknoo\East\Common\Object\ApiKeyToken;
+use Teknoo\East\Common\Object\BearerToken;
+use Teknoo\East\Common\Object\BearerTokensAuth;
 use Teknoo\East\Common\Object\MediaMetadata;
 use Teknoo\East\Common\Object\RecoveryAccess;
 use Teknoo\East\Common\Object\StoredPassword;
@@ -107,6 +109,8 @@ class AuthDataDiscriminatorMapListenerTest extends TestCase
             TOTPAuth::class => TOTPAuth::class,
             ThirdPartyAuth::class => ThirdPartyAuth::class,
             self::LEGACY_API_KEYS_AUTH => ApiKeysAuth::class,
+            BearerToken::class => BearerToken::class,
+            BearerTokensAuth::class => BearerTokensAuth::class,
         ];
 
         $map = $metadata->fieldMappings['authData']['discriminatorMap'] ?? [];
