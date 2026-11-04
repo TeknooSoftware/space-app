@@ -1,5 +1,29 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.0-beta4] - 2026-11-04
+### Beta Release
+
+#### Security
+- The query or the body of a request can no longer define the options of a form (like `csrf_protection`) or an
+  ingredient named by a class: only the attributes of the request (route defaults) can (East Foundation 9.5.1)
+- The logout clears the Mercure subscriber cookie: the browser can no longer subscribe to the private topics of the
+  user (Mercure Bundle 0.7)
+
+#### Fixes
+- A value that can not be converted to the type of a form field (e.g. `abc` in an integer field) shows the form again
+  with its error, instead of a `500` (East Common 4.9.1)
+
+#### Evolutions
+- East Common 4.9 adds a unique sparse index on `authData.tokens.token_digest` to `User`: create it and clear the
+  Doctrine metadata cache when upgrading
+- Update libs
+  - East Common 4.9.1, East Foundation 9.5.1
+  - Symfony 7.4.23/8.1.11, Symfony Flex 2.12
+  - Symfony Mercure 0.10, Mercure Bundle 0.7
+  - Scheb 2FA 8.7
+  - Illuminate 13.40, Laminas Diactoros 3.10, Lcobucci Clock 3.7, Endroid QR Code 6.2
+  - PHPUnit 13.4.6, PHPStan 2.3.5
+
 ## [2.6.0-beta3] - 2026-10-28
 ### Beta Release
 
