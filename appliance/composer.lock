@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b00e526cb4b30a8c3e70d5da0be90107",
+    "content-hash": "fd90248d852ba9df20b7dfae057c3409",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -12063,16 +12063,16 @@
         },
         {
             "name": "teknoo/recipe",
-            "version": "7.3.0",
+            "version": "7.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/recipe.git",
-                "reference": "53d47d284679151892c43646d5967fc03f92ca08"
+                "reference": "18f766cf2d946575cb649ecee9da61281043efbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/53d47d284679151892c43646d5967fc03f92ca08",
-                "reference": "53d47d284679151892c43646d5967fc03f92ca08",
+                "url": "https://api.github.com/repos/TeknooSoftware/recipe/zipball/18f766cf2d946575cb649ecee9da61281043efbc",
+                "reference": "18f766cf2d946575cb649ecee9da61281043efbc",
                 "shasum": ""
             },
             "require": {
@@ -12081,8 +12081,8 @@
                 "teknoo/states": "^7.1.11"
             },
             "require-dev": {
-                "behat/behat": "^3.33",
-                "nikic/php-parser": "^5.9",
+                "behat/behat": "^4.0",
+                "behat/phpunit-assertions-extension": "^1.0",
                 "phpstan/extension-installer": "^1.4.3",
                 "phpstan/phpstan": "^2.2.16",
                 "phpunit/phpunit": "^13.3.5",
@@ -12142,8 +12142,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-09-27T14:03:42+00:00",
-            "published-time": "2026-09-27T14:14:21+00:00"
+            "time": "2026-11-04T19:21:30+00:00",
+            "published-time": "2026-11-04T19:22:43+00:00"
         },
         {
             "name": "teknoo/states",
