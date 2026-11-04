@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "06d29c819ab9fe93c512efe72dc7fa00",
+    "content-hash": "b00e526cb4b30a8c3e70d5da0be90107",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11442,16 +11442,16 @@
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "9.5.1",
+            "version": "9.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "c399dde60e944e96b657221895170f15ff71fb36"
+                "reference": "e5006e189f6625cc217468d6ee8750674fa91198"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/c399dde60e944e96b657221895170f15ff71fb36",
-                "reference": "c399dde60e944e96b657221895170f15ff71fb36",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/e5006e189f6625cc217468d6ee8750674fa91198",
+                "reference": "e5006e189f6625cc217468d6ee8750674fa91198",
                 "shasum": ""
             },
             "require": {
@@ -11543,21 +11543,21 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-03T21:16:17+00:00",
-            "published-time": "2026-11-03T21:38:46+00:00"
+            "time": "2026-11-04T12:52:41+00:00",
+            "published-time": "2026-11-04T12:58:54+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "9.5.1",
+            "version": "9.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "c60577c3e5478cb635f026fb56b38f4914b4656c"
+                "reference": "19ef68be223fa8ada1cc69e5a8fbda986faeec81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/c60577c3e5478cb635f026fb56b38f4914b4656c",
-                "reference": "c60577c3e5478cb635f026fb56b38f4914b4656c",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/19ef68be223fa8ada1cc69e5a8fbda986faeec81",
+                "reference": "19ef68be223fa8ada1cc69e5a8fbda986faeec81",
                 "shasum": ""
             },
             "require": {
@@ -11573,7 +11573,7 @@
                 "symfony/serializer": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-foundation": "^9.5.1",
+                "teknoo/east-foundation": "^9.5.2",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
                 "teknoo/states": "^7.1.2"
@@ -11622,8 +11622,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-03T21:41:29+00:00",
-            "published-time": "2026-11-03T21:41:57+00:00"
+            "time": "2026-11-04T12:59:18+00:00",
+            "published-time": "2026-11-04T12:59:36+00:00"
         },
         {
             "name": "teknoo/east-paas",
