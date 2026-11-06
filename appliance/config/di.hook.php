@@ -42,7 +42,7 @@ use function is_a;
 use function is_string;
 
 return [
-    'teknoo.space.hooks_collection.default_timeout' => 240.0,
+    'teknoo.space.hooks_collection.default_timeout' => 600.0,
 
     HooksCollectionInterface::class => static function (ContainerInterface $container): HooksCollectionInterface {
         $definitions = [];
