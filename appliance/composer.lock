@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fd90248d852ba9df20b7dfae057c3409",
+    "content-hash": "0b266f9f4fb6624b2e2e9a54aa1590c9",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -706,16 +706,16 @@
         },
         {
             "name": "doctrine/mongodb-odm",
-            "version": "2.17.3",
+            "version": "2.17.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/mongodb-odm.git",
-                "reference": "e140f0f2714ee403f8866007c6b3504825d76102"
+                "reference": "81f98861aecd8b78f22dfc159951091c3e275796"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/e140f0f2714ee403f8866007c6b3504825d76102",
-                "reference": "e140f0f2714ee403f8866007c6b3504825d76102",
+                "url": "https://api.github.com/repos/doctrine/mongodb-odm/zipball/81f98861aecd8b78f22dfc159951091c3e275796",
+                "reference": "81f98861aecd8b78f22dfc159951091c3e275796",
                 "shasum": ""
             },
             "require": {
@@ -813,7 +813,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/mongodb-odm/issues",
-                "source": "https://github.com/doctrine/mongodb-odm/tree/2.17.3"
+                "source": "https://github.com/doctrine/mongodb-odm/tree/2.17.4"
             },
             "funding": [
                 {
@@ -829,8 +829,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-10-20T18:02:02+00:00",
-            "published-time": "2026-10-20T18:11:55+00:00"
+            "time": "2026-10-26T11:08:40+00:00",
+            "published-time": "2026-11-06T09:46:54+00:00"
         },
         {
             "name": "doctrine/mongodb-odm-bundle",
@@ -11203,16 +11203,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "4.9.1",
+            "version": "4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "f10461c69340e61aed85e4d7466a650993cc21ba"
+                "reference": "a0ed29bb226fc229f8b68af1453829c3eca2501f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/f10461c69340e61aed85e4d7466a650993cc21ba",
-                "reference": "f10461c69340e61aed85e4d7466a650993cc21ba",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/a0ed29bb226fc229f8b68af1453829c3eca2501f",
+                "reference": "a0ed29bb226fc229f8b68af1453829c3eca2501f",
                 "shasum": ""
             },
             "require": {
@@ -11352,21 +11352,21 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-03T16:04:16+00:00",
-            "published-time": "2026-11-03T16:06:40+00:00"
+            "time": "2026-11-06T15:54:31+00:00",
+            "published-time": "2026-11-06T15:59:42+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.9.1",
+            "version": "4.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "22426037d1aa5fcc6aadf70733166b23f62fbe0f"
+                "reference": "2bd64420067e67fcd95dd54010967dec60ea845f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/22426037d1aa5fcc6aadf70733166b23f62fbe0f",
-                "reference": "22426037d1aa5fcc6aadf70733166b23f62fbe0f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/2bd64420067e67fcd95dd54010967dec60ea845f",
+                "reference": "2bd64420067e67fcd95dd54010967dec60ea845f",
                 "shasum": ""
             },
             "require": {
@@ -11391,7 +11391,7 @@
                 "symfony/validator": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.2",
-                "teknoo/east-common": "^4.9.1",
+                "teknoo/east-common": "^4.10",
                 "teknoo/east-foundation-symfony": "^9.4",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.3",
@@ -11442,8 +11442,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-03T16:07:44+00:00",
-            "published-time": "2026-11-03T16:08:04+00:00"
+            "time": "2026-11-06T16:00:30+00:00",
+            "published-time": "2026-11-06T16:00:51+00:00"
         },
         {
             "name": "teknoo/east-foundation",
