@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b266f9f4fb6624b2e2e9a54aa1590c9",
+    "content-hash": "1e93d1d742b3dd7a8b2eeadb45b36cb8",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4754,16 +4754,16 @@
         },
         {
             "name": "spomky-labs/otphp",
-            "version": "11.5.0",
+            "version": "11.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Spomky-Labs/otphp.git",
-                "reference": "877683d6352b80cdc7020fd43a725629c2524435"
+                "reference": "16866d2206d6f0c0421294357da23a28b78852f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/877683d6352b80cdc7020fd43a725629c2524435",
-                "reference": "877683d6352b80cdc7020fd43a725629c2524435",
+                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/16866d2206d6f0c0421294357da23a28b78852f7",
+                "reference": "16866d2206d6f0c0421294357da23a28b78852f7",
                 "shasum": ""
             },
             "require": {
@@ -4808,7 +4808,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Spomky-Labs/otphp/issues",
-                "source": "https://github.com/Spomky-Labs/otphp/tree/11.5.0"
+                "source": "https://github.com/Spomky-Labs/otphp/tree/11.5.1"
             },
             "funding": [
                 {
@@ -4820,8 +4820,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-06-06T23:41:24+00:00",
-            "published-time": "2026-06-06T23:50:57+00:00"
+            "time": "2026-11-07T17:39:42+00:00",
+            "published-time": "2026-11-07T17:56:33+00:00"
         },
         {
             "name": "stevenmaguire/oauth2-microsoft",
