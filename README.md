@@ -588,7 +588,7 @@ the web application and the four workers do not receive the same set.
                   `HookInterface`.
                 * `command` : (array of string or string) path to the composer executable. `$PATH` joker is usable.
                 * `timeout`: (int) max time allowed to install dependencies via Composer.
-                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*, 240s by default
+                  Can't be bigger than `SPACE_WORKER_TIME_LIMIT`. *Optional*, 600s by default
 
         * OCI Image building :
             * `SPACE_IMG_BUILDER_CMD` : (string) name of the tool to use to create OCI/Docker image.
