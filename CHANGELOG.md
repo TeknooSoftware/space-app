@@ -1,6 +1,6 @@
 # Teknoo Software - Space - Change Log
 
-## [2.6.0-beta5] - Release pending
+## [2.6.0-beta5] - 2026-11-07
 ### Beta Release
 
 #### Evolutions
