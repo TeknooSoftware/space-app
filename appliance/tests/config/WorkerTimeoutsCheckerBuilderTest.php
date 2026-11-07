@@ -126,8 +126,8 @@ class WorkerTimeoutsCheckerBuilderTest extends TestCase
             [
                 'The timeout `SPACE_IMG_BUILDER_TIMEOUT` (1800s) is bigger than the worker time limit '
                     . '`SPACE_WORKER_TIME_LIMIT` (1000s), the worker will be stopped before reaching it',
-                'The biggest hook timeout (`composer`, 240s) added to the biggest deployment timeout '
-                    . '(`SPACE_DC_TIMEOUT`, 900s) gives 1140s, bigger than the worker time limit '
+                'The biggest hook timeout (`composer`, 600s) added to the biggest deployment timeout '
+                    . '(`SPACE_DC_TIMEOUT`, 900s) gives 1500s, bigger than the worker time limit '
                     . '`SPACE_WORKER_TIME_LIMIT` (1000s), a job running this hook may be stopped before the end of '
                     . 'its deployment',
             ],

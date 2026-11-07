@@ -1,5 +1,11 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.0-beta5] - 2026-11-07
+### Beta Release
+
+#### Evolutions
+- A hook defined without timeout has 600 seconds instead of 240, the network can be slow
+
 ## [2.6.0-beta4] - 2026-11-04
 ### Beta Release
 
