@@ -1,5 +1,10 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.0-beta6] - 2026-11-10
+### Beta Release
+#### Fix
+- Remove doctrine/common
+
 ## [2.6.0-beta5] - 2026-11-07
 ### Beta Release
 
