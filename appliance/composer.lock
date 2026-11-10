@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31a53055e5ec2da661166aa917234d78",
+    "content-hash": "5cd2b33b7ed7c0aa7aaad75ffb1a4fe0",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1484,16 +1484,16 @@
         },
         {
             "name": "illuminate/collections",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/collections.git",
-                "reference": "3170236055eb67e860b9d2c01c664d1876fa1652"
+                "reference": "ac19e4e945513b1bad6744f8ea2626974a036bc0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/collections/zipball/3170236055eb67e860b9d2c01c664d1876fa1652",
-                "reference": "3170236055eb67e860b9d2c01c664d1876fa1652",
+                "url": "https://api.github.com/repos/illuminate/collections/zipball/ac19e4e945513b1bad6744f8ea2626974a036bc0",
+                "reference": "ac19e4e945513b1bad6744f8ea2626974a036bc0",
                 "shasum": ""
             },
             "require": {
@@ -1540,12 +1540,12 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-10-30T21:24:02+00:00",
-            "published-time": "2026-11-03T15:07:42+00:00"
+            "time": "2026-11-04T19:47:22+00:00",
+            "published-time": "2026-11-10T15:54:52+00:00"
         },
         {
             "name": "illuminate/conditionable",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/conditionable.git",
@@ -1588,11 +1588,11 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-03T15:07:44+00:00"
+            "published-time": "2026-11-10T15:54:56+00:00"
         },
         {
             "name": "illuminate/contracts",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -1637,11 +1637,11 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-29T13:51:55+00:00",
-            "published-time": "2026-11-03T15:07:54+00:00"
+            "published-time": "2026-11-10T15:55:07+00:00"
         },
         {
             "name": "illuminate/macroable",
-            "version": "v13.40.0",
+            "version": "v13.42.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/macroable.git",
@@ -1684,7 +1684,7 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2026-10-06T02:42:44+00:00",
-            "published-time": "2026-11-03T15:08:15+00:00"
+            "published-time": "2026-11-10T15:56:01+00:00"
         },
         {
             "name": "jean85/pretty-package-versions",
@@ -1963,16 +1963,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v2.1.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "2d5869a838bbcf37e0d8b0568fc41914e81374b5"
+                "reference": "2bfb44e8af009b553ed2c060c94b0bc3c67b4769"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/2d5869a838bbcf37e0d8b0568fc41914e81374b5",
-                "reference": "2d5869a838bbcf37e0d8b0568fc41914e81374b5",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/2bfb44e8af009b553ed2c060c94b0bc3c67b4769",
+                "reference": "2bfb44e8af009b553ed2c060c94b0bc3c67b4769",
                 "shasum": ""
             },
             "require": {
@@ -2020,8 +2020,8 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2026-09-22T14:32:34+00:00",
-            "published-time": "2026-09-22T14:33:13+00:00"
+            "time": "2026-10-14T21:20:29+00:00",
+            "published-time": "2026-11-10T16:11:08+00:00"
         },
         {
             "name": "lcobucci/clock",
@@ -12687,20 +12687,20 @@
         },
         {
             "name": "behat/phpunit-assertions-extension",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/PHPUnitAssertionsExtension.git",
-                "reference": "055f263f4d59c7d424dabf3765be1e99cc0a7ddd"
+                "reference": "8774866c2aedc88d12828aa5cdf4bcd4ae30079c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/PHPUnitAssertionsExtension/zipball/055f263f4d59c7d424dabf3765be1e99cc0a7ddd",
-                "reference": "055f263f4d59c7d424dabf3765be1e99cc0a7ddd",
+                "url": "https://api.github.com/repos/Behat/PHPUnitAssertionsExtension/zipball/8774866c2aedc88d12828aa5cdf4bcd4ae30079c",
+                "reference": "8774866c2aedc88d12828aa5cdf4bcd4ae30079c",
                 "shasum": ""
             },
             "require": {
-                "behat/behat": "^3.33 || ^4.0@alpha",
+                "behat/behat": "^3.34 || ^4.0",
                 "php": ">=8.2 <8.6",
                 "phpunit/phpunit": "^8.5 || ^9.6 || ^10.5 || ^11.5 || ^12.5 || ^13.3",
                 "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0 || ^8.0"
@@ -12740,7 +12740,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/PHPUnitAssertionsExtension/issues",
-                "source": "https://github.com/Behat/PHPUnitAssertionsExtension/tree/v1.0.0"
+                "source": "https://github.com/Behat/PHPUnitAssertionsExtension/tree/v1.1.0"
             },
             "funding": [
                 {
@@ -12756,8 +12756,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-21T20:20:17+00:00",
-            "published-time": "2026-09-25T16:18:28+00:00"
+            "time": "2026-11-10T17:51:08+00:00",
+            "published-time": "2026-11-10T18:24:19+00:00"
         },
         {
             "name": "composer/pcre",
@@ -14114,12 +14114,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "fe3a585588a168d9f2727fb468145f4c5f56f5b4"
+                "reference": "ab5f23bc1b9007cc45a78109bc1f499ca02588b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fe3a585588a168d9f2727fb468145f4c5f56f5b4",
-                "reference": "fe3a585588a168d9f2727fb468145f4c5f56f5b4",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ab5f23bc1b9007cc45a78109bc1f499ca02588b3",
+                "reference": "ab5f23bc1b9007cc45a78109bc1f499ca02588b3",
                 "shasum": ""
             },
             "conflict": {
@@ -14201,6 +14201,7 @@
                 "barzahlen/barzahlen-php": "<2.0.1",
                 "baserproject/basercms": "<=5.2.2",
                 "bassjobsen/bootstrap-3-typeahead": ">4.0.2",
+                "bazaarvoice/bazaarvoice-magento2-ext": ">=8,<9.1.11",
                 "bbpress/bbpress": "<2.6.5",
                 "bcit-ci/codeigniter": "<3.1.3",
                 "bcosca/fatfree": "<3.7.2",
@@ -14654,7 +14655,7 @@
                 "mautic/grapes-js-builder-bundle": ">=4,<4.4.18|>=5,<5.2.9|>=6,<6.0.7",
                 "maximebf/debugbar": "<1.19",
                 "mckenziearts/livewire-markdown-editor": "<1.3",
-                "mcp/sdk": ">=0.5,<0.7.1",
+                "mcp/sdk": ">=0.5,<0.7.1|>=0.8,<0.9",
                 "mdanter/ecc": "<2",
                 "mediaessenz/mail": "<3.12.5|>=4,<4.2",
                 "mediawiki/abuse-filter": "<1.39.9|>=1.40,<1.41.3|>=1.42,<1.42.2",
@@ -15282,8 +15283,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-10T03:11:40+00:00",
-            "published-time": "2026-11-10T03:11:44+00:00"
+            "time": "2026-11-10T20:14:47+00:00",
+            "published-time": "2026-11-10T20:14:52+00:00"
         },
         {
             "name": "sebastian/cli-parser",
