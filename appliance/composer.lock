@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c86b7bfd40396e1d684033cd857b8580",
+    "content-hash": "31a53055e5ec2da661166aa917234d78",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -324,99 +324,6 @@
             ],
             "time": "2026-04-29T20:41:02+00:00",
             "published-time": "2026-04-29T20:41:48+00:00"
-        },
-        {
-            "name": "doctrine/common",
-            "version": "3.5.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/common.git",
-                "reference": "d9ea4a54ca2586db781f0265d36bea731ac66ec5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/d9ea4a54ca2586db781f0265d36bea731ac66ec5",
-                "reference": "d9ea4a54ca2586db781f0265d36bea731ac66ec5",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/persistence": "^2.0 || ^3.0 || ^4.0",
-                "php": "^7.1 || ^8.0"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^9.0 || ^10.0",
-                "doctrine/collections": "^1",
-                "phpstan/phpstan": "^1.4.1",
-                "phpstan/phpstan-phpunit": "^1",
-                "phpunit/phpunit": "^7.5.20 || ^8.5 || ^9.0",
-                "squizlabs/php_codesniffer": "^3.0",
-                "symfony/phpunit-bridge": "^6.1",
-                "vimeo/psalm": "^4.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Doctrine\\Common\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
-                },
-                {
-                    "name": "Roman Borschel",
-                    "email": "roman@code-factory.org"
-                },
-                {
-                    "name": "Benjamin Eberlei",
-                    "email": "kontakt@beberlei.de"
-                },
-                {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com"
-                },
-                {
-                    "name": "Johannes Schmitt",
-                    "email": "schmittjoh@gmail.com"
-                },
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com"
-                }
-            ],
-            "description": "PHP Doctrine Common project is a library that provides additional functionality that other Doctrine projects depend on such as better reflection support, proxies and much more.",
-            "homepage": "https://www.doctrine-project.org/projects/common.html",
-            "keywords": [
-                "common",
-                "doctrine",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/doctrine/common/issues",
-                "source": "https://github.com/doctrine/common/tree/3.5.0"
-            },
-            "funding": [
-                {
-                    "url": "https://www.doctrine-project.org/sponsorship.html",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://www.patreon.com/phpdoctrine",
-                    "type": "patreon"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/doctrine%2Fcommon",
-                    "type": "tidelift"
-                }
-            ],
-            "abandoned": true,
-            "time": "2025-01-01T22:12:03+00:00",
-            "published-time": "2025-01-01T22:13:20+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -11202,16 +11109,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "4.10.0",
+            "version": "4.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "a0ed29bb226fc229f8b68af1453829c3eca2501f"
+                "reference": "9293797cc5a9f8aa48204686ebc6a186af2b7a64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/a0ed29bb226fc229f8b68af1453829c3eca2501f",
-                "reference": "a0ed29bb226fc229f8b68af1453829c3eca2501f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/9293797cc5a9f8aa48204686ebc6a186af2b7a64",
+                "reference": "9293797cc5a9f8aa48204686ebc6a186af2b7a64",
                 "shasum": ""
             },
             "require": {
@@ -11225,7 +11132,6 @@
             "require-dev": {
                 "behat/behat": "^4.0",
                 "behat/phpunit-assertions-extension": "^1.0",
-                "doctrine/common": "^3.5",
                 "doctrine/mongodb-odm": "^2.17.1",
                 "doctrine/mongodb-odm-bundle": "^5.6",
                 "doctrine/persistence": "^4.2",
@@ -11351,25 +11257,24 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-06T15:54:31+00:00",
-            "published-time": "2026-11-06T15:59:42+00:00"
+            "time": "2026-11-10T09:40:30+00:00",
+            "published-time": "2026-11-10T09:45:20+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.10.0",
+            "version": "4.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "2bd64420067e67fcd95dd54010967dec60ea845f"
+                "reference": "044a6e94c2cedb4f449a745e0369efb6738a9e6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/2bd64420067e67fcd95dd54010967dec60ea845f",
-                "reference": "2bd64420067e67fcd95dd54010967dec60ea845f",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/044a6e94c2cedb4f449a745e0369efb6738a9e6b",
+                "reference": "044a6e94c2cedb4f449a745e0369efb6738a9e6b",
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "^3.5",
                 "doctrine/mongodb-odm": "^2.15.3",
                 "doctrine/mongodb-odm-bundle": "^5.5.1",
                 "doctrine/persistence": "^4.1.1",
@@ -11390,7 +11295,7 @@
                 "symfony/validator": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.2",
-                "teknoo/east-common": "^4.10",
+                "teknoo/east-common": "^4.10.1",
                 "teknoo/east-foundation-symfony": "^9.4",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.3",
@@ -11441,8 +11346,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-06T16:00:30+00:00",
-            "published-time": "2026-11-06T16:00:51+00:00"
+            "time": "2026-11-10T09:43:40+00:00",
+            "published-time": "2026-11-10T09:48:48+00:00"
         },
         {
             "name": "teknoo/east-foundation",
@@ -11631,16 +11536,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.11.5",
+            "version": "5.11.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "bec264476b6aeb8a98681c3bac44da2395f0af45"
+                "reference": "768aecc603bba57875eda8d876d9ca38b1c35b9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/bec264476b6aeb8a98681c3bac44da2395f0af45",
-                "reference": "bec264476b6aeb8a98681c3bac44da2395f0af45",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/768aecc603bba57875eda8d876d9ca38b1c35b9f",
+                "reference": "768aecc603bba57875eda8d876d9ca38b1c35b9f",
                 "shasum": ""
             },
             "require": {
@@ -11650,17 +11555,16 @@
                 "php": "^8.4",
                 "php-di/php-di": "^7.1.1",
                 "psr/http-client": "^1.0.3",
-                "teknoo/east-common": "^4.8.1",
-                "teknoo/east-foundation": "^9.4",
+                "teknoo/east-common": "^4.10.1",
+                "teknoo/east-foundation": "^9.5.2",
                 "teknoo/immutable": "^3.0.22",
-                "teknoo/recipe": "^7.3",
+                "teknoo/recipe": "^7.3.2",
                 "teknoo/states": "^7.1.13"
             },
             "require-dev": {
                 "behat/behat": "^4.0",
                 "behat/phpunit-assertions-extension": "^1.0",
                 "dmarynicz/behat-parallel-extension": "^1.3.0",
-                "doctrine/common": "^3.5",
                 "doctrine/mongodb-odm": "^2.16.1",
                 "doctrine/mongodb-odm-bundle": "^5.6",
                 "doctrine/persistence": "^4.1.1",
@@ -11788,25 +11692,24 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-27T06:48:39+00:00",
-            "published-time": "2026-10-27T06:53:11+00:00"
+            "time": "2026-11-10T11:17:22+00:00",
+            "published-time": "2026-11-10T11:18:15+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
-            "version": "5.11.5",
+            "version": "5.11.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas-symfony.git",
-                "reference": "0bcd91df6ee615ff97f73c34b4731eed48b06e00"
+                "reference": "83130ad152f24f6bed3ead71cc459c51a6aff858"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/0bcd91df6ee615ff97f73c34b4731eed48b06e00",
-                "reference": "0bcd91df6ee615ff97f73c34b4731eed48b06e00",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas-symfony/zipball/83130ad152f24f6bed3ead71cc459c51a6aff858",
+                "reference": "83130ad152f24f6bed3ead71cc459c51a6aff858",
                 "shasum": ""
             },
             "require": {
-                "doctrine/common": "^3.5",
                 "doctrine/mongodb-odm": "^2.15.3",
                 "doctrine/mongodb-odm-bundle": "^5.5.1",
                 "doctrine/persistence": "^4.1.1",
@@ -11838,9 +11741,9 @@
                 "symfony/validator": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.2",
-                "teknoo/east-common-symfony": "^4.8",
+                "teknoo/east-common-symfony": "^4.10.1",
                 "teknoo/east-foundation-symfony": "^9.4",
-                "teknoo/east-paas": "^5.11.5",
+                "teknoo/east-paas": "^5.11.7",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/kubernetes-client": "^2.1.1",
                 "teknoo/recipe": "^7.3",
@@ -11902,8 +11805,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-27T06:54:33+00:00",
-            "published-time": "2026-10-27T06:55:03+00:00"
+            "time": "2026-11-10T11:22:10+00:00",
+            "published-time": "2026-11-10T11:27:27+00:00"
         },
         {
             "name": "teknoo/immutable",
