@@ -1,5 +1,141 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.0] - 2026-11-12
+### Stable Release
+
+#### Security
+- The dashboard relay can not send the token to another host: the requested path is always appended after a `/`
+  closing the dashboard address (a path like `@evil.test/x` turned the dashboard host into user info), and a path
+  going up from the dashboard address (`..`, encoded or not) is refused
+- A request with side effects relayed to the dashboard must be issued by Space itself (`Sec-Fetch-Site:
+  same-origin`, or an `Origin` of the Space host), otherwise `403` (CSRF)
+- The dashboards of the clusters registered by the accounts, whose address is supplied by the client, are relayed
+  only when the new env var `SPACE_DASHBOARD_EXTERNAL_ENABLED` (default `false`) is enabled, and then only over https
+  to a host whose addresses are all public (SSRF). Their address must be an https URL in the cluster form
+- The relay never forwards the cookies nor the credentials of Space, nor the cookies or framing headers of the
+  dashboard
+- A dashboard is relayed only with a credential to inject (`403` otherwise)
+- Residual risk, documented with the recommended mitigation (egress `NetworkPolicy`): a DNS rebinding between the
+  check of the addresses of an external dashboard and the connection
+- The deletions from the web interface (projects, jobs, clusters of an account, and in the administration accounts,
+  projects, jobs, users and media), of an API key, and the disabling of the 2FA check a CSRF token (`403` without
+  it). The API, authenticated by JWT, is not concerned
+  - **Breaking**: custom templates must add `_token` to the deleting links, and disable the 2FA from a `POST` form
+- The logout asks the browser to clear all the data of the site
+- A member can no longer choose its subscription plan with a `subscriptionPlanId` sent in the request of its account
+  settings: the default plan of a subscription comes from the new step `SetDefaultSubscriptionPlan`
+- The namespace and its prefix can no longer be changed on the edit of an account by the administration: with
+  `namespaceIsReadonly`, the fields are disabled, not only read-only in the page (East PaaS 5.11.5)
+- The refresh of the quota and the reinstall of the registry from the web administration require a `POST` with a CSRF
+  token (`403` without it, `405` with a `GET`). The API is not concerned
+  - **Breaking**: custom templates must send a `POST` with `_token` (token id `teknoo_space_admin_account_task`)
+- **Breaking**: a refusal of the firewall of the API (`403`, rules of `access_control`) has the JSON error envelope
+  (`meta` and `data`), as the other errors of the API, not an HTML body
+- **Breaking**: `ROLE_ADMIN` is restricted to the accounts (data, plan, users, status, quotas, registry), the users
+  (without password), the lists of projects and jobs, the jobs (open, delete) and the dashboard. The other admin
+  pages and endpoints (variables, clusters, environments, projects, start of jobs, media) and the members area
+  answer `403`
+  - The reinstall of an environment moves to the members area, always on the account of the user: a button beside the
+    deletion in the account settings (`POST` with the CSRF token `teknoo_space_account_task`) and
+    `POST /api/v1/account/environment/{envName}/{clusterName}/reinstall`
+  - The administration still reads the environments and the clusters of an account, without changing them: in the
+    edit of the account (name, type and master address of a cluster), and with
+    `GET /api/v1/admin/account/{id}/environments` and `GET /api/v1/admin/account/{accountId}/clusters` (without
+    credentials)
+- **Breaking**: an administrator of Space has no member rights, and a user of an account can not get `ROLE_ADMIN`:
+  remove the role or detach the user from its account first. The error is shown on the users field
+- The admin user form has no password: a user created by the administration signs in through the recovery or OAuth
+- The dashboard of a user without account, not administrator, no longer shows the clusters of the platform, their
+  health and their version, but a message (new step `RenderWithoutAccount`)
+- The query or the body of a request can no longer define the options of a form (like `csrf_protection`) or an
+  ingredient named by a class: only the attributes of the request (route defaults) can (East Foundation 9.5.1)
+- The logout clears the Mercure subscriber cookie: the browser can no longer subscribe to the private topics of the
+  user (Mercure Bundle 0.7)
+
+#### Fixes
+- For a cluster without configured dashboard (docker-compose clusters), the dashboard page no longer embeds a frame,
+  and the dashboard frame answers a `404` instead of a `500`
+- The dashboard page failed for an environment hosted on a cluster registered by the account
+- The dashboard relay forwarded neither the query string nor the body of the requests
+- `DashboardFrameInterface` did not declare the environment name read by its implementation
+- The API returns the errors of every field of a form, not only the ones of the form itself
+- Out of the dev environment, the Content Security Policy blocked the inline handlers: the deleting links ask their
+  confirmation again (and cancelling it no longer deletes), the copy buttons no longer submit their form, and the
+  cluster selector of the dashboard works again
+- The help of a form field is shown under it
+- The restart of a job through the API (`/api/v1/project/{projectId}/job/{jobId}/restart` and its admin twin)
+  answered a `500`
+  - **Breaking**: these endpoints are removed, create the job with `job/new`. The web restart does not change
+- A value that can not be converted to the type of a form field (e.g. `abc` in an integer field) shows the form again
+  with its error, instead of a `500` (East Common 4.9.1)
+- Remove doctrine/common
+
+#### Evolutions
+- **Headlamp replaces the archived Kubernetes Dashboard**, as the web dashboard embedded in Space. Space still
+  relays it and injects the credentials of the environment: users never sign in on the dashboard, and only see the
+  namespace of their environment. Headlamp is served under a base path included in the dashboard address (Helm value
+  `config.baseURL`, e.g. `http://headlamp.headlamp.svc/__headlamp/`)
+  - **Breaking**: a cluster has a dashboard only with a dashboard address and a dashboard type, there is no default
+    type: `dashboard_type` in the clusters catalog, for every type of cluster (`headlamp`, or `kubernetes-dashboard`
+    for the legacy dashboard), `SPACE_CLUSTER_DASHBOARD_TYPE` for the cluster configured by environment variables
+  - **Deprecated**: `SPACE_KUBERNETES_DASHBOARD` is replaced by `SPACE_CLUSTER_DASHBOARD`, and still read when the
+    new one is empty
+  - **Known limitation**: the relay works request by request, websockets and streamed requests are refused at once
+    (`501`): pod logs, terminals and live updates of the dashboard are not available
+- **Generic dashboard relay**, for any web dashboard and any type of cluster, driven by dashboard profiles
+  (`DashboardProfile`): the templates of the headers injected (`Authorization: Bearer {token}`), the entry path, the
+  HTML snippet inserted in the relayed pages, the rewriting of the base path, the path aliases
+  - Built-in profiles: `headlamp`, `kubernetes-dashboard`; extensions can add their own by decorating
+    `teknoo.space.dashboard.profiles`
+  - New dashboard profile option `localResponses`: `GET` paths answered by Space with a JSON body, without reaching
+    the dashboard. The `headlamp` profile answers `{}` on `/me`, Headlamp reads the user from a `SelfSubjectReview`
+  - `ConfigClusterInterface` exposes the dashboard type and the credential of an administrator on the dashboard
+    (`dashboardType`, `dashboardAdminToken`)
+  - New field `dashboardType` on the clusters registered by the accounts (form, API, MongoDB). A cluster registered
+    before has no dashboard type, so no dashboard, until a type is chosen in its form
+  - The resolution of the dashboard to relay (new step `ResolveDashboardTarget`) is separated from the HTTP transport
+    (`DashboardFrameInterface`)
+  - **Breaking**: `ClustersInfoInterface` and `DashboardFrameInterface` move to
+    `Teknoo\Space\Contracts\Recipe\Step\Cluster`, their implementations `ClustersInfo` and `DashboardFrame` to
+    `Teknoo\Space\Infrastructures\Symfony\Recipe\Step\Cluster`
+- `ROLE_PENDING`: a user attached to no account, limited to the dashboard (a message), its settings, its password
+  and its 2FA. The API, the API keys and the JWT are refused to it
+  - **Breaking**: the first sign-in with OAuth creates a user with `ROLE_PENDING` (before: no role)
+  - The admin user form gives the choice `pending`: alone, and refused to a user of an account
+  - Attached to an account by the administration, the user gets `ROLE_USER` and must sign in again
+- Hooks: `AbstractHook` passes the called command, without its options, as second argument of the success of the
+  promise.
+- `HookingDeployment` logs the command called by the hook in the history, under the key `hook_command` (`null` if the
+  hook does not provide it), next to `hook_output`.
+- A hook defined without timeout has 600 seconds instead of 240, the network can be slow
+- East Common 4.9 adds a unique sparse index on `authData.tokens.token_digest` to `User`: create it and clear the
+  Doctrine metadata cache when upgrading
+- New optional env var `MERCURE_COOKIE_NAME`, the name of the subscriber cookie, by default the one of the protocol
+  of the hub
+- Dev stack: MongoDB 9, as in production
+- Update `teknoo.space.assets.version`
+- Tests: Behat coverage of the dashboard page and of the dashboard relay
+- Tests: valid cron expression in the jobs fixtures, and Behat coverage of a persistent volume shared by two
+  containers of a pod and by a scheduled job, with the options of the Kubernetes CronJobs
+- Tests: Behat coverage of the CSRF checks and of the scheduled jobs on Docker Compose, new helpers for the tests of
+  the extensions (`useProjectPaasFile()`, `useComposeExpectedDirectory()`)
+- Update libs
+  - East PaaS 5.11.7 (scheduled jobs on the Docker Compose hosts), East Common 4.10.1, East Foundation 9.5.2
+  - Recipe 7.3.2, States 7.1.13, PHP-DI Symfony Bridge 7.2, Kubernetes Client 2.1.1
+  - Symfony 7.4.23/8.1.11, Symfony Flex 2.12
+  - Symfony Mercure 0.10, Mercure Bundle 0.7
+  - Doctrine MongoDB ODM 2.17.4
+  - Scheb 2FA 8.7
+  - Illuminate 13.42, Laravel Serializable Closure 2.2, Laminas Diactoros 3.10, Lcobucci Clock 3.7
+  - Endroid QR Code 6.2, Guzzle 7.16
+  - PHPUnit 13.4.6, PHPStan 2.3.5, Behat PHPUnit Assertions 1.1
+
+#### Docs
+- `documentation/configuration.md`: web dashboard, new env vars (including `MERCURE_COOKIE_NAME`) and catalog key,
+  residual risk of the relay of the external dashboards
+- The `404` logged by Headlamp on `apis/<group>/<version>` are its probes of the API versions the cluster does not
+  serve, with or without Space
+
 ## [2.6.0-beta6] - 2026-11-10
 ### Beta Release
 #### Fix
