@@ -14,3 +14,4 @@ graphify-out/
 /appliance/.plan/
 /.plan/
 /.ada/
+/scripts/*.sh
