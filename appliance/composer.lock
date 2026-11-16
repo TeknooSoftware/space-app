@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9c1f68b05483dabcb86d2a0587c08ff",
+    "content-hash": "ccf7662732515e00fa399336966e33e3",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2921,16 +2921,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "3.12.1",
+            "version": "3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "d7059e4c691d05ea1222b5124bed0f961be46e15"
+                "reference": "1f5f55bb4a9a230ff6d8a4ceccea31d10b0142ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/d7059e4c691d05ea1222b5124bed0f961be46e15",
-                "reference": "d7059e4c691d05ea1222b5124bed0f961be46e15",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1f5f55bb4a9a230ff6d8a4ceccea31d10b0142ac",
+                "reference": "1f5f55bb4a9a230ff6d8a4ceccea31d10b0142ac",
                 "shasum": ""
             },
             "require": {
@@ -3010,7 +3010,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/3.12.1"
+                "source": "https://github.com/Seldaek/monolog/tree/3.13.0"
             },
             "funding": [
                 {
@@ -3022,8 +3022,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-09-29T19:21:12+00:00",
-            "published-time": "2026-09-29T19:21:44+00:00"
+            "time": "2026-11-16T10:43:05+00:00",
+            "published-time": "2026-11-16T10:45:37+00:00"
         },
         {
             "name": "mrjoops/oauth2-jira",
@@ -12054,16 +12054,16 @@
         },
         {
             "name": "teknoo/states",
-            "version": "7.1.13",
+            "version": "7.1.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/states.git",
-                "reference": "3a886047a1e460c54315c1bb0bb269385aac80a0"
+                "reference": "fbc753982f1e4926479a2110ae6034ca37fadfee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/3a886047a1e460c54315c1bb0bb269385aac80a0",
-                "reference": "3a886047a1e460c54315c1bb0bb269385aac80a0",
+                "url": "https://api.github.com/repos/TeknooSoftware/states/zipball/fbc753982f1e4926479a2110ae6034ca37fadfee",
+                "reference": "fbc753982f1e4926479a2110ae6034ca37fadfee",
                 "shasum": ""
             },
             "require": {
@@ -12075,7 +12075,7 @@
                 "doctrine/orm": "^3.6.2",
                 "nikic/php-parser": "^5.7",
                 "phpstan/phpdoc-parser": "^2.3.2",
-                "phpstan/phpstan": "^2.3.2",
+                "phpstan/phpstan": "^2.3.6",
                 "phpunit/phpunit": "^13.2",
                 "roave/security-advisories": "dev-latest",
                 "squizlabs/php_codesniffer": "^4.0.1",
@@ -12137,8 +12137,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-25T11:17:36+00:00",
-            "published-time": "2026-10-25T11:22:48+00:00"
+            "time": "2026-11-16T12:52:39+00:00",
+            "published-time": "2026-11-16T12:53:27+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
