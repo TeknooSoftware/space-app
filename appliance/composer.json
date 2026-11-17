@@ -37,7 +37,7 @@
         "doctrine/mongodb-odm-bundle": "^5.6.1",
         "doctrine/persistence": "^4.2.1",
         "endroid/qr-code": "^6.2.0",
-        "guzzlehttp/guzzle": "^7.16.1||^8",
+        "guzzlehttp/guzzle": "^7.16.2||^8",
         "knpuniversity/oauth2-client-bundle": "^2.20.2",
         "illuminate/contracts": "^13.42.0",
         "illuminate/collections": "^13.42.0",
