@@ -32,6 +32,6 @@ namespace Teknoo\Space\Object\DTO\Task;
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
  */
-final class ReinstallRegistryTask extends AbstractAccountTask
+class ReinstallRegistryTask extends AbstractAccountTask
 {
 }

@@ -49,7 +49,7 @@ use function substr;
  * @copyright Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @author Richard Déloge <richard@teknoo.software>
  */
-final class ExtensionsDiscoveryExtension implements TestworkExtension
+class ExtensionsDiscoveryExtension implements TestworkExtension
 {
     public function getConfigKey(): string
     {
