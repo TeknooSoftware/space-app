@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6321e166e1442256a12583c507d6e2d3",
+    "content-hash": "2d2e25207b0bd192ee5bd8add4c2ca57",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -11109,16 +11109,16 @@
         },
         {
             "name": "teknoo/east-common",
-            "version": "4.10.3",
+            "version": "4.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common.git",
-                "reference": "bceab7a3eaed06373d426deceba45bb4ebb930cf"
+                "reference": "fcba5713ecaa5644e5ea07662eef7ca34939a96c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/bceab7a3eaed06373d426deceba45bb4ebb930cf",
-                "reference": "bceab7a3eaed06373d426deceba45bb4ebb930cf",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common/zipball/fcba5713ecaa5644e5ea07662eef7ca34939a96c",
+                "reference": "fcba5713ecaa5644e5ea07662eef7ca34939a96c",
                 "shasum": ""
             },
             "require": {
@@ -11257,21 +11257,21 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-18T09:44:33+00:00",
-            "published-time": "2026-11-18T09:45:19+00:00"
+            "time": "2026-11-19T06:02:41+00:00",
+            "published-time": "2026-11-19T06:13:54+00:00"
         },
         {
             "name": "teknoo/east-common-symfony",
-            "version": "4.10.3",
+            "version": "4.10.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-common-symfony.git",
-                "reference": "a4bdd405656f19082a69879319548da71feee5f1"
+                "reference": "5d2d8b2a2a79f407a2d2d7be3fadc2d7001b4085"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/a4bdd405656f19082a69879319548da71feee5f1",
-                "reference": "a4bdd405656f19082a69879319548da71feee5f1",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-common-symfony/zipball/5d2d8b2a2a79f407a2d2d7be3fadc2d7001b4085",
+                "reference": "5d2d8b2a2a79f407a2d2d7be3fadc2d7001b4085",
                 "shasum": ""
             },
             "require": {
@@ -11295,8 +11295,8 @@
                 "symfony/validator": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.2",
-                "teknoo/east-common": "^4.10.3",
-                "teknoo/east-foundation-symfony": "^9.4",
+                "teknoo/east-common": "^4.10.4",
+                "teknoo/east-foundation-symfony": "^9.5.3",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.3",
                 "teknoo/states": "^7.1.11",
@@ -11346,21 +11346,21 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-18T09:45:39+00:00",
-            "published-time": "2026-11-18T09:46:04+00:00"
+            "time": "2026-11-19T06:14:57+00:00",
+            "published-time": "2026-11-19T06:15:26+00:00"
         },
         {
             "name": "teknoo/east-foundation",
-            "version": "9.5.2",
+            "version": "9.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation.git",
-                "reference": "e5006e189f6625cc217468d6ee8750674fa91198"
+                "reference": "b02f40fccd0e40735ad2fce41d1bafa4000df066"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/e5006e189f6625cc217468d6ee8750674fa91198",
-                "reference": "e5006e189f6625cc217468d6ee8750674fa91198",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation/zipball/b02f40fccd0e40735ad2fce41d1bafa4000df066",
+                "reference": "b02f40fccd0e40735ad2fce41d1bafa4000df066",
                 "shasum": ""
             },
             "require": {
@@ -11452,21 +11452,21 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-04T12:52:41+00:00",
-            "published-time": "2026-11-04T12:58:54+00:00"
+            "time": "2026-11-18T21:43:16+00:00",
+            "published-time": "2026-11-18T21:44:17+00:00"
         },
         {
             "name": "teknoo/east-foundation-symfony",
-            "version": "9.5.2",
+            "version": "9.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-foundation-symfony.git",
-                "reference": "19ef68be223fa8ada1cc69e5a8fbda986faeec81"
+                "reference": "eff68b3cd239b0fcfe2d11db31ce07324533a9fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/19ef68be223fa8ada1cc69e5a8fbda986faeec81",
-                "reference": "19ef68be223fa8ada1cc69e5a8fbda986faeec81",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-foundation-symfony/zipball/eff68b3cd239b0fcfe2d11db31ce07324533a9fc",
+                "reference": "eff68b3cd239b0fcfe2d11db31ce07324533a9fc",
                 "shasum": ""
             },
             "require": {
@@ -11482,7 +11482,7 @@
                 "symfony/serializer": "^6.4.24||^7.4||^8.1",
                 "symfony/yaml": "^6.4.24||^7.4||^8.1",
                 "teknoo/bridge-phpdi-symfony": "^7.1.2",
-                "teknoo/east-foundation": "^9.5.2",
+                "teknoo/east-foundation": "^9.5.3",
                 "teknoo/immutable": "^3.0.22",
                 "teknoo/recipe": "^7.2.2",
                 "teknoo/states": "^7.1.2"
@@ -11531,8 +11531,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-04T12:59:18+00:00",
-            "published-time": "2026-11-04T12:59:36+00:00"
+            "time": "2026-11-18T21:44:50+00:00",
+            "published-time": "2026-11-18T21:45:15+00:00"
         },
         {
             "name": "teknoo/east-paas",
@@ -14114,12 +14114,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "9f18043008504f654d3723c95346357a3af11deb"
+                "reference": "9ca11cd1098a5cf36dd8be9de62d5c57d571a582"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9f18043008504f654d3723c95346357a3af11deb",
-                "reference": "9f18043008504f654d3723c95346357a3af11deb",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9ca11cd1098a5cf36dd8be9de62d5c57d571a582",
+                "reference": "9ca11cd1098a5cf36dd8be9de62d5c57d571a582",
                 "shasum": ""
             },
             "conflict": {
@@ -14147,7 +14147,7 @@
                 "algolia/algoliasearch-magento-2": "<=3.16.1|>=3.17.0.0-beta1,<=3.17.1",
                 "almirhodzic/nova-toggle-5": "<1.3",
                 "alt-design/alt-redirect": "<1.6.4",
-                "altcha-org/altcha": "<1.3.1",
+                "altcha-org/altcha": "<1.3.1|>=2,<2.0.3",
                 "alterphp/easyadmin-extension-bundle": ">=1.2,<1.2.11|>=1.3,<1.3.1",
                 "amazing/media2click": ">=1,<1.3.3",
                 "ameos/ameos_filemanager": "<3.1.3",
@@ -15288,8 +15288,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-18T16:12:42+00:00",
-            "published-time": "2026-11-18T16:12:50+00:00"
+            "time": "2026-11-18T23:16:43+00:00",
+            "published-time": "2026-11-18T23:16:48+00:00"
         },
         {
             "name": "sebastian/cli-parser",
