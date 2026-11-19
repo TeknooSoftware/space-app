@@ -94,6 +94,7 @@ trait PersistenceOperationTrait
             return match (key($value)) {
                 '$in' => in_array($expected, current($value)),
                 '$nin' => !in_array($expected, current($value)),
+                '$ne' => $expected !== current($value),
                 default => $expected === $value,
             };
         }
