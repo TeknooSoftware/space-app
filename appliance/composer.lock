@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27e4ce9994fa3df32e3da46d5e46c31d",
+    "content-hash": "5aefa8891dc406cbc3b3fe81c1b785fc",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2090,16 +2090,16 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "5.6.1",
+            "version": "5.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "482760068e5a55a9045feddb3e2fc3f878cbd577"
+                "reference": "5e82acfd2b5944dd9a43c59690fb3dc3563d1c87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/482760068e5a55a9045feddb3e2fc3f878cbd577",
-                "reference": "482760068e5a55a9045feddb3e2fc3f878cbd577",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/5e82acfd2b5944dd9a43c59690fb3dc3563d1c87",
+                "reference": "5e82acfd2b5944dd9a43c59690fb3dc3563d1c87",
                 "shasum": ""
             },
             "require": {
@@ -2147,7 +2147,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lcobucci/jwt/issues",
-                "source": "https://github.com/lcobucci/jwt/tree/5.6.1"
+                "source": "https://github.com/lcobucci/jwt/tree/5.6.2"
             },
             "funding": [
                 {
@@ -2159,8 +2159,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-10-10T09:42:14+00:00",
-            "published-time": "2026-10-10T09:43:25+00:00"
+            "time": "2026-11-19T17:12:02+00:00",
+            "published-time": "2026-11-19T19:43:04+00:00"
         },
         {
             "name": "league/flysystem",
@@ -4434,7 +4434,7 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v8.7.0",
+            "version": "v8.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
@@ -4477,23 +4477,23 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.7.0"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.7.1"
             },
             "time": "2026-01-24T13:26:10+00:00",
-            "published-time": "2026-10-30T19:26:02+00:00"
+            "published-time": "2026-11-19T20:03:54+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v8.7.0",
+            "version": "v8.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "3a01b7bf07389b0f4db2b5747333c9ee2ea6370b"
+                "reference": "997efc5cd517fa39dbe4335e1a4d64c195c880d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/3a01b7bf07389b0f4db2b5747333c9ee2ea6370b",
-                "reference": "3a01b7bf07389b0f4db2b5747333c9ee2ea6370b",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/997efc5cd517fa39dbe4335e1a4d64c195c880d1",
+                "reference": "997efc5cd517fa39dbe4335e1a4d64c195c880d1",
                 "shasum": ""
             },
             "require": {
@@ -4545,14 +4545,14 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v8.7.0"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v8.7.1"
             },
-            "time": "2026-10-30T19:05:40+00:00",
-            "published-time": "2026-10-30T19:27:03+00:00"
+            "time": "2026-11-19T20:02:23+00:00",
+            "published-time": "2026-11-19T20:03:53+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v8.7.0",
+            "version": "v8.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
@@ -4599,14 +4599,14 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.7.0"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.7.1"
             },
             "time": "2026-01-24T13:27:55+00:00",
-            "published-time": "2026-10-30T19:26:02+00:00"
+            "published-time": "2026-11-19T20:03:53+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v8.7.0",
+            "version": "v8.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
@@ -4653,10 +4653,10 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v8.7.0"
+                "source": "https://github.com/scheb/2fa-totp/tree/v8.7.1"
             },
             "time": "2026-01-24T13:27:55+00:00",
-            "published-time": "2026-10-30T19:26:02+00:00"
+            "published-time": "2026-11-19T20:03:53+00:00"
         },
         {
             "name": "spomky-labs/otphp",
