@@ -1,5 +1,27 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.1] - 2026-11-19
+### Stable Release
+
+#### Security
+- A Symfony UX Live request runs the recipe of its route only with the headers of Symfony UX
+  (`X-Requested-With: XMLHttpRequest` and `Accept: application/vnd.live-component+html`), and its props and updated
+  fields can no longer define a protected parameter or an ingredient named by a class (East Foundation 9.5.3)
+  - **Breaking**: tests sending Live requests must add these headers
+- `JumpIf` and `JumpIfNot` call `expectedJumpValue` only when it is a `Closure`: wrap any other callable in a closure
+  (East Common 4.10.2)
+
+#### Fixes
+- With Doctrine ODM, a `NotEqual` criteria is converted into a filter MongoDB accepts (`{field: {$ne: value}}`), it was
+  refused (East Common 4.10.4)
+- The HTTP status of an error page is the code of the error only when it is an HTTP error code, `500` otherwise: the
+  code of a SMTP server or of MongoDB made an invalid status (East Common 4.10.3)
+
+#### Evolutions
+- The account task DTOs (`DeleteEnvironmentsTask`, `InstallEnvironmentTask`, `InstallRegistryTask`,
+  `RefreshQuotaTask`, `ReinstallEnvironmentTask`, `ReinstallRegistryTask`) are no longer `final`
+- Update of Guzzle (7.16.3), Monolog (3.13), Illuminate (13.43) and States (7.1.14)
+
 ## [2.6.0] - 2026-11-12
 ### Stable Release
 
