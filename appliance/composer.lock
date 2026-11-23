@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ac0a44ff4b4da38025e6f57975ac170d",
+    "content-hash": "a4e93ff74bba86d4bc4ab89035cedfc2",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -926,26 +926,26 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "4.0.4",
+            "version": "4.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "d42c8731f0624ad6bdc8d3e5e9a4524f68801cfa"
+                "reference": "9bef884e12278a7b89b64adbfb9379c021d3c102"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/d42c8731f0624ad6bdc8d3e5e9a4524f68801cfa",
-                "reference": "d42c8731f0624ad6bdc8d3e5e9a4524f68801cfa",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/9bef884e12278a7b89b64adbfb9379c021d3c102",
+                "reference": "9bef884e12278a7b89b64adbfb9379c021d3c102",
                 "shasum": ""
             },
             "require": {
-                "doctrine/lexer": "^2.0 || ^3.0",
+                "doctrine/lexer": "^3.0.3",
                 "php": ">=8.1",
-                "symfony/polyfill-intl-idn": "^1.26"
+                "symfony/polyfill-intl-idn": "^1.43"
             },
             "require-dev": {
-                "phpunit/phpunit": "^10.2",
-                "vimeo/psalm": "^5.12"
+                "phpunit/phpunit": "^10.5.67",
+                "vimeo/psalm": "^5.26.1"
             },
             "suggest": {
                 "ext-intl": "PHP Internationalization Libraries are required to use the SpoofChecking validation"
@@ -981,7 +981,7 @@
             ],
             "support": {
                 "issues": "https://github.com/egulias/EmailValidator/issues",
-                "source": "https://github.com/egulias/EmailValidator/tree/4.0.4"
+                "source": "https://github.com/egulias/EmailValidator/tree/4.0.5"
             },
             "funding": [
                 {
@@ -989,8 +989,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-06T22:45:56+00:00",
-            "published-time": "2025-03-20T21:39:03+00:00"
+            "time": "2026-11-22T16:52:20+00:00",
+            "published-time": "2026-11-22T22:05:57+00:00"
         },
         {
             "name": "endroid/qr-code",
@@ -1150,22 +1150,22 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.16.3",
+            "version": "7.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "c88a78082757dd5a0c44191651535259fcb6e605"
+                "reference": "f61ba5ea0a55032a55ddbb72cab7d307c1043654"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/c88a78082757dd5a0c44191651535259fcb6e605",
-                "reference": "c88a78082757dd5a0c44191651535259fcb6e605",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f61ba5ea0a55032a55ddbb72cab7d307c1043654",
+                "reference": "f61ba5ea0a55032a55ddbb72cab7d307c1043654",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/promises": "^2.6",
-                "guzzlehttp/psr7": "^2.13.4",
+                "guzzlehttp/promises": "^2.6.2",
+                "guzzlehttp/psr7": "^2.13.6",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
                 "symfony/deprecation-contracts": "^2.5 || ^3.0",
@@ -1258,7 +1258,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.16.3"
+                "source": "https://github.com/guzzle/guzzle/tree/7.17.0"
             },
             "funding": [
                 {
@@ -1274,21 +1274,21 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-17T16:23:09+00:00",
-            "published-time": "2026-11-17T16:23:41+00:00"
+            "time": "2026-11-22T16:49:11+00:00",
+            "published-time": "2026-11-22T16:50:19+00:00"
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.6.1",
+            "version": "2.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "a1b6aceb39165acd5c421239e6abfa1b83dbe224"
+                "reference": "72e93ed2b1f3d8c09d1460c950bd5726face7ccd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/a1b6aceb39165acd5c421239e6abfa1b83dbe224",
-                "reference": "a1b6aceb39165acd5c421239e6abfa1b83dbe224",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/72e93ed2b1f3d8c09d1460c950bd5726face7ccd",
+                "reference": "72e93ed2b1f3d8c09d1460c950bd5726face7ccd",
                 "shasum": ""
             },
             "require": {
@@ -1343,7 +1343,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.6.1"
+                "source": "https://github.com/guzzle/promises/tree/2.6.2"
             },
             "funding": [
                 {
@@ -1359,21 +1359,21 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-20T00:03:12+00:00",
-            "published-time": "2026-11-20T00:04:27+00:00"
+            "time": "2026-11-21T03:45:23+00:00",
+            "published-time": "2026-11-21T03:46:19+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.13.5",
+            "version": "2.13.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "5aa00c5418afbe3f435910af0e98cb03d659c49d"
+                "reference": "2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/5aa00c5418afbe3f435910af0e98cb03d659c49d",
-                "reference": "5aa00c5418afbe3f435910af0e98cb03d659c49d",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2",
+                "reference": "2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2",
                 "shasum": ""
             },
             "require": {
@@ -1463,7 +1463,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.13.5"
+                "source": "https://github.com/guzzle/psr7/tree/2.13.6"
             },
             "funding": [
                 {
@@ -1479,8 +1479,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-19T20:34:53+00:00",
-            "published-time": "2026-11-19T20:36:04+00:00"
+            "time": "2026-11-21T23:48:40+00:00",
+            "published-time": "2026-11-21T23:49:39+00:00"
         },
         {
             "name": "illuminate/collections",
@@ -4434,20 +4434,20 @@
         },
         {
             "name": "scheb/2fa-backup-code",
-            "version": "v8.7.1",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-backup-code.git",
-                "reference": "cf4251fcc24f4a39d1307d8bbfabecfbd21ed57b"
+                "reference": "6cedfccc7cd6d510c504eb8d2757b2cf2de0f154"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/cf4251fcc24f4a39d1307d8bbfabecfbd21ed57b",
-                "reference": "cf4251fcc24f4a39d1307d8bbfabecfbd21ed57b",
+                "url": "https://api.github.com/repos/scheb/2fa-backup-code/zipball/6cedfccc7cd6d510c504eb8d2757b2cf2de0f154",
+                "reference": "6cedfccc7cd6d510c504eb8d2757b2cf2de0f154",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.4.0 || ~8.5.0",
+                "php": "~8.4.0 || ~8.5.0 || ~8.6.0",
                 "scheb/2fa-bundle": "self.version"
             },
             "type": "library",
@@ -4477,27 +4477,27 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.7.1"
+                "source": "https://github.com/scheb/2fa-backup-code/tree/v8.8.0"
             },
-            "time": "2026-01-24T13:26:10+00:00",
-            "published-time": "2026-11-19T20:03:54+00:00"
+            "time": "2026-11-20T18:19:27+00:00",
+            "published-time": "2026-11-20T18:23:57+00:00"
         },
         {
             "name": "scheb/2fa-bundle",
-            "version": "v8.7.1",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-bundle.git",
-                "reference": "997efc5cd517fa39dbe4335e1a4d64c195c880d1"
+                "reference": "352e8758b07df39eed45d3db14f4d6b7dcba0b65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/997efc5cd517fa39dbe4335e1a4d64c195c880d1",
-                "reference": "997efc5cd517fa39dbe4335e1a4d64c195c880d1",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/352e8758b07df39eed45d3db14f4d6b7dcba0b65",
+                "reference": "352e8758b07df39eed45d3db14f4d6b7dcba0b65",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.4.0 || ~8.5.0",
+                "php": "~8.4.0 || ~8.5.0 || ~8.6.0",
                 "symfony/config": "^7.4 || ^8.0",
                 "symfony/dependency-injection": "^7.4 || ^8.0",
                 "symfony/event-dispatcher": "^7.4 || ^8.0",
@@ -4545,27 +4545,27 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-bundle/tree/v8.7.1"
+                "source": "https://github.com/scheb/2fa-bundle/tree/v8.8.0"
             },
-            "time": "2026-11-19T20:02:23+00:00",
-            "published-time": "2026-11-19T20:03:53+00:00"
+            "time": "2026-11-20T18:19:27+00:00",
+            "published-time": "2026-11-20T18:26:37+00:00"
         },
         {
             "name": "scheb/2fa-google-authenticator",
-            "version": "v8.7.1",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-google-authenticator.git",
-                "reference": "b7b173fa2cb437cb16d5a42af487e7e73a5f3ba1"
+                "reference": "d551e5ad0a3fbf25a4f48747482eb0f75886887e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/b7b173fa2cb437cb16d5a42af487e7e73a5f3ba1",
-                "reference": "b7b173fa2cb437cb16d5a42af487e7e73a5f3ba1",
+                "url": "https://api.github.com/repos/scheb/2fa-google-authenticator/zipball/d551e5ad0a3fbf25a4f48747482eb0f75886887e",
+                "reference": "d551e5ad0a3fbf25a4f48747482eb0f75886887e",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.4.0 || ~8.5.0",
+                "php": "~8.4.0 || ~8.5.0 || ~8.6.0",
                 "scheb/2fa-bundle": "self.version",
                 "spomky-labs/otphp": "^11.4"
             },
@@ -4599,27 +4599,27 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.7.1"
+                "source": "https://github.com/scheb/2fa-google-authenticator/tree/v8.8.0"
             },
-            "time": "2026-01-24T13:27:55+00:00",
-            "published-time": "2026-11-19T20:03:53+00:00"
+            "time": "2026-11-20T18:19:27+00:00",
+            "published-time": "2026-11-20T18:23:57+00:00"
         },
         {
             "name": "scheb/2fa-totp",
-            "version": "v8.7.1",
+            "version": "v8.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/scheb/2fa-totp.git",
-                "reference": "ca7562c6b6f9e5bb30cadcc98123327c2540e18f"
+                "reference": "4e37ff3a6af63c395498233ab2a6cccdd8d504bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/ca7562c6b6f9e5bb30cadcc98123327c2540e18f",
-                "reference": "ca7562c6b6f9e5bb30cadcc98123327c2540e18f",
+                "url": "https://api.github.com/repos/scheb/2fa-totp/zipball/4e37ff3a6af63c395498233ab2a6cccdd8d504bd",
+                "reference": "4e37ff3a6af63c395498233ab2a6cccdd8d504bd",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.4.0 || ~8.5.0",
+                "php": "~8.4.0 || ~8.5.0 || ~8.6.0",
                 "scheb/2fa-bundle": "self.version",
                 "spomky-labs/otphp": "^11.4"
             },
@@ -4653,10 +4653,10 @@
                 "two-step"
             ],
             "support": {
-                "source": "https://github.com/scheb/2fa-totp/tree/v8.7.1"
+                "source": "https://github.com/scheb/2fa-totp/tree/v8.8.0"
             },
-            "time": "2026-01-24T13:27:55+00:00",
-            "published-time": "2026-11-19T20:03:53+00:00"
+            "time": "2026-11-20T18:19:27+00:00",
+            "published-time": "2026-11-20T18:26:37+00:00"
         },
         {
             "name": "spomky-labs/otphp",
@@ -12497,16 +12497,16 @@
     "packages-dev": [
         {
             "name": "behat/behat",
-            "version": "v4.0.0",
+            "version": "v4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/Behat.git",
-                "reference": "3f65b57a8e52c7d2c45e219ecaf5900a995946bf"
+                "reference": "a61d22aa80a809730f36e92a630dd6ef9a41f385"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/Behat/zipball/3f65b57a8e52c7d2c45e219ecaf5900a995946bf",
-                "reference": "3f65b57a8e52c7d2c45e219ecaf5900a995946bf",
+                "url": "https://api.github.com/repos/Behat/Behat/zipball/a61d22aa80a809730f36e92a630dd6ef9a41f385",
+                "reference": "a61d22aa80a809730f36e92a630dd6ef9a41f385",
                 "shasum": ""
             },
             "require": {
@@ -12515,7 +12515,7 @@
                 "composer/xdebug-handler": "^1.4 || ^2.0 || ^3.0",
                 "cucumber/tag-expressions": "^11.0",
                 "ext-mbstring": "*",
-                "php": ">=8.2 <8.6",
+                "php": ">=8.2 <8.7",
                 "psr/container": "^1.0 || ^2.0",
                 "symfony/config": "^5.4 || ^6.4 || ^7.0 || ^8.0",
                 "symfony/console": "^5.4.9 || ^6.4 || ^7.0 || ^8.0",
@@ -12581,7 +12581,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/Behat/issues",
-                "source": "https://github.com/Behat/Behat/tree/v4.0.0"
+                "source": "https://github.com/Behat/Behat/tree/v4.1.1"
             },
             "funding": [
                 {
@@ -12597,8 +12597,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-28T16:13:53+00:00",
-            "published-time": "2026-09-28T16:17:31+00:00"
+            "time": "2026-11-20T21:17:01+00:00",
+            "published-time": "2026-11-20T21:25:08+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -12688,21 +12688,21 @@
         },
         {
             "name": "behat/phpunit-assertions-extension",
-            "version": "v1.1.0",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Behat/PHPUnitAssertionsExtension.git",
-                "reference": "8774866c2aedc88d12828aa5cdf4bcd4ae30079c"
+                "reference": "0b204d8e7227db9637ac870a1cc55e6e51b8e79a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Behat/PHPUnitAssertionsExtension/zipball/8774866c2aedc88d12828aa5cdf4bcd4ae30079c",
-                "reference": "8774866c2aedc88d12828aa5cdf4bcd4ae30079c",
+                "url": "https://api.github.com/repos/Behat/PHPUnitAssertionsExtension/zipball/0b204d8e7227db9637ac870a1cc55e6e51b8e79a",
+                "reference": "0b204d8e7227db9637ac870a1cc55e6e51b8e79a",
                 "shasum": ""
             },
             "require": {
                 "behat/behat": "^3.34 || ^4.0",
-                "php": ">=8.2 <8.6",
+                "php": ">=8.2 <8.7",
                 "phpunit/phpunit": "^8.5 || ^9.6 || ^10.5 || ^11.5 || ^12.5 || ^13.3",
                 "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0 || ^8.0"
             },
@@ -12741,7 +12741,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Behat/PHPUnitAssertionsExtension/issues",
-                "source": "https://github.com/Behat/PHPUnitAssertionsExtension/tree/v1.1.0"
+                "source": "https://github.com/Behat/PHPUnitAssertionsExtension/tree/v1.2.0"
             },
             "funding": [
                 {
@@ -12757,8 +12757,8 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-10T17:51:08+00:00",
-            "published-time": "2026-11-10T18:24:19+00:00"
+            "time": "2026-11-23T09:00:51+00:00",
+            "published-time": "2026-11-23T09:01:39+00:00"
         },
         {
             "name": "composer/pcre",
@@ -12906,16 +12906,16 @@
         },
         {
             "name": "cucumber/tag-expressions",
-            "version": "v11.0.1",
+            "version": "v11.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cucumber/tag-expressions-php.git",
-                "reference": "d88e12c03a2069b4336156dc7831a6b78cce5e1d"
+                "reference": "3db448cea2366fc55f5250403bc50a26d1bea594"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cucumber/tag-expressions-php/zipball/d88e12c03a2069b4336156dc7831a6b78cce5e1d",
-                "reference": "d88e12c03a2069b4336156dc7831a6b78cce5e1d",
+                "url": "https://api.github.com/repos/cucumber/tag-expressions-php/zipball/3db448cea2366fc55f5250403bc50a26d1bea594",
+                "reference": "3db448cea2366fc55f5250403bc50a26d1bea594",
                 "shasum": ""
             },
             "require": {
@@ -12943,10 +12943,10 @@
             "homepage": "https://github.com/cucumber/tag-expressions",
             "support": {
                 "issues": "https://github.com/cucumber/tag-expressions/issues",
-                "source": "https://github.com/cucumber/tag-expressions-php/tree/v11.0.1"
+                "source": "https://github.com/cucumber/tag-expressions-php/tree/v11.2.0"
             },
-            "time": "2026-03-24T10:42:49+00:00",
-            "published-time": "2026-08-15T17:37:27+00:00"
+            "time": "2026-10-02T10:04:17+00:00",
+            "published-time": "2026-11-21T19:03:59+00:00"
         },
         {
             "name": "dmarynicz/behat-parallel-extension",
@@ -14115,12 +14115,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "ea3fd42f04ff44f4cd3ad8c549595baeef0103d3"
+                "reference": "9b14985ecfc98a89626ef5c83c7af75a9f39b350"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/ea3fd42f04ff44f4cd3ad8c549595baeef0103d3",
-                "reference": "ea3fd42f04ff44f4cd3ad8c549595baeef0103d3",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/9b14985ecfc98a89626ef5c83c7af75a9f39b350",
+                "reference": "9b14985ecfc98a89626ef5c83c7af75a9f39b350",
                 "shasum": ""
             },
             "conflict": {
@@ -14197,6 +14197,7 @@
                 "bacula-web/bacula-web": "<9.7.1",
                 "badaso/core": "<=2.9.11",
                 "bagisto/bagisto": "<=2.3.15",
+                "baldinof/roadrunner-bundle": ">=3.0.1,<3.2.4",
                 "barrelstrength/sprout-base-email": "<1.2.7",
                 "barrelstrength/sprout-forms": "<3.9",
                 "barryvdh/laravel-translation-manager": "<0.6.8",
@@ -14727,7 +14728,7 @@
                 "nette/application": ">=2,<2.0.19|>=2.1,<2.1.13|>=2.2,<2.2.10|>=2.3,<2.3.14|>=2.4,<2.4.16|>=3,<3.0.6",
                 "nette/nette": ">=2,<2.0.19|>=2.1,<2.1.13",
                 "neuron-core/neuron-ai": "<=2.8.11",
-                "nilsteampassnet/teampass": "<3.1.3.1-dev",
+                "nilsteampassnet/teampass": "<3.2.2",
                 "nitsan/ns-backup": "<13.0.1",
                 "nitsan/ns-t3ai": "<14.0.2",
                 "nonfiction/nterchange": "<4.1.1",
@@ -14839,7 +14840,7 @@
                 "pocketmine/pocketmine-mp": "<5.44.2",
                 "pocketmine/raklib": ">=0.14,<0.14.6|>=0.15,<0.15.1",
                 "pontedilana/php-weasyprint": "<=2.5.1",
-                "poweradmin/poweradmin": "<4.2.5|>=4.3,<4.3.4",
+                "poweradmin/poweradmin": "<4.2.6|>=4.3,<4.3.5|>=4.4,<4.4.1",
                 "predis/predis": ">=3.0.0.0-RC1,<3.3",
                 "pressbooks/pressbooks": "<5.18",
                 "prestashop/autoupgrade": ">=4,<4.10.1",
@@ -15291,8 +15292,8 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-11-20T05:52:42+00:00",
-            "published-time": "2026-11-20T05:52:47+00:00"
+            "time": "2026-11-22T21:37:04+00:00",
+            "published-time": "2026-11-22T21:37:08+00:00"
         },
         {
             "name": "sebastian/cli-parser",
