@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.2] - 2026-11-23
+### Stable Release
+
+#### Evolutions
+- Support of Guzzle 8 (Guzzle 7.17 still supported): the Kubernetes client uses Guzzle without adapter,
+  `php-http/guzzle7-adapter` is removed (Teknoo Kubernetes Client 2.2, East PaaS 5.11.8)
+- Update of JWT (5.7), OAuth2 Client (2.10), Scheb 2FA (8.8) and Behat (4.1.1)
+
 ## [2.6.1] - 2026-11-19
 ### Stable Release
 
