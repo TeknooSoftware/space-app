@@ -27,7 +27,7 @@ namespace Teknoo\Space\Tests\Behat\Traits;
 
 use Behat\Step\Given;
 use Behat\Step\Then;
-use Http\Adapter\Guzzle7\Client as ClientAlias;
+use GuzzleHttp\Client as GuzzleClient;
 use Http\Discovery\Strategy\CommonClassesStrategy;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\HttpClient\HttplugClient as SymfonyHttplug;
@@ -142,8 +142,8 @@ trait KubernetesTrait
             HttpClientDiscovery::registerInstantiator(SymfonyHttplug::class, MockClientInstantiator::class);
         }
 
-        if (class_exists(ClientAlias::class)) {
-            HttpClientDiscovery::registerInstantiator(ClientAlias::class, MockClientInstantiator::class);
+        if (class_exists(GuzzleClient::class)) {
+            HttpClientDiscovery::registerInstantiator(GuzzleClient::class, MockClientInstantiator::class);
         }
 
         if (class_exists(CommonClassesStrategy::class)) {

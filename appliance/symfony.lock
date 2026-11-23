@@ -164,9 +164,6 @@
     "php-http/discovery": {
         "version": "1.14.1"
     },
-    "php-http/guzzle7-adapter": {
-        "version": "1.0.0"
-    },
     "php-http/httplug": {
         "version": "2.2.0"
     },
@@ -232,9 +229,6 @@
     },
     "psr/simple-cache": {
         "version": "1.0.1"
-    },
-    "ralouphie/getallheaders": {
-        "version": "2.0.5"
     },
     "roave/security-advisories": {
         "version": "dev-master"
