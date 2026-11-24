@@ -104,13 +104,13 @@
         "teknoo/east-paas-symfony": "^5.11.9",
         "teknoo/immutable": "^3.0.22",
         "teknoo/kubernetes-client": "^2.2.0",
-        "teknoo/recipe": "^7.3.2",
+        "teknoo/recipe": "^7.3.3",
         "teknoo/states": "^7.1.14",
         "tijsverkoyen/css-to-inline-styles": "^2.4",
         "twig/cssinliner-extra": "^3.26",
         "twig/extra-bundle": "^3.31.0",
         "twig/inky-extra": "^3.26",
-        "twig/twig": "^3.31.0"
+        "twig/twig": "^3.31.1"
     },
     "require-dev": {
         "behat/behat": "^4.1.1",
