@@ -11440,16 +11440,16 @@
         },
         {
             "name": "teknoo/east-paas",
-            "version": "5.11.8",
+            "version": "5.11.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/TeknooSoftware/east-paas.git",
-                "reference": "56c2d0041feca2d7da96a449e678551ac21fad18"
+                "reference": "b77b05bb56a14c51a74571211160e8c9f4065f73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/56c2d0041feca2d7da96a449e678551ac21fad18",
-                "reference": "56c2d0041feca2d7da96a449e678551ac21fad18",
+                "url": "https://api.github.com/repos/TeknooSoftware/east-paas/zipball/b77b05bb56a14c51a74571211160e8c9f4065f73",
+                "reference": "b77b05bb56a14c51a74571211160e8c9f4065f73",
                 "shasum": ""
             },
             "require": {
@@ -11462,7 +11462,7 @@
                 "teknoo/east-common": "^4.10.1",
                 "teknoo/east-foundation": "^9.5.2",
                 "teknoo/immutable": "^3.0.22",
-                "teknoo/recipe": "^7.3.2",
+                "teknoo/recipe": "^7.3.4",
                 "teknoo/states": "^7.1.13"
             },
             "require-dev": {
@@ -11596,8 +11596,8 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2026-11-23T11:05:32+00:00",
-            "published-time": "2026-11-23T11:06:53+00:00"
+            "time": "2026-11-25T11:15:57+00:00",
+            "published-time": "2026-11-25T11:16:30+00:00"
         },
         {
             "name": "teknoo/east-paas-symfony",
