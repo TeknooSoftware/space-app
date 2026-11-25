@@ -1,5 +1,31 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.3] - 2026-11-25
+### Stable Release
+
+#### Security
+- Update of Symfony to 8.1.12, and 7.4.24 as minimum for Symfony 7.4 (CVE), notably:
+  - Security: the host of a redirect target is parsed like a browser does, and the `unanimous` strategy requires
+    every attribute to be granted
+  - Routing and FrameworkBundle: a generated URL or a redirect of the router (path starting with `//`) can no longer
+    point to another host
+  - HttpFoundation and HttpKernel: `127.0.0.1` is trusted only for sub-requests, and IPv4-mapped addresses match IPv4
+    subnets
+  - Mailer: `require_tls` and `STARTTLS` resist a man in the middle
+  - HttpClient: `HTTP_PROXY` is read from the environment on the CLI, and no default credentials are added to the
+    cross-origin redirects of `NoPrivateNetworkHttpClient`
+  - FrameworkBundle: the CLI error renderer is used only in debug mode
+  - ExpressionLanguage and Serializer: bounded processing (denial of service)
+- Update of Twig to 3.31.1: a variable named as a macro import alias is escaped, and several bypasses of the sandbox
+  are fixed (the sandbox is not used by Space)
+
+#### Fixes
+- An exception thrown by the success callback of a promise without failure callback reaches the failure callback of
+  its next promise (`next()`) instead of being thrown (Recipe 7.3.4, East PaaS 5.11.9)
+
+#### Evolutions
+- Update of Scheb 2FA (8.8.1), Illuminate (13.44.1) and Twig Extra Bundle (3.31)
+
 ## [2.6.2] - 2026-11-23
 ### Stable Release
 
