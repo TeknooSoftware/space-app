@@ -103,7 +103,7 @@ by `config/routes/api.yaml`. The web pages of API keys and JWT tokens under `/my
 Route files are prefixed: `space.api.v1.<name>.yaml`. The `/api/v1` and `/api/v1/admin` prefixes come from the
 loader `config/routes/api.yaml`, not from the file names.
 
-Web routes: 10 YAML files (`space.*.yaml`) in `config/routes/` with 45 `path:` entries total. That directory
+Web routes: 10 YAML files (`space.*.yaml`) in `config/routes/` with 38 `path:` entries total. That directory
 also holds the framework/vendor route files (`api.yaml`, `connect.oauth.yaml`, `east.*`, `scheb_2fa.yaml`,
 `symfony.framework.yaml`, `web_profiler.yaml`).
 

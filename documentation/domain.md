@@ -651,8 +651,10 @@ services and checked by the `IsGranted` attribute or `AuthorizationChecker` duri
 
 An administrator of Space (`ROLE_ADMIN`) is never a member of an account. It manages the accounts (data, subscription
 plan, users, status, refresh of the quotas, reinstall of the registry, creation and deletion), the users (without
-their password), lists the projects and the jobs, opens and deletes the jobs, and uses the dashboard. Everything else
-(variables, clusters and environments of an account, projects, start of jobs, area of the members) answers `403`.
+their password), lists the projects and the jobs, opens and deletes the jobs, reads the environments and the clusters
+of an account through the API, and uses the dashboard. No admin route changes the variables, the clusters or the
+environments of an account, opens, creates or deletes a project, or starts a job (`404` or `405`). The area of the
+members answers `403`.
 
 A user attached to no account has `ROLE_PENDING` (first sign-in with OAuth, or the admin user form). It can only open
 its dashboard, which shows a message, its settings, its password, its 2FA and the support. The API refuses it. It gets

@@ -30,118 +30,13 @@ Feature: API admin endpoints to administrate custom clusters of accounts.
     And is a serialized collection of "5" items on "1" pages
     And the list of serialized accounts clusters
 
-  Scenario: From the API, as Admin, create an account cluster, via a request with a form url encoded body is refused
+  Scenario: From the API, as Admin, the list of accounts clusters of an account gives the identifier of each cluster
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And "5" accounts clusters "cluster X" and a slug "a-cluster"
     And the platform is booted
     And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to create an account cluster as admin:
-      | field                              | value                   |
-      | account_cluster.name               | Behats Test             |
-      | account_cluster.slug               | behat-test              |
-      | account_cluster.type               | kubernetes              |
-      | account_cluster.masterAddress      | https://127.0.0.1:12345 |
-      | account_cluster.storageProvisioner | nfs                     |
-      | account_cluster.dashboardAddress   | https://dashboard.local |
-      | account_cluster.caCertificate      | Foo                     |
-      | account_cluster.token              | Bar                     |
-      | account_cluster.supportRegistry    | 1                       |
-      | account_cluster.registryUrl        | https://registry.local  |
-      | account_cluster.useHnc             | 0                       |
+    When the API is called to list of accounts clusters of last account as admin
     Then get a JSON response
-    But an 403 error
-
-  Scenario: From the API, as Admin, create an account cluster, via a request with a json body is refused
-    Given an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to create an account cluster as admin with a json body:
-      | field              | value                   |
-      | name               | Behats Test             |
-      | slug               | behat-test              |
-      | type               | kubernetes              |
-      | masterAddress      | https://127.0.0.1:12345 |
-      | storageProvisioner | nfs                     |
-      | dashboardAddress   | https://dashboard.local |
-      | caCertificate      | Foo                     |
-      | token              | Bar                     |
-      | supportRegistry    | 1                       |
-      | registryUrl        | https://registry.local  |
-      | useHnc             | 0                       |
-    Then get a JSON response
-    But an 403 error
-
-  Scenario: From the API, as Admin, get an account cluster is refused
-    Given an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And an account clusters "my cluster" and a slug "a-cluster"
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to get the last account cluster as admin
-    Then get a JSON response
-    But an 403 error
-
-  Scenario: From the API, as Admin, edit an account's cluster, via a request with a form url encoded body is refused
-    Given an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And an account clusters "my cluster" and a slug "a-cluster"
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to edit an account cluster as admin:
-      | field                              | value                   |
-      | account_cluster.name               | Behats Test             |
-      | account_cluster.slug               | behat-test              |
-      | account_cluster.type               | kubernetes              |
-      | account_cluster.masterAddress      | https://127.0.0.1:12345 |
-      | account_cluster.storageProvisioner | nfs                     |
-      | account_cluster.dashboardAddress   | https://dashboard.local |
-      | account_cluster.caCertificate      | Foo                     |
-      | account_cluster.token              | Bar                     |
-      | account_cluster.supportRegistry    | 1                       |
-      | account_cluster.registryUrl        | https://registry.local  |
-      | account_cluster.useHnc             | 0                       |
-    Then get a JSON response
-    But an 403 error
-
-  Scenario: From the API, as Admin, edit an account's cluster, via a request with a json body is refused
-    Given an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And an account clusters "my cluster" and a slug "a-cluster"
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to edit an account cluster as admin with a json body:
-      | field              | value                   |
-      | name               | Behats Test             |
-      | slug               | behat-test              |
-      | type               | kubernetes              |
-      | masterAddress      | https://127.0.0.1:12345 |
-      | storageProvisioner | nfs                     |
-      | dashboardAddress   | https://dashboard.local |
-      | caCertificate      | Foo                     |
-      | token              | Bar                     |
-      | supportRegistry    | 1                       |
-      | registryUrl        | https://registry.local  |
-      | useHnc             | 0                       |
-    Then get a JSON response
-    But an 403 error
-
-  Scenario: From the API, as Admin, delete an account cluster is refused
-    Given an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And an account clusters "my cluster" and a slug "a-cluster"
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to delete the last account cluster as admin
-    Then get a JSON response
-    But an 403 error
-
-  Scenario: From the API, as Admin, delete an account cluster, via a request with DELETE method is refused
-    Given an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And an account clusters "my cluster" and a slug "a-cluster"
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to delete the last account cluster with DELETE method as admin
-    Then get a JSON response
-    But an 403 error
+    And is a serialized collection of "5" items on "1" pages
+    And each serialized account cluster of the list carries its identifier

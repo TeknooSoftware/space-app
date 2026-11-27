@@ -32,6 +32,17 @@ Feature: API endpoints to manage account's projects
     And is a serialized collection of "5" items on "1" pages
     And the list of serialized owned projects
 
+  Scenario: From the API, list owned projects with a wrong direction is refused
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And "5" standard projects "project X" and a prefix "a-prefix"
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to list of projects with the direction "foo"
+    Then get a JSON response
+    And an 400 error about "teknoo.east.common.order.error.invalid_direction"
+
   Scenario: From the API, create a project, via a request with a form url encoded body
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"

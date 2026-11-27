@@ -48,6 +48,27 @@ class SpaceAccount implements IdentifiedObjectInterface, NormalizableInterface, 
 {
     use AutoTrait;
 
+    /*
+     * `id` and `name` of the account, for the API: a collection is serialized object per object, without the `meta`
+     * envelope of a single object, so a row of the list would otherwise carry no identifier. The property `account`
+     * is not in the group `api`: the views of the environments must not carry it.
+     *
+     * phpcs 4.0.4 does not tokenize property hook bodies, it reads `$this` as a second property declaration.
+     */
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.Multiple
+    // phpcs:disable PSR2.Classes.PropertyDeclaration.ScopeMissing
+    #[Normalize('api')]
+    public string $id {
+        get => $this->account->getId();
+    }
+
+    #[Normalize('api')]
+    public string $name {
+        get => (string) $this->account;
+    }
+    // phpcs:enable PSR2.Classes.PropertyDeclaration.ScopeMissing
+    // phpcs:enable PSR2.Classes.PropertyDeclaration.Multiple
+
     /**
      * @param iterable<AccountPersistedVariable>|AccountPersistedVariable[] $variables
      * @param AccountEnvironmentResume[] $environments

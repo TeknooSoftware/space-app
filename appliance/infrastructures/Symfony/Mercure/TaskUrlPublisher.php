@@ -29,6 +29,7 @@ use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Teknoo\East\Paas\Object\Job;
 use Teknoo\East\Paas\Object\Project;
+use Teknoo\Space\Contracts\Object\TaskJobInterface;
 
 use function array_filter;
 use function json_encode;
@@ -54,7 +55,7 @@ class TaskUrlPublisher
         string $taskId,
         ?string $taskUrl,
         ?Project $project = null,
-        ?Job $job = null,
+        Job|TaskJobInterface|null $job = null,
     ): static {
         if (!$this->enabled) {
             return $this;

@@ -13,19 +13,6 @@ Feature: API admin endpoints to administrate variables and secrets defined for p
     Given a Space app instance
     And a memory document database
 
-  Scenario: From the API, as Admin, get a project'variables is refused
-    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And the 2FA authentication is enabled for the last user
-    And an account for "My Company" with the account namespace "my-company"
-    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
-    And a standard project "my project" and a prefix "a-prefix"
-    And "10" project's variables
-    And the platform is booted
-    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
-    When the API is called to get the last project's variables as admin
-    Then get a JSON response
-    But an 403 error
-
   Scenario: From the API, as Admin, edit a project's variables via a request with a form url encoded body is refused
     Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
     And the 2FA authentication is enabled for the last user

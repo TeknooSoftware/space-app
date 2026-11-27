@@ -29,6 +29,18 @@ Feature: API endpoints to create custom clusters on accounts available to accoun
     And is a serialized collection of "5" items on "1" pages
     And the list of serialized owned accounts clusters
 
+  Scenario: From the API, the list of accounts clusters of user's account gives the identifier of each cluster
+    Given an account for "My Company" with the account namespace "my-company"
+    And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And "5" accounts clusters "cluster X" and a slug "a-cluster"
+    And the platform is booted
+    And the user is authenticated on the API with "dupont@teknoo.space" and the password "Test2@Test"
+    When the API is called to list of accounts clusters
+    Then get a JSON response
+    And is a serialized collection of "5" items on "1" pages
+    And each serialized account cluster of the list carries its identifier
+
   Scenario: From the API, create an account cluster, via a request with a form url encoded body
     Given an account for "My Company" with the account namespace "my-company"
     And a user, called "Dupont" "Jean" with the "dupont@teknoo.space" with the password "Test2@Test"

@@ -31,7 +31,10 @@ use PHPUnit\Framework\MockObject\Stub;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
+use Teknoo\East\Common\Object\User;
+use Teknoo\Space\Contracts\Object\TaskJobInterface;
 use Teknoo\Space\Infrastructures\Symfony\Mercure\TaskUrlPublisher;
+use TypeError;
 
 /**
  * Class TaskUrlPublisherTest.
@@ -100,5 +103,33 @@ class TaskUrlPublisherTest extends TestCase
             TaskUrlPublisher::class,
             $publisher->publish('foo', 'bar', null),
         );
+    }
+
+    public function testPublishWithATaskJob(): void
+    {
+        $job = $this->createStub(TaskJobInterface::class);
+        $job->method('getId')->willReturn('job-id');
+
+        $hub = $this->createMock(HubInterface::class);
+        $hub->expects($this->once())
+            ->method('publish')
+            ->with($this->callback(
+                static fn (Update $update): bool => '{"task_id":"bar","job_id":"job-id","task_url":"url"}'
+                    === $update->getData(),
+            ))
+            ->willReturn('id');
+
+        $publisher = new TaskUrlPublisher($hub);
+        $this->assertInstanceOf(
+            TaskUrlPublisher::class,
+            $publisher->publish('foo', 'bar', 'url', job: $job),
+        );
+    }
+
+    public function testPublishRefusesAnIdentifiedObjectWhichIsNotAJob(): void
+    {
+        $this->expectException(TypeError::class);
+
+        $this->taskUrlPublisher->publish('foo', 'bar', 'url', job: $this->createStub(User::class));
     }
 }

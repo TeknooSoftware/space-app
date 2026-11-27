@@ -323,12 +323,6 @@ trait BrowserActionTrait
         $this->openEditPageOfLast('_teknoo_paas_admin_account_edit', Account::class, 'admin_space_account');
     }
 
-    #[When('it goes to the admin project page')]
-    public function itGoesToTheAdminProjectPage(): void
-    {
-        $this->openEditPageOfLast('_teknoo_paas_admin_project_edit', Project::class, 'space_project');
-    }
-
     #[When('it opens the account cluster page')]
     public function itOpensTheAccountClusterPage(): void
     {
@@ -488,6 +482,15 @@ trait BrowserActionTrait
         );
     }
 
+    #[When('it calls the path :path with the method :method')]
+    public function itCallsThePathWithTheMethod(string $path, string $method): void
+    {
+        $this->executeRequest(
+            method: $method,
+            url: $path,
+        );
+    }
+
     #[When('it opens the admin page :route of the last account')]
     public function itOpensTheAdminPageOfTheLastAccount(string $route): void
     {
@@ -498,22 +501,12 @@ trait BrowserActionTrait
             url: $this->getPathFromRoute(
                 route: $route,
                 parameters: match ($route) {
-                    'space_admin_account_clusters_list',
-                    'space_admin_account_clusters_new',
-                    '_teknoo_paas_admin_project_new' => ['accountId' => $accountId],
-                    'space_admin_account_environment_reinstall' => [
-                        'id' => $accountId,
-                        'envName' => 'prod',
-                        'clusterName' => 'Demo Kube Cluster',
-                    ],
                     'space_admin_job_get' => ['id' => $this->recall(Job::class)?->getId()],
                     'space_admin_account_code_generator',
                     '_teknoo_paas_admin_account_list',
                     '_teknoo_paas_admin_project_list',
                     '_teknoo_paas_admin_job_list',
-                    'space_dashboard',
-                    '_teknoo_common_admin_media_list',
-                    '_teknoo_common_admin_media_new' => [],
+                    'space_dashboard' => [],
                     default => ['id' => $accountId],
                 },
             ),

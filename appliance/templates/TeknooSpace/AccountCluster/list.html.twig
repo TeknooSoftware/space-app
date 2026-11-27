@@ -9,32 +9,15 @@
 {% block listTitle %}<i class="uil uil-server"></i> {{ 'teknoo.space.title.account.account_cluster'|trans }}{% endblock %}
 
 {%- block breadcrumbListLink -%}
-    {% if is_granted('ROLE_ADMIN') %}
-        {{ path('_teknoo_paas_admin_account_list') }}
-    {% else %}
-        {{ path('space_account_settings') }}
-    {% endif %}
+    {{ path('space_account_settings') }}
 {%- endblock -%}
 {%- block breadcrumbListTitle -%}
-    {% if is_granted('ROLE_ADMIN') %}
-        {{ 'teknoo.space.title.admin_account'|trans }}
-    {% else %}
-        {{ 'teknoo.space.title.account.settings'|trans }}
-    {% endif %}
+    {{ 'teknoo.space.title.account.settings'|trans }}
 {%- endblock -%}
 {% block additionalBreadcrumbs %}
-    {% if is_granted('ROLE_ADMIN') %}
-        <li class="breadcrumb-item text-capitalize">
-            <a href="{{ path('_teknoo_paas_admin_account_edit', {'id': account.id}) }}">{{ account }}</a>
-        </li>
-        <li class="breadcrumb-item text-capitalize">
-            <a href="{{ path('space_admin_account_clusters_list', {'accountId': account.id}) }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
-        </li>
-    {% else %}
-        <li class="breadcrumb-item text-capitalize">
-            <a href="{{ path('space_account_clusters_list') }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
-        </li>
-    {% endif %}
+    <li class="breadcrumb-item text-capitalize">
+        <a href="{{ path('space_account_clusters_list') }}">{{ 'teknoo.space.title.account.account_cluster'|trans }}</a>
+    </li>
 {% endblock %}
 
 {%- block topHeaderButton -%}
@@ -42,7 +25,7 @@
     <li class="list-inline-item mb-0 ms-1">
         <a rel="noopener"
            class="btn btn-outline-light"
-           href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_new', {'accountId': account.id}) }}{% else %}{{ path('space_account_clusters_new') }}{% endif %}"
+           href="{{ path('space_account_clusters_new') }}"
            title="{{ 'teknoo.space.text.create_account_cluster'|trans }}">
             <i class="uil uil-book-medical"></i>
             {{ 'teknoo.space.action.create_account_cluster'|trans }}
@@ -53,11 +36,7 @@
 {% block listTableHeader %}
     <thead class="bg-light">
     <tr>
-        {% if is_granted('ROLE_ADMIN') %}
-            {% set clusterListUrl = path('space_admin_account_clusters_list', {'accountId': account.id}) %}
-        {% else %}
-            {% set clusterListUrl = path('space_account_clusters_list') %}
-        {% endif %}
+        {% set clusterListUrl = path('space_account_clusters_list') %}
         <th scope="col" class="col-7 border-bottom">
             <a class="text-primary"
                href="{{ clusterListUrl }}{{ app_order_in_url(queryParams, 'name') }}">
@@ -92,7 +71,7 @@
     <tr {% if loop.index is even %}class="table-row-even" {% else %}class="table-row-odd"{% endif %}>
         <td>
             <a class="text-primary space-account-cluster-name"
-               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
+               href="{{ path('space_account_clusters_edit', {'id':object.id}) }}"
                title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">
                 {{ object }}
             </a>
@@ -102,13 +81,13 @@
         <td class="text-end">
             {{ space_extension('space_account_cluster_list_item', object) }}
             <a class="text-primary"
-               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_edit', {'accountId': account.id, 'id':object.id}) }}{% else %}{{ path('space_account_clusters_edit', {'id':object.id}) }}{% endif %}"
+               href="{{ path('space_account_clusters_edit', {'id':object.id}) }}"
                title="{{ 'teknoo.space.action.edit_account_cluster'|trans }}">
                 <span class="mdi mdi-pencil"></span>
             </a>
             <a class="text-primary"
                data-confirm="{{ 'teknoo.space.text.confirm_delete'|trans }}"
-               href="{% if is_granted('ROLE_ADMIN') %}{{ path('space_admin_account_clusters_delete', {'accountId': account.id, 'id':object.id, '_token': csrf_token('teknoo_space_delete')}) }}{% else %}{{ path('space_account_clusters_delete', {'id':object.id, '_token': csrf_token('teknoo_space_delete')}) }}{% endif %}"
+               href="{{ path('space_account_clusters_delete', {'id':object.id, '_token': csrf_token('teknoo_space_delete')}) }}"
                title="{{ 'teknoo.space.action.delete_account_cluster'|trans }}">
                 <span class="mdi mdi-trash-can"></span>
             </a>

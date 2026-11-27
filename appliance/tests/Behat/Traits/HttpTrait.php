@@ -179,6 +179,16 @@ trait HttpTrait
         return $this->response;
     }
 
+    /**
+     * A `404` alone does not prove that a route does not exist: an existing route answers it too for an unknown object
+     */
+    #[Then('no route handles the request')]
+    public function noRouteHandlesTheRequest(): void
+    {
+        Assert::assertNotNull($this->request);
+        Assert::assertNull($this->request->attributes->get('_route'));
+    }
+
     #[Then('a session is opened')]
     #[Then('a new session is open')]
     public function aNewSessionIsOpen(): void

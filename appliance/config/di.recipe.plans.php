@@ -51,7 +51,6 @@ use Teknoo\East\Common\Recipe\Step\StartLoopingOn;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditAccountEndPointInterface;
 use Teknoo\East\Paas\Contracts\Recipe\Plan\EditProjectEndPointInterface;
 use Teknoo\East\Paas\Loader\AccountLoader;
-use Teknoo\East\Paas\Recipe\Plan\AbstractEditObjectEndPoint;
 use Teknoo\East\Paas\Recipe\Plan\NewAccountEndPoint;
 use Teknoo\East\Paas\Recipe\Plan\NewJob;
 use Teknoo\East\Paas\Recipe\Plan\NewProjectEndPoint;
@@ -948,33 +947,6 @@ return [
             value(SpaceAccount::class),
             diGet('teknoo.east.common.get_default_error_template'),
         ),
-
-    EditAccountEndPointInterface::class . ':without-steps' => static function (
-        ContainerInterface $container
-    ): EditAccountEndPointInterface {
-        $accessControl = null;
-        if ($container->has(ObjectAccessControlInterface::class)) {
-            $accessControl = $container->get(ObjectAccessControlInterface::class);
-        }
-
-        $defaultErrorTemplate = null;
-        if ($container->has('teknoo.east.common.get_default_error_template')) {
-            $defaultErrorTemplate = $container->get('teknoo.east.common.get_default_error_template');
-        }
-
-        return new class (
-            $container->get(OriginalRecipeInterface::class),
-            $container->get(LoadObject::class),
-            $container->get(FormHandlingInterface::class),
-            $container->get(FormProcessingInterface::class),
-            $container->get(SaveObject::class),
-            $container->get(RenderFormInterface::class),
-            $container->get(RenderError::class),
-            $accessControl,
-            $defaultErrorTemplate,
-        ) extends AbstractEditObjectEndPoint implements EditAccountEndPointInterface {
-        };
-    },
 
     ProjectNew::class => static function (ContainerInterface $container): ProjectNew {
         $plan = new ProjectNew(

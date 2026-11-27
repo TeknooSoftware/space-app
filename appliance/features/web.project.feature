@@ -194,16 +194,6 @@ Feature: Web interface to manage account's projects
       | space_project.project.clusters.0.identity.username | deployer     |
     And the form field "space_project.project.clusters.0.identity.username" is read only
 
-  Scenario: From the UI, as Admin, a project can not be opened
-    Given an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
-    And an account clusters "Cluster Company" and a slug "my-company-cluster" on docker compose
-    And an account environment on "Cluster Company" for the environment "prod"
-    And a standard project "my project" and a prefix "demo" on "Cluster Company" for "prod"
-    And the user sign in with "admin@teknoo.space" and the password "Test2@Test"
-    And it is redirected to the dashboard
-    When it goes to the admin project page
-    Then the user must have a 403 error
-
   Scenario: From the UI, the hierarchical namespaces switch of a project's cluster is shown when enabled
     Given the hierarchical namespaces field is shown in the web interface
     And a standard project "my project" and a prefix "demo"

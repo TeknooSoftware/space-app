@@ -180,4 +180,29 @@ class SpaceAccountTest extends TestCase
 
         $this->assertSame($spaceAccount, $result);
     }
+
+    public function testExportToMeDataForTheApiGivesTheIdAndTheName(): void
+    {
+        $account = $this->createStub(Account::class);
+        $account->method('getId')->willReturn('account-id');
+        $account->method('__toString')->willReturn('My Company');
+
+        $spaceAccount = new SpaceAccount(
+            account: $account,
+            accountData: $this->createStub(AccountData::class),
+        );
+
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->with([
+                '@class' => SpaceAccount::class,
+                'id' => 'account-id',
+                'name' => 'My Company',
+            ]);
+
+        $result = $spaceAccount->exportToMeData($normalizer, ['groups' => ['api']]);
+
+        $this->assertSame($spaceAccount, $result);
+    }
 }

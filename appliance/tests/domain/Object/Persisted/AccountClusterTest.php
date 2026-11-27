@@ -652,6 +652,28 @@ class AccountClusterTest extends TestCase
         $this->assertInstanceOf(AccountCluster::class, $result);
     }
 
+    #[AllowMockObjectsWithoutExpectations]
+    public function testExportToMeDataForTheApiGivesTheId(): void
+    {
+        $exported = null;
+        $normalizer = $this->createMock(EastNormalizerInterface::class);
+        $normalizer->expects($this->once())
+            ->method('injectData')
+            ->willReturnCallback(
+                function (array $data) use (&$exported, $normalizer): EastNormalizerInterface {
+                    $exported = $data;
+
+                    return $normalizer;
+                }
+            );
+
+        $this->accountCluster->setId('cluster-id');
+        $this->accountCluster->exportToMeData($normalizer, ['groups' => ['api']]);
+
+        $this->assertIsArray($exported);
+        $this->assertSame('cluster-id', $exported['id'] ?? null);
+    }
+
     public function testVerifyAccessToUser(): void
     {
         $user = $this->createStub(User::class);

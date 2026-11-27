@@ -161,9 +161,9 @@ The bowls are no longer executed inside the web request: each provisioning role 
 `Teknoo\Space\Object\DTO\Task\*` task (a `NewTaskInterface`) through `CallNewTask`, and the `new_task`
 worker runs the matching `Recipe\Plan\Task\AccountProvisioningTask` instance, which loads the account, its
 history, clusters, environments and registry before delegating to the bowl. The admin routes
-(`space_admin_account_*_reinstall`, `space_admin_account_refresh_quota` and their API twins) share one HTTP
+(`space_admin_account_registry_reinstall`, `space_admin_account_refresh_quota` and their API twins) share one HTTP
 plan, `Recipe\Plan\AccountTaskDispatch`, whose route default `taskClass` selects the task (the web routes require
-a `POST` with a CSRF token, the environment reinstall is refused to the administrators). A member reinstalls an
+a `POST` with a CSRF token; there is no admin route to reinstall an environment). A member reinstalls an
 environment of its account through the same plan, from its settings (`space_account_environment_reinstall`, `POST`
 with a CSRF token, refused to the administrators by `access_control`) or the API
 (`space_api_v1_account_environment_reinstall`), without account id: their route default `useAccountOfUser` takes

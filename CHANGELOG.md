@@ -1,5 +1,26 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.4] - 2026-11-27
+### Stable Release
+
+#### Security
+- A new secret variable of an account or of a project with the value `0` is encrypted: it was taken as empty, and
+  saved without encryption
+
+#### Fixes
+- The API list of the accounts (`GET /api/v1/admin/accounts`) gives the `id` and the `name` of each account. The
+  answers of an account, of its settings and of its environments gain them too
+- The API lists of the clusters of an account give the `id` of each cluster
+- A list refuses with a `400` every `direction` other than `ASC` or `DESC`: a wrong value answered a `500`, and a non
+  scalar value was ignored (East Common 4.10.5)
+
+#### Evolutions
+- `TaskUrlPublisher::publish()` accepts as `job` an object implementing the new `TaskJobInterface`, besides the East
+  PaaS `Job`. A subclass overriding `publish()` must widen its parameter `$job`
+- **Breaking**: the admin routes forbidden since 2.6.0 and the media ones are removed (`404` or `405`, in HTML on
+  the API), with `MediaSearchType`, `teknoo.space.endpoint.admin.account.edit_without_steps` and
+  `EditAccountEndPointInterface:without-steps`. Custom templates must no longer call `path()` on these routes
+
 ## [2.6.3] - 2026-11-25
 ### Stable Release
 

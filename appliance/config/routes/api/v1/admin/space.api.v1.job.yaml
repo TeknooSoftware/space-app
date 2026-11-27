@@ -1,30 +1,3 @@
-space_api_v1_admin_job_new:
-    path: '/account/{accountId}/project/{projectId}/job/new'
-    methods: ['POST', 'PUT']
-    schemes: ['https']
-    defaults:
-        _controller: 'teknoo.space.endpoint.job.new'
-        api: 'json'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        formClass: 'Teknoo\Space\Infrastructures\Symfony\Form\Type\Job\ApiNewJobType'
-        objectClass: 'Teknoo\Space\Object\DTO\NewJob'
-        projectKey: 'Teknoo\East\Paas\Object\Project'
-        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooSpace/api/AdminJob/new.json.twig'
-        clusterCatalog: '@teknoo.space.clusters_catalog'
-
-space_api_v1_admin_job_new_pending:
-    path: '/account/{accountId}/project/{projectId}/job/pending/{taskId}'
-    methods: ['GET']
-    schemes: ['https']
-    defaults:
-        _controller: 'teknoo.space.endpoint.job.pending'
-        api: 'json'
-        errorTemplate: '@@TeknooEastCommon/Error/default.json.twig'
-        projectKey: 'Teknoo\East\Paas\Object\Project'
-        projectLoader: '@Teknoo\Space\Loader\Meta\SpaceProjectLoader'
-        template: '@@TeknooSpace/api/AdminJob/pending.json.twig'
-
 space_api_v1_admin_job_list:
     path: '/account/{accountId}/project/{projectId}/jobs'
     methods: ['GET', 'POST']

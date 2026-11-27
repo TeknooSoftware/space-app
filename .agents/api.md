@@ -23,7 +23,7 @@ The `/api/v1` and `/api/v1/admin` prefixes are **not** in these files: they come
 **Web routes** (`config/routes/`): 10 YAML files (`space.account.yaml`, `space.admin.account.yaml`,
 `space.admin.job.yaml`, `space.dashboard.yaml`, `space.health.yaml`, `space.job.yaml`,
 `space.project.yaml`, `space.settings.yaml`, `space.subscription.yaml`,
-`space.support.contact.yaml`) containing 45 `path:` entries. The same directory also holds the
+`space.support.contact.yaml`) containing 38 `path:` entries. The same directory also holds the
 framework and vendor route files (`api.yaml`, `connect.oauth.yaml`, `east.common.include.yaml`,
 `east.paas.include.yaml`, four `east.paas.overwrite.*.yaml`, `scheb_2fa.yaml`, `symfony.framework.yaml`,
 `web_profiler.yaml`).
@@ -43,11 +43,11 @@ API responses are rendered by Twig templates in `templates/TeknooSpace/api/`. Th
 | `Jwt/`            | `jwt.form`, `jwt.token`                                |
 | `Project/`        | `deleted`, `item`, `list`, `variables`                 |
 | `User/`           | `settings`                                             |
-| `AdminAccount/`   | `deleted`, `environments`, `item`, `list`, `variables` |
-| `AdminJob/`       | `deleted`, `get`, `list`, `new`, `pending`             |
+| `AdminAccount/`   | `deleted`, `environments`, `item`, `list`              |
+| `AdminJob/`       | `deleted`, `get`, `list`                               |
 | `AdminUser/`      | `deleted`, `item`, `list`                              |
 
-There is no `AdminProject/` directory: admin project responses reuse the non-admin `Project/` templates.
+There is no `AdminProject/` directory: the admin project lists reuse the non-admin `Project/list` template.
 The `Jwt/` templates render the East Common routes `/api/v1/login` and `/api/v1/jwt/create-token`: they are set by
 the `template` and `tokenTemplate` defaults of the route import, in `config/routes/east.common.include.yaml`.
 

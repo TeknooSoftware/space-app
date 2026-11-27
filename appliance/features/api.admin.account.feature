@@ -23,6 +23,18 @@ Feature: API admin endpoints to administrate accounts
     And is a serialized collection of "10" items on "1" pages
     And the list of serialized accounts
 
+  Scenario: From the API, as Admin, the list of accounts gives the identifier and the name of each account
+    Given a memory document database
+    And an admin, called "Space" "Admin" with the "admin@teknoo.space" with the password "Test2@Test"
+    And the 2FA authentication is enabled for the last user
+    And 10 accounts with some users
+    And the platform is booted
+    And the user is authenticated on the API with "admin@teknoo.space" and the password "Test2@Test"
+    When the API is called to list of accounts as admin
+    Then get a JSON response
+    And is a serialized collection of "10" items on "1" pages
+    And each serialized account of the list carries its identifier and its name
+
   Scenario: From the API, a user of an account can not use the admin endpoints, the error is a JSON response
     Given a memory document database
     And an account for "My Company" with the account namespace "my-company"

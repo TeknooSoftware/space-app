@@ -817,7 +817,9 @@ Workers broadcast real-time job status updates via Mercure (Server-Sent Events).
 `infrastructures/Symfony/Mercure/`:
 
 - **TaskUrlPublisher**: Publishes job URL updates after job processing completes. Triggers browser
-  redirect to the job detail page. Dispatched by `NewTaskHandler` and `RunJobHandler`.
+  redirect to the job detail page. Dispatched by `NewTaskHandler` and `RunJobHandler`. Its `job` is an East PaaS
+  `Job` or an object implementing `Teknoo\Space\Contracts\Object\TaskJobInterface`, never another identified
+  object: its id is published on the topic as `job_id`.
 - **TaskErrorPublisher**: Publishes task error notifications when a job fails or encounters errors.
   Used by the `TaskError` notifier for error broadcast.
 

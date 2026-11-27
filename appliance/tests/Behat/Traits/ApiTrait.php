@@ -63,6 +63,7 @@ use Teknoo\Space\Object\Persisted\UserData;
 use Teknoo\Space\Service\PersistedVariableEncryption;
 use Throwable;
 
+use function array_column;
 use function array_filter;
 use function array_map;
 use function array_slice;
@@ -126,6 +127,22 @@ trait ApiTrait
                     'admin' => 'space_api_v1_admin_project_list',
                     default => 'space_api_v1_project_list',
                 }
+            ),
+            headers: [
+                'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
+            ],
+            noCookies: true,
+        );
+    }
+
+    #[When('the API is called to list of projects with the direction :direction')]
+    public function theApiIsCalledToListOfProjectsWithTheDirection(string $direction): void
+    {
+        $this->executeRequest(
+            method: 'GET',
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_project_list',
+                parameters: ['direction' => $direction],
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -244,34 +261,21 @@ trait ApiTrait
     }
 
     #[When('the API is called to get the last project')]
-    #[When('the API is called to get the last project as :role')]
-    public function theApiIsCalledToGetTheLastProject(bool $isForVariables = false, ?string $role = null): void
+    public function theApiIsCalledToGetTheLastProject(bool $isForVariables = false): void
     {
         $project = $this->recall(Project::class);
 
         $this->executeRequest(
             method: 'GET',
-            url: match ($role) {
-                'admin' => $this->getPathFromRoute(
-                    route: match ($isForVariables) {
-                        true => 'space_api_v1_admin_project_edit_variables',
-                        default => 'space_api_v1_admin_project_edit',
-                    },
-                    parameters: [
-                        'id' => $project->getId(),
-                        'accountId' => $project->getAccount()->getId(),
-                    ],
-                ),
-                default => $this->getPathFromRoute(
-                    route: match ($isForVariables) {
-                        true => 'space_api_v1_project_edit_variables',
-                        default => 'space_api_v1_project_edit',
-                    },
-                    parameters: [
-                        'id' => $project->getId(),
-                    ],
-                ),
-            },
+            url: $this->getPathFromRoute(
+                route: match ($isForVariables) {
+                    true => 'space_api_v1_project_edit_variables',
+                    default => 'space_api_v1_project_edit',
+                },
+                parameters: [
+                    'id' => $project->getId(),
+                ],
+            ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -279,31 +283,18 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to get the last account cluster as admin')]
-    public function theApiIsCalledToGetTheLastAccountClusterAsAdmin(): void
-    {
-        $this->theApiIsCalledToGetTheLastAccountCluster('space_api_v1_admin_account_clusters_edit');
-    }
-
     #[When('the API is called to get the last account cluster')]
-    public function theApiIsCalledToGetTheLastAccountCluster(
-        string $routeName = 'space_api_v1_account_clusters_edit'
-    ): void {
+    public function theApiIsCalledToGetTheLastAccountCluster(): void
+    {
         $accountCluster = $this->recall(AccountCluster::class);
 
         $this->executeRequest(
             method: 'GET',
             url: $this->getPathFromRoute(
-                route: $routeName,
-                parameters: match ($routeName) {
-                    'space_api_v1_admin_account_clusters_edit' => [
-                        'id' => $accountCluster->getId(),
-                        'accountId' => $accountCluster->getAccount()->getId(),
-                    ],
-                    default => [
-                        'id' => $accountCluster->getId(),
-                    ],
-                }
+                route: 'space_api_v1_account_clusters_edit',
+                parameters: [
+                    'id' => $accountCluster->getId(),
+                ],
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -353,10 +344,9 @@ trait ApiTrait
     }
 
     #[When("the API is called to get the last project's variables")]
-    #[When("the API is called to get the last project's variables as :role")]
-    public function theApiIsCalledToGetTheLastProjectsVariables(?string $role = null): void
+    public function theApiIsCalledToGetTheLastProjectsVariables(): void
     {
-        $this->theApiIsCalledToGetTheLastProject(isForVariables: true, role: $role);
+        $this->theApiIsCalledToGetTheLastProject(isForVariables: true);
     }
 
     #[When('the API is called to get the last generated job')]
@@ -388,32 +378,20 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to delete the last project with :method method as :role')]
-    #[When('the API is called to delete the last project as :role')]
     #[When('the API is called to delete the last project with :method method')]
     #[When('the API is called to delete the last project')]
-    public function theApiIsCalledToDeleteTheLastProject(string $method = 'POST', ?string $role = null): void
+    public function theApiIsCalledToDeleteTheLastProject(string $method = 'POST'): void
     {
         $project = $this->recall(Project::class);
 
         $this->executeRequest(
             method: $method,
-            url:
-            match ($role) {
-                'admin' => $this->getPathFromRoute(
-                    route: 'space_api_v1_admin_project_delete',
-                    parameters: [
-                        'accountId' => $project->getAccount()->getId(),
-                        'id' => $project->getId(),
-                    ],
-                ),
-                default => $this->getPathFromRoute(
-                    route: 'space_api_v1_project_delete',
-                    parameters: [
-                        'id' => $project->getId(),
-                    ],
-                ),
-            },
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_project_delete',
+                parameters: [
+                    'id' => $project->getId(),
+                ],
+            ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
@@ -421,32 +399,19 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to delete the last account cluster with :method method as :role')]
-    #[When('the API is called to delete the last account cluster as :role')]
     #[When('the API is called to delete the last account cluster')]
     #[When('the API is called to delete the last account cluster with :method method')]
-    public function theApiIsCalledToDeleteTheLastAccountCluster(string $method = 'POST', ?string $role = null): void
+    public function theApiIsCalledToDeleteTheLastAccountCluster(string $method = 'POST'): void
     {
-        $route = match ($role) {
-            'admin' => 'space_api_v1_admin_account_clusters_delete',
-            default => 'space_api_v1_account_clusters_delete',
-        };
-
         $accountCluster = $this->recall(AccountCluster::class);
 
         $this->executeRequest(
             method: $method,
             url: $this->getPathFromRoute(
-                route: $route,
-                parameters: match ($role) {
-                    'admin' => [
-                        'id' => $accountCluster->getId(),
-                        'accountId' => $accountCluster->getAccount()->getId(),
-                    ],
-                    default => [
-                        'id' => $accountCluster->getId(),
-                    ],
-                },
+                route: 'space_api_v1_account_clusters_delete',
+                parameters: [
+                    'id' => $accountCluster->getId(),
+                ],
             ),
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
@@ -533,13 +498,11 @@ trait ApiTrait
     }
 
     #[When('the API is called to create a new job with a json body:')]
-    #[When('the API is called to create a new job as :role with a json body:')]
-    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields, ?string $role = null): void
+    public function theApiIsCalledToCreateANewJobWithAJsonBody(TableNode $bodyFields): void
     {
         $this->theApiIsCalledToCreateANewJob(
             bodyFields: $bodyFields,
             format: 'json',
-            role: $role,
         );
     }
 
@@ -631,82 +594,42 @@ trait ApiTrait
 
     #[When('the API is called to edit a project:')]
     #[When("the API is called to edit a project with a :format body:")]
-    #[When('the API is called to edit a project as :role with a :format body:')]
-    #[When('the API is called to edit a project as :role:')]
     public function theApiIsCalledToEditAProject(
         TableNode $bodyFields,
         string $format = 'default',
-        ?string $role = null,
         bool $isForVariables = false,
     ): void {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
-            url: match ($role) {
-                'admin' => $this->getPathFromRoute(
-                    route: match ($isForVariables) {
-                        true => 'space_api_v1_admin_project_edit_variables',
-                        default => 'space_api_v1_admin_project_edit',
-                    },
-                    parameters: [
-                        'id' => $project->getId(),
-                        'accountId' => $project->getAccount()->getId(),
-                    ]
-                ),
-                default => $this->getPathFromRoute(
-                    route: match ($isForVariables) {
-                        true => 'space_api_v1_project_edit_variables',
-                        default => 'space_api_v1_project_edit',
-                    },
-                    parameters: [
-                        'id' => $project->getId(),
-                    ]
-                ),
-            },
+            url: $this->getPathFromRoute(
+                route: match ($isForVariables) {
+                    true => 'space_api_v1_project_edit_variables',
+                    default => 'space_api_v1_project_edit',
+                },
+                parameters: [
+                    'id' => $project->getId(),
+                ]
+            ),
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
     #[When('the API is called to refresh credentials of the last project')]
-    #[When('the API is called to refresh credentials of the last project as :role')]
-    public function theApiIsCalledToRefreshCredentialsOfTheLastProject(
-        string $role = '',
-    ): void {
+    public function theApiIsCalledToRefreshCredentialsOfTheLastProject(): void
+    {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
-            url: match ($role) {
-                'admin' => $this->getPathFromRoute(
-                    route: 'space_api_v1_admin_project_refresh_credentials',
-                    parameters: [
-                        'id' => $project->getId(),
-                        'accountId' => $project->getAccount()->getId(),
-                    ]
-                ),
-                default => $this->getPathFromRoute(
-                    route: 'space_api_v1_project_refresh_credentials',
-                    parameters: [
-                        'id' => $project->getId(),
-                    ]
-                )
-            },
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_project_refresh_credentials',
+                parameters: [
+                    'id' => $project->getId(),
+                ]
+            ),
             bodyFields: null,
             format: 'json',
-        );
-    }
-
-    #[When('the API is called to edit an account cluster as admin with a :format body:')]
-    #[When('the API is called to edit an account cluster as admin:')]
-    public function theApiIsCalledToEditAnAccountClusterAsAdmin(
-        TableNode $bodyFields,
-        string $format = 'default',
-    ): void {
-        $this->theApiIsCalledToEditAnAccountCluster(
-            bodyFields: $bodyFields,
-            format: $format,
-            routeName: 'space_api_v1_admin_account_clusters_edit',
-            role: 'admin',
         );
     }
 
@@ -715,82 +638,46 @@ trait ApiTrait
     public function theApiIsCalledToEditAnAccountCluster(
         TableNode $bodyFields,
         string $format = 'default',
-        string $routeName = 'space_api_v1_account_clusters_edit',
-        ?string $role = null,
     ): void {
         $accountCluster = $this->recall(AccountCluster::class);
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: $routeName,
-                parameters: match ($role) {
-                    'admin' =>  [
-                        'id' => $accountCluster->getId(),
-                        'accountId' => $accountCluster->getAccount()->getId(),
-                    ],
-                    default =>  [
-                        'id' => $accountCluster->getId(),
-                    ],
-                }
+                route: 'space_api_v1_account_clusters_edit',
+                parameters: [
+                    'id' => $accountCluster->getId(),
+                ]
             ),
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
-    #[When('the API is called to create a project as :role with a :format body:')]
-    #[When('the API is called to create a project as :role:')]
     #[When('the API is called to create a project with a :format body:')]
     #[When('the API is called to create a project:')]
     public function theApiIsCalledToCreateAProject(
         TableNode $bodyFields,
         string $format = 'default',
-        ?string $role = null,
     ): void {
-        if ('admin' === $role) {
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_admin_project_new',
-                parameters: [
-                    'accountId' => $this->recall(Account::class)->getId(),
-                ]
-            );
-        } else {
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_project_new',
-            );
-        }
-
         $this->submitValuesThroughAPI(
-            url: $url,
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_project_new',
+            ),
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
-    #[When('the API is called to create an account cluster as :role with a :format body:')]
-    #[When('the API is called to create an account cluster as :role:')]
     #[When('the API is called to create an account cluster:')]
     #[When('the API is called to create an account cluster with a :format body:')]
     public function theApiIsCalledToCreateAnAccountCluster(
         TableNode $bodyFields,
         string $format = 'default',
-        ?string $role = null,
     ): void {
-        if ('admin' === $role) {
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_admin_account_clusters_new',
-                parameters: [
-                    'accountId' => $this->recall(Account::class)->getId(),
-                ]
-            );
-        } else {
-            $url = $this->getPathFromRoute(
-                route: 'space_api_v1_account_clusters_new',
-            );
-        }
-
         $this->submitValuesThroughAPI(
-            url: $url,
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_account_clusters_new',
+            ),
             bodyFields: $bodyFields,
             format: $format,
         );
@@ -849,22 +736,16 @@ trait ApiTrait
 
     #[When('the API is called to edit the last account with a :format body:')]
     #[When('the API is called to edit the last account:')]
-    #[When('the API is called to edit the last account :view with a :format body:')]
-    #[When('the API is called to edit the last account :view:')]
     public function theApiIsCalledToEditAnAccount(
         TableNode $bodyFields,
         string $format = 'default',
-        string $view = 'default',
     ): void {
         $account = $this->recall(Account::class);
         Assert::assertNotNull($account);
 
         $this->submitValuesThroughAPI(
             url: $this->getPathFromRoute(
-                route: match ($view) {
-                    'environments' => 'space_api_v1_admin_account_edit_environments',
-                    default => 'space_api_v1_admin_account_edit',
-                },
+                route: 'space_api_v1_admin_account_edit',
                 parameters: [
                     'id' => $account->getId(),
                 ]
@@ -903,26 +784,6 @@ trait ApiTrait
                 route: 'space_api_v1_admin_account_refresh_quota',
                 parameters: [
                     'id' => $account->getId(),
-                ]
-            ),
-            bodyFields: null,
-            format: 'json',
-        );
-    }
-
-    #[When("the API is called to reinstall the account's environment :envName on :clusterName")]
-    public function theApiIsCalledToReinstallTheAccountsEnvironmentOn(string $envName, string $clusterName): void
-    {
-        $account = $this->recall(Account::class);
-        Assert::assertNotNull($account);
-
-        $this->submitValuesThroughAPI(
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_admin_account_environment_reinstall',
-                parameters: [
-                    'id' => $account->getId(),
-                    'envName' => $envName,
-                    'clusterName' => $clusterName,
                 ]
             ),
             bodyFields: null,
@@ -981,15 +842,7 @@ trait ApiTrait
                     ),
                     default => $this->getPathFromRoute('space_api_v1_account_environments'),
                 },
-                'variables' => match ($role) {
-                    'admin' => $this->getPathFromRoute(
-                        route: 'space_api_v1_admin_account_edit_variables',
-                        parameters: [
-                            'id' => $this->recall(Account::class)->getId(),
-                        ],
-                    ),
-                    default => $this->getPathFromRoute('space_api_v1_account_edit_variables'),
-                },
+                'variables' => $this->getPathFromRoute('space_api_v1_account_edit_variables'),
                 default => throw new DomainException("$view is not available"),
             },
             headers: [
@@ -1014,30 +867,19 @@ trait ApiTrait
 
     #[When("the API is called to update account's :view:")]
     #[When("the API is called to update account's :view with a :format body:")]
-    #[When("the API is called to update account's :view as :role:")]
-    #[When("the API is called to update account's :view with a :format body as :role:")]
     public function theApiIsCalledToUpdateAccountsSettings(
         TableNode $bodyFields,
         string $format = 'default',
         string $view = 'settings',
-        ?string $role = null,
     ): void {
         $this->submitValuesThroughAPI(
             url: match ($view) {
                 'environments' => $this->getPathFromRoute(
                     route: 'space_api_v1_account_environments',
                 ),
-                'variables' => match ($role) {
-                    'admin' => $this->getPathFromRoute(
-                        route: 'space_api_v1_admin_account_edit_variables',
-                        parameters: [
-                            'id' => $this->recall(Account::class)->getId(),
-                        ],
-                    ),
-                    default => $this->getPathFromRoute(
-                        route: 'space_api_v1_account_edit_variables',
-                    ),
-                },
+                'variables' => $this->getPathFromRoute(
+                    route: 'space_api_v1_account_edit_variables',
+                ),
                 default => $this->getPathFromRoute(
                     route: 'space_api_v1_account_settings',
                 ),
@@ -1096,60 +938,38 @@ trait ApiTrait
     }
 
     #[When('the API is called to create a new job:')]
-    #[When('the API is called to create a new job as :role:')]
     public function theApiIsCalledToCreateANewJob(
         TableNode $bodyFields,
         string $format = 'default',
-        ?string $role = null
     ): void {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
-            url: match ($role) {
-                'admin' => $this->getPathFromRoute(
-                    route: 'space_api_v1_admin_job_new',
-                    parameters: [
-                        'accountId' => $project->getAccount()->getId(),
-                        'projectId' => $project->getId(),
-                    ]
-                ),
-                default => $this->getPathFromRoute(
-                    route: 'space_api_v1_job_new',
-                    parameters: [
-                        'projectId' => $project->getId(),
-                    ]
-                ),
-            },
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_job_new',
+                parameters: [
+                    'projectId' => $project->getId(),
+                ]
+            ),
             bodyFields: $bodyFields,
             format: $format,
         );
     }
 
     #[When('the API is called to restart a the job:')]
-    #[When('the API is called to restart a the job as :role:')]
     public function theApiIsCalledToRestartATheJob(
         TableNode $bodyFields,
         string $format = 'default',
-        ?string $role = null,
     ): void {
         $project = $this->recall(Project::class);
 
         $this->submitValuesThroughAPI(
-            url: match ($role) {
-                'admin' => $this->getPathFromRoute(
-                    route: 'space_api_v1_admin_job_new',
-                    parameters: [
-                        'accountId' => $project->getAccount()->getId(),
-                        'projectId' => $project->getId(),
-                    ]
-                ),
-                default => $this->getPathFromRoute(
-                    route: 'space_api_v1_job_new',
-                    parameters: [
-                        'projectId' => $project->getId(),
-                    ]
-                ),
-            },
+            url: $this->getPathFromRoute(
+                route: 'space_api_v1_job_new',
+                parameters: [
+                    'projectId' => $project->getId(),
+                ]
+            ),
             bodyFields: $bodyFields,
             format: $format,
         );
@@ -1173,35 +993,16 @@ trait ApiTrait
         );
     }
 
-    #[When('the API is called to get the pending status of the task :taskId as admin')]
-    public function theApiIsCalledToGetThePendingStatusOfTheTaskAsAdmin(string $taskId): void
+    #[When('the API is called with the method :method on the path :path')]
+    public function theApiIsCalledWithTheMethodOnThePath(string $method, string $path): void
     {
-        $project = $this->recall(Project::class);
-
         $this->executeRequest(
-            method: 'GET',
-            url: $this->getPathFromRoute(
-                route: 'space_api_v1_admin_job_new_pending',
-                parameters: [
-                    'accountId' => $project->getAccount()->getId(),
-                    'projectId' => $project->getId(),
-                    'taskId' => $taskId,
-                ]
-            ),
+            method: $method,
+            url: $path,
             headers: [
                 'HTTP_AUTHORIZATION' => "Bearer {$this->jwtToken}",
             ],
             noCookies: true,
-        );
-    }
-
-    #[Then('there are :count jobs in the memory')]
-    public function thereAreJobsInTheMemory(int $count): void
-    {
-        //The jobs of the fixtures are documents, the jobs created by a request are domain objects
-        Assert::assertCount(
-            $count,
-            [...$this->listObjects(Job::class), ...$this->listObjects(JobOrigin::class)],
         );
     }
 
@@ -1333,8 +1134,7 @@ trait ApiTrait
     }
 
     #[Then('a pending job id')]
-    #[Then('a pending job id with :role route')]
-    public function aPendingJobId(?string $role = null): void
+    public function aPendingJobId(): void
     {
         $body = (string) $this->response->getContent();
         $unserialized = json_decode(json: $body, associative: true);
@@ -1345,23 +1145,13 @@ trait ApiTrait
         $this->apiPendingJobUrl = $unserialized['meta']['url'];
 
         Assert::assertEquals(
-            match ($role) {
-                'admin' => $this->urlGenerator->generate(
-                    'space_api_v1_admin_job_new_pending',
-                    [
-                        'accountId' => $this->recall(Account::class)?->getId(),
-                        'projectId' => $this->recall(Project::class)?->getId(),
-                        'taskId' => $unserialized['data']['task_queue_id'],
-                    ]
-                ),
-                default => $this->urlGenerator->generate(
-                    'space_api_v1_job_new_pending',
-                    [
-                        'projectId' => $this->recall(Project::class)?->getId(),
-                        'taskId' => $unserialized['data']['task_queue_id'],
-                    ]
-                ),
-            },
+            $this->urlGenerator->generate(
+                'space_api_v1_job_new_pending',
+                [
+                    'projectId' => $this->recall(Project::class)?->getId(),
+                    'taskId' => $unserialized['data']['task_queue_id'],
+                ]
+            ),
             $unserialized['meta']['url'],
         );
     }
@@ -1476,6 +1266,58 @@ trait ApiTrait
         Assert::assertEquals(
             $normalized,
             $unserialized['data'],
+        );
+    }
+
+    #[Then('each serialized account of the list carries its identifier and its name')]
+    public function eachSerializedAccountOfTheListCarriesItsIdentifierAndItsName(): void
+    {
+        $identifiers = [];
+        $names = [];
+        foreach ($this->getListOfPersistedObjects(Account::class) as $account) {
+            $identifiers[] = $account->getId();
+            $names[] = (string) $account;
+        }
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertSame(
+            array_slice($identifiers, 0, $this->itemsPerPages),
+            array_column($unserialized['data'], 'id'),
+        );
+
+        Assert::assertSame(
+            array_slice($names, 0, $this->itemsPerPages),
+            array_column($unserialized['data'], 'name'),
+        );
+    }
+
+    #[Then('each serialized account cluster of the list carries its identifier')]
+    public function eachSerializedAccountClusterOfTheListCarriesItsIdentifier(): void
+    {
+        $account = $this->recall(Account::class);
+        $identifiers = [];
+        foreach ($this->getListOfPersistedObjects(AccountCluster::class) as $accountCluster) {
+            if ($accountCluster->getAccount() === $account) {
+                $identifiers[] = $accountCluster->getId();
+            }
+        }
+
+        $body = (string) $this->response->getContent();
+        $unserialized = json_decode(json: $body, associative: true);
+
+        Assert::assertNotEmpty(
+            $unserialized['data'] ?? null,
+        );
+
+        Assert::assertSame(
+            array_slice($identifiers, 0, $this->itemsPerPages),
+            array_column($unserialized['data'], 'id'),
         );
     }
 

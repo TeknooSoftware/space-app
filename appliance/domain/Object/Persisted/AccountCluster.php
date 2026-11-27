@@ -76,6 +76,13 @@ class AccountCluster implements
     }
 
     /*
+     * Redeclared from `ObjectTrait` only to be normalized: a collection is serialized object per object, without the
+     * `meta` envelope of a single object, so a row of the list would otherwise carry no identifier.
+     */
+    #[Normalize('api')]
+    protected ?string $id = null;
+
+    /*
      * To avoid issues with old mapping without `username` and `dashboardType` and issues when Mapper not instanciate
      * new fields.
      */

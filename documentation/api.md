@@ -151,11 +151,11 @@ carry the **`.json.twig`** extension, and a single object is usually `item`, not
 | `Jwt/`            | `jwt.form`, `jwt.token`                                |
 | `Project/`        | `deleted`, `item`, `list`, `variables`                 |
 | `User/`           | `settings`                                             |
-| `AdminAccount/`   | `deleted`, `environments`, `item`, `list`, `variables` |
-| `AdminJob/`       | `deleted`, `get`, `list`, `new`, `pending`             |
+| `AdminAccount/`   | `deleted`, `environments`, `item`, `list`              |
+| `AdminJob/`       | `deleted`, `get`, `list`                               |
 | `AdminUser/`      | `deleted`, `item`, `list`                              |
 
-There is no `AdminProject/` directory: the admin project endpoints reuse the `Project/` templates.
+There is no `AdminProject/` directory: the admin project lists reuse the `Project/list` template.
 The `Jwt/` templates render the East Common routes `/api/v1/login` and `/api/v1/jwt/create-token`: they replace the
 templates shipped by East Common through the `template` and `tokenTemplate` defaults of the route import.
 
@@ -301,14 +301,12 @@ its unchanged `message`. The `message` is most of the time the class name of the
 
 All admin endpoints are prefixed with `/api/v1/admin`.
 
-An administrator of Space is never a member of an account. These admin endpoints answer `403` to it: the variables,
-clusters and environments of an account (`/account/{id}/variables`, `/account/{id}/environments`,
-`/account/{id}/environment/...`, `/account/{accountId}/clusters` and `/cluster/...`), the creation, edition, deletion,
-variables and credentials of a project, and the creation and pending of a job. Only the `GET` of
-`/account/{id}/environments` and of `/account/{accountId}/clusters` answer, read only (a cluster without its
-credentials). The endpoints of the members
-(`/api/v1/account/...`, `/api/v1/project/...`, `/api/v1/projects`) answer `403` too. Every `403` of the API has the
-JSON error envelope.
+An administrator of Space is never a member of an account. No admin endpoint changes the variables, the clusters or the
+environments of an account, opens, creates or deletes a project, or starts a job: the environments and the clusters of
+an account are only read (a cluster without its credentials). A request to an url without endpoint gets a `404`, or a
+`405` when the url only accepts another method, in HTML and not with the JSON error envelope. The endpoints of the
+members (`/api/v1/account/...`, `/api/v1/project/...`, `/api/v1/projects`) answer `403` to an administrator. Every
+`403` of the API has the JSON error envelope.
 
 #### Admin - Account Management
 
@@ -332,17 +330,9 @@ JSON error envelope.
 
 - `GET /api/v1/admin/account/{id}/status`
 
-**Manage Account Environments**
+**Get Account Environments** *(read only)*
 
 - `GET /api/v1/admin/account/{id}/environments`
-- `POST /api/v1/admin/account/{id}/environments`
-- `PUT /api/v1/admin/account/{id}/environments`
-
-**Manage Account Variables**
-
-- `GET /api/v1/admin/account/{id}/variables`
-- `POST /api/v1/admin/account/{id}/variables`
-- `PUT /api/v1/admin/account/{id}/variables`
 
 **Delete Account**
 
@@ -357,37 +347,17 @@ JSON error envelope.
 
 - `POST /api/v1/admin/account/{id}/quota/refresh`
 
-**Reinstall Account Environment**
-
-- `POST /api/v1/admin/account/{id}/environment/{envName}/{clusterName}/reinstall`
-
-These three actions are asynchronous: the response `{"meta": {...}, "success": true, "taskId": "..."}` only
+These two actions are asynchronous: the response `{"meta": {...}, "success": true, "taskId": "..."}` only
 means the task has been queued to the `new_task` worker (and recorded in the account history). The result, or
-the error, is appended to the account history once the worker has run. Creating an account or adding an
-environment to it queues the registry / environment install the same way: a just-added environment is returned
-without `accountEnvironmentId` until the worker has provisioned it.
+the error, is appended to the account history once the worker has run. Creating an account queues the install of
+its registry the same way, and so does adding an environment to it from the members area: a just-added environment
+is returned without `accountEnvironmentId` until the worker has provisioned it.
 
 #### Admin - Account Cluster Management
 
-**List Account Clusters**
+**List Account Clusters** *(read only)*
 
 - `GET /api/v1/admin/account/{accountId}/clusters`
-
-**Create Account Cluster**
-
-- `POST /api/v1/admin/account/{accountId}/cluster/new`
-- `PUT /api/v1/admin/account/{accountId}/cluster/new`
-
-**Get/Update Account Cluster**
-
-- `GET /api/v1/admin/account/{accountId}/cluster/{id}`
-- `POST /api/v1/admin/account/{accountId}/cluster/{id}`
-- `PUT /api/v1/admin/account/{accountId}/cluster/{id}`
-
-**Delete Account Cluster**
-
-- `POST /api/v1/admin/account/{accountId}/cluster/{id}/delete`
-- `DELETE /api/v1/admin/account/{accountId}/cluster/{id}/delete`
 
 #### Admin - User Management
 
@@ -424,42 +394,7 @@ without `accountEnvironmentId` until the worker has provisioned it.
 - `GET /api/v1/admin/account/{accountId}/projects`
 - `POST /api/v1/admin/account/{accountId}/projects` *(with search/filter)*
 
-**Create Project**
-
-- `POST /api/v1/admin/account/{accountId}/project/new`
-- `PUT /api/v1/admin/account/{accountId}/project/new`
-
-**Get/Update Project**
-
-- `GET /api/v1/admin/account/{accountId}/project/{id}`
-- `POST /api/v1/admin/account/{accountId}/project/{id}`
-- `PUT /api/v1/admin/account/{accountId}/project/{id}`
-
-**Manage Project Variables**
-
-- `GET /api/v1/admin/account/{accountId}/project/{id}/variables`
-- `POST /api/v1/admin/account/{accountId}/project/{id}/variables`
-- `PUT /api/v1/admin/account/{accountId}/project/{id}/variables`
-
-**Refresh Project Credentials**
-
-- `POST /api/v1/admin/account/{accountId}/project/{id}/refresh-credentials`
-
-**Delete Project**
-
-- `POST /api/v1/admin/account/{accountId}/project/{id}/delete`
-- `DELETE /api/v1/admin/account/{accountId}/project/{id}/delete`
-
 #### Admin - Job Management
-
-**Create New Job**
-
-- `POST /api/v1/admin/account/{accountId}/project/{projectId}/job/new`
-- `PUT /api/v1/admin/account/{accountId}/project/{projectId}/job/new`
-
-**Get Pending Job Status**
-
-- `GET /api/v1/admin/account/{accountId}/project/{projectId}/job/pending/{taskId}`
 
 **List Jobs for Project**
 

@@ -123,31 +123,13 @@
                 "colClass": "col cluster-field cluster-field-for-docker-compose",
                 'label': 'teknoo.space.form.project.cluster.username'
             }) }}
-            {% if is_granted('ROLE_ADMIN') %}
-                {{ form_row(form.identity.token, {"colClass": "col cluster-field cluster-field-for-kubernetes"}) }}
-                {{ form_row(
-                    form.identity.clear, {
-                        "colClass": "col-1 align-self-center pt-4",
-                        'label_attr':{
-                            'class': 'switch-custom'
-                        }
-                    }) }}
-                {{ form_row(
-                    form.locked, {
-                        "colClass": "col-1 align-self-center pt-4",
-                        'label_attr':{
-                            'class': 'switch-custom'
-                        }
-                    }) }}
-            {% else %}
-                {{ form_row(form.identity.token, {"colClass": "col cluster-field cluster-field-for-kubernetes"}) }}
-                {{ form_row(
-                    form.identity.clear, {
-                        "colClass": "col-1 align-self-center pt-4",
-                        'label_attr':{'class': 'switch-custom'}
-                    }) }}
-                {% do form.locked.setRendered %}
-            {% endif %}
+            {{ form_row(form.identity.token, {"colClass": "col cluster-field cluster-field-for-kubernetes"}) }}
+            {{ form_row(
+                form.identity.clear, {
+                    "colClass": "col-1 align-self-center pt-4",
+                    'label_attr':{'class': 'switch-custom'}
+                }) }}
+            {% do form.locked.setRendered %}
             <div class="col-1 align-self-center">
                 <div class="form-group">
                     <button type="button"

@@ -1,7 +1,3 @@
-_east_common_admin:
-    resource: '@TeknooEastCommonBundle/config/admin_routing.yaml'
-    prefix: '/admin'
-
 _east_common_2fa:
     resource: '@TeknooEastCommonBundle/config/2fa_routing.yaml'
     prefix: '/'
@@ -17,7 +13,6 @@ _east_common_user_recovery:
 _east_common:
     resource: '@TeknooEastCommonBundle/config/routing.yaml'
     prefix: '/'
-
 
 # Routes are shipped by East Common, templates are the ones of Space
 _east_common_api_keys:

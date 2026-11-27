@@ -27,9 +27,6 @@ parameters:
         "@TeknooEastPaas/Job/list.json.twig": {
             "job_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\JobSearchType"
         },
-        "@TeknooEastCommon/AdminMedia/list.html.twig": {
-            "media_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\MediaSearchType"
-        },
         "@TeknooEastCommon/AccountCluster/list.html.twig": {
             "account_cluster_search": "Teknoo\\Space\\Infrastructures\\Symfony\\Form\\Type\\Search\\AccountClusterSearchType"
         },

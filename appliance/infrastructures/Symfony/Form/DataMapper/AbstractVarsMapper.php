@@ -126,15 +126,16 @@ abstract class AbstractVarsMapper implements DataMapperInterface
             $envName = $set->envName;
             foreach ($set->variables as $variable) {
                 $value = $variable->value;
-                $secret = $variable->secret || (!empty($variable->encryptionAlgorithm) && empty($value));
-                $needEncryption = $variable->secret && !empty($value);
+                $isEmptyValue = ('' === $value || false === $value || null === $value);
+                $secret = $variable->secret || (!empty($variable->encryptionAlgorithm) && true === $isEmptyValue);
+                $needEncryption = $variable->secret && false === $isEmptyValue;
 
-                if (!empty($value)) {
+                if (false === $isEmptyValue) {
                     $variable->encryptionAlgorithm = '';
                 }
 
                 if (
-                    empty($value)
+                    $isEmptyValue
                     && (true === $variable->wasSecret)
                     && !empty($variable->getId())
                     && isset($existentVariables[$variable->getId()])

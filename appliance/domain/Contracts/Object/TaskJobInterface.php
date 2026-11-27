@@ -23,45 +23,18 @@
 
 declare(strict_types=1);
 
-namespace Teknoo\Space\Infrastructures\Symfony\Form\Type\Search;
-
-use Symfony\Component\Form\AbstractType;
-use Teknoo\East\Common\Query\Expr\InclusiveOr;
-use Teknoo\East\Common\Query\Expr\Regex;
-use Teknoo\East\Foundation\Manager\ManagerInterface;
-use Teknoo\Space\Object\DTO\Search;
+namespace Teknoo\Space\Contracts\Object;
 
 /**
+ * A job run by a task, other than the East PaaS `Job`: its id is published, with the id of the task, on the topic
+ * of the pending page of the task.
+ *
  * @copyright   Copyright (c) EIRL Richard Déloge (https://deloge.io - richard@deloge.io)
  * @copyright   Copyright (c) SASU Teknoo Software (https://teknoo.software - contact@teknoo.software)
  * @license     http://teknoo.software/license/bsd-3         3-Clause BSD License
  * @author      Richard Déloge <richard@teknoo.software>
- *
- * @extends AbstractType<Search>
  */
-class MediaSearchType extends AbstractType
+interface TaskJobInterface
 {
-    use DefaultSearchTrait;
-
-    #[\Override]
-    public function getBlockPrefix(): string
-    {
-        return 'media_search';
-    }
-
-    protected static function onSubmit(Search $search, ManagerInterface $manager): void
-    {
-        $manager->updateWorkPlan([
-            'criteria' => [
-                'mediaSearch' => new InclusiveOr(
-                    [
-                        'metadata.file_name' => new Regex($search->search),
-                    ],
-                    [
-                        'metadata.alternative' => new Regex($search->search),
-                    ],
-                )
-            ],
-        ]);
-    }
+    public function getId(): string;
 }
