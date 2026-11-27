@@ -1,5 +1,13 @@
 # Teknoo Software - Space - Change Log
 
+## [2.6.5] - 2026-11-27
+### Stable Release
+
+#### Evolutions
+- Remove the translations of the admin and media pages removed in 2.6.4: custom templates must no longer use them
+- Remove the dead administrator branches of the account variables and project edit pages
+- Update of Symfony to 8.1.13 (bug fixes)
+
 ## [2.6.4] - 2026-11-27
 ### Stable Release
 

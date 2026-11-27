@@ -9,11 +9,7 @@
 {%- endblock -%}
 
 {%- block breadcrumbListLink -%}
-    {% if is_granted('ROLE_ADMIN') %}
-        {{ path('_teknoo_paas_admin_account_list') }}
-    {% else %}
-        {{ path('space_account_settings') }}
-    {% endif %}
+    {{ path('space_account_settings') }}
 {%- endblock -%}
 {% block breadcrumbFormTitle %}{{ 'teknoo.space.title.account.settings'|trans }}{% endblock %}
 {% block breadcrumInstanceTitle %}{{ 'teknoo.space.title.account.account_variables'|trans }}{% endblock %}
